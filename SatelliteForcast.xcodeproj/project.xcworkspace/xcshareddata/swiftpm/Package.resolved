@@ -1,0 +1,61 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "ASCollectionView",
+        "repositoryURL": "https://github.com/DJBen/ASCollectionView.git",
+        "state": {
+          "branch": null,
+          "revision": "bab75600a09e52a002101f1dcaab94d42591513b",
+          "version": "2.0.0"
+        }
+      },
+      {
+        "package": "DifferenceKit",
+        "repositoryURL": "https://github.com/ra1028/DifferenceKit",
+        "state": {
+          "branch": null,
+          "revision": "62745d7780deef4a023a792a1f8f763ec7bf9705",
+          "version": "1.2.0"
+        }
+      },
+      {
+        "package": "ReactiveSwift",
+        "repositoryURL": "https://github.com/ReactiveCocoa/ReactiveSwift.git",
+        "state": {
+          "branch": null,
+          "revision": "4a8e1e4a683e96daf658f68132dae781738bc862",
+          "version": "6.6.0"
+        }
+      },
+      {
+        "package": "RxSwift",
+        "repositoryURL": "https://github.com/ReactiveX/RxSwift.git",
+        "state": {
+          "branch": null,
+          "revision": "7c17a6ccca06b5c107cfa4284e634562ddaf5951",
+          "version": "6.2.0"
+        }
+      },
+      {
+        "package": "SatelliteKit",
+        "repositoryURL": "https://github.com/DJBen/SatelliteKit.git",
+        "state": {
+          "branch": null,
+          "revision": "64f7195fe74ba8c5168f2878a264a6cf09480612",
+          "version": "1.0.28"
+        }
+      },
+      {
+        "package": "SwiftRex",
+        "repositoryURL": "https://github.com/SwiftRex/SwiftRex.git",
+        "state": {
+          "branch": null,
+          "revision": "fbbf0eaab840bfc2f1e07e7e32d9327a63bc48ba",
+          "version": "0.8.4"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
