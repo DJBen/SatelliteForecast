@@ -55,6 +55,27 @@ struct SkyChart: View {
         return path
     }
 
+    var starPath: Path {
+        let date = sortedDateHorizontalCoordinates.first!.date
+        var path = Path()
+
+        let stars = Star.magitudeLessThan(3.99)
+        for star in stars {
+            let (x, y, z) = (star.physicalInfo.coordinate.x, star.physicalInfo.coordinate.y, star.physicalInfo.coordinate.z)
+            let (ra, dec) = (atan2pi(y, x) * rad2deg, asin(z / (x * x + y * y + z * z).squareRoot()) * rad2deg)
+            let (alt, azi) = azel(time: date, site: (observerCoordinate.lat, observerCoordinate.lon), cele: (ra, dec))
+            if alt < 0 {
+                continue
+            }
+            let point = pointAtHorizontalCoordinate(AziEleDst(azim: azi, elev: alt, dist: 0))
+            path.move(to: point)
+            let radius = CGFloat(3 * exp(0.25 * -star.physicalInfo.apparentMagnitude))
+            path.addEllipse(in: CGRect(x: point.x - radius, y: point.y - radius, width: radius * 2, height: radius * 2))
+        }
+
+        return path
+    }
+
     var body: some View {
         backgroundPath
             .fill()
@@ -66,6 +87,11 @@ struct SkyChart: View {
             .overlay(
                 pathFromSortedDateHorizontalCoordinates(sortedDateHorizontalCoordinates)
                     .stroke(Color.black, lineWidth: 1)
+            )
+            .overlay(
+                starPath
+                    .fill()
+                    .foregroundColor(.black)
             )
     }
 }
@@ -86,7 +112,7 @@ struct SkyChart_Previews: PreviewProvider {
 
         return SatelliteWidgetViewModel(
             satelliteName: tle.commonName,
-            sortedDateHorizontalCoordinates: (0..<75)
+            sortedDateHorizontalCoordinates: (0..<40)
                 .map { date.addingTimeInterval(Double($0 * 10)) }
                 .map { (currentDate) -> DateHorizontalCoordinate in
                     let aziEleDst = sat.topPosition(

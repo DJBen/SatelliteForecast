@@ -24,6 +24,24 @@
 		EF9D82A82661BBF100616C97 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EF9D827C2661BBF000616C97 /* Assets.xcassets */; };
 		EF9D82F426622E6E00616C97 /* SatelliteWidgetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9D82F326622E6E00616C97 /* SatelliteWidgetViewModel.swift */; };
 		EF9D82F526622E6E00616C97 /* SatelliteWidgetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9D82F326622E6E00616C97 /* SatelliteWidgetViewModel.swift */; };
+		EFAE1EAB2664FEEF00A18A42 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = EFAE1EAA2664FEEF00A18A42 /* SQLite */; };
+		EFAE1EB52664FF0400A18A42 /* Constellation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EAD2664FF0400A18A42 /* Constellation.swift */; };
+		EFAE1EB62664FF0400A18A42 /* Constellation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EAD2664FF0400A18A42 /* Constellation.swift */; };
+		EFAE1EB72664FF0400A18A42 /* SpectralType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EAE2664FF0400A18A42 /* SpectralType.swift */; };
+		EFAE1EB82664FF0400A18A42 /* SpectralType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EAE2664FF0400A18A42 /* SpectralType.swift */; };
+		EFAE1EB92664FF0400A18A42 /* Constellation+Display.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EAF2664FF0400A18A42 /* Constellation+Display.swift */; };
+		EFAE1EBA2664FF0400A18A42 /* Constellation+Display.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EAF2664FF0400A18A42 /* Constellation+Display.swift */; };
+		EFAE1EBB2664FF0400A18A42 /* BayerFlamsteed.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EB02664FF0400A18A42 /* BayerFlamsteed.swift */; };
+		EFAE1EBC2664FF0400A18A42 /* BayerFlamsteed.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EB02664FF0400A18A42 /* BayerFlamsteed.swift */; };
+		EFAE1EBD2664FF0400A18A42 /* constellation_lines.dat in Resources */ = {isa = PBXBuildFile; fileRef = EFAE1EB22664FF0400A18A42 /* constellation_lines.dat */; };
+		EFAE1EBE2664FF0400A18A42 /* constellation_lines.dat in Resources */ = {isa = PBXBuildFile; fileRef = EFAE1EB22664FF0400A18A42 /* constellation_lines.dat */; };
+		EFAE1EBF2664FF0400A18A42 /* stars.sqlite3 in Resources */ = {isa = PBXBuildFile; fileRef = EFAE1EB32664FF0400A18A42 /* stars.sqlite3 */; };
+		EFAE1EC02664FF0400A18A42 /* stars.sqlite3 in Resources */ = {isa = PBXBuildFile; fileRef = EFAE1EB32664FF0400A18A42 /* stars.sqlite3 */; };
+		EFAE1EC12664FF0400A18A42 /* Star.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EB42664FF0400A18A42 /* Star.swift */; };
+		EFAE1EC22664FF0400A18A42 /* Star.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EB42664FF0400A18A42 /* Star.swift */; };
+		EFAE1EC42664FF4800A18A42 /* StarryNight.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EC32664FF4800A18A42 /* StarryNight.swift */; };
+		EFAE1EC52664FF4800A18A42 /* StarryNight.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EC32664FF4800A18A42 /* StarryNight.swift */; };
+		EFAE1EC8266502EE00A18A42 /* Regex in Frameworks */ = {isa = PBXBuildFile; productRef = EFAE1EC7266502EE00A18A42 /* Regex */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,8 +62,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		A1A3F9C6DE651593F2EBE9F7 /* Pods_SatelliteForcast__iOS_.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SatelliteForcast__iOS_.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		C3A3AB485C033D06A72BA27A /* Pods_SatelliteForcast__macOS_.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SatelliteForcast__macOS_.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EF4AF7672663DB7D00D28F47 /* TLE+Convenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TLE+Convenience.swift"; sourceTree = "<group>"; };
 		EF4AF76B266434CC00D28F47 /* SkyChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyChart.swift; sourceTree = "<group>"; };
 		EF9D827A2661BBF000616C97 /* SatelliteForcastApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteForcastApp.swift; sourceTree = "<group>"; };
@@ -63,6 +79,14 @@
 		EF9D82A02661BBF100616C97 /* Tests_macOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests_macOS.swift; sourceTree = "<group>"; };
 		EF9D82A22661BBF100616C97 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EF9D82F326622E6E00616C97 /* SatelliteWidgetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteWidgetViewModel.swift; sourceTree = "<group>"; };
+		EFAE1EAD2664FF0400A18A42 /* Constellation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constellation.swift; sourceTree = "<group>"; };
+		EFAE1EAE2664FF0400A18A42 /* SpectralType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpectralType.swift; sourceTree = "<group>"; };
+		EFAE1EAF2664FF0400A18A42 /* Constellation+Display.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Constellation+Display.swift"; sourceTree = "<group>"; };
+		EFAE1EB02664FF0400A18A42 /* BayerFlamsteed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BayerFlamsteed.swift; sourceTree = "<group>"; };
+		EFAE1EB22664FF0400A18A42 /* constellation_lines.dat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = constellation_lines.dat; sourceTree = "<group>"; };
+		EFAE1EB32664FF0400A18A42 /* stars.sqlite3 */ = {isa = PBXFileReference; lastKnownFileType = file; path = stars.sqlite3; sourceTree = "<group>"; };
+		EFAE1EB42664FF0400A18A42 /* Star.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Star.swift; sourceTree = "<group>"; };
+		EFAE1EC32664FF4800A18A42 /* StarryNight.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StarryNight.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,7 +94,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EFAE1EAB2664FEEF00A18A42 /* SQLite in Frameworks */,
 				EF4AF7602663DA6900D28F47 /* CombineRex in Frameworks */,
+				EFAE1EC8266502EE00A18A42 /* Regex in Frameworks */,
 				EF4AF7632663DB2000D28F47 /* ASCollectionView in Frameworks */,
 				EF4AF7662663DB4200D28F47 /* SatelliteKit in Frameworks */,
 			);
@@ -103,8 +129,6 @@
 		EC932DBEBD7F42A47E1A7B1F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A1A3F9C6DE651593F2EBE9F7 /* Pods_SatelliteForcast__iOS_.framework */,
-				C3A3AB485C033D06A72BA27A /* Pods_SatelliteForcast__macOS_.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -133,6 +157,7 @@
 		EF9D82792661BBEF00616C97 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				EFAE1EAC2664FF0400A18A42 /* StarryNight */,
 				EF4AF76A266434A500D28F47 /* UI */,
 				EF9D82F226622E3F00616C97 /* View Models */,
 				EF9D827A2661BBF000616C97 /* SatelliteForcastApp.swift */,
@@ -197,6 +222,29 @@
 			path = "View Models";
 			sourceTree = "<group>";
 		};
+		EFAE1EAC2664FF0400A18A42 /* StarryNight */ = {
+			isa = PBXGroup;
+			children = (
+				EFAE1EAD2664FF0400A18A42 /* Constellation.swift */,
+				EFAE1EAE2664FF0400A18A42 /* SpectralType.swift */,
+				EFAE1EAF2664FF0400A18A42 /* Constellation+Display.swift */,
+				EFAE1EB02664FF0400A18A42 /* BayerFlamsteed.swift */,
+				EFAE1EB12664FF0400A18A42 /* Fixtures */,
+				EFAE1EB42664FF0400A18A42 /* Star.swift */,
+				EFAE1EC32664FF4800A18A42 /* StarryNight.swift */,
+			);
+			path = StarryNight;
+			sourceTree = "<group>";
+		};
+		EFAE1EB12664FF0400A18A42 /* Fixtures */ = {
+			isa = PBXGroup;
+			children = (
+				EFAE1EB22664FF0400A18A42 /* constellation_lines.dat */,
+				EFAE1EB32664FF0400A18A42 /* stars.sqlite3 */,
+			);
+			path = Fixtures;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -217,6 +265,8 @@
 				EF4AF75F2663DA6900D28F47 /* CombineRex */,
 				EF4AF7622663DB2000D28F47 /* ASCollectionView */,
 				EF4AF7652663DB4200D28F47 /* SatelliteKit */,
+				EFAE1EAA2664FEEF00A18A42 /* SQLite */,
+				EFAE1EC7266502EE00A18A42 /* Regex */,
 			);
 			productName = "SatelliteForcast (iOS)";
 			productReference = EF9D82812661BBF000616C97 /* SatelliteForcast.app */;
@@ -282,7 +332,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1240;
-				LastUpgradeCheck = 1240;
+				LastUpgradeCheck = 1250;
 				TargetAttributes = {
 					EF9D82802661BBF000616C97 = {
 						CreatedOnToolsVersion = 12.4;
@@ -313,6 +363,8 @@
 				EF4AF75E2663DA6900D28F47 /* XCRemoteSwiftPackageReference "SwiftRex" */,
 				EF4AF7612663DB2000D28F47 /* XCRemoteSwiftPackageReference "ASCollectionView" */,
 				EF4AF7642663DB4200D28F47 /* XCRemoteSwiftPackageReference "SatelliteKit" */,
+				EFAE1EA92664FEEF00A18A42 /* XCRemoteSwiftPackageReference "SQLite.swift" */,
+				EFAE1EC6266502EE00A18A42 /* XCRemoteSwiftPackageReference "Regex" */,
 			);
 			productRefGroup = EF9D82822661BBF000616C97 /* Products */;
 			projectDirPath = "";
@@ -332,6 +384,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				EF9D82A72661BBF100616C97 /* Assets.xcassets in Resources */,
+				EFAE1EBD2664FF0400A18A42 /* constellation_lines.dat in Resources */,
+				EFAE1EBF2664FF0400A18A42 /* stars.sqlite3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -340,6 +394,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				EF9D82A82661BBF100616C97 /* Assets.xcassets in Resources */,
+				EFAE1EBE2664FF0400A18A42 /* constellation_lines.dat in Resources */,
+				EFAE1EC02664FF0400A18A42 /* stars.sqlite3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -365,10 +421,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				EF9D82F426622E6E00616C97 /* SatelliteWidgetViewModel.swift in Sources */,
+				EFAE1EB72664FF0400A18A42 /* SpectralType.swift in Sources */,
 				EF4AF7682663DB7D00D28F47 /* TLE+Convenience.swift in Sources */,
+				EFAE1EC12664FF0400A18A42 /* Star.swift in Sources */,
+				EFAE1EC42664FF4800A18A42 /* StarryNight.swift in Sources */,
 				EF9D82A52661BBF100616C97 /* ContentView.swift in Sources */,
+				EFAE1EBB2664FF0400A18A42 /* BayerFlamsteed.swift in Sources */,
 				EF4AF76C266434CC00D28F47 /* SkyChart.swift in Sources */,
 				EF9D82A32661BBF100616C97 /* SatelliteForcastApp.swift in Sources */,
+				EFAE1EB92664FF0400A18A42 /* Constellation+Display.swift in Sources */,
+				EFAE1EB52664FF0400A18A42 /* Constellation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -377,10 +439,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				EF9D82F526622E6E00616C97 /* SatelliteWidgetViewModel.swift in Sources */,
+				EFAE1EB82664FF0400A18A42 /* SpectralType.swift in Sources */,
 				EF4AF7692663DB7D00D28F47 /* TLE+Convenience.swift in Sources */,
+				EFAE1EC22664FF0400A18A42 /* Star.swift in Sources */,
+				EFAE1EC52664FF4800A18A42 /* StarryNight.swift in Sources */,
 				EF9D82A62661BBF100616C97 /* ContentView.swift in Sources */,
+				EFAE1EBC2664FF0400A18A42 /* BayerFlamsteed.swift in Sources */,
 				EF4AF76D266434CC00D28F47 /* SkyChart.swift in Sources */,
 				EF9D82A42661BBF100616C97 /* SatelliteForcastApp.swift in Sources */,
+				EFAE1EBA2664FF0400A18A42 /* Constellation+Display.swift in Sources */,
+				EFAE1EB62664FF0400A18A42 /* Constellation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -533,6 +601,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 52RD2GH5DP;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = iOS/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -554,6 +623,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 52RD2GH5DP;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = iOS/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -576,8 +646,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 52RD2GH5DP;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = macOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -598,8 +670,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 52RD2GH5DP;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = macOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -774,6 +848,22 @@
 				minimumVersion = 1.0.28;
 			};
 		};
+		EFAE1EA92664FEEF00A18A42 /* XCRemoteSwiftPackageReference "SQLite.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/stephencelis/SQLite.swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.12.2;
+			};
+		};
+		EFAE1EC6266502EE00A18A42 /* XCRemoteSwiftPackageReference "Regex" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sharplet/Regex.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -791,6 +881,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EF4AF7642663DB4200D28F47 /* XCRemoteSwiftPackageReference "SatelliteKit" */;
 			productName = SatelliteKit;
+		};
+		EFAE1EAA2664FEEF00A18A42 /* SQLite */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EFAE1EA92664FEEF00A18A42 /* XCRemoteSwiftPackageReference "SQLite.swift" */;
+			productName = SQLite;
+		};
+		EFAE1EC7266502EE00A18A42 /* Regex */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EFAE1EC6266502EE00A18A42 /* XCRemoteSwiftPackageReference "Regex" */;
+			productName = Regex;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
