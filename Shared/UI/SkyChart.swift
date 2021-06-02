@@ -9,9 +9,33 @@ import SwiftUI
 import SatelliteKit
 
 struct SkyChart: View {
+    /// The observer coordinate in latitude (in degrees), longitude (in degrees) and altitude (in meters)
     var observerCoordinate: LatLonAlt
+
+    /// The reference date for the background sky.
     var skyReferenceDate: Date
-    var sortedDateHorizontalCoordinates: [DateHorizontalCoordinate]
+
+    /// A satellite trail consisting of pairs of dates and horizontal coordinates.
+    /// Satellite trail will be plotted as a curve.
+    var satelliteTrail: [DateHorizontalCoordinate]
+
+    /// The degree interval between each pair of azimuth marks
+    var azimuthMarkInterval: Int = 15
+
+    /// The length of azimuth marks
+    var azimuthMarkLength: CGFloat = 3
+
+    init(
+        observerCoordinate: LatLonAlt,
+        skyReferenceDate: Date,
+        satelliteTrail: [DateHorizontalCoordinate],
+        configure: (inout SkyChart) -> Void = { _ in }
+    ) {
+        self.observerCoordinate = observerCoordinate
+        self.skyReferenceDate = skyReferenceDate
+        self.satelliteTrail = satelliteTrail
+        configure(&self)
+    }
 
     private func radius(fromRect rect: CGRect) -> CGFloat {
         return min(rect.width, rect.height) / 2
@@ -103,9 +127,6 @@ struct SkyChart: View {
                     for line in constellation.connectionLines {
                         let (alt1, azi1) = azel(time: skyReferenceDate, site: (observerCoordinate.lat, observerCoordinate.lon), cele: cartesianToRaDec(line.star1.physicalInfo.coordinate))
                         let (alt2, azi2) = azel(time: skyReferenceDate, site: (observerCoordinate.lat, observerCoordinate.lon), cele: cartesianToRaDec(line.star2.physicalInfo.coordinate))
-                        if alt1 < 0 || alt2 < 0 {
-                            continue
-                        }
                         let point1 = pointAtHorizontalCoordinate(AziEleDst(azim: azi1, elev: alt1, dist: 0), rect: rect)
                         let point2 = pointAtHorizontalCoordinate(AziEleDst(azim: azi2, elev: alt2, dist: 0), rect: rect)
                         path.move(to: point1)
@@ -121,8 +142,8 @@ struct SkyChart: View {
         GeometryReader { geometry in
             let rect = geometry.frame(in: .local)
             Path { path in
-                stride(from: 0, to: 360, by: 10).forEach { azimuth in
-                    let (point1, point2) = azimuthMarkPoints(azimuth: Double(azimuth), length: 3, rect: rect)
+                stride(from: 0, to: 360, by: azimuthMarkInterval).forEach { azimuth in
+                    let (point1, point2) = azimuthMarkPoints(azimuth: Double(azimuth), length: azimuthMarkLength, rect: rect)
                     path.move(to: point1)
                     path.addLine(to: point2)
                 }
@@ -137,7 +158,7 @@ struct SkyChart: View {
             let radius = radius(fromRect: rect)
             ZStack {
                 ForEach(
-                    Array(stride(from: 0, to: 360, by: 10)),
+                    Array(stride(from: 0, to: 360, by: azimuthMarkInterval)),
                     id: \.self,
                     content: { azimuth in
                         let angle: CGFloat = CGFloat(Double(azimuth + 180) * deg2rad)
@@ -187,39 +208,64 @@ struct SkyChart: View {
         }
     }
 
+    var moonCoordinate: AziEleDst {
+        let (alt, azi) = azel(
+            time: skyReferenceDate,
+            site: (observerCoordinate.lat, observerCoordinate.lon),
+            cele: lunarGeo(julianDays: skyReferenceDate.julianDate)
+        )
+        return AziEleDst(azim: azi, elev: alt, dist: 0)
+    }
+
     var body: some View {
         GeometryReader { geometry in
             let rect = geometry.frame(in: .local)
             pathFromSortedDateHorizontalCoordinates(
-                sortedDateHorizontalCoordinates,
+                satelliteTrail,
                 rect: rect
             )
             .stroke(Color.black, lineWidth: 1)
-            .coordinateSpace(name: "Root")
+            .overlay(starPath)
+            .overlay(constellationLinesPath)
+            .clipShape(Circle())
+            .overlay(backgroundPath)
+            .overlay(azimuthMarks)
+            .overlay(azimuthMarkTexts)
             .overlay(
-                starPath
-            )
-            .overlay(
-                constellationLinesPath
-            )
-            .clipShape(
-                Circle()
-            )
-            .overlay(
-                backgroundPath
-            )
-            .overlay(
-                azimuthMarks
-            )
-            .overlay(
-                azimuthMarkTexts
+                HStack(spacing: 10) {
+                    Path { path in
+                        if moonCoordinate.elev < 0 {
+                            return
+                        }
+                        path.addArc(
+                            center: CGPoint(x: rect.midX, y: rect.midY),
+                            radius: 5,
+                            startAngle: Angle(degrees: 0),
+                            endAngle: Angle(degrees: 360),
+                            clockwise: false
+                        )
+                    }
+                    .fill()
+                    .foregroundColor(.gray)
+
+                    Text("Moon")
+                        .font(.caption2)
+                        .foregroundColor(.blue)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .position(
+                    pointAtHorizontalCoordinate(
+                        moonCoordinate,
+                        rect: rect
+                    )
+                )
             )
         }
     }
 }
 
 struct SkyChart_Previews: PreviewProvider {
-    static let viewModel: SatelliteWidgetViewModel = {
+    static let issTrail: SatelliteWidgetViewModel = {
         let tle = try! TLE(
             raw: """
             ISS (ZARYA)
@@ -246,6 +292,33 @@ struct SkyChart_Previews: PreviewProvider {
         )
     }()
 
+    static let tianHeTrail: SatelliteWidgetViewModel = {
+        let tle = try! TLE(
+            raw: """
+            TIANHE
+            1 48274U 21035A   21152.91865056  .00003057  00000-0  33542-4 0  9993
+            2 48274  41.4713  16.3199 0005053  25.9394 109.3813 15.65195495  5304
+            """
+        )
+        let sat = Satellite(withTLE: tle)
+
+        let formatter = ISO8601DateFormatter()
+        let date = formatter.date(from: "2021-06-02T06:34:46-0600")!
+
+        return SatelliteWidgetViewModel(
+            satelliteName: tle.commonName,
+            sortedDateHorizontalCoordinates: (0..<40)
+                .map { date.addingTimeInterval(Double($0 * 10)) }
+                .map { (currentDate) -> DateHorizontalCoordinate in
+                    let aziEleDst = sat.topPosition(
+                        julianDays: currentDate.julianDate,
+                        observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
+                    )
+                    return DateHorizontalCoordinate(date: currentDate, horizontalCoordinate: aziEleDst)
+                }
+        )
+    }()
+
     static var previews: some View {
         SkyChart(
             observerCoordinate: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
@@ -253,7 +326,17 @@ struct SkyChart_Previews: PreviewProvider {
                 let formatter = ISO8601DateFormatter()
                 return formatter.date(from: "2021-06-02T20:40:00+0800")!
             }(),
-            sortedDateHorizontalCoordinates: viewModel.sortedDateHorizontalCoordinates
+            satelliteTrail: issTrail.sortedDateHorizontalCoordinates
+        )
+        .padding(20)
+
+        SkyChart(
+            observerCoordinate: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
+            skyReferenceDate: {
+                let formatter = ISO8601DateFormatter()
+                return formatter.date(from: "2021-06-02T06:34:46-0600")!
+            }(),
+            satelliteTrail: tianHeTrail.sortedDateHorizontalCoordinates
         )
         .padding(20)
     }
