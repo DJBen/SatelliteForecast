@@ -29,8 +29,6 @@
 		EFAE1EB62664FF0400A18A42 /* Constellation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EAD2664FF0400A18A42 /* Constellation.swift */; };
 		EFAE1EB72664FF0400A18A42 /* SpectralType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EAE2664FF0400A18A42 /* SpectralType.swift */; };
 		EFAE1EB82664FF0400A18A42 /* SpectralType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EAE2664FF0400A18A42 /* SpectralType.swift */; };
-		EFAE1EB92664FF0400A18A42 /* Constellation+Display.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EAF2664FF0400A18A42 /* Constellation+Display.swift */; };
-		EFAE1EBA2664FF0400A18A42 /* Constellation+Display.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EAF2664FF0400A18A42 /* Constellation+Display.swift */; };
 		EFAE1EBB2664FF0400A18A42 /* BayerFlamsteed.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EB02664FF0400A18A42 /* BayerFlamsteed.swift */; };
 		EFAE1EBC2664FF0400A18A42 /* BayerFlamsteed.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EB02664FF0400A18A42 /* BayerFlamsteed.swift */; };
 		EFAE1EBD2664FF0400A18A42 /* constellation_lines.dat in Resources */ = {isa = PBXBuildFile; fileRef = EFAE1EB22664FF0400A18A42 /* constellation_lines.dat */; };
@@ -42,6 +40,10 @@
 		EFAE1EC42664FF4800A18A42 /* StarryNight.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EC32664FF4800A18A42 /* StarryNight.swift */; };
 		EFAE1EC52664FF4800A18A42 /* StarryNight.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EC32664FF4800A18A42 /* StarryNight.swift */; };
 		EFAE1EC8266502EE00A18A42 /* Regex in Frameworks */ = {isa = PBXBuildFile; productRef = EFAE1EC7266502EE00A18A42 /* Regex */; };
+		EFAE1ECA2666228D00A18A42 /* Constellation+Display.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EC92666228D00A18A42 /* Constellation+Display.swift */; };
+		EFAE1ECB2666228D00A18A42 /* Constellation+Display.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EC92666228D00A18A42 /* Constellation+Display.swift */; };
+		EFAE1ECE266626D800A18A42 /* MathUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1ECD266626D800A18A42 /* MathUtil.swift */; };
+		EFAE1ECF266626D800A18A42 /* MathUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1ECD266626D800A18A42 /* MathUtil.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,12 +83,13 @@
 		EF9D82F326622E6E00616C97 /* SatelliteWidgetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteWidgetViewModel.swift; sourceTree = "<group>"; };
 		EFAE1EAD2664FF0400A18A42 /* Constellation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constellation.swift; sourceTree = "<group>"; };
 		EFAE1EAE2664FF0400A18A42 /* SpectralType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpectralType.swift; sourceTree = "<group>"; };
-		EFAE1EAF2664FF0400A18A42 /* Constellation+Display.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Constellation+Display.swift"; sourceTree = "<group>"; };
 		EFAE1EB02664FF0400A18A42 /* BayerFlamsteed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BayerFlamsteed.swift; sourceTree = "<group>"; };
 		EFAE1EB22664FF0400A18A42 /* constellation_lines.dat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = constellation_lines.dat; sourceTree = "<group>"; };
 		EFAE1EB32664FF0400A18A42 /* stars.sqlite3 */ = {isa = PBXFileReference; lastKnownFileType = file; path = stars.sqlite3; sourceTree = "<group>"; };
 		EFAE1EB42664FF0400A18A42 /* Star.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Star.swift; sourceTree = "<group>"; };
 		EFAE1EC32664FF4800A18A42 /* StarryNight.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StarryNight.swift; sourceTree = "<group>"; };
+		EFAE1EC92666228D00A18A42 /* Constellation+Display.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Constellation+Display.swift"; sourceTree = "<group>"; };
+		EFAE1ECD266626D800A18A42 /* MathUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathUtil.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -157,6 +160,7 @@
 		EF9D82792661BBEF00616C97 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				EFAE1ECC266626CD00A18A42 /* MathUtil */,
 				EFAE1EAC2664FF0400A18A42 /* StarryNight */,
 				EF4AF76A266434A500D28F47 /* UI */,
 				EF9D82F226622E3F00616C97 /* View Models */,
@@ -226,8 +230,8 @@
 			isa = PBXGroup;
 			children = (
 				EFAE1EAD2664FF0400A18A42 /* Constellation.swift */,
+				EFAE1EC92666228D00A18A42 /* Constellation+Display.swift */,
 				EFAE1EAE2664FF0400A18A42 /* SpectralType.swift */,
-				EFAE1EAF2664FF0400A18A42 /* Constellation+Display.swift */,
 				EFAE1EB02664FF0400A18A42 /* BayerFlamsteed.swift */,
 				EFAE1EB12664FF0400A18A42 /* Fixtures */,
 				EFAE1EB42664FF0400A18A42 /* Star.swift */,
@@ -243,6 +247,14 @@
 				EFAE1EB32664FF0400A18A42 /* stars.sqlite3 */,
 			);
 			path = Fixtures;
+			sourceTree = "<group>";
+		};
+		EFAE1ECC266626CD00A18A42 /* MathUtil */ = {
+			isa = PBXGroup;
+			children = (
+				EFAE1ECD266626D800A18A42 /* MathUtil.swift */,
+			);
+			path = MathUtil;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -425,12 +437,13 @@
 				EF4AF7682663DB7D00D28F47 /* TLE+Convenience.swift in Sources */,
 				EFAE1EC12664FF0400A18A42 /* Star.swift in Sources */,
 				EFAE1EC42664FF4800A18A42 /* StarryNight.swift in Sources */,
+				EFAE1ECE266626D800A18A42 /* MathUtil.swift in Sources */,
 				EF9D82A52661BBF100616C97 /* ContentView.swift in Sources */,
 				EFAE1EBB2664FF0400A18A42 /* BayerFlamsteed.swift in Sources */,
 				EF4AF76C266434CC00D28F47 /* SkyChart.swift in Sources */,
 				EF9D82A32661BBF100616C97 /* SatelliteForcastApp.swift in Sources */,
-				EFAE1EB92664FF0400A18A42 /* Constellation+Display.swift in Sources */,
 				EFAE1EB52664FF0400A18A42 /* Constellation.swift in Sources */,
+				EFAE1ECA2666228D00A18A42 /* Constellation+Display.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -443,12 +456,13 @@
 				EF4AF7692663DB7D00D28F47 /* TLE+Convenience.swift in Sources */,
 				EFAE1EC22664FF0400A18A42 /* Star.swift in Sources */,
 				EFAE1EC52664FF4800A18A42 /* StarryNight.swift in Sources */,
+				EFAE1ECF266626D800A18A42 /* MathUtil.swift in Sources */,
 				EF9D82A62661BBF100616C97 /* ContentView.swift in Sources */,
 				EFAE1EBC2664FF0400A18A42 /* BayerFlamsteed.swift in Sources */,
 				EF4AF76D266434CC00D28F47 /* SkyChart.swift in Sources */,
 				EF9D82A42661BBF100616C97 /* SatelliteForcastApp.swift in Sources */,
-				EFAE1EBA2664FF0400A18A42 /* Constellation+Display.swift in Sources */,
 				EFAE1EB62664FF0400A18A42 /* Constellation.swift in Sources */,
+				EFAE1ECB2666228D00A18A42 /* Constellation+Display.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

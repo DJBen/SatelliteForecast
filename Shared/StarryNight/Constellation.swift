@@ -13,7 +13,7 @@ private let constel = Table("constellations")
 private let dbName = Expression<String>("constellation")
 private let dbIAUName = Expression<String>("iau")
 private let dbGenitive = Expression<String>("genitive")
-private let constellationLinePath = Bundle(identifier: "com.squareup.sihao.StarryNight")!.path(forResource: "constellation_lines", ofType: "dat")!
+private let constellationLinePath = Bundle.main.path(forResource: "constellation_lines", ofType: "dat")!
 
 public struct Constellation: Hashable {
     public struct Line: CustomStringConvertible {
