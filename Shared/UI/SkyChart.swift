@@ -172,38 +172,29 @@ struct SkyChart: View {
                             .offset(x: sin(angle) * (radius + 10), y: cos(angle) * (radius + 10))
                     }
                 )
-                Text("NE")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-                    .position(x: rect.midX, y: rect.midY)
-                    .rotationEffect(
-                        Angle(degrees: -(Double(.pi * 0.75) * rad2deg) + 180)
-                    )
-                    .offset(x: sin(.pi * 0.75) * (radius + 30), y: cos(.pi * 0.75) * (radius + 30))
-                Text("NW")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-                    .position(x: rect.midX, y: rect.midY)
-                    .rotationEffect(
-                        Angle(degrees: -(Double(.pi * 1.25) * rad2deg) + 180)
-                    )
-                    .offset(x: sin(.pi * 1.25) * (radius + 30), y: cos(.pi * 1.25) * (radius + 30))
-                Text("SE")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-                    .position(x: rect.midX, y: rect.midY)
-                    .rotationEffect(
-                        Angle(degrees: -(Double(.pi * 0.25) * rad2deg) + 180)
-                    )
-                    .offset(x: sin(.pi * 0.25) * (radius + 30), y: cos(.pi * 0.25) * (radius + 30))
-                Text("SW")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-                    .position(x: rect.midX, y: rect.midY)
-                    .rotationEffect(
-                        Angle(degrees: -(Double(.pi * 1.75) * rad2deg) + 180)
-                    )
-                    .offset(x: sin(.pi * 1.75) * (radius + 30), y: cos(.pi * 1.75) * (radius + 30))
+                let orientationAnglesNorth: [(String, Double, Double)] = [
+                    ("NE", .pi * 0.75, -.pi * 0.5),
+                    ("NW", .pi * -0.75, .pi * 0.5),
+                    ("SE", .pi * 0.25, -.pi * 0.5),
+                    ("SW", .pi * -0.25, .pi * 0.5)
+                ]
+                let orientationAnglesSouth: [(String, Double, Double)] = [
+                    ("NE", .pi * -0.75, .pi * 0.5),
+                    ("NW", .pi * 0.75, -.pi * 0.5),
+                    ("SE", .pi * -0.25, .pi * 0.5),
+                    ("SW", .pi * 0.25, -.pi * 0.5)
+                ]
+                let orientationAngles: [(String, Double, Double)] = observerCoordinate.lon > 0 ? orientationAnglesNorth : orientationAnglesSouth
+                ForEach(orientationAngles, id: \.self.0) { (direction, angle, textOrientation) in
+                    Text(direction)
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                        .position(x: rect.midX, y: rect.midY)
+                        .rotationEffect(
+                            Angle(degrees: (Double(angle + textOrientation) * rad2deg))
+                        )
+                        .offset(x: sin(CGFloat(angle)) * (radius + 30), y: cos(CGFloat(angle)) * (radius + 30))
+                }
             }
         }
     }
