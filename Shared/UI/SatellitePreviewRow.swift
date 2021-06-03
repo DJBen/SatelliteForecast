@@ -18,120 +18,179 @@ struct SatelliteElevationCurve: View {
     var dateRange: Range<Date>
     var satellitePredictionInterval: TimeInterval = 20
     var timeGridLineInterval: TimeInterval = 30 * 60
-    // Number of pixel per second
+    // Horizontal width per second
     var minimumHorizonalResolution: CGFloat = 3 / 60
     var elevationGridLineInterval: Double = 30
 
+    private var xPercentDatePair: [(Double, Date, Int)] {
+        let calendar = Calendar(identifier: .gregorian)
+        let components = calendar.dateComponents([.year, .month, .day, .hour], from: dateRange.lowerBound)
+        var date = calendar.date(from: components)!
+        var results = [(Double, Date, Int)]()
+        var index: Int = 0
+        while true {
+            defer {
+                date.addTimeInterval(timeGridLineInterval)
+            }
+            if date < dateRange.lowerBound {
+                continue
+            }
+            let xPercent = date.timeIntervalSince(dateRange.lowerBound) / (dateRange.upperBound.timeIntervalSince(dateRange.lowerBound))
+            if xPercent < 0.05 {
+                continue
+            }
+            if xPercent > 0.95 {
+                break
+            }
+            results.append((xPercent, date, index))
+            index += 1
+        }
+        return results
+    }
+
+    private var timeGrid: some View {
+        GeometryReader { geometry in
+            let rect = geometry.frame(in: .local)
+
+            Path { path in
+                for (xPercent, _, _) in xPercentDatePair {
+                    let x = CGFloat(xPercent) * rect.width
+                    path.move(to: CGPoint(x: x, y: rect.minY))
+                    path.addLine(to: CGPoint(x: x, y: rect.maxY))
+                }
+            }
+            .stroke(Color.blue.opacity(0.3), lineWidth: 1)
+        }
+    }
+
+    private var elevationGrid: some View {
+        GeometryReader { geometry in
+            let rect = geometry.frame(in: .local)
+            let elevIterator = stride(from: -90.0, to: 90.0, by: elevationGridLineInterval)
+            ZStack {
+                Path { path in
+                    elevIterator.forEach { elev in
+                        let y = CGFloat(elev + 90) / 180 * rect.height
+                        path.move(to: CGPoint(x: rect.minX, y: y))
+                        path.addLine(to: CGPoint(x: rect.maxX, y: y))
+                    }
+                }
+                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+
+                Path { path in
+                    path.move(to: CGPoint(x: rect.minX, y: rect.midY))
+                    path.addLine(to: CGPoint(x: rect.maxX, y: rect.midY))
+                }
+                .stroke(Color.gray, lineWidth: 1)
+
+                ForEach(Array(elevIterator), id: \.self) { elev in
+                    let y = CGFloat(elev + 90) / 180 * rect.height
+
+                    Text("\(Int(-elev))º")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                        .frame(height: 30, alignment: .bottomTrailing)
+                        .position(x: 15, y: y)
+                }
+            }
+        }
+    }
+
+    private var satelliteElevationPlot: some View {
+        GeometryReader { geometry in
+            let rect = geometry.frame(in: .local)
+            let snapshots = satellite.snapshots(
+                observer: observerCoordinate,
+                dateRange: dateRange,
+                interval: satellitePredictionInterval
+            )
+            Path { path in
+                func snapshotPoint(_ snapshot: SatelliteSnapshot, i: Int) -> CGPoint {
+                    let x = rect.width / CGFloat(snapshots.count) * CGFloat(i)
+                    let y = CGFloat(snapshot.position.elev + 90) / 180 * -rect.height + rect.height
+                    return CGPoint(x: x, y: y)
+                }
+                for (i, snapshot) in snapshots.enumerated() {
+                    if i == 0 {
+                        path.move(to: snapshotPoint(snapshot, i: i))
+                    } else {
+                        path.addLine(to: snapshotPoint(snapshot, i: i))
+                    }
+                }
+            }
+            .stroke(
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.blue, Color.red]),
+                    startPoint: .bottom,
+                    endPoint: .top
+                ),
+                lineWidth: 1
+            )
+        }
+    }
+
     var body: some View {
-        let snapshots = satellite.snapshots(
-            observer: observerCoordinate,
-            dateRange: dateRange,
-            interval: satellitePredictionInterval
-        )
         GeometryReader { geometry in
             ScrollView(
                 .horizontal,
                 showsIndicators: false,
                 content: {
+                    let formatter: DateFormatter = {
+                        let formatter = DateFormatter()
+                        formatter.dateFormat = "HH:mm a"
+                        return formatter
+                    }()
+
                     let initialRect = geometry.frame(in: .local)
                     let widthPerSecond = initialRect.width / CGFloat(dateRange.upperBound.timeIntervalSince(dateRange.lowerBound))
                     let rect = CGRect(origin: initialRect.origin, size: CGSize(width: initialRect.width / widthPerSecond * max(widthPerSecond, minimumHorizonalResolution), height: initialRect.height))
-                    Path { path in
-                        path.move(to: CGPoint(x: rect.minX, y: rect.midY))
-                        path.addLine(to: CGPoint(x: rect.maxX, y: rect.midY))
+
+                    VStack(
+                        alignment: .leading,
+                        spacing: 4
+                    ) {
+                        timeGrid
+                            .overlay(elevationGrid)
+                            .overlay(satelliteElevationPlot)
+
+                        HStack(alignment: .center, spacing: 0) {
+                            ForEach(xPercentDatePair, id: \.0) { (xPercent, date, index) in
+                                VStack {
+                                    Text(
+                                        formatter.string(from: date)
+                                    )
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                                    .frame(width: 80)
+                                    .offset(x: CGFloat(xPercent) * rect.width - CGFloat(index) * 80 - 40)
+                                }
+                            }
+                        }
                     }
-                    .stroke(Color.black, lineWidth: 1)
-                    .overlay(
-                        ZStack {
-                            let xDatePair: [(CGFloat, Date)] = {
-                                let calendar = Calendar(identifier: .gregorian)
-                                let components = calendar.dateComponents([.year, .month, .day, .hour], from: dateRange.lowerBound)
-                                var date = calendar.date(from: components)!
-                                var results = [(CGFloat, Date)]()
-                                while true {
-                                    defer {
-                                        date.addTimeInterval(timeGridLineInterval)
-                                    }
-                                    if date < dateRange.lowerBound {
-                                        continue
-                                    }
-                                    let xPercent = date.timeIntervalSince(dateRange.lowerBound) / (dateRange.upperBound.timeIntervalSince(dateRange.lowerBound))
-                                    if xPercent < 0.05 {
-                                        continue
-                                    }
-                                    if xPercent > 0.95 {
-                                        break
-                                    }
-
-                                    let x = CGFloat(xPercent) * rect.width
-                                    results.append((x, date))
-                                }
-                                return results
-                            }()
-
-                            Path { path in
-                                for (x, _) in xDatePair {
-                                    path.move(to: CGPoint(x: x, y: rect.minY))
-                                    path.addLine(to: CGPoint(x: x, y: rect.maxY))
-                                }
-                            }
-                            .stroke(Color.blue.opacity(0.5), lineWidth: 1)
-
-                            let formatter: DateFormatter = {
-                                let formatter = DateFormatter()
-                                formatter.dateFormat = "HH:mm a"
-                                return formatter
-                            }()
-
-                            ForEach(xDatePair, id: \.0) { (x, date) in
-                                Text(formatter.string(from: date))
-                                    .position(CGPoint(x: x, y: rect.maxY))
-                            }
-                        }
-                    )
-                    .overlay(
-                        Path { path in
-                            stride(from: -90.0, to: 90.0, by: elevationGridLineInterval).forEach { elev in
-                                let y = CGFloat(elev + 90) / 180 * rect.height
-                                path.move(to: CGPoint(x: rect.minX, y: y))
-                                path.addLine(to: CGPoint(x: rect.maxX, y: y))
-                            }
-                        }
-                        .stroke(Color.gray.opacity(0.5), lineWidth: 1)
-                    )
-                    .overlay(
-                        Path { path in
-                            func snapshotPoint(_ snapshot: SatelliteSnapshot, i: Int) -> CGPoint {
-                                let x = rect.width / CGFloat(snapshots.count) * CGFloat(i)
-                                let y = CGFloat(snapshot.position.elev + 90) / 180 * -rect.height + rect.height
-                                return CGPoint(x: x, y: y)
-                            }
-                            for (i, snapshot) in snapshots.enumerated() {
-                                if i == 0 {
-                                    path.move(to: snapshotPoint(snapshot, i: i))
-                                } else {
-                                    path.addLine(to: snapshotPoint(snapshot, i: i))
-                                }
-                            }
-                        }
-                        .stroke(
-                            LinearGradient(
-                                gradient: Gradient(colors: [Color.blue, Color.red]),
-                                startPoint: .bottom,
-                                endPoint: .top
-                            ),
-                            lineWidth: 1
-                        )
-                    )
                     .frame(
                         width: rect.width,
                         height: rect.height,
-                        alignment: .center
+                        alignment: .leading
                     )
                 }
             )
-            .frame(width: .infinity)
         }
+    }
+}
+
+struct SatellitePreviewRow: View {
+    /// The satellite to preview.
+    var satellite: Satellite
+    /// The observer coordinate in latitude (in degrees), longitude (in degrees) and altitude (in meters)
+    var observerCoordinate: LatLonAlt
+    var dateRange: Range<Date>
+
+    var body: some View {
+        SatelliteElevationCurve(
+            satellite: satellite,
+            observerCoordinate: observerCoordinate,
+            dateRange: dateRange
+        )
     }
 }
 
