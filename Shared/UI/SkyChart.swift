@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SatelliteKit
+import SatelliteForcastCore
 
 struct SkyChart: View {
     /// The observer coordinate in latitude (in degrees), longitude (in degrees) and altitude (in meters)
@@ -17,7 +18,7 @@ struct SkyChart: View {
 
     /// A satellite trail consisting of pairs of dates and horizontal coordinates.
     /// Satellite trail will be plotted as a curve.
-    var satelliteTrail: [DateHorizontalCoordinate]
+    var satelliteTrail: [SatelliteSnapshot]
 
     /// The degree interval between each pair of azimuth marks
     var azimuthMarkInterval: Int = 15
@@ -28,7 +29,7 @@ struct SkyChart: View {
     init(
         observerCoordinate: LatLonAlt,
         skyReferenceDate: Date,
-        satelliteTrail: [DateHorizontalCoordinate],
+        satelliteTrail: [SatelliteSnapshot],
         configure: (inout SkyChart) -> Void = { _ in }
     ) {
         self.observerCoordinate = observerCoordinate
@@ -60,17 +61,17 @@ struct SkyChart: View {
         )
     }
 
-    private func pathFromSortedDateHorizontalCoordinates(_ sortedDateHorizontalCoordinates: [DateHorizontalCoordinate], rect: CGRect) -> some View {
+    private func pathFromSortedSatelliteSnapshots(_ sortedSatelliteSnapshots: [SatelliteSnapshot], rect: CGRect) -> some View {
         ZStack {
-            ForEach(0..<sortedDateHorizontalCoordinates.count - 1) { i in
+            ForEach(0..<sortedSatelliteSnapshots.count - 1) { i in
                 Path { path in
-                    let point = pointAtHorizontalCoordinate(sortedDateHorizontalCoordinates[i].horizontalCoordinate, rect: rect)
-                    let nextPoint = pointAtHorizontalCoordinate(sortedDateHorizontalCoordinates[i + 1].horizontalCoordinate, rect: rect)
+                    let point = pointAtHorizontalCoordinate(sortedSatelliteSnapshots[i].position, rect: rect)
+                    let nextPoint = pointAtHorizontalCoordinate(sortedSatelliteSnapshots[i + 1].position, rect: rect)
                     path.move(to: point)
                     path.addLine(to: nextPoint)
                 }
                 .stroke(
-                    sortedDateHorizontalCoordinates[i].isIlluminated ? Color.black : Color.gray,
+                    sortedSatelliteSnapshots[i].isIlluminated ? Color("satellitePath_illuminated") : Color("satellitePath_notIlluminated"),
                     lineWidth: 1
                 )
             }
@@ -214,7 +215,7 @@ struct SkyChart: View {
     var body: some View {
         GeometryReader { geometry in
             let rect = geometry.frame(in: .local)
-            pathFromSortedDateHorizontalCoordinates(
+            pathFromSortedSatelliteSnapshots(
                 satelliteTrail,
                 rect: rect
             )
@@ -273,20 +274,12 @@ struct SkyChart_Previews: PreviewProvider {
 
         return SatelliteWidgetViewModel(
             satelliteName: tle.commonName,
-            sortedDateHorizontalCoordinates: (0..<80)
-                .map { date.addingTimeInterval(Double($0 * 10)) }
-                .map { (currentDate) -> DateHorizontalCoordinate in
-                    let observer = LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0)
-                    let aziEleDst = sat.topPosition(
-                        julianDays: currentDate.julianDate,
-                        observer: observer
-                    )
-                    return DateHorizontalCoordinate(
-                        date: currentDate,
-                        horizontalCoordinate: aziEleDst,
-                        isIlluminated: true
-                    )
-                }
+            sortedSatelliteSnapshots: SatelliteSnapshot.populate(
+                satellite: sat,
+                dateRange: date..<date.addingTimeInterval(800),
+                observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
+                interpolation: .fixed(10)
+            )
         )
     }()
 
@@ -305,19 +298,12 @@ struct SkyChart_Previews: PreviewProvider {
 
         return SatelliteWidgetViewModel(
             satelliteName: tle.commonName,
-            sortedDateHorizontalCoordinates: (0..<80)
-                .map { date.addingTimeInterval(Double($0 * 10)) }
-                .map { (currentDate) -> DateHorizontalCoordinate in
-                    let aziEleDst = sat.topPosition(
-                        julianDays: currentDate.julianDate,
-                        observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
-                    )
-                    return DateHorizontalCoordinate(
-                        date: currentDate,
-                        horizontalCoordinate: aziEleDst,
-                        isIlluminated: true
-                    )
-                }
+            sortedSatelliteSnapshots:         SatelliteSnapshot.populate(
+                satellite: sat,
+                dateRange: date..<date.addingTimeInterval(800),
+                observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
+                interpolation: .fixed(10)
+            )
         )
     }()
 
@@ -328,7 +314,7 @@ struct SkyChart_Previews: PreviewProvider {
                 let formatter = ISO8601DateFormatter()
                 return formatter.date(from: "2021-06-02T20:40:00+0800")!
             }(),
-            satelliteTrail: issTrail.sortedDateHorizontalCoordinates
+            satelliteTrail: issTrail.sortedSatelliteSnapshots
         )
         .padding(20)
 
@@ -338,7 +324,7 @@ struct SkyChart_Previews: PreviewProvider {
                 let formatter = ISO8601DateFormatter()
                 return formatter.date(from: "2021-06-02T06:34:46-0600")!
             }(),
-            satelliteTrail: tianHeTrail.sortedDateHorizontalCoordinates
+            satelliteTrail: tianHeTrail.sortedSatelliteSnapshots
         )
         .padding(20)
     }

@@ -11,12 +11,7 @@ import SwiftUI
 struct SatelliteForcastApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView(
-                viewModel: SatelliteWidgetViewModel(
-                    satelliteName: "",
-                    sortedDateHorizontalCoordinates: []
-                )
-            )
+            ContentView()
         }
     }
 }
