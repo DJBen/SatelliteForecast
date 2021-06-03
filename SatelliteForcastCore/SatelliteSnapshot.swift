@@ -14,15 +14,18 @@ public struct SatelliteSnapshot {
     public let date: Date
     public let position: AziEleDst
     public let isIlluminated: Bool
+    public let sunElevation: Double
 
     public init(
         date: Date,
         position: AziEleDst,
-        isIlluminated: Bool
+        isIlluminated: Bool,
+        sunElevation: Double
     ) {
         self.date = date
         self.position = position
         self.isIlluminated = isIlluminated
+        self.sunElevation = sunElevation
     }
 }
 
@@ -65,14 +68,21 @@ extension Satellite {
             )
         }
         let position = topVector2AziEleDst(cel2top(julianDays: julianDate, satCel: eciPosition, obsCel: obsCel))
+        let solarCel = solarCel(julianDays: julianDate)
         let isIlluminated = AstroAlgorithms.hasLineOfSight(
             object1Geo: eciPosition,
-            object2Geo: solarCel(julianDays: julianDate) * au2Km
+            object2Geo: solarCel * au2Km
+        )
+        let (_, sunElev) = azel(
+            time: Date(julianDate: julianDate),
+            site: (observer.lat, observer.lon),
+            cele: cartesianToRaDec(solarCel)
         )
         return SatelliteSnapshot(
             date: Date(julianDate: julianDate),
             position: position,
-            isIlluminated: isIlluminated
+            isIlluminated: isIlluminated,
+            sunElevation: sunElev
         )
     }
 
@@ -85,6 +95,21 @@ extension Satellite {
         observer: LatLonAlt
     ) -> SatelliteSnapshot {
         return snapshot(julianDate: date.julianDate, observer: observer)
+    }
+
+    public func snapshots(
+        observer: LatLonAlt,
+        dateRange: Range<Date>,
+        interval: TimeInterval
+    ) -> [SatelliteSnapshot] {
+        stride(
+            from: dateRange.lowerBound.julianDate,
+            to: dateRange.upperBound.julianDate,
+            by: interval * TimeConstants.sec2day
+        )
+        .map { (julianDate) -> SatelliteSnapshot in
+            snapshot(julianDate: julianDate, observer: observer)
+        }
     }
 
     /// Find satellite passes over a large time span.
@@ -103,18 +128,11 @@ extension Satellite {
         coarseInterval: TimeInterval = 30,
         fineInterval: TimeInterval = 3
     ) -> [PassInformation] {
-        func snapshots(dateRange: Range<Date>, interval: TimeInterval) -> [SatelliteSnapshot] {
-            stride(
-                from: dateRange.lowerBound.julianDate,
-                to: dateRange.upperBound.julianDate,
-                by: interval * TimeConstants.sec2day
-            )
-            .map { (julianDate) -> SatelliteSnapshot in
-                snapshot(julianDate: julianDate, observer: observer)
-            }
-        }
-
-        let coarseSnapshots = snapshots(dateRange: dateRange, interval: coarseInterval)
+        let coarseSnapshots = snapshots(
+            observer: observer,
+            dateRange: dateRange,
+            interval: coarseInterval
+        )
 
         guard let firstSnapshot = coarseSnapshots.first else {
             return []
@@ -129,7 +147,11 @@ extension Satellite {
                 return
             }
 
-            let fineSnapshots = snapshots(dateRange: fromSnapshot.date..<toSnapshot.date, interval: fineInterval)
+            let fineSnapshots = snapshots(
+                observer: observer,
+                dateRange: fromSnapshot.date..<toSnapshot.date,
+                interval: fineInterval
+            )
 
             var illuminationChanges = [PassInformation.IlluminationChange]()
             var risesAt: Date?

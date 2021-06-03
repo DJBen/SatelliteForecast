@@ -72,6 +72,15 @@
           "revision": "fbbf0eaab840bfc2f1e07e7e32d9327a63bc48ba",
           "version": "0.8.4"
         }
+      },
+      {
+        "package": "SwiftSplines",
+        "repositoryURL": "https://github.com/Bersaelor/SwiftSplines.git",
+        "state": {
+          "branch": null,
+          "revision": "2288e9fbf3245f1b89b69c23bebd30461aa0f40c",
+          "version": "0.3.0"
+        }
       }
     ]
   },

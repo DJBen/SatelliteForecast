@@ -10,8 +10,6 @@
 		EF4AF7602663DA6900D28F47 /* CombineRex in Frameworks */ = {isa = PBXBuildFile; productRef = EF4AF75F2663DA6900D28F47 /* CombineRex */; };
 		EF4AF7632663DB2000D28F47 /* ASCollectionView in Frameworks */ = {isa = PBXBuildFile; productRef = EF4AF7622663DB2000D28F47 /* ASCollectionView */; };
 		EF4AF7662663DB4200D28F47 /* SatelliteKit in Frameworks */ = {isa = PBXBuildFile; productRef = EF4AF7652663DB4200D28F47 /* SatelliteKit */; };
-		EF4AF7682663DB7D00D28F47 /* TLE+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4AF7672663DB7D00D28F47 /* TLE+Convenience.swift */; };
-		EF4AF7692663DB7D00D28F47 /* TLE+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4AF7672663DB7D00D28F47 /* TLE+Convenience.swift */; };
 		EF4AF76C266434CC00D28F47 /* SkyChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4AF76B266434CC00D28F47 /* SkyChart.swift */; };
 		EF4AF76D266434CC00D28F47 /* SkyChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4AF76B266434CC00D28F47 /* SkyChart.swift */; };
 		EF9D82962661BBF100616C97 /* Tests_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9D82952661BBF100616C97 /* Tests_iOS.swift */; };
@@ -51,6 +49,10 @@
 		EFAE1F002668641200A18A42 /* SatelliteKit in Frameworks */ = {isa = PBXBuildFile; productRef = EFAE1EFF2668641200A18A42 /* SatelliteKit */; };
 		EFAE1F0626686CCF00A18A42 /* MathUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F0526686CCF00A18A42 /* MathUtil.swift */; };
 		EFAE1F0826686E5900A18A42 /* SatelliteSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F0726686E5900A18A42 /* SatelliteSnapshot.swift */; };
+		EFAE1F0C2668B10F00A18A42 /* SatellitePreviewRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F0B2668B10F00A18A42 /* SatellitePreviewRow.swift */; };
+		EFAE1F0D2668B10F00A18A42 /* SatellitePreviewRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F0B2668B10F00A18A42 /* SatellitePreviewRow.swift */; };
+		EFAE1F0E2668B23E00A18A42 /* TLE+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4AF7672663DB7D00D28F47 /* TLE+Convenience.swift */; };
+		EFAE1F112668B52D00A18A42 /* SwiftSplines in Frameworks */ = {isa = PBXBuildFile; productRef = EFAE1F102668B52D00A18A42 /* SwiftSplines */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -133,6 +135,7 @@
 		EFAE1EFD266863BE00A18A42 /* AstroAlgorithms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AstroAlgorithms.swift; sourceTree = "<group>"; };
 		EFAE1F0526686CCF00A18A42 /* MathUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MathUtil.swift; sourceTree = "<group>"; };
 		EFAE1F0726686E5900A18A42 /* SatelliteSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteSnapshot.swift; sourceTree = "<group>"; };
+		EFAE1F0B2668B10F00A18A42 /* SatellitePreviewRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatellitePreviewRow.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -144,6 +147,7 @@
 				EFAE1EAB2664FEEF00A18A42 /* SQLite in Frameworks */,
 				EF4AF7602663DA6900D28F47 /* CombineRex in Frameworks */,
 				EFAE1EC8266502EE00A18A42 /* Regex in Frameworks */,
+				EFAE1F112668B52D00A18A42 /* SwiftSplines in Frameworks */,
 				EF4AF7632663DB2000D28F47 /* ASCollectionView in Frameworks */,
 				EF4AF7662663DB4200D28F47 /* SatelliteKit in Frameworks */,
 			);
@@ -200,6 +204,7 @@
 			isa = PBXGroup;
 			children = (
 				EF4AF76B266434CC00D28F47 /* SkyChart.swift */,
+				EFAE1F0B2668B10F00A18A42 /* SatellitePreviewRow.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -228,7 +233,6 @@
 				EF9D827A2661BBF000616C97 /* SatelliteForcastApp.swift */,
 				EF9D827B2661BBF000616C97 /* ContentView.swift */,
 				EF9D827C2661BBF000616C97 /* Assets.xcassets */,
-				EF4AF7672663DB7D00D28F47 /* TLE+Convenience.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -317,6 +321,7 @@
 			children = (
 				EFAE1EE0266862B400A18A42 /* SatelliteForcastCore.h */,
 				EFAE1EFD266863BE00A18A42 /* AstroAlgorithms.swift */,
+				EF4AF7672663DB7D00D28F47 /* TLE+Convenience.swift */,
 				EFAE1F0526686CCF00A18A42 /* MathUtil.swift */,
 				EFAE1EE1266862B400A18A42 /* Info.plist */,
 				EFAE1F0726686E5900A18A42 /* SatelliteSnapshot.swift */,
@@ -368,6 +373,7 @@
 				EF4AF7652663DB4200D28F47 /* SatelliteKit */,
 				EFAE1EAA2664FEEF00A18A42 /* SQLite */,
 				EFAE1EC7266502EE00A18A42 /* Regex */,
+				EFAE1F102668B52D00A18A42 /* SwiftSplines */,
 			);
 			productName = "SatelliteForcast (iOS)";
 			productReference = EF9D82812661BBF000616C97 /* SatelliteForcast.app */;
@@ -512,6 +518,7 @@
 				EF4AF7642663DB4200D28F47 /* XCRemoteSwiftPackageReference "SatelliteKit" */,
 				EFAE1EA92664FEEF00A18A42 /* XCRemoteSwiftPackageReference "SQLite.swift" */,
 				EFAE1EC6266502EE00A18A42 /* XCRemoteSwiftPackageReference "Regex" */,
+				EFAE1F0F2668B52D00A18A42 /* XCRemoteSwiftPackageReference "SwiftSplines" */,
 			);
 			productRefGroup = EF9D82822661BBF000616C97 /* Products */;
 			projectDirPath = "";
@@ -585,9 +592,9 @@
 			files = (
 				EF9D82F426622E6E00616C97 /* SatelliteWidgetViewModel.swift in Sources */,
 				EFAE1EB72664FF0400A18A42 /* SpectralType.swift in Sources */,
-				EF4AF7682663DB7D00D28F47 /* TLE+Convenience.swift in Sources */,
 				EFAE1EC12664FF0400A18A42 /* Star.swift in Sources */,
 				EFAE1EC42664FF4800A18A42 /* StarryNight.swift in Sources */,
+				EFAE1F0C2668B10F00A18A42 /* SatellitePreviewRow.swift in Sources */,
 				EF9D82A52661BBF100616C97 /* ContentView.swift in Sources */,
 				EFAE1EBB2664FF0400A18A42 /* BayerFlamsteed.swift in Sources */,
 				EF4AF76C266434CC00D28F47 /* SkyChart.swift in Sources */,
@@ -603,9 +610,9 @@
 			files = (
 				EF9D82F526622E6E00616C97 /* SatelliteWidgetViewModel.swift in Sources */,
 				EFAE1EB82664FF0400A18A42 /* SpectralType.swift in Sources */,
-				EF4AF7692663DB7D00D28F47 /* TLE+Convenience.swift in Sources */,
 				EFAE1EC22664FF0400A18A42 /* Star.swift in Sources */,
 				EFAE1EC52664FF4800A18A42 /* StarryNight.swift in Sources */,
+				EFAE1F0D2668B10F00A18A42 /* SatellitePreviewRow.swift in Sources */,
 				EF9D82A62661BBF100616C97 /* ContentView.swift in Sources */,
 				EFAE1EBC2664FF0400A18A42 /* BayerFlamsteed.swift in Sources */,
 				EF4AF76D266434CC00D28F47 /* SkyChart.swift in Sources */,
@@ -636,6 +643,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EFAE1EFE266863BE00A18A42 /* AstroAlgorithms.swift in Sources */,
+				EFAE1F0E2668B23E00A18A42 /* TLE+Convenience.swift in Sources */,
 				EFAE1F0626686CCF00A18A42 /* MathUtil.swift in Sources */,
 				EFAE1F0826686E5900A18A42 /* SatelliteSnapshot.swift in Sources */,
 			);
@@ -1185,6 +1193,14 @@
 				minimumVersion = 2.1.1;
 			};
 		};
+		EFAE1F0F2668B52D00A18A42 /* XCRemoteSwiftPackageReference "SwiftSplines" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Bersaelor/SwiftSplines.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.3.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1222,6 +1238,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EF4AF7642663DB4200D28F47 /* XCRemoteSwiftPackageReference "SatelliteKit" */;
 			productName = SatelliteKit;
+		};
+		EFAE1F102668B52D00A18A42 /* SwiftSplines */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EFAE1F0F2668B52D00A18A42 /* XCRemoteSwiftPackageReference "SwiftSplines" */;
+			productName = SwiftSplines;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

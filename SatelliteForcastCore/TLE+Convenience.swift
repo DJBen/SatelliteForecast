@@ -8,7 +8,7 @@
 import SatelliteKit
 
 extension TLE {
-    init(raw: String) throws {
+    public init(raw: String) throws {
         let lines = raw.components(separatedBy: .newlines)
         try self.init(lines[0], lines[1], lines[2])
     }
