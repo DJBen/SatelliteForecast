@@ -9,5 +9,5 @@ import SatelliteForcastCore
 
 struct SatelliteWidgetViewModel {
     let satelliteName: String
-    let sortedSatelliteSnapshots: [SatelliteSnapshot]
+    let satelliteSnapshots: [SatelliteSnapshot]
 }

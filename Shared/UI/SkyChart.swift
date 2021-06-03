@@ -61,17 +61,17 @@ struct SkyChart: View {
         )
     }
 
-    private func pathFromSortedSatelliteSnapshots(_ sortedSatelliteSnapshots: [SatelliteSnapshot], rect: CGRect) -> some View {
+    private func pathFromSortedSatelliteSnapshots(_ satelliteSnapshots: [SatelliteSnapshot], rect: CGRect) -> some View {
         ZStack {
-            ForEach(0..<sortedSatelliteSnapshots.count - 1) { i in
+            ForEach(0..<satelliteSnapshots.count - 1) { i in
                 Path { path in
-                    let point = pointAtHorizontalCoordinate(sortedSatelliteSnapshots[i].position, rect: rect)
-                    let nextPoint = pointAtHorizontalCoordinate(sortedSatelliteSnapshots[i + 1].position, rect: rect)
+                    let point = pointAtHorizontalCoordinate(satelliteSnapshots[i].position, rect: rect)
+                    let nextPoint = pointAtHorizontalCoordinate(satelliteSnapshots[i + 1].position, rect: rect)
                     path.move(to: point)
                     path.addLine(to: nextPoint)
                 }
                 .stroke(
-                    sortedSatelliteSnapshots[i].isIlluminated ? Color("satellitePath_illuminated") : Color("satellitePath_notIlluminated"),
+                    satelliteSnapshots[i].isIlluminated ? Color("satellitePath_illuminated") : Color("satellitePath_notIlluminated"),
                     lineWidth: 1
                 )
             }
@@ -274,12 +274,12 @@ struct SkyChart_Previews: PreviewProvider {
 
         return SatelliteWidgetViewModel(
             satelliteName: tle.commonName,
-            sortedSatelliteSnapshots: SatelliteSnapshot.populate(
-                satellite: sat,
-                dateRange: date..<date.addingTimeInterval(800),
+            satelliteSnapshots: sat.findPasses(
                 observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
-                interpolation: .fixed(10)
+                dateRange: date..<date.addingTimeInterval(800)
             )
+            .first!
+            .snapshots
         )
     }()
 
@@ -298,12 +298,12 @@ struct SkyChart_Previews: PreviewProvider {
 
         return SatelliteWidgetViewModel(
             satelliteName: tle.commonName,
-            sortedSatelliteSnapshots:         SatelliteSnapshot.populate(
-                satellite: sat,
-                dateRange: date..<date.addingTimeInterval(800),
+            satelliteSnapshots: sat.findPasses(
                 observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
-                interpolation: .fixed(10)
+                dateRange: date..<date.addingTimeInterval(800)
             )
+            .first!
+            .snapshots
         )
     }()
 
@@ -314,7 +314,7 @@ struct SkyChart_Previews: PreviewProvider {
                 let formatter = ISO8601DateFormatter()
                 return formatter.date(from: "2021-06-02T20:40:00+0800")!
             }(),
-            satelliteTrail: issTrail.sortedSatelliteSnapshots
+            satelliteTrail: issTrail.satelliteSnapshots
         )
         .padding(20)
 
@@ -324,7 +324,7 @@ struct SkyChart_Previews: PreviewProvider {
                 let formatter = ISO8601DateFormatter()
                 return formatter.date(from: "2021-06-02T06:34:46-0600")!
             }(),
-            satelliteTrail: tianHeTrail.sortedSatelliteSnapshots
+            satelliteTrail: tianHeTrail.satelliteSnapshots
         )
         .padding(20)
     }
