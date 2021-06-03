@@ -9,12 +9,6 @@
 import Foundation
 import SQLite
 
-private let constel = Table("constellations")
-private let dbName = Expression<String>("constellation")
-private let dbIAUName = Expression<String>("iau")
-private let dbGenitive = Expression<String>("genitive")
-private let constellationLinePath = Bundle.main.path(forResource: "constellation_lines", ofType: "dat")!
-
 public struct Constellation: Hashable {
     public struct Line: CustomStringConvertible {
         public let star1: Star
@@ -37,7 +31,7 @@ public struct Constellation: Hashable {
     private static var cachedConstellations = [String: Constellation]()
 
     private static var lineMappings: [String: [(Int, Int)]] = {
-        let content = try! String(contentsOfFile: constellationLinePath)
+        let content = try! String(contentsOfFile: StarryNight.Constellations.constellationLinePath)
         let lines = content.components(separatedBy: "\n").filter { (str) -> Bool in
             return str.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).isEmpty == false
         }
@@ -59,9 +53,13 @@ public struct Constellation: Hashable {
     }()
 
     public static var all: Set<Constellation> {
-        for row in try! db.prepare(constel) {
-            let iau = try! row.get(dbIAUName)
-            let con = Constellation(name: try! row.get(dbName), iAUName: iau, genitive: try! row.get(dbGenitive))
+        for row in try! StarryNight.db.prepare(StarryNight.Constellations.table) {
+            let iau = try! row.get(StarryNight.Constellations.dbIAUName)
+            let con = Constellation(
+                name: try! row.get(StarryNight.Constellations.dbName),
+                iAUName: iau,
+                genitive: try! row.get(StarryNight.Constellations.dbGenitive)
+            )
             if cachedConstellations[iau] == nil {
                 cachedConstellations[iau] = con
             }
@@ -93,9 +91,13 @@ public struct Constellation: Hashable {
     }
 
     private static func queryConstellation(_ query: Table) -> Constellation? {
-        if let row = try! db.pluck(query) {
-            let con = Constellation(name: try! row.get(dbName), iAUName: try! row.get(dbIAUName), genitive: try! row.get(dbGenitive))
-            cachedConstellations[try! row.get(dbIAUName)] = con
+        if let row = try! StarryNight.db.pluck(query) {
+            let con = Constellation(
+                name: try! row.get(StarryNight.Constellations.dbName),
+                iAUName: try! row.get(StarryNight.Constellations.dbIAUName),
+                genitive: try! row.get(StarryNight.Constellations.dbGenitive)
+            )
+            cachedConstellations[try! row.get(StarryNight.Constellations.dbIAUName)] = con
             return con
         }
         return nil
@@ -106,7 +108,11 @@ public struct Constellation: Hashable {
             let (_, v) = cachedConstellations[conIndex]
             return v
         }
-        let query = constel.select(dbName, dbIAUName, dbGenitive).filter(dbName == name)
+        let query = StarryNight.Constellations.table.select(
+            StarryNight.Constellations.dbName,
+            StarryNight.Constellations.dbIAUName,
+            StarryNight.Constellations.dbGenitive
+        ).filter(StarryNight.Constellations.dbName == name)
         return queryConstellation(query)
     }
 
@@ -114,7 +120,11 @@ public struct Constellation: Hashable {
         if let con = cachedConstellations[iau] {
             return con
         }
-        let query = constel.select(dbName, dbIAUName, dbGenitive).filter(dbIAUName == iau)
+        let query = StarryNight.Constellations.table.select(
+            StarryNight.Constellations.dbName,
+            StarryNight.Constellations.dbIAUName,
+            StarryNight.Constellations.dbGenitive
+        ).filter(StarryNight.Constellations.dbIAUName == iau)
         return queryConstellation(query)
     }
 }

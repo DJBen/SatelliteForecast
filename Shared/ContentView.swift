@@ -57,7 +57,11 @@ struct ContentView_Previews: PreviewProvider {
                         julianDays: currentDate.julianDate,
                         observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0)
                     )
-                    return DateHorizontalCoordinate(date: currentDate, horizontalCoordinate: aziEleDst)
+                    return DateHorizontalCoordinate(
+                        date: currentDate,
+                        horizontalCoordinate: aziEleDst,
+                        isIlluminated: true
+                    )
                 }
         )
     }()

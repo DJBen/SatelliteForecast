@@ -11,6 +11,7 @@ import SatelliteKit
 struct DateHorizontalCoordinate {
     let date: Date
     let horizontalCoordinate: AziEleDst
+    let isIlluminated: Bool
 }
 
 struct SatelliteWidgetViewModel {

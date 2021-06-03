@@ -11,28 +11,6 @@ import SatelliteKit
 import SQLite
 import Regex
 
-private let stars = Table("stars_7")
-// The sun has id 0. Using id > 0 to filter out the sun.
-private let dbInternalId = Expression<Int>("id")
-private let dbBFDesignation = Expression<String?>("bf")
-private let dbHip = Expression<Int?>("hip")
-private let dbHr = Expression<Int?>("hr")
-private let dbHd = Expression<Int?>("hd")
-private let dbGl = Expression<String?>("gl")
-private let dbProperName = Expression<String?>("proper")
-private let dbX = Expression<Double>("x")
-private let dbY = Expression<Double>("y")
-private let dbZ = Expression<Double>("z")
-private let dbVx = Expression<Double>("vx")
-private let dbVy = Expression<Double>("vy")
-private let dbVz = Expression<Double>("vz")
-private let dbCon = Expression<String>("con")
-private let dbSpect = Expression<String?>("spect")
-private let dbMag = Expression<Double>("mag")
-private let dbAbsMag = Expression<Double>("absmag")
-private let dbLum = Expression<Double>("lum")
-private let dbDist = Expression<Double>("dist")
-
 public struct Star: Hashable, Equatable {
 
     public struct Identity: Hashable, Equatable, CustomStringConvertible {
@@ -144,16 +122,18 @@ public struct Star: Hashable, Equatable {
     }
 
     private init(row: Row) {
-        let identity = Star.Identity(id: try! row.get(dbInternalId), hipId: try! row.get(dbHip), hrId: try! row.get(dbHr), hdId: try! row.get(dbHd), gl: try! row.get(dbGl), bfDesig: try! row.get(dbBFDesignation), proper: try! row.get(dbProperName), constellationIAU: try! row.get(dbCon))
-        let coord = Vector(try! row.get(dbX), try! row.get(dbY), try! row.get(dbZ))
-        let vel = Vector(try! row.get(dbVx), try! row.get(dbVy), try! row.get(dbVz))
-        let phys = Star.PhysicalInfo(spect: try! row.get(dbSpect), apparentMagnitude: try! row.get(dbMag), absoluteMagnitude: try! row.get(dbAbsMag), luminosity: try! row.get(dbLum), distance: try! row.get(dbDist), coordinate: coord, motion: vel)
+        let identity = Star.Identity(id: try! row.get(StarryNight.Stars.dbInternalId), hipId: try! row.get(StarryNight.Stars.dbHip), hrId: try! row.get(StarryNight.Stars.dbHr), hdId: try! row.get(StarryNight.Stars.dbHd), gl: try! row.get(StarryNight.Stars.dbGl), bfDesig: try! row.get(StarryNight.Stars.dbBFDesignation), proper: try! row.get(StarryNight.Stars.dbProperName), constellationIAU: try! row.get(StarryNight.Stars.dbCon))
+        let coord = Vector(try! row.get(StarryNight.Stars.dbX), try! row.get(StarryNight.Stars.dbY), try! row.get(StarryNight.Stars.dbZ))
+        let vel = Vector(try! row.get(StarryNight.Stars.dbVx), try! row.get(StarryNight.Stars.dbVy), try! row.get(StarryNight.Stars.dbVz))
+        let phys = Star.PhysicalInfo(spect: try! row.get(StarryNight.Stars.dbSpect), apparentMagnitude: try! row.get(StarryNight.Stars.dbMag), absoluteMagnitude: try! row.get(StarryNight.Stars.dbAbsMag), luminosity: try! row.get(StarryNight.Stars.dbLum), distance: try! row.get(StarryNight.Stars.dbDist), coordinate: coord, motion: vel)
         self.init(identity: identity, physicalInfo: phys)
     }
 
     public static func magitudeLessThan(_ magCutoff: Double) -> [Star] {
-        let query = stars.filter(dbMag < magCutoff && dbInternalId > 0).order(dbMag.asc)
-        let rows = try! db.prepare(query)
+        let query = StarryNight.Stars.table
+            .filter(StarryNight.Stars.dbMag < magCutoff && StarryNight.Stars.dbInternalId > 0)
+            .order(StarryNight.Stars.dbMag.asc)
+        let rows = try! StarryNight.db.prepare(query)
         return rows.map { Star(row: $0) }
     }
 
@@ -165,18 +145,18 @@ public struct Star: Hashable, Equatable {
     ///   - angularDistance: Maximum angular distance to consider in radians.
     /// - Returns: The closest star to a given cartesian coordinate.
     public static func closest(to coordinate: Vector, maximumMagnitude magCutoff: Double? = nil, maximumAngularDistance angularDistance: Double? = nil) -> Star? {
-        let xSqr = (dbX / dbDist - coordinate.x) * (dbX / dbDist - coordinate.x)
-        let ySqr = (dbY / dbDist - coordinate.y) * (dbY / dbDist - coordinate.y)
-        let zSqr = (dbZ / dbDist - coordinate.z) * (dbZ / dbDist - coordinate.z)
+        let xSqr = (StarryNight.Stars.dbX / StarryNight.Stars.dbDist - coordinate.x) * (StarryNight.Stars.dbX / StarryNight.Stars.dbDist - coordinate.x)
+        let ySqr = (StarryNight.Stars.dbY / StarryNight.Stars.dbDist - coordinate.y) * (StarryNight.Stars.dbY / StarryNight.Stars.dbDist - coordinate.y)
+        let zSqr = (StarryNight.Stars.dbZ / StarryNight.Stars.dbDist - coordinate.z) * (StarryNight.Stars.dbZ / StarryNight.Stars.dbDist - coordinate.z)
         let distanceSqr = xSqr + ySqr + zSqr
         let cutoff = magCutoff ?? Double.greatestFiniteMagnitude
-        var query = stars.filter(dbMag < cutoff && dbInternalId > 0)
+        var query = StarryNight.Stars.table.filter(StarryNight.Stars.dbMag < cutoff && StarryNight.Stars.dbInternalId > 0)
         if let angularDistance = angularDistance {
             let maxDistSqr = pow(asin(angularDistance / 2) * 2, 2)
             query = query.where(distanceSqr < maxDistSqr)
         }
         query = query.order(distanceSqr).limit(1)
-        if let row = try! db.pluck(query) {
+        if let row = try! StarryNight.db.pluck(query) {
             return Star(row: row)
         } else {
             return nil
@@ -184,8 +164,8 @@ public struct Star: Hashable, Equatable {
     }
 
     private static func queryStar(_ query: Table) -> Star? {
-        if let row = try! db.pluck(query) {
-            let id = try! row.get(dbInternalId)
+        if let row = try! StarryNight.db.pluck(query) {
+            let id = try! row.get(StarryNight.Stars.dbInternalId)
             if let cachedStar = cachedStars[id] {
                 return cachedStar
             }
@@ -202,33 +182,33 @@ public struct Star: Hashable, Equatable {
             return []
         }
         let query: Table
-        let nonSolar = dbInternalId > 0
+        let nonSolar = StarryNight.Stars.dbInternalId > 0
         switch name {
         case Regex("hr\\s*(\\d+)", options: [.ignoreCase]):
             let match = Regex.lastMatch!
             let hr = Int(match.captures[0]!)!
-            query = stars.filter(dbHr == hr && nonSolar)
+            query = StarryNight.Stars.table.filter(StarryNight.Stars.dbHr == hr && nonSolar)
         case Regex("hd\\s*(\\d+)", options: [.ignoreCase]):
             let match = Regex.lastMatch!
             let hd = Int(match.captures[0]!)!
-            query = stars.filter(dbHd == hd && nonSolar)
+            query = StarryNight.Stars.table.filter(StarryNight.Stars.dbHd == hd && nonSolar)
         case Regex("hip\\s*(\\d+)", options: [.ignoreCase]):
             let match = Regex.lastMatch!
             let hip = Int(match.captures[0]!)!
-            query = stars.filter(dbHip == hip && nonSolar)
+            query = StarryNight.Stars.table.filter(StarryNight.Stars.dbHip == hip && nonSolar)
         default:
-            query = stars.filter(dbProperName.like("%\(name)%") && nonSolar)
+            query = StarryNight.Stars.table.filter(StarryNight.Stars.dbProperName.like("%\(name)%") && nonSolar)
         }
-        return try! db.prepare(query).map { Star(row: $0) }
+        return try! StarryNight.db.prepare(query).map { Star(row: $0) }
     }
 
     public static func hip(_ hip: Int) -> Star? {
-        let query = stars.filter(dbHip == hip)
+        let query = StarryNight.Stars.table.filter(StarryNight.Stars.dbHip == hip)
         return queryStar(query)
     }
 
     public static func hr(_ hr: Int) -> Star? {
-        let query = stars.filter(dbHr == hr)
+        let query = StarryNight.Stars.table.filter(StarryNight.Stars.dbHr == hr)
         return queryStar(query)
     }
 
@@ -236,8 +216,8 @@ public struct Star: Hashable, Equatable {
         if let cachedStar = cachedStars[id] {
             return cachedStar
         }
-        let query = stars.filter(dbInternalId == id)
-        if let row = try! db.pluck(query) {
+        let query = StarryNight.Stars.table.filter(StarryNight.Stars.dbInternalId == id)
+        if let row = try! StarryNight.db.pluck(query) {
             let star = Star(row: row)
             cachedStars[id] = star
             return star

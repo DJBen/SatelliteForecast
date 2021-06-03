@@ -11,15 +11,6 @@ import CoreGraphics
 import SQLite
 import SatelliteKit
 
-private let borders = Table("con_border_simple")
-private let dbBorderCon = Expression<String>("con")
-private let dbLowRa = Expression<Double>("low_ra")
-private let dbHighRa = Expression<Double>("high_ra")
-private let dbLowDec = Expression<Double>("low_dec")
-
-private let fullBorders = Table("constellation_borders")
-private let dbOppoCon = Expression<String>("opposite_con")
-
 private let constellationCenter: [String: Vector] = [
     "Peg": Vector(0.86804042300030027, -0.26298778535788447, 0.33323259346164735),
     "Sex": Vector(-0.88261544888599275, 0.45798408225176818, -0.052864117997383893),
@@ -120,14 +111,14 @@ extension Constellation {
     }
 
     public var neighbors: Set<Constellation> {
-        var query = fullBorders.select(dbOppoCon)
+        var query = StarryNight.ConstellationBorders.fullBorders.select(StarryNight.ConstellationBorders.dbOppoCon)
         if iAUName == "Ser" {
-            query = query.where(dbBorderCon == "Ser1" || dbBorderCon == "Ser2")
+            query = query.where(StarryNight.ConstellationBorders.dbBorderCon == "Ser1" || StarryNight.ConstellationBorders.dbBorderCon == "Ser2")
         } else {
-            query = query.where(dbBorderCon == iAUName)
+            query = query.where(StarryNight.ConstellationBorders.dbBorderCon == iAUName)
         }
-        return Set<Constellation>(try! db.prepare(query).map { (row) -> Constellation in
-            let oppoCon = try! row.get(dbOppoCon)
+        return Set<Constellation>(try! StarryNight.db.prepare(query).map { (row) -> Constellation in
+            let oppoCon = try! row.get(StarryNight.ConstellationBorders.dbOppoCon)
             return Constellation.iau(oppoCon)!
         })
     }

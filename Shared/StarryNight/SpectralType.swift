@@ -10,10 +10,6 @@ import Foundation
 import SQLite
 import Regex
 
-private let spectralTable = Table("spectral")
-private let spectralTypeColumn = Expression<String>("SpT")
-private let tempColumn = Expression<Double>("Teff")
-
 public struct SpectralType: CustomStringConvertible {
     public let rawType: String
     public var description: String {
@@ -37,10 +33,14 @@ public struct SpectralType: CustomStringConvertible {
     public var temperature: Double {
         let fractionSubtype = "\(type)\(subType != nil ? String(format: "%.1f", subType!) : String())%"
         let integerSubtype = "\(type)\(subType != nil ? String(Int(subType!)) : String())%"
-        if let row = try! db.pluck(spectralTable.select(tempColumn).where(spectralTypeColumn.like(fractionSubtype))) {
-            return row[tempColumn] + 273.15
-        } else if let row = try! db.pluck(spectralTable.select(tempColumn).where(spectralTypeColumn.like(integerSubtype))) {
-            return row[tempColumn] + 273.15
+        if let row = try! StarryNight.db.pluck(
+            StarryNight.Spectral.table.select(StarryNight.Spectral.temp).where(StarryNight.Spectral.spectralType.like(fractionSubtype))
+        ) {
+            return row[StarryNight.Spectral.temp] + 273.15
+        } else if let row = try! StarryNight.db.pluck(
+            StarryNight.Spectral.table.select(StarryNight.Spectral.temp).where(StarryNight.Spectral.spectralType.like(integerSubtype))
+        ) {
+            return row[StarryNight.Spectral.temp] + 273.15
         }
         fatalError()
     }
