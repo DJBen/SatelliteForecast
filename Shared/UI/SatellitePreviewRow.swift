@@ -8,7 +8,6 @@
 import SwiftUI
 import SatelliteKit
 import SatelliteForcastCore
-import SwiftSplines
 
 struct SatelliteElevationCurve: View {
     /// The satellite to preview.
