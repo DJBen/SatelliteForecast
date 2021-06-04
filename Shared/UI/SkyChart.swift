@@ -8,6 +8,7 @@
 import SwiftUI
 import SatelliteKit
 import SatelliteForcastCore
+import StarryNight
 
 struct SkyChart: View {
     /// The observer coordinate in latitude (in degrees), longitude (in degrees) and altitude (in meters)

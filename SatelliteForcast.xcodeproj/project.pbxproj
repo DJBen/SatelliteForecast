@@ -23,23 +23,7 @@
 		EF9D82F426622E6E00616C97 /* SatelliteWidgetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9D82F326622E6E00616C97 /* SatelliteWidgetViewModel.swift */; };
 		EF9D82F526622E6E00616C97 /* SatelliteWidgetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9D82F326622E6E00616C97 /* SatelliteWidgetViewModel.swift */; };
 		EFAE1EAB2664FEEF00A18A42 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = EFAE1EAA2664FEEF00A18A42 /* SQLite */; };
-		EFAE1EB52664FF0400A18A42 /* Constellation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EAD2664FF0400A18A42 /* Constellation.swift */; };
-		EFAE1EB62664FF0400A18A42 /* Constellation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EAD2664FF0400A18A42 /* Constellation.swift */; };
-		EFAE1EB72664FF0400A18A42 /* SpectralType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EAE2664FF0400A18A42 /* SpectralType.swift */; };
-		EFAE1EB82664FF0400A18A42 /* SpectralType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EAE2664FF0400A18A42 /* SpectralType.swift */; };
-		EFAE1EBB2664FF0400A18A42 /* BayerFlamsteed.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EB02664FF0400A18A42 /* BayerFlamsteed.swift */; };
-		EFAE1EBC2664FF0400A18A42 /* BayerFlamsteed.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EB02664FF0400A18A42 /* BayerFlamsteed.swift */; };
-		EFAE1EBD2664FF0400A18A42 /* constellation_lines.dat in Resources */ = {isa = PBXBuildFile; fileRef = EFAE1EB22664FF0400A18A42 /* constellation_lines.dat */; };
-		EFAE1EBE2664FF0400A18A42 /* constellation_lines.dat in Resources */ = {isa = PBXBuildFile; fileRef = EFAE1EB22664FF0400A18A42 /* constellation_lines.dat */; };
-		EFAE1EBF2664FF0400A18A42 /* stars.sqlite3 in Resources */ = {isa = PBXBuildFile; fileRef = EFAE1EB32664FF0400A18A42 /* stars.sqlite3 */; };
-		EFAE1EC02664FF0400A18A42 /* stars.sqlite3 in Resources */ = {isa = PBXBuildFile; fileRef = EFAE1EB32664FF0400A18A42 /* stars.sqlite3 */; };
-		EFAE1EC12664FF0400A18A42 /* Star.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EB42664FF0400A18A42 /* Star.swift */; };
-		EFAE1EC22664FF0400A18A42 /* Star.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EB42664FF0400A18A42 /* Star.swift */; };
-		EFAE1EC42664FF4800A18A42 /* StarryNight.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EC32664FF4800A18A42 /* StarryNight.swift */; };
-		EFAE1EC52664FF4800A18A42 /* StarryNight.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EC32664FF4800A18A42 /* StarryNight.swift */; };
 		EFAE1EC8266502EE00A18A42 /* Regex in Frameworks */ = {isa = PBXBuildFile; productRef = EFAE1EC7266502EE00A18A42 /* Regex */; };
-		EFAE1ECA2666228D00A18A42 /* Constellation+Display.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EC92666228D00A18A42 /* Constellation+Display.swift */; };
-		EFAE1ECB2666228D00A18A42 /* Constellation+Display.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EC92666228D00A18A42 /* Constellation+Display.swift */; };
 		EFAE1EE7266862B500A18A42 /* SatelliteForcastCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EFAE1EDE266862B400A18A42 /* SatelliteForcastCore.framework */; };
 		EFAE1EEE266862B500A18A42 /* AstroAlgorithmsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EED266862B500A18A42 /* AstroAlgorithmsTests.swift */; };
 		EFAE1EF0266862B500A18A42 /* SatelliteForcastCore.h in Headers */ = {isa = PBXBuildFile; fileRef = EFAE1EE0266862B400A18A42 /* SatelliteForcastCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -54,6 +38,25 @@
 		EFAE1F0E2668B23E00A18A42 /* TLE+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4AF7672663DB7D00D28F47 /* TLE+Convenience.swift */; };
 		EFAE1F132669E7A800A18A42 /* SunlightIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F122669E7A800A18A42 /* SunlightIndicator.swift */; };
 		EFAE1F142669E7A800A18A42 /* SunlightIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F122669E7A800A18A42 /* SunlightIndicator.swift */; };
+		EFAE1F2B266A0D9F00A18A42 /* StarryNight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EFAE1F22266A0D9F00A18A42 /* StarryNight.framework */; };
+		EFAE1F34266A0D9F00A18A42 /* StarryNight.h in Headers */ = {isa = PBXBuildFile; fileRef = EFAE1F24266A0D9F00A18A42 /* StarryNight.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		EFAE1F37266A0D9F00A18A42 /* StarryNight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EFAE1F22266A0D9F00A18A42 /* StarryNight.framework */; };
+		EFAE1F38266A0D9F00A18A42 /* StarryNight.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EFAE1F22266A0D9F00A18A42 /* StarryNight.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EFAE1F3F266A0DA700A18A42 /* StarryNight.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EC32664FF4800A18A42 /* StarryNight.swift */; };
+		EFAE1F40266A0DA700A18A42 /* Constellation+Display.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EC92666228D00A18A42 /* Constellation+Display.swift */; };
+		EFAE1F41266A0DA700A18A42 /* SpectralType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EAE2664FF0400A18A42 /* SpectralType.swift */; };
+		EFAE1F42266A0DA700A18A42 /* BayerFlamsteed.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EB02664FF0400A18A42 /* BayerFlamsteed.swift */; };
+		EFAE1F43266A0DA700A18A42 /* Star.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EB42664FF0400A18A42 /* Star.swift */; };
+		EFAE1F44266A0DA700A18A42 /* Constellation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EAD2664FF0400A18A42 /* Constellation.swift */; };
+		EFAE1F46266A0DD300A18A42 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = EFAE1F45266A0DD300A18A42 /* SQLite */; };
+		EFAE1F48266A0DD300A18A42 /* Regex in Frameworks */ = {isa = PBXBuildFile; productRef = EFAE1F47266A0DD300A18A42 /* Regex */; };
+		EFAE1F4D266A0E1200A18A42 /* BayerFlamsteedTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F49266A0E1200A18A42 /* BayerFlamsteedTest.swift */; };
+		EFAE1F4E266A0E1200A18A42 /* SpectralTypeTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F4A266A0E1200A18A42 /* SpectralTypeTest.swift */; };
+		EFAE1F4F266A0E1200A18A42 /* StarTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F4B266A0E1200A18A42 /* StarTest.swift */; };
+		EFAE1F50266A0E1200A18A42 /* ConstellationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F4C266A0E1200A18A42 /* ConstellationTest.swift */; };
+		EFAE1F52266A0E4600A18A42 /* SatelliteKit in Frameworks */ = {isa = PBXBuildFile; productRef = EFAE1F51266A0E4600A18A42 /* SatelliteKit */; };
+		EFAE1F59266A0FDD00A18A42 /* constellation_lines.dat in Resources */ = {isa = PBXBuildFile; fileRef = EFAE1EB22664FF0400A18A42 /* constellation_lines.dat */; };
+		EFAE1F5A266A0FDD00A18A42 /* stars.sqlite3 in Resources */ = {isa = PBXBuildFile; fileRef = EFAE1EB32664FF0400A18A42 /* stars.sqlite3 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -85,6 +88,20 @@
 			remoteGlobalIDString = EFAE1EDD266862B400A18A42;
 			remoteInfo = SatelliteForcastCore;
 		};
+		EFAE1F2C266A0D9F00A18A42 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EF9D82752661BBEF00616C97 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EFAE1F21266A0D9F00A18A42;
+			remoteInfo = StarryNight;
+		};
+		EFAE1F35266A0D9F00A18A42 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EF9D82752661BBEF00616C97 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EFAE1F21266A0D9F00A18A42;
+			remoteInfo = StarryNight;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -94,6 +111,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				EFAE1F38266A0D9F00A18A42 /* StarryNight.framework in Embed Frameworks */,
 				EFAE1EF4266862B500A18A42 /* SatelliteForcastCore.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -138,6 +156,15 @@
 		EFAE1F0726686E5900A18A42 /* SatelliteSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteSnapshot.swift; sourceTree = "<group>"; };
 		EFAE1F0B2668B10F00A18A42 /* SatellitePreviewRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatellitePreviewRow.swift; sourceTree = "<group>"; };
 		EFAE1F122669E7A800A18A42 /* SunlightIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunlightIndicator.swift; sourceTree = "<group>"; };
+		EFAE1F22266A0D9F00A18A42 /* StarryNight.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StarryNight.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EFAE1F24266A0D9F00A18A42 /* StarryNight.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StarryNight.h; sourceTree = "<group>"; };
+		EFAE1F25266A0D9F00A18A42 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EFAE1F2A266A0D9F00A18A42 /* StarryNightTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StarryNightTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EFAE1F33266A0D9F00A18A42 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EFAE1F49266A0E1200A18A42 /* BayerFlamsteedTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BayerFlamsteedTest.swift; sourceTree = "<group>"; };
+		EFAE1F4A266A0E1200A18A42 /* SpectralTypeTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpectralTypeTest.swift; sourceTree = "<group>"; };
+		EFAE1F4B266A0E1200A18A42 /* StarTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StarTest.swift; sourceTree = "<group>"; };
+		EFAE1F4C266A0E1200A18A42 /* ConstellationTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConstellationTest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -150,6 +177,7 @@
 				EF4AF7602663DA6900D28F47 /* CombineRex in Frameworks */,
 				EFAE1EC8266502EE00A18A42 /* Regex in Frameworks */,
 				EF4AF7632663DB2000D28F47 /* ASCollectionView in Frameworks */,
+				EFAE1F37266A0D9F00A18A42 /* StarryNight.framework in Frameworks */,
 				EF4AF7662663DB4200D28F47 /* SatelliteKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -191,6 +219,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EFAE1F1F266A0D9F00A18A42 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EFAE1F52266A0E4600A18A42 /* SatelliteKit in Frameworks */,
+				EFAE1F48266A0DD300A18A42 /* Regex in Frameworks */,
+				EFAE1F46266A0DD300A18A42 /* SQLite in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EFAE1F27266A0D9F00A18A42 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EFAE1F2B266A0D9F00A18A42 /* StarryNight.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -221,6 +267,8 @@
 				EF9D829F2661BBF100616C97 /* Tests macOS */,
 				EFAE1EDF266862B400A18A42 /* SatelliteForcastCore */,
 				EFAE1EEC266862B500A18A42 /* SatelliteForcastCoreTests */,
+				EFAE1F23266A0D9F00A18A42 /* StarryNight */,
+				EFAE1F30266A0D9F00A18A42 /* StarryNightTests */,
 				EF9D82822661BBF000616C97 /* Products */,
 				EC932DBEBD7F42A47E1A7B1F /* Frameworks */,
 			);
@@ -229,7 +277,6 @@
 		EF9D82792661BBEF00616C97 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				EFAE1EAC2664FF0400A18A42 /* StarryNight */,
 				EF4AF76A266434A500D28F47 /* UI */,
 				EF9D82F226622E3F00616C97 /* View Models */,
 				EF9D827A2661BBF000616C97 /* SatelliteForcastApp.swift */,
@@ -248,6 +295,8 @@
 				EF9D829C2661BBF100616C97 /* Tests macOS.xctest */,
 				EFAE1EDE266862B400A18A42 /* SatelliteForcastCore.framework */,
 				EFAE1EE6266862B500A18A42 /* SatelliteForcastCoreTests.xctest */,
+				EFAE1F22266A0D9F00A18A42 /* StarryNight.framework */,
+				EFAE1F2A266A0D9F00A18A42 /* StarryNightTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -295,20 +344,6 @@
 			path = "View Models";
 			sourceTree = "<group>";
 		};
-		EFAE1EAC2664FF0400A18A42 /* StarryNight */ = {
-			isa = PBXGroup;
-			children = (
-				EFAE1EAD2664FF0400A18A42 /* Constellation.swift */,
-				EFAE1EC92666228D00A18A42 /* Constellation+Display.swift */,
-				EFAE1EAE2664FF0400A18A42 /* SpectralType.swift */,
-				EFAE1EB02664FF0400A18A42 /* BayerFlamsteed.swift */,
-				EFAE1EB12664FF0400A18A42 /* Fixtures */,
-				EFAE1EB42664FF0400A18A42 /* Star.swift */,
-				EFAE1EC32664FF4800A18A42 /* StarryNight.swift */,
-			);
-			path = StarryNight;
-			sourceTree = "<group>";
-		};
 		EFAE1EB12664FF0400A18A42 /* Fixtures */ = {
 			isa = PBXGroup;
 			children = (
@@ -340,6 +375,34 @@
 			path = SatelliteForcastCoreTests;
 			sourceTree = "<group>";
 		};
+		EFAE1F23266A0D9F00A18A42 /* StarryNight */ = {
+			isa = PBXGroup;
+			children = (
+				EFAE1EAD2664FF0400A18A42 /* Constellation.swift */,
+				EFAE1EC92666228D00A18A42 /* Constellation+Display.swift */,
+				EFAE1EAE2664FF0400A18A42 /* SpectralType.swift */,
+				EFAE1EB02664FF0400A18A42 /* BayerFlamsteed.swift */,
+				EFAE1EB12664FF0400A18A42 /* Fixtures */,
+				EFAE1EB42664FF0400A18A42 /* Star.swift */,
+				EFAE1EC32664FF4800A18A42 /* StarryNight.swift */,
+				EFAE1F24266A0D9F00A18A42 /* StarryNight.h */,
+				EFAE1F25266A0D9F00A18A42 /* Info.plist */,
+			);
+			path = StarryNight;
+			sourceTree = "<group>";
+		};
+		EFAE1F30266A0D9F00A18A42 /* StarryNightTests */ = {
+			isa = PBXGroup;
+			children = (
+				EFAE1F49266A0E1200A18A42 /* BayerFlamsteedTest.swift */,
+				EFAE1F4C266A0E1200A18A42 /* ConstellationTest.swift */,
+				EFAE1F4A266A0E1200A18A42 /* SpectralTypeTest.swift */,
+				EFAE1F4B266A0E1200A18A42 /* StarTest.swift */,
+				EFAE1F33266A0D9F00A18A42 /* Info.plist */,
+			);
+			path = StarryNightTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -348,6 +411,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				EFAE1EF0266862B500A18A42 /* SatelliteForcastCore.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EFAE1F1D266A0D9F00A18A42 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EFAE1F34266A0D9F00A18A42 /* StarryNight.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -367,6 +438,7 @@
 			);
 			dependencies = (
 				EFAE1EF2266862B500A18A42 /* PBXTargetDependency */,
+				EFAE1F36266A0D9F00A18A42 /* PBXTargetDependency */,
 			);
 			name = "SatelliteForcast (iOS)";
 			packageProductDependencies = (
@@ -473,6 +545,49 @@
 			productReference = EFAE1EE6266862B500A18A42 /* SatelliteForcastCoreTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		EFAE1F21266A0D9F00A18A42 /* StarryNight */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EFAE1F3D266A0D9F00A18A42 /* Build configuration list for PBXNativeTarget "StarryNight" */;
+			buildPhases = (
+				EFAE1F1D266A0D9F00A18A42 /* Headers */,
+				EFAE1F1E266A0D9F00A18A42 /* Sources */,
+				EFAE1F1F266A0D9F00A18A42 /* Frameworks */,
+				EFAE1F20266A0D9F00A18A42 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = StarryNight;
+			packageProductDependencies = (
+				EFAE1F45266A0DD300A18A42 /* SQLite */,
+				EFAE1F47266A0DD300A18A42 /* Regex */,
+				EFAE1F51266A0E4600A18A42 /* SatelliteKit */,
+			);
+			productName = StarryNight;
+			productReference = EFAE1F22266A0D9F00A18A42 /* StarryNight.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		EFAE1F29266A0D9F00A18A42 /* StarryNightTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EFAE1F3E266A0D9F00A18A42 /* Build configuration list for PBXNativeTarget "StarryNightTests" */;
+			buildPhases = (
+				EFAE1F26266A0D9F00A18A42 /* Sources */,
+				EFAE1F27266A0D9F00A18A42 /* Frameworks */,
+				EFAE1F28266A0D9F00A18A42 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EFAE1F54266A0F1A00A18A42 /* PBXTargetDependency */,
+				EFAE1F58266A0F1A00A18A42 /* PBXTargetDependency */,
+				EFAE1F2D266A0D9F00A18A42 /* PBXTargetDependency */,
+			);
+			name = StarryNightTests;
+			productName = StarryNightTests;
+			productReference = EFAE1F2A266A0D9F00A18A42 /* StarryNightTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -502,6 +617,13 @@
 					EFAE1EE5266862B500A18A42 = {
 						CreatedOnToolsVersion = 12.5;
 					};
+					EFAE1F21266A0D9F00A18A42 = {
+						CreatedOnToolsVersion = 12.5;
+					};
+					EFAE1F29266A0D9F00A18A42 = {
+						CreatedOnToolsVersion = 12.5;
+						LastSwiftMigration = 1250;
+					};
 				};
 			};
 			buildConfigurationList = EF9D82782661BBEF00616C97 /* Build configuration list for PBXProject "SatelliteForcast" */;
@@ -530,6 +652,8 @@
 				EF9D829B2661BBF100616C97 /* Tests macOS */,
 				EFAE1EDD266862B400A18A42 /* SatelliteForcastCore */,
 				EFAE1EE5266862B500A18A42 /* SatelliteForcastCoreTests */,
+				EFAE1F21266A0D9F00A18A42 /* StarryNight */,
+				EFAE1F29266A0D9F00A18A42 /* StarryNightTests */,
 			);
 		};
 /* End PBXProject section */
@@ -540,8 +664,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				EF9D82A72661BBF100616C97 /* Assets.xcassets in Resources */,
-				EFAE1EBD2664FF0400A18A42 /* constellation_lines.dat in Resources */,
-				EFAE1EBF2664FF0400A18A42 /* stars.sqlite3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -550,8 +672,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				EF9D82A82661BBF100616C97 /* Assets.xcassets in Resources */,
-				EFAE1EBE2664FF0400A18A42 /* constellation_lines.dat in Resources */,
-				EFAE1EC02664FF0400A18A42 /* stars.sqlite3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -583,6 +703,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EFAE1F20266A0D9F00A18A42 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EFAE1F59266A0FDD00A18A42 /* constellation_lines.dat in Resources */,
+				EFAE1F5A266A0FDD00A18A42 /* stars.sqlite3 in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EFAE1F28266A0D9F00A18A42 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -592,16 +728,10 @@
 			files = (
 				EF9D82F426622E6E00616C97 /* SatelliteWidgetViewModel.swift in Sources */,
 				EFAE1F132669E7A800A18A42 /* SunlightIndicator.swift in Sources */,
-				EFAE1EB72664FF0400A18A42 /* SpectralType.swift in Sources */,
-				EFAE1EC12664FF0400A18A42 /* Star.swift in Sources */,
-				EFAE1EC42664FF4800A18A42 /* StarryNight.swift in Sources */,
 				EFAE1F0C2668B10F00A18A42 /* SatellitePreviewRow.swift in Sources */,
 				EF9D82A52661BBF100616C97 /* ContentView.swift in Sources */,
-				EFAE1EBB2664FF0400A18A42 /* BayerFlamsteed.swift in Sources */,
 				EF4AF76C266434CC00D28F47 /* SkyChart.swift in Sources */,
 				EF9D82A32661BBF100616C97 /* SatelliteForcastApp.swift in Sources */,
-				EFAE1EB52664FF0400A18A42 /* Constellation.swift in Sources */,
-				EFAE1ECA2666228D00A18A42 /* Constellation+Display.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -611,16 +741,10 @@
 			files = (
 				EF9D82F526622E6E00616C97 /* SatelliteWidgetViewModel.swift in Sources */,
 				EFAE1F142669E7A800A18A42 /* SunlightIndicator.swift in Sources */,
-				EFAE1EB82664FF0400A18A42 /* SpectralType.swift in Sources */,
-				EFAE1EC22664FF0400A18A42 /* Star.swift in Sources */,
-				EFAE1EC52664FF4800A18A42 /* StarryNight.swift in Sources */,
 				EFAE1F0D2668B10F00A18A42 /* SatellitePreviewRow.swift in Sources */,
 				EF9D82A62661BBF100616C97 /* ContentView.swift in Sources */,
-				EFAE1EBC2664FF0400A18A42 /* BayerFlamsteed.swift in Sources */,
 				EF4AF76D266434CC00D28F47 /* SkyChart.swift in Sources */,
 				EF9D82A42661BBF100616C97 /* SatelliteForcastApp.swift in Sources */,
-				EFAE1EB62664FF0400A18A42 /* Constellation.swift in Sources */,
-				EFAE1ECB2666228D00A18A42 /* Constellation+Display.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -659,6 +783,30 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EFAE1F1E266A0D9F00A18A42 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EFAE1F40266A0DA700A18A42 /* Constellation+Display.swift in Sources */,
+				EFAE1F41266A0DA700A18A42 /* SpectralType.swift in Sources */,
+				EFAE1F3F266A0DA700A18A42 /* StarryNight.swift in Sources */,
+				EFAE1F43266A0DA700A18A42 /* Star.swift in Sources */,
+				EFAE1F42266A0DA700A18A42 /* BayerFlamsteed.swift in Sources */,
+				EFAE1F44266A0DA700A18A42 /* Constellation.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EFAE1F26266A0D9F00A18A42 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EFAE1F4F266A0E1200A18A42 /* StarTest.swift in Sources */,
+				EFAE1F50266A0E1200A18A42 /* ConstellationTest.swift in Sources */,
+				EFAE1F4D266A0E1200A18A42 /* BayerFlamsteedTest.swift in Sources */,
+				EFAE1F4E266A0E1200A18A42 /* SpectralTypeTest.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -685,6 +833,24 @@
 		EFAE1F042668694F00A18A42 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			productRef = EFAE1F032668694F00A18A42 /* SatelliteKit */;
+		};
+		EFAE1F2D266A0D9F00A18A42 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EFAE1F21266A0D9F00A18A42 /* StarryNight */;
+			targetProxy = EFAE1F2C266A0D9F00A18A42 /* PBXContainerItemProxy */;
+		};
+		EFAE1F36266A0D9F00A18A42 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EFAE1F21266A0D9F00A18A42 /* StarryNight */;
+			targetProxy = EFAE1F35266A0D9F00A18A42 /* PBXContainerItemProxy */;
+		};
+		EFAE1F54266A0F1A00A18A42 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = EFAE1F53266A0F1A00A18A42 /* SatelliteKit */;
+		};
+		EFAE1F58266A0F1A00A18A42 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = EFAE1F57266A0F1A00A18A42 /* Regex */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1086,6 +1252,107 @@
 			};
 			name = Release;
 		};
+		EFAE1F39266A0D9F00A18A42 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 52RD2GH5DP;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = StarryNight/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.djben.StarryNight;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		EFAE1F3A266A0D9F00A18A42 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 52RD2GH5DP;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = StarryNight/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.djben.StarryNight;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		EFAE1F3B266A0D9F00A18A42 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 52RD2GH5DP;
+				INFOPLIST_FILE = StarryNightTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.djben.StarryNightTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		EFAE1F3C266A0D9F00A18A42 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 52RD2GH5DP;
+				INFOPLIST_FILE = StarryNightTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.djben.StarryNightTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1148,6 +1415,24 @@
 			buildConfigurations = (
 				EFAE1EF8266862B500A18A42 /* Debug */,
 				EFAE1EF9266862B500A18A42 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EFAE1F3D266A0D9F00A18A42 /* Build configuration list for PBXNativeTarget "StarryNight" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EFAE1F39266A0D9F00A18A42 /* Debug */,
+				EFAE1F3A266A0D9F00A18A42 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EFAE1F3E266A0D9F00A18A42 /* Build configuration list for PBXNativeTarget "StarryNightTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EFAE1F3B266A0D9F00A18A42 /* Debug */,
+				EFAE1F3C266A0D9F00A18A42 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1232,6 +1517,31 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EF4AF7642663DB4200D28F47 /* XCRemoteSwiftPackageReference "SatelliteKit" */;
 			productName = SatelliteKit;
+		};
+		EFAE1F45266A0DD300A18A42 /* SQLite */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EFAE1EA92664FEEF00A18A42 /* XCRemoteSwiftPackageReference "SQLite.swift" */;
+			productName = SQLite;
+		};
+		EFAE1F47266A0DD300A18A42 /* Regex */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EFAE1EC6266502EE00A18A42 /* XCRemoteSwiftPackageReference "Regex" */;
+			productName = Regex;
+		};
+		EFAE1F51266A0E4600A18A42 /* SatelliteKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF4AF7642663DB4200D28F47 /* XCRemoteSwiftPackageReference "SatelliteKit" */;
+			productName = SatelliteKit;
+		};
+		EFAE1F53266A0F1A00A18A42 /* SatelliteKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF4AF7642663DB4200D28F47 /* XCRemoteSwiftPackageReference "SatelliteKit" */;
+			productName = SatelliteKit;
+		};
+		EFAE1F57266A0F1A00A18A42 /* Regex */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EFAE1EC6266502EE00A18A42 /* XCRemoteSwiftPackageReference "Regex" */;
+			productName = Regex;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
