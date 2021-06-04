@@ -1,5 +1,5 @@
 //
-//  SatellitePreviewRow.swift
+//  SatelliteElevationGraph.swift
 //  SatelliteForcast
 //
 //  Created by Ben Lu on 6/2/21.
@@ -9,7 +9,7 @@ import SwiftUI
 import SatelliteKit
 import SatelliteForcastCore
 
-struct SatelliteElevationCurveViewModel {
+struct SatelliteElevationGraphViewModel {
     // Generated data source
     fileprivate let satelliteElevationPath: (CGRect) -> CGPath
     fileprivate let unilluminatedPaths: (CGRect) -> CGPath
@@ -109,8 +109,8 @@ struct SatelliteElevationCurveViewModel {
     }
 }
 
-struct SatelliteElevationCurve: View {
-    var viewModel: SatelliteElevationCurveViewModel
+struct SatelliteElevationGraph: View {
+    var viewModel: SatelliteElevationGraphViewModel
 
     private var timeGrid: some View {
         GeometryReader { geometry in
@@ -250,7 +250,7 @@ struct SatelliteElevationCurve: View {
     }
 }
 
-struct SatelliteElevationCurve_Previews: PreviewProvider {
+struct SatelliteElevationGraph_Previews: PreviewProvider {
     static var previews: some View {
         let tle = try! TLE(
             raw: """
@@ -264,7 +264,7 @@ struct SatelliteElevationCurve_Previews: PreviewProvider {
         let observerCoordinate = LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0)
         // Date range
         let dateRange = Date().advanced(by: -60 * 60 * 2)..<Date().advanced(by: 60 * 60 * 4)
-        let viewModel = SatelliteElevationCurveViewModel(
+        let viewModel = SatelliteElevationGraphViewModel(
             snapshots: sat.snapshots(
                 observer: observerCoordinate,
                 dateRange: dateRange,
@@ -273,7 +273,7 @@ struct SatelliteElevationCurve_Previews: PreviewProvider {
             observerCoordinate: observerCoordinate,
             dateRange: dateRange
         )
-        SatelliteElevationCurve(viewModel: viewModel)
+        SatelliteElevationGraph(viewModel: viewModel)
             .previewLayout(.fixed(width: 720, height: 240))
             .previewDisplayName("ISS")
 
@@ -285,7 +285,7 @@ struct SatelliteElevationCurve_Previews: PreviewProvider {
             """
         )
         let sat2 = Satellite(withTLE: tle2)
-        let viewModel2 = SatelliteElevationCurveViewModel(
+        let viewModel2 = SatelliteElevationGraphViewModel(
             snapshots: sat2.snapshots(
                 observer: observerCoordinate,
                 dateRange: dateRange,
@@ -294,7 +294,7 @@ struct SatelliteElevationCurve_Previews: PreviewProvider {
             observerCoordinate: observerCoordinate,
             dateRange: dateRange
         )
-        SatelliteElevationCurve(viewModel: viewModel2)
+        SatelliteElevationGraph(viewModel: viewModel2)
             .previewLayout(.fixed(width: 720, height: 240))
             .previewDisplayName("DFH-1")
 
@@ -306,7 +306,7 @@ struct SatelliteElevationCurve_Previews: PreviewProvider {
             """
         )
         let sat3 = Satellite(withTLE: tle3)
-        let viewModel3 = SatelliteElevationCurveViewModel(
+        let viewModel3 = SatelliteElevationGraphViewModel(
             snapshots: sat3.snapshots(
                 observer: observerCoordinate,
                 dateRange: dateRange,
@@ -315,7 +315,7 @@ struct SatelliteElevationCurve_Previews: PreviewProvider {
             observerCoordinate: observerCoordinate,
             dateRange: dateRange
         )
-        SatelliteElevationCurve(viewModel: viewModel3)
+        SatelliteElevationGraph(viewModel: viewModel3)
             .previewLayout(.fixed(width: 720, height: 240))
             .previewDisplayName("Molniya 2-9")
 
