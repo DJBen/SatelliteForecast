@@ -5,11 +5,20 @@
 //  Created by Ben Lu on 6/2/21.
 //
 
+import CombineRex
 import SwiftUI
 import SatelliteKit
 import SatelliteForcastCore
 
-struct SatelliteElevationGraphViewModel {
+enum SatelliteElevationGraphAction {
+
+}
+
+struct SatelliteElevationGraphState: Equatable {
+    static func == (lhs: SatelliteElevationGraphState, rhs: SatelliteElevationGraphState) -> Bool {
+        return lhs.snapshots == rhs.snapshots && lhs.dateRange == rhs.dateRange && lhs.elevationGridLineInterval == rhs.elevationGridLineInterval
+    }
+
     // Generated data source
     fileprivate let satelliteElevationPath: (CGRect) -> CGPath
     fileprivate let unilluminatedPaths: (CGRect) -> CGPath
@@ -110,14 +119,14 @@ struct SatelliteElevationGraphViewModel {
 }
 
 struct SatelliteElevationGraph: View {
-    var viewModel: SatelliteElevationGraphViewModel
+    var viewModel: ObservableViewModel<SatelliteElevationGraphAction, SatelliteElevationGraphState>
 
     private var timeGrid: some View {
         GeometryReader { geometry in
             let rect = geometry.frame(in: .local)
 
             Path { path in
-                for (xPercent, _, _) in viewModel.xPercentDatePair {
+                for (xPercent, _, _) in viewModel.state.xPercentDatePair {
                     let x = CGFloat(xPercent) * rect.width
                     // Do not draw vertical lines that are too close to the edges
                     if x - rect.minX < 20 || rect.maxX - x < 20 {
@@ -134,7 +143,7 @@ struct SatelliteElevationGraph: View {
     private var elevationGrid: some View {
         GeometryReader { geometry in
             let rect = geometry.frame(in: .local)
-            let elevIterator = stride(from: -90.0, to: 90.0, by: viewModel.elevationGridLineInterval)
+            let elevIterator = stride(from: -90.0, to: 90.0, by: viewModel.state.elevationGridLineInterval)
             ZStack {
                 Path { path in
                     elevIterator.forEach { elev in
@@ -168,7 +177,7 @@ struct SatelliteElevationGraph: View {
         GeometryReader { geometry in
             let rect = geometry.frame(in: .local)
 
-            Path(viewModel.satelliteElevationPath(rect))
+            Path(viewModel.state.satelliteElevationPath(rect))
             .stroke(
                 LinearGradient(
                     gradient: Gradient(colors: [Color.blue, Color.red]),
@@ -185,7 +194,7 @@ struct SatelliteElevationGraph: View {
         GeometryReader { geometry in
             let rect = geometry.frame(in: .local)
 
-            Path(viewModel.unilluminatedPaths(rect))
+            Path(viewModel.state.unilluminatedPaths(rect))
             .stroke(
                 Color(white: 0.8),
                 lineWidth: 2
@@ -202,7 +211,7 @@ struct SatelliteElevationGraph: View {
             }()
 
             let initialRect = geometry.frame(in: .local)
-            let rect = viewModel.contentRect(initialRect)
+            let rect = viewModel.state.contentRect(initialRect)
 
             ScrollView(
                 .horizontal,
@@ -219,14 +228,14 @@ struct SatelliteElevationGraph: View {
 
                         SunlightIndicator(
                             viewModel: SunlightIndicatorViewModel(
-                                snapshots: viewModel.snapshots,
-                                dateRange: viewModel.dateRange
+                                snapshots: viewModel.state.snapshots,
+                                dateRange: viewModel.state.dateRange
                             )
                         )
                         .frame(height: 24)
 
                         HStack(alignment: .center, spacing: 0) {
-                            ForEach(viewModel.xPercentDatePair, id: \.0) { (xPercent, date, index) in
+                            ForEach(viewModel.state.xPercentDatePair, id: \.0) { (xPercent, date, index) in
                                 VStack {
                                     Text(
                                         formatter.string(from: date)
@@ -264,7 +273,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         let observerCoordinate = LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0)
         // Date range
         let dateRange = Date().advanced(by: -60 * 60 * 2)..<Date().advanced(by: 60 * 60 * 4)
-        let viewModel = SatelliteElevationGraphViewModel(
+        let viewModel = SatelliteElevationGraphState(
             snapshots: sat.snapshots(
                 observer: observerCoordinate,
                 dateRange: dateRange,
@@ -273,7 +282,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
             observerCoordinate: observerCoordinate,
             dateRange: dateRange
         )
-        SatelliteElevationGraph(viewModel: viewModel)
+        SatelliteElevationGraph(viewModel: .mock(state: viewModel))
             .previewLayout(.fixed(width: 720, height: 240))
             .previewDisplayName("ISS")
 
@@ -285,7 +294,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
             """
         )
         let sat2 = Satellite(withTLE: tle2)
-        let viewModel2 = SatelliteElevationGraphViewModel(
+        let viewModel2 = SatelliteElevationGraphState(
             snapshots: sat2.snapshots(
                 observer: observerCoordinate,
                 dateRange: dateRange,
@@ -294,7 +303,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
             observerCoordinate: observerCoordinate,
             dateRange: dateRange
         )
-        SatelliteElevationGraph(viewModel: viewModel2)
+        SatelliteElevationGraph(viewModel: .mock(state: viewModel2))
             .previewLayout(.fixed(width: 720, height: 240))
             .previewDisplayName("DFH-1")
 
@@ -306,7 +315,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
             """
         )
         let sat3 = Satellite(withTLE: tle3)
-        let viewModel3 = SatelliteElevationGraphViewModel(
+        let viewModel3 = SatelliteElevationGraphState(
             snapshots: sat3.snapshots(
                 observer: observerCoordinate,
                 dateRange: dateRange,
@@ -315,7 +324,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
             observerCoordinate: observerCoordinate,
             dateRange: dateRange
         )
-        SatelliteElevationGraph(viewModel: viewModel3)
+        SatelliteElevationGraph(viewModel: .mock(state: viewModel3))
             .previewLayout(.fixed(width: 720, height: 240))
             .previewDisplayName("Molniya 2-9")
 

@@ -33,8 +33,8 @@
 		EFAE1F002668641200A18A42 /* SatelliteKit in Frameworks */ = {isa = PBXBuildFile; productRef = EFAE1EFF2668641200A18A42 /* SatelliteKit */; };
 		EFAE1F0626686CCF00A18A42 /* MathUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F0526686CCF00A18A42 /* MathUtil.swift */; };
 		EFAE1F0826686E5900A18A42 /* SatelliteSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F0726686E5900A18A42 /* SatelliteSnapshot.swift */; };
-		EFAE1F0C2668B10F00A18A42 /* SatellitePreviewRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F0B2668B10F00A18A42 /* SatellitePreviewRow.swift */; };
-		EFAE1F0D2668B10F00A18A42 /* SatellitePreviewRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F0B2668B10F00A18A42 /* SatellitePreviewRow.swift */; };
+		EFAE1F0C2668B10F00A18A42 /* SatelliteElevationGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F0B2668B10F00A18A42 /* SatelliteElevationGraph.swift */; };
+		EFAE1F0D2668B10F00A18A42 /* SatelliteElevationGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F0B2668B10F00A18A42 /* SatelliteElevationGraph.swift */; };
 		EFAE1F0E2668B23E00A18A42 /* TLE+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4AF7672663DB7D00D28F47 /* TLE+Convenience.swift */; };
 		EFAE1F132669E7A800A18A42 /* SunlightIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F122669E7A800A18A42 /* SunlightIndicator.swift */; };
 		EFAE1F142669E7A800A18A42 /* SunlightIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F122669E7A800A18A42 /* SunlightIndicator.swift */; };
@@ -57,6 +57,9 @@
 		EFAE1F52266A0E4600A18A42 /* SatelliteKit in Frameworks */ = {isa = PBXBuildFile; productRef = EFAE1F51266A0E4600A18A42 /* SatelliteKit */; };
 		EFAE1F59266A0FDD00A18A42 /* constellation_lines.dat in Resources */ = {isa = PBXBuildFile; fileRef = EFAE1EB22664FF0400A18A42 /* constellation_lines.dat */; };
 		EFAE1F5A266A0FDD00A18A42 /* stars.sqlite3 in Resources */ = {isa = PBXBuildFile; fileRef = EFAE1EB32664FF0400A18A42 /* stars.sqlite3 */; };
+		EFAE1F5C266A1A5000A18A42 /* Satellite+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F5B266A1A5000A18A42 /* Satellite+Convenience.swift */; };
+		EFAE1F5E266A1D1700A18A42 /* Loadable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F5D266A1D1700A18A42 /* Loadable.swift */; };
+		EFAE1F60266A1FCB00A18A42 /* Astronomy+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F5F266A1FCB00A18A42 /* Astronomy+Convenience.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -154,7 +157,7 @@
 		EFAE1EFD266863BE00A18A42 /* AstroAlgorithms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AstroAlgorithms.swift; sourceTree = "<group>"; };
 		EFAE1F0526686CCF00A18A42 /* MathUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MathUtil.swift; sourceTree = "<group>"; };
 		EFAE1F0726686E5900A18A42 /* SatelliteSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteSnapshot.swift; sourceTree = "<group>"; };
-		EFAE1F0B2668B10F00A18A42 /* SatellitePreviewRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatellitePreviewRow.swift; sourceTree = "<group>"; };
+		EFAE1F0B2668B10F00A18A42 /* SatelliteElevationGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteElevationGraph.swift; sourceTree = "<group>"; };
 		EFAE1F122669E7A800A18A42 /* SunlightIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunlightIndicator.swift; sourceTree = "<group>"; };
 		EFAE1F22266A0D9F00A18A42 /* StarryNight.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StarryNight.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFAE1F24266A0D9F00A18A42 /* StarryNight.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StarryNight.h; sourceTree = "<group>"; };
@@ -165,6 +168,9 @@
 		EFAE1F4A266A0E1200A18A42 /* SpectralTypeTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpectralTypeTest.swift; sourceTree = "<group>"; };
 		EFAE1F4B266A0E1200A18A42 /* StarTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StarTest.swift; sourceTree = "<group>"; };
 		EFAE1F4C266A0E1200A18A42 /* ConstellationTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConstellationTest.swift; sourceTree = "<group>"; };
+		EFAE1F5B266A1A5000A18A42 /* Satellite+Convenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Satellite+Convenience.swift"; sourceTree = "<group>"; };
+		EFAE1F5D266A1D1700A18A42 /* Loadable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Loadable.swift; sourceTree = "<group>"; };
+		EFAE1F5F266A1FCB00A18A42 /* Astronomy+Convenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Astronomy+Convenience.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -251,7 +257,7 @@
 			isa = PBXGroup;
 			children = (
 				EF4AF76B266434CC00D28F47 /* SkyChart.swift */,
-				EFAE1F0B2668B10F00A18A42 /* SatellitePreviewRow.swift */,
+				EFAE1F0B2668B10F00A18A42 /* SatelliteElevationGraph.swift */,
 				EFAE1F122669E7A800A18A42 /* SunlightIndicator.swift */,
 			);
 			path = UI;
@@ -362,6 +368,9 @@
 				EFAE1F0526686CCF00A18A42 /* MathUtil.swift */,
 				EFAE1EE1266862B400A18A42 /* Info.plist */,
 				EFAE1F0726686E5900A18A42 /* SatelliteSnapshot.swift */,
+				EFAE1F5B266A1A5000A18A42 /* Satellite+Convenience.swift */,
+				EFAE1F5D266A1D1700A18A42 /* Loadable.swift */,
+				EFAE1F5F266A1FCB00A18A42 /* Astronomy+Convenience.swift */,
 			);
 			path = SatelliteForcastCore;
 			sourceTree = "<group>";
@@ -728,7 +737,7 @@
 			files = (
 				EF9D82F426622E6E00616C97 /* SatelliteWidgetViewModel.swift in Sources */,
 				EFAE1F132669E7A800A18A42 /* SunlightIndicator.swift in Sources */,
-				EFAE1F0C2668B10F00A18A42 /* SatellitePreviewRow.swift in Sources */,
+				EFAE1F0C2668B10F00A18A42 /* SatelliteElevationGraph.swift in Sources */,
 				EF9D82A52661BBF100616C97 /* ContentView.swift in Sources */,
 				EF4AF76C266434CC00D28F47 /* SkyChart.swift in Sources */,
 				EF9D82A32661BBF100616C97 /* SatelliteForcastApp.swift in Sources */,
@@ -741,7 +750,7 @@
 			files = (
 				EF9D82F526622E6E00616C97 /* SatelliteWidgetViewModel.swift in Sources */,
 				EFAE1F142669E7A800A18A42 /* SunlightIndicator.swift in Sources */,
-				EFAE1F0D2668B10F00A18A42 /* SatellitePreviewRow.swift in Sources */,
+				EFAE1F0D2668B10F00A18A42 /* SatelliteElevationGraph.swift in Sources */,
 				EF9D82A62661BBF100616C97 /* ContentView.swift in Sources */,
 				EF4AF76D266434CC00D28F47 /* SkyChart.swift in Sources */,
 				EF9D82A42661BBF100616C97 /* SatelliteForcastApp.swift in Sources */,
@@ -771,7 +780,10 @@
 				EFAE1EFE266863BE00A18A42 /* AstroAlgorithms.swift in Sources */,
 				EFAE1F0E2668B23E00A18A42 /* TLE+Convenience.swift in Sources */,
 				EFAE1F0626686CCF00A18A42 /* MathUtil.swift in Sources */,
+				EFAE1F5C266A1A5000A18A42 /* Satellite+Convenience.swift in Sources */,
+				EFAE1F60266A1FCB00A18A42 /* Astronomy+Convenience.swift in Sources */,
 				EFAE1F0826686E5900A18A42 /* SatelliteSnapshot.swift in Sources */,
+				EFAE1F5E266A1D1700A18A42 /* Loadable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

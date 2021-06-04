@@ -8,9 +8,14 @@
 import SwiftUI
 import SatelliteKit
 import SatelliteForcastCore
+import SwiftRex
+import CombineRex
 
 @main
 struct SatelliteForcastApp: App {
+    @UIApplicationDelegateAdaptor private var appDelegate: AppDelegate
+    @StateObject var store = Store.shared.asObservableViewModel(initialState: .empty)
+
     var body: some Scene {
         WindowGroup {
             let tle = try! TLE(
@@ -25,7 +30,7 @@ struct SatelliteForcastApp: App {
             let observerCoordinate = LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0)
             // Date range
             let dateRange = Date().advanced(by: -60 * 60 * 2)..<Date().advanced(by: 60 * 60 * 22)
-            let viewModel = SatelliteElevationCurveViewModel(
+            let viewModel = SatelliteElevationGraphState(
                 snapshots: sat.snapshots(
                     observer: observerCoordinate,
                     dateRange: dateRange,
@@ -34,8 +39,37 @@ struct SatelliteForcastApp: App {
                 observerCoordinate: observerCoordinate,
                 dateRange: dateRange
             )
-            SatelliteElevationCurve(viewModel: viewModel)
+            SatelliteElevationGraph(viewModel: .mock(state: viewModel))
                 .previewLayout(.fixed(width: 720, height: 240))
         }
     }
+}
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+
+    }
+
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        return true
+    }
+}
+
+struct AppState: Equatable {
+    var satellites: Loadable<[Satellite]>
+
+    static var empty: AppState {
+        AppState(satellites: .neverLoaded)
+    }
+}
+
+enum AppAction {
+}
+
+class Store: ReduxStoreBase<AppAction, AppState> {
+    static let shared = Store(
+        subject: .combine(initialValue: .empty),
+        reducer: Reducer<AppAction, AppState>.identity,
+        middleware: IdentityMiddleware()
+    )
 }

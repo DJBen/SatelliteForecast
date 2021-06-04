@@ -31,6 +31,8 @@ public struct SatelliteSnapshot {
     }
 }
 
+extension SatelliteSnapshot: Equatable {}
+
 /// The information for a single satellite pass.
 public struct PassInformation {
     public enum IlluminationChange {
