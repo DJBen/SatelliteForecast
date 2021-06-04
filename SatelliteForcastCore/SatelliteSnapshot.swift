@@ -14,6 +14,8 @@ public struct SatelliteSnapshot {
     public let date: Date
     public let position: AziEleDst
     public let isIlluminated: Bool
+
+    /// The sun's elevation, ranging from -90 to 90 degrees.
     public let sunElevation: Double
 
     public init(
@@ -73,7 +75,7 @@ extension Satellite {
             object1Geo: eciPosition,
             object2Geo: solarCel * au2Km
         )
-        let (_, sunElev) = azel(
+        let (sunElev, _) = azel(
             time: Date(julianDate: julianDate),
             site: (observer.lat, observer.lon),
             cele: cartesianToRaDec(solarCel)
@@ -213,5 +215,25 @@ extension Satellite {
         tryGenerateFinePassInfo()
 
         return passInformation
+    }
+}
+
+extension Array {
+    public func split(belongsToSameGroup: (Element, Element) -> Bool) -> [[Element]] {
+        guard let firstElement = first else {
+            return [[]]
+        }
+        var results = [[Element]]()
+        var segment = [firstElement]
+        for i in startIndex..<endIndex - 1 {
+            if belongsToSameGroup(self[i], self[i + 1]) {
+                segment.append(self[i + 1])
+            } else {
+                results.append(segment)
+                segment = [self[i + 1]]
+            }
+        }
+        results.append(segment)
+        return results
     }
 }

@@ -13,7 +13,6 @@ import SatelliteForcastCore
 struct SatelliteForcastApp: App {
     var body: some Scene {
         WindowGroup {
-            let calendar = Calendar(identifier: .gregorian)
             let tle = try! TLE(
                 raw: """
                 ISS (ZARYA)
@@ -22,12 +21,21 @@ struct SatelliteForcastApp: App {
                 """
             )
             let sat = Satellite(withTLE: tle)
-            SatelliteElevationCurve(
-                satellite: sat,
-                // 2000 Broadway, Redwood City, CA 94063
-                observerCoordinate: LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0),
-                dateRange: calendar.startOfDay(for: Date())..<calendar.startOfDay(for: Date()).advanced(by: 7200)
+            // 2000 Broadway, Redwood City, CA 94063
+            let observerCoordinate = LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0)
+            // Date range
+            let dateRange = Date().advanced(by: -60 * 60 * 2)..<Date().advanced(by: 60 * 60 * 22)
+            let viewModel = SatelliteElevationCurveViewModel(
+                snapshots: sat.snapshots(
+                    observer: observerCoordinate,
+                    dateRange: dateRange,
+                    interval: 20
+                ),
+                observerCoordinate: observerCoordinate,
+                dateRange: dateRange
             )
+            SatelliteElevationCurve(viewModel: viewModel)
+                .previewLayout(.fixed(width: 720, height: 240))
         }
     }
 }
