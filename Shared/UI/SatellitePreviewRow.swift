@@ -10,13 +10,15 @@ import SatelliteKit
 import SatelliteForcastCore
 
 struct SatelliteElevationCurveViewModel {
-    // Data source
+    // Generated data source
     fileprivate let satelliteElevationPath: (CGRect) -> CGPath
     fileprivate let unilluminatedPaths: (CGRect) -> CGPath
     fileprivate let xPercentDatePair: [(Double, Date, Int)]
-    fileprivate let sunlightGradientStops: [Gradient.Stop]
     fileprivate let contentRect: (CGRect) -> CGRect
 
+    // Copied properties
+    fileprivate let snapshots: [SatelliteSnapshot]
+    fileprivate let dateRange: Range<Date>
     fileprivate let elevationGridLineInterval: Double
 
     /// Initialize the view model.
@@ -33,13 +35,15 @@ struct SatelliteElevationCurveViewModel {
         minimumHorizonalResolution: CGFloat = 3 / 60,
         elevationGridLineInterval: Double = 30
     ) {
+        self.snapshots = snapshots
+        self.dateRange = dateRange
+        self.elevationGridLineInterval = elevationGridLineInterval
+
         func snapshotPoint(_ snapshot: SatelliteSnapshot, i: Int, rect: CGRect) -> CGPoint {
             let x = rect.width / CGFloat(snapshots.count) * CGFloat(i)
             let y = CGFloat(snapshot.position.elev + 90) / 180 * -rect.height + rect.height
             return CGPoint(x: x, y: y)
         }
-
-        self.elevationGridLineInterval = elevationGridLineInterval
 
         satelliteElevationPath = { rect in
             let path = CGMutablePath()
@@ -75,46 +79,6 @@ struct SatelliteElevationCurveViewModel {
             return path.copy()!
         }
 
-        sunlightGradientStops = {
-            guard let firstSnapshot = snapshots.first else {
-                return []
-            }
-
-            let boundaries: [(Double, Color)] = [
-                (90, Color(.sRGB, red: 255 / 255, green: 250 / 255, blue: 240 / 255, opacity: 1)),
-                (50, Color(.sRGB, red: 255 / 255, green: 240 / 255, blue: 233 / 255, opacity: 1)),
-                (30, Color(.sRGB, red: 255 / 255, green: 219 / 255, blue: 186 / 255, opacity: 1)),
-                (10, Color(.sRGB, red: 255 / 255, green: 196 / 255, blue: 137 / 255, opacity: 1)),
-                (0, Color(.sRGB, red: 237 / 255, green: 109 / 255, blue: 83 / 255, opacity: 1)),
-                (-6, Color(.sRGB, red: 190 / 255, green: 74 / 255, blue: 210 / 255, opacity: 1)),
-                (-12, Color(.sRGB, red: 119 / 255, green: 34 / 255, blue: 194 / 255, opacity: 1)),
-                (-18, Color(.sRGB, red: 42 / 255, green: 42 / 255, blue: 136 / 255, opacity: 1)),
-                (-22, Color(.sRGB, red: 0 / 255, green: 3 / 255, blue: 61 / 255, opacity: 1))
-            ]
-
-            func color(elevation: Double) -> Color {
-                return boundaries.first { $0.0 >= elevation }!.1
-            }
-            var stops = [Gradient.Stop]()
-            stops.append(Gradient.Stop(color: color(elevation: firstSnapshot.sunElevation), location: 0))
-
-            for i in (0..<snapshots.count - 1) {
-                let (s1, s2) = (snapshots[i], snapshots[i + 1])
-                let location: CGFloat = CGFloat(i) / CGFloat(snapshots.count)
-
-                for (boundary, color) in boundaries {
-                    if (s1.sunElevation > boundary && s2.sunElevation <= boundary) ||
-                        (s1.sunElevation < boundary && s2.sunElevation >= boundary) {
-                        stops.append(Gradient.Stop(color: color, location: location))
-                    }
-                }
-            }
-
-            stops.append(Gradient.Stop(color: color(elevation: snapshots.last!.sunElevation), location: 1))
-
-            return stops
-        }()
-
         xPercentDatePair = {
             let calendar = Calendar(identifier: .gregorian)
             let components = calendar.dateComponents([.year, .month, .day, .hour], from: dateRange.lowerBound)
@@ -129,10 +93,7 @@ struct SatelliteElevationCurveViewModel {
                     continue
                 }
                 let xPercent = date.timeIntervalSince(dateRange.lowerBound) / (dateRange.upperBound.timeIntervalSince(dateRange.lowerBound))
-                if xPercent < 0.05 {
-                    continue
-                }
-                if xPercent > 0.95 {
+                if xPercent > 1 {
                     break
                 }
                 results.append((xPercent, date, index))
@@ -158,6 +119,10 @@ struct SatelliteElevationCurve: View {
             Path { path in
                 for (xPercent, _, _) in viewModel.xPercentDatePair {
                     let x = CGFloat(xPercent) * rect.width
+                    // Do not draw vertical lines that are too close to the edges
+                    if x - rect.minX < 20 || rect.maxX - x < 20 {
+                        continue
+                    }
                     path.move(to: CGPoint(x: x, y: rect.minY))
                     path.addLine(to: CGPoint(x: x, y: rect.maxY))
                 }
@@ -215,7 +180,8 @@ struct SatelliteElevationCurve: View {
         }
     }
 
-    private var illuminationIndicator: some View {
+    /// An overlay on satellite elevation plot to indicate satellite in these ranges are not illuminated by the sun.
+    private var satelliteDarknessPath: some View {
         GeometryReader { geometry in
             let rect = geometry.frame(in: .local)
 
@@ -224,25 +190,6 @@ struct SatelliteElevationCurve: View {
                 Color(white: 0.8),
                 lineWidth: 2
             )
-        }
-    }
-
-    private var sunlightIndicator: some View {
-        GeometryReader { geometry in
-            let rect = geometry.frame(in: .local)
-
-            Rectangle()
-                .fill(
-                    LinearGradient(
-                        gradient: Gradient(stops: viewModel.sunlightGradientStops),
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .frame(
-                    width: rect.width,
-                    height: rect.height
-                )
         }
     }
 
@@ -268,10 +215,15 @@ struct SatelliteElevationCurve: View {
                         timeGrid
                             .overlay(elevationGrid)
                             .overlay(satelliteElevationPlot)
-                            .overlay(illuminationIndicator)
+                            .overlay(satelliteDarknessPath)
 
-                        sunlightIndicator
-                            .frame(height: 24)
+                        SunlightIndicator(
+                            viewModel: SunlightIndicatorViewModel(
+                                snapshots: viewModel.snapshots,
+                                dateRange: viewModel.dateRange
+                            )
+                        )
+                        .frame(height: 24)
 
                         HStack(alignment: .center, spacing: 0) {
                             ForEach(viewModel.xPercentDatePair, id: \.0) { (xPercent, date, index) in
@@ -323,5 +275,49 @@ struct SatelliteElevationCurve_Previews: PreviewProvider {
         )
         SatelliteElevationCurve(viewModel: viewModel)
             .previewLayout(.fixed(width: 720, height: 240))
+            .previewDisplayName("ISS")
+
+        let tle2 = try! TLE(
+            raw: """
+            DFH-1
+            1 04382U 70034A   21154.78159189  .00001370  00000-0  21022-3 0  9993
+            2 04382  68.4187 192.6131 1052892 188.4862 169.7083 13.08082975404634
+            """
+        )
+        let sat2 = Satellite(withTLE: tle2)
+        let viewModel2 = SatelliteElevationCurveViewModel(
+            snapshots: sat2.snapshots(
+                observer: observerCoordinate,
+                dateRange: dateRange,
+                interval: 20
+            ),
+            observerCoordinate: observerCoordinate,
+            dateRange: dateRange
+        )
+        SatelliteElevationCurve(viewModel: viewModel2)
+            .previewLayout(.fixed(width: 720, height: 240))
+            .previewDisplayName("DFH-1")
+
+        let tle3 = try! TLE(
+            raw: """
+            MOLNIYA 2-9
+            1 07276U 74026A   21154.36625011 -.00000128  00000-0  00000-0 0  9990
+            2 07276  64.2122 283.1177 6670908 285.3565  14.2908  2.45094844240000
+            """
+        )
+        let sat3 = Satellite(withTLE: tle3)
+        let viewModel3 = SatelliteElevationCurveViewModel(
+            snapshots: sat3.snapshots(
+                observer: observerCoordinate,
+                dateRange: dateRange,
+                interval: 20
+            ),
+            observerCoordinate: observerCoordinate,
+            dateRange: dateRange
+        )
+        SatelliteElevationCurve(viewModel: viewModel3)
+            .previewLayout(.fixed(width: 720, height: 240))
+            .previewDisplayName("Molniya 2-9")
+
     }
 }

@@ -52,6 +52,8 @@
 		EFAE1F0C2668B10F00A18A42 /* SatellitePreviewRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F0B2668B10F00A18A42 /* SatellitePreviewRow.swift */; };
 		EFAE1F0D2668B10F00A18A42 /* SatellitePreviewRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F0B2668B10F00A18A42 /* SatellitePreviewRow.swift */; };
 		EFAE1F0E2668B23E00A18A42 /* TLE+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4AF7672663DB7D00D28F47 /* TLE+Convenience.swift */; };
+		EFAE1F132669E7A800A18A42 /* SunlightIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F122669E7A800A18A42 /* SunlightIndicator.swift */; };
+		EFAE1F142669E7A800A18A42 /* SunlightIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F122669E7A800A18A42 /* SunlightIndicator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -135,6 +137,7 @@
 		EFAE1F0526686CCF00A18A42 /* MathUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MathUtil.swift; sourceTree = "<group>"; };
 		EFAE1F0726686E5900A18A42 /* SatelliteSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteSnapshot.swift; sourceTree = "<group>"; };
 		EFAE1F0B2668B10F00A18A42 /* SatellitePreviewRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatellitePreviewRow.swift; sourceTree = "<group>"; };
+		EFAE1F122669E7A800A18A42 /* SunlightIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunlightIndicator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -203,6 +206,7 @@
 			children = (
 				EF4AF76B266434CC00D28F47 /* SkyChart.swift */,
 				EFAE1F0B2668B10F00A18A42 /* SatellitePreviewRow.swift */,
+				EFAE1F122669E7A800A18A42 /* SunlightIndicator.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -587,6 +591,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EF9D82F426622E6E00616C97 /* SatelliteWidgetViewModel.swift in Sources */,
+				EFAE1F132669E7A800A18A42 /* SunlightIndicator.swift in Sources */,
 				EFAE1EB72664FF0400A18A42 /* SpectralType.swift in Sources */,
 				EFAE1EC12664FF0400A18A42 /* Star.swift in Sources */,
 				EFAE1EC42664FF4800A18A42 /* StarryNight.swift in Sources */,
@@ -605,6 +610,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EF9D82F526622E6E00616C97 /* SatelliteWidgetViewModel.swift in Sources */,
+				EFAE1F142669E7A800A18A42 /* SunlightIndicator.swift in Sources */,
 				EFAE1EB82664FF0400A18A42 /* SpectralType.swift in Sources */,
 				EFAE1EC22664FF0400A18A42 /* Star.swift in Sources */,
 				EFAE1EC52664FF4800A18A42 /* StarryNight.swift in Sources */,
