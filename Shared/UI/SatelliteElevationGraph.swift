@@ -64,8 +64,8 @@ struct SatelliteElevationGraphState: Equatable {
             let path = CGMutablePath()
             snapshotsSplitByIllumination
                 .filter { !($0.first?.1.isIlluminated ?? true) }
-                .forEach { snapshots in
-                    for (i, s) in snapshots.enumerated() {
+                .forEach { snapshotGroup in
+                    for (i, s) in snapshotGroup.enumerated() {
                         let (globalIndex, snapshot) = s
                         let xPercent = CGFloat(globalIndex) / CGFloat(snapshots.count)
                         if i == 0 {
@@ -147,7 +147,7 @@ struct SatelliteElevationGraphState: Equatable {
 }
 
 struct SatelliteElevationGraph: View {
-    var viewModel: ObservableViewModel<SatelliteElevationGraphAction, SatelliteElevationGraphState>
+    @ObservedObject var viewModel: ObservableViewModel<SatelliteElevationGraphAction, SatelliteElevationGraphState>
 
     private var timeGrid: some View {
         GeometryReader { geometry in
@@ -320,7 +320,6 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         let dateRange = Date().advanced(by: -60 * 60 * 2)..<Date().advanced(by: 60 * 60 * 4)
         let viewModel = SatelliteElevationGraphState.project(
             state: AppState(
-                satellites: .loaded([sat]),
                 observerCoordinate: observerCoordinate,
                 allSnapshots: [
                     sat.noradIdent: sat.snapshots(
@@ -330,7 +329,8 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                     )
                 ],
                 currentSatelliteNorad: sat.noradIdent,
-                dateRange: dateRange
+                dateRange: dateRange,
+                tleLoaderState: TLELoaderState(standaloneTLEs: [.loaded(tle)])
             )
         )
         SatelliteElevationGraph(viewModel: .mock(state: viewModel))
@@ -347,17 +347,17 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         let sat2 = Satellite(withTLE: tle2)
         let viewModel2 = SatelliteElevationGraphState.project(
             state: AppState(
-                satellites: .loaded([sat2]),
                 observerCoordinate: observerCoordinate,
                 allSnapshots: [
-                    sat.noradIdent: sat2.snapshots(
+                    sat2.noradIdent: sat2.snapshots(
                         observer: observerCoordinate,
                         dateRange: dateRange,
                         interval: 20
                     )
                 ],
-                currentSatelliteNorad: sat.noradIdent,
-                dateRange: dateRange
+                currentSatelliteNorad: sat2.noradIdent,
+                dateRange: dateRange,
+                tleLoaderState: TLELoaderState(standaloneTLEs: [.loaded(tle2)])
             )
         )
         SatelliteElevationGraph(viewModel: .mock(state: viewModel2))
@@ -374,17 +374,17 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         let sat3 = Satellite(withTLE: tle3)
         let viewModel3 = SatelliteElevationGraphState.project(
             state: AppState(
-                satellites: .loaded([sat3]),
                 observerCoordinate: observerCoordinate,
                 allSnapshots: [
-                    sat.noradIdent: sat3.snapshots(
+                    sat3.noradIdent: sat3.snapshots(
                         observer: observerCoordinate,
                         dateRange: dateRange,
                         interval: 20
                     )
                 ],
-                currentSatelliteNorad: sat.noradIdent,
-                dateRange: dateRange
+                currentSatelliteNorad: sat3.noradIdent,
+                dateRange: dateRange,
+                tleLoaderState: TLELoaderState(standaloneTLEs: [.loaded(tle3)])
             )
         )
         SatelliteElevationGraph(viewModel: .mock(state: viewModel3))

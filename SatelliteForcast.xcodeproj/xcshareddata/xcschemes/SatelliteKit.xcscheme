@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "EF9D82802661BBF000616C97"
-               BuildableName = "SatelliteForcast.app"
-               BlueprintName = "SatelliteForcast (iOS)"
+               BlueprintIdentifier = "EF7A3144266B5F9F00CC33C0"
+               BuildableName = "SatelliteKit.framework"
+               BlueprintName = "SatelliteKit"
                ReferencedContainer = "container:SatelliteForcast.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -28,36 +28,6 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "EF9D82902661BBF000616C97"
-               BuildableName = "Tests iOS.xctest"
-               BlueprintName = "Tests iOS"
-               ReferencedContainer = "container:SatelliteForcast.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "EFAE1EE5266862B500A18A42"
-               BuildableName = "SatelliteForcastCoreTests.xctest"
-               BlueprintName = "SatelliteForcastCoreTests"
-               ReferencedContainer = "container:SatelliteForcast.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "EFAE1F29266A0D9F00A18A42"
-               BuildableName = "StarryNightTests.xctest"
-               BlueprintName = "StarryNightTests"
-               ReferencedContainer = "container:SatelliteForcast.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
          <TestableReference
             skipped = "NO">
             <BuildableReference
@@ -80,16 +50,6 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "EF9D82802661BBF000616C97"
-            BuildableName = "SatelliteForcast.app"
-            BlueprintName = "SatelliteForcast (iOS)"
-            ReferencedContainer = "container:SatelliteForcast.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -97,16 +57,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "EF9D82802661BBF000616C97"
-            BuildableName = "SatelliteForcast.app"
-            BlueprintName = "SatelliteForcast (iOS)"
+            BlueprintIdentifier = "EF7A3144266B5F9F00CC33C0"
+            BuildableName = "SatelliteKit.framework"
+            BlueprintName = "SatelliteKit"
             ReferencedContainer = "container:SatelliteForcast.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

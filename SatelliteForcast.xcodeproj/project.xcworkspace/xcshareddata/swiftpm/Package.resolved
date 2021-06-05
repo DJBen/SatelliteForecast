@@ -56,15 +56,6 @@
         }
       },
       {
-        "package": "SatelliteKit",
-        "repositoryURL": "https://github.com/DJBen/SatelliteKit.git",
-        "state": {
-          "branch": null,
-          "revision": "64f7195fe74ba8c5168f2878a264a6cf09480612",
-          "version": "1.0.28"
-        }
-      },
-      {
         "package": "SQLite.swift",
         "repositoryURL": "https://github.com/stephencelis/SQLite.swift.git",
         "state": {
