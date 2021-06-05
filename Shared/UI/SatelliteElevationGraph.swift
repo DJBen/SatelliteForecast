@@ -10,6 +10,20 @@ import SwiftUI
 import SatelliteKit
 import SatelliteForcastCore
 
+struct SatelliteElevationGraphConfigs: Equatable {
+    var timeGridLineInterval: TimeInterval
+    var elevationGridLineInterval: Double
+    var minimumHorizonalResolution: CGFloat
+
+    static var preset: SatelliteElevationGraphConfigs {
+        return SatelliteElevationGraphConfigs(
+            timeGridLineInterval: 30 * 60,
+            elevationGridLineInterval: 30,
+            minimumHorizonalResolution: 3 / 60
+        )
+    }
+}
+
 enum SatelliteElevationGraphAction {
 
 }
@@ -17,6 +31,52 @@ enum SatelliteElevationGraphAction {
 struct SatelliteElevationGraphState: Equatable {
     static func == (lhs: SatelliteElevationGraphState, rhs: SatelliteElevationGraphState) -> Bool {
         return lhs.snapshots == rhs.snapshots && lhs.dateRange == rhs.dateRange && lhs.elevationGridLineInterval == rhs.elevationGridLineInterval
+    }
+
+    private static func snapshotPoint(_ snapshot: SatelliteSnapshot, xPercent: CGFloat, rect: CGRect) -> CGPoint {
+        let x = rect.width * xPercent
+        let y = CGFloat(snapshot.position.elev + 90) / 180 * -rect.height + rect.height
+        return CGPoint(x: x, y: y)
+    }
+
+    private static func satelliteElevationPathFunc(snapshots: [SatelliteSnapshot]) -> (CGRect) -> CGPath {
+        return { rect in
+            let path = CGMutablePath()
+            for (i, snapshot) in snapshots.enumerated() {
+                let xPercent = CGFloat(i) / CGFloat(snapshots.count)
+                if i == 0 {
+                    path.move(to: snapshotPoint(snapshot, xPercent: xPercent, rect: rect))
+                } else {
+                    path.addLine(to: snapshotPoint(snapshot, xPercent: xPercent, rect: rect))
+                }
+            }
+            return path.copy()!
+        }
+    }
+
+    private static func unilluminatedPathsFunc(snapshots: [SatelliteSnapshot]) -> (CGRect) -> CGPath {
+        let snapshotsSplitByIllumination = Array(snapshots.enumerated())
+            .split { (s1, s2) -> Bool in
+            return s1.1.isIlluminated == s2.1.isIlluminated
+        }
+
+        return { rect in
+            let path = CGMutablePath()
+            snapshotsSplitByIllumination
+                .filter { !($0.first?.1.isIlluminated ?? true) }
+                .forEach { snapshots in
+                    for (i, s) in snapshots.enumerated() {
+                        let (globalIndex, snapshot) = s
+                        let xPercent = CGFloat(globalIndex) / CGFloat(snapshots.count)
+                        if i == 0 {
+                            path.move(to: snapshotPoint(snapshot, xPercent: xPercent, rect: rect))
+                        } else {
+                            path.addLine(to: snapshotPoint(snapshot, xPercent: xPercent, rect: rect))
+                        }
+                    }
+                }
+            return path.copy()!
+        }
     }
 
     // Generated data source
@@ -27,81 +87,39 @@ struct SatelliteElevationGraphState: Equatable {
 
     // Copied properties
     fileprivate let snapshots: [SatelliteSnapshot]
+    /// Date range for display.
     fileprivate let dateRange: Range<Date>
     fileprivate let elevationGridLineInterval: Double
 
-    /// Initialize the view model.
-    /// - Parameters:
-    ///   - snapshots: Satellite snapshots.
-    ///   - observerCoordinate: The observer coordinate in latitude (in degrees), longitude (in degrees) and altitude (in meters)
-    ///   - dateRange: The date range
-    init(
-        snapshots: [SatelliteSnapshot],
-        observerCoordinate: LatLonAlt,
-        dateRange: Range<Date>,
-        timeGridLineInterval: TimeInterval = 30 * 60,
-        // Horizontal width per second
-        minimumHorizonalResolution: CGFloat = 3 / 60,
-        elevationGridLineInterval: Double = 30
-    ) {
-        self.snapshots = snapshots
-        self.dateRange = dateRange
-        self.elevationGridLineInterval = elevationGridLineInterval
+    static var empty: SatelliteElevationGraphState {
+        .init(
+            satelliteElevationPath: { _ in CGMutablePath() },
+            unilluminatedPaths: { _ in CGMutablePath() },
+            xPercentDatePair: [],
+            contentRect: { $0 },
+            snapshots: [],
+            dateRange: Date().advanced(by: -60 * 60 * 2)..<Date().advanced(by: 60 * 60 * 22),
+            elevationGridLineInterval: 30
+        )
+    }
 
-        func snapshotPoint(_ snapshot: SatelliteSnapshot, i: Int, rect: CGRect) -> CGPoint {
-            let x = rect.width / CGFloat(snapshots.count) * CGFloat(i)
-            let y = CGFloat(snapshot.position.elev + 90) / 180 * -rect.height + rect.height
-            return CGPoint(x: x, y: y)
-        }
+    static func project(state: Store.StateType) -> SatelliteElevationGraphState {
+        let snapshots = state.currentSatelliteSnapshots
 
-        satelliteElevationPath = { rect in
-            let path = CGMutablePath()
-            for (i, snapshot) in snapshots.enumerated() {
-                if i == 0 {
-                    path.move(to: snapshotPoint(snapshot, i: i, rect: rect))
-                } else {
-                    path.addLine(to: snapshotPoint(snapshot, i: i, rect: rect))
-                }
-            }
-            return path.copy()!
-        }
-
-        let snapshotsSplitByIllumination = Array(snapshots.enumerated())
-            .split { (s1, s2) -> Bool in
-            return s1.1.isIlluminated == s2.1.isIlluminated
-        }
-
-        unilluminatedPaths = { rect in
-            let path = CGMutablePath()
-            snapshotsSplitByIllumination
-                .filter { !($0.first?.1.isIlluminated ?? true) }
-                .forEach { snapshots in
-                    for (i, s) in snapshots.enumerated() {
-                        let (globalIndex, snapshot) = s
-                        if i == 0 {
-                            path.move(to: snapshotPoint(snapshot, i: globalIndex, rect: rect))
-                        } else {
-                            path.addLine(to: snapshotPoint(snapshot, i: globalIndex, rect: rect))
-                        }
-                    }
-                }
-            return path.copy()!
-        }
-
-        xPercentDatePair = {
+        let xPercentDatePair: [(Double, Date, Int)] = {
             let calendar = Calendar(identifier: .gregorian)
-            let components = calendar.dateComponents([.year, .month, .day, .hour], from: dateRange.lowerBound)
+            let components = calendar.dateComponents([.year, .month, .day, .hour], from: state.dateRange.lowerBound)
             var date = calendar.date(from: components)!
             var results = [(Double, Date, Int)]()
             var index: Int = 0
             while true {
                 defer {
-                    date.addTimeInterval(timeGridLineInterval)
+                    date.addTimeInterval(state.satelliteElevationGraphConfigs.timeGridLineInterval)
                 }
-                if date < dateRange.lowerBound {
+                if date < state.dateRange.lowerBound {
                     continue
                 }
-                let xPercent = date.timeIntervalSince(dateRange.lowerBound) / (dateRange.upperBound.timeIntervalSince(dateRange.lowerBound))
+                let xPercent = date.timeIntervalSince(state.dateRange.lowerBound) / (state.dateRange.upperBound.timeIntervalSince(state.dateRange.lowerBound))
                 if xPercent > 1 {
                     break
                 }
@@ -111,10 +129,20 @@ struct SatelliteElevationGraphState: Equatable {
             return results
         }()
 
-        contentRect = { initialRect in
-            let widthPerSecond = initialRect.width / CGFloat(dateRange.upperBound.timeIntervalSince(dateRange.lowerBound))
-            return CGRect(origin: initialRect.origin, size: CGSize(width: initialRect.width / widthPerSecond * max(widthPerSecond, minimumHorizonalResolution), height: initialRect.height))
+        let contentRect: (CGRect) -> CGRect = { initialRect in
+            let widthPerSecond = initialRect.width / CGFloat(state.dateRange.upperBound.timeIntervalSince(state.dateRange.lowerBound))
+            return CGRect(origin: initialRect.origin, size: CGSize(width: initialRect.width / widthPerSecond * max(widthPerSecond, state.satelliteElevationGraphConfigs.minimumHorizonalResolution), height: initialRect.height))
         }
+
+        return SatelliteElevationGraphState(
+            satelliteElevationPath: satelliteElevationPathFunc(snapshots: snapshots),
+            unilluminatedPaths: unilluminatedPathsFunc(snapshots: snapshots),
+            xPercentDatePair: xPercentDatePair,
+            contentRect: contentRect,
+            snapshots: snapshots,
+            dateRange: state.dateRange,
+            elevationGridLineInterval: state.satelliteElevationGraphConfigs.elevationGridLineInterval
+        )
     }
 }
 
@@ -259,6 +287,23 @@ struct SatelliteElevationGraph: View {
     }
 }
 
+import CombineRextensions
+
+extension ViewProducer where Context == Void, ProducedView == SatelliteElevationGraph {
+    static func satelliteElevationGraph<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
+        ViewProducer<Context, ProducedView> {
+            SatelliteElevationGraph(
+                viewModel: viewModel
+                    .projection(
+                        action: { _ in return nil },
+                        state: SatelliteElevationGraphState.project(state:)
+                    )
+                    .asObservableViewModel(initialState: .empty)
+            )
+        }
+    }
+}
+
 struct SatelliteElevationGraph_Previews: PreviewProvider {
     static var previews: some View {
         let tle = try! TLE(
@@ -273,14 +318,20 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         let observerCoordinate = LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0)
         // Date range
         let dateRange = Date().advanced(by: -60 * 60 * 2)..<Date().advanced(by: 60 * 60 * 4)
-        let viewModel = SatelliteElevationGraphState(
-            snapshots: sat.snapshots(
-                observer: observerCoordinate,
-                dateRange: dateRange,
-                interval: 20
-            ),
-            observerCoordinate: observerCoordinate,
-            dateRange: dateRange
+        let viewModel = SatelliteElevationGraphState.project(
+            state: AppState(
+                satellites: .loaded([sat]),
+                observerCoordinate: observerCoordinate,
+                allSnapshots: [
+                    sat.noradIdent: sat.snapshots(
+                        observer: observerCoordinate,
+                        dateRange: dateRange,
+                        interval: 20
+                    )
+                ],
+                currentSatelliteNorad: sat.noradIdent,
+                dateRange: dateRange
+            )
         )
         SatelliteElevationGraph(viewModel: .mock(state: viewModel))
             .previewLayout(.fixed(width: 720, height: 240))
@@ -294,14 +345,20 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
             """
         )
         let sat2 = Satellite(withTLE: tle2)
-        let viewModel2 = SatelliteElevationGraphState(
-            snapshots: sat2.snapshots(
-                observer: observerCoordinate,
-                dateRange: dateRange,
-                interval: 20
-            ),
-            observerCoordinate: observerCoordinate,
-            dateRange: dateRange
+        let viewModel2 = SatelliteElevationGraphState.project(
+            state: AppState(
+                satellites: .loaded([sat2]),
+                observerCoordinate: observerCoordinate,
+                allSnapshots: [
+                    sat.noradIdent: sat2.snapshots(
+                        observer: observerCoordinate,
+                        dateRange: dateRange,
+                        interval: 20
+                    )
+                ],
+                currentSatelliteNorad: sat.noradIdent,
+                dateRange: dateRange
+            )
         )
         SatelliteElevationGraph(viewModel: .mock(state: viewModel2))
             .previewLayout(.fixed(width: 720, height: 240))
@@ -315,14 +372,20 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
             """
         )
         let sat3 = Satellite(withTLE: tle3)
-        let viewModel3 = SatelliteElevationGraphState(
-            snapshots: sat3.snapshots(
-                observer: observerCoordinate,
-                dateRange: dateRange,
-                interval: 20
-            ),
-            observerCoordinate: observerCoordinate,
-            dateRange: dateRange
+        let viewModel3 = SatelliteElevationGraphState.project(
+            state: AppState(
+                satellites: .loaded([sat3]),
+                observerCoordinate: observerCoordinate,
+                allSnapshots: [
+                    sat.noradIdent: sat3.snapshots(
+                        observer: observerCoordinate,
+                        dateRange: dateRange,
+                        interval: 20
+                    )
+                ],
+                currentSatelliteNorad: sat.noradIdent,
+                dateRange: dateRange
+            )
         )
         SatelliteElevationGraph(viewModel: .mock(state: viewModel3))
             .previewLayout(.fixed(width: 720, height: 240))

@@ -315,7 +315,7 @@ struct SkyChart_Previews: PreviewProvider {
     static var previews: some View {
         SkyChart(
             viewModel: .mock(
-                state:SkyChartState(
+                state: SkyChartState(
                     observerCoordinate: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
                     skyReferenceDate: {
                         let formatter = ISO8601DateFormatter()
