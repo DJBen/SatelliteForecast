@@ -13,12 +13,12 @@ import CombineRex
 struct AppState: Equatable {
     var satellites: Loadable<[Satellite]>
     var observerCoordinate: LatLonAlt
-
     var allSnapshots: [String: [SatelliteSnapshot]] = [:]
     var currentSatelliteNorad: String?
     var dateRange: Range<Date>
-
     var satelliteElevationGraphConfigs: SatelliteElevationGraphConfigs = .preset
+
+    var coreLocationState: CoreLocationState = .empty
 
     static var empty: AppState {
         AppState(
@@ -39,12 +39,50 @@ struct AppState: Equatable {
 }
 
 enum AppAction {
+    case coreLocationInput(CoreLocationInputAction)
+    case coreLocationOutput(CoreLocationOutputAction)
+}
+
+extension AppAction {
+    public var coreLocationInput: CoreLocationInputAction? {
+        get {
+            guard case let .coreLocationInput(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .coreLocationInput = self, let newValue = newValue else { return }
+            self = .coreLocationInput(newValue)
+        }
+    }
+
+    public var coreLocationOutput: CoreLocationOutputAction? {
+        get {
+            guard case let .coreLocationOutput(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .coreLocationOutput = self, let newValue = newValue else { return }
+            self = .coreLocationOutput(newValue)
+        }
+    }
 }
 
 class Store: ReduxStoreBase<AppAction, AppState> {
-    static let shared = Store(
-        subject: .combine(initialValue: .empty),
-        reducer: Reducer<AppAction, AppState>.identity,
-        middleware: IdentityMiddleware()
-    )
+    static let shared = Store()
+
+    private init() {
+        super.init(
+            subject: .combine(initialValue: .empty),
+            reducer: Reducer<CoreLocationOutputAction, CoreLocationState>.coreLocationReducer
+                .lift(action: \.coreLocationOutput, state: \.coreLocationState),
+            middleware: CoreLocationMiddleware()
+                .lift(
+                    inputAction: \AppAction.coreLocationInput,
+                    outputAction: { AppAction.coreLocationOutput($0) },
+                    state: \.coreLocationState
+                )
+//                <> LoggerMiddleware()
+                .eraseToAnyMiddleware()
+        )
+    }
 }

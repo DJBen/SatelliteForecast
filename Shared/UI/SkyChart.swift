@@ -264,7 +264,7 @@ public struct SkyChart: View {
 }
 
 struct SkyChart_Previews: PreviewProvider {
-    static let issTrail: SatelliteWidgetViewModel = {
+    static let issTrail: [SatelliteSnapshot] = {
         let tle = try! TLE(
             raw: """
             ISS (ZARYA)
@@ -277,18 +277,15 @@ struct SkyChart_Previews: PreviewProvider {
         let formatter = ISO8601DateFormatter()
         let date = formatter.date(from: "2021-06-02T20:35:30+0800")!
 
-        return SatelliteWidgetViewModel(
-            satelliteName: tle.commonName,
-            satelliteSnapshots: sat.findPasses(
-                observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
-                dateRange: date..<date.addingTimeInterval(800)
-            )
-            .first!
-            .snapshots
+        return sat.findPasses(
+            observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
+            dateRange: date..<date.addingTimeInterval(800)
         )
+        .first!
+        .snapshots
     }()
 
-    static let tianHeTrail: SatelliteWidgetViewModel = {
+    static let tianHeTrail: [SatelliteSnapshot] = {
         let tle = try! TLE(
             raw: """
             TIANHE
@@ -301,15 +298,12 @@ struct SkyChart_Previews: PreviewProvider {
         let formatter = ISO8601DateFormatter()
         let date = formatter.date(from: "2021-06-02T06:29:00-0600")!
 
-        return SatelliteWidgetViewModel(
-            satelliteName: tle.commonName,
-            satelliteSnapshots: sat.findPasses(
-                observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
-                dateRange: date..<date.addingTimeInterval(800)
-            )
-            .first!
-            .snapshots
+        return sat.findPasses(
+            observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
+            dateRange: date..<date.addingTimeInterval(800)
         )
+        .first!
+        .snapshots
     }()
 
     static var previews: some View {
@@ -321,7 +315,7 @@ struct SkyChart_Previews: PreviewProvider {
                         let formatter = ISO8601DateFormatter()
                         return formatter.date(from: "2021-06-02T20:40:00+0800")!
                     }(),
-                    satelliteTrail: issTrail.satelliteSnapshots
+                    satelliteTrail: issTrail
                 )
             )
         )
@@ -335,7 +329,7 @@ struct SkyChart_Previews: PreviewProvider {
                         let formatter = ISO8601DateFormatter()
                         return formatter.date(from: "2021-06-02T06:34:46-0600")!
                     }(),
-                    satelliteTrail: tianHeTrail.satelliteSnapshots
+                    satelliteTrail: tianHeTrail
                 )
             )
         )
