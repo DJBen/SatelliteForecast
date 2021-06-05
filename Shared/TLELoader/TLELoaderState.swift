@@ -21,7 +21,7 @@ enum TLECategory: Equatable, Hashable {
 }
 
 struct TLELoaderState: Equatable {
-    var tles: [TLECategory: Loadable<TLE>] = [:]
+    var tles: [TLECategory: Loadable<[TLE]>] = [:]
     var standaloneTLEs: [Loadable<TLE>] = []
 
     static var empty: TLELoaderState {

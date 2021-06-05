@@ -12,12 +12,12 @@ import SatelliteForcastCore
 struct AppState: Equatable {
     var observerCoordinate: LatLonAlt
     var allSnapshots: [String: [SatelliteSnapshot]] = [:]
-    var currentSatelliteNorad: String?
     var dateRange: Range<Date>
     var satelliteElevationGraphConfigs: SatelliteElevationGraphConfigs = .preset
 
     var tleLoaderState: TLELoaderState = .empty
     var coreLocationState: CoreLocationState = .empty
+    var selectedSatelliteNoradIndex: String?
 
     static var empty: AppState {
         AppState(
@@ -29,9 +29,9 @@ struct AppState: Equatable {
     }
 
     var currentSatelliteSnapshots: [SatelliteSnapshot] {
-        guard let currentSatelliteNorad = currentSatelliteNorad else {
+        guard let selectedSatelliteNoradIndex = selectedSatelliteNoradIndex else {
             return []
         }
-        return allSnapshots[currentSatelliteNorad] ?? []
+        return allSnapshots[selectedSatelliteNoradIndex] ?? []
     }
 }

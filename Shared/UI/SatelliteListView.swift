@@ -13,17 +13,22 @@ import SatelliteKit
 
 enum SatelliteListViewAction {
     case onAppear
+    case selectSatellite(noradIndex: Int?)
 }
 
 struct SatelliteListViewState: Equatable {
     var tlesByCategory: [TLECategory: [TLE]] = [:]
+    var selectedNoradIndex: Int?
 
     static var empty: SatelliteListViewState {
         return SatelliteListViewState()
     }
 
     static func project(state: Store.StateType) -> SatelliteListViewState {
-        return SatelliteListViewState()
+        return SatelliteListViewState(
+            tlesByCategory: state.tleLoaderState.tles.compactMapValues(\.value),
+            selectedNoradIndex: state.selectedSatelliteNoradIndex.map { Int($0)! }
+        )
     }
 }
 
@@ -31,16 +36,28 @@ struct SatelliteListView: View {
     @ObservedObject var viewModel: ObservableViewModel<SatelliteListViewAction, SatelliteListViewState>
 
     var body: some View {
-        List {
-            ForEach(Array(viewModel.state.tlesByCategory.keys), id: \.self) { category in
-                Section(
-                    header: Text(LocalizedStrings.SatelliteListView.sectionHeader(from: category))
-                ) {
-                    ForEach(viewModel.state.tlesByCategory[category] ?? [], id: \.noradIndex) { tle in
-                        Text(tle.commonName)
+        NavigationView {
+            List {
+                ForEach(Array(viewModel.state.tlesByCategory.keys), id: \.self) { category in
+                    Section(
+                        header: Text(LocalizedStrings.SatelliteListView.sectionHeader(from: category))
+                    ) {
+                        ForEach(viewModel.state.tlesByCategory[category] ?? [], id: \.noradIndex) { tle in
+                            NavigationLink(
+                                destination: SatelliteDetailView(),
+                                tag: tle.noradIndex,
+                                selection: Binding<Int?>(
+                                    get: { viewModel.state.selectedNoradIndex },
+                                    set: { viewModel.dispatch(.selectSatellite(noradIndex: $0)) }
+                                )
+                            ) {
+                                Text(tle.commonName)
+                            }
+                        }
                     }
                 }
             }
+            .navigationTitle("Satellites")
         }
         .onAppear {
             viewModel.dispatch(.onAppear)

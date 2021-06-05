@@ -19,7 +19,7 @@ enum TLELoaderInputAction {
 }
 
 enum TLELoaderOutputAction {
-    case loadedTLEFile(TLECategory, TLE)
+    case loadedTLEFile(TLECategory, [TLE])
     case failedLoadingTLEFile(TLECategory, TLELoaderError)
 }
 

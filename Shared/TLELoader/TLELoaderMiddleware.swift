@@ -27,7 +27,7 @@ extension EffectMiddleware where
                 DispatchedAction<TLELoaderOutputAction>(
                     .loadedTLEFile(
                         category,
-                        try TLE(raw: try JSONDecoder().decode(String.self, from: result.data))
+                        try TLE.load(chunk: String(data: result.data, encoding: .utf8)!)
                     )
                 )
             }

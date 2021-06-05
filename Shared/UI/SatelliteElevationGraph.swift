@@ -328,9 +328,9 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                         interval: 20
                     )
                 ],
-                currentSatelliteNorad: sat.noradIdent,
                 dateRange: dateRange,
-                tleLoaderState: TLELoaderState(standaloneTLEs: [.loaded(tle)])
+                tleLoaderState: TLELoaderState(standaloneTLEs: [.loaded(tle)]),
+                selectedSatelliteNoradIndex: sat.noradIdent
             )
         )
         SatelliteElevationGraph(viewModel: .mock(state: viewModel))
@@ -355,9 +355,9 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                         interval: 20
                     )
                 ],
-                currentSatelliteNorad: sat2.noradIdent,
                 dateRange: dateRange,
-                tleLoaderState: TLELoaderState(standaloneTLEs: [.loaded(tle2)])
+                tleLoaderState: TLELoaderState(standaloneTLEs: [.loaded(tle2)]),
+                selectedSatelliteNoradIndex: sat2.noradIdent
             )
         )
         SatelliteElevationGraph(viewModel: .mock(state: viewModel2))
@@ -382,9 +382,9 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                         interval: 20
                     )
                 ],
-                currentSatelliteNorad: sat3.noradIdent,
                 dateRange: dateRange,
-                tleLoaderState: TLELoaderState(standaloneTLEs: [.loaded(tle3)])
+                tleLoaderState: TLELoaderState(standaloneTLEs: [.loaded(tle3)]),
+                selectedSatelliteNoradIndex: sat3.noradIdent
             )
         )
         SatelliteElevationGraph(viewModel: .mock(state: viewModel3))

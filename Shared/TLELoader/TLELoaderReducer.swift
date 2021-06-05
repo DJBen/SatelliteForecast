@@ -29,8 +29,8 @@ extension Reducer where ActionType == TLELoaderInputAction, StateType == TLELoad
 extension Reducer where ActionType == TLELoaderOutputAction, StateType == TLELoaderState {
     static let tleLoaderReducer = Reducer.reduce { action, state in
         switch action {
-        case let .loadedTLEFile(category, tle):
-            state.tles[category] = .loaded(tle)
+        case let .loadedTLEFile(category, tles):
+            state.tles[category] = .loaded(tles)
         case let .failedLoadingTLEFile(category, error):
             // TODO #1: handle TLE loading error
             print("Failed loading TLE for category \(String(describing: category)): \(error))")

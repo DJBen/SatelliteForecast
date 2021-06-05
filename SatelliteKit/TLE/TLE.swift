@@ -57,7 +57,21 @@ public struct TLE: Equatable, Decodable {
         let lines = raw.components(separatedBy: .newlines)
         try self.init(lines[0], lines[1], lines[2])
     }
-    
+
+    public static func load(chunk: String) throws -> [TLE] {
+        var tle = [String]()
+        var result = [TLE]()
+        for (i, line) in chunk.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: .newlines).enumerated() {
+            if i % 3 == 0 {
+                result.append(try TLE(tle[0], tle[1], tle[2]))
+                tle = [String]()
+            } else {
+                tle.append(line)
+            }
+        }
+        return result
+    }
+
 /*┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
   └──────────────────────────────────────────────────────────────────────────────────────────────────┘*/
     public init(_ line0: String, _ line1: String, _ line2: String) throws {
