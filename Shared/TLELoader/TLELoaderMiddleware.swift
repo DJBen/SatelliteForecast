@@ -11,6 +11,10 @@ import CombineRex
 import SatelliteKit
 
 struct TLELoaderDependencies {
+    /// A date to determine whether to refetch the new TLEs.
+    /// If the average TLE age is greater than the update interval, it will fetch the new TLEs rather than accessing the cached ones.
+    let updateReferenceDate: Date
+    let updateInterval: TimeInterval = 4 * 60 * 60
 }
 
 extension EffectMiddleware where
@@ -52,18 +56,22 @@ extension EffectMiddleware where
         EffectMiddleware<TLELoaderInputAction, TLELoaderOutputAction, TLELoaderState, TLELoaderDependencies>
             .onAction { (inputAction, _, getState) -> Effect<TLELoaderDependencies, TLELoaderOutputAction> in
             switch inputAction {
-            case .willLoadTLECategory:
-                return .doNothing
+            case let .loadTLECategory(category):
+                return Effect(token: category) { context -> AnyPublisher<DispatchedAction<TLELoaderOutputAction>, Never> in
+                    if let tles = getState().tles[category] {
+                        let averageTLEAge = tles.map {  context.dependencies.updateReferenceDate.timeIntervalSince(Date(daysSince1950: $0.t₀))
+                        }
+                        .reduce(0, +) / Double(tles.count)
 
-            case .loadTLECategories:
-                return Effect { context -> AnyPublisher<DispatchedAction<TLELoaderOutputAction>, Never> in
-                    let publishers = getState().tles
-                        .filter { $1 == .loading }
-                        .keys
-                        .map(publisher(category:))
+                        if averageTLEAge > context.dependencies.updateInterval {
+                            return publisher(category: category)
+                        }
 
-                    return Publishers.MergeMany(publishers)
-                        .eraseToAnyPublisher()
+                        return Empty<DispatchedAction<TLELoaderOutputAction>, Never>()
+                            .eraseToAnyPublisher()
+                    }
+
+                    return publisher(category: category)
                 }
             }
         }

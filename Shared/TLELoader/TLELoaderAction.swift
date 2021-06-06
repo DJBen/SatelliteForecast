@@ -14,8 +14,7 @@ enum TLELoaderError: Error {
 }
 
 enum TLELoaderInputAction {
-    case willLoadTLECategory(TLECategory)
-    case loadTLECategories
+    case loadTLECategory((TLECategory))
 }
 
 enum TLELoaderOutputAction {

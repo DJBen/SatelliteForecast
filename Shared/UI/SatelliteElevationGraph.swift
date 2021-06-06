@@ -9,6 +9,7 @@ import CombineRex
 import SwiftUI
 import SatelliteKit
 import SatelliteForcastCore
+import CoreLocation
 
 struct SatelliteElevationGraphConfigs: Equatable {
     var timeGridLineInterval: TimeInterval
@@ -314,22 +315,25 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
             """
         )
         let sat = Satellite(withTLE: tle)
-        // 2000 Broadway, Redwood City, CA 94063
-        let observerCoordinate = LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0)
         // Date range
         let dateRange = Date().advanced(by: -60 * 60 * 2)..<Date().advanced(by: 60 * 60 * 4)
+        // 2000 Broadway, Redwood City, CA 94063
+        let location = CLLocation(latitude: 37.486743000691185, longitude: -122.22655970246515)
         let viewModel = SatelliteElevationGraphState.project(
             state: AppState(
-                observerCoordinate: observerCoordinate,
                 allSnapshots: [
                     sat.noradIdent: sat.snapshots(
-                        observer: observerCoordinate,
+                        observer: LatLonAlt(location: location),
                         dateRange: dateRange,
                         interval: 20
                     )
                 ],
                 dateRange: dateRange,
-                tleLoaderState: TLELoaderState(standaloneTLEs: [.loaded(tle)]),
+                tleLoaderState: TLELoaderState(standaloneTLEs: [tle]),
+                coreLocationState: CoreLocationState(
+                    authorizationStatus: .authorizedWhenInUse,
+                    location: location
+                ),
                 selectedSatelliteNoradIndex: sat.noradIdent
             )
         )
@@ -347,16 +351,19 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         let sat2 = Satellite(withTLE: tle2)
         let viewModel2 = SatelliteElevationGraphState.project(
             state: AppState(
-                observerCoordinate: observerCoordinate,
                 allSnapshots: [
                     sat2.noradIdent: sat2.snapshots(
-                        observer: observerCoordinate,
+                        observer: LatLonAlt(location: location),
                         dateRange: dateRange,
                         interval: 20
                     )
                 ],
                 dateRange: dateRange,
-                tleLoaderState: TLELoaderState(standaloneTLEs: [.loaded(tle2)]),
+                tleLoaderState: TLELoaderState(standaloneTLEs: [tle2]),
+                coreLocationState: CoreLocationState(
+                    authorizationStatus: .authorizedWhenInUse,
+                    location: location
+                ),
                 selectedSatelliteNoradIndex: sat2.noradIdent
             )
         )
@@ -374,16 +381,19 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         let sat3 = Satellite(withTLE: tle3)
         let viewModel3 = SatelliteElevationGraphState.project(
             state: AppState(
-                observerCoordinate: observerCoordinate,
                 allSnapshots: [
                     sat3.noradIdent: sat3.snapshots(
-                        observer: observerCoordinate,
+                        observer: LatLonAlt(location: location),
                         dateRange: dateRange,
                         interval: 20
                     )
                 ],
                 dateRange: dateRange,
-                tleLoaderState: TLELoaderState(standaloneTLEs: [.loaded(tle3)]),
+                tleLoaderState: TLELoaderState(standaloneTLEs: [tle3]),
+                coreLocationState: CoreLocationState(
+                    authorizationStatus: .authorizedWhenInUse,
+                    location: location
+                ),
                 selectedSatelliteNoradIndex: sat3.noradIdent
             )
         )

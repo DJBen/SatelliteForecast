@@ -9,6 +9,13 @@
 /* Begin PBXBuildFile section */
 		EF1CAB32266B7ABF006319C8 /* SatelliteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CAB31266B7ABF006319C8 /* SatelliteDetailView.swift */; };
 		EF1CAB33266B7ABF006319C8 /* SatelliteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CAB31266B7ABF006319C8 /* SatelliteDetailView.swift */; };
+		EF1CAB36266B87B6006319C8 /* SatelliteListViewReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CAB35266B87B6006319C8 /* SatelliteListViewReducer.swift */; };
+		EF1CAB37266B87B6006319C8 /* SatelliteListViewReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CAB35266B87B6006319C8 /* SatelliteListViewReducer.swift */; };
+		EF1CAB39266B8934006319C8 /* SatelliteListViewMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CAB38266B8934006319C8 /* SatelliteListViewMiddleware.swift */; };
+		EF1CAB3A266B8934006319C8 /* SatelliteListViewMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CAB38266B8934006319C8 /* SatelliteListViewMiddleware.swift */; };
+		EF1CAB3E266C44C0006319C8 /* Regex in Frameworks */ = {isa = PBXBuildFile; productRef = EF1CAB3D266C44C0006319C8 /* Regex */; };
+		EF1CAB40266C495D006319C8 /* visual.txt in Resources */ = {isa = PBXBuildFile; fileRef = EF1CAB3F266C495D006319C8 /* visual.txt */; };
+		EF1CAB42266C4F87006319C8 /* CoreLocation+LatLonAlt.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CAB41266C4F87006319C8 /* CoreLocation+LatLonAlt.swift */; };
 		EF4AF7602663DA6900D28F47 /* CombineRex in Frameworks */ = {isa = PBXBuildFile; productRef = EF4AF75F2663DA6900D28F47 /* CombineRex */; };
 		EF4AF7632663DB2000D28F47 /* ASCollectionView in Frameworks */ = {isa = PBXBuildFile; productRef = EF4AF7622663DB2000D28F47 /* ASCollectionView */; };
 		EF4AF76C266434CC00D28F47 /* SkyChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4AF76B266434CC00D28F47 /* SkyChart.swift */; };
@@ -106,7 +113,6 @@
 		EFAE1F59266A0FDD00A18A42 /* constellation_lines.dat in Resources */ = {isa = PBXBuildFile; fileRef = EFAE1EB22664FF0400A18A42 /* constellation_lines.dat */; };
 		EFAE1F5A266A0FDD00A18A42 /* stars.sqlite3 in Resources */ = {isa = PBXBuildFile; fileRef = EFAE1EB32664FF0400A18A42 /* stars.sqlite3 */; };
 		EFAE1F5C266A1A5000A18A42 /* Satellite+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F5B266A1A5000A18A42 /* Satellite+Convenience.swift */; };
-		EFAE1F5E266A1D1700A18A42 /* Loadable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F5D266A1D1700A18A42 /* Loadable.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -186,6 +192,10 @@
 
 /* Begin PBXFileReference section */
 		EF1CAB31266B7ABF006319C8 /* SatelliteDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteDetailView.swift; sourceTree = "<group>"; };
+		EF1CAB35266B87B6006319C8 /* SatelliteListViewReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteListViewReducer.swift; sourceTree = "<group>"; };
+		EF1CAB38266B8934006319C8 /* SatelliteListViewMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteListViewMiddleware.swift; sourceTree = "<group>"; };
+		EF1CAB3F266C495D006319C8 /* visual.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = visual.txt; sourceTree = "<group>"; };
+		EF1CAB41266C4F87006319C8 /* CoreLocation+LatLonAlt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CoreLocation+LatLonAlt.swift"; sourceTree = "<group>"; };
 		EF4AF76B266434CC00D28F47 /* SkyChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyChart.swift; sourceTree = "<group>"; };
 		EF7A311D266AFBF800CC33C0 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		EF7A3121266B03B400CC33C0 /* CoreLocationMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreLocationMiddleware.swift; sourceTree = "<group>"; };
@@ -268,7 +278,6 @@
 		EFAE1F4B266A0E1200A18A42 /* StarTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StarTest.swift; sourceTree = "<group>"; };
 		EFAE1F4C266A0E1200A18A42 /* ConstellationTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConstellationTest.swift; sourceTree = "<group>"; };
 		EFAE1F5B266A1A5000A18A42 /* Satellite+Convenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Satellite+Convenience.swift"; sourceTree = "<group>"; };
-		EFAE1F5D266A1D1700A18A42 /* Loadable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Loadable.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -351,6 +360,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EF1CAB3E266C44C0006319C8 /* Regex in Frameworks */,
 				EFAE1F2B266A0D9F00A18A42 /* StarryNight.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -365,13 +375,23 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		EF1CAB34266B8747006319C8 /* SatelliteListView */ = {
+			isa = PBXGroup;
+			children = (
+				EF7A3196266B6BBF00CC33C0 /* SatelliteListView.swift */,
+				EF1CAB35266B87B6006319C8 /* SatelliteListViewReducer.swift */,
+				EF1CAB38266B8934006319C8 /* SatelliteListViewMiddleware.swift */,
+			);
+			path = SatelliteListView;
+			sourceTree = "<group>";
+		};
 		EF4AF76A266434A500D28F47 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				EF1CAB34266B8747006319C8 /* SatelliteListView */,
 				EF4AF76B266434CC00D28F47 /* SkyChart.swift */,
 				EFAE1F0B2668B10F00A18A42 /* SatelliteElevationGraph.swift */,
 				EFAE1F122669E7A800A18A42 /* SunlightIndicator.swift */,
-				EF7A3196266B6BBF00CC33C0 /* SatelliteListView.swift */,
 				EF1CAB31266B7ABF006319C8 /* SatelliteDetailView.swift */,
 			);
 			path = UI;
@@ -414,6 +434,7 @@
 		EF7A3153266B5F9F00CC33C0 /* SatelliteKitTests */ = {
 			isa = PBXGroup;
 			children = (
+				EF1CAB3F266C495D006319C8 /* visual.txt */,
 				EF7A3154266B5F9F00CC33C0 /* SatelliteKitTests.swift */,
 				EF7A3184266B5FCE00CC33C0 /* AstroTests.swift */,
 				EF7A3181266B5FCE00CC33C0 /* MathTests.swift */,
@@ -574,7 +595,7 @@
 				EFAE1EE1266862B400A18A42 /* Info.plist */,
 				EFAE1F0726686E5900A18A42 /* SatelliteSnapshot.swift */,
 				EFAE1F5B266A1A5000A18A42 /* Satellite+Convenience.swift */,
-				EFAE1F5D266A1D1700A18A42 /* Loadable.swift */,
+				EF1CAB41266C4F87006319C8 /* CoreLocation+LatLonAlt.swift */,
 			);
 			path = SatelliteForcastCore;
 			sourceTree = "<group>";
@@ -836,10 +857,12 @@
 			);
 			dependencies = (
 				EFAE1F54266A0F1A00A18A42 /* PBXTargetDependency */,
-				EFAE1F58266A0F1A00A18A42 /* PBXTargetDependency */,
 				EFAE1F2D266A0D9F00A18A42 /* PBXTargetDependency */,
 			);
 			name = StarryNightTests;
+			packageProductDependencies = (
+				EF1CAB3D266C44C0006319C8 /* Regex */,
+			);
 			productName = StarryNightTests;
 			productReference = EFAE1F2A266A0D9F00A18A42 /* StarryNightTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -935,6 +958,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EF1CAB40266C495D006319C8 /* visual.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1046,7 +1070,9 @@
 				EFAE1F0C2668B10F00A18A42 /* SatelliteElevationGraph.swift in Sources */,
 				EF7A3194266B6B0B00CC33C0 /* AppAction.swift in Sources */,
 				EF9D82A52661BBF100616C97 /* ContentView.swift in Sources */,
+				EF1CAB36266B87B6006319C8 /* SatelliteListViewReducer.swift in Sources */,
 				EF7A3125266B1A2500CC33C0 /* CoreLocationState.swift in Sources */,
+				EF1CAB39266B8934006319C8 /* SatelliteListViewMiddleware.swift in Sources */,
 				EF1CAB32266B7ABF006319C8 /* SatelliteDetailView.swift in Sources */,
 				EF7A3128266B1A2D00CC33C0 /* CoreLocationAction.swift in Sources */,
 				EF7A3198266B6E4900CC33C0 /* SatelliteListView.swift in Sources */,
@@ -1073,7 +1099,9 @@
 				EFAE1F0D2668B10F00A18A42 /* SatelliteElevationGraph.swift in Sources */,
 				EF7A3195266B6B0C00CC33C0 /* AppAction.swift in Sources */,
 				EF9D82A62661BBF100616C97 /* ContentView.swift in Sources */,
+				EF1CAB37266B87B6006319C8 /* SatelliteListViewReducer.swift in Sources */,
 				EF7A3126266B1A2500CC33C0 /* CoreLocationState.swift in Sources */,
+				EF1CAB3A266B8934006319C8 /* SatelliteListViewMiddleware.swift in Sources */,
 				EF1CAB33266B7ABF006319C8 /* SatelliteDetailView.swift in Sources */,
 				EF7A3129266B1A2D00CC33C0 /* CoreLocationAction.swift in Sources */,
 				EF7A3199266B6E4A00CC33C0 /* SatelliteListView.swift in Sources */,
@@ -1109,10 +1137,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				EFAE1EFE266863BE00A18A42 /* AstroAlgorithms.swift in Sources */,
+				EF1CAB42266C4F87006319C8 /* CoreLocation+LatLonAlt.swift in Sources */,
 				EFAE1F0626686CCF00A18A42 /* MathUtil.swift in Sources */,
 				EFAE1F5C266A1A5000A18A42 /* Satellite+Convenience.swift in Sources */,
 				EFAE1F0826686E5900A18A42 /* SatelliteSnapshot.swift in Sources */,
-				EFAE1F5E266A1D1700A18A42 /* Loadable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1198,10 +1226,6 @@
 		EFAE1F54266A0F1A00A18A42 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			productRef = EFAE1F53266A0F1A00A18A42 /* SatelliteKit */;
-		};
-		EFAE1F58266A0F1A00A18A42 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = EFAE1F57266A0F1A00A18A42 /* Regex */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1961,6 +1985,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		EF1CAB3D266C44C0006319C8 /* Regex */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EFAE1EC6266502EE00A18A42 /* XCRemoteSwiftPackageReference "Regex" */;
+			productName = Regex;
+		};
 		EF4AF75F2663DA6900D28F47 /* CombineRex */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = EF4AF75E2663DA6900D28F47 /* XCRemoteSwiftPackageReference "SwiftRex" */;
@@ -2005,11 +2034,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EF4AF7642663DB4200D28F47 /* XCRemoteSwiftPackageReference "SatelliteKit" */;
 			productName = SatelliteKit;
-		};
-		EFAE1F57266A0F1A00A18A42 /* Regex */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EFAE1EC6266502EE00A18A42 /* XCRemoteSwiftPackageReference "Regex" */;
-			productName = Regex;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

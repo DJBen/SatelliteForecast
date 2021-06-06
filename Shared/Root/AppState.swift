@@ -10,7 +10,6 @@ import SatelliteKit
 import SatelliteForcastCore
 
 struct AppState: Equatable {
-    var observerCoordinate: LatLonAlt
     var allSnapshots: [String: [SatelliteSnapshot]] = [:]
     var dateRange: Range<Date>
     var satelliteElevationGraphConfigs: SatelliteElevationGraphConfigs = .preset
@@ -21,9 +20,6 @@ struct AppState: Equatable {
 
     static var empty: AppState {
         AppState(
-            // Default to a dummy address
-            // 2000 Broadway, Redwood City, CA 94063
-            observerCoordinate: LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0),
             dateRange: Date().advanced(by: -60 * 60 * 2)..<Date().advanced(by: 60 * 60 * 22)
         )
     }

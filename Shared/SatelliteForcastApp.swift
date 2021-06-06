@@ -20,7 +20,7 @@ struct SatelliteForcastApp: App {
     var body: some Scene {
         WindowGroup {
             ViewProducer
-                .satelliteElevationGraph(viewModel: store)
+                .satelliteListView(viewModel: store)
                 .view()
         }
     }

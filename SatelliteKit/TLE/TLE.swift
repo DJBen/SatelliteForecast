@@ -61,13 +61,18 @@ public struct TLE: Equatable, Decodable {
     public static func load(chunk: String) throws -> [TLE] {
         var tle = [String]()
         var result = [TLE]()
-        for (i, line) in chunk.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: .newlines).enumerated() {
-            if i % 3 == 0 {
+        let lines = chunk.trimmingCharacters(in: .whitespacesAndNewlines)
+            .split(whereSeparator: \.isNewline)
+        for (i, line) in lines.enumerated() {
+            if tle.count >= 3 && i % 3 == 0 {
                 result.append(try TLE(tle[0], tle[1], tle[2]))
-                tle = [String]()
+                tle = [String(line)]
             } else {
-                tle.append(line)
+                tle.append(String(line))
             }
+        }
+        if tle.count == 3 {
+            result.append(try TLE(tle[0], tle[1], tle[2]))
         }
         return result
     }

@@ -17,12 +17,28 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         super.init(
             subject: .combine(initialValue: .empty),
             reducer: Reducer<CoreLocationOutputAction, CoreLocationState>.coreLocationReducer
-                .lift(action: \.coreLocationOutput, state: \.coreLocationState),
+                .lift(action: \.coreLocationOutput, state: \.coreLocationState)
+
+                <> Reducer<TLELoaderInputAction, TLELoaderState>.tleLoaderReducer
+                .lift(action: \.tleLoaderInput, state: \.tleLoaderState)
+
+                <> Reducer<TLELoaderOutputAction, TLELoaderState>.tleLoaderReducer
+                .lift(action: \.tleLoaderOutput, state: \.tleLoaderState)
+
+                <> Reducer<SatelliteListViewAction, AppState>.satelliteListViewReducer
+                .lift(action: \.satelliteListView),
             middleware: CoreLocationMiddleware()
                 .lift(
                     inputAction: \AppAction.coreLocationInput,
                     outputAction: AppAction.coreLocationOutput,
                     state: \.coreLocationState
+                )
+
+                <> EffectMiddleware.coreLocationLogger
+                .lift(
+                    inputAction: { $0.coreLocationOutput },
+                    outputAction: { _ -> AppAction in },
+                    state: { _ in }
                 )
 
                 <> EffectMiddleware.tleLoader
@@ -31,7 +47,17 @@ class Store: ReduxStoreBase<AppAction, AppState> {
                     outputAction: AppAction.tleLoaderOutput,
                     state: \AppState.tleLoaderState
                 )
-                .inject(TLELoaderDependencies())
+                .inject(
+                    TLELoaderDependencies(
+                        updateReferenceDate: Date()
+                    )
+                )
+
+                <> EffectMiddleware.satelliteListView
+                .lift(
+                    inputAction: { $0.satelliteListView },
+                    state: SatelliteListViewState.project(state:)
+                )
 
 //                <> LoggerMiddleware()
         )

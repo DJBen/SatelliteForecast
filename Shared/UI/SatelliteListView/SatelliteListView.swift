@@ -26,7 +26,7 @@ struct SatelliteListViewState: Equatable {
 
     static func project(state: Store.StateType) -> SatelliteListViewState {
         return SatelliteListViewState(
-            tlesByCategory: state.tleLoaderState.tles.compactMapValues(\.value),
+            tlesByCategory: state.tleLoaderState.tles,
             selectedNoradIndex: state.selectedSatelliteNoradIndex.map { Int($0)! }
         )
     }
