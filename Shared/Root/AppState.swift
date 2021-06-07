@@ -25,9 +25,26 @@ struct AppState: Equatable {
     }
 
     var currentSatelliteSnapshots: [SatelliteSnapshot] {
-        guard let selectedSatelliteNoradIndex = selectedSatelliteNoradIndex else {
-            return []
+        get {
+            guard let selectedSatelliteNoradIndex = selectedSatelliteNoradIndex else {
+                return []
+            }
+            return allSnapshots[selectedSatelliteNoradIndex] ?? []
         }
-        return allSnapshots[selectedSatelliteNoradIndex] ?? []
+        set {
+            guard let selectedSatelliteNoradIndex = selectedSatelliteNoradIndex else {
+                return
+            }
+            allSnapshots[selectedSatelliteNoradIndex] = newValue
+        }
+    }
+
+    var selectedSatelliteTLE: TLE? {
+        guard let index = selectedSatelliteNoradIndex.flatMap(Int.init) else {
+            return nil
+        }
+        return tleLoaderState.tles.values
+            .flatMap { $0 }
+            .first { $0.noradIndex == index }
     }
 }

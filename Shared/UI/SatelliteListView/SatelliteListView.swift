@@ -35,6 +35,8 @@ struct SatelliteListViewState: Equatable {
 struct SatelliteListView: View {
     @ObservedObject var viewModel: ObservableViewModel<SatelliteListViewAction, SatelliteListViewState>
 
+    var detailViewProducer: ViewProducer<Void, SatelliteDetailView>
+
     var body: some View {
         NavigationView {
             List {
@@ -44,7 +46,7 @@ struct SatelliteListView: View {
                     ) {
                         ForEach(viewModel.state.tlesByCategory[category] ?? [], id: \.noradIndex) { tle in
                             NavigationLink(
-                                destination: SatelliteDetailView(),
+                                destination: detailViewProducer.view(),
                                 tag: tle.noradIndex,
                                 selection: Binding<Int?>(
                                     get: { viewModel.state.selectedNoradIndex },
@@ -74,7 +76,9 @@ extension ViewProducer where Context == Void, ProducedView == SatelliteListView 
                         action: AppAction.satelliteListView,
                         state: SatelliteListViewState.project(state:)
                     )
-                    .asObservableViewModel(initialState: .empty)
+                    .asObservableViewModel(initialState: .empty),
+                detailViewProducer: ViewProducer<Void, SatelliteDetailView>
+                    .satelliteDetailView(viewModel: viewModel)
             )
         }
     }
@@ -105,6 +109,12 @@ struct SatelliteListView_Previews: PreviewProvider {
                     tlesByCategory: [
                         .brightest100: brightest100
                     ]
+                )
+            ),
+            detailViewProducer: .pure(
+                SatelliteDetailView(
+                    viewModel: .mock(state: .empty),
+                    elevationGraphProducer: .crash
                 )
             )
         )

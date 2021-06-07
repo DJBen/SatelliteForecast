@@ -38,36 +38,6 @@
                ReferencedContainer = "container:SatelliteForcast.xcodeproj">
             </BuildableReference>
          </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "EFAE1EE5266862B500A18A42"
-               BuildableName = "SatelliteForcastCoreTests.xctest"
-               BlueprintName = "SatelliteForcastCoreTests"
-               ReferencedContainer = "container:SatelliteForcast.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "EFAE1F29266A0D9F00A18A42"
-               BuildableName = "StarryNightTests.xctest"
-               BlueprintName = "StarryNightTests"
-               ReferencedContainer = "container:SatelliteForcast.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "EF7A314C266B5F9F00CC33C0"
-               BuildableName = "SatelliteKitTests.xctest"
-               BlueprintName = "SatelliteKitTests"
-               ReferencedContainer = "container:SatelliteForcast.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

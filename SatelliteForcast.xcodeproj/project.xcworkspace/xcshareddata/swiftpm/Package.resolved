@@ -65,12 +65,30 @@
         }
       },
       {
+        "package": "SnapshotTesting",
+        "repositoryURL": "https://github.com/pointfreeco/swift-snapshot-testing.git",
+        "state": {
+          "branch": null,
+          "revision": "f8a9c997c3c1dab4e216a8ec9014e23144cbab37",
+          "version": "1.9.0"
+        }
+      },
+      {
         "package": "SwiftRex",
         "repositoryURL": "https://github.com/SwiftRex/SwiftRex.git",
         "state": {
           "branch": null,
           "revision": "fbbf0eaab840bfc2f1e07e7e32d9327a63bc48ba",
           "version": "0.8.4"
+        }
+      },
+      {
+        "package": "TestingExtensions",
+        "repositoryURL": "https://github.com/SwiftRex/TestingExtensions.git",
+        "state": {
+          "branch": null,
+          "revision": "d097b8addb3f38e2f362ddc35de60a5e58fc6de8",
+          "version": "0.2.5"
         }
       }
     ]

@@ -101,10 +101,16 @@ extension Satellite {
         return snapshot(julianDate: date.julianDate, observer: observer)
     }
 
+    /// Generate satellite snapshots over a date range with a given interval at an observer location.
+    /// - Parameters:
+    ///   - observer: Observer coordinate.
+    ///   - dateRange: The date range to generate satellite ephemerides.
+    ///   - interval: The interval to generate satellite ephemerides.
+    /// - Returns: A list of satellite snapshots over a date range with a given interval at an observer location in chronological order.
     public func snapshots(
         observer: LatLonAlt,
         dateRange: Range<Date>,
-        interval: TimeInterval
+        interval: TimeInterval = 30
     ) -> [SatelliteSnapshot] {
         stride(
             from: dateRange.lowerBound.julianDate,
@@ -113,6 +119,34 @@ extension Satellite {
         )
         .map { (julianDate) -> SatelliteSnapshot in
             snapshot(julianDate: julianDate, observer: observer)
+        }
+    }
+
+    public enum PassFindingParam {
+        /// Find satellite passes within a date range, with a coarse search of any moment that the satellite is above the horizon.
+        /// If any of these moments are found, it is going to generate the satellite ephemerides with a fine interval for the duration
+        /// when satellite is above the horizon.
+        case dateRange(
+            Range<Date>,
+            coarseInterval: TimeInterval = 30,
+            fineInterval: TimeInterval = 3
+        )
+
+        /// Find satellite passes with a coarse result of satellite ephemerides.
+        /// It is going to look for any moments when satellite rises above the horizon. If any of these moments are found, it is going
+        /// to generate the satellite ephemerides with a fine interval for that duration.
+        case existingSnapshots(
+            [SatelliteSnapshot],
+            fineInterval: TimeInterval = 3
+        )
+
+        var fineInterval: TimeInterval {
+            switch self {
+            case let .dateRange(_, coarseInterval: _, fineInterval: fineInterval):
+                return fineInterval
+            case let .existingSnapshots(_, fineInterval: fineInterval):
+                return fineInterval
+            }
         }
     }
 
@@ -128,15 +162,19 @@ extension Satellite {
     /// - Returns: Information about a list of satellite passes.
     public func findPasses(
         observer: LatLonAlt,
-        dateRange: Range<Date>,
-        coarseInterval: TimeInterval = 30,
-        fineInterval: TimeInterval = 3
+        param: PassFindingParam
     ) -> [PassInformation] {
-        let coarseSnapshots = snapshots(
-            observer: observer,
-            dateRange: dateRange,
-            interval: coarseInterval
-        )
+        let coarseSnapshots: [SatelliteSnapshot]
+        switch param {
+        case let .dateRange(dateRange, coarseInterval, _):
+            coarseSnapshots = snapshots(
+                observer: observer,
+                dateRange: dateRange,
+                interval: coarseInterval
+            )
+        case let .existingSnapshots(snapshots, _):
+            coarseSnapshots = snapshots
+        }
 
         guard let firstSnapshot = coarseSnapshots.first else {
             return []
@@ -154,7 +192,7 @@ extension Satellite {
             let fineSnapshots = snapshots(
                 observer: observer,
                 dateRange: fromSnapshot.date..<toSnapshot.date,
-                interval: fineInterval
+                interval: param.fineInterval
             )
 
             var illuminationChanges = [PassInformation.IlluminationChange]()
