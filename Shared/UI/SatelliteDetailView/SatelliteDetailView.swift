@@ -32,23 +32,22 @@ struct SatelliteDetailView: View {
     @ObservedObject var viewModel: ObservableViewModel<SatelliteDetailViewAction, SatelliteDetailViewState>
 
     var elevationGraphProducer: ViewProducer<Void, SatelliteElevationGraph>
+    var skyChartProducer: ViewProducer<Void, SkyChart>
 
     var body: some View {
-        NavigationView {
-            if let tle = viewModel.state.tle {
-                VStack {
-                    elevationGraphProducer.view()
-
-                    Text("Placeholder")
-                        .frame(width: 100, height: 300, alignment: .center)
-                }
-                .navigationTitle(tle.commonName)
-                .onAppear {
-                    viewModel.dispatch(.onAppear)
-                }
-            } else {
-                EmptyView()
+        if let tle = viewModel.state.tle {
+            VStack(spacing: 10) {
+                elevationGraphProducer.view()
+                skyChartProducer.view()
+                    .padding(20)
+                    .frame(idealHeight: 500, maxHeight: .infinity)
             }
+            .navigationTitle(tle.commonName)
+            .onAppear {
+                viewModel.dispatch(.onAppear)
+            }
+        } else {
+            EmptyView()
         }
     }
 }
@@ -64,11 +63,14 @@ extension ViewProducer where Context == Void, ProducedView == SatelliteDetailVie
                     )
                     .asObservableViewModel(initialState: .empty),
                 elevationGraphProducer: ViewProducer<Void, SatelliteElevationGraph>
-                    .satelliteElevationGraph(viewModel: viewModel)
+                    .satelliteElevationGraph(viewModel: viewModel),
+                skyChartProducer: ViewProducer<Void, SkyChart>.skyChart(viewModel: viewModel)
             )
         }
     }
 }
+
+import CoreLocation
 
 struct SatelliteDetailView_Previews: PreviewProvider {
     static var previews: some View {
@@ -79,14 +81,31 @@ struct SatelliteDetailView_Previews: PreviewProvider {
             2 48274  41.4713  16.3199 0005053  25.9394 109.3813 15.65195495  5304
             """
         )
+        let dateRange = Date().advanced(by: -60 * 60 * 2)..<Date().advanced(by: 60 * 60 * 22)
+        let sat = Satellite(withTLE: tle)
+        // 2000 Broadway, Redwood City, CA 94063
+        let location = CLLocation(latitude: 37.486743000691185, longitude: -122.22655970246515)
+        let snapshots = sat.snapshots(
+            observer: LatLonAlt(location: location),
+            dateRange: dateRange
+        )
+        let passes = sat.findPasses(observer: LatLonAlt(location: location), param: .existingSnapshots(snapshots))
         let appState = AppState(
-            dateRange: Date().advanced(by: -60 * 60 * 2)..<Date().advanced(by: 60 * 60 * 22),
+            allSnapshots: [tle.noradIndex: snapshots],
+            dateRange: dateRange,
             satelliteElevationGraphConfigs: .preset,
+            skyChartState: SkyChartRootState(
+                skyReferenceDate: Date(),
+                passInformation: passes
+            ),
             tleLoaderState: TLELoaderState(
                 tles: [.brightest100: [tle]]
             ),
-            coreLocationState: .empty,
-            selectedSatelliteNoradIndex: "48274"
+            coreLocationState: CoreLocationState(
+                authorizationStatus: .authorizedWhenInUse,
+                location: location
+            ),
+            selectedSatelliteNoradIndex: tle.noradIndex
         )
         SatelliteDetailView(
             viewModel: .mock(
@@ -98,6 +117,15 @@ struct SatelliteDetailView_Previews: PreviewProvider {
                 SatelliteElevationGraph(
                     viewModel: .mock(
                         state: SatelliteElevationGraphState.project(
+                            state: appState
+                        )
+                    )
+                )
+            ),
+            skyChartProducer: .pure(
+                SkyChart(
+                    viewModel: .mock(
+                        state: SkyChartState.project(
                             state: appState
                         )
                     )

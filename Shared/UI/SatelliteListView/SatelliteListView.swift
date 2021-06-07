@@ -27,7 +27,7 @@ struct SatelliteListViewState: Equatable {
     static func project(state: Store.StateType) -> SatelliteListViewState {
         return SatelliteListViewState(
             tlesByCategory: state.tleLoaderState.tles,
-            selectedNoradIndex: state.selectedSatelliteNoradIndex.map { Int($0)! }
+            selectedNoradIndex: state.selectedSatelliteNoradIndex
         )
     }
 }
@@ -115,7 +115,8 @@ struct SatelliteListView_Previews: PreviewProvider {
             detailViewProducer: .pure(
                 SatelliteDetailView(
                     viewModel: .mock(state: .empty),
-                    elevationGraphProducer: .crash
+                    elevationGraphProducer: .crash,
+                    skyChartProducer: .crash
                 )
             )
         )

@@ -10,33 +10,70 @@ import SwiftUI
 import SatelliteKit
 import SatelliteForcastCore
 import StarryNight
+import CombineRextensions
 
-public enum SkyChartAction {
-
-}
-
-public struct SkyChartState: Equatable {
-    /// The observer coordinate in latitude (in degrees), longitude (in degrees) and altitude (in meters)
-    public let observerCoordinate: LatLonAlt
-
-    /// The reference date for the background sky.
-    public let skyReferenceDate: Date
-
-    /// A satellite trail consisting of pairs of dates and horizontal coordinates.
-    /// Satellite trail will be plotted as a curve.
-    public let satelliteTrail: [SatelliteSnapshot]
-
+struct SkyChartConfigs: Equatable {
     /// The degree interval between each pair of azimuth marks
-    public let azimuthMarkInterval: Int = 15
+    var azimuthMarkInterval: Int = 15
 
     /// The length of azimuth marks
-    public let azimuthMarkLength: CGFloat = 3
+    var azimuthMarkLength: CGFloat = 3
+
+    static var preset: SkyChartConfigs {
+        return SkyChartConfigs()
+    }
 }
 
-public struct SkyChart: View {
+enum SkyChartAction {
+
+}
+
+/// The root state of sky charts.
+struct SkyChartRootState: Equatable {
+    var skyReferenceDate: Date
+    var passInformation: [PassInformation] = []
+    var configs: SkyChartConfigs = .preset
+}
+
+/// A state used in a single sky chart view
+enum SkyChartState: Equatable {
+    case locationNotDetermined(
+        configs: SkyChartConfigs = .preset
+    )
+    case observer(
+        LatLonAlt,
+        skyReferenceDate: Date,
+        passInformation: PassInformation?,
+        configs: SkyChartConfigs = .preset
+    )
+
+    var configs: SkyChartConfigs {
+        switch self {
+        case let .locationNotDetermined(configs),
+             let .observer(_, skyReferenceDate: _, passInformation: _, configs: configs):
+            return configs
+        }
+    }
+
+    static func project(state: AppState) -> SkyChartState {
+        if let observerCoodinate = state.coreLocationState.location.map(LatLonAlt.init) {
+            return .observer(
+                observerCoodinate,
+                skyReferenceDate: state.skyChartState.skyReferenceDate,
+                // TODO #3: Support multiple pass charts
+                passInformation: state.skyChartState.passInformation.first,
+                configs: state.skyChartConfigs
+            )
+        } else {
+            return .locationNotDetermined(configs: state.skyChartConfigs)
+        }
+    }
+}
+
+struct SkyChart: View {
     private let viewModel: ObservableViewModel<SkyChartAction, SkyChartState>
 
-    public init(viewModel: ObservableViewModel<SkyChartAction, SkyChartState>) {
+    init(viewModel: ObservableViewModel<SkyChartAction, SkyChartState>) {
         self.viewModel = viewModel
     }
 
@@ -63,20 +100,38 @@ public struct SkyChart: View {
         )
     }
 
-    private func pathFromSortedSatelliteSnapshots(_ satelliteSnapshots: [SatelliteSnapshot], rect: CGRect) -> some View {
-        ZStack {
-            ForEach(0..<satelliteSnapshots.count - 1) { i in
-                Path { path in
-                    let point = pointAtHorizontalCoordinate(satelliteSnapshots[i].position, rect: rect)
-                    let nextPoint = pointAtHorizontalCoordinate(satelliteSnapshots[i + 1].position, rect: rect)
-                    path.move(to: point)
-                    path.addLine(to: nextPoint)
+    private var pathFromSortedSatelliteSnapshots: some View {
+        switch viewModel.state {
+        case let .observer(observerCoordinate, skyReferenceDate, passInformation, _):
+            return AnyView(GeometryReader { geometry in
+                let rect = geometry.frame(in: .local)
+
+                if let passInformation = passInformation {
+                    if passInformation.snapshots.isEmpty {
+                        EmptyView()
+                    } else {
+                        let indexIDs = (0..<passInformation.snapshots.count - 1).map {
+                            ($0, "\(String(describing: passInformation.risesAt))_ref-\(String(describing: skyReferenceDate))_\(observerCoordinate)_\($0)")
+                        }
+                        ZStack {
+                            ForEach(indexIDs, id: \.1) { (i, _) in
+                                Path { path in
+                                    let point = pointAtHorizontalCoordinate(passInformation.snapshots[i].position, rect: rect)
+                                    let nextPoint = pointAtHorizontalCoordinate(passInformation.snapshots[i + 1].position, rect: rect)
+                                    path.move(to: point)
+                                    path.addLine(to: nextPoint)
+                                }
+                                .stroke(
+                                    passInformation.snapshots[i].isIlluminated ? Color("satellitePath_illuminated") : Color("satellitePath_notIlluminated"),
+                                    lineWidth: 1
+                                )
+                            }
+                        }
+                    }
                 }
-                .stroke(
-                    satelliteSnapshots[i].isIlluminated ? Color("satellitePath_illuminated") : Color("satellitePath_notIlluminated"),
-                    lineWidth: 1
-                )
-            }
+            })
+        case .locationNotDetermined(_):
+            return AnyView(EmptyView())
         }
     }
 
@@ -98,52 +153,62 @@ public struct SkyChart: View {
     }
 
     var starPath: some View {
-        GeometryReader { geometry in
-            let rect = geometry.frame(in: .local)
-            Path { path in
-                let stars = Star.magitudeLessThan(4.5)
-                for star in stars {
-                    let (alt, azi) = azel(
-                        time: viewModel.state.skyReferenceDate,
-                        site: (viewModel.state.observerCoordinate.lat, viewModel.state.observerCoordinate.lon),
-                        cele: cartesianToRaDec(star.physicalInfo.coordinate))
-                    if alt < 0 {
-                        continue
+        switch viewModel.state {
+        case let .observer(observerCoordinate, skyReferenceDate, _, _):
+            return AnyView(GeometryReader { geometry in
+                let rect = geometry.frame(in: .local)
+                Path { path in
+                    let stars = Star.magitudeLessThan(4.5)
+                    for star in stars {
+                        let (alt, azi) = azel(
+                            time: skyReferenceDate,
+                            site: (observerCoordinate.lat, observerCoordinate.lon),
+                            cele: cartesianToRaDec(star.physicalInfo.coordinate))
+                        if alt < 0 {
+                            continue
+                        }
+                        let point = pointAtHorizontalCoordinate(AziEleDst(azim: azi, elev: alt, dist: 0), rect: rect)
+                        path.move(to: point)
+                        let radius = CGFloat(3 * exp(0.425 * -star.physicalInfo.apparentMagnitude))
+                        path.addEllipse(in: CGRect(x: point.x - radius, y: point.y - radius, width: radius * 2, height: radius * 2))
                     }
-                    let point = pointAtHorizontalCoordinate(AziEleDst(azim: azi, elev: alt, dist: 0), rect: rect)
-                    path.move(to: point)
-                    let radius = CGFloat(3.5 * exp(0.375 * -star.physicalInfo.apparentMagnitude))
-                    path.addEllipse(in: CGRect(x: point.x - radius, y: point.y - radius, width: radius * 2, height: radius * 2))
                 }
-            }
-            .fill()
-            .foregroundColor(.black)
+                .fill()
+                .foregroundColor(.black)
+            })
+        case .locationNotDetermined(_):
+            return AnyView(EmptyView())
         }
     }
 
     var constellationLinesPath: some View {
-        GeometryReader { geometry in
-            let rect = geometry.frame(in: .local)
-            Path { path in
-                for constellation in Constellation.all {
-                    guard let center = constellation.displayCenter else {
-                        continue
-                    }
-                    let (alt, _) = azel(time: viewModel.state.skyReferenceDate, site: (viewModel.state.observerCoordinate.lat, viewModel.state.observerCoordinate.lon), cele: cartesianToRaDec(center))
-                    if alt < 0 {
-                        continue
-                    }
-                    for line in constellation.connectionLines {
-                        let (alt1, azi1) = azel(time: viewModel.state.skyReferenceDate, site: (viewModel.state.observerCoordinate.lat, viewModel.state.observerCoordinate.lon), cele: cartesianToRaDec(line.star1.physicalInfo.coordinate))
-                        let (alt2, azi2) = azel(time: viewModel.state.skyReferenceDate, site: (viewModel.state.observerCoordinate.lat, viewModel.state.observerCoordinate.lon), cele: cartesianToRaDec(line.star2.physicalInfo.coordinate))
-                        let point1 = pointAtHorizontalCoordinate(AziEleDst(azim: azi1, elev: alt1, dist: 0), rect: rect)
-                        let point2 = pointAtHorizontalCoordinate(AziEleDst(azim: azi2, elev: alt2, dist: 0), rect: rect)
-                        path.move(to: point1)
-                        path.addLine(to: point2)
+        switch viewModel.state {
+        case let .observer(observerCoordinate, skyReferenceDate, _, _):
+            return AnyView(GeometryReader { geometry in
+                let rect = geometry.frame(in: .local)
+                Path { path in
+                    for constellation in Constellation.all {
+                        guard let center = constellation.displayCenter else {
+                            continue
+                        }
+                        let (alt, _) = azel(time: skyReferenceDate, site: (observerCoordinate.lat, observerCoordinate.lon), cele: cartesianToRaDec(center))
+                        if alt < 0 {
+                            continue
+                        }
+                        for line in constellation.connectionLines {
+                            let (alt1, azi1) = azel(time: skyReferenceDate, site: (observerCoordinate.lat, observerCoordinate.lon), cele: cartesianToRaDec(line.star1.physicalInfo.coordinate))
+                            let (alt2, azi2) = azel(time: skyReferenceDate, site: (observerCoordinate.lat, observerCoordinate.lon), cele: cartesianToRaDec(line.star2.physicalInfo.coordinate))
+                            let point1 = pointAtHorizontalCoordinate(AziEleDst(azim: azi1, elev: alt1, dist: 0), rect: rect)
+                            let point2 = pointAtHorizontalCoordinate(AziEleDst(azim: azi2, elev: alt2, dist: 0), rect: rect)
+                            path.move(to: point1)
+                            path.addLine(to: point2)
+                        }
                     }
                 }
-            }
-            .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+            })
+        case .locationNotDetermined(_):
+            return AnyView(EmptyView())
         }
     }
 
@@ -151,8 +216,8 @@ public struct SkyChart: View {
         GeometryReader { geometry in
             let rect = geometry.frame(in: .local)
             Path { path in
-                stride(from: 0, to: 360, by: viewModel.state.azimuthMarkInterval).forEach { azimuth in
-                    let (point1, point2) = azimuthMarkPoints(azimuth: Double(azimuth), length: viewModel.state.azimuthMarkLength, rect: rect)
+                stride(from: 0, to: 360, by: viewModel.state.configs.azimuthMarkInterval).forEach { azimuth in
+                    let (point1, point2) = azimuthMarkPoints(azimuth: Double(azimuth), length: viewModel.state.configs.azimuthMarkLength, rect: rect)
                     path.move(to: point1)
                     path.addLine(to: point2)
                 }
@@ -162,75 +227,70 @@ public struct SkyChart: View {
     }
 
     var azimuthMarkTexts: some View {
-        GeometryReader { geometry in
-            let rect = geometry.frame(in: .local)
-            let radius = radius(fromRect: rect)
-            ZStack {
-                ForEach(
-                    Array(stride(from: 0, to: 360, by: viewModel.state.azimuthMarkInterval)),
-                    id: \.self,
-                    content: { azimuth in
-                        let angle: CGFloat = CGFloat(Double(azimuth + 180) * deg2rad)
-                        Text("\(azimuth)º")
-                            .font(.caption2)
+        switch viewModel.state {
+        case let .observer(observerCoordinate, _, _, _):
+            return AnyView(GeometryReader { geometry in
+                let rect = geometry.frame(in: .local)
+                let radius = radius(fromRect: rect)
+                ZStack {
+                    ForEach(
+                        Array(stride(from: 0, to: 360, by: viewModel.state.configs.azimuthMarkInterval)),
+                        id: \.self,
+                        content: { azimuth in
+                            let angle: CGFloat = CGFloat(Double(azimuth + 180) * deg2rad)
+                            Text("\(azimuth)º")
+                                .font(.caption2)
+                                .foregroundColor(.gray)
+                                .position(x: rect.midX, y: rect.midY)
+                                .rotationEffect(
+                                    Angle(degrees: -(Double(angle) * rad2deg) + 180)
+                                )
+                                .offset(x: sin(angle) * (radius + 10), y: cos(angle) * (radius + 10))
+                        }
+                    )
+                    let orientationAnglesNorth: [(String, Double, Double)] = [
+                        ("NE", .pi * 0.75, -.pi * 0.5),
+                        ("NW", .pi * -0.75, .pi * 0.5),
+                        ("SE", .pi * 0.25, -.pi * 0.5),
+                        ("SW", .pi * -0.25, .pi * 0.5)
+                    ]
+                    let orientationAnglesSouth: [(String, Double, Double)] = [
+                        ("NE", .pi * -0.75, .pi * 0.5),
+                        ("NW", .pi * 0.75, -.pi * 0.5),
+                        ("SE", .pi * -0.25, .pi * 0.5),
+                        ("SW", .pi * 0.25, -.pi * 0.5)
+                    ]
+                    let orientationAngles: [(String, Double, Double)] = observerCoordinate.lon > 0 ? orientationAnglesNorth : orientationAnglesSouth
+                    ForEach(orientationAngles, id: \.self.0) { (direction, angle, textOrientation) in
+                        Text(direction)
+                            .font(.subheadline)
                             .foregroundColor(.gray)
                             .position(x: rect.midX, y: rect.midY)
                             .rotationEffect(
-                                Angle(degrees: -(Double(angle) * rad2deg) + 180)
+                                Angle(degrees: (Double(angle + textOrientation) * rad2deg))
                             )
-                            .offset(x: sin(angle) * (radius + 10), y: cos(angle) * (radius + 10))
+                            .offset(x: sin(CGFloat(angle)) * (radius + 30), y: cos(CGFloat(angle)) * (radius + 30))
                     }
-                )
-                let orientationAnglesNorth: [(String, Double, Double)] = [
-                    ("NE", .pi * 0.75, -.pi * 0.5),
-                    ("NW", .pi * -0.75, .pi * 0.5),
-                    ("SE", .pi * 0.25, -.pi * 0.5),
-                    ("SW", .pi * -0.25, .pi * 0.5)
-                ]
-                let orientationAnglesSouth: [(String, Double, Double)] = [
-                    ("NE", .pi * -0.75, .pi * 0.5),
-                    ("NW", .pi * 0.75, -.pi * 0.5),
-                    ("SE", .pi * -0.25, .pi * 0.5),
-                    ("SW", .pi * 0.25, -.pi * 0.5)
-                ]
-                let orientationAngles: [(String, Double, Double)] = viewModel.state.observerCoordinate.lon > 0 ? orientationAnglesNorth : orientationAnglesSouth
-                ForEach(orientationAngles, id: \.self.0) { (direction, angle, textOrientation) in
-                    Text(direction)
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                        .position(x: rect.midX, y: rect.midY)
-                        .rotationEffect(
-                            Angle(degrees: (Double(angle + textOrientation) * rad2deg))
-                        )
-                        .offset(x: sin(CGFloat(angle)) * (radius + 30), y: cos(CGFloat(angle)) * (radius + 30))
                 }
-            }
+            })
+        case .locationNotDetermined(_):
+            return AnyView(EmptyView())
         }
     }
 
-    var moonCoordinate: AziEleDst {
-        let (alt, azi) = azel(
-            time: viewModel.state.skyReferenceDate,
-            site: (viewModel.state.observerCoordinate.lat, viewModel.state.observerCoordinate.lon),
-            cele: lunarGeo(julianDays: viewModel.state.skyReferenceDate.julianDate)
-        )
-        return AziEleDst(azim: azi, elev: alt, dist: 0)
-    }
-
-    public var body: some View {
-        GeometryReader { geometry in
-            let rect = geometry.frame(in: .local)
-            pathFromSortedSatelliteSnapshots(
-                viewModel.state.satelliteTrail,
-                rect: rect
+    var moonShape: some View {
+        switch viewModel.state {
+        case let .observer(observerCoordinate, skyReferenceDate, _, _):
+            let (alt, azi) = azel(
+                time: skyReferenceDate,
+                site: (observerCoordinate.lat, observerCoordinate.lon),
+                cele: lunarGeo(julianDays: skyReferenceDate.julianDate)
             )
-            .overlay(starPath)
-            .overlay(constellationLinesPath)
-            .clipShape(Circle())
-            .overlay(backgroundPath)
-            .overlay(azimuthMarks)
-            .overlay(azimuthMarkTexts)
-            .overlay(
+            let moonCoordinate = AziEleDst(azim: azi, elev: alt, dist: 0)
+
+            return AnyView(GeometryReader { geometry in
+                let rect = geometry.frame(in: .local)
+
                 HStack(spacing: 10) {
                     Path { path in
                         if moonCoordinate.elev < 0 {
@@ -258,13 +318,43 @@ public struct SkyChart: View {
                         rect: rect
                     )
                 )
+            })
+        case .locationNotDetermined(_):
+            return AnyView(EmptyView())
+        }
+    }
+
+    var body: some View {
+        pathFromSortedSatelliteSnapshots
+            .overlay(starPath)
+            .overlay(constellationLinesPath)
+            .clipShape(Circle())
+            .overlay(backgroundPath)
+            .overlay(azimuthMarks)
+            .overlay(azimuthMarkTexts)
+            .overlay(moonShape)
+    }
+}
+
+extension ViewProducer where Context == Void, ProducedView == SkyChart {
+    static func skyChart<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
+        ViewProducer<Context, ProducedView> {
+            SkyChart(
+                viewModel: viewModel
+                    .projection(
+                        action: { _ -> AppAction in },
+                        state: SkyChartState.project(state:)
+                    )
+                    .asObservableViewModel(
+                        initialState: .locationNotDetermined()
+                    )
             )
         }
     }
 }
 
 struct SkyChart_Previews: PreviewProvider {
-    static let issTrail: [SatelliteSnapshot] = {
+    static let issPass: PassInformation = {
         let tle = try! TLE(
             raw: """
             ISS (ZARYA)
@@ -282,10 +372,9 @@ struct SkyChart_Previews: PreviewProvider {
             param: .dateRange(date..<date.addingTimeInterval(800))
         )
         .first!
-        .snapshots
     }()
 
-    static let tianHeTrail: [SatelliteSnapshot] = {
+    static let tianHePass: PassInformation = {
         let tle = try! TLE(
             raw: """
             TIANHE
@@ -303,19 +392,19 @@ struct SkyChart_Previews: PreviewProvider {
             param: .dateRange(date..<date.addingTimeInterval(800))
         )
         .first!
-        .snapshots
     }()
 
     static var previews: some View {
         SkyChart(
             viewModel: .mock(
-                state: SkyChartState(
-                    observerCoordinate: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
+                state: .observer(
+                    LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
                     skyReferenceDate: {
                         let formatter = ISO8601DateFormatter()
                         return formatter.date(from: "2021-06-02T20:40:00+0800")!
                     }(),
-                    satelliteTrail: issTrail
+                    passInformation: issPass,
+                    configs: .preset
                 )
             )
         )
@@ -323,13 +412,14 @@ struct SkyChart_Previews: PreviewProvider {
 
         SkyChart(
             viewModel: .mock(
-                state: SkyChartState(
-                    observerCoordinate: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
+                state: .observer(
+                    LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
                     skyReferenceDate: {
                         let formatter = ISO8601DateFormatter()
                         return formatter.date(from: "2021-06-02T06:34:46-0600")!
                     }(),
-                    satelliteTrail: tianHeTrail
+                    passInformation: tianHePass,
+                    configs: .preset
                 )
             )
         )

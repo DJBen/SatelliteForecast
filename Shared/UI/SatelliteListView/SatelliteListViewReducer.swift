@@ -14,7 +14,7 @@ extension Reducer where ActionType == SatelliteListViewAction, StateType == Stor
         case .onAppear:
             break
         case let .selectSatellite(noradIndex: noradIndex):
-            state.selectedSatelliteNoradIndex = noradIndex.map(String.init)
+            state.selectedSatelliteNoradIndex = noradIndex
         }
     }
 }

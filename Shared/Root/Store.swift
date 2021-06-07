@@ -62,6 +62,11 @@ class Store: ReduxStoreBase<AppAction, AppState> {
                     inputAction: { $0.satelliteListView }
                 )
 
+                <> EffectMiddleware.satelliteDetailView
+                .lift(
+                    inputAction: { $0.satelliteDetailView }
+                )
+
                 <> EffectMiddleware.timer
                 .lift(
                     inputAction: { $0.timer },

@@ -10,14 +10,18 @@ import SatelliteKit
 import SatelliteForcastCore
 
 struct AppState: Equatable {
-    var allSnapshots: [String: [SatelliteSnapshot]] = [:]
+    var allSnapshots: [Int: [SatelliteSnapshot]] = [:]
     /// The date range from which ephemerides are generated.
     var dateRange: Range<Date>
     var satelliteElevationGraphConfigs: SatelliteElevationGraphConfigs = .preset
+    var skyChartConfigs: SkyChartConfigs = .preset
+    var skyChartState: SkyChartRootState = SkyChartRootState(
+        skyReferenceDate: Date()
+    )
 
     var tleLoaderState: TLELoaderState = .empty
     var coreLocationState: CoreLocationState = .empty
-    var selectedSatelliteNoradIndex: String?
+    var selectedSatelliteNoradIndex: Int?
 
     static var empty: AppState {
         AppState(
@@ -41,7 +45,7 @@ struct AppState: Equatable {
     }
 
     var selectedSatelliteTLE: TLE? {
-        guard let index = selectedSatelliteNoradIndex.flatMap(Int.init) else {
+        guard let index = selectedSatelliteNoradIndex else {
             return nil
         }
         return tleLoaderState.tles.values

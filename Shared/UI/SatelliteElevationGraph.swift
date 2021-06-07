@@ -323,7 +323,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         let viewModel = SatelliteElevationGraphState.project(
             state: AppState(
                 allSnapshots: [
-                    sat.noradIdent: sat.snapshots(
+                    Int(sat.noradIdent)!: sat.snapshots(
                         observer: LatLonAlt(location: location),
                         dateRange: dateRange,
                         interval: 20
@@ -335,7 +335,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                     authorizationStatus: .authorizedWhenInUse,
                     location: location
                 ),
-                selectedSatelliteNoradIndex: sat.noradIdent
+                selectedSatelliteNoradIndex: Int(sat.noradIdent)!
             )
         )
         SatelliteElevationGraph(viewModel: .mock(state: viewModel))
@@ -353,7 +353,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         let viewModel2 = SatelliteElevationGraphState.project(
             state: AppState(
                 allSnapshots: [
-                    sat2.noradIdent: sat2.snapshots(
+                    Int(sat2.noradIdent)!: sat2.snapshots(
                         observer: LatLonAlt(location: location),
                         dateRange: dateRange,
                         interval: 20
@@ -365,7 +365,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                     authorizationStatus: .authorizedWhenInUse,
                     location: location
                 ),
-                selectedSatelliteNoradIndex: sat2.noradIdent
+                selectedSatelliteNoradIndex: Int(sat2.noradIdent)!
             )
         )
         SatelliteElevationGraph(viewModel: .mock(state: viewModel2))
@@ -383,7 +383,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         let viewModel3 = SatelliteElevationGraphState.project(
             state: AppState(
                 allSnapshots: [
-                    sat3.noradIdent: sat3.snapshots(
+                    Int(sat3.noradIdent)!: sat3.snapshots(
                         observer: LatLonAlt(location: location),
                         dateRange: dateRange,
                         interval: 20
@@ -395,7 +395,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                     authorizationStatus: .authorizedWhenInUse,
                     location: location
                 ),
-                selectedSatelliteNoradIndex: sat3.noradIdent
+                selectedSatelliteNoradIndex: Int(sat3.noradIdent)!
             )
         )
         SatelliteElevationGraph(viewModel: .mock(state: viewModel3))

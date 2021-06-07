@@ -12,10 +12,9 @@ extension Reducer where ActionType == TLEPropagatorAction, StateType == Store.St
     static let tlePropagatorReducer = Reducer.reduce { action, state in
         switch action {
         case let .foundPasses(passInformation, searchDateRange, noradIndex):
-            // TODO #2: Feed pass information into sky chart.
-            break
+            state.skyChartState.passInformation = passInformation
         case let .propagatedSnapshots(satelliteSnapshots, noradIndex):
-            state.allSnapshots[String(noradIndex)] = satelliteSnapshots
+            state.allSnapshots[noradIndex] = satelliteSnapshots
         }
     }
 }
