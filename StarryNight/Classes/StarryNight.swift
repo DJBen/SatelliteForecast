@@ -12,14 +12,14 @@ import SQLite
 private class StarryNightClass: NSObject {}
 
 enum StarryNight {
-    static let db = try! Connection(Bundle(for: StarryNightClass.self).path(forResource: "stars", ofType: "sqlite3")!)
+    static let db = try! Connection(Bundle.starryNightResourcesBundle.path(forResource: "stars", ofType: "sqlite3")!)
 
     enum Constellations {
         static let table = Table("constellations")
         static let dbName = Expression<String>("constellation")
         static let dbIAUName = Expression<String>("iau")
         static let dbGenitive = Expression<String>("genitive")
-        static let constellationLinePath = Bundle(for: StarryNightClass.self).path(forResource: "constellation_lines", ofType: "dat")!
+        static let constellationLinePath = Bundle.starryNightResourcesBundle.path(forResource: "constellation_lines", ofType: "dat")!
     }
 
     enum Spectral {

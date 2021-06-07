@@ -22,17 +22,12 @@ class SatelliteListViewMiddlewareTests: XCTestCase {
     }
 
     func testExample() throws {
-        let aaa: AnyMiddleware<AppAction, AppAction, AppState> = EffectMiddleware<SatelliteListViewAction, AppAction, AppState, Void>
-            .satelliteListView
-            .lift(
-                inputAction: { $0.satelliteListView }
-            )
-            .eraseToAnyMiddleware()
-//        let middleware: AnyMiddleware<AppAction, AppState, Void> = {
-//            return EffectMiddleware<SatelliteListViewAction, AppAction, AppState, Void>.satelliteListView
-//                .lift(inputAction: { AppAction.satelliteListView($0) }
-//                .eraseToAnyMiddleware()
-//        }()
+//        let middleware: AnyMiddleware<AppAction, AppAction, AppState> = EffectMiddleware<SatelliteListViewAction, AppAction, AppState, Void>
+//            .satelliteListView
+//            .lift(
+//                inputAction: { $0.satelliteListView }
+//            )
+//            .eraseToAnyMiddleware()
 //        assert(
 //            initialValue: AppState.empty,
 //            reducer: Reducer<SatelliteListViewAction, AppState>.identity,
