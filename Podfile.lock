@@ -3,6 +3,8 @@ PODS:
     - SwiftRex (~> 0.8.4)
   - CombineRextensions (1.0.0.LOCAL):
     - CombineRex (~> 0.8.4)
+  - SatelliteForcastCore (1.0.0.LOCAL):
+    - SatelliteKit (= 1.0.0.LOCAL)
   - SatelliteKit (1.0.0.LOCAL)
   - SnapshotTesting (1.8.2)
   - SQLite.swift (0.12.2):
@@ -22,6 +24,7 @@ PODS:
 DEPENDENCIES:
   - CombineRex (~> 0.8.4)
   - CombineRextensions (from `https://github.com/DJBen/CombineRextensions.git`)
+  - SatelliteForcastCore (from `./SatelliteForcastCore`)
   - SatelliteKit (from `./SatelliteKit`)
   - StarryNight (from `./StarryNight`)
   - SwiftRex (from `https://github.com/DJBen/SwiftRex.git`, branch `sihao/enable-testability`)
@@ -37,6 +40,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   CombineRextensions:
     :git: https://github.com/DJBen/CombineRextensions.git
+  SatelliteForcastCore:
+    :path: "./SatelliteForcastCore"
   SatelliteKit:
     :path: "./SatelliteKit"
   StarryNight:
@@ -58,6 +63,7 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   CombineRex: 5d4fdba0229b4243d853b4d8934a16367b338fb7
   CombineRextensions: 00444b1b96f1914c0c52d4498e0e90e89469540e
+  SatelliteForcastCore: 12c6008972828ec0ea1583afa7bc397acca5a1f9
   SatelliteKit: c8bb99e36b2482d865495b387dc8908723241993
   SnapshotTesting: 38947050d13960d57a4a9c166fcf51bca7d56970
   SQLite.swift: d2b4642190917051ce6bd1d49aab565fe794eea3
@@ -66,6 +72,6 @@ SPEC CHECKSUMS:
   SwiftRex: 59a43c38f9c67b87dfcb79912577fbceede4345c
   TestingExtensions: 037b8c0fd64a491192c4182b691a6388d280bb7c
 
-PODFILE CHECKSUM: d5126129bef424ad4c7868844ba8c34cb665576f
+PODFILE CHECKSUM: a8d40819a27931a3a6736bacb322698a0fe6a50a
 
 COCOAPODS: 1.10.1

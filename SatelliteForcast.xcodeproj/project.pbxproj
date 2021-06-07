@@ -9,11 +9,9 @@
 /* Begin PBXBuildFile section */
 		A216FD028553CB25B8067A5B /* Pods_SatelliteForcast__iOS__Tests_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E7B920498D3C9223DFAD57B /* Pods_SatelliteForcast__iOS__Tests_iOS.framework */; };
 		B3F043F7AEADE73FB37A3EE3 /* Pods_SatelliteForcast__iOS_.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BC419C23447DA5FF0D281B0 /* Pods_SatelliteForcast__iOS_.framework */; };
-		B665E13B8C168E2C453FC73C /* Pods_SatelliteForcastCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2336545E290A0B67DF2A4890 /* Pods_SatelliteForcastCore.framework */; };
 		EF1CAB32266B7ABF006319C8 /* SatelliteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CAB31266B7ABF006319C8 /* SatelliteDetailView.swift */; };
 		EF1CAB36266B87B6006319C8 /* SatelliteListViewReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CAB35266B87B6006319C8 /* SatelliteListViewReducer.swift */; };
 		EF1CAB39266B8934006319C8 /* SatelliteListViewMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CAB38266B8934006319C8 /* SatelliteListViewMiddleware.swift */; };
-		EF1CAB42266C4F87006319C8 /* CoreLocation+LatLonAlt.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CAB41266C4F87006319C8 /* CoreLocation+LatLonAlt.swift */; };
 		EF1CAB46266CC90C006319C8 /* TLEPropagatorAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CAB44266CC8F2006319C8 /* TLEPropagatorAction.swift */; };
 		EF1CAB4C266DBD38006319C8 /* SatelliteListViewMiddlewareTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CAB4B266DBD38006319C8 /* SatelliteListViewMiddlewareTests.swift */; platformFilter = ios; };
 		EF4AF76C266434CC00D28F47 /* SkyChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4AF76B266434CC00D28F47 /* SkyChart.swift */; };
@@ -33,17 +31,8 @@
 		EF7A319B266B733C00CC33C0 /* LocalizedStrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A319A266B733C00CC33C0 /* LocalizedStrings.swift */; };
 		EF9D82A32661BBF100616C97 /* SatelliteForcastApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9D827A2661BBF000616C97 /* SatelliteForcastApp.swift */; };
 		EF9D82A72661BBF100616C97 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EF9D827C2661BBF000616C97 /* Assets.xcassets */; };
-		EFAE1EE7266862B500A18A42 /* SatelliteForcastCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EFAE1EDE266862B400A18A42 /* SatelliteForcastCore.framework */; };
-		EFAE1EEE266862B500A18A42 /* AstroAlgorithmsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EED266862B500A18A42 /* AstroAlgorithmsTests.swift */; };
-		EFAE1EF0266862B500A18A42 /* SatelliteForcastCore.h in Headers */ = {isa = PBXBuildFile; fileRef = EFAE1EE0266862B400A18A42 /* SatelliteForcastCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		EFAE1EF3266862B500A18A42 /* SatelliteForcastCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EFAE1EDE266862B400A18A42 /* SatelliteForcastCore.framework */; };
-		EFAE1EF4266862B500A18A42 /* SatelliteForcastCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EFAE1EDE266862B400A18A42 /* SatelliteForcastCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		EFAE1EFE266863BE00A18A42 /* AstroAlgorithms.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1EFD266863BE00A18A42 /* AstroAlgorithms.swift */; };
-		EFAE1F0626686CCF00A18A42 /* MathUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F0526686CCF00A18A42 /* MathUtil.swift */; };
-		EFAE1F0826686E5900A18A42 /* SatelliteSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F0726686E5900A18A42 /* SatelliteSnapshot.swift */; };
 		EFAE1F0C2668B10F00A18A42 /* SatelliteElevationGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F0B2668B10F00A18A42 /* SatelliteElevationGraph.swift */; };
 		EFAE1F132669E7A800A18A42 /* SunlightIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F122669E7A800A18A42 /* SunlightIndicator.swift */; };
-		EFAE1F5C266A1A5000A18A42 /* Satellite+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F5B266A1A5000A18A42 /* Satellite+Convenience.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,20 +43,6 @@
 			remoteGlobalIDString = EF9D82802661BBF000616C97;
 			remoteInfo = "SatelliteForcast (iOS)";
 		};
-		EFAE1EE8266862B500A18A42 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = EF9D82752661BBEF00616C97 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = EFAE1EDD266862B400A18A42;
-			remoteInfo = SatelliteForcastCore;
-		};
-		EFAE1EF1266862B500A18A42 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = EF9D82752661BBEF00616C97 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = EFAE1EDD266862B400A18A42;
-			remoteInfo = SatelliteForcastCore;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -77,7 +52,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				EFAE1EF4266862B500A18A42 /* SatelliteForcastCore.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -109,7 +83,6 @@
 		EF1CAB31266B7ABF006319C8 /* SatelliteDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteDetailView.swift; sourceTree = "<group>"; };
 		EF1CAB35266B87B6006319C8 /* SatelliteListViewReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteListViewReducer.swift; sourceTree = "<group>"; };
 		EF1CAB38266B8934006319C8 /* SatelliteListViewMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteListViewMiddleware.swift; sourceTree = "<group>"; };
-		EF1CAB41266C4F87006319C8 /* CoreLocation+LatLonAlt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CoreLocation+LatLonAlt.swift"; sourceTree = "<group>"; };
 		EF1CAB44266CC8F2006319C8 /* TLEPropagatorAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TLEPropagatorAction.swift; sourceTree = "<group>"; };
 		EF1CAB4B266DBD38006319C8 /* SatelliteListViewMiddlewareTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteListViewMiddlewareTests.swift; sourceTree = "<group>"; };
 		EF4AF76B266434CC00D28F47 /* SkyChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyChart.swift; sourceTree = "<group>"; };
@@ -133,18 +106,8 @@
 		EF9D82812661BBF000616C97 /* SatelliteForcast.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SatelliteForcast.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EF9D82912661BBF100616C97 /* Tests iOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EF9D82972661BBF100616C97 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		EFAE1EDE266862B400A18A42 /* SatelliteForcastCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SatelliteForcastCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EFAE1EE0266862B400A18A42 /* SatelliteForcastCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SatelliteForcastCore.h; sourceTree = "<group>"; };
-		EFAE1EE1266862B400A18A42 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		EFAE1EE6266862B500A18A42 /* SatelliteForcastCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SatelliteForcastCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		EFAE1EED266862B500A18A42 /* AstroAlgorithmsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AstroAlgorithmsTests.swift; sourceTree = "<group>"; };
-		EFAE1EEF266862B500A18A42 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		EFAE1EFD266863BE00A18A42 /* AstroAlgorithms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AstroAlgorithms.swift; sourceTree = "<group>"; };
-		EFAE1F0526686CCF00A18A42 /* MathUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MathUtil.swift; sourceTree = "<group>"; };
-		EFAE1F0726686E5900A18A42 /* SatelliteSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteSnapshot.swift; sourceTree = "<group>"; };
 		EFAE1F0B2668B10F00A18A42 /* SatelliteElevationGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteElevationGraph.swift; sourceTree = "<group>"; };
 		EFAE1F122669E7A800A18A42 /* SunlightIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunlightIndicator.swift; sourceTree = "<group>"; };
-		EFAE1F5B266A1A5000A18A42 /* Satellite+Convenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Satellite+Convenience.swift"; sourceTree = "<group>"; };
 		FB835F01E06946970289CB6C /* Pods-SatelliteKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteKit.release.xcconfig"; path = "Target Support Files/Pods-SatelliteKit/Pods-SatelliteKit.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -153,7 +116,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EFAE1EF3266862B500A18A42 /* SatelliteForcastCore.framework in Frameworks */,
 				B3F043F7AEADE73FB37A3EE3 /* Pods_SatelliteForcast__iOS_.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -163,22 +125,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A216FD028553CB25B8067A5B /* Pods_SatelliteForcast__iOS__Tests_iOS.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		EFAE1EDB266862B400A18A42 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B665E13B8C168E2C453FC73C /* Pods_SatelliteForcastCore.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		EFAE1EE3266862B500A18A42 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				EFAE1EE7266862B500A18A42 /* SatelliteForcastCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -278,8 +224,6 @@
 			children = (
 				EF9D82792661BBEF00616C97 /* Shared */,
 				EF9D82942661BBF100616C97 /* Tests iOS */,
-				EFAE1EDF266862B400A18A42 /* SatelliteForcastCore */,
-				EFAE1EEC266862B500A18A42 /* SatelliteForcastCoreTests */,
 				EF9D82822661BBF000616C97 /* Products */,
 				EC932DBEBD7F42A47E1A7B1F /* Frameworks */,
 				38032A026A794DBA01ED4368 /* Pods */,
@@ -308,8 +252,6 @@
 			children = (
 				EF9D82812661BBF000616C97 /* SatelliteForcast.app */,
 				EF9D82912661BBF100616C97 /* Tests iOS.xctest */,
-				EFAE1EDE266862B400A18A42 /* SatelliteForcastCore.framework */,
-				EFAE1EE6266862B500A18A42 /* SatelliteForcastCoreTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -323,41 +265,7 @@
 			path = "Tests iOS";
 			sourceTree = "<group>";
 		};
-		EFAE1EDF266862B400A18A42 /* SatelliteForcastCore */ = {
-			isa = PBXGroup;
-			children = (
-				EFAE1EE0266862B400A18A42 /* SatelliteForcastCore.h */,
-				EFAE1EFD266863BE00A18A42 /* AstroAlgorithms.swift */,
-				EFAE1F0526686CCF00A18A42 /* MathUtil.swift */,
-				EFAE1EE1266862B400A18A42 /* Info.plist */,
-				EFAE1F0726686E5900A18A42 /* SatelliteSnapshot.swift */,
-				EFAE1F5B266A1A5000A18A42 /* Satellite+Convenience.swift */,
-				EF1CAB41266C4F87006319C8 /* CoreLocation+LatLonAlt.swift */,
-			);
-			path = SatelliteForcastCore;
-			sourceTree = "<group>";
-		};
-		EFAE1EEC266862B500A18A42 /* SatelliteForcastCoreTests */ = {
-			isa = PBXGroup;
-			children = (
-				EFAE1EED266862B500A18A42 /* AstroAlgorithmsTests.swift */,
-				EFAE1EEF266862B500A18A42 /* Info.plist */,
-			);
-			path = SatelliteForcastCoreTests;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
-
-/* Begin PBXHeadersBuildPhase section */
-		EFAE1ED9266862B400A18A42 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				EFAE1EF0266862B500A18A42 /* SatelliteForcastCore.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
 		EF9D82802661BBF000616C97 /* SatelliteForcast (iOS) */ = {
@@ -374,7 +282,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				EFAE1EF2266862B500A18A42 /* PBXTargetDependency */,
 			);
 			name = "SatelliteForcast (iOS)";
 			productName = "SatelliteForcast (iOS)";
@@ -402,43 +309,6 @@
 			productReference = EF9D82912661BBF100616C97 /* Tests iOS.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
-		EFAE1EDD266862B400A18A42 /* SatelliteForcastCore */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = EFAE1EFA266862B500A18A42 /* Build configuration list for PBXNativeTarget "SatelliteForcastCore" */;
-			buildPhases = (
-				8D6E4C7D38EEE3C86C881548 /* [CP] Check Pods Manifest.lock */,
-				EFAE1ED9266862B400A18A42 /* Headers */,
-				EFAE1EDA266862B400A18A42 /* Sources */,
-				EFAE1EDB266862B400A18A42 /* Frameworks */,
-				EFAE1EDC266862B400A18A42 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = SatelliteForcastCore;
-			productName = SatelliteForcastCore;
-			productReference = EFAE1EDE266862B400A18A42 /* SatelliteForcastCore.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		EFAE1EE5266862B500A18A42 /* SatelliteForcastCoreTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = EFAE1EFB266862B500A18A42 /* Build configuration list for PBXNativeTarget "SatelliteForcastCoreTests" */;
-			buildPhases = (
-				EFAE1EE2266862B500A18A42 /* Sources */,
-				EFAE1EE3266862B500A18A42 /* Frameworks */,
-				EFAE1EE4266862B500A18A42 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				EFAE1EE9266862B500A18A42 /* PBXTargetDependency */,
-			);
-			name = SatelliteForcastCoreTests;
-			productName = SatelliteForcastCoreTests;
-			productReference = EFAE1EE6266862B500A18A42 /* SatelliteForcastCoreTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -454,12 +324,6 @@
 					EF9D82902661BBF000616C97 = {
 						CreatedOnToolsVersion = 12.4;
 						TestTargetID = EF9D82802661BBF000616C97;
-					};
-					EFAE1EDD266862B400A18A42 = {
-						CreatedOnToolsVersion = 12.5;
-					};
-					EFAE1EE5266862B500A18A42 = {
-						CreatedOnToolsVersion = 12.5;
 					};
 				};
 			};
@@ -478,8 +342,6 @@
 			targets = (
 				EF9D82802661BBF000616C97 /* SatelliteForcast (iOS) */,
 				EF9D82902661BBF000616C97 /* Tests iOS */,
-				EFAE1EDD266862B400A18A42 /* SatelliteForcastCore */,
-				EFAE1EE5266862B500A18A42 /* SatelliteForcastCoreTests */,
 			);
 		};
 /* End PBXProject section */
@@ -494,20 +356,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		EF9D828F2661BBF000616C97 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		EFAE1EDC266862B400A18A42 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		EFAE1EE4266862B500A18A42 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -550,28 +398,6 @@
 			);
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/Pods-SatelliteForcast (iOS)-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		8D6E4C7D38EEE3C86C881548 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SatelliteForcastCore-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -657,26 +483,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		EFAE1EDA266862B400A18A42 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				EFAE1EFE266863BE00A18A42 /* AstroAlgorithms.swift in Sources */,
-				EF1CAB42266C4F87006319C8 /* CoreLocation+LatLonAlt.swift in Sources */,
-				EFAE1F0626686CCF00A18A42 /* MathUtil.swift in Sources */,
-				EFAE1F5C266A1A5000A18A42 /* Satellite+Convenience.swift in Sources */,
-				EFAE1F0826686E5900A18A42 /* SatelliteSnapshot.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		EFAE1EE2266862B500A18A42 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				EFAE1EEE266862B500A18A42 /* AstroAlgorithmsTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -685,16 +491,6 @@
 			platformFilter = ios;
 			target = EF9D82802661BBF000616C97 /* SatelliteForcast (iOS) */;
 			targetProxy = EF9D82922661BBF100616C97 /* PBXContainerItemProxy */;
-		};
-		EFAE1EE9266862B500A18A42 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = EFAE1EDD266862B400A18A42 /* SatelliteForcastCore */;
-			targetProxy = EFAE1EE8266862B500A18A42 /* PBXContainerItemProxy */;
-		};
-		EFAE1EF2266862B500A18A42 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = EFAE1EDD266862B400A18A42 /* SatelliteForcastCore */;
-			targetProxy = EFAE1EF1266862B500A18A42 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -818,7 +614,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9907431CCC757C4BD4653927 /* Pods-SatelliteForcast (iOS).debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
@@ -842,7 +637,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 38FCA424B0A1D65F8B701E01 /* Pods-SatelliteForcast (iOS).release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
@@ -906,110 +700,6 @@
 			};
 			name = Release;
 		};
-		EFAE1EF6266862B500A18A42 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = B30832459D7AAF36D6E158F4 /* Pods-SatelliteForcastCore.debug.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 52RD2GH5DP;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = SatelliteForcastCore/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.djben.SatelliteForcastCore;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		EFAE1EF7266862B500A18A42 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = B8CDE26BA13420CACBBAA0DD /* Pods-SatelliteForcastCore.release.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 52RD2GH5DP;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = SatelliteForcastCore/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.djben.SatelliteForcastCore;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		EFAE1EF8266862B500A18A42 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 52RD2GH5DP;
-				INFOPLIST_FILE = SatelliteForcastCoreTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.djben.SatelliteForcastCoreTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		EFAE1EF9266862B500A18A42 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 52RD2GH5DP;
-				INFOPLIST_FILE = SatelliteForcastCoreTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.djben.SatelliteForcastCoreTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1036,24 +726,6 @@
 			buildConfigurations = (
 				EF9D82B22661BBF100616C97 /* Debug */,
 				EF9D82B32661BBF100616C97 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		EFAE1EFA266862B500A18A42 /* Build configuration list for PBXNativeTarget "SatelliteForcastCore" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				EFAE1EF6266862B500A18A42 /* Debug */,
-				EFAE1EF7266862B500A18A42 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		EFAE1EFB266862B500A18A42 /* Build configuration list for PBXNativeTarget "SatelliteForcastCoreTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				EFAE1EF8266862B500A18A42 /* Debug */,
-				EFAE1EF9266862B500A18A42 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
