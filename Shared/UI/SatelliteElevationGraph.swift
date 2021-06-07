@@ -10,6 +10,7 @@ import SwiftUI
 import SatelliteKit
 import SatelliteForcastCore
 import CoreLocation
+import CombineRextensions
 
 struct SatelliteElevationGraphConfigs: Equatable {
     var timeGridLineInterval: TimeInterval
@@ -296,7 +297,7 @@ extension ViewProducer where Context == Void, ProducedView == SatelliteElevation
             SatelliteElevationGraph(
                 viewModel: viewModel
                     .projection(
-                        action: { _ in return nil },
+                        action: { _ -> AppAction in },
                         state: SatelliteElevationGraphState.project(state:)
                     )
                     .asObservableViewModel(initialState: .empty)

@@ -27,4 +27,8 @@ struct TLELoaderState: Equatable {
     static var empty: TLELoaderState {
         return TLELoaderState()
     }
+
+    func tle(noradIndex: Int) -> TLE? {
+        return tles.values.flatMap { $0 }.first { $0.noradIndex == noradIndex } ?? standaloneTLEs.first { $0.noradIndex == noradIndex }
+    }
 }

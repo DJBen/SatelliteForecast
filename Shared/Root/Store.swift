@@ -55,8 +55,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
 
                 <> EffectMiddleware.satelliteListView
                 .lift(
-                    inputAction: { $0.satelliteListView },
-                    state: SatelliteListViewState.project(state:)
+                    inputAction: { $0.satelliteListView }
                 )
 
 //                <> LoggerMiddleware()

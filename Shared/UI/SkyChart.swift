@@ -279,7 +279,7 @@ struct SkyChart_Previews: PreviewProvider {
 
         return sat.findPasses(
             observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
-            dateRange: date..<date.addingTimeInterval(800)
+            param: .dateRange(date..<date.addingTimeInterval(800))
         )
         .first!
         .snapshots
@@ -300,7 +300,7 @@ struct SkyChart_Previews: PreviewProvider {
 
         return sat.findPasses(
             observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
-            dateRange: date..<date.addingTimeInterval(800)
+            param: .dateRange(date..<date.addingTimeInterval(800))
         )
         .first!
         .snapshots

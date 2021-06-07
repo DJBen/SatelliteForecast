@@ -51,15 +51,17 @@ extension CoreLocationMiddleware: CLLocationManagerDelegate {
     }
 }
 
+fileprivate let logger = Logger(subsystem: "io.djben.coreLocation", category: "middleware")
+
 extension EffectMiddleware where InputActionType == CoreLocationOutputAction, OutputActionType == Never, StateType == Void, Dependencies == Void {
     static var coreLocationLogger: EffectMiddleware<CoreLocationOutputAction, Never, Void, Void> {
         EffectMiddleware<CoreLocationOutputAction, Never, Void, Void>
             .onAction { action, _, getState in
                 switch action {
                 case let .authorizationDidChange(authorizationStatus):
-                    os_log("[CoreLocation] authorization changed: \(authorizationStatus.rawValue))")
+                    logger.info("[CoreLocation] authorization changed: \(authorizationStatus.rawValue))")
                 case let .locationChanged(location):
-                    os_log("[CoreLocation] location changed: \(location)")
+                    logger.info("[CoreLocation] location changed: \(location)")
                 }
 
                 return .doNothing
