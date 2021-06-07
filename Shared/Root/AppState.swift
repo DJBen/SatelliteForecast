@@ -11,6 +11,7 @@ import SatelliteForcastCore
 
 struct AppState: Equatable {
     var allSnapshots: [String: [SatelliteSnapshot]] = [:]
+    /// The date range from which ephemerides are generated.
     var dateRange: Range<Date>
     var satelliteElevationGraphConfigs: SatelliteElevationGraphConfigs = .preset
 

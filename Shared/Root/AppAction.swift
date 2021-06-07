@@ -15,6 +15,7 @@ enum AppAction {
     case satelliteListView(SatelliteListViewAction)
     case satelliteDetailView(SatelliteDetailViewAction)
     case tlePropagator(TLEPropagatorAction)
+    case timer(TimerAction)
 }
 
 extension AppAction {
@@ -81,6 +82,28 @@ extension AppAction {
         set {
             guard case .satelliteDetailView = self, let newValue = newValue else { return }
             self = .satelliteDetailView(newValue)
+        }
+    }
+
+    public var tlePropagator: TLEPropagatorAction? {
+        get {
+            guard case let .tlePropagator(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .tlePropagator = self, let newValue = newValue else { return }
+            self = .tlePropagator(newValue)
+        }
+    }
+
+    public var timer: TimerAction? {
+        get {
+            guard case let .timer(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .timer = self, let newValue = newValue else { return }
+            self = .timer(newValue)
         }
     }
 }

@@ -6,14 +6,14 @@
 //
 
 import Foundation
+import os
 import Combine
 import CombineRex
 import SatelliteKit
 
+fileprivate let logger = Logger(subsystem: "io.djben.tleLoader", category: "middleware")
+
 struct TLELoaderDependencies {
-    /// A date to determine whether to refetch the new TLEs.
-    /// If the average TLE age is greater than the update interval, it will fetch the new TLEs rather than accessing the cached ones.
-    let updateReferenceDate: Date
     let updateInterval: TimeInterval = 4 * 60 * 60
 }
 
@@ -59,14 +59,16 @@ extension EffectMiddleware where
             case let .loadTLECategory(category):
                 return Effect(token: category) { context -> AnyPublisher<DispatchedAction<TLELoaderOutputAction>, Never> in
                     if let tles = getState().tles[category] {
-                        let averageTLEAge = tles.map {  context.dependencies.updateReferenceDate.timeIntervalSince(Date(daysSince1950: $0.t₀))
+                        let averageTLEAge = tles.map {  getState().referenceDate.timeIntervalSince(Date(daysSince1950: $0.t₀))
                         }
                         .reduce(0, +) / Double(tles.count)
 
                         if averageTLEAge > context.dependencies.updateInterval {
+                            logger.notice("Avg TLE age \(averageTLEAge) too old: updating.")
                             return publisher(category: category)
                         }
 
+                        logger.notice("Avg TLE age \(averageTLEAge) is new: skip update.")
                         return Empty<DispatchedAction<TLELoaderOutputAction>, Never>()
                             .eraseToAnyPublisher()
                     }

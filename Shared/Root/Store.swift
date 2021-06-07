@@ -26,7 +26,13 @@ class Store: ReduxStoreBase<AppAction, AppState> {
                 .lift(action: \.tleLoaderOutput, state: \.tleLoaderState)
 
                 <> Reducer<SatelliteListViewAction, AppState>.satelliteListViewReducer
-                .lift(action: \.satelliteListView),
+                .lift(action: \.satelliteListView)
+
+                <> Reducer<TLEPropagatorAction, AppState>.tlePropagatorReducer
+                .lift(action: \.tlePropagator)
+
+                <> Reducer<TimerAction, AppState>.timerReducer
+                .lift(action: \.timer),
             middleware: CoreLocationMiddleware()
                 .lift(
                     inputAction: \AppAction.coreLocationInput,
@@ -48,14 +54,18 @@ class Store: ReduxStoreBase<AppAction, AppState> {
                     state: \AppState.tleLoaderState
                 )
                 .inject(
-                    TLELoaderDependencies(
-                        updateReferenceDate: Date()
-                    )
+                    TLELoaderDependencies()
                 )
 
                 <> EffectMiddleware.satelliteListView
                 .lift(
                     inputAction: { $0.satelliteListView }
+                )
+
+                <> EffectMiddleware.timer
+                .lift(
+                    inputAction: { $0.timer },
+                    outputAction: AppAction.timer
                 )
 
 //                <> LoggerMiddleware()

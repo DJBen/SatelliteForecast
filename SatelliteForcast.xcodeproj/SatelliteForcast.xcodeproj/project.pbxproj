@@ -12,12 +12,12 @@
 		EF1CAB32266B7ABF006319C8 /* SatelliteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CAB31266B7ABF006319C8 /* SatelliteDetailView.swift */; };
 		EF1CAB36266B87B6006319C8 /* SatelliteListViewReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CAB35266B87B6006319C8 /* SatelliteListViewReducer.swift */; };
 		EF1CAB39266B8934006319C8 /* SatelliteListViewMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CAB38266B8934006319C8 /* SatelliteListViewMiddleware.swift */; };
+		EF1CAB46266CC90C006319C8 /* TLEPropagatorAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CAB44266CC8F2006319C8 /* TLEPropagatorAction.swift */; };
 		EF1CAB4C266DBD38006319C8 /* SatelliteListViewMiddlewareTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CAB4B266DBD38006319C8 /* SatelliteListViewMiddlewareTests.swift */; platformFilter = ios; };
+		EF35EAD1266E1A37004FE7FD /* TLEPropagatorReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF35EAD0266E1A37004FE7FD /* TLEPropagatorReducer.swift */; };
+		EF35EAD3266E1EC6004FE7FD /* TimerMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF35EAD2266E1EC6004FE7FD /* TimerMiddleware.swift */; };
+		EF35EAD7266E2220004FE7FD /* TimerReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF35EAD6266E2220004FE7FD /* TimerReducer.swift */; };
 		EF4AF76C266434CC00D28F47 /* SkyChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4AF76B266434CC00D28F47 /* SkyChart.swift */; };
-		EF5CB017266E28EE000019DA /* TimerReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5CB016266E28EE000019DA /* TimerReducer.swift */; };
-		EF5CB019266E28FC000019DA /* TimerMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5CB018266E28FC000019DA /* TimerMiddleware.swift */; };
-		EF5CB01D266E2933000019DA /* TLEPropagatorReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5CB01B266E2933000019DA /* TLEPropagatorReducer.swift */; };
-		EF5CB01E266E2933000019DA /* TLEPropagatorAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5CB01C266E2933000019DA /* TLEPropagatorAction.swift */; };
 		EF7A311E266AFBF800CC33C0 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A311D266AFBF800CC33C0 /* Store.swift */; };
 		EF7A3122266B03B400CC33C0 /* CoreLocationMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A3121266B03B400CC33C0 /* CoreLocationMiddleware.swift */; };
 		EF7A3125266B1A2500CC33C0 /* CoreLocationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A3124266B1A2500CC33C0 /* CoreLocationState.swift */; };
@@ -86,12 +86,12 @@
 		EF1CAB31266B7ABF006319C8 /* SatelliteDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteDetailView.swift; sourceTree = "<group>"; };
 		EF1CAB35266B87B6006319C8 /* SatelliteListViewReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteListViewReducer.swift; sourceTree = "<group>"; };
 		EF1CAB38266B8934006319C8 /* SatelliteListViewMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteListViewMiddleware.swift; sourceTree = "<group>"; };
+		EF1CAB44266CC8F2006319C8 /* TLEPropagatorAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TLEPropagatorAction.swift; sourceTree = "<group>"; };
 		EF1CAB4B266DBD38006319C8 /* SatelliteListViewMiddlewareTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteListViewMiddlewareTests.swift; sourceTree = "<group>"; };
+		EF35EAD0266E1A37004FE7FD /* TLEPropagatorReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TLEPropagatorReducer.swift; sourceTree = "<group>"; };
+		EF35EAD2266E1EC6004FE7FD /* TimerMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TimerMiddleware.swift; path = Shared/TimerMiddleware.swift; sourceTree = SOURCE_ROOT; };
+		EF35EAD6266E2220004FE7FD /* TimerReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerReducer.swift; sourceTree = "<group>"; };
 		EF4AF76B266434CC00D28F47 /* SkyChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyChart.swift; sourceTree = "<group>"; };
-		EF5CB016266E28EE000019DA /* TimerReducer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimerReducer.swift; sourceTree = "<group>"; };
-		EF5CB018266E28FC000019DA /* TimerMiddleware.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimerMiddleware.swift; sourceTree = "<group>"; };
-		EF5CB01B266E2933000019DA /* TLEPropagatorReducer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TLEPropagatorReducer.swift; sourceTree = "<group>"; };
-		EF5CB01C266E2933000019DA /* TLEPropagatorAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TLEPropagatorAction.swift; sourceTree = "<group>"; };
 		EF7A311D266AFBF800CC33C0 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		EF7A3121266B03B400CC33C0 /* CoreLocationMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreLocationMiddleware.swift; sourceTree = "<group>"; };
 		EF7A3124266B1A2500CC33C0 /* CoreLocationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreLocationState.swift; sourceTree = "<group>"; };
@@ -181,6 +181,15 @@
 			path = SatelliteDetailView;
 			sourceTree = "<group>";
 		};
+		EF35EAD5266E2215004FE7FD /* Timer */ = {
+			isa = PBXGroup;
+			children = (
+				EF35EAD2266E1EC6004FE7FD /* TimerMiddleware.swift */,
+				EF35EAD6266E2220004FE7FD /* TimerReducer.swift */,
+			);
+			path = Timer;
+			sourceTree = "<group>";
+		};
 		EF4AF76A266434A500D28F47 /* UI */ = {
 			isa = PBXGroup;
 			children = (
@@ -191,24 +200,6 @@
 				EFAE1F122669E7A800A18A42 /* SunlightIndicator.swift */,
 			);
 			path = UI;
-			sourceTree = "<group>";
-		};
-		EF5CB015266E28EE000019DA /* Timer */ = {
-			isa = PBXGroup;
-			children = (
-				EF5CB018266E28FC000019DA /* TimerMiddleware.swift */,
-				EF5CB016266E28EE000019DA /* TimerReducer.swift */,
-			);
-			path = Timer;
-			sourceTree = "<group>";
-		};
-		EF5CB01A266E2933000019DA /* TLEPropagator */ = {
-			isa = PBXGroup;
-			children = (
-				EF5CB01B266E2933000019DA /* TLEPropagatorReducer.swift */,
-				EF5CB01C266E2933000019DA /* TLEPropagatorAction.swift */,
-			);
-			path = TLEPropagator;
 			sourceTree = "<group>";
 		};
 		EF7A3120266B03A100CC33C0 /* CoreLocation */ = {
@@ -257,17 +248,18 @@
 		EF9D82792661BBEF00616C97 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				EF5CB015266E28EE000019DA /* Timer */,
 				EF7A318D266B6ABC00CC33C0 /* Root */,
 				EF4AF76A266434A500D28F47 /* UI */,
 				EF7A3130266B489A00CC33C0 /* TLELoader */,
-				EF5CB01A266E2933000019DA /* TLEPropagator */,
 				EF7A3120266B03A100CC33C0 /* CoreLocation */,
+				EF35EAD5266E2215004FE7FD /* Timer */,
 				EF9D827A2661BBF000616C97 /* SatelliteForcastApp.swift */,
 				EF7A319A266B733C00CC33C0 /* LocalizedStrings.swift */,
 				EF9D827C2661BBF000616C97 /* Assets.xcassets */,
 				EF7A312D266B1D7B00CC33C0 /* LoggerMiddleware.swift */,
+				EF1CAB44266CC8F2006319C8 /* TLEPropagatorAction.swift */,
 				EF864272266DFFE9004F0AFA /* Info.plist */,
+				EF35EAD0266E1A37004FE7FD /* TLEPropagatorReducer.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -477,25 +469,25 @@
 			files = (
 				EF7A3122266B03B400CC33C0 /* CoreLocationMiddleware.swift in Sources */,
 				EF7A311E266AFBF800CC33C0 /* Store.swift in Sources */,
-				EF5CB017266E28EE000019DA /* TimerReducer.swift in Sources */,
 				EF7A3132266B493300CC33C0 /* TLELoaderMiddleware.swift in Sources */,
 				EF7A312B266B1A3800CC33C0 /* CoreLocationReducer.swift in Sources */,
+				EF1CAB46266CC90C006319C8 /* TLEPropagatorAction.swift in Sources */,
 				EFAE1F132669E7A800A18A42 /* SunlightIndicator.swift in Sources */,
 				EFAE1F0C2668B10F00A18A42 /* SatelliteElevationGraph.swift in Sources */,
 				EF7A3194266B6B0B00CC33C0 /* AppAction.swift in Sources */,
+				EF35EAD1266E1A37004FE7FD /* TLEPropagatorReducer.swift in Sources */,
 				EF1CAB36266B87B6006319C8 /* SatelliteListViewReducer.swift in Sources */,
+				EF35EAD7266E2220004FE7FD /* TimerReducer.swift in Sources */,
 				EF7A3125266B1A2500CC33C0 /* CoreLocationState.swift in Sources */,
 				EF1CAB39266B8934006319C8 /* SatelliteListViewMiddleware.swift in Sources */,
 				EF1CAB32266B7ABF006319C8 /* SatelliteDetailView.swift in Sources */,
 				EF7A3128266B1A2D00CC33C0 /* CoreLocationAction.swift in Sources */,
 				EF7A3198266B6E4900CC33C0 /* SatelliteListView.swift in Sources */,
-				EF5CB019266E28FC000019DA /* TimerMiddleware.swift in Sources */,
+				EF35EAD3266E1EC6004FE7FD /* TimerMiddleware.swift in Sources */,
 				EF7A3192266B6AFC00CC33C0 /* AppState.swift in Sources */,
 				EF4AF76C266434CC00D28F47 /* SkyChart.swift in Sources */,
 				EF7A3138266B4A5300CC33C0 /* TLELoaderAction.swift in Sources */,
 				EF7A3135266B493E00CC33C0 /* TLELoaderState.swift in Sources */,
-				EF5CB01D266E2933000019DA /* TLEPropagatorReducer.swift in Sources */,
-				EF5CB01E266E2933000019DA /* TLEPropagatorAction.swift in Sources */,
 				EF7A319B266B733C00CC33C0 /* LocalizedStrings.swift in Sources */,
 				EF9D82A32661BBF100616C97 /* SatelliteForcastApp.swift in Sources */,
 				EF7A312E266B1D7B00CC33C0 /* LoggerMiddleware.swift in Sources */,

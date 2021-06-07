@@ -38,6 +38,9 @@ struct SatelliteDetailView: View {
             if let tle = viewModel.state.tle {
                 VStack {
                     elevationGraphProducer.view()
+
+                    Text("Placeholder")
+                        .frame(width: 100, height: 300, alignment: .center)
                 }
                 .navigationTitle(tle.commonName)
                 .onAppear {

@@ -33,7 +33,8 @@ extension EffectMiddleware where
                 case .onAppear:
                     return .sequence(
                         .coreLocationInput(.requestAuthorization),
-                        .tleLoaderInput(.loadTLECategory(.brightest100))
+                        .tleLoaderInput(.loadTLECategory(.brightest100)),
+                        .timer(.start)
                     )
                 case let .selectSatellite(noradIndex):
                     return Effect { context -> AnyPublisher<DispatchedAction<AppAction>, Never> in

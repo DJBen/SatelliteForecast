@@ -21,6 +21,7 @@ enum TLECategory: Equatable, Hashable {
 }
 
 struct TLELoaderState: Equatable {
+    var referenceDate: Date = Date()
     var tles: [TLECategory: [TLE]] = [:]
     var standaloneTLEs: [TLE] = []
 

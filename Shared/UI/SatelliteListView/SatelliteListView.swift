@@ -55,6 +55,7 @@ struct SatelliteListView: View {
                             ) {
                                 Text(tle.commonName)
                             }
+                            .id(tle.noradIndex)
                         }
                     }
                 }

@@ -279,8 +279,8 @@ struct SatelliteElevationGraph: View {
                         }
                     }
                     .frame(
-                        width: rect.width,
-                        height: rect.height,
+                        width: max(0, rect.width),
+                        height: max(0, rect.height),
                         alignment: .leading
                     )
                 }
