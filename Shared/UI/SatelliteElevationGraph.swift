@@ -150,6 +150,7 @@ struct SatelliteElevationGraphState: Equatable {
 
 struct SatelliteElevationGraph: View {
     @ObservedObject var viewModel: ObservableViewModel<SatelliteElevationGraphAction, SatelliteElevationGraphState>
+    @State private var contentSize: CGSize = .zero
 
     private var timeGrid: some View {
         GeometryReader { geometry in
@@ -189,16 +190,22 @@ struct SatelliteElevationGraph: View {
                     path.addLine(to: CGPoint(x: rect.maxX, y: rect.midY))
                 }
                 .stroke(Color.gray, lineWidth: 1)
+            }
+        }
+    }
 
-                ForEach(Array(elevIterator), id: \.self) { elev in
-                    let y = CGFloat(elev + 90) / 180 * rect.height
+    private var elevationText: some View {
+        ZStack {
+            let elevIterator = stride(from: -90.0, to: 90.0, by: viewModel.state.elevationGridLineInterval)
 
-                    Text("\(Int(-elev))º")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                        .frame(height: 30, alignment: .bottomTrailing)
-                        .position(x: 15, y: y)
-                }
+            ForEach(Array(elevIterator), id: \.self) { elev in
+                let y = CGFloat(elev + 90) / 180 * self.contentSize.height
+
+                Text("\(Int(-elev))º")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+                    .frame(height: 30, alignment: .bottomTrailing)
+                    .position(x: 15, y: y)
             }
         }
     }
@@ -243,48 +250,54 @@ struct SatelliteElevationGraph: View {
             let initialRect = geometry.frame(in: .local)
             let rect = viewModel.state.contentRect(initialRect)
 
-            ScrollView(
-                .horizontal,
-                showsIndicators: false,
-                content: {
-                    VStack(
-                        alignment: .leading,
-                        spacing: 4
-                    ) {
-                        timeGrid
-                            .overlay(elevationGrid)
-                            .overlay(satelliteElevationPlot)
-                            .overlay(satelliteDarknessPath)
+            ZStack {
+                ScrollView(
+                    .horizontal,
+                    showsIndicators: false,
+                    content: {
+                        VStack(
+                            alignment: .leading,
+                            spacing: 4
+                        ) {
+                            timeGrid
+                                .overlay(elevationGrid)
+                                .overlay(satelliteElevationPlot)
+                                .overlay(satelliteDarknessPath)
+                                .modifier(SizeModifier())
+                                .onPreferenceChange(SizePreferenceKey.self) { self.contentSize = $0 }
 
-                        SunlightIndicator(
-                            viewModel: SunlightIndicatorViewModel(
-                                snapshots: viewModel.state.snapshots,
-                                dateRange: viewModel.state.dateRange
+                            SunlightIndicator(
+                                viewModel: SunlightIndicatorViewModel(
+                                    snapshots: viewModel.state.snapshots,
+                                    dateRange: viewModel.state.dateRange
+                                )
                             )
-                        )
-                        .frame(height: 24)
+                            .frame(height: 24)
 
-                        HStack(alignment: .center, spacing: 0) {
-                            ForEach(viewModel.state.xPercentDatePair, id: \.0) { (xPercent, date, index) in
-                                VStack {
-                                    Text(
-                                        formatter.string(from: date)
-                                    )
-                                    .font(.caption)
-                                    .foregroundColor(.gray)
-                                    .frame(width: 80)
-                                    .offset(x: CGFloat(xPercent) * rect.width - CGFloat(index) * 80 - 40)
+                            HStack(alignment: .center, spacing: 0) {
+                                ForEach(viewModel.state.xPercentDatePair, id: \.0) { (xPercent, date, index) in
+                                    VStack {
+                                        Text(
+                                            formatter.string(from: date)
+                                        )
+                                        .font(.caption)
+                                        .foregroundColor(.gray)
+                                        .frame(width: 80)
+                                        .offset(x: CGFloat(xPercent) * rect.width - CGFloat(index) * 80 - 40)
+                                    }
                                 }
                             }
                         }
+                        .frame(
+                            width: max(0, rect.width),
+                            height: max(0, rect.height),
+                            alignment: .leading
+                        )
                     }
-                    .frame(
-                        width: max(0, rect.width),
-                        height: max(0, rect.height),
-                        alignment: .leading
-                    )
-                }
-            )
+                )
+
+                elevationText
+            }
         }
     }
 }
