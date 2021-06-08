@@ -14,6 +14,7 @@ enum AppAction {
     case tleLoaderOutput(TLELoaderOutputAction)
     case satelliteListView(SatelliteListViewAction)
     case satelliteDetailView(SatelliteDetailViewAction)
+    case satelliteElevationGraph(SatelliteElevationGraphAction)
     case skyChart(SkyChartAction)
     case tlePropagator(TLEPropagatorAction)
     case timer(TimerAction)
