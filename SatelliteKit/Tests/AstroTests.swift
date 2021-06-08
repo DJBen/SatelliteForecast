@@ -57,4 +57,10 @@ class AstroTests: XCTestCase {
         print(azEl)
     }
 
+    func testSolarGeo() {
+        let formatter = ISO8601DateFormatter()
+        let (ra, dec) = solarGeo(julianDays: formatter.date(from: "2021-06-07T17:41:00-0600")!.julianDate)
+        XCTAssertEqual(ra, hms2deg(hms: (5, 5, 31.83)), accuracy: 0.1)
+        XCTAssertEqual(dec, 22.846, accuracy: 0.1)
+    }
 }

@@ -39,28 +39,35 @@ struct SatelliteListView: View {
 
     var body: some View {
         NavigationView {
-            List {
-                ForEach(Array(viewModel.state.tlesByCategory.keys), id: \.self) { category in
-                    Section(
-                        header: Text(LocalizedStrings.SatelliteListView.sectionHeader(from: category))
-                    ) {
-                        ForEach(viewModel.state.tlesByCategory[category] ?? [], id: \.noradIndex) { tle in
-                            NavigationLink(
-                                destination: detailViewProducer.view(),
-                                tag: tle.noradIndex,
-                                selection: Binding<Int?>(
-                                    get: { viewModel.state.selectedNoradIndex },
-                                    set: { viewModel.dispatch(.selectSatellite(noradIndex: $0)) }
-                                )
-                            ) {
-                                Text(tle.commonName)
+            if viewModel.state.tlesByCategory.isEmpty {
+                ProgressView {
+                    Text("Loading...")
+                }
+                .navigationTitle("Satellites")
+            } else {
+                List {
+                    ForEach(Array(viewModel.state.tlesByCategory.keys), id: \.self) { category in
+                        Section(
+                            header: Text(LocalizedStrings.SatelliteListView.sectionHeader(from: category))
+                        ) {
+                            ForEach(viewModel.state.tlesByCategory[category] ?? [], id: \.noradIndex) { tle in
+                                NavigationLink(
+                                    destination: detailViewProducer.view(),
+                                    tag: tle.noradIndex,
+                                    selection: Binding<Int?>(
+                                        get: { viewModel.state.selectedNoradIndex },
+                                        set: { viewModel.dispatch(.selectSatellite(noradIndex: $0)) }
+                                    )
+                                ) {
+                                    Text(tle.commonName)
+                                }
+                                .id(tle.noradIndex)
                             }
-                            .id(tle.noradIndex)
                         }
                     }
+                    .navigationTitle("Satellites")
                 }
             }
-            .navigationTitle("Satellites")
         }
         .onAppear {
             viewModel.dispatch(.onAppear)

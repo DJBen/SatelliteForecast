@@ -36,11 +36,13 @@ struct SatelliteDetailView: View {
 
     var body: some View {
         if let tle = viewModel.state.tle {
-            VStack(spacing: 10) {
-                elevationGraphProducer.view()
+            VStack(spacing: 20) {
+                Spacer()
                 skyChartProducer.view()
-                    .padding(20)
                     .frame(idealHeight: 500, maxHeight: .infinity)
+
+                elevationGraphProducer.view()
+                    .frame(height: 250, alignment: .leading)
             }
             .navigationTitle(tle.commonName)
             .onAppear {

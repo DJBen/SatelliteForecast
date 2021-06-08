@@ -28,6 +28,9 @@ class Store: ReduxStoreBase<AppAction, AppState> {
                 <> Reducer<SatelliteListViewAction, AppState>.satelliteListViewReducer
                 .lift(action: \.satelliteListView)
 
+                <> Reducer<SkyChartAction, SkyChartRootState>.skyChartReducer
+                .lift(action: \.skyChart, state: \.skyChartState)
+
                 <> Reducer<TLEPropagatorAction, AppState>.tlePropagatorReducer
                 .lift(action: \.tlePropagator)
 
@@ -65,6 +68,13 @@ class Store: ReduxStoreBase<AppAction, AppState> {
                 <> EffectMiddleware.satelliteDetailView
                 .lift(
                     inputAction: { $0.satelliteDetailView }
+                )
+
+                <> EffectMiddleware.skyChart
+                .lift(
+                    inputAction: { $0.skyChart },
+                    outputAction: AppAction.skyChart,
+                    state: \.skyChartState
                 )
 
                 <> EffectMiddleware.timer

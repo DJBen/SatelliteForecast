@@ -14,6 +14,7 @@ enum AppAction {
     case tleLoaderOutput(TLELoaderOutputAction)
     case satelliteListView(SatelliteListViewAction)
     case satelliteDetailView(SatelliteDetailViewAction)
+    case skyChart(SkyChartAction)
     case tlePropagator(TLEPropagatorAction)
     case timer(TimerAction)
 }
@@ -82,6 +83,17 @@ extension AppAction {
         set {
             guard case .satelliteDetailView = self, let newValue = newValue else { return }
             self = .satelliteDetailView(newValue)
+        }
+    }
+
+    public var skyChart: SkyChartAction? {
+        get {
+            guard case let .skyChart(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .skyChart = self, let newValue = newValue else { return }
+            self = .skyChart(newValue)
         }
     }
 

@@ -25,7 +25,8 @@ struct SkyChartConfigs: Equatable {
 }
 
 enum SkyChartAction {
-
+    case onAppear
+    case loadedBackgroundSky(stars: [Star], constellations: Set<Constellation>)
 }
 
 /// The root state of sky charts.
@@ -33,6 +34,10 @@ struct SkyChartRootState: Equatable {
     var skyReferenceDate: Date
     var passInformation: [PassInformation] = []
     var configs: SkyChartConfigs = .preset
+
+    // Background sky that is async loaded
+    var stars: [Star] = []
+    var constellations: Set<Constellation> = []
 }
 
 /// A state used in a single sky chart view
@@ -44,13 +49,15 @@ enum SkyChartState: Equatable {
         LatLonAlt,
         skyReferenceDate: Date,
         passInformation: PassInformation?,
-        configs: SkyChartConfigs = .preset
+        configs: SkyChartConfigs = .preset,
+        stars: [Star] = [],
+        constellations: Set<Constellation> = []
     )
 
     var configs: SkyChartConfigs {
         switch self {
         case let .locationNotDetermined(configs),
-             let .observer(_, skyReferenceDate: _, passInformation: _, configs: configs):
+             let .observer(_, skyReferenceDate: _, passInformation: _, configs: configs, stars: _, constellations: _):
             return configs
         }
     }
@@ -62,7 +69,9 @@ enum SkyChartState: Equatable {
                 skyReferenceDate: state.skyChartState.skyReferenceDate,
                 // TODO #3: Support multiple pass charts
                 passInformation: state.skyChartState.passInformation.first,
-                configs: state.skyChartConfigs
+                configs: state.skyChartConfigs,
+                stars: state.skyChartState.stars,
+                constellations: state.skyChartState.constellations
             )
         } else {
             return .locationNotDetermined(configs: state.skyChartConfigs)
@@ -102,7 +111,7 @@ struct SkyChart: View {
 
     private var pathFromSortedSatelliteSnapshots: some View {
         switch viewModel.state {
-        case let .observer(observerCoordinate, skyReferenceDate, passInformation, _):
+        case let .observer(observerCoordinate, skyReferenceDate, passInformation, _, _, _):
             return AnyView(GeometryReader { geometry in
                 let rect = geometry.frame(in: .local)
 
@@ -154,11 +163,10 @@ struct SkyChart: View {
 
     var starPath: some View {
         switch viewModel.state {
-        case let .observer(observerCoordinate, skyReferenceDate, _, _):
+        case let .observer(observerCoordinate, skyReferenceDate, _, _, stars, _):
             return AnyView(GeometryReader { geometry in
                 let rect = geometry.frame(in: .local)
                 Path { path in
-                    let stars = Star.magitudeLessThan(4.5)
                     for star in stars {
                         let (alt, azi) = azel(
                             time: skyReferenceDate,
@@ -183,11 +191,11 @@ struct SkyChart: View {
 
     var constellationLinesPath: some View {
         switch viewModel.state {
-        case let .observer(observerCoordinate, skyReferenceDate, _, _):
+        case let .observer(observerCoordinate, skyReferenceDate, _, _, _, constellations):
             return AnyView(GeometryReader { geometry in
                 let rect = geometry.frame(in: .local)
                 Path { path in
-                    for constellation in Constellation.all {
+                    for constellation in constellations {
                         guard let center = constellation.displayCenter else {
                             continue
                         }
@@ -228,7 +236,7 @@ struct SkyChart: View {
 
     var azimuthMarkTexts: some View {
         switch viewModel.state {
-        case let .observer(observerCoordinate, _, _, _):
+        case let .observer(observerCoordinate, _, _, _, _, _):
             return AnyView(GeometryReader { geometry in
                 let rect = geometry.frame(in: .local)
                 let radius = radius(fromRect: rect)
@@ -278,24 +286,82 @@ struct SkyChart: View {
         }
     }
 
-    var moonShape: some View {
+    func planetView<Content: View, Label: View>(
+        getRaDec: (Double) -> (ra: Double, dec: Double),
+        planetViewGenerator: @escaping () -> Content,
+        @ViewBuilder labelBuilder: @escaping () -> Label
+    ) -> some View {
         switch viewModel.state {
-        case let .observer(observerCoordinate, skyReferenceDate, _, _):
+        case let .observer(observerCoordinate, skyReferenceDate, _, _, _, _):
             let (alt, azi) = azel(
                 time: skyReferenceDate,
                 site: (observerCoordinate.lat, observerCoordinate.lon),
-                cele: lunarGeo(julianDays: skyReferenceDate.julianDate)
+                cele: getRaDec(skyReferenceDate.julianDate)
             )
-            let moonCoordinate = AziEleDst(azim: azi, elev: alt, dist: 0)
+            let planetCoordinate = AziEleDst(azim: azi, elev: alt, dist: 0)
+
+            if planetCoordinate.elev < 0 {
+                return AnyView(EmptyView())
+            }
 
             return AnyView(GeometryReader { geometry in
                 let rect = geometry.frame(in: .local)
+                ZStack {
+                    HStack(spacing: 0) {
+                        planetViewGenerator()
 
-                HStack(spacing: 10) {
+                        labelBuilder()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .position(
+                        pointAtHorizontalCoordinate(
+                            planetCoordinate,
+                            rect: rect
+                        )
+                    )
+                }
+            })
+        case .locationNotDetermined(_):
+            return AnyView(EmptyView())
+        }
+    }
+
+    var sunView: some View {
+        GeometryReader { geometry in
+            let rect = geometry.frame(in: .local)
+            planetView(
+                getRaDec: solarGeo,
+                planetViewGenerator: {
                     Path { path in
-                        if moonCoordinate.elev < 0 {
-                            return
-                        }
+                        path.addArc(
+                            center: CGPoint(x: rect.midX, y: rect.midY),
+                            radius: 8,
+                            startAngle: Angle(degrees: 0),
+                            endAngle: Angle(degrees: 360),
+                            clockwise: false
+                        )
+                    }
+                    .fill()
+                    .foregroundColor(.yellow)
+                    .shadow(color: .yellow, radius: 12, x: 0.0, y: 0.0)
+                },
+                labelBuilder: {
+                    Text("Sun")
+                        .font(.caption2)
+                        .foregroundColor(.orange)
+                        .offset(x: 10)
+                }
+            )
+        }
+    }
+
+    var moonView: some View {
+        GeometryReader { geometry in
+            let rect = geometry.frame(in: .local)
+            planetView(
+                getRaDec: lunarGeo,
+                planetViewGenerator: {
+                    Path { path in
                         path.addArc(
                             center: CGPoint(x: rect.midX, y: rect.midY),
                             radius: 5,
@@ -306,21 +372,15 @@ struct SkyChart: View {
                     }
                     .fill()
                     .foregroundColor(.gray)
-
+                    .shadow(color: .yellow.opacity(0.7), radius: 8, x: 0.0, y: 0.0)
+                },
+                labelBuilder: {
                     Text("Moon")
                         .font(.caption2)
                         .foregroundColor(.blue)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .offset(x: 8)
                 }
-                .position(
-                    pointAtHorizontalCoordinate(
-                        moonCoordinate,
-                        rect: rect
-                    )
-                )
-            })
-        case .locationNotDetermined(_):
-            return AnyView(EmptyView())
+            )
         }
     }
 
@@ -332,7 +392,12 @@ struct SkyChart: View {
             .overlay(backgroundPath)
             .overlay(azimuthMarks)
             .overlay(azimuthMarkTexts)
-            .overlay(moonShape)
+            .overlay(moonView)
+            .overlay(sunView)
+            .id(UUID())
+            .onAppear {
+                viewModel.dispatch(.onAppear)
+            }
     }
 }
 
@@ -342,7 +407,7 @@ extension ViewProducer where Context == Void, ProducedView == SkyChart {
             SkyChart(
                 viewModel: viewModel
                     .projection(
-                        action: { _ -> AppAction in },
+                        action: { AppAction.skyChart($0) },
                         state: SkyChartState.project(state:)
                     )
                     .asObservableViewModel(
@@ -395,6 +460,9 @@ struct SkyChart_Previews: PreviewProvider {
     }()
 
     static var previews: some View {
+        let stars = Star.magitudeLessThan(4.5)
+        let constellations = Constellation.all
+
         SkyChart(
             viewModel: .mock(
                 state: .observer(
@@ -404,7 +472,9 @@ struct SkyChart_Previews: PreviewProvider {
                         return formatter.date(from: "2021-06-02T20:40:00+0800")!
                     }(),
                     passInformation: issPass,
-                    configs: .preset
+                    configs: .preset,
+                    stars: stars,
+                    constellations: constellations
                 )
             )
         )
@@ -419,7 +489,9 @@ struct SkyChart_Previews: PreviewProvider {
                         return formatter.date(from: "2021-06-02T06:34:46-0600")!
                     }(),
                     passInformation: tianHePass,
-                    configs: .preset
+                    configs: .preset,
+                    stars: stars,
+                    constellations: constellations
                 )
             )
         )

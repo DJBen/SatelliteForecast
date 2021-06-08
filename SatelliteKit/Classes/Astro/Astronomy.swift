@@ -91,13 +91,12 @@ public func solarCel(julianDays: Double) -> Vector {
                   sin(solarEclpLong) * sin(eclipticInclin))
 }
 
-//  Declination (delta) and Right Ascension (alpha) are returned as decimal degrees.
-
+//  Right Ascension (alpha) and Declination (delta) are returned as decimal degrees.
 public func solarGeo(julianDays: Double) -> (Double, Double) {
     let     solarVector: Vector = solarCel(julianDays: julianDays)
 
-    return (asin(solarVector.z) * rad2deg,
-            atan2pi(solarVector.y, solarVector.x) * rad2deg)
+    return (atan2pi(solarVector.y, solarVector.x) * rad2deg,
+            asin(solarVector.z) * rad2deg)
 }
 
 /*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -136,15 +135,17 @@ public func lunarCel(julianDays: Double) -> Vector {
     return Vector(moonX1, moonY1, moonZ1)
 }
 
-//  (Declination, Right_Ascension) are returned as decimal degrees.
+//  (Right_Ascension, Declination) are returned as decimal degrees.
 
 public func lunarGeo (julianDays: Double) -> (Double, Double) {
     let     lunarVector: Vector = lunarCel(julianDays: julianDays)
 
-    return (asin(lunarVector.z / (lunarVector.x * lunarVector.x +
-                                  lunarVector.y * lunarVector.y +
-                                  lunarVector.z * lunarVector.z).squareRoot()) * rad2deg,
-            atan2pi(lunarVector.y, lunarVector.x) * rad2deg)
+    return (
+        atan2pi(lunarVector.y, lunarVector.x) * rad2deg,
+        asin(lunarVector.z / (lunarVector.x * lunarVector.x +
+            lunarVector.y * lunarVector.y +
+            lunarVector.z * lunarVector.z).squareRoot()) * rad2deg
+    )
 }
 
 /*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓

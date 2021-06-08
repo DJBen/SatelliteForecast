@@ -26,7 +26,8 @@ extension EffectMiddleware where
                 switch action {
                 case .start:
                     return Effect { context -> AnyPublisher<DispatchedAction<TimerAction>, Never> in
-                        Timer.publish(every: 1, on: .current, in: .default)
+                        Timer.publish(every: 1, on: .main, in: .default)
+                            .autoconnect()
                             .map { DispatchedAction(TimerAction.tick($0)) }
                             .eraseToAnyPublisher()
                     }
