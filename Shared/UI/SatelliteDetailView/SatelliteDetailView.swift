@@ -98,7 +98,7 @@ struct SatelliteDetailView_Previews: PreviewProvider {
             satelliteElevationGraphConfigs: .preset,
             skyChartState: SkyChartRootState(
                 skyReferenceDate: Date(),
-                passInformation: passes
+                passInformation: [tle.noradIndex: passes]
             ),
             tleLoaderState: TLELoaderState(
                 tles: [.brightest100: [tle]]
@@ -127,7 +127,7 @@ struct SatelliteDetailView_Previews: PreviewProvider {
             skyChartProducer: .pure(
                 SkyChart(
                     viewModel: .mock(
-                        state: SkyChartState.project(
+                        state: SkyChartState.projectPassingMode(
                             state: appState
                         )
                     )

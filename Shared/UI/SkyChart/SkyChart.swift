@@ -32,7 +32,7 @@ enum SkyChartAction {
 /// The root state of sky charts.
 struct SkyChartRootState: Equatable {
     var skyReferenceDate: Date
-    var passInformation: [PassInformation] = []
+    var passInformation: [Int: [PassInformation]] = [:]
     var configs: SkyChartConfigs = .preset
 
     // Background sky that is async loaded
@@ -41,41 +41,76 @@ struct SkyChartRootState: Equatable {
 }
 
 /// A state used in a single sky chart view
-enum SkyChartState: Equatable {
-    case locationNotDetermined(
-        configs: SkyChartConfigs = .preset
-    )
-    case observer(
-        LatLonAlt,
-        skyReferenceDate: Date,
-        passInformation: PassInformation?,
-        configs: SkyChartConfigs = .preset,
-        stars: [Star] = [],
-        constellations: Set<Constellation> = []
-    )
+struct SkyChartState: Equatable {
+    enum Mode: Equatable {
+        /// Display a placeholder.
+        case notReady
+        /// Display the sky at date. This option will not show any satellite passes.
+        case sky(Date, observer: LatLonAlt)
+        /// Display a satellite pass. The background sky's date will be the approx time of higest elevation of the pass.
+        case pass(PassInformation, observer: LatLonAlt)
 
-    var configs: SkyChartConfigs {
-        switch self {
-        case let .locationNotDetermined(configs),
-             let .observer(_, skyReferenceDate: _, passInformation: _, configs: configs, stars: _, constellations: _):
-            return configs
+        /// The reference date for the background sky, if available.
+        /// No background sky will be drawn if this returns `nil`.
+        var referenceDate: Date? {
+            switch self {
+            case let .sky(date, _):
+                return date
+            case let .pass(passInformation, _):
+                return passInformation.risesAt ?? passInformation.setsAt
+            case .notReady:
+                return nil
+            }
+        }
+
+        /// The observer corodinate, if available.
+        /// Nothing will be drawn if this property is missing.
+        var observer: LatLonAlt? {
+            switch self {
+            case let .pass(_, observer: observer), let .sky(_, observer: observer):
+                return observer
+            case .notReady:
+                return nil
+            }
+        }
+
+        var passInformation: PassInformation? {
+            switch self {
+            case let .pass(passInformation, observer: _):
+                return passInformation
+            default:
+                return nil
+            }
         }
     }
 
-    static func project(state: AppState) -> SkyChartState {
-        if let observerCoodinate = state.coreLocationState.location.map(LatLonAlt.init) {
-            return .observer(
-                observerCoodinate,
-                skyReferenceDate: state.skyChartState.skyReferenceDate,
-                // TODO #3: Support multiple pass charts
-                passInformation: state.skyChartState.passInformation.first,
-                configs: state.skyChartConfigs,
-                stars: state.skyChartState.stars,
-                constellations: state.skyChartState.constellations
-            )
-        } else {
-            return .locationNotDetermined(configs: state.skyChartConfigs)
+    var mode: Mode = .notReady
+    var configs: SkyChartConfigs = .preset
+    var stars: [Star] = []
+    var constellations: Set<Constellation> = []
+
+    static func projectPassingMode(state: AppState) -> SkyChartState {
+        guard let observerCoodinate = state.coreLocationState.location.map(LatLonAlt.init) else {
+            return SkyChartState(mode: .notReady)
         }
+        let passInformation: PassInformation? = {
+            if let noradIndex = state.selectedSatelliteNoradIndex {
+                return state.skyChartState.passInformation[noradIndex]?
+                    .first { $0.risesAt != nil && $0.risesAt! > state.skyChartState.skyReferenceDate }
+            } else {
+                return nil
+            }
+        }()
+        return SkyChartState(
+            mode: passInformation.map { Mode.pass($0, observer: observerCoodinate) } ?? .notReady,
+            configs: state.skyChartConfigs,
+            stars: state.skyChartState.stars,
+            constellations: state.skyChartState.constellations
+        )
+    }
+
+    static var empty: SkyChartState {
+        SkyChartState()
     }
 }
 
@@ -110,36 +145,36 @@ struct SkyChart: View {
     }
 
     private var pathFromSortedSatelliteSnapshots: some View {
-        switch viewModel.state {
-        case let .observer(observerCoordinate, skyReferenceDate, passInformation, _, _, _):
+        switch viewModel.state.mode {
+        case .notReady:
+            return AnyView(EmptyView())
+        case let .pass(passInformation, observerCoordinate):
             return AnyView(GeometryReader { geometry in
                 let rect = geometry.frame(in: .local)
 
-                if let passInformation = passInformation {
-                    if passInformation.snapshots.isEmpty {
-                        EmptyView()
-                    } else {
-                        let indexIDs = (0..<passInformation.snapshots.count - 1).map {
-                            ($0, "\(String(describing: passInformation.risesAt))_ref-\(String(describing: skyReferenceDate))_\(observerCoordinate)_\($0)")
-                        }
-                        ZStack {
-                            ForEach(indexIDs, id: \.1) { (i, _) in
-                                Path { path in
-                                    let point = pointAtHorizontalCoordinate(passInformation.snapshots[i].position, rect: rect)
-                                    let nextPoint = pointAtHorizontalCoordinate(passInformation.snapshots[i + 1].position, rect: rect)
-                                    path.move(to: point)
-                                    path.addLine(to: nextPoint)
-                                }
-                                .stroke(
-                                    passInformation.snapshots[i].isIlluminated ? Color("satellitePath_illuminated") : Color("satellitePath_notIlluminated"),
-                                    lineWidth: 1
-                                )
+                if passInformation.snapshots.isEmpty {
+                    EmptyView()
+                } else {
+                    let indexIDs = (0..<passInformation.snapshots.count - 1).map {
+                        ($0, "\(String(describing: passInformation.risesAt))_\(observerCoordinate)_\($0)")
+                    }
+                    ZStack {
+                        ForEach(indexIDs, id: \.1) { (i, _) in
+                            Path { path in
+                                let point = pointAtHorizontalCoordinate(passInformation.snapshots[i].position, rect: rect)
+                                let nextPoint = pointAtHorizontalCoordinate(passInformation.snapshots[i + 1].position, rect: rect)
+                                path.move(to: point)
+                                path.addLine(to: nextPoint)
                             }
+                            .stroke(
+                                passInformation.snapshots[i].isIlluminated ? Color("satellitePath_illuminated") : Color("satellitePath_notIlluminated"),
+                                lineWidth: 1
+                            )
                         }
                     }
                 }
             })
-        case .locationNotDetermined(_):
+        case .sky(_, observer: _):
             return AnyView(EmptyView())
         }
     }
@@ -162,14 +197,13 @@ struct SkyChart: View {
     }
 
     var starPath: some View {
-        switch viewModel.state {
-        case let .observer(observerCoordinate, skyReferenceDate, _, _, stars, _):
-            return AnyView(GeometryReader { geometry in
+        GeometryReader { geometry in
+            if let referenceDate = viewModel.state.mode.referenceDate, let observerCoordinate = viewModel.state.mode.observer {
                 let rect = geometry.frame(in: .local)
                 Path { path in
-                    for star in stars {
+                    for star in viewModel.state.stars {
                         let (alt, azi) = azel(
-                            time: skyReferenceDate,
+                            time: referenceDate,
                             site: (observerCoordinate.lat, observerCoordinate.lon),
                             cele: cartesianToRaDec(star.physicalInfo.coordinate))
                         if alt < 0 {
@@ -183,29 +217,27 @@ struct SkyChart: View {
                 }
                 .fill()
                 .foregroundColor(.black)
-            })
-        case .locationNotDetermined(_):
-            return AnyView(EmptyView())
+            }
         }
+
     }
 
     var constellationLinesPath: some View {
-        switch viewModel.state {
-        case let .observer(observerCoordinate, skyReferenceDate, _, _, _, constellations):
-            return AnyView(GeometryReader { geometry in
+        GeometryReader { geometry in
+            if let referenceDate = viewModel.state.mode.referenceDate, let observerCoordinate = viewModel.state.mode.observer {
                 let rect = geometry.frame(in: .local)
                 Path { path in
-                    for constellation in constellations {
+                    for constellation in viewModel.state.constellations {
                         guard let center = constellation.displayCenter else {
                             continue
                         }
-                        let (alt, _) = azel(time: skyReferenceDate, site: (observerCoordinate.lat, observerCoordinate.lon), cele: cartesianToRaDec(center))
+                        let (alt, _) = azel(time: referenceDate, site: (observerCoordinate.lat, observerCoordinate.lon), cele: cartesianToRaDec(center))
                         if alt < 0 {
                             continue
                         }
                         for line in constellation.connectionLines {
-                            let (alt1, azi1) = azel(time: skyReferenceDate, site: (observerCoordinate.lat, observerCoordinate.lon), cele: cartesianToRaDec(line.star1.physicalInfo.coordinate))
-                            let (alt2, azi2) = azel(time: skyReferenceDate, site: (observerCoordinate.lat, observerCoordinate.lon), cele: cartesianToRaDec(line.star2.physicalInfo.coordinate))
+                            let (alt1, azi1) = azel(time: referenceDate, site: (observerCoordinate.lat, observerCoordinate.lon), cele: cartesianToRaDec(line.star1.physicalInfo.coordinate))
+                            let (alt2, azi2) = azel(time: referenceDate, site: (observerCoordinate.lat, observerCoordinate.lon), cele: cartesianToRaDec(line.star2.physicalInfo.coordinate))
                             let point1 = pointAtHorizontalCoordinate(AziEleDst(azim: azi1, elev: alt1, dist: 0), rect: rect)
                             let point2 = pointAtHorizontalCoordinate(AziEleDst(azim: azi2, elev: alt2, dist: 0), rect: rect)
                             path.move(to: point1)
@@ -214,9 +246,7 @@ struct SkyChart: View {
                     }
                 }
                 .stroke(Color.gray.opacity(0.2), lineWidth: 1)
-            })
-        case .locationNotDetermined(_):
-            return AnyView(EmptyView())
+            }
         }
     }
 
@@ -235,9 +265,8 @@ struct SkyChart: View {
     }
 
     var azimuthMarkTexts: some View {
-        switch viewModel.state {
-        case let .observer(observerCoordinate, _, _, _, _, _):
-            return AnyView(GeometryReader { geometry in
+        GeometryReader { geometry in
+            if let observerCoordinate = viewModel.state.mode.observer {
                 let rect = geometry.frame(in: .local)
                 let radius = radius(fromRect: rect)
                 ZStack {
@@ -280,9 +309,7 @@ struct SkyChart: View {
                             .offset(x: sin(CGFloat(angle)) * (radius + 30), y: cos(CGFloat(angle)) * (radius + 30))
                     }
                 }
-            })
-        case .locationNotDetermined(_):
-            return AnyView(EmptyView())
+            }
         }
     }
 
@@ -291,12 +318,11 @@ struct SkyChart: View {
         planetViewGenerator: @escaping () -> Content,
         @ViewBuilder labelBuilder: @escaping () -> Label
     ) -> some View {
-        switch viewModel.state {
-        case let .observer(observerCoordinate, skyReferenceDate, _, _, _, _):
+        if let referenceDate = viewModel.state.mode.referenceDate, let observerCoordinate = viewModel.state.mode.observer {
             let (alt, azi) = azel(
-                time: skyReferenceDate,
+                time: referenceDate,
                 site: (observerCoordinate.lat, observerCoordinate.lon),
-                cele: getRaDec(skyReferenceDate.julianDate)
+                cele: getRaDec(referenceDate.julianDate)
             )
             let planetCoordinate = AziEleDst(azim: azi, elev: alt, dist: 0)
 
@@ -321,7 +347,7 @@ struct SkyChart: View {
                     )
                 }
             })
-        case .locationNotDetermined(_):
+        } else {
             return AnyView(EmptyView())
         }
     }
@@ -388,12 +414,12 @@ struct SkyChart: View {
         pathFromSortedSatelliteSnapshots
             .overlay(starPath)
             .overlay(constellationLinesPath)
+            .overlay(moonView)
+            .overlay(sunView)
             .clipShape(Circle())
             .overlay(backgroundPath)
             .overlay(azimuthMarks)
             .overlay(azimuthMarkTexts)
-            .overlay(moonView)
-            .overlay(sunView)
             .id(UUID())
             .onAppear {
                 viewModel.dispatch(.onAppear)
@@ -408,10 +434,10 @@ extension ViewProducer where Context == Void, ProducedView == SkyChart {
                 viewModel: viewModel
                     .projection(
                         action: { AppAction.skyChart($0) },
-                        state: SkyChartState.project(state:)
+                        state: SkyChartState.projectPassingMode(state:)
                     )
                     .asObservableViewModel(
-                        initialState: .locationNotDetermined()
+                        initialState: .empty
                     )
             )
         }
@@ -465,13 +491,11 @@ struct SkyChart_Previews: PreviewProvider {
 
         SkyChart(
             viewModel: .mock(
-                state: .observer(
-                    LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
-                    skyReferenceDate: {
-                        let formatter = ISO8601DateFormatter()
-                        return formatter.date(from: "2021-06-02T20:40:00+0800")!
-                    }(),
-                    passInformation: issPass,
+                state: SkyChartState(
+                    mode: .pass(
+                        issPass,
+                        observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0)
+                    ),
                     configs: .preset,
                     stars: stars,
                     constellations: constellations
@@ -482,13 +506,11 @@ struct SkyChart_Previews: PreviewProvider {
 
         SkyChart(
             viewModel: .mock(
-                state: .observer(
-                    LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
-                    skyReferenceDate: {
-                        let formatter = ISO8601DateFormatter()
-                        return formatter.date(from: "2021-06-02T06:34:46-0600")!
-                    }(),
-                    passInformation: tianHePass,
+                state: SkyChartState(
+                    mode: .pass(
+                        tianHePass,
+                        observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
+                    ),
                     configs: .preset,
                     stars: stars,
                     constellations: constellations
@@ -496,5 +518,11 @@ struct SkyChart_Previews: PreviewProvider {
             )
         )
         .padding(20)
+
+        SkyChart(
+            viewModel: .mock(state: .empty)
+        )
+        .padding(20)
+        .previewDisplayName("Placeholder")
     }
 }
