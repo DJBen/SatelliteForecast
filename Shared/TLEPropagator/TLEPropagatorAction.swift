@@ -7,8 +7,9 @@
 
 import Foundation
 import SatelliteForcastCore
+import BTree
 
 enum TLEPropagatorAction {
-    case foundPasses([PassInformation], searchDateRange: Range<Date>, noradIndex: Int)
-    case propagatedSnapshots([SatelliteSnapshot], noradIndex: Int)
+    case foundPasses([PassInformation], fineSnapshots: Map<Date, SatelliteSnapshot>, noradIndex: Int)
+    case propagatedSnapshots(Map<Date, SatelliteSnapshot>, noradIndex: Int)
 }

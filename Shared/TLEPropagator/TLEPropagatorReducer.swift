@@ -6,15 +6,30 @@
 //
 
 import Foundation
+import os
 import SwiftRex
+import SatelliteForcastCore
+import BTree
+
+fileprivate let logger = Logger(subsystem: "io.djben.TLEPropagator", category: "reducer")
 
 extension Reducer where ActionType == TLEPropagatorAction, StateType == Store.StateType {
     static let tlePropagatorReducer = Reducer.reduce { action, state in
         switch action {
-        case let .foundPasses(passInformation, searchDateRange, noradIndex):
-            state.skyChartState.passInformation[noradIndex] = passInformation
+        case let .foundPasses(passes, snapshots, noradIndex):
+            logger.info("Found \(passes.count) passes for \(noradIndex). Detailed snapshots count: \(snapshots.count)")
+            if let _ = state.satellites[noradIndex] {
+                state.satellites[noradIndex]!.passes = passes
+            } else {
+                state.satellites[noradIndex] = SatelliteState(snapshots: Map<Date, SatelliteSnapshot>(), passes: passes)
+            }
         case let .propagatedSnapshots(satelliteSnapshots, noradIndex):
-            state.allSnapshots[noradIndex] = satelliteSnapshots
+            logger.info("Propagated \(satelliteSnapshots.count) snapshots for \(noradIndex).")
+            if let _ = state.satellites[noradIndex] {
+                state.satellites[noradIndex]!.snapshots = satelliteSnapshots
+            } else {
+                state.satellites[noradIndex] = SatelliteState(snapshots: satelliteSnapshots, passes: [])
+            }
         }
     }
 }

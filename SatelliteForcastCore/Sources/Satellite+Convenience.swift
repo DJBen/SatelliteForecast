@@ -5,6 +5,7 @@
 //  Created by Ben Lu on 6/4/21.
 //
 
+import BTree
 import Foundation
 import SatelliteKit
 
@@ -78,15 +79,18 @@ extension Satellite {
         observer: LatLonAlt,
         dateRange: Range<Date>,
         interval: TimeInterval = 30
-    ) -> [SatelliteSnapshot] {
+    ) -> Map<Date, SatelliteSnapshot> {
+        var snapshots = Map<Date, SatelliteSnapshot>()
         stride(
             from: dateRange.lowerBound.julianDate,
             to: dateRange.upperBound.julianDate,
             by: interval * TimeConstants.sec2day
         )
-        .map { (julianDate) -> SatelliteSnapshot in
-            snapshot(julianDate: julianDate, observer: observer)
+        .forEach { (julianDate) in
+            let date = Date(julianDate: julianDate)
+            snapshots[date] = snapshot(julianDate: julianDate, observer: observer)
         }
+        return snapshots
     }
 
     public enum PassFindingParam {
@@ -103,7 +107,7 @@ extension Satellite {
         /// It is going to look for any moments when satellite rises above the horizon. If any of these moments are found, it is going
         /// to generate the satellite ephemerides with a fine interval for that duration.
         case existingSnapshots(
-            [SatelliteSnapshot],
+            Map<Date, SatelliteSnapshot>,
             fineInterval: TimeInterval = 3
         )
 
@@ -130,8 +134,8 @@ extension Satellite {
     public func findPasses(
         observer: LatLonAlt,
         param: PassFindingParam
-    ) -> [PassInformation] {
-        let coarseSnapshots: [SatelliteSnapshot]
+    ) -> (passes: [PassInformation], fineSnapshots: Map<Date, SatelliteSnapshot>) {
+        let coarseSnapshots: Map<Date, SatelliteSnapshot>
         switch param {
         case let .dateRange(dateRange, coarseInterval, _):
             coarseSnapshots = snapshots(
@@ -143,13 +147,14 @@ extension Satellite {
             coarseSnapshots = snapshots
         }
 
-        guard let firstSnapshot = coarseSnapshots.first else {
-            return []
+        guard let firstSnapshot = coarseSnapshots.first?.1 else {
+            return ([], Map())
         }
 
         var snapshotBeforeRising: SatelliteSnapshot?
         var snapshotAfterSetting: SatelliteSnapshot?
         var passInformation = [PassInformation]()
+        var resultSnapshots = Map<Date, SatelliteSnapshot>()
 
         func tryGenerateFinePassInfo() {
             guard let fromSnapshot = snapshotBeforeRising, let toSnapshot = snapshotAfterSetting else {
@@ -165,9 +170,10 @@ extension Satellite {
             var illuminationChanges = [PassInformation.IlluminationChange]()
             var risesAt: Date?
             var setsAt: Date?
-            for i in 0..<fineSnapshots.count - 1 {
-                let snapshot1 = fineSnapshots[i]
-                let snapshot2 = fineSnapshots[i + 1]
+
+            for index in fineSnapshots.indices where index < fineSnapshots.index(before: fineSnapshots.endIndex) {
+                let snapshot1 = fineSnapshots[index].1
+                let snapshot2 = fineSnapshots[fineSnapshots.index(after: index)].1
 
                 if snapshot1.isIlluminated && !snapshot2.isIlluminated {
                     illuminationChanges.append(.entersShadow(date: snapshot2.date))
@@ -183,14 +189,16 @@ extension Satellite {
                     setsAt = snapshot2.date
                 }
             }
+
             passInformation.append(
                 PassInformation(
                     risesAt: risesAt,
                     setsAt: setsAt,
-                    illuminationChanges: illuminationChanges,
-                    snapshots: fineSnapshots
+                    illuminationChanges: illuminationChanges
                 )
             )
+
+            resultSnapshots = resultSnapshots.merging(fineSnapshots)
 
             snapshotBeforeRising = nil
             snapshotAfterSetting = nil
@@ -200,9 +208,9 @@ extension Satellite {
             snapshotBeforeRising = firstSnapshot
         }
 
-        for i in 0..<coarseSnapshots.count - 1 {
-            let snapshot1 = coarseSnapshots[i]
-            let snapshot2 = coarseSnapshots[i + 1]
+        for index in coarseSnapshots.indices where index < coarseSnapshots.index(before: coarseSnapshots.endIndex) {
+            let snapshot1 = coarseSnapshots[index].1
+            let snapshot2 = coarseSnapshots[coarseSnapshots.index(after: index)].1
 
             if snapshot1.position.elev <= 0 && snapshot2.position.elev > 0 {
                 snapshotBeforeRising = snapshot1
@@ -215,12 +223,12 @@ extension Satellite {
             tryGenerateFinePassInfo()
         }
 
-        if coarseSnapshots.last!.position.elev > 0 {
-            snapshotAfterSetting = coarseSnapshots.last!
+        if coarseSnapshots.last!.1.position.elev > 0 {
+            snapshotAfterSetting = coarseSnapshots.last!.1
         }
 
         tryGenerateFinePassInfo()
 
-        return passInformation
+        return (passInformation, resultSnapshots)
     }
 }

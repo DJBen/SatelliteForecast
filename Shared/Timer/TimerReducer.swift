@@ -15,7 +15,6 @@ extension Reducer where ActionType == TimerAction, StateType == AppState {
             break
         case let .tick(currentDate):
             state.tleLoaderState.referenceDate = currentDate
-            state.skyChartState.skyReferenceDate = currentDate
 
             // Advance date range every 5 mins
             if currentDate.timeIntervalSince(state.dateRange.lowerBound.addingTimeInterval(60 * 60 * 2)) > 10 * 60 {

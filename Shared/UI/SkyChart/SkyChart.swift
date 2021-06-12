@@ -11,6 +11,7 @@ import SatelliteKit
 import SatelliteForcastCore
 import StarryNight
 import CombineRextensions
+import BTree
 
 struct SkyChartConfigs: Equatable {
     /// The degree interval between each pair of azimuth marks
@@ -31,24 +32,39 @@ enum SkyChartAction {
 
 /// The root state of sky charts.
 struct SkyChartRootState: Equatable {
-    var skyReferenceDate: Date
-    var passInformation: [Int: [PassInformation]] = [:]
     var configs: SkyChartConfigs = .preset
 
     // Background sky that is async loaded
     var stars: [Star] = []
     var constellations: Set<Constellation> = []
+
+    static var empty: SkyChartRootState {
+        return SkyChartRootState()
+    }
 }
 
 /// A state used in a single sky chart view
-struct SkyChartState: Equatable {
+struct SkyChartViewState: Equatable {
     enum Mode: Equatable {
+        static func == (lhs: SkyChartViewState.Mode, rhs: SkyChartViewState.Mode) -> Bool {
+            switch (lhs, rhs) {
+            case (.notReady, .notReady):
+                return true
+            case let (.sky(d1, obs1), .sky(d2, obs2)):
+                return d1 == d2 && obs1 == obs2
+            case let (.pass(p1, s1, obs1), .pass(p2, s2, obs2)):
+                return p1 == p2 && s1 == s2 && obs1 == obs2
+            default:
+                return false
+            }
+        }
+
         /// Display a placeholder.
         case notReady
         /// Display the sky at date. This option will not show any satellite passes.
         case sky(Date, observer: LatLonAlt)
         /// Display a satellite pass. The background sky's date will be the approx time of higest elevation of the pass.
-        case pass(PassInformation, observer: LatLonAlt)
+        case pass(PassInformation, snapshotsDuringPass: Map<Date, SatelliteSnapshot>, observer: LatLonAlt)
 
         /// The reference date for the background sky, if available.
         /// No background sky will be drawn if this returns `nil`.
@@ -56,7 +72,7 @@ struct SkyChartState: Equatable {
             switch self {
             case let .sky(date, _):
                 return date
-            case let .pass(passInformation, _):
+            case let .pass(passInformation, _, _):
                 return passInformation.risesAt ?? passInformation.setsAt
             case .notReady:
                 return nil
@@ -67,7 +83,7 @@ struct SkyChartState: Equatable {
         /// Nothing will be drawn if this property is missing.
         var observer: LatLonAlt? {
             switch self {
-            case let .pass(_, observer: observer), let .sky(_, observer: observer):
+            case let .pass(_, _, observer), let .sky(_, observer):
                 return observer
             case .notReady:
                 return nil
@@ -76,7 +92,7 @@ struct SkyChartState: Equatable {
 
         var passInformation: PassInformation? {
             switch self {
-            case let .pass(passInformation, observer: _):
+            case let .pass(passInformation, _, observer: _):
                 return passInformation
             default:
                 return nil
@@ -89,35 +105,38 @@ struct SkyChartState: Equatable {
     var stars: [Star] = []
     var constellations: Set<Constellation> = []
 
-    static func projectPassingMode(state: AppState) -> SkyChartState {
+    static func projectPassingMode(state: AppState) -> SkyChartViewState {
         guard let observerCoodinate = state.coreLocationState.location.map(LatLonAlt.init) else {
-            return SkyChartState(mode: .notReady)
+            return SkyChartViewState(mode: .notReady)
         }
-        let passInformation: PassInformation? = {
-            if let noradIndex = state.selectedSatelliteNoradIndex {
-                return state.skyChartState.passInformation[noradIndex]?
-                    .first { $0.risesAt != nil && $0.risesAt! > state.skyChartState.skyReferenceDate }
+        let firstPass: (PassInformation, Map<Date, SatelliteSnapshot>)? = {
+            if let noradIndex = state.selectedSatelliteNoradIndex,
+               let satelliteState = state.satellites[noradIndex],
+               let pass = satelliteState.passes
+                .first(where: { $0.risesAt != nil && $0.risesAt! > state.tleLoaderState.referenceDate }) {
+                let subMap = satelliteState.snapshots.submap(from: pass.risesAt!, through: pass.setsAt ?? satelliteState.snapshots.last!.0)
+                return (pass, subMap)
             } else {
                 return nil
             }
         }()
-        return SkyChartState(
-            mode: passInformation.map { Mode.pass($0, observer: observerCoodinate) } ?? .notReady,
+        return SkyChartViewState(
+            mode: firstPass.map { Mode.pass($0.0, snapshotsDuringPass: $0.1, observer: observerCoodinate) } ?? .notReady,
             configs: state.skyChartConfigs,
             stars: state.skyChartState.stars,
             constellations: state.skyChartState.constellations
         )
     }
 
-    static var empty: SkyChartState {
-        SkyChartState()
+    static var empty: SkyChartViewState {
+        SkyChartViewState()
     }
 }
 
 struct SkyChart: View {
-    private let viewModel: ObservableViewModel<SkyChartAction, SkyChartState>
+    private let viewModel: ObservableViewModel<SkyChartAction, SkyChartViewState>
 
-    init(viewModel: ObservableViewModel<SkyChartAction, SkyChartState>) {
+    init(viewModel: ObservableViewModel<SkyChartAction, SkyChartViewState>) {
         self.viewModel = viewModel
     }
 
@@ -148,26 +167,32 @@ struct SkyChart: View {
         switch viewModel.state.mode {
         case .notReady:
             return AnyView(EmptyView())
-        case let .pass(passInformation, observerCoordinate):
+        case let .pass(_, snapshotsDuringPass, _):
             return AnyView(GeometryReader { geometry in
                 let rect = geometry.frame(in: .local)
 
-                if passInformation.snapshots.isEmpty {
+                if snapshotsDuringPass.isEmpty {
                     EmptyView()
                 } else {
-                    let indexIDs = (0..<passInformation.snapshots.count - 1).map {
-                        ($0, "\(String(describing: passInformation.risesAt))_\(observerCoordinate)_\($0)")
+                    let snapshotsByIllumination = snapshotsDuringPass.split { (e1, e2) -> Bool in
+                        return e1.1.isIlluminated != e2.1.isIlluminated
                     }
                     ZStack {
-                        ForEach(indexIDs, id: \.1) { (i, _) in
+                        ForEach(snapshotsByIllumination.indices, id: \.self) { (index) in
                             Path { path in
-                                let point = pointAtHorizontalCoordinate(passInformation.snapshots[i].position, rect: rect)
-                                let nextPoint = pointAtHorizontalCoordinate(passInformation.snapshots[i + 1].position, rect: rect)
-                                path.move(to: point)
-                                path.addLine(to: nextPoint)
+                                let snapshotsGroup = snapshotsByIllumination[index]
+                                for i in snapshotsGroup.indices.dropLast() {
+                                    if i == snapshotsGroup.startIndex {
+                                        let point = pointAtHorizontalCoordinate(snapshotsGroup[i].1.position, rect: rect)
+                                        path.move(to: point)
+                                    } else {
+                                        let nextPoint = pointAtHorizontalCoordinate(snapshotsGroup[snapshotsGroup.index(after: i)].1.position, rect: rect)
+                                        path.addLine(to: nextPoint)
+                                    }
+                                }
                             }
                             .stroke(
-                                passInformation.snapshots[i].isIlluminated ? Color("satellitePath_illuminated") : Color("satellitePath_notIlluminated"),
+                                snapshotsByIllumination[index].first!.1.isIlluminated ? Color("satellitePath_illuminated") : Color("satellitePath_notIlluminated"),
                                 lineWidth: 1
                             )
                         }
@@ -434,7 +459,7 @@ extension ViewProducer where Context == Void, ProducedView == SkyChart {
                 viewModel: viewModel
                     .projection(
                         action: { AppAction.skyChart($0) },
-                        state: SkyChartState.projectPassingMode(state:)
+                        state: SkyChartViewState.projectPassingMode(state:)
                     )
                     .asObservableViewModel(
                         initialState: .empty
@@ -445,7 +470,7 @@ extension ViewProducer where Context == Void, ProducedView == SkyChart {
 }
 
 struct SkyChart_Previews: PreviewProvider {
-    static let issPass: PassInformation = {
+    static let issPass: (PassInformation, Map<Date, SatelliteSnapshot>) = {
         let tle = try! TLE(
             raw: """
             ISS (ZARYA)
@@ -458,14 +483,15 @@ struct SkyChart_Previews: PreviewProvider {
         let formatter = ISO8601DateFormatter()
         let date = formatter.date(from: "2021-06-02T20:35:30+0800")!
 
-        return sat.findPasses(
+        let (passes, snapshotsDuringPass) = sat.findPasses(
             observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
             param: .dateRange(date..<date.addingTimeInterval(800))
         )
-        .first!
+        let firstPass = passes.first!
+        return (firstPass, snapshotsDuringPass[firstPass])
     }()
 
-    static let tianHePass: PassInformation = {
+    static let tianHePass: (PassInformation, Map<Date, SatelliteSnapshot>) = {
         let tle = try! TLE(
             raw: """
             TIANHE
@@ -478,22 +504,24 @@ struct SkyChart_Previews: PreviewProvider {
         let formatter = ISO8601DateFormatter()
         let date = formatter.date(from: "2021-06-02T06:29:00-0600")!
 
-        return sat.findPasses(
+        let (passes, snapshotsDuringPass) = sat.findPasses(
             observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
             param: .dateRange(date..<date.addingTimeInterval(800))
         )
-        .first!
+        let firstPass = passes.first!
+        return (firstPass, snapshotsDuringPass[firstPass])
     }()
 
     static var previews: some View {
         let stars = Star.magitudeLessThan(4.5)
         let constellations = Constellation.all
-
+        let (pass, snapshots) = issPass
         SkyChart(
             viewModel: .mock(
-                state: SkyChartState(
+                state: SkyChartViewState(
                     mode: .pass(
-                        issPass,
+                        pass,
+                        snapshotsDuringPass: snapshots,
                         observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0)
                     ),
                     configs: .preset,
@@ -504,11 +532,14 @@ struct SkyChart_Previews: PreviewProvider {
         )
         .padding(20)
 
+        let (pass2, snapshots2) = tianHePass
+
         SkyChart(
             viewModel: .mock(
-                state: SkyChartState(
+                state: SkyChartViewState(
                     mode: .pass(
-                        tianHePass,
+                        pass2,
+                        snapshotsDuringPass: snapshots2,
                         observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
                     ),
                     configs: .preset,

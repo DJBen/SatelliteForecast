@@ -8,17 +8,16 @@
 import Foundation
 import SatelliteKit
 import SatelliteForcastCore
+import BTree
 
 struct AppState: Equatable {
-    var allSnapshots: [Int: [SatelliteSnapshot]] = [:]
     /// The date range from which ephemerides are generated.
     var dateRange: Range<Date>
     var satelliteElevationGraphConfigs: SatelliteElevationGraphConfigs = .preset
+    var skyChartState: SkyChartRootState = .empty
     var skyChartConfigs: SkyChartConfigs = .preset
-    var skyChartState: SkyChartRootState = SkyChartRootState(
-        skyReferenceDate: Date()
-    )
-
+    /// A mapping from NORAD ID to the satellite state.
+    var satellites: [Int: SatelliteState] = [:]
     var tleLoaderState: TLELoaderState = .empty
     var coreLocationState: CoreLocationState = .empty
     var selectedSatelliteNoradIndex: Int?
@@ -29,18 +28,18 @@ struct AppState: Equatable {
         )
     }
 
-    var currentSatelliteSnapshots: [SatelliteSnapshot] {
+    var currentSatelliteSnapshots: Map<Date, SatelliteSnapshot> {
         get {
             guard let selectedSatelliteNoradIndex = selectedSatelliteNoradIndex else {
-                return []
+                return Map()
             }
-            return allSnapshots[selectedSatelliteNoradIndex] ?? []
+            return satellites[selectedSatelliteNoradIndex]?.snapshots ?? Map()
         }
         set {
             guard let selectedSatelliteNoradIndex = selectedSatelliteNoradIndex else {
                 return
             }
-            allSnapshots[selectedSatelliteNoradIndex] = newValue
+            satellites[selectedSatelliteNoradIndex]?.snapshots = newValue
         }
     }
 

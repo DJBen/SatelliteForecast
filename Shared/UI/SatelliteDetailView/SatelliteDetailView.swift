@@ -8,6 +8,7 @@
 import CombineRex
 import SwiftUI
 import CombineRextensions
+import SatelliteForcastCore
 import SatelliteKit
 
 enum SatelliteDetailViewAction {
@@ -91,15 +92,16 @@ struct SatelliteDetailView_Previews: PreviewProvider {
             observer: LatLonAlt(location: location),
             dateRange: dateRange
         )
-        let passes = sat.findPasses(observer: LatLonAlt(location: location), param: .existingSnapshots(snapshots))
+        let (passes, fineSnapshots) = sat.findPasses(observer: LatLonAlt(location: location), param: .existingSnapshots(snapshots))
         let appState = AppState(
-            allSnapshots: [tle.noradIndex: snapshots],
             dateRange: dateRange,
             satelliteElevationGraphConfigs: .preset,
-            skyChartState: SkyChartRootState(
-                skyReferenceDate: Date(),
-                passInformation: [tle.noradIndex: passes]
-            ),
+            satellites: [
+                tle.noradIndex: SatelliteState(
+                    snapshots: snapshots.merging(fineSnapshots),
+                    passes: passes
+                )
+            ],
             tleLoaderState: TLELoaderState(
                 tles: [.brightest100: [tle]]
             ),
@@ -127,7 +129,7 @@ struct SatelliteDetailView_Previews: PreviewProvider {
             skyChartProducer: .pure(
                 SkyChart(
                     viewModel: .mock(
-                        state: SkyChartState.projectPassingMode(
+                        state: SkyChartViewState.projectPassingMode(
                             state: appState
                         )
                     )

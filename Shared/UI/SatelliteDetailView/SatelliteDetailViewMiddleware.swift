@@ -45,8 +45,8 @@ extension EffectMiddleware where
                             return Empty().eraseToAnyPublisher()
                         }
 
-                        // Only populate satellite ephemerides if empty or outdated by more than 30 mins.
-                        guard state.currentSatelliteSnapshots.isEmpty || state.dateRange.lowerBound.timeIntervalSince(state.currentSatelliteSnapshots.first!.date) > 30 * 60 else {
+                        // Only populate satellite ephemerides if empty or outdated by more than 1 hour.
+                        guard state.currentSatelliteSnapshots.isEmpty || state.dateRange.lowerBound.timeIntervalSince(state.currentSatelliteSnapshots.first!.1.date) > 60 * 60 else {
                             logger.debug("Ephemeride of \(noradIndex) are already generated. Skipping.")
                             return Empty().eraseToAnyPublisher()
                         }
@@ -68,7 +68,7 @@ extension EffectMiddleware where
                                 )
                             )
 
-                            let passInformation = satellite
+                            let (passes, fineSnapshots) = satellite
                                 .findPasses(
                                     observer: observerCoordinate,
                                     param: .existingSnapshots(snapshots)
@@ -78,8 +78,8 @@ extension EffectMiddleware where
                                 DispatchedAction<AppAction>(
                                     .tlePropagator(
                                         .foundPasses(
-                                            passInformation,
-                                            searchDateRange: state.dateRange,
+                                            passes,
+                                            fineSnapshots: fineSnapshots,
                                             noradIndex: noradIndex
                                         )
                                     )

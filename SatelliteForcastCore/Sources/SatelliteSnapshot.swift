@@ -33,22 +33,4 @@ public struct SatelliteSnapshot {
 
 extension SatelliteSnapshot: Equatable {}
 
-extension Array {
-    public func split(belongsToSameGroup: (Element, Element) -> Bool) -> [[Element]] {
-        guard let firstElement = first else {
-            return [[]]
-        }
-        var results = [[Element]]()
-        var segment = [firstElement]
-        for i in startIndex..<endIndex - 1 {
-            if belongsToSameGroup(self[i], self[i + 1]) {
-                segment.append(self[i + 1])
-            } else {
-                results.append(segment)
-                segment = [self[i + 1]]
-            }
-        }
-        results.append(segment)
-        return results
-    }
-}
+extension SatelliteSnapshot: Hashable {}

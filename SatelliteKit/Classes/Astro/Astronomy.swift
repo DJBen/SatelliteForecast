@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct LatLonAlt: Equatable {
+public struct LatLonAlt: Equatable, Hashable {
     public init(lat: Double, lon: Double, alt: Double) {
         self.lat = lat
         self.lon = lon
@@ -21,7 +21,7 @@ public struct LatLonAlt: Equatable {
 
 }
 
-public struct AziEleDst: Equatable {
+public struct AziEleDst: Equatable, Hashable {
     public init(azim: Double, elev: Double, dist: Double) {
         self.azim = azim
         self.elev = elev

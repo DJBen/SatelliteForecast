@@ -21,6 +21,7 @@ enum TLECategory: Equatable, Hashable {
 }
 
 struct TLELoaderState: Equatable {
+    /// A date that mostly approximates the current date.
     var referenceDate: Date = Date()
     var tles: [TLECategory: [TLE]] = [:]
     var standaloneTLEs: [TLE] = []
@@ -30,6 +31,7 @@ struct TLELoaderState: Equatable {
     }
 
     func tle(noradIndex: Int) -> TLE? {
-        return tles.values.flatMap { $0 }.first { $0.noradIndex == noradIndex } ?? standaloneTLEs.first { $0.noradIndex == noradIndex }
+        return tles.values.flatMap { $0 }
+            .first { $0.noradIndex == noradIndex } ?? standaloneTLEs.first { $0.noradIndex == noradIndex }
     }
 }

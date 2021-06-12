@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import BTree
 
 /// The information for a single satellite pass.
 public struct PassInformation {
@@ -15,14 +16,28 @@ public struct PassInformation {
     }
 
     /// The time when satellite rises above the horizon. Might be `nil` if the satellite starts above horizon.
+    /// At least one of `risesAt` and `setsAt` must exist.
     public let risesAt: Date?
     /// The time when satellite sets below the horizon. Might be `nil` if the satellite never sets.
+    /// At least one of `risesAt` and `setsAt` must exist.
     public let setsAt: Date?
     /// Changes in satellite illumination.
     public let illuminationChanges: [IlluminationChange]
-    /// Snapshots of the satellites consisting of
-    public let snapshots: [SatelliteSnapshot]
 }
 
 extension PassInformation: Equatable {}
 extension PassInformation.IlluminationChange: Equatable {}
+
+extension Map where Key == Date, Value == SatelliteSnapshot {
+    public subscript(pass: PassInformation) -> Map<Key, Value> {
+        if let risesAt = pass.risesAt, let setsAt = pass.setsAt {
+            return submap(from: risesAt, through: setsAt)
+        } else if let risesAt = pass.risesAt {
+            return submap(from: risesAt, through: self[index(before: endIndex)].0)
+        } else if let setsAt = pass.setsAt {
+            return submap(from: self[startIndex].0, through: setsAt)
+        } else {
+            fatalError("Pass must have a rise and set value")
+        }
+    }
+}

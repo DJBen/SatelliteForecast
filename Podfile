@@ -9,6 +9,7 @@ target 'SatelliteForcast (iOS)' do
   pod "StarryNight", :path => './StarryNight'
   pod "SatelliteForcastCore", :path => './SatelliteForcastCore'
   pod "CombineRextensions", :git => 'https://github.com/DJBen/CombineRextensions.git'
+  pod "BTree", "~> 4.1.0"
 
   target 'Tests iOS' do
     pod "TestingExtensions", :path => './TestingExtensions'

@@ -8,6 +8,7 @@
 import SwiftUI
 import SatelliteKit
 import SatelliteForcastCore
+import BTree
 
 struct SunlightIndicatorViewModel {
     fileprivate enum SunEvent: Identifiable {
@@ -31,11 +32,11 @@ struct SunlightIndicatorViewModel {
     fileprivate let sunEventsXCoord: (CGRect) -> [(SunEvent, CGFloat)]
 
     init(
-        snapshots: [SatelliteSnapshot],
+        snapshots: Map<Date, SatelliteSnapshot>,
         dateRange: Range<Date>
     ) {
         sunlightGradientStops = {
-            guard let firstSnapshot = snapshots.first else {
+            guard let (_, firstSnapshot) = snapshots.first else {
                 return []
             }
 
@@ -63,8 +64,10 @@ struct SunlightIndicatorViewModel {
             var stops = [Gradient.Stop]()
             stops.append(Gradient.Stop(color: color(elevation: firstSnapshot.sunElevation), location: 0))
 
-            for i in (0..<snapshots.count - 1) {
-                let (s1, s2) = (snapshots[i], snapshots[i + 1])
+            for (i, index) in snapshots.indices.enumerated() where index < snapshots.index(before: snapshots.endIndex) {
+                let s1 = snapshots[index].1
+                let s2 = snapshots[snapshots.index(after: index)].1
+
                 let location: CGFloat = CGFloat(i) / CGFloat(snapshots.count)
 
                 for (boundary, color) in boundaries {
@@ -75,24 +78,24 @@ struct SunlightIndicatorViewModel {
                 }
             }
 
-            stops.append(Gradient.Stop(color: color(elevation: snapshots.last!.sunElevation), location: 1))
+            stops.append(Gradient.Stop(color: color(elevation: snapshots.last!.1.sunElevation), location: 1))
 
             return stops
         }()
 
         let snapshotsSplitBySunriseOrSet = snapshots.split { s1, s2 in
-            (s1.sunElevation > 0 && s2.sunElevation > 0) ||
-                (s1.sunElevation < 0 && s2.sunElevation < 0)
+            (s1.1.sunElevation > 0 && s2.1.sunElevation > 0) ||
+                (s1.1.sunElevation < 0 && s2.1.sunElevation < 0)
         }
 
         let sunEventsXPercent: [(SunEvent, CGFloat)] = {
-            if snapshotsSplitBySunriseOrSet.count == 1 {
+            if snapshotsSplitBySunriseOrSet.isEmpty {
                 return []
             }
             var results = [(SunEvent, CGFloat)]()
             for i in 0..<snapshotsSplitBySunriseOrSet.count - 1 {
                 let (s1, s2) = (snapshotsSplitBySunriseOrSet[i], snapshotsSplitBySunriseOrSet[i + 1])
-                guard let last = s1.last, let first = s2.first else {
+                guard let (_, last) = s1.last, let (_, first) = s2.first else {
                     continue
                 }
                 if last.sunElevation <= 0 && first.sunElevation > 0 {

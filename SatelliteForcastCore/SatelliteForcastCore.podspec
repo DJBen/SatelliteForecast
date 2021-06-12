@@ -22,6 +22,7 @@ Pod::Spec.new do |s|
   s.source_files = 'Sources/**/*.swift'
 
   s.dependency 'SatelliteKit', '1.0.0.LOCAL'
+  s.dependency 'BTree', '~> 4.1.0'
 
   s.test_spec 'Tests' do |test_spec|
     test_spec.source_files = 'Tests/**/*.swift'
