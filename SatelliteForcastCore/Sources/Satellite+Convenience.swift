@@ -182,7 +182,7 @@ extension Satellite {
                 }
 
                 if snapshot1.position.elev <= 0 && snapshot2.position.elev > 0 {
-                    risesAt = snapshot2.date
+                    risesAt = snapshot1.date
                 }
 
                 if snapshot1.position.elev > 0 && snapshot2.position.elev <= 0 {

@@ -174,21 +174,20 @@ struct SkyChart: View {
                 if snapshotsDuringPass.isEmpty {
                     EmptyView()
                 } else {
-                    let snapshotsByIllumination = snapshotsDuringPass.split { (e1, e2) -> Bool in
+                    let snapshotsByIllumination = snapshotsDuringPass.split(inclusivity: .includesSecondElementsInPreviousGroup) { (e1, e2) -> Bool in
                         return e1.1.isIlluminated != e2.1.isIlluminated
                     }
                     ZStack {
                         ForEach(snapshotsByIllumination.indices, id: \.self) { (index) in
                             Path { path in
                                 let snapshotsGroup = snapshotsByIllumination[index]
-                                for i in snapshotsGroup.indices.dropLast() {
+                                for i in snapshotsGroup.indices where i < snapshotsGroup.index(before: snapshotsGroup.endIndex) {
                                     if i == snapshotsGroup.startIndex {
                                         let point = pointAtHorizontalCoordinate(snapshotsGroup[i].1.position, rect: rect)
                                         path.move(to: point)
-                                    } else {
-                                        let nextPoint = pointAtHorizontalCoordinate(snapshotsGroup[snapshotsGroup.index(after: i)].1.position, rect: rect)
-                                        path.addLine(to: nextPoint)
                                     }
+                                    let nextPoint = pointAtHorizontalCoordinate(snapshotsGroup[snapshotsGroup.index(after: i)].1.position, rect: rect)
+                                    path.addLine(to: nextPoint)
                                 }
                             }
                             .stroke(
@@ -217,7 +216,7 @@ struct SkyChart: View {
                 )
                 path.closeSubpath()
             }
-            .stroke(Color.black, lineWidth: 1)
+            .stroke(Color("skyChartStroke"), lineWidth: 1)
         }
     }
 
@@ -241,7 +240,7 @@ struct SkyChart: View {
                     }
                 }
                 .fill()
-                .foregroundColor(.black)
+                .foregroundColor(Color("star"))
             }
         }
 
@@ -270,7 +269,7 @@ struct SkyChart: View {
                         }
                     }
                 }
-                .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                .stroke(Color("constellationLine"), lineWidth: 1)
             }
         }
     }
@@ -280,12 +279,16 @@ struct SkyChart: View {
             let rect = geometry.frame(in: .local)
             Path { path in
                 stride(from: 0, to: 360, by: viewModel.state.configs.azimuthMarkInterval).forEach { azimuth in
-                    let (point1, point2) = azimuthMarkPoints(azimuth: Double(azimuth), length: viewModel.state.configs.azimuthMarkLength, rect: rect)
+                    let (point1, point2) = azimuthMarkPoints(
+                        azimuth: Double(azimuth),
+                        length: viewModel.state.configs.azimuthMarkLength,
+                        rect: rect
+                    )
                     path.move(to: point1)
                     path.addLine(to: point2)
                 }
             }
-            .stroke(Color.black, lineWidth: 1)
+            .stroke(Color("skyChartStroke"), lineWidth: 1)
         }
     }
 
@@ -343,7 +346,8 @@ struct SkyChart: View {
         planetViewGenerator: @escaping () -> Content,
         @ViewBuilder labelBuilder: @escaping () -> Label
     ) -> some View {
-        if let referenceDate = viewModel.state.mode.referenceDate, let observerCoordinate = viewModel.state.mode.observer {
+        if let referenceDate = viewModel.state.mode.referenceDate,
+           let observerCoordinate = viewModel.state.mode.observer {
             let (alt, azi) = azel(
                 time: referenceDate,
                 site: (observerCoordinate.lat, observerCoordinate.lon),
@@ -436,9 +440,9 @@ struct SkyChart: View {
     }
 
     var body: some View {
-        pathFromSortedSatelliteSnapshots
-            .overlay(starPath)
+        starPath
             .overlay(constellationLinesPath)
+            .overlay(pathFromSortedSatelliteSnapshots)
             .overlay(moonView)
             .overlay(sunView)
             .clipShape(Circle())
@@ -516,21 +520,25 @@ struct SkyChart_Previews: PreviewProvider {
         let stars = Star.magitudeLessThan(4.5)
         let constellations = Constellation.all
         let (pass, snapshots) = issPass
-        SkyChart(
-            viewModel: .mock(
-                state: SkyChartViewState(
-                    mode: .pass(
-                        pass,
-                        snapshotsDuringPass: snapshots,
-                        observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0)
-                    ),
-                    configs: .preset,
-                    stars: stars,
-                    constellations: constellations
+
+        ForEach(ColorScheme.allCases, id: \.self) {
+            SkyChart(
+                viewModel: .mock(
+                    state: SkyChartViewState(
+                        mode: .pass(
+                            pass,
+                            snapshotsDuringPass: snapshots,
+                            observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0)
+                        ),
+                        configs: .preset,
+                        stars: stars,
+                        constellations: constellations
+                    )
                 )
             )
-        )
-        .padding(20)
+            .padding(20)
+            .preferredColorScheme($0)
+        }
 
         let (pass2, snapshots2) = tianHePass
 

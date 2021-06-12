@@ -8,11 +8,17 @@
 import Foundation
 import BTree
 
+public enum Inclusivity {
+    case disjoint
+    case includesFirstElementInNextGroup
+    case includesSecondElementsInPreviousGroup
+}
+
 extension BidirectionalCollection {
     /// Split the map into a list of submaps based on the criteria between every neighboring elements. The splitted subarray will never be empty.
     /// - Parameter shouldSplit: A block passing two elements and expecting a boolean. If the block evaluates to `true`, the map will be split between these two elements.
     /// - Returns: Split the map into a list of submaps based on evaluations of each pair of elements.
-    public func split(shouldSplit: (Element, Element) -> Bool) -> [[Element]] {
+    public func split(inclusivity: Inclusivity = .disjoint, shouldSplit: (Element, Element) -> Bool) -> [[Element]] {
         guard !isEmpty else {
             return []
         }
@@ -23,8 +29,17 @@ extension BidirectionalCollection {
             let e1 = self[i]
             let e2 = self[index(after: i)]
             if shouldSplit(e1, e2) {
-                results.append(Array(self[fromIndex...i]))
-                fromIndex = index(after: i)
+                switch inclusivity {
+                case .disjoint:
+                    results.append(Array(self[fromIndex...i]))
+                    fromIndex = index(after: i)
+                case .includesFirstElementInNextGroup:
+                    results.append(Array(self[fromIndex...i]))
+                    fromIndex = i
+                case .includesSecondElementsInPreviousGroup:
+                    results.append(Array(self[fromIndex...index(after: i)]))
+                    fromIndex = index(after: i)
+                }
             }
         }
 
@@ -39,7 +54,7 @@ extension Map {
     /// - Parameter shouldSplit: A block passing two elements and expecting a boolean. If the block evaluates to `true`, the
     /// map will be split between these two elements.
     /// - Returns: Split the map into a list of submaps based on evaluations of each pair of elements.
-    public func split(shouldSplit: (Element, Element) -> Bool) -> [Map<Key, Value>] {
+    public func split(inclusivity: Inclusivity = .disjoint, shouldSplit: (Element, Element) -> Bool) -> [Map<Key, Value>] {
         guard !isEmpty else {
             return []
         }
@@ -50,8 +65,17 @@ extension Map {
             let e1 = self[i]
             let e2 = self[index(after: i)]
             if shouldSplit(e1, e2) {
-                results.append(self[fromIndex...i])
-                fromIndex = index(after: i)
+                switch inclusivity {
+                case .disjoint:
+                    results.append(self[fromIndex...i])
+                    fromIndex = index(after: i)
+                case .includesFirstElementInNextGroup:
+                    results.append(self[fromIndex...i])
+                    fromIndex = i
+                case .includesSecondElementsInPreviousGroup:
+                    results.append(self[fromIndex...index(after: i)])
+                    fromIndex = index(after: i)
+                }
             }
         }
 

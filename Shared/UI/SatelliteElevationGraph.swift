@@ -225,7 +225,7 @@ class SatelliteElevationGraphState: Equatable {
 struct SatelliteElevationGraph: View {
     @ObservedObject var viewModel: ObservableViewModel<SatelliteElevationGraphAction, SatelliteElevationGraphState>
     @State private var contentSize: CGSize = .zero
-    @State private var longPressLocation: CGPoint?
+    @State private var tapLocation: CGPoint?
 
     private var timeGrid: some View {
         GeometryReader { geometry in
@@ -315,13 +315,13 @@ struct SatelliteElevationGraph: View {
     }
 
     private var selectedTimeInfo: some View {
-        if let longPressLocation = longPressLocation {
+        if let tapLocation = tapLocation {
             return AnyView(
                 GeometryReader { geometry in
                     let rect = geometry.frame(in: .local)
                     Path { path in
-                        path.move(to: CGPoint(x: longPressLocation.x, y: rect.minY))
-                        path.addLine(to: CGPoint(x: longPressLocation.x, y: rect.maxY))
+                        path.move(to: CGPoint(x: tapLocation.x, y: rect.minY))
+                        path.addLine(to: CGPoint(x: tapLocation.x, y: rect.maxY))
                     }
                     .stroke(
                         style: StrokeStyle(lineWidth: 1)
@@ -332,33 +332,6 @@ struct SatelliteElevationGraph: View {
             )
         } else {
             return AnyView(EmptyView().allowsHitTesting(false))
-        }
-    }
-
-    struct LongPressGestureModifier: ViewModifier {
-        @Binding var longPressLocation: CGPoint?
-
-        func body(content: Content) -> some View {
-            content.highPriorityGesture(
-                LongPressGesture(minimumDuration: 0.75)
-                    .sequenced(before: DragGesture(minimumDistance: 0, coordinateSpace: .local))
-                    .onChanged({ value in
-                        switch value {
-                        case .second(true, let drag):
-                            self.longPressLocation = drag?.location
-                        default:
-                            break
-                        }
-                    })
-                    .onEnded { value in
-                        switch value {
-                        case .second(true, _):
-                            self.longPressLocation = nil
-                        default:
-                            break
-                        }
-                    }
-            )
         }
     }
 
@@ -386,7 +359,6 @@ struct SatelliteElevationGraph: View {
                                 .overlay(elevationGrid)
                                 .overlay(satelliteElevationPlot)
                                 .overlay(satelliteDarknessPath)
-                                .modifier(LongPressGestureModifier(longPressLocation: self.$longPressLocation))
                                 .modifier(SizeModifier())
                                 .onPreferenceChange(SizePreferenceKey.self) { self.contentSize = $0 }
                                 .overlay(selectedTimeInfo)
