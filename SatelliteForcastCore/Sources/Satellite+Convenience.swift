@@ -167,9 +167,36 @@ extension Satellite {
                 interval: param.fineInterval
             )
 
+            // Use a cheaper quadratic interpolation to find
+            // RST time.
+            let elevInterp = quadraticInterpolate(fineSnapshots.map { ($0.0.julianDate, $0.1.position.elev) }, steps: 3000)
+            let maxElevPair = elevInterp.max(by: { $0.1 < $1.1 }).map { (Date(julianDate: $0), $1) }!
+            let risesAtPair: (Date, Double)? = {
+                for index in elevInterp.indices where index < elevInterp.index(before: elevInterp.endIndex) {
+                    if elevInterp[index].1 <= 0 && elevInterp[elevInterp.index(after: index)].1 > 0 {
+                        let result = elevInterp[elevInterp.index(after: index)]
+                        return (
+                            Date(julianDate: result.0),
+                            result.1
+                        )
+                    }
+                }
+                return nil
+            }()
+            let setsAtPair: (Date, Double)? = {
+                for index in elevInterp.indices where index < elevInterp.index(before: elevInterp.endIndex) {
+                    if elevInterp[index].1 > 0 && elevInterp[elevInterp.index(after: index)].1 <= 0 {
+                        let result = elevInterp[elevInterp.index(after: index)]
+                        return (
+                            Date(julianDate: result.0),
+                            result.1
+                        )
+                    }
+                }
+                return nil
+            }()
+
             var illuminationChanges = [PassInformation.IlluminationChange]()
-            var risesAt: Date?
-            var setsAt: Date?
 
             for index in fineSnapshots.indices where index < fineSnapshots.index(before: fineSnapshots.endIndex) {
                 let snapshot1 = fineSnapshots[index].1
@@ -180,20 +207,15 @@ extension Satellite {
                 } else if !snapshot1.isIlluminated && snapshot2.isIlluminated {
                     illuminationChanges.append(.exitsShadow(date: snapshot2.date))
                 }
-
-                if snapshot1.position.elev <= 0 && snapshot2.position.elev > 0 {
-                    risesAt = snapshot1.date
-                }
-
-                if snapshot1.position.elev > 0 && snapshot2.position.elev <= 0 {
-                    setsAt = snapshot2.date
-                }
             }
 
             passInformation.append(
                 PassInformation(
-                    risesAt: risesAt,
-                    setsAt: setsAt,
+                    rise: risesAtPair.map { PassInformation.DateElev(date: $0.0, elev: $0.1) },
+                    set: setsAtPair.map { PassInformation.DateElev(date: $0.0, elev: $0.1) },
+                    hightestElevation: PassInformation.DateElev(
+                        date: maxElevPair.0, elev: maxElevPair.1
+                    ),
                     illuminationChanges: illuminationChanges
                 )
             )

@@ -25,11 +25,6 @@ struct SkyChartConfigs: Equatable {
     }
 }
 
-enum SkyChartAction {
-    case onAppear
-    case loadedBackgroundSky(stars: [Star], constellations: Set<Constellation>)
-}
-
 /// The root state of sky charts.
 struct SkyChartRootState: Equatable {
     var configs: SkyChartConfigs = .preset
@@ -41,6 +36,11 @@ struct SkyChartRootState: Equatable {
     static var empty: SkyChartRootState {
         return SkyChartRootState()
     }
+}
+
+enum SkyChartAction {
+    case onAppear
+    case loadedBackgroundSky(stars: [Star], constellations: Set<Constellation>)
 }
 
 /// A state used in a single sky chart view
@@ -105,6 +105,16 @@ struct SkyChartViewState: Equatable {
     var stars: [Star] = []
     var constellations: Set<Constellation> = []
 
+
+    struct DirectionArrow: Equatable {
+        let azimuth: Double
+        // 0 to 1
+        let dist: Double
+        let orientation: Double
+    }
+    // Derived information
+    var directionArrow: DirectionArrow?
+
     static func projectPassingMode(state: AppState) -> SkyChartViewState {
         guard let observerCoodinate = state.coreLocationState.location.map(LatLonAlt.init) else {
             return SkyChartViewState(mode: .notReady)
@@ -113,7 +123,7 @@ struct SkyChartViewState: Equatable {
             if let noradIndex = state.selectedSatelliteNoradIndex,
                let satelliteState = state.satellites[noradIndex],
                let pass = satelliteState.passes
-                .first(where: { $0.risesAt != nil && $0.risesAt! > state.tleLoaderState.referenceDate }) {
+                .first(where: { $0.risesAt != nil && $0.risesAt! > state.tleLoaderState.referenceDate && $0.hightestElevation.elev > 10 }) {
                 let subMap = satelliteState.snapshots.submap(from: pass.risesAt!, through: pass.setsAt ?? satelliteState.snapshots.last!.0)
                 return (pass, subMap)
             } else {
@@ -144,7 +154,7 @@ struct SkyChart: View {
         return min(rect.width, rect.height) / 2
     }
 
-    private func pointAtHorizontalCoordinate(_ coordinate: AziEleDst, rect: CGRect) -> CGPoint {
+    private func point(at coordinate: AziEleDst, rect: CGRect) -> CGPoint {
         let dist = (90 - coordinate.elev) / 90.0 * Double(radius(fromRect: rect))
         let xOffset = sin(coordinate.azim * deg2rad) * dist
         let yOffset = cos(coordinate.azim * deg2rad) * dist
@@ -152,15 +162,41 @@ struct SkyChart: View {
     }
 
     private func azimuthMarkPoints(azimuth: Double, length: CGFloat, rect: CGRect) -> (CGPoint, CGPoint) {
-        func pointWithAzimuth(_ azim: Double, dist: Double) -> CGPoint {
+        func point(_ azim: Double, dist: Double) -> CGPoint {
             let xOffset = sin(azim * deg2rad) * dist
             let yOffset = cos(azim * deg2rad) * dist
             return CGPoint(x: rect.midX - CGFloat(xOffset), y: rect.midY - CGFloat(yOffset))
         }
         return (
-            pointWithAzimuth(azimuth, dist: Double(radius(fromRect: rect))),
-            pointWithAzimuth(azimuth, dist: Double(radius(fromRect: rect) + length))
+            point(azimuth, dist: Double(radius(fromRect: rect))),
+            point(azimuth, dist: Double(radius(fromRect: rect) + length))
         )
+    }
+
+    private var passInfoLabel: some View {
+        switch viewModel.state.mode {
+        case .notReady, .sky(_, observer: _):
+            return AnyView(EmptyView())
+        case let .pass(pass, snapshotsDuringPass, _):
+            return AnyView(GeometryReader { geometry in
+                let rect = geometry.frame(in: .local)
+                let formatter: DateFormatter = {
+                    let formatter = DateFormatter()
+                    formatter.setLocalizedDateFormatFromTemplate("mm:ss")
+                    return formatter
+                }()
+                ZStack {
+                    if let risesAt = pass.risesAt {
+                        snapshotsDuringPass.
+                        Text(formatter.string(from: risesAt))
+                            .position(point(at: planetCoordinate, rect: rect))
+                    }
+                    if let setsAt = pass.setsAt {
+                        Text(formatter.string(from: setsAt))
+                    }
+                }
+            })
+        }
     }
 
     private var pathFromSortedSatelliteSnapshots: some View {
@@ -183,10 +219,10 @@ struct SkyChart: View {
                                 let snapshotsGroup = snapshotsByIllumination[index]
                                 for i in snapshotsGroup.indices where i < snapshotsGroup.index(before: snapshotsGroup.endIndex) {
                                     if i == snapshotsGroup.startIndex {
-                                        let point = pointAtHorizontalCoordinate(snapshotsGroup[i].1.position, rect: rect)
+                                        let point = point(at: snapshotsGroup[i].1.position, rect: rect)
                                         path.move(to: point)
                                     }
-                                    let nextPoint = pointAtHorizontalCoordinate(snapshotsGroup[snapshotsGroup.index(after: i)].1.position, rect: rect)
+                                    let nextPoint = point(at: snapshotsGroup[snapshotsGroup.index(after: i)].1.position, rect: rect)
                                     path.addLine(to: nextPoint)
                                 }
                             }
@@ -233,7 +269,7 @@ struct SkyChart: View {
                         if alt < 0 {
                             continue
                         }
-                        let point = pointAtHorizontalCoordinate(AziEleDst(azim: azi, elev: alt, dist: 0), rect: rect)
+                        let point = point(at: AziEleDst(azim: azi, elev: alt, dist: 0), rect: rect)
                         path.move(to: point)
                         let radius = CGFloat(3 * exp(0.425 * -star.physicalInfo.apparentMagnitude))
                         path.addEllipse(in: CGRect(x: point.x - radius, y: point.y - radius, width: radius * 2, height: radius * 2))
@@ -262,8 +298,8 @@ struct SkyChart: View {
                         for line in constellation.connectionLines {
                             let (alt1, azi1) = azel(time: referenceDate, site: (observerCoordinate.lat, observerCoordinate.lon), cele: cartesianToRaDec(line.star1.physicalInfo.coordinate))
                             let (alt2, azi2) = azel(time: referenceDate, site: (observerCoordinate.lat, observerCoordinate.lon), cele: cartesianToRaDec(line.star2.physicalInfo.coordinate))
-                            let point1 = pointAtHorizontalCoordinate(AziEleDst(azim: azi1, elev: alt1, dist: 0), rect: rect)
-                            let point2 = pointAtHorizontalCoordinate(AziEleDst(azim: azi2, elev: alt2, dist: 0), rect: rect)
+                            let point1 = point(at: AziEleDst(azim: azi1, elev: alt1, dist: 0), rect: rect)
+                            let point2 = point(at: AziEleDst(azim: azi2, elev: alt2, dist: 0), rect: rect)
                             path.move(to: point1)
                             path.addLine(to: point2)
                         }
@@ -368,12 +404,7 @@ struct SkyChart: View {
                         labelBuilder()
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    .position(
-                        pointAtHorizontalCoordinate(
-                            planetCoordinate,
-                            rect: rect
-                        )
-                    )
+                    .position(point(at: planetCoordinate, rect: rect))
                 }
             })
         } else {
