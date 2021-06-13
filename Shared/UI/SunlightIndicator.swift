@@ -64,11 +64,11 @@ struct SunlightIndicatorViewModel {
             var stops = [Gradient.Stop]()
             stops.append(Gradient.Stop(color: color(elevation: firstSnapshot.sunElevation), location: 0))
 
-            for (i, index) in snapshots.indices.enumerated() where index < snapshots.index(before: snapshots.endIndex) {
+            for index in snapshots.indices where index < snapshots.index(before: snapshots.endIndex) {
                 let s1 = snapshots[index].1
                 let s2 = snapshots[snapshots.index(after: index)].1
 
-                let location: CGFloat = CGFloat(i) / CGFloat(snapshots.count)
+                let location: CGFloat = CGFloat(s1.date.timeIntervalSince(dateRange.lowerBound) / dateRange.upperBound.timeIntervalSince(dateRange.lowerBound))
 
                 for (boundary, color) in boundaries {
                     if (s1.sunElevation > boundary && s2.sunElevation <= boundary) ||
@@ -84,8 +84,8 @@ struct SunlightIndicatorViewModel {
         }()
 
         let snapshotsSplitBySunriseOrSet = snapshots.split { s1, s2 in
-            (s1.1.sunElevation > 0 && s2.1.sunElevation > 0) ||
-                (s1.1.sunElevation < 0 && s2.1.sunElevation < 0)
+            (s1.1.sunElevation > 0 && s2.1.sunElevation <= 0) ||
+                (s1.1.sunElevation <= 0 && s2.1.sunElevation > 0)
         }
 
         let sunEventsXPercent: [(SunEvent, CGFloat)] = {
