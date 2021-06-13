@@ -43,7 +43,7 @@ class SatelliteElevationGraphState: Equatable {
 
     private static var satelliteElevationCache: (Int, CGPath)?
 
-    private static func satelliteElevationPathFunc(snapshots: Map<Date, SatelliteSnapshot>, snapshotsHash: Int) -> (CGRect) -> CGPath {
+    private static func satelliteElevationPathFunc(snapshots: Map<Date, SatelliteSnapshot>, snapshotsHash: Int, dateRange: Range<Date>) -> (CGRect) -> CGPath {
         return { rect in
             let path = CGMutablePath()
             if snapshots.isEmpty {
@@ -60,8 +60,8 @@ class SatelliteElevationGraphState: Equatable {
                 return cache.1
             }
 
-            for (i, (_, snapshot)) in snapshots.enumerated() {
-                let xPercent = CGFloat(i) / CGFloat(snapshots.count)
+            for (i, (date, snapshot)) in snapshots.enumerated() {
+                let xPercent = CGFloat(date.timeIntervalSince(dateRange.lowerBound) / dateRange.upperBound.timeIntervalSince(dateRange.lowerBound))
                 if i == 0 {
                     path.move(to: snapshotPoint(snapshot, xPercent: xPercent, rect: rect))
                 } else {
@@ -77,9 +77,9 @@ class SatelliteElevationGraphState: Equatable {
     private static var unilluminatedPathsCache: (Int, CGPath)?
 
     private static func unilluminatedPathsFunc(
-        snapshotsSplitByIllumination: [[(Int, SatelliteSnapshot)]],
+        snapshotsSplitByIllumination: [Map<Date, SatelliteSnapshot>],
         snapshotsHash: Int,
-        totalCount: Int
+        dateRange: Range<Date>
     ) -> (CGRect) -> CGPath {
         return { rect in
             let path = CGMutablePath()
@@ -101,10 +101,10 @@ class SatelliteElevationGraphState: Equatable {
             snapshotsSplitByIllumination
                 .filter { !($0.first?.1.isIlluminated ?? true) }
                 .forEach { snapshotGroup in
-                    for (i, s) in snapshotGroup.enumerated() {
-                        let (globalIndex, snapshot) = s
-                        let xPercent = CGFloat(globalIndex) / CGFloat(totalCount)
-                        if i == 0 {
+                    for index in snapshotGroup.indices {
+                        let (date, snapshot) = snapshotGroup[index]
+                        let xPercent = CGFloat(date.timeIntervalSince(dateRange.lowerBound) / dateRange.upperBound.timeIntervalSince(dateRange.lowerBound))
+                        if index == snapshotGroup.startIndex {
                             path.move(to: snapshotPoint(snapshot, xPercent: xPercent, rect: rect))
                         } else {
                             path.addLine(to: snapshotPoint(snapshot, xPercent: xPercent, rect: rect))
@@ -160,7 +160,11 @@ class SatelliteElevationGraphState: Equatable {
     }
 
     static func project(state: Store.StateType) -> SatelliteElevationGraphState {
-        let snapshots = state.currentSatelliteSnapshots
+        // The view model's snapshot will be constrained to the date range.
+        let snapshots = state.currentSatelliteSnapshots.submap(
+            from: state.dateRange.lowerBound,
+            to: state.dateRange.upperBound
+        )
         let snapshotsHash: Int = {
             var hasher = Hasher()
             for (_, snapshot) in snapshots {
@@ -197,8 +201,7 @@ class SatelliteElevationGraphState: Equatable {
             return CGRect(origin: initialRect.origin, size: CGSize(width: initialRect.width / widthPerSecond * max(widthPerSecond, state.satelliteElevationGraphConfigs.minimumHorizonalResolution), height: initialRect.height))
         }
 
-        let snapshotsSplitByIllumination = Array(snapshots.enumerated())
-            .map { ($0, $1.1) }
+        let snapshotsSplitByIllumination = snapshots
             .split(shouldSplit: { (s1, s2) -> Bool in
                 return s1.1.isIlluminated != s2.1.isIlluminated
             })
@@ -206,12 +209,13 @@ class SatelliteElevationGraphState: Equatable {
         return SatelliteElevationGraphState(
             satelliteElevationPath: satelliteElevationPathFunc(
                 snapshots: snapshots,
-                snapshotsHash: snapshotsHash
+                snapshotsHash: snapshotsHash,
+                dateRange: state.dateRange
             ),
             unilluminatedPaths: unilluminatedPathsFunc(
                 snapshotsSplitByIllumination: snapshotsSplitByIllumination,
                 snapshotsHash: snapshotsHash,
-                totalCount: snapshots.count
+                dateRange: state.dateRange
             ),
             xPercentDatePair: xPercentDatePair,
             contentRect: contentRect,

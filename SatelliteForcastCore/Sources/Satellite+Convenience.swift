@@ -154,7 +154,7 @@ extension Satellite {
         var snapshotBeforeRising: SatelliteSnapshot?
         var snapshotAfterSetting: SatelliteSnapshot?
         var passInformation = [PassInformation]()
-        var resultSnapshots = Map<Date, SatelliteSnapshot>()
+        var resultSnapshots = coarseSnapshots
 
         func tryGenerateFinePassInfo() {
             guard let fromSnapshot = snapshotBeforeRising, let toSnapshot = snapshotAfterSetting else {

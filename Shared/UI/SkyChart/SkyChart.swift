@@ -173,6 +173,17 @@ struct SkyChart: View {
         )
     }
 
+    struct PassInfoModifier: ViewModifier {
+        func body(content: Content) -> some View {
+            return content.fixedSize()
+                .padding(2)
+                .background(Color("passInfoLabel_background"))
+                .foregroundColor(Color("passInfoLabel_foreground"))
+                .font(.caption2)
+                .cornerRadius(4)
+        }
+    }
+
     private var passInfoLabel: some View {
         switch viewModel.state.mode {
         case .notReady, .sky(_, observer: _):
@@ -182,17 +193,35 @@ struct SkyChart: View {
                 let rect = geometry.frame(in: .local)
                 let formatter: DateFormatter = {
                     let formatter = DateFormatter()
-                    formatter.setLocalizedDateFormatFromTemplate("mm:ss")
+                    formatter.setLocalizedDateFormatFromTemplate("H:mm:ss")
+                    return formatter
+                }()
+                let numberFormatter: NumberFormatter = {
+                    let formatter = NumberFormatter()
+                    formatter.usesSignificantDigits = true
+                    formatter.maximumSignificantDigits = 3
                     return formatter
                 }()
                 ZStack {
-                    if let risesAt = pass.risesAt {
-                        snapshotsDuringPass.
-                        Text(formatter.string(from: risesAt))
-                            .position(point(at: planetCoordinate, rect: rect))
+                    if let risesAt = pass.risesAt,
+                       let snapshot = snapshotsDuringPass.submap(from: risesAt, to: risesAt.addingTimeInterval(10)).first {
+                        let textPosition = AziEleDst(azim: snapshot.1.position.azim, elev: snapshot.1.position.elev + 15, dist: 0)
+                        Text("↑\(formatter.string(from: risesAt))")
+                            .modifier(PassInfoModifier())
+                            .position(point(at: textPosition, rect: rect))
                     }
-                    if let setsAt = pass.setsAt {
-                        Text(formatter.string(from: setsAt))
+                    if let setsAt = pass.setsAt,
+                       let snapshot = snapshotsDuringPass.submap(from: setsAt.addingTimeInterval(-10), to: setsAt).last {
+                        let textPosition = AziEleDst(azim: snapshot.1.position.azim, elev: snapshot.1.position.elev + 15, dist: 0)
+                        Text("↓\(formatter.string(from: setsAt))")
+                            .modifier(PassInfoModifier())
+                            .position(point(at: textPosition, rect: rect))
+                    }
+                    if let higestElevSnapshot = snapshotsDuringPass.submap(from: pass.hightestElevation.date.addingTimeInterval(-2), to: pass.hightestElevation.date.addingTimeInterval(2)).first {
+                        let textPosition = AziEleDst(azim: higestElevSnapshot.1.position.azim, elev: higestElevSnapshot.1.position.elev + 15, dist: 0)
+                        Text("\(formatter.string(from: pass.hightestElevation.date)) \n∠\(numberFormatter.string(from: NSNumber(value: pass.hightestElevation.elev))!)°")
+                            .modifier(PassInfoModifier())
+                            .position(point(at: textPosition, rect: rect))
                     }
                 }
             })
@@ -480,6 +509,7 @@ struct SkyChart: View {
             .overlay(backgroundPath)
             .overlay(azimuthMarks)
             .overlay(azimuthMarkTexts)
+            .overlay(passInfoLabel)
             .id(UUID())
             .onAppear {
                 viewModel.dispatch(.onAppear)
