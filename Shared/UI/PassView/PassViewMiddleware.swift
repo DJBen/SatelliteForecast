@@ -1,5 +1,5 @@
 //
-//  SatelliteDetailViewMiddleware.swift
+//  PassViewMiddleware.swift
 //  SatelliteForcast (iOS)
 //
 //  Created by Ben Lu on 6/7/21.
@@ -11,22 +11,22 @@ import Combine
 import CombineRex
 import SatelliteKit
 
-fileprivate let logger = Logger(subsystem: "io.djben.satelliteDetailView", category: "middleware")
+fileprivate let logger = Logger(subsystem: "io.djben.passView", category: "middleware")
 
 extension EffectMiddleware where
-    InputActionType == SatelliteDetailViewAction,
+    InputActionType == PassViewAction,
     OutputActionType == AppAction,
     StateType == AppState,
     Dependencies == Void {
 
-    /// A middeware that listens to `SatelliteDetailViewAction`.
+    /// A middeware that listens to `PassViewAction`.
     /// - `onAppear`:
     ///   - Generate a coarse ephemeris of the satellite over a long future period.
     ///   - Find all the passes in the same period, and generate a fine ephemeris during each pass.
     ///
     ///   Thus this effect will have two action outputs before it completes.
-    static var satelliteDetailView: EffectMiddleware<SatelliteDetailViewAction, AppAction, AppState, Void> {
-        EffectMiddleware<SatelliteDetailViewAction, AppAction, AppState, Void>
+    static var passView: EffectMiddleware<PassViewAction, AppAction, AppState, Void> {
+        EffectMiddleware<PassViewAction, AppAction, AppState, Void>
             .onAction { (action, _, getState) -> Effect<Void, AppAction> in
                 switch action {
                 case .onAppear:

@@ -35,7 +35,7 @@ struct SatelliteListViewState: Equatable {
 struct SatelliteListView: View {
     @ObservedObject var viewModel: ObservableViewModel<SatelliteListViewAction, SatelliteListViewState>
 
-    var detailViewProducer: ViewProducer<Void, SatelliteDetailView>
+    var detailViewProducer: ViewProducer<Void, PassView>
 
     var body: some View {
         NavigationView {
@@ -85,8 +85,8 @@ extension ViewProducer where Context == Void, ProducedView == SatelliteListView 
                         state: SatelliteListViewState.project(state:)
                     )
                     .asObservableViewModel(initialState: .empty),
-                detailViewProducer: ViewProducer<Void, SatelliteDetailView>
-                    .satelliteDetailView(viewModel: viewModel)
+                detailViewProducer: ViewProducer<Void, PassView>
+                    .passView(viewModel: viewModel)
             )
         }
     }
@@ -120,7 +120,7 @@ struct SatelliteListView_Previews: PreviewProvider {
                 )
             ),
             detailViewProducer: .pure(
-                SatelliteDetailView(
+                PassView(
                     viewModel: .mock(state: .empty),
                     elevationGraphProducer: .crash,
                     skyChartProducer: .crash

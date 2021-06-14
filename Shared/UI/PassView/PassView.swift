@@ -1,5 +1,5 @@
 //
-//  SatelliteDetailView.swift
+//  PassView.swift
 //  SatelliteForcast
 //
 //  Created by Ben Lu on 6/5/21.
@@ -11,29 +11,29 @@ import CombineRextensions
 import SatelliteForcastCore
 import SatelliteKit
 
-enum SatelliteDetailViewAction {
+enum PassViewAction {
     case onAppear
 }
 
-struct SatelliteDetailViewState: Equatable {
+struct PassViewState: Equatable {
     var tle: TLE?
     var selectedPass: PassInformation?
 
-    static func project(state: AppState) -> SatelliteDetailViewState {
-        SatelliteDetailViewState(
+    static func project(state: AppState) -> PassViewState {
+        PassViewState(
             tle: state.selectedSatelliteTLE,
             selectedPass: state.selectedSatellitePass
         )
     }
 
-    static var empty: SatelliteDetailViewState {
-        return SatelliteDetailViewState()
+    static var empty: PassViewState {
+        return PassViewState()
     }
 }
 
 /// The satellite detail view shows satellite passes and the sky chart during the first visible pass (if available).
-struct SatelliteDetailView: View {
-    @ObservedObject var viewModel: ObservableViewModel<SatelliteDetailViewAction, SatelliteDetailViewState>
+struct PassView: View {
+    @ObservedObject var viewModel: ObservableViewModel<PassViewAction, PassViewState>
 
     var elevationGraphProducer: ViewProducer<Void, SatelliteElevationGraph>
     var skyChartProducer: ViewProducer<Void, SkyChart>
@@ -58,14 +58,14 @@ struct SatelliteDetailView: View {
     }
 }
 
-extension ViewProducer where Context == Void, ProducedView == SatelliteDetailView {
-    static func satelliteDetailView<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
-        ViewProducer<Void, SatelliteDetailView> { noradIndex in
-            SatelliteDetailView(
+extension ViewProducer where Context == Void, ProducedView == PassView {
+    static func passView<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
+        ViewProducer<Void, PassView> { noradIndex in
+            PassView(
                 viewModel: viewModel
                     .projection(
-                        action: AppAction.satelliteDetailView,
-                        state: SatelliteDetailViewState.project(state:)
+                        action: AppAction.passView,
+                        state: PassViewState.project(state:)
                     )
                     .asObservableViewModel(initialState: .empty),
                 elevationGraphProducer: ViewProducer<Void, SatelliteElevationGraph>
@@ -78,7 +78,7 @@ extension ViewProducer where Context == Void, ProducedView == SatelliteDetailVie
 
 import CoreLocation
 
-struct SatelliteDetailView_Previews: PreviewProvider {
+struct PassView_Previews: PreviewProvider {
     static var previews: some View {
         let tle = try! TLE(
             raw: """
@@ -114,9 +114,9 @@ struct SatelliteDetailView_Previews: PreviewProvider {
             ),
             navigationState: .detail(noradIndex: tle.noradIndex, selectedPassIndex: 0)
         )
-        SatelliteDetailView(
+        PassView(
             viewModel: .mock(
-                state: SatelliteDetailViewState(
+                state: PassViewState(
                     tle: tle
                 )
             ),

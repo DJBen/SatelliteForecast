@@ -13,7 +13,7 @@ enum AppAction {
     case tleLoaderInput(TLELoaderInputAction)
     case tleLoaderOutput(TLELoaderOutputAction)
     case satelliteListView(SatelliteListViewAction)
-    case satelliteDetailView(SatelliteDetailViewAction)
+    case passView(PassViewAction)
     case satelliteElevationGraph(SatelliteElevationGraphAction)
     case skyChart(SkyChartAction)
     case tlePropagator(TLEPropagatorAction)
@@ -76,14 +76,14 @@ extension AppAction {
         }
     }
 
-    public var satelliteDetailView: SatelliteDetailViewAction? {
+    public var passView: PassViewAction? {
         get {
-            guard case let .satelliteDetailView(value) = self else { return nil }
+            guard case let .passView(value) = self else { return nil }
             return value
         }
         set {
-            guard case .satelliteDetailView = self, let newValue = newValue else { return }
-            self = .satelliteDetailView(newValue)
+            guard case .passView = self, let newValue = newValue else { return }
+            self = .passView(newValue)
         }
     }
 

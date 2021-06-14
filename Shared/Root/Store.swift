@@ -65,9 +65,9 @@ class Store: ReduxStoreBase<AppAction, AppState> {
                     inputAction: { $0.satelliteListView }
                 )
 
-                <> EffectMiddleware.satelliteDetailView
+                <> EffectMiddleware.passView
                 .lift(
-                    inputAction: { $0.satelliteDetailView }
+                    inputAction: { $0.passView }
                 )
 
                 <> EffectMiddleware.skyChart
