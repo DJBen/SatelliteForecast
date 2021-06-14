@@ -10,11 +10,6 @@ import BTree
 
 /// The information for a single satellite pass.
 public struct PassInformation {
-    public enum IlluminationChange {
-        case entersShadow(date: Date)
-        case exitsShadow(date: Date)
-    }
-
     public struct DateElev {
         public let date: Date
         public let elev: Double
@@ -39,14 +34,42 @@ public struct PassInformation {
     }
 
     /// The time and elelvation angle (in degrees) of the highest elevation point during the pass.
-    public let hightestElevation: DateElev
-    
-    /// Changes in satellite illumination.
-    public let illuminationChanges: [IlluminationChange]
+    public let transit: DateElev
+
+    public struct Illumination {
+        public enum Change {
+            case entersShadow(date: Date)
+            case exitsShadow(date: Date)
+        }
+
+        public let initiallyIlluminated: Bool
+        public let changes: [Change]
+
+        /// Whether any part of the pass is illuminated.
+        public var hasAnyIllumination: Bool {
+            func hasExitsShadow(_ changes: Change) -> Bool {
+                switch changes {
+                case .exitsShadow(date: _):
+                    return true
+                default:
+                    return false
+                }
+            }
+            return initiallyIlluminated || changes.contains { hasExitsShadow($0) }
+        }
+    }
+
+    /// The satellite illumination ifnformation.
+    public let illumination: Illumination
+
+    /// The elevation of the sun at transit. A satellite pass can usually only be seen after civil twilight or before civil dawn when sun is
+    /// below -6 degrees.
+    public let sunElevationAtTransit: Double
 }
 
 extension PassInformation: Equatable {}
-extension PassInformation.IlluminationChange: Equatable {}
+extension PassInformation.Illumination: Equatable {}
+extension PassInformation.Illumination.Change: Equatable {}
 extension PassInformation.DateElev: Equatable {}
 
 extension Map where Key == Date, Value == SatelliteSnapshot {

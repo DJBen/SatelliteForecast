@@ -17,10 +17,12 @@ enum SatelliteDetailViewAction {
 
 struct SatelliteDetailViewState: Equatable {
     var tle: TLE?
+    var selectedPass: PassInformation?
 
     static func project(state: AppState) -> SatelliteDetailViewState {
         SatelliteDetailViewState(
-            tle: state.selectedSatelliteTLE
+            tle: state.selectedSatelliteTLE,
+            selectedPass: state.selectedSatellitePass
         )
     }
 
@@ -29,6 +31,7 @@ struct SatelliteDetailViewState: Equatable {
     }
 }
 
+/// The satellite detail view shows satellite passes and the sky chart during the first visible pass (if available).
 struct SatelliteDetailView: View {
     @ObservedObject var viewModel: ObservableViewModel<SatelliteDetailViewAction, SatelliteDetailViewState>
 
@@ -109,7 +112,7 @@ struct SatelliteDetailView_Previews: PreviewProvider {
                 authorizationStatus: .authorizedWhenInUse,
                 location: location
             ),
-            selectedSatelliteNoradIndex: tle.noradIndex
+            navigationState: .detail(noradIndex: tle.noradIndex, selectedPassIndex: 0)
         )
         SatelliteDetailView(
             viewModel: .mock(

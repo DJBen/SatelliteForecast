@@ -196,7 +196,7 @@ extension Satellite {
                 return nil
             }()
 
-            var illuminationChanges = [PassInformation.IlluminationChange]()
+            var illuminationChanges = [PassInformation.Illumination.Change]()
 
             for index in fineSnapshots.indices where index < fineSnapshots.index(before: fineSnapshots.endIndex) {
                 let snapshot1 = fineSnapshots[index].1
@@ -209,14 +209,24 @@ extension Satellite {
                 }
             }
 
+            let sunElev = azel(
+                time: maxElevPair.0,
+                site: (observer.lat, observer.lon),
+                cele: solarGeo(julianDays: maxElevPair.0.julianDate)
+            ).alt
+
             passInformation.append(
                 PassInformation(
                     rise: risesAtPair.map { PassInformation.DateElev(date: $0.0, elev: $0.1) },
                     set: setsAtPair.map { PassInformation.DateElev(date: $0.0, elev: $0.1) },
-                    hightestElevation: PassInformation.DateElev(
+                    transit: PassInformation.DateElev(
                         date: maxElevPair.0, elev: maxElevPair.1
                     ),
-                    illuminationChanges: illuminationChanges
+                    illumination: PassInformation.Illumination(
+                        initiallyIlluminated: fineSnapshots.first!.1.isIlluminated,
+                        changes: illuminationChanges
+                    ),
+                    sunElevationAtTransit: sunElev
                 )
             )
 

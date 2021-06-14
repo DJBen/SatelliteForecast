@@ -15,12 +15,40 @@ struct AppState: Equatable {
     var dateRange: Range<Date>
     var satelliteElevationGraphConfigs: SatelliteElevationGraphConfigs = .preset
     var skyChartState: SkyChartRootState = .empty
-    var skyChartConfigs: SkyChartConfigs = .preset
     /// A mapping from NORAD ID to the satellite state.
     var satellites: [Int: SatelliteState] = [:]
     var tleLoaderState: TLELoaderState = .empty
     var coreLocationState: CoreLocationState = .empty
-    var selectedSatelliteNoradIndex: Int?
+
+    // Navigation
+    enum NavigationState: Equatable {
+        case list
+        case detail(noradIndex: Int, selectedPassIndex: Int? = nil)
+    }
+    var navigationState: NavigationState = .list
+
+    // MARK: Derived Properties
+    var selectedSatelliteNoradIndex: Int? {
+        get {
+            switch navigationState {
+            case let .detail(noradIndex, _):
+                return noradIndex
+            default:
+                return nil
+            }
+        }
+
+        set {
+            if let newValue = newValue {
+                if newValue == self.selectedSatelliteNoradIndex {
+                    return
+                }
+                self.navigationState = .detail(noradIndex: newValue, selectedPassIndex: nil)
+            } else {
+                self.navigationState = .list
+            }
+        }
+    }
 
     static var empty: AppState {
         AppState(
@@ -50,5 +78,17 @@ struct AppState: Equatable {
         return tleLoaderState.tles.values
             .flatMap { $0 }
             .first { $0.noradIndex == index }
+    }
+
+    var selectedSatellitePass: PassInformation? {
+        switch navigationState {
+        case let .detail(noradIndex, selectedPassIndex):
+            guard let selectedPassIndex = selectedPassIndex else {
+                return nil
+            }
+            return satellites[noradIndex]?.passes[selectedPassIndex]
+        default:
+            return nil
+        }
     }
 }

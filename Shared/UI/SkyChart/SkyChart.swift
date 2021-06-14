@@ -105,7 +105,6 @@ struct SkyChartViewState: Equatable {
     var stars: [Star] = []
     var constellations: Set<Constellation> = []
 
-
     struct DirectionArrow: Equatable {
         let azimuth: Double
         // 0 to 1
@@ -120,19 +119,22 @@ struct SkyChartViewState: Equatable {
             return SkyChartViewState(mode: .notReady)
         }
         let firstPass: (PassInformation, Map<Date, SatelliteSnapshot>)? = {
-            if let noradIndex = state.selectedSatelliteNoradIndex,
-               let satelliteState = state.satellites[noradIndex],
-               let pass = satelliteState.passes
-                .first(where: { $0.risesAt != nil && $0.risesAt! > state.tleLoaderState.referenceDate && $0.hightestElevation.elev > 10 }) {
+            switch state.navigationState {
+            case let .detail(noradIndex: noradIndex, selectedPassIndex: selectedPassIndex):
+                guard let satelliteState = state.satellites[noradIndex],
+                      let selectedPassIndex = selectedPassIndex else {
+                    return nil
+                }
+                let pass = satelliteState.passes[selectedPassIndex]
                 let subMap = satelliteState.snapshots.submap(from: pass.risesAt!, through: pass.setsAt ?? satelliteState.snapshots.last!.0)
                 return (pass, subMap)
-            } else {
+            default:
                 return nil
             }
         }()
         return SkyChartViewState(
             mode: firstPass.map { Mode.pass($0.0, snapshotsDuringPass: $0.1, observer: observerCoodinate) } ?? .notReady,
-            configs: state.skyChartConfigs,
+            configs: state.skyChartState.configs,
             stars: state.skyChartState.stars,
             constellations: state.skyChartState.constellations
         )
@@ -217,9 +219,9 @@ struct SkyChart: View {
                             .modifier(PassInfoModifier())
                             .position(point(at: textPosition, rect: rect))
                     }
-                    if let higestElevSnapshot = snapshotsDuringPass.submap(from: pass.hightestElevation.date.addingTimeInterval(-2), to: pass.hightestElevation.date.addingTimeInterval(2)).first {
+                    if let higestElevSnapshot = snapshotsDuringPass.submap(from: pass.transit.date.addingTimeInterval(-2), to: pass.transit.date.addingTimeInterval(2)).first {
                         let textPosition = AziEleDst(azim: higestElevSnapshot.1.position.azim, elev: higestElevSnapshot.1.position.elev + 15, dist: 0)
-                        Text("\(formatter.string(from: pass.hightestElevation.date)) \n∠\(numberFormatter.string(from: NSNumber(value: pass.hightestElevation.elev))!)°")
+                        Text("\(formatter.string(from: pass.transit.date)) \n∠\(numberFormatter.string(from: NSNumber(value: pass.transit.elev))!)°")
                             .modifier(PassInfoModifier())
                             .position(point(at: textPosition, rect: rect))
                     }
@@ -228,7 +230,7 @@ struct SkyChart: View {
         }
     }
 
-    private var pathFromSortedSatelliteSnapshots: some View {
+    private var satellitePath: some View {
         switch viewModel.state.mode {
         case .notReady:
             return AnyView(EmptyView())
@@ -313,7 +315,8 @@ struct SkyChart: View {
 
     var constellationLinesPath: some View {
         GeometryReader { geometry in
-            if let referenceDate = viewModel.state.mode.referenceDate, let observerCoordinate = viewModel.state.mode.observer {
+            if let referenceDate = viewModel.state.mode.referenceDate,
+               let observerCoordinate = viewModel.state.mode.observer {
                 let rect = geometry.frame(in: .local)
                 Path { path in
                     for constellation in viewModel.state.constellations {
@@ -502,7 +505,7 @@ struct SkyChart: View {
     var body: some View {
         starPath
             .overlay(constellationLinesPath)
-            .overlay(pathFromSortedSatelliteSnapshots)
+            .overlay(satellitePath)
             .overlay(moonView)
             .overlay(sunView)
             .clipShape(Circle())

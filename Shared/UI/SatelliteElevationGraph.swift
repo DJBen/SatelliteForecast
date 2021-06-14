@@ -452,7 +452,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                     authorizationStatus: .authorizedWhenInUse,
                     location: location
                 ),
-                selectedSatelliteNoradIndex: Int(sat.noradIdent)!
+                navigationState: .detail(noradIndex: Int(sat.noradIdent)!, selectedPassIndex: nil)
             )
         )
         SatelliteElevationGraph(viewModel: .mock(state: viewModel))
@@ -485,7 +485,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                     authorizationStatus: .authorizedWhenInUse,
                     location: location
                 ),
-                selectedSatelliteNoradIndex: Int(sat2.noradIdent)!
+                navigationState: .detail(noradIndex: Int(sat2.noradIdent)!, selectedPassIndex: nil)
             )
         )
         SatelliteElevationGraph(viewModel: .mock(state: viewModel2))
@@ -518,7 +518,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                     authorizationStatus: .authorizedWhenInUse,
                     location: location
                 ),
-                selectedSatelliteNoradIndex: Int(sat3.noradIdent)!
+                navigationState: .detail(noradIndex: Int(sat3.noradIdent)!, selectedPassIndex: nil)
             )
         )
         SatelliteElevationGraph(viewModel: .mock(state: viewModel3))
