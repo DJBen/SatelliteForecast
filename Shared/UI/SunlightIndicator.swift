@@ -27,6 +27,15 @@ struct SunlightIndicatorViewModel {
                 return "icon_sunset"
             }
         }
+
+        fileprivate var systemImageName: String {
+            switch self {
+            case .rise:
+                return "sunrise.fill"
+            case .set:
+                return "sunset.fill"
+            }
+        }
     }
     fileprivate let sunlightGradientStops: [Gradient.Stop]
     fileprivate let sunEventsXCoord: (CGRect) -> [(SunEvent, CGFloat)]
@@ -145,15 +154,13 @@ struct SunlightIndicator: View {
                 sunlightIndicator
 
                 ForEach(viewModel.sunEventsXCoord(rect), id: \.0) { (sunEvent, x) in
-                    Image(sunEvent.imageName)
+                    Image(systemName: sunEvent.systemImageName)
                         .renderingMode(.template)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .foregroundColor(.white)
-                        .frame(height: 20)
+                        .frame(height: 18)
                         .position(x: x, y: rect.midY)
-                        .offset(y: 2)
-
                 }
             }
         }

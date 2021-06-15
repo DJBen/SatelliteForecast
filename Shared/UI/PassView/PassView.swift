@@ -6,10 +6,10 @@
 //
 
 import CombineRex
-import SwiftUI
 import CombineRextensions
 import SatelliteForcastCore
 import SatelliteKit
+import SwiftUI
 
 enum PassViewAction {
     case onAppear
@@ -40,17 +40,28 @@ struct PassView: View {
 
     var body: some View {
         if let tle = viewModel.state.tle {
-            VStack(spacing: 20) {
-                Spacer()
-                skyChartProducer.view()
-                    .frame(idealHeight: 500, maxHeight: .infinity)
+            GeometryReader { geometry in
+                let rect = geometry.frame(in: .local)
+                VStack(spacing: 20) {
+                    elevationGraphProducer.view()
+                        .frame(alignment: .leading)
+                    skyChartProducer.view()
+                        .frame(height: min(rect.width, rect.height))
+                    Spacer(minLength: 10)
+                }
+                .navigationTitle(tle.commonName)
+                .onAppear {
+                    viewModel.dispatch(.onAppear)
+                }
+                .toolbar {
+                    ToolbarItem(placement: .bottomBar) {
+                        Button(action: {
 
-                elevationGraphProducer.view()
-                    .frame(height: 250, alignment: .leading)
-            }
-            .navigationTitle(tle.commonName)
-            .onAppear {
-                viewModel.dispatch(.onAppear)
+                        }, label: {
+                            Image(systemName: "square.stack.3d.up")
+                        })
+                    }
+                }
             }
         } else {
             EmptyView()

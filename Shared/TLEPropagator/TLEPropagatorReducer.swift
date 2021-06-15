@@ -25,13 +25,23 @@ extension Reducer where ActionType == TLEPropagatorAction, StateType == Store.St
                 state.satellites[noradIndex] = SatelliteState(snapshots: snapshots, passes: passes)
             }
 
-            // Defaults to select the first *visible* pass that satisfies all three criteria:
-            // - Sun elevation below the horizon.
-            // - Transit (maximum elevation) greater than 10 degress above horizon
+        case .selectVisiblePass:
+            // Defaults to select the first *visible* pass that satisfies all the following criteria:
+            // - Time of pass is after the current time.
+            // - Sun elevation is -6° or more below the horizon (having a sky that is dimmer than
+            //   civil twilight or dawn).
+            // - Transit (maximum elevation) greater than 10 degrees above horizon
             // - Has any illuminated segment during the pass
             switch state.navigationState {
             case let .detail(noradIndex, selectedPassIndex: nil):
-                let selectedPassIndex = state.satellites[noradIndex]!.passes.firstIndex(where: { $0.illumination.hasAnyIllumination && $0.sunElevationAtTransit < -6 && $0.transit.elev > 10 })
+                let selectedPassIndex = state.satellites[noradIndex]!.passes.firstIndex(
+                    where: {
+                        ($0.risesAt ?? $0.setsAt!) > state.tleLoaderState.referenceDate
+                            && $0.illumination.hasAnyIllumination
+                            && $0.sunElevationAtTransit < -6
+                            && $0.transit.elev > 10
+                    }
+                )
                 state.navigationState = .detail(noradIndex: noradIndex, selectedPassIndex: selectedPassIndex)
             default:
                 break

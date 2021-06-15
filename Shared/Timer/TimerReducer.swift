@@ -16,7 +16,7 @@ extension Reducer where ActionType == TimerAction, StateType == AppState {
         case let .tick(currentDate):
             state.tleLoaderState.referenceDate = currentDate
 
-            // Advance date range every 5 mins
+            // Advance date range every 10 mins
             if currentDate.timeIntervalSince(state.dateRange.lowerBound.addingTimeInterval(60 * 60 * 2)) > 10 * 60 {
                 state.dateRange = currentDate.advanced(by: -60 * 60 * 2)..<currentDate.advanced(by: 60 * 60 * 22)
             }

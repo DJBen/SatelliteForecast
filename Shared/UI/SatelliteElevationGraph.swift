@@ -128,6 +128,7 @@ class SatelliteElevationGraphState: Equatable {
     /// Date range for display.
     fileprivate let dateRange: Range<Date>
     fileprivate let elevationGridLineInterval: Double
+    fileprivate let highlightedDateRange: Range<Date>?
 
     static var empty: SatelliteElevationGraphState {
         .init(
@@ -137,7 +138,8 @@ class SatelliteElevationGraphState: Equatable {
             contentRect: { $0 },
             snapshots: Map<Date, SatelliteSnapshot>(),
             dateRange: Date().advanced(by: -60 * 60 * 2)..<Date().advanced(by: 60 * 60 * 22),
-            elevationGridLineInterval: 30
+            elevationGridLineInterval: 30,
+            highlightedDateRange: nil
         )
     }
 
@@ -148,7 +150,8 @@ class SatelliteElevationGraphState: Equatable {
         contentRect: @escaping (CGRect) -> CGRect,
         snapshots: Map<Date, SatelliteSnapshot>,
         dateRange: Range<Date>,
-        elevationGridLineInterval: Double
+        elevationGridLineInterval: Double,
+        highlightedDateRange: Range<Date>?
     ) {
         self.satelliteElevationPath = satelliteElevationPath
         self.unilluminatedPaths = unilluminatedPaths
@@ -157,6 +160,7 @@ class SatelliteElevationGraphState: Equatable {
         self.snapshots = snapshots
         self.dateRange = dateRange
         self.elevationGridLineInterval = elevationGridLineInterval
+        self.highlightedDateRange = highlightedDateRange
     }
 
     static func project(state: Store.StateType) -> SatelliteElevationGraphState {
@@ -221,7 +225,12 @@ class SatelliteElevationGraphState: Equatable {
             contentRect: contentRect,
             snapshots: snapshots,
             dateRange: state.dateRange,
-            elevationGridLineInterval: state.satelliteElevationGraphConfigs.elevationGridLineInterval
+            elevationGridLineInterval: state.satelliteElevationGraphConfigs.elevationGridLineInterval,
+            highlightedDateRange: state.selectedSatellitePass.map { pass -> Range<Date> in
+                let fromDate = pass.risesAt ?? state.dateRange.lowerBound
+                let toDate = pass.setsAt ?? state.dateRange.upperBound
+                return fromDate..<toDate
+            }
         )
     }
 }
@@ -229,7 +238,6 @@ class SatelliteElevationGraphState: Equatable {
 struct SatelliteElevationGraph: View {
     @ObservedObject var viewModel: ObservableViewModel<SatelliteElevationGraphAction, SatelliteElevationGraphState>
     @State private var contentSize: CGSize = .zero
-    @State private var tapLocation: CGPoint?
 
     private var timeGrid: some View {
         GeometryReader { geometry in
@@ -280,7 +288,7 @@ struct SatelliteElevationGraph: View {
             ForEach(Array(elevIterator), id: \.self) { elev in
                 let y = CGFloat(elev + 90) / 180 * self.contentSize.height
 
-                Text("\(Int(-elev))º")
+                Text("\(Int(-elev))°")
                     .font(.caption)
                     .foregroundColor(.gray)
                     .frame(height: 30, alignment: .bottomTrailing)
@@ -318,32 +326,133 @@ struct SatelliteElevationGraph: View {
         }
     }
 
-    private var selectedTimeInfo: some View {
-        if let tapLocation = tapLocation {
-            return AnyView(
-                GeometryReader { geometry in
-                    let rect = geometry.frame(in: .local)
-                    Path { path in
-                        path.move(to: CGPoint(x: tapLocation.x, y: rect.minY))
-                        path.addLine(to: CGPoint(x: tapLocation.x, y: rect.maxY))
+    private var dateLabels: some View {
+        GeometryReader { geometry in
+            let rect = geometry.frame(in: .local)
+            let dateRange = viewModel.state.dateRange
+            let calendar = Calendar(identifier: .gregorian)
+            let components = calendar.dateComponents([.year, .month, .day], from: dateRange.lowerBound)
+
+            let dates: [Date] = {
+                var date = calendar.date(from: components)!
+                var dates = [Date]()
+                while true {
+                    defer {
+                        date = date.advanced(by: 60 * 60 * 24)
                     }
-                    .stroke(
-                        style: StrokeStyle(lineWidth: 1)
-                    )
-                    .foregroundColor(.orange)
+                    if date < dateRange.lowerBound {
+                        continue
+                    }
+                    if date >= dateRange.upperBound {
+                        break
+                    }
+                    dates.append(date)
                 }
-                .allowsHitTesting(false)
-            )
-        } else {
-            return AnyView(EmptyView().allowsHitTesting(false))
+                return dates
+            }()
+
+
+            ForEach(dates, id: \.self) { date in
+                HStack {
+                    Text(dateFormatter.string(from: date.advanced(by: -60 * 60 * 24)))
+                        .multilineTextAlignment(.trailing)
+                        .foregroundColor(.gray)
+                        .font(.caption2)
+                    Text(dateFormatter.string(from: date))
+                        .foregroundColor(.gray)
+                        .font(.caption2)
+                }
+                .frame(height: rect.height, alignment: .top)
+                .position(x: rect.width * CGFloat((date.julianDate - dateRange.lowerBound.julianDate) / (dateRange.upperBound.julianDate - dateRange.lowerBound.julianDate)), y: rect.midY)
+                .fixedSize()
+            }
         }
     }
 
-    let formatter: DateFormatter = {
+    private var highlightedPassRegion: some View {
+        GeometryReader { geometry in
+            let rect = geometry.frame(in: .local)
+            let dateRange = viewModel.state.dateRange
+            if let highlightedDateRange = viewModel.state.highlightedDateRange {
+                let fromX = CGFloat(highlightedDateRange.lowerBound.timeIntervalSince(dateRange.lowerBound) / dateRange.upperBound.timeIntervalSince(dateRange.lowerBound)) * rect.width
+                let toX = CGFloat(highlightedDateRange.upperBound.timeIntervalSince(dateRange.lowerBound) / dateRange.upperBound.timeIntervalSince(dateRange.lowerBound)) * rect.width
+                HStack(spacing: 0) {
+                    Spacer(minLength: fromX)
+                    Rectangle()
+                        .fill(
+                            LinearGradient(
+                                gradient: Gradient(
+                                    stops: [
+                                        Gradient.Stop(color: Color.yellow.opacity(0), location: 0),
+                                        Gradient.Stop(color: Color.yellow.opacity(0.2), location: 0.1),
+                                        Gradient.Stop(color: Color.yellow.opacity(0.3), location: 1)
+                                    ]
+                                ),
+                                startPoint: .bottom,
+                                endPoint: .top
+                            )
+                        )
+                        .id("centerAtDate")
+                    Spacer(minLength: rect.width - toX)
+                }
+            }
+        }
+    }
+
+    let timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm a"
         return formatter
     }()
+
+    let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.setLocalizedDateFormatFromTemplate("MMM dd")
+        return formatter
+    }()
+
+    func innerViews(rect: CGRect) -> some View {
+        VStack(
+            alignment: .leading,
+            spacing: 4
+        ) {
+            timeGrid
+                .overlay(elevationGrid)
+                .overlay(satelliteElevationPlot)
+                .overlay(satelliteDarknessPath)
+                .modifier(SizeModifier())
+                .onPreferenceChange(SizePreferenceKey.self) { self.contentSize = $0 }
+                .overlay(highlightedPassRegion)
+                .overlay(dateLabels)
+
+            SunlightIndicator(
+                viewModel: SunlightIndicatorViewModel(
+                    snapshots: viewModel.state.snapshots,
+                    dateRange: viewModel.state.dateRange
+                )
+            )
+            .frame(height: 24)
+
+            HStack(alignment: .center, spacing: 0) {
+                ForEach(viewModel.state.xPercentDatePair, id: \.0) { (xPercent, date, index) in
+                    VStack {
+                        Text(
+                            timeFormatter.string(from: date)
+                        )
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                        .frame(width: 80)
+                        .offset(x: CGFloat(xPercent) * rect.width - CGFloat(index) * 80 - 40)
+                    }
+                }
+            }
+        }
+        .frame(
+            width: max(0, rect.width),
+            height: max(0, rect.height),
+            alignment: .leading
+        )
+    }
 
     var body: some View {
         GeometryReader { geometry in
@@ -355,45 +464,17 @@ struct SatelliteElevationGraph: View {
                     .horizontal,
                     showsIndicators: false,
                     content: {
-                        VStack(
-                            alignment: .leading,
-                            spacing: 4
-                        ) {
-                            timeGrid
-                                .overlay(elevationGrid)
-                                .overlay(satelliteElevationPlot)
-                                .overlay(satelliteDarknessPath)
-                                .modifier(SizeModifier())
-                                .onPreferenceChange(SizePreferenceKey.self) { self.contentSize = $0 }
-                                .overlay(selectedTimeInfo)
-
-                            SunlightIndicator(
-                                viewModel: SunlightIndicatorViewModel(
-                                    snapshots: viewModel.state.snapshots,
-                                    dateRange: viewModel.state.dateRange
-                                )
+                        ScrollViewReader { scrollViewProxy in
+                            innerViews(
+                                rect: rect
                             )
-                            .frame(height: 24)
-
-                            HStack(alignment: .center, spacing: 0) {
-                                ForEach(viewModel.state.xPercentDatePair, id: \.0) { (xPercent, date, index) in
-                                    VStack {
-                                        Text(
-                                            formatter.string(from: date)
-                                        )
-                                        .font(.caption)
-                                        .foregroundColor(.gray)
-                                        .frame(width: 80)
-                                        .offset(x: CGFloat(xPercent) * rect.width - CGFloat(index) * 80 - 40)
-                                    }
+                            .onChange(
+                                of: viewModel.state.highlightedDateRange,
+                                perform: { _ in
+                                    scrollViewProxy.scrollTo("centerAtDate", anchor: .center)
                                 }
-                            }
+                            )
                         }
-                        .frame(
-                            width: max(0, rect.width),
-                            height: max(0, rect.height),
-                            alignment: .leading
-                        )
                     }
                 )
 

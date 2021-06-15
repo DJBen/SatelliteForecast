@@ -48,7 +48,14 @@ extension EffectMiddleware where
                         // Only populate satellite ephemerides if empty or outdated by more than 1 hour.
                         guard state.currentSatelliteSnapshots.isEmpty || state.dateRange.lowerBound.timeIntervalSince(state.currentSatelliteSnapshots.first!.1.date) > 60 * 60 else {
                             logger.debug("Ephemeride of \(noradIndex) are already generated. Skipping.")
-                            return Empty().eraseToAnyPublisher()
+                            return Just(
+                                DispatchedAction<AppAction>(
+                                    .tlePropagator(
+                                        .selectVisiblePass
+                                    )
+                                )
+                            )
+                            .eraseToAnyPublisher()
                         }
 
                         // Loads satellite passes
@@ -82,6 +89,14 @@ extension EffectMiddleware where
                                             fineSnapshots: fineSnapshots,
                                             noradIndex: noradIndex
                                         )
+                                    )
+                                )
+                            )
+
+                            subject.send(
+                                DispatchedAction<AppAction>(
+                                    .tlePropagator(
+                                        .selectVisiblePass
                                     )
                                 )
                             )

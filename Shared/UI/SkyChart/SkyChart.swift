@@ -371,7 +371,7 @@ struct SkyChart: View {
                         id: \.self,
                         content: { azimuth in
                             let angle: CGFloat = CGFloat(Double(azimuth + 180) * deg2rad)
-                            Text("\(azimuth)º")
+                            Text("\(azimuth)°")
                                 .font(.caption2)
                                 .foregroundColor(.gray)
                                 .position(x: rect.midX, y: rect.midY)
@@ -513,7 +513,6 @@ struct SkyChart: View {
             .overlay(azimuthMarks)
             .overlay(azimuthMarkTexts)
             .overlay(passInfoLabel)
-            .id(UUID())
             .onAppear {
                 viewModel.dispatch(.onAppear)
             }
