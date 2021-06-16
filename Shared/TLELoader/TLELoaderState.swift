@@ -22,7 +22,7 @@ enum TLECategory: Equatable, Hashable {
 
 struct TLELoaderState: Equatable {
     /// A date that mostly approximates the current date.
-    var referenceDate: Date = Date()
+    var referenceDate: Double = Date().julianDate
     var tles: [TLECategory: [TLE]] = [:]
     var standaloneTLEs: [TLE] = []
 

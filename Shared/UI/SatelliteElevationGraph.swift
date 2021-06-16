@@ -32,7 +32,7 @@ enum SatelliteElevationGraphAction {
 
 class SatelliteElevationGraphState: Equatable {
     static func == (lhs: SatelliteElevationGraphState, rhs: SatelliteElevationGraphState) -> Bool {
-        return lhs.snapshots == rhs.snapshots && lhs.dateRange == rhs.dateRange && lhs.elevationGridLineInterval == rhs.elevationGridLineInterval
+        return lhs.snapshots == rhs.snapshots && lhs.julianDateRange == rhs.julianDateRange && lhs.elevationGridLineInterval == rhs.elevationGridLineInterval && lhs.highlightedDateRange == rhs.highlightedDateRange
     }
 
     private static func snapshotPoint(_ snapshot: SatelliteSnapshot, xPercent: CGFloat, rect: CGRect) -> CGPoint {
@@ -43,7 +43,11 @@ class SatelliteElevationGraphState: Equatable {
 
     private static var satelliteElevationCache: (Int, CGPath)?
 
-    private static func satelliteElevationPathFunc(snapshots: Map<Date, SatelliteSnapshot>, snapshotsHash: Int, dateRange: Range<Date>) -> (CGRect) -> CGPath {
+    private static func satelliteElevationPathFunc(
+        snapshots: Map<Double, SatelliteSnapshot>,
+        snapshotsHash: Int,
+        julianDateRange: Range<Double>
+    ) -> (CGRect) -> CGPath {
         return { rect in
             let path = CGMutablePath()
             if snapshots.isEmpty {
@@ -60,8 +64,8 @@ class SatelliteElevationGraphState: Equatable {
                 return cache.1
             }
 
-            for (i, (date, snapshot)) in snapshots.enumerated() {
-                let xPercent = CGFloat(date.timeIntervalSince(dateRange.lowerBound) / dateRange.upperBound.timeIntervalSince(dateRange.lowerBound))
+            for (i, (julianDate, snapshot)) in snapshots.enumerated() {
+                let xPercent = CGFloat((julianDate - julianDateRange.lowerBound) / (julianDateRange.upperBound - julianDateRange.lowerBound))
                 if i == 0 {
                     path.move(to: snapshotPoint(snapshot, xPercent: xPercent, rect: rect))
                 } else {
@@ -77,9 +81,9 @@ class SatelliteElevationGraphState: Equatable {
     private static var unilluminatedPathsCache: (Int, CGPath)?
 
     private static func unilluminatedPathsFunc(
-        snapshotsSplitByIllumination: [Map<Date, SatelliteSnapshot>],
+        snapshotsSplitByIllumination: [Map<Double, SatelliteSnapshot>],
         snapshotsHash: Int,
-        dateRange: Range<Date>
+        julianDateRange: Range<Double>
     ) -> (CGRect) -> CGPath {
         return { rect in
             let path = CGMutablePath()
@@ -102,8 +106,8 @@ class SatelliteElevationGraphState: Equatable {
                 .filter { !($0.first?.1.isIlluminated ?? true) }
                 .forEach { snapshotGroup in
                     for index in snapshotGroup.indices {
-                        let (date, snapshot) = snapshotGroup[index]
-                        let xPercent = CGFloat(date.timeIntervalSince(dateRange.lowerBound) / dateRange.upperBound.timeIntervalSince(dateRange.lowerBound))
+                        let (julianDate, snapshot) = snapshotGroup[index]
+                        let xPercent = CGFloat((julianDate - julianDateRange.lowerBound) / (julianDateRange.upperBound - julianDateRange.lowerBound))
                         if index == snapshotGroup.startIndex {
                             path.move(to: snapshotPoint(snapshot, xPercent: xPercent, rect: rect))
                         } else {
@@ -120,15 +124,15 @@ class SatelliteElevationGraphState: Equatable {
     // Generated data source
     fileprivate let satelliteElevationPath: (CGRect) -> CGPath
     fileprivate let unilluminatedPaths: (CGRect) -> CGPath
-    fileprivate let xPercentDatePair: [(Double, Date, Int)]
+    fileprivate let xPercentDatePair: [(Double, Double, Int)]
     fileprivate let contentRect: (CGRect) -> CGRect
 
     // Copied properties
-    fileprivate let snapshots: Map<Date, SatelliteSnapshot>
+    fileprivate let snapshots: Map<Double, SatelliteSnapshot>
     /// Date range for display.
-    fileprivate let dateRange: Range<Date>
+    fileprivate let julianDateRange: Range<Double>
     fileprivate let elevationGridLineInterval: Double
-    fileprivate let highlightedDateRange: Range<Date>?
+    fileprivate let highlightedDateRange: Range<Double>?
 
     static var empty: SatelliteElevationGraphState {
         .init(
@@ -136,8 +140,8 @@ class SatelliteElevationGraphState: Equatable {
             unilluminatedPaths: { _ in CGMutablePath() },
             xPercentDatePair: [],
             contentRect: { $0 },
-            snapshots: Map<Date, SatelliteSnapshot>(),
-            dateRange: Date().advanced(by: -60 * 60 * 2)..<Date().advanced(by: 60 * 60 * 22),
+            snapshots: Map<Double, SatelliteSnapshot>(),
+            julianDateRange: Date().advanced(by: -60 * 60 * 2).julianDate..<Date().advanced(by: 60 * 60 * 22).julianDate,
             elevationGridLineInterval: 30,
             highlightedDateRange: nil
         )
@@ -146,19 +150,19 @@ class SatelliteElevationGraphState: Equatable {
     init(
         satelliteElevationPath: @escaping (CGRect) -> CGPath,
         unilluminatedPaths: @escaping (CGRect) -> CGPath,
-        xPercentDatePair: [(Double, Date, Int)],
+        xPercentDatePair: [(Double, Double, Int)],
         contentRect: @escaping (CGRect) -> CGRect,
-        snapshots: Map<Date, SatelliteSnapshot>,
-        dateRange: Range<Date>,
+        snapshots: Map<Double, SatelliteSnapshot>,
+        julianDateRange: Range<Double>,
         elevationGridLineInterval: Double,
-        highlightedDateRange: Range<Date>?
+        highlightedDateRange: Range<Double>?
     ) {
         self.satelliteElevationPath = satelliteElevationPath
         self.unilluminatedPaths = unilluminatedPaths
         self.xPercentDatePair = xPercentDatePair
         self.contentRect = contentRect
         self.snapshots = snapshots
-        self.dateRange = dateRange
+        self.julianDateRange = julianDateRange
         self.elevationGridLineInterval = elevationGridLineInterval
         self.highlightedDateRange = highlightedDateRange
     }
@@ -166,8 +170,8 @@ class SatelliteElevationGraphState: Equatable {
     static func project(state: Store.StateType) -> SatelliteElevationGraphState {
         // The view model's snapshot will be constrained to the date range.
         let snapshots = state.currentSatelliteSnapshots.submap(
-            from: state.dateRange.lowerBound,
-            to: state.dateRange.upperBound
+            from: state.julianDateRange.lowerBound,
+            to: state.julianDateRange.upperBound
         )
         let snapshotsHash: Int = {
             var hasher = Hasher()
@@ -177,31 +181,31 @@ class SatelliteElevationGraphState: Equatable {
             return hasher.finalize()
         }()
 
-        let xPercentDatePair: [(Double, Date, Int)] = {
+        let xPercentDatePair: [(Double, Double, Int)] = {
             let calendar = Calendar(identifier: .gregorian)
-            let components = calendar.dateComponents([.year, .month, .day, .hour], from: state.dateRange.lowerBound)
-            var date = calendar.date(from: components)!
-            var results = [(Double, Date, Int)]()
+            let components = calendar.dateComponents([.year, .month, .day, .hour], from: Date(julianDate: state.julianDateRange.lowerBound))
+            var julianDate: Double = calendar.date(from: components)!.julianDate
+            var results = [(Double, Double, Int)]()
             var index: Int = 0
             while true {
                 defer {
-                    date.addTimeInterval(state.satelliteElevationGraphConfigs.timeGridLineInterval)
+                    julianDate += TimeConstants.sec2day * state.satelliteElevationGraphConfigs.timeGridLineInterval
                 }
-                if date < state.dateRange.lowerBound {
+                if julianDate < state.julianDateRange.lowerBound {
                     continue
                 }
-                let xPercent = date.timeIntervalSince(state.dateRange.lowerBound) / (state.dateRange.upperBound.timeIntervalSince(state.dateRange.lowerBound))
+                let xPercent = (julianDate - state.julianDateRange.lowerBound) / (state.julianDateRange.upperBound - state.julianDateRange.lowerBound)
                 if xPercent > 1 {
                     break
                 }
-                results.append((xPercent, date, index))
+                results.append((xPercent, julianDate, index))
                 index += 1
             }
             return results
         }()
 
         let contentRect: (CGRect) -> CGRect = { initialRect in
-            let widthPerSecond = initialRect.width / CGFloat(state.dateRange.upperBound.timeIntervalSince(state.dateRange.lowerBound))
+            let widthPerSecond = initialRect.width / CGFloat((state.julianDateRange.upperBound - state.julianDateRange.lowerBound) * TimeConstants.day2sec)
             return CGRect(origin: initialRect.origin, size: CGSize(width: initialRect.width / widthPerSecond * max(widthPerSecond, state.satelliteElevationGraphConfigs.minimumHorizonalResolution), height: initialRect.height))
         }
 
@@ -214,22 +218,20 @@ class SatelliteElevationGraphState: Equatable {
             satelliteElevationPath: satelliteElevationPathFunc(
                 snapshots: snapshots,
                 snapshotsHash: snapshotsHash,
-                dateRange: state.dateRange
+                julianDateRange: state.julianDateRange
             ),
             unilluminatedPaths: unilluminatedPathsFunc(
                 snapshotsSplitByIllumination: snapshotsSplitByIllumination,
                 snapshotsHash: snapshotsHash,
-                dateRange: state.dateRange
+                julianDateRange: state.julianDateRange
             ),
             xPercentDatePair: xPercentDatePair,
             contentRect: contentRect,
             snapshots: snapshots,
-            dateRange: state.dateRange,
+            julianDateRange: state.julianDateRange,
             elevationGridLineInterval: state.satelliteElevationGraphConfigs.elevationGridLineInterval,
-            highlightedDateRange: state.selectedSatellitePass.map { pass -> Range<Date> in
-                let fromDate = pass.risesAt ?? state.dateRange.lowerBound
-                let toDate = pass.setsAt ?? state.dateRange.upperBound
-                return fromDate..<toDate
+            highlightedDateRange: state.selectedSatellitePass.map { pass -> Range<Double> in
+                return pass.rise.julianDate..<pass.set.julianDate
             }
         )
     }
@@ -329,9 +331,9 @@ struct SatelliteElevationGraph: View {
     private var dateLabels: some View {
         GeometryReader { geometry in
             let rect = geometry.frame(in: .local)
-            let dateRange = viewModel.state.dateRange
+            let julianDateRange = viewModel.state.julianDateRange
             let calendar = Calendar(identifier: .gregorian)
-            let components = calendar.dateComponents([.year, .month, .day], from: dateRange.lowerBound)
+            let components = calendar.dateComponents([.year, .month, .day], from: Date(julianDate: julianDateRange.lowerBound))
 
             let dates: [Date] = {
                 var date = calendar.date(from: components)!
@@ -340,10 +342,10 @@ struct SatelliteElevationGraph: View {
                     defer {
                         date = date.advanced(by: 60 * 60 * 24)
                     }
-                    if date < dateRange.lowerBound {
+                    if date < Date(julianDate: julianDateRange.lowerBound) {
                         continue
                     }
-                    if date >= dateRange.upperBound {
+                    if date >= Date(julianDate: julianDateRange.upperBound) {
                         break
                     }
                     dates.append(date)
@@ -363,7 +365,7 @@ struct SatelliteElevationGraph: View {
                         .font(.caption2)
                 }
                 .frame(height: rect.height, alignment: .top)
-                .position(x: rect.width * CGFloat((date.julianDate - dateRange.lowerBound.julianDate) / (dateRange.upperBound.julianDate - dateRange.lowerBound.julianDate)), y: rect.midY)
+                .position(x: rect.width * CGFloat((date.julianDate - julianDateRange.lowerBound) / (julianDateRange.upperBound - julianDateRange.lowerBound)), y: rect.midY)
                 .fixedSize()
             }
         }
@@ -372,10 +374,10 @@ struct SatelliteElevationGraph: View {
     private var highlightedPassRegion: some View {
         GeometryReader { geometry in
             let rect = geometry.frame(in: .local)
-            let dateRange = viewModel.state.dateRange
+            let julianDateRange = viewModel.state.julianDateRange
             if let highlightedDateRange = viewModel.state.highlightedDateRange {
-                let fromX = CGFloat(highlightedDateRange.lowerBound.timeIntervalSince(dateRange.lowerBound) / dateRange.upperBound.timeIntervalSince(dateRange.lowerBound)) * rect.width
-                let toX = CGFloat(highlightedDateRange.upperBound.timeIntervalSince(dateRange.lowerBound) / dateRange.upperBound.timeIntervalSince(dateRange.lowerBound)) * rect.width
+                let fromX = CGFloat((highlightedDateRange.lowerBound - julianDateRange.lowerBound) / (julianDateRange.upperBound - julianDateRange.lowerBound)) * rect.width
+                let toX = CGFloat((highlightedDateRange.upperBound - julianDateRange.lowerBound) / (julianDateRange.upperBound - julianDateRange.lowerBound)) * rect.width
                 HStack(spacing: 0) {
                     Spacer(minLength: fromX)
                     Rectangle()
@@ -428,16 +430,16 @@ struct SatelliteElevationGraph: View {
             SunlightIndicator(
                 viewModel: SunlightIndicatorViewModel(
                     snapshots: viewModel.state.snapshots,
-                    dateRange: viewModel.state.dateRange
+                    julianDateRange: viewModel.state.julianDateRange
                 )
             )
             .frame(height: 24)
 
             HStack(alignment: .center, spacing: 0) {
-                ForEach(viewModel.state.xPercentDatePair, id: \.0) { (xPercent, date, index) in
+                ForEach(viewModel.state.xPercentDatePair, id: \.0) { (xPercent, julianDate, index) in
                     VStack {
                         Text(
-                            timeFormatter.string(from: date)
+                            timeFormatter.string(from: Date(julianDate: julianDate))
                         )
                         .font(.caption)
                         .foregroundColor(.gray)
@@ -512,17 +514,17 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         )
         let sat = Satellite(withTLE: tle)
         // Date range
-        let dateRange = Date().advanced(by: -60 * 60 * 2)..<Date().advanced(by: 60 * 60 * 4)
+        let julianDateRange = Date().advanced(by: -60 * 60 * 2).julianDate..<Date().advanced(by: 60 * 60 * 4).julianDate
         // 2000 Broadway, Redwood City, CA 94063
         let location = CLLocation(latitude: 37.486743000691185, longitude: -122.22655970246515)
         let viewModel = SatelliteElevationGraphState.project(
             state: AppState(
-                dateRange: dateRange,
+                julianDateRange: julianDateRange,
                 satellites: [
                     Int(sat.noradIdent)!: SatelliteState(
                         snapshots: sat.snapshots(
                             observer: LatLonAlt(location: location),
-                            dateRange: dateRange,
+                            julianDateRange: julianDateRange,
                             interval: 20
                         ),
                         passes: []
@@ -550,12 +552,12 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         let sat2 = Satellite(withTLE: tle2)
         let viewModel2 = SatelliteElevationGraphState.project(
             state: AppState(
-                dateRange: dateRange,
+                julianDateRange: julianDateRange,
                 satellites: [
                     Int(sat2.noradIdent)!: SatelliteState(
                         snapshots: sat2.snapshots(
                             observer: LatLonAlt(location: location),
-                            dateRange: dateRange,
+                            julianDateRange: julianDateRange,
                             interval: 20
                         ),
                         passes: []
@@ -583,12 +585,12 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         let sat3 = Satellite(withTLE: tle3)
         let viewModel3 = SatelliteElevationGraphState.project(
             state: AppState(
-                dateRange: dateRange,
+                julianDateRange: julianDateRange,
                 satellites: [
                     Int(sat3.noradIdent)!: SatelliteState(
                         snapshots: sat3.snapshots(
                             observer: LatLonAlt(location: location),
-                            dateRange: dateRange,
+                            julianDateRange: julianDateRange,
                             interval: 20
                         ),
                         passes: []

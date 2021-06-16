@@ -36,7 +36,7 @@ extension Reducer where ActionType == TLEPropagatorAction, StateType == Store.St
             case let .detail(noradIndex, selectedPassIndex: nil):
                 let selectedPassIndex = state.satellites[noradIndex]!.passes.firstIndex(
                     where: {
-                        ($0.risesAt ?? $0.setsAt!) > state.tleLoaderState.referenceDate
+                        $0.rise.julianDate > state.tleLoaderState.referenceDate
                             && $0.illumination.hasAnyIllumination
                             && $0.sunElevationAtTransit < -6
                             && $0.transit.elev > 10

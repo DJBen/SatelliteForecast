@@ -12,7 +12,7 @@ import BTree
 
 struct AppState: Equatable {
     /// The date range from which ephemerides are generated.
-    var dateRange: Range<Date>
+    var julianDateRange: Range<Double>
     var satelliteElevationGraphConfigs: SatelliteElevationGraphConfigs = .preset
     var skyChartState: SkyChartRootState = .empty
     /// A mapping from NORAD ID to the satellite state.
@@ -52,11 +52,11 @@ struct AppState: Equatable {
 
     static var empty: AppState {
         AppState(
-            dateRange: Date().advanced(by: -60 * 60 * 2)..<Date().advanced(by: 60 * 60 * 22)
+            julianDateRange: Date().advanced(by: -60 * 60 * 2).julianDate..<Date().advanced(by: 60 * 60 * 22).julianDate
         )
     }
 
-    var currentSatelliteSnapshots: Map<Date, SatelliteSnapshot> {
+    var currentSatelliteSnapshots: Map<Double, SatelliteSnapshot> {
         get {
             guard let selectedSatelliteNoradIndex = selectedSatelliteNoradIndex else {
                 return Map()

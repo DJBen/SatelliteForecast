@@ -149,13 +149,13 @@ public func lunarGeo (julianDays: Double) -> (Double, Double) {
 }
 
 /*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-  ┃ Date, (lat°, lon°), (ra°, dec°) -> (alt°, azi°)                                                  ┃
+  ┃ JD, (lat°, lon°), (ra°, dec°) -> (alt°, azi°)                                                  ┃
   ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛*/
-public func azel(time: Date,
+public func azel(julianDate: Double,
                  site: (Double, Double),
                  cele: (Double, Double)) -> (alt: Double, azi: Double) {
 
-    let hourAngle = (siteMeanSiderealTime(date: time, site.1) - cele.0) * deg2rad
+    let hourAngle = (siteMeanSiderealTime(julianDate: julianDate, site.1) - cele.0) * deg2rad
 
     let lat = site.0 * deg2rad
     let dec = cele.1 * deg2rad

@@ -46,12 +46,12 @@ extension Satellite {
             object2Geo: solarCel * au2Km
         )
         let (sunElev, _) = azel(
-            time: Date(julianDate: julianDate),
+            julianDate: julianDate,
             site: (observer.lat, observer.lon),
             cele: cartesianToRaDec(solarCel)
         )
         return SatelliteSnapshot(
-            date: Date(julianDate: julianDate),
+            julianDate: julianDate,
             position: position,
             isIlluminated: isIlluminated,
             sunElevation: sunElev
@@ -77,48 +77,85 @@ extension Satellite {
     /// - Returns: A list of satellite snapshots over a date range with a given interval at an observer location in chronological order.
     public func snapshots(
         observer: LatLonAlt,
-        dateRange: Range<Date>,
+        julianDateRange: Range<Double>,
         interval: TimeInterval = 30
-    ) -> Map<Date, SatelliteSnapshot> {
-        var snapshots = Map<Date, SatelliteSnapshot>()
+    ) -> Map<Double, SatelliteSnapshot> {
+        var snapshots = Map<Double, SatelliteSnapshot>()
         stride(
-            from: dateRange.lowerBound.julianDate,
-            to: dateRange.upperBound.julianDate,
+            from: julianDateRange.lowerBound,
+            through: julianDateRange.upperBound,
             by: interval * TimeConstants.sec2day
         )
         .forEach { (julianDate) in
-            let date = Date(julianDate: julianDate)
-            snapshots[date] = snapshot(julianDate: julianDate, observer: observer)
+            snapshots[julianDate] = snapshot(julianDate: julianDate, observer: observer)
         }
         return snapshots
     }
 
-    public enum PassFindingParam {
-        /// Find satellite passes within a date range, with a coarse search of any moment that the satellite is above the horizon.
-        /// If any of these moments are found, it is going to generate the satellite ephemerides with a fine interval for the duration
-        /// when satellite is above the horizon.
-        case dateRange(
-            Range<Date>,
-            coarseInterval: TimeInterval = 30,
-            fineInterval: TimeInterval = 3
+    private func generatePassInfo(
+        observer: LatLonAlt,
+        julianDateRange: Range<Double>,
+        fineInterval: TimeInterval = 3
+    ) -> (pass: PassInformation, snapshots: Map<Double, SatelliteSnapshot>) {
+        let fineSnapshots = snapshots(
+            observer: observer,
+            julianDateRange: julianDateRange,
+            interval: fineInterval
         )
 
-        /// Find satellite passes with a coarse result of satellite ephemerides.
-        /// It is going to look for any moments when satellite rises above the horizon. If any of these moments are found, it is going
-        /// to generate the satellite ephemerides with a fine interval for that duration.
-        case existingSnapshots(
-            Map<Date, SatelliteSnapshot>,
-            fineInterval: TimeInterval = 3
-        )
+        // Use a cheaper quadratic interpolation to find RST times.
+        let elevInterp = quadraticInterpolate(fineSnapshots.map { ($0.0, $0.1.position.elev) }, steps: 3000)
+        let maxElevPair = elevInterp.max(by: { $0.1 < $1.1 })!
+        let risesAtPair: (Double, Double)? = {
+            for index in elevInterp.indices where index < elevInterp.index(before: elevInterp.endIndex) {
+                if elevInterp[index].1 <= 0 && elevInterp[elevInterp.index(after: index)].1 > 0 {
+                    return elevInterp[elevInterp.index(after: index)]
+                }
+            }
+            return nil
+        }()
+        let setsAtPair: (Double, Double)? = {
+            for index in elevInterp.indices where index < elevInterp.index(before: elevInterp.endIndex) {
+                if elevInterp[index].1 > 0 && elevInterp[elevInterp.index(after: index)].1 <= 0 {
+                    return elevInterp[elevInterp.index(after: index)]
+                }
+            }
+            return nil
+        }()
 
-        var fineInterval: TimeInterval {
-            switch self {
-            case let .dateRange(_, coarseInterval: _, fineInterval: fineInterval):
-                return fineInterval
-            case let .existingSnapshots(_, fineInterval: fineInterval):
-                return fineInterval
+        var illuminationChanges = [PassInformation.Illumination.Change]()
+
+        for index in fineSnapshots.indices where index < fineSnapshots.index(before: fineSnapshots.endIndex) {
+            let snapshot1 = fineSnapshots[index].1
+            let snapshot2 = fineSnapshots[fineSnapshots.index(after: index)].1
+
+            if snapshot1.isIlluminated && !snapshot2.isIlluminated {
+                illuminationChanges.append(.entersShadow(julianDate: snapshot2.julianDate))
+            } else if !snapshot1.isIlluminated && snapshot2.isIlluminated {
+                illuminationChanges.append(.exitsShadow(julianDate: snapshot2.julianDate))
             }
         }
+
+        let sunElev = azel(
+            julianDate: maxElevPair.0,
+            site: (observer.lat, observer.lon),
+            cele: solarGeo(julianDays: maxElevPair.0)
+        ).alt
+
+        let pass = PassInformation(
+            rise: risesAtPair.map { PassInformation.DateElev(julianDate: $0.0, elev: $0.1) }!,
+            set: setsAtPair.map { PassInformation.DateElev(julianDate: $0.0, elev: $0.1) }!,
+            transit: PassInformation.DateElev(
+                julianDate: maxElevPair.0, elev: maxElevPair.1
+            ),
+            illumination: PassInformation.Illumination(
+                initiallyIlluminated: fineSnapshots.first!.1.isIlluminated,
+                changes: illuminationChanges
+            ),
+            sunElevationAtTransit: sunElev
+        )
+
+        return (pass: pass, snapshots: fineSnapshots)
     }
 
     /// Find satellite passes over a large time span.
@@ -127,118 +164,20 @@ extension Satellite {
     /// over the candidate time span to generate detailed satellite ephemerides of that mentioned pass.
     /// - Parameters:
     ///   - observer: The observer corodinate.
-    ///   - dateRange: The range of the satellite pass search.
-    ///   - coarseInterval: The coarse interval to hunt for a rough window when satellite appearing above horizonal.
+    ///   - coarseSnapshots: Coarse snapshots to find satellite passes.
     ///   - fineInterval: The fine interval in which the ephemerides and detailed pass info are generated.
-    /// - Returns: Information about a list of satellite passes.
+    /// - Returns: A tuple containing the following:
+    ///   - passes: A list of satellite passes.
+    ///   - snapshots: Resulting snapshots by merging the coarse snapshots and the generated fine snapshots.
     public func findPasses(
         observer: LatLonAlt,
-        param: PassFindingParam
-    ) -> (passes: [PassInformation], fineSnapshots: Map<Date, SatelliteSnapshot>) {
-        let coarseSnapshots: Map<Date, SatelliteSnapshot>
-        switch param {
-        case let .dateRange(dateRange, coarseInterval, _):
-            coarseSnapshots = snapshots(
-                observer: observer,
-                dateRange: dateRange,
-                interval: coarseInterval
-            )
-        case let .existingSnapshots(snapshots, _):
-            coarseSnapshots = snapshots
-        }
-
-        guard let firstSnapshot = coarseSnapshots.first?.1 else {
-            return ([], Map())
-        }
-
+        coarseSnapshots: Map<Double, SatelliteSnapshot> = Map(),
+        fineInterval: TimeInterval = 3
+    ) -> (passes: [PassInformation], snapshots: Map<Double, SatelliteSnapshot>) {
         var snapshotBeforeRising: SatelliteSnapshot?
         var snapshotAfterSetting: SatelliteSnapshot?
-        var passInformation = [PassInformation]()
+        var passes = [PassInformation]()
         var resultSnapshots = coarseSnapshots
-
-        func tryGenerateFinePassInfo() {
-            guard let fromSnapshot = snapshotBeforeRising, let toSnapshot = snapshotAfterSetting else {
-                return
-            }
-
-            let fineSnapshots = snapshots(
-                observer: observer,
-                dateRange: fromSnapshot.date..<toSnapshot.date,
-                interval: param.fineInterval
-            )
-
-            // Use a cheaper quadratic interpolation to find
-            // RST time.
-            let elevInterp = quadraticInterpolate(fineSnapshots.map { ($0.0.julianDate, $0.1.position.elev) }, steps: 3000)
-            let maxElevPair = elevInterp.max(by: { $0.1 < $1.1 }).map { (Date(julianDate: $0), $1) }!
-            let risesAtPair: (Date, Double)? = {
-                for index in elevInterp.indices where index < elevInterp.index(before: elevInterp.endIndex) {
-                    if elevInterp[index].1 <= 0 && elevInterp[elevInterp.index(after: index)].1 > 0 {
-                        let result = elevInterp[elevInterp.index(after: index)]
-                        return (
-                            Date(julianDate: result.0),
-                            result.1
-                        )
-                    }
-                }
-                return nil
-            }()
-            let setsAtPair: (Date, Double)? = {
-                for index in elevInterp.indices where index < elevInterp.index(before: elevInterp.endIndex) {
-                    if elevInterp[index].1 > 0 && elevInterp[elevInterp.index(after: index)].1 <= 0 {
-                        let result = elevInterp[elevInterp.index(after: index)]
-                        return (
-                            Date(julianDate: result.0),
-                            result.1
-                        )
-                    }
-                }
-                return nil
-            }()
-
-            var illuminationChanges = [PassInformation.Illumination.Change]()
-
-            for index in fineSnapshots.indices where index < fineSnapshots.index(before: fineSnapshots.endIndex) {
-                let snapshot1 = fineSnapshots[index].1
-                let snapshot2 = fineSnapshots[fineSnapshots.index(after: index)].1
-
-                if snapshot1.isIlluminated && !snapshot2.isIlluminated {
-                    illuminationChanges.append(.entersShadow(date: snapshot2.date))
-                } else if !snapshot1.isIlluminated && snapshot2.isIlluminated {
-                    illuminationChanges.append(.exitsShadow(date: snapshot2.date))
-                }
-            }
-
-            let sunElev = azel(
-                time: maxElevPair.0,
-                site: (observer.lat, observer.lon),
-                cele: solarGeo(julianDays: maxElevPair.0.julianDate)
-            ).alt
-
-            passInformation.append(
-                PassInformation(
-                    rise: risesAtPair.map { PassInformation.DateElev(date: $0.0, elev: $0.1) },
-                    set: setsAtPair.map { PassInformation.DateElev(date: $0.0, elev: $0.1) },
-                    transit: PassInformation.DateElev(
-                        date: maxElevPair.0, elev: maxElevPair.1
-                    ),
-                    illumination: PassInformation.Illumination(
-                        initiallyIlluminated: fineSnapshots.first!.1.isIlluminated,
-                        changes: illuminationChanges
-                    ),
-                    sunElevationAtTransit: sunElev
-                )
-            )
-
-            resultSnapshots = resultSnapshots.merging(fineSnapshots)
-
-            snapshotBeforeRising = nil
-            snapshotAfterSetting = nil
-        }
-
-        if firstSnapshot.position.elev > 0 {
-            snapshotBeforeRising = firstSnapshot
-        }
 
         for index in coarseSnapshots.indices where index < coarseSnapshots.index(before: coarseSnapshots.endIndex) {
             let snapshot1 = coarseSnapshots[index].1
@@ -252,15 +191,19 @@ extension Satellite {
                 snapshotAfterSetting = snapshot2
             }
 
-            tryGenerateFinePassInfo()
+            if let fromDate = snapshotBeforeRising?.julianDate, let toDate = snapshotAfterSetting?.julianDate, fromDate < toDate {
+                let (pass, snapshots) = generatePassInfo(
+                    observer: observer,
+                    julianDateRange: fromDate..<toDate,
+                    fineInterval: fineInterval
+                )
+                passes.append(pass)
+                resultSnapshots = resultSnapshots.merging(snapshots)
+
+                snapshotBeforeRising = nil
+                snapshotAfterSetting = nil
+            }
         }
-
-        if coarseSnapshots.last!.1.position.elev > 0 {
-            snapshotAfterSetting = coarseSnapshots.last!.1
-        }
-
-        tryGenerateFinePassInfo()
-
-        return (passInformation, resultSnapshots)
+        return (passes, resultSnapshots)
     }
 }

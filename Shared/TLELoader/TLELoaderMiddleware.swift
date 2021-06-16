@@ -59,7 +59,8 @@ extension EffectMiddleware where
             case let .loadTLECategory(category):
                 return Effect(token: category) { context -> AnyPublisher<DispatchedAction<TLELoaderOutputAction>, Never> in
                     if let tles = getState().tles[category] {
-                        let averageTLEAge = tles.map {  getState().referenceDate.timeIntervalSince(Date(daysSince1950: $0.t₀))
+                        let averageTLEAge = tles.map {
+                            Date(julianDate: getState().referenceDate).timeIntervalSince(Date(daysSince1950: $0.t₀))
                         }
                         .reduce(0, +) / Double(tles.count)
 

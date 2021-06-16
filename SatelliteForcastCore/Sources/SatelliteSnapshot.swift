@@ -11,7 +11,7 @@ import SatelliteKit
 /// A snapshot of the satellite of a specific date, coordinate, velocity and whether
 /// if it is illuminated by sunlight.
 public struct SatelliteSnapshot {
-    public let date: Date
+    public let julianDate: Double
     public let position: AziEleDst
     public let isIlluminated: Bool
 
@@ -19,12 +19,12 @@ public struct SatelliteSnapshot {
     public let sunElevation: Double
 
     public init(
-        date: Date,
+        julianDate: Double,
         position: AziEleDst,
         isIlluminated: Bool,
         sunElevation: Double
     ) {
-        self.date = date
+        self.julianDate = julianDate
         self.position = position
         self.isIlluminated = isIlluminated
         self.sunElevation = sunElevation

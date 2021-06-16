@@ -61,19 +61,19 @@ struct SkyChartViewState: Equatable {
 
         /// Display a placeholder.
         case notReady
-        /// Display the sky at date. This option will not show any satellite passes.
-        case sky(Date, observer: LatLonAlt)
+        /// Display the sky at julian date. This option will not show any satellite passes.
+        case sky(Double, observer: LatLonAlt)
         /// Display a satellite pass. The background sky's date will be the approx time of higest elevation of the pass.
-        case pass(PassInformation, snapshotsDuringPass: Map<Date, SatelliteSnapshot>, observer: LatLonAlt)
+        case pass(PassInformation, snapshotsDuringPass: Map<Double, SatelliteSnapshot>, observer: LatLonAlt)
 
-        /// The reference date for the background sky, if available.
+        /// The reference julian date for the background sky, if available.
         /// No background sky will be drawn if this returns `nil`.
-        var referenceDate: Date? {
+        var referenceDate: Double? {
             switch self {
             case let .sky(date, _):
                 return date
             case let .pass(passInformation, _, _):
-                return passInformation.risesAt ?? passInformation.setsAt
+                return passInformation.rise.julianDate
             case .notReady:
                 return nil
             }
@@ -118,7 +118,7 @@ struct SkyChartViewState: Equatable {
         guard let observerCoodinate = state.coreLocationState.location.map(LatLonAlt.init) else {
             return SkyChartViewState(mode: .notReady)
         }
-        let firstPass: (PassInformation, Map<Date, SatelliteSnapshot>)? = {
+        let firstPass: (PassInformation, Map<Double, SatelliteSnapshot>)? = {
             switch state.navigationState {
             case let .detail(noradIndex: noradIndex, selectedPassIndex: selectedPassIndex):
                 guard let satelliteState = state.satellites[noradIndex],
@@ -126,7 +126,7 @@ struct SkyChartViewState: Equatable {
                     return nil
                 }
                 let pass = satelliteState.passes[selectedPassIndex]
-                let subMap = satelliteState.snapshots.submap(from: pass.risesAt!, through: pass.setsAt ?? satelliteState.snapshots.last!.0)
+                let subMap = satelliteState.snapshots.submap(from: pass.rise.julianDate, through: pass.set.julianDate)
                 return (pass, subMap)
             default:
                 return nil
@@ -205,23 +205,21 @@ struct SkyChart: View {
                     return formatter
                 }()
                 ZStack {
-                    if let risesAt = pass.risesAt,
-                       let snapshot = snapshotsDuringPass.submap(from: risesAt, to: risesAt.addingTimeInterval(10)).first {
+                    if let snapshot = snapshotsDuringPass.submap(from: pass.rise.julianDate, to: pass.rise.julianDate + TimeConstants.sec2day * 10).first {
                         let textPosition = AziEleDst(azim: snapshot.1.position.azim, elev: snapshot.1.position.elev + 15, dist: 0)
-                        Text("↑\(formatter.string(from: risesAt))")
+                        Text("↑\(formatter.string(from: Date(julianDate: pass.rise.julianDate)))")
                             .modifier(PassInfoModifier())
                             .position(point(at: textPosition, rect: rect))
                     }
-                    if let setsAt = pass.setsAt,
-                       let snapshot = snapshotsDuringPass.submap(from: setsAt.addingTimeInterval(-10), to: setsAt).last {
+                    if let snapshot = snapshotsDuringPass.submap(from: pass.set.julianDate - TimeConstants.sec2day * 10, to: pass.set.julianDate).last {
                         let textPosition = AziEleDst(azim: snapshot.1.position.azim, elev: snapshot.1.position.elev + 15, dist: 0)
-                        Text("↓\(formatter.string(from: setsAt))")
+                        Text("↓\(formatter.string(from: Date(julianDate: pass.set.julianDate)))")
                             .modifier(PassInfoModifier())
                             .position(point(at: textPosition, rect: rect))
                     }
-                    if let higestElevSnapshot = snapshotsDuringPass.submap(from: pass.transit.date.addingTimeInterval(-2), to: pass.transit.date.addingTimeInterval(2)).first {
+                    if let higestElevSnapshot = snapshotsDuringPass.submap(from: pass.transit.julianDate - TimeConstants.sec2day * 2, to: pass.transit.julianDate + TimeConstants.sec2day * 10).first {
                         let textPosition = AziEleDst(azim: higestElevSnapshot.1.position.azim, elev: higestElevSnapshot.1.position.elev + 15, dist: 0)
-                        Text("\(formatter.string(from: pass.transit.date)) \n∠\(numberFormatter.string(from: NSNumber(value: pass.transit.elev))!)°")
+                        Text("\(formatter.string(from: Date(julianDate: pass.transit.julianDate))) \n∠\(numberFormatter.string(from: NSNumber(value: pass.transit.elev))!)°")
                             .modifier(PassInfoModifier())
                             .position(point(at: textPosition, rect: rect))
                     }
@@ -294,7 +292,7 @@ struct SkyChart: View {
                 Path { path in
                     for star in viewModel.state.stars {
                         let (alt, azi) = azel(
-                            time: referenceDate,
+                            julianDate: referenceDate,
                             site: (observerCoordinate.lat, observerCoordinate.lon),
                             cele: cartesianToRaDec(star.physicalInfo.coordinate))
                         if alt < 0 {
@@ -323,13 +321,13 @@ struct SkyChart: View {
                         guard let center = constellation.displayCenter else {
                             continue
                         }
-                        let (alt, _) = azel(time: referenceDate, site: (observerCoordinate.lat, observerCoordinate.lon), cele: cartesianToRaDec(center))
+                        let (alt, _) = azel(julianDate: referenceDate, site: (observerCoordinate.lat, observerCoordinate.lon), cele: cartesianToRaDec(center))
                         if alt < 0 {
                             continue
                         }
                         for line in constellation.connectionLines {
-                            let (alt1, azi1) = azel(time: referenceDate, site: (observerCoordinate.lat, observerCoordinate.lon), cele: cartesianToRaDec(line.star1.physicalInfo.coordinate))
-                            let (alt2, azi2) = azel(time: referenceDate, site: (observerCoordinate.lat, observerCoordinate.lon), cele: cartesianToRaDec(line.star2.physicalInfo.coordinate))
+                            let (alt1, azi1) = azel(julianDate: referenceDate, site: (observerCoordinate.lat, observerCoordinate.lon), cele: cartesianToRaDec(line.star1.physicalInfo.coordinate))
+                            let (alt2, azi2) = azel(julianDate: referenceDate, site: (observerCoordinate.lat, observerCoordinate.lon), cele: cartesianToRaDec(line.star2.physicalInfo.coordinate))
                             let point1 = point(at: AziEleDst(azim: azi1, elev: alt1, dist: 0), rect: rect)
                             let point2 = point(at: AziEleDst(azim: azi2, elev: alt2, dist: 0), rect: rect)
                             path.move(to: point1)
@@ -417,9 +415,9 @@ struct SkyChart: View {
         if let referenceDate = viewModel.state.mode.referenceDate,
            let observerCoordinate = viewModel.state.mode.observer {
             let (alt, azi) = azel(
-                time: referenceDate,
+                julianDate: referenceDate,
                 site: (observerCoordinate.lat, observerCoordinate.lon),
-                cele: getRaDec(referenceDate.julianDate)
+                cele: getRaDec(referenceDate)
             )
             let planetCoordinate = AziEleDst(azim: azi, elev: alt, dist: 0)
 
@@ -537,7 +535,7 @@ extension ViewProducer where Context == Void, ProducedView == SkyChart {
 }
 
 struct SkyChart_Previews: PreviewProvider {
-    static let issPass: (PassInformation, Map<Date, SatelliteSnapshot>) = {
+    static let issPass: (PassInformation, Map<Double, SatelliteSnapshot>) = {
         let tle = try! TLE(
             raw: """
             ISS (ZARYA)
@@ -550,15 +548,21 @@ struct SkyChart_Previews: PreviewProvider {
         let formatter = ISO8601DateFormatter()
         let date = formatter.date(from: "2021-06-02T20:35:30+0800")!
 
-        let (passes, snapshotsDuringPass) = sat.findPasses(
+        let observer = LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0)
+        let snapshots = sat.snapshots(
+            observer: observer,
+            julianDateRange: date.julianDate..<date.addingTimeInterval(800).julianDate
+        )
+
+        let (passes, fineSnapshots) = sat.findPasses(
             observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
-            param: .dateRange(date..<date.addingTimeInterval(800))
+            coarseSnapshots: snapshots
         )
         let firstPass = passes.first!
-        return (firstPass, snapshotsDuringPass[firstPass])
+        return (firstPass, fineSnapshots.submap(from: firstPass.rise.julianDate, through: firstPass.set.julianDate))
     }()
 
-    static let tianHePass: (PassInformation, Map<Date, SatelliteSnapshot>) = {
+    static let tianHePass: (PassInformation, Map<Double, SatelliteSnapshot>) = {
         let tle = try! TLE(
             raw: """
             TIANHE
@@ -571,12 +575,18 @@ struct SkyChart_Previews: PreviewProvider {
         let formatter = ISO8601DateFormatter()
         let date = formatter.date(from: "2021-06-02T06:29:00-0600")!
 
-        let (passes, snapshotsDuringPass) = sat.findPasses(
+        let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
+        let snapshots = sat.snapshots(
+            observer: observer,
+            julianDateRange: date.julianDate..<date.addingTimeInterval(800).julianDate
+        )
+
+        let (passes, fineSnapshots) = sat.findPasses(
             observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
-            param: .dateRange(date..<date.addingTimeInterval(800))
+            coarseSnapshots: snapshots
         )
         let firstPass = passes.first!
-        return (firstPass, snapshotsDuringPass[firstPass])
+        return (firstPass, fineSnapshots.submap(from: firstPass.rise.julianDate, through: firstPass.set.julianDate))
     }()
 
     static var previews: some View {

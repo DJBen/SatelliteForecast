@@ -15,11 +15,11 @@ import SatelliteKit
 /// ones that are approximately minutes apart for the rest of their orbits.
 /// - Passes The pass information describing the exact time of rise and set, and sun illumination changes during the pass.
 public struct SatelliteState: Equatable {
-    public var snapshots: Map<Date, SatelliteSnapshot>
+    public var snapshots: Map<Double, SatelliteSnapshot>
     public var passes: [PassInformation]
 
     public init(
-        snapshots: Map<Date, SatelliteSnapshot> = Map(),
+        snapshots: Map<Double, SatelliteSnapshot> = Map(),
         passes: [PassInformation] = []
     ) {
         self.snapshots = snapshots

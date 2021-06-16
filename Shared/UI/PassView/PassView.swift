@@ -98,17 +98,17 @@ struct PassView_Previews: PreviewProvider {
             2 48274  41.4713  16.3199 0005053  25.9394 109.3813 15.65195495  5304
             """
         )
-        let dateRange = Date().advanced(by: -60 * 60 * 2)..<Date().advanced(by: 60 * 60 * 22)
+        let julianDateRange = Date().advanced(by: -60 * 60 * 2).julianDate..<Date().advanced(by: 60 * 60 * 22).julianDate
         let sat = Satellite(withTLE: tle)
         // 2000 Broadway, Redwood City, CA 94063
         let location = CLLocation(latitude: 37.486743000691185, longitude: -122.22655970246515)
         let snapshots = sat.snapshots(
             observer: LatLonAlt(location: location),
-            dateRange: dateRange
+            julianDateRange: julianDateRange
         )
-        let (passes, fineSnapshots) = sat.findPasses(observer: LatLonAlt(location: location), param: .existingSnapshots(snapshots))
+        let (passes, fineSnapshots) = sat.findPasses(observer: LatLonAlt(location: location), coarseSnapshots: snapshots)
         let appState = AppState(
-            dateRange: dateRange,
+            julianDateRange: julianDateRange,
             satelliteElevationGraphConfigs: .preset,
             satellites: [
                 tle.noradIndex: SatelliteState(

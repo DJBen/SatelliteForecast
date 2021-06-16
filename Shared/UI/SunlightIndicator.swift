@@ -41,8 +41,8 @@ struct SunlightIndicatorViewModel {
     fileprivate let sunEventsXCoord: (CGRect) -> [(SunEvent, CGFloat)]
 
     init(
-        snapshots: Map<Date, SatelliteSnapshot>,
-        dateRange: Range<Date>
+        snapshots: Map<Double, SatelliteSnapshot>,
+        julianDateRange: Range<Double>
     ) {
         sunlightGradientStops = {
             guard let (_, firstSnapshot) = snapshots.first else {
@@ -77,7 +77,7 @@ struct SunlightIndicatorViewModel {
                 let s1 = snapshots[index].1
                 let s2 = snapshots[snapshots.index(after: index)].1
 
-                let location: CGFloat = CGFloat(s1.date.timeIntervalSince(dateRange.lowerBound) / dateRange.upperBound.timeIntervalSince(dateRange.lowerBound))
+                let location: CGFloat = CGFloat((s1.julianDate - julianDateRange.lowerBound) / (julianDateRange.upperBound - julianDateRange.lowerBound))
 
                 for (boundary, color) in boundaries {
                     if (s1.sunElevation > boundary && s2.sunElevation <= boundary) ||
@@ -108,10 +108,10 @@ struct SunlightIndicatorViewModel {
                     continue
                 }
                 if last.sunElevation <= 0 && first.sunElevation > 0 {
-                    let percent = last.date.timeIntervalSince(dateRange.lowerBound) / dateRange.upperBound.timeIntervalSince(dateRange.lowerBound)
+                    let percent = (last.julianDate - julianDateRange.lowerBound) / (julianDateRange.upperBound - julianDateRange.lowerBound)
                     results.append((.rise, CGFloat(percent)))
                 } else if last.sunElevation > 0 && first.sunElevation <= 0 {
-                    let percent = last.date.timeIntervalSince(dateRange.lowerBound) / dateRange.upperBound.timeIntervalSince(dateRange.lowerBound)
+                    let percent = (last.julianDate - julianDateRange.lowerBound) / (julianDateRange.upperBound - julianDateRange.lowerBound)
                     results.append((.set, CGFloat(percent)))
                 }
             }
@@ -181,14 +181,14 @@ struct SunlightIndicator_Previews: PreviewProvider {
         // 2000 Broadway, Redwood City, CA 94063
         let observerCoordinate = LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0)
         // Date range
-        let dateRange = Date().advanced(by: -60 * 60 * 2)..<Date().advanced(by: 60 * 60 * 30)
+        let julianDateRange = Date().advanced(by: -60 * 60 * 2).julianDate..<Date().advanced(by: 60 * 60 * 30).julianDate
         let viewModel = SunlightIndicatorViewModel(
             snapshots: sat.snapshots(
                 observer: observerCoordinate,
-                dateRange: dateRange,
+                julianDateRange: julianDateRange,
                 interval: 60
             ),
-            dateRange: dateRange
+            julianDateRange: julianDateRange
         )
         SunlightIndicator(viewModel: viewModel)
             .previewLayout(.fixed(width: 320, height: 24))
