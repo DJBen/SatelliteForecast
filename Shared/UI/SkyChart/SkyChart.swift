@@ -14,11 +14,53 @@ import CombineRextensions
 import BTree
 
 struct SkyChartConfigs: Equatable {
+    struct BackgroundSky: Equatable {
+        var showStars: Bool = true
+        var showConstellationLines: Bool = true
+
+        struct PlantaryBody: OptionSet {
+            let rawValue: Int
+
+            static let sun = PlantaryBody(rawValue: 1 << 0)
+            static let moon = PlantaryBody(rawValue: 1 << 1)
+            static let mercury = PlantaryBody(rawValue: 1 << 2)
+            static let venus = PlantaryBody(rawValue: 1 << 3)
+            static let jupiter = PlantaryBody(rawValue: 1 << 4)
+            static let saturn = PlantaryBody(rawValue: 1 << 5)
+
+            static let all: PlantaryBody = [.sun, .moon, .mercury, .venus, .jupiter, .saturn]
+        }
+
+        var visibileBodies: PlantaryBody = .all
+
+        enum PlantaryBodyLabel {
+            case text
+            case symbol
+        }
+
+        var bodySymbol: PlantaryBodyLabel = .text
+
+        static var preset: BackgroundSky {
+            BackgroundSky()
+        }
+    }
+
+    /// The background sky configuration
+    var backgroundSky: BackgroundSky = .preset
+
+    var showAzimuthTexts: Bool = true
+
     /// The degree interval between each pair of azimuth marks
     var azimuthMarkInterval: Int = 15
 
     /// The length of azimuth marks
     var azimuthMarkLength: CGFloat = 3
+
+    var showDirections: Bool = true
+
+    var directionTextOutset: CGFloat = 30
+
+    var showPassInfoLabels: Bool = true
 
     static var preset: SkyChartConfigs {
         return SkyChartConfigs()
@@ -101,7 +143,6 @@ struct SkyChartViewState: Equatable {
     }
 
     var mode: Mode = .notReady
-    var configs: SkyChartConfigs = .preset
     var stars: [Star] = []
     var constellations: Set<Constellation> = []
 
@@ -120,7 +161,7 @@ struct SkyChartViewState: Equatable {
         }
         let firstPass: (PassInformation, Map<Double, SatelliteSnapshot>)? = {
             switch state.navigationState {
-            case let .detail(noradIndex: noradIndex, selectedPassIndex: selectedPassIndex):
+            case let .pass(noradIndex: noradIndex, selectedPassIndex: selectedPassIndex):
                 guard let satelliteState = state.satellites[noradIndex],
                       let selectedPassIndex = selectedPassIndex else {
                     return nil
@@ -134,7 +175,6 @@ struct SkyChartViewState: Equatable {
         }()
         return SkyChartViewState(
             mode: firstPass.map { Mode.pass($0.0, snapshotsDuringPass: $0.1, observer: observerCoodinate) } ?? .notReady,
-            configs: state.skyChartState.configs,
             stars: state.skyChartState.stars,
             constellations: state.skyChartState.constellations
         )
@@ -147,9 +187,14 @@ struct SkyChartViewState: Equatable {
 
 struct SkyChart: View {
     private let viewModel: ObservableViewModel<SkyChartAction, SkyChartViewState>
+    private let configs: SkyChartConfigs
 
-    init(viewModel: ObservableViewModel<SkyChartAction, SkyChartViewState>) {
+    init(
+        viewModel: ObservableViewModel<SkyChartAction, SkyChartViewState>,
+        configs: SkyChartConfigs
+    ) {
         self.viewModel = viewModel
+        self.configs = configs
     }
 
     private func radius(fromRect rect: CGRect) -> CGFloat {
@@ -187,6 +232,9 @@ struct SkyChart: View {
     }
 
     private var passInfoLabel: some View {
+        guard configs.showPassInfoLabels else {
+            return AnyView(EmptyView())
+        }
         switch viewModel.state.mode {
         case .notReady, .sky(_, observer: _):
             return AnyView(EmptyView())
@@ -287,7 +335,9 @@ struct SkyChart: View {
 
     var starPath: some View {
         GeometryReader { geometry in
-            if let referenceDate = viewModel.state.mode.referenceDate, let observerCoordinate = viewModel.state.mode.observer {
+            if configs.backgroundSky.showStars,
+               let referenceDate = viewModel.state.mode.referenceDate,
+               let observerCoordinate = viewModel.state.mode.observer {
                 let rect = geometry.frame(in: .local)
                 Path { path in
                     for star in viewModel.state.stars {
@@ -313,7 +363,8 @@ struct SkyChart: View {
 
     var constellationLinesPath: some View {
         GeometryReader { geometry in
-            if let referenceDate = viewModel.state.mode.referenceDate,
+            if configs.backgroundSky.showConstellationLines,
+               let referenceDate = viewModel.state.mode.referenceDate,
                let observerCoordinate = viewModel.state.mode.observer {
                 let rect = geometry.frame(in: .local)
                 Path { path in
@@ -344,10 +395,10 @@ struct SkyChart: View {
         GeometryReader { geometry in
             let rect = geometry.frame(in: .local)
             Path { path in
-                stride(from: 0, to: 360, by: viewModel.state.configs.azimuthMarkInterval).forEach { azimuth in
+                stride(from: 0, to: 360, by: configs.azimuthMarkInterval).forEach { azimuth in
                     let (point1, point2) = azimuthMarkPoints(
                         azimuth: Double(azimuth),
-                        length: viewModel.state.configs.azimuthMarkLength,
+                        length: configs.azimuthMarkLength,
                         rect: rect
                     )
                     path.move(to: point1)
@@ -364,21 +415,23 @@ struct SkyChart: View {
                 let rect = geometry.frame(in: .local)
                 let radius = radius(fromRect: rect)
                 ZStack {
-                    ForEach(
-                        Array(stride(from: 0, to: 360, by: viewModel.state.configs.azimuthMarkInterval)),
-                        id: \.self,
-                        content: { azimuth in
-                            let angle: CGFloat = CGFloat(Double(azimuth + 180) * deg2rad)
-                            Text("\(azimuth)°")
-                                .font(.caption2)
-                                .foregroundColor(.gray)
-                                .position(x: rect.midX, y: rect.midY)
-                                .rotationEffect(
-                                    Angle(degrees: -(Double(angle) * rad2deg) + 180)
-                                )
-                                .offset(x: sin(angle) * (radius + 10), y: cos(angle) * (radius + 10))
-                        }
-                    )
+                    if configs.showAzimuthTexts {
+                        ForEach(
+                            Array(stride(from: 0, to: 360, by: configs.azimuthMarkInterval)),
+                            id: \.self,
+                            content: { azimuth in
+                                let angle: CGFloat = CGFloat(Double(azimuth + 180) * deg2rad)
+                                Text("\(azimuth)°")
+                                    .font(.caption2)
+                                    .foregroundColor(.gray)
+                                    .position(x: rect.midX, y: rect.midY)
+                                    .rotationEffect(
+                                        Angle(degrees: -(Double(angle) * rad2deg) + 180)
+                                    )
+                                    .offset(x: sin(angle) * (radius + 10), y: cos(angle) * (radius + 10))
+                            }
+                        )
+                    }
                     let orientationAnglesNorth: [(String, Double, Double)] = [
                         ("NE", .pi * 0.75, -.pi * 0.5),
                         ("NW", .pi * -0.75, .pi * 0.5),
@@ -392,25 +445,26 @@ struct SkyChart: View {
                         ("SW", .pi * 0.25, -.pi * 0.5)
                     ]
                     let orientationAngles: [(String, Double, Double)] = observerCoordinate.lon > 0 ? orientationAnglesNorth : orientationAnglesSouth
-                    ForEach(orientationAngles, id: \.self.0) { (direction, angle, textOrientation) in
-                        Text(direction)
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
-                            .position(x: rect.midX, y: rect.midY)
-                            .rotationEffect(
-                                Angle(degrees: (Double(angle + textOrientation) * rad2deg))
-                            )
-                            .offset(x: sin(CGFloat(angle)) * (radius + 30), y: cos(CGFloat(angle)) * (radius + 30))
+                    if configs.showDirections {
+                        ForEach(orientationAngles, id: \.self.0) { (direction, angle, textOrientation) in
+                            Text(direction)
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
+                                .position(x: rect.midX, y: rect.midY)
+                                .rotationEffect(
+                                    Angle(degrees: (Double(angle + textOrientation) * rad2deg))
+                                )
+                                .offset(x: sin(CGFloat(angle)) * (radius + configs.directionTextOutset), y: cos(CGFloat(angle)) * (radius + configs.directionTextOutset))
+                        }
                     }
                 }
             }
         }
     }
 
-    func planetView<Content: View, Label: View>(
+    func planetView<Content: View>(
         getRaDec: (Double) -> (ra: Double, dec: Double),
-        planetViewGenerator: @escaping () -> Content,
-        @ViewBuilder labelBuilder: @escaping () -> Label
+        @ViewBuilder planetViewGenerator: @escaping (AziEleDst) -> Content
     ) -> some View {
         if let referenceDate = viewModel.state.mode.referenceDate,
            let observerCoordinate = viewModel.state.mode.observer {
@@ -426,15 +480,8 @@ struct SkyChart: View {
             }
 
             return AnyView(GeometryReader { geometry in
-                let rect = geometry.frame(in: .local)
                 ZStack {
-                    HStack(spacing: 0) {
-                        planetViewGenerator()
-
-                        labelBuilder()
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                    .position(point(at: planetCoordinate, rect: rect))
+                    planetViewGenerator(planetCoordinate)
                 }
             })
         } else {
@@ -443,12 +490,11 @@ struct SkyChart: View {
     }
 
     var sunView: some View {
-        GeometryReader { geometry in
-            let rect = geometry.frame(in: .local)
-            planetView(
-                getRaDec: solarGeo,
-                planetViewGenerator: {
-                    Path { path in
+        if configs.backgroundSky.visibileBodies.contains(.sun) {
+            return AnyView(GeometryReader { geometry in
+                let rect = geometry.frame(in: .local)
+                planetView(getRaDec: solarGeo) { planetCoordinate in
+                    let path = Path { path in
                         path.addArc(
                             center: CGPoint(x: rect.midX, y: rect.midY),
                             radius: 8,
@@ -460,24 +506,43 @@ struct SkyChart: View {
                     .fill()
                     .foregroundColor(.yellow)
                     .shadow(color: .yellow, radius: 12, x: 0.0, y: 0.0)
-                },
-                labelBuilder: {
-                    Text("Sun")
-                        .font(.caption2)
-                        .foregroundColor(.orange)
-                        .offset(x: 10)
+
+                    switch configs.backgroundSky.bodySymbol {
+                    case .text:
+                        HStack(spacing: 0) {
+                            path
+
+                            Text("Sun")
+                                .font(.caption2)
+                                .foregroundColor(.orange)
+                                .offset(x: 10)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .position(point(at: planetCoordinate, rect: rect))
+
+                    case .symbol:
+                        ZStack {
+                            path
+                            Text("☉")
+                                .font(.system(size: 12))
+                                .foregroundColor(.white)
+                                .frame(alignment: .center)
+                        }
+                        .position(point(at: planetCoordinate, rect: rect))
+                    }
                 }
-            )
+            })
+        } else {
+            return AnyView(EmptyView())
         }
     }
 
     var moonView: some View {
-        GeometryReader { geometry in
-            let rect = geometry.frame(in: .local)
-            planetView(
-                getRaDec: lunarGeo,
-                planetViewGenerator: {
-                    Path { path in
+        if configs.backgroundSky.visibileBodies.contains(.moon) {
+            return AnyView(GeometryReader { geometry in
+                let rect = geometry.frame(in: .local)
+                planetView(getRaDec: lunarGeo) { planetCoordinate in
+                    let path = Path { path in
                         path.addArc(
                             center: CGPoint(x: rect.midX, y: rect.midY),
                             radius: 5,
@@ -489,23 +554,42 @@ struct SkyChart: View {
                     .fill()
                     .foregroundColor(.gray)
                     .shadow(color: .yellow.opacity(0.7), radius: 8, x: 0.0, y: 0.0)
-                },
-                labelBuilder: {
-                    Text("Moon")
-                        .font(.caption2)
-                        .foregroundColor(.blue)
-                        .offset(x: 8)
+
+                    switch configs.backgroundSky.bodySymbol {
+                    case .text:
+                        HStack(spacing: 0) {
+                            path
+                            Text("Moon")
+                                .font(.caption2)
+                                .foregroundColor(.blue)
+                                .offset(x: 8)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .position(point(at: planetCoordinate, rect: rect))
+
+                    case .symbol:
+                        ZStack {
+                            path
+                            Text("☾")
+                                .font(.system(size: 8))
+                                .foregroundColor(.white)
+                                .frame(alignment: .center)
+                        }
+                        .position(point(at: planetCoordinate, rect: rect))
+                    }
                 }
-            )
+            })
+        } else {
+            return AnyView(EmptyView())
         }
     }
 
     var body: some View {
         starPath
             .overlay(constellationLinesPath)
-            .overlay(satellitePath)
             .overlay(moonView)
             .overlay(sunView)
+            .overlay(satellitePath)
             .clipShape(Circle())
             .overlay(backgroundPath)
             .overlay(azimuthMarks)
@@ -514,6 +598,32 @@ struct SkyChart: View {
             .onAppear {
                 viewModel.dispatch(.onAppear)
             }
+    }
+}
+
+extension ViewProducer where Context == Int, ProducedView == SkyChart {
+    static func skyChartAsPreview<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
+        ViewProducer<Context, ProducedView> { index in
+            SkyChart(
+                viewModel: viewModel
+                    .projection(
+                        action: { AppAction.skyChart($0) },
+                        state: SkyChartViewState.projectPassingMode(state:)
+                    )
+                    .asObservableViewModel(
+                        initialState: .empty
+                    ),
+                configs: SkyChartConfigs(
+                    backgroundSky: SkyChartConfigs.BackgroundSky(
+                        showStars: false,
+                        showConstellationLines: false,
+                        visibileBodies: []
+                    ),
+                    azimuthMarkInterval: 90,
+                    azimuthMarkLength: 2
+                )
+            )
+        }
     }
 }
 
@@ -528,7 +638,8 @@ extension ViewProducer where Context == Void, ProducedView == SkyChart {
                     )
                     .asObservableViewModel(
                         initialState: .empty
-                    )
+                    ),
+                configs: .preset
             )
         }
     }
@@ -603,11 +714,11 @@ struct SkyChart_Previews: PreviewProvider {
                             snapshotsDuringPass: snapshots,
                             observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0)
                         ),
-                        configs: .preset,
                         stars: stars,
                         constellations: constellations
                     )
-                )
+                ),
+                configs: .preset
             )
             .padding(20)
             .preferredColorScheme($0)
@@ -623,16 +734,17 @@ struct SkyChart_Previews: PreviewProvider {
                         snapshotsDuringPass: snapshots2,
                         observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
                     ),
-                    configs: .preset,
                     stars: stars,
                     constellations: constellations
                 )
-            )
+            ),
+            configs: .preset
         )
         .padding(20)
 
         SkyChart(
-            viewModel: .mock(state: .empty)
+            viewModel: .mock(state: .empty),
+            configs: .preset
         )
         .padding(20)
         .previewDisplayName("Placeholder")

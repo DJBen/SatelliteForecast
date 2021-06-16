@@ -23,7 +23,8 @@ struct AppState: Equatable {
     // Navigation
     enum NavigationState: Equatable {
         case list
-        case detail(noradIndex: Int, selectedPassIndex: Int? = nil)
+        case allPasses(noradIndex: Int)
+        case pass(noradIndex: Int, selectedPassIndex: Int? = nil)
     }
     var navigationState: NavigationState = .list
 
@@ -31,7 +32,7 @@ struct AppState: Equatable {
     var selectedSatelliteNoradIndex: Int? {
         get {
             switch navigationState {
-            case let .detail(noradIndex, _):
+            case let .pass(noradIndex, _):
                 return noradIndex
             default:
                 return nil
@@ -43,7 +44,7 @@ struct AppState: Equatable {
                 if newValue == self.selectedSatelliteNoradIndex {
                     return
                 }
-                self.navigationState = .detail(noradIndex: newValue, selectedPassIndex: nil)
+                self.navigationState = .pass(noradIndex: newValue, selectedPassIndex: nil)
             } else {
                 self.navigationState = .list
             }
@@ -82,7 +83,7 @@ struct AppState: Equatable {
 
     var selectedSatellitePass: PassInformation? {
         switch navigationState {
-        case let .detail(noradIndex, selectedPassIndex):
+        case let .pass(noradIndex, selectedPassIndex):
             guard let selectedPassIndex = selectedPassIndex else {
                 return nil
             }

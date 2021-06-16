@@ -171,7 +171,7 @@ extension Satellite {
     ///   - snapshots: Resulting snapshots by merging the coarse snapshots and the generated fine snapshots.
     public func findPasses(
         observer: LatLonAlt,
-        coarseSnapshots: Map<Double, SatelliteSnapshot> = Map(),
+        coarseSnapshots: Map<Double, SatelliteSnapshot>,
         fineInterval: TimeInterval = 3
     ) -> (passes: [PassInformation], snapshots: Map<Double, SatelliteSnapshot>) {
         var snapshotBeforeRising: SatelliteSnapshot?

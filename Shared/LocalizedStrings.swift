@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SatelliteForcastCore
 
 enum LocalizedStrings {
     enum SatelliteListView {
@@ -18,6 +19,37 @@ enum LocalizedStrings {
                     bundle: .main,
                     value: "Brightest 100 Satellites",
                     comment: "The section header for the brightest 100 satellites"
+                )
+            }
+        }
+    }
+
+    enum PassPreviewCell {
+        static func titleForPassVisibility(_ visibility: PassInformation.Visibility) -> String {
+            switch visibility {
+            case .visible:
+                return NSLocalizedString(
+                    "PassPreviewCell.visibilityText.visible",
+                    tableName: nil,
+                    bundle: .main,
+                    value: "Visible",
+                    comment: "The pass is visible"
+                )
+            case .daylight:
+                return NSLocalizedString(
+                    "PassPreviewCell.visibilityText.daylight",
+                    tableName: nil,
+                    bundle: .main,
+                    value: "Daylight",
+                    comment: "The pass happens during daylight"
+                )
+            case .unlit:
+                return NSLocalizedString(
+                    "PassPreviewCell.visibilityText.unlit",
+                    tableName: nil,
+                    bundle: .main,
+                    value: "Unlit",
+                    comment: "The pass happens entirely unlit"
                 )
             }
         }

@@ -56,9 +56,32 @@ public struct PassInformation {
     /// The elevation of the sun at transit. A satellite pass can usually only be seen after civil twilight or before civil dawn when sun is
     /// below -6 degrees.
     public let sunElevationAtTransit: Double
+
+    /// The visibility of the satellite pass.
+    public enum Visibility {
+        /// At least a part of the pass is lit, and the sun elevation is below -6 degrees (civil twilight / dawn point).
+        case visible
+        /// Pass happens while sun is up (above -6 degrees). It would be too bright to see the satellite.
+        case daylight
+        /// Pass happens entirely unlit by the sun.
+        case unlit
+    }
+
+    public var visibility: Visibility {
+        if sunElevationAtTransit > -6 {
+            return .daylight
+        }
+
+        if illumination.hasAnyIllumination {
+            return .visible
+        } else {
+            return .unlit
+        }
+    }
 }
 
 extension PassInformation: Equatable {}
 extension PassInformation.Illumination: Equatable {}
 extension PassInformation.Illumination.Change: Equatable {}
+extension PassInformation.Visibility: Equatable {}
 extension PassInformation.DateElev: Equatable {}

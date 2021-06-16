@@ -33,7 +33,7 @@ extension Reducer where ActionType == TLEPropagatorAction, StateType == Store.St
             // - Transit (maximum elevation) greater than 10 degrees above horizon
             // - Has any illuminated segment during the pass
             switch state.navigationState {
-            case let .detail(noradIndex, selectedPassIndex: nil):
+            case let .pass(noradIndex, selectedPassIndex: nil):
                 let selectedPassIndex = state.satellites[noradIndex]!.passes.firstIndex(
                     where: {
                         $0.rise.julianDate > state.tleLoaderState.referenceDate
@@ -42,7 +42,7 @@ extension Reducer where ActionType == TLEPropagatorAction, StateType == Store.St
                             && $0.transit.elev > 10
                     }
                 )
-                state.navigationState = .detail(noradIndex: noradIndex, selectedPassIndex: selectedPassIndex)
+                state.navigationState = .pass(noradIndex: noradIndex, selectedPassIndex: selectedPassIndex)
             default:
                 break
             }

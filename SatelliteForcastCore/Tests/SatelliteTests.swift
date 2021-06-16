@@ -28,10 +28,12 @@ class SatelliteTests: XCTestCase {
 
         let formatter = ISO8601DateFormatter()
         let date = formatter.date(from: "2021-06-02T20:35:30+0800")!
+        let observer = LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0)
+        let coarseSnapshots = sat.snapshots(observer: observer, julianDateRange: date.julianDate..<date.addingTimeInterval(800).julianDate)
 
         let (passes, snapshotsDuringPass) = sat.findPasses(
             observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
-            param: .dateRange(date..<date.addingTimeInterval(800))
+            coarseSnapshots: coarseSnapshots
         )
     }
 }

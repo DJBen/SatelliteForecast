@@ -81,7 +81,8 @@ extension ViewProducer where Context == Void, ProducedView == PassView {
                     .asObservableViewModel(initialState: .empty),
                 elevationGraphProducer: ViewProducer<Void, SatelliteElevationGraph>
                     .satelliteElevationGraph(viewModel: viewModel),
-                skyChartProducer: ViewProducer<Void, SkyChart>.skyChart(viewModel: viewModel)
+                skyChartProducer: ViewProducer<Void, SkyChart>
+                    .skyChart(viewModel: viewModel)
             )
         }
     }
@@ -123,7 +124,7 @@ struct PassView_Previews: PreviewProvider {
                 authorizationStatus: .authorizedWhenInUse,
                 location: location
             ),
-            navigationState: .detail(noradIndex: tle.noradIndex, selectedPassIndex: 0)
+            navigationState: .pass(noradIndex: tle.noradIndex, selectedPassIndex: 0)
         )
         PassView(
             viewModel: .mock(
@@ -146,7 +147,8 @@ struct PassView_Previews: PreviewProvider {
                         state: SkyChartViewState.projectPassingMode(
                             state: appState
                         )
-                    )
+                    ),
+                    configs: .preset
                 )
             )
         )
