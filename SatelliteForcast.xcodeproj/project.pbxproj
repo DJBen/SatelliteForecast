@@ -17,6 +17,7 @@
 		EF1CAB39266B8934006319C8 /* SatelliteListViewMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CAB38266B8934006319C8 /* SatelliteListViewMiddleware.swift */; };
 		EF1CAB4C266DBD38006319C8 /* SatelliteListViewMiddlewareTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CAB4B266DBD38006319C8 /* SatelliteListViewMiddlewareTests.swift */; platformFilter = ios; };
 		EF46564B2679C81F0040B762 /* PassPreviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF46564A2679C81F0040B762 /* PassPreviewCell.swift */; };
+		EF46564D267AF7070040B762 /* SkyChartConfigs.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF46564C267AF7070040B762 /* SkyChartConfigs.swift */; };
 		EF4AF76C266434CC00D28F47 /* SkyChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4AF76B266434CC00D28F47 /* SkyChart.swift */; };
 		EF5CB017266E28EE000019DA /* TimerReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5CB016266E28EE000019DA /* TimerReducer.swift */; };
 		EF5CB019266E28FC000019DA /* TimerMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5CB018266E28FC000019DA /* TimerMiddleware.swift */; };
@@ -97,6 +98,7 @@
 		EF1CAB38266B8934006319C8 /* SatelliteListViewMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteListViewMiddleware.swift; sourceTree = "<group>"; };
 		EF1CAB4B266DBD38006319C8 /* SatelliteListViewMiddlewareTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteListViewMiddlewareTests.swift; sourceTree = "<group>"; };
 		EF46564A2679C81F0040B762 /* PassPreviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassPreviewCell.swift; sourceTree = "<group>"; };
+		EF46564C267AF7070040B762 /* SkyChartConfigs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyChartConfigs.swift; sourceTree = "<group>"; };
 		EF4AF76B266434CC00D28F47 /* SkyChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyChart.swift; sourceTree = "<group>"; };
 		EF5CB016266E28EE000019DA /* TimerReducer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimerReducer.swift; sourceTree = "<group>"; };
 		EF5CB018266E28FC000019DA /* TimerMiddleware.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimerMiddleware.swift; sourceTree = "<group>"; };
@@ -179,6 +181,7 @@
 			isa = PBXGroup;
 			children = (
 				EF0FC06B2677D7A200560AF0 /* AllPassesView.swift */,
+				EF46564A2679C81F0040B762 /* PassPreviewCell.swift */,
 			);
 			path = AllPassesView;
 			sourceTree = "<group>";
@@ -189,6 +192,7 @@
 				EF4AF76B266434CC00D28F47 /* SkyChart.swift */,
 				EF19FA08266EC38200D0B2CD /* SkyChartMiddleware.swift */,
 				EF19FA0A266EC7CE00D0B2CD /* SkyChartReducer.swift */,
+				EF46564C267AF7070040B762 /* SkyChartConfigs.swift */,
 			);
 			path = SkyChart;
 			sourceTree = "<group>";
@@ -222,7 +226,6 @@
 				EFAE1F0B2668B10F00A18A42 /* SatelliteElevationGraph.swift */,
 				EFAE1F122669E7A800A18A42 /* SunlightIndicator.swift */,
 				EFF750C7266F4DFF005222F8 /* SizeModifier.swift */,
-				EF46564A2679C81F0040B762 /* PassPreviewCell.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -511,6 +514,7 @@
 			files = (
 				EF7A3122266B03B400CC33C0 /* CoreLocationMiddleware.swift in Sources */,
 				EF7A311E266AFBF800CC33C0 /* Store.swift in Sources */,
+				EF46564D267AF7070040B762 /* SkyChartConfigs.swift in Sources */,
 				EF5CB017266E28EE000019DA /* TimerReducer.swift in Sources */,
 				EF7A3132266B493300CC33C0 /* TLELoaderMiddleware.swift in Sources */,
 				EF19FA09266EC38200D0B2CD /* SkyChartMiddleware.swift in Sources */,

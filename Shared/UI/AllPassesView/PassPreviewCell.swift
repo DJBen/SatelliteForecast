@@ -15,7 +15,6 @@ import CombineRextensions
 struct PassPreviewCell: View {
     var pass: PassInformation
     var indexOfPass: Int
-    var snapshots: Map<Double, SatelliteSnapshot>
     var skyChartProducer: ViewProducer<Int, SkyChart>
 
     let formatter: DateFormatter = {
@@ -83,6 +82,7 @@ struct PassPreviewCell: View {
             skyChartProducer.view(indexOfPass)
                 .padding(5)
         }
+        .background(Color.white)
     }
 }
 
@@ -117,7 +117,6 @@ struct PassPreviewCell_Previews: PreviewProvider {
             return PassPreviewCell(
                 pass: pass,
                 indexOfPass: 0,
-                snapshots: snapshotsDuringPass,
                 skyChartProducer: .pure(
                     SkyChart(
                         viewModel: .mock(
