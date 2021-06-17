@@ -25,18 +25,28 @@ extension EffectMiddleware where
             .onAction { action, _, getState in
                 switch action {
                 case .onAppear:
-                    if getState().stars.count > 0 && getState().constellations.count > 0 {
-                        return .doNothing
-                    }
-                    return .promise(token: "loadBackgroundSky") { context, sink in
+                    return Effect { context -> AnyPublisher<DispatchedAction<SkyChartAction>, Never> in
+                        let subject = PassthroughSubject<DispatchedAction<SkyChartAction>, Never>()
+
+                        if getState().stars.count > 0 && getState().constellations.count > 0 {
+                            subject.send(completion: .finished)
+                            return subject.eraseToAnyPublisher()
+                        }
+
                         DispatchQueue.global(qos: .userInitiated).async {
+
                             let stars = Star.magitudeLessThan(4.5)
                             let constellations = Constellation.all
                             logger.info("Loaded background stars and constellations from DB")
-                            sink(.loadedBackgroundSky(stars: stars, constellations: constellations))
+
+                            subject.send(DispatchedAction<SkyChartAction>(.generatedCachedResources(stars: stars, constellations: constellations)))
+
+                            subject.send(completion: .finished)
                         }
+
+                        return subject.eraseToAnyPublisher()
                     }
-                case .loadedBackgroundSky(stars: _, constellations: _):
+                case .generatedCachedResources(stars: _, constellations: _):
                     return .doNothing
                 }
             }

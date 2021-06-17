@@ -85,3 +85,9 @@ extension PassInformation.Illumination: Equatable {}
 extension PassInformation.Illumination.Change: Equatable {}
 extension PassInformation.Visibility: Equatable {}
 extension PassInformation.DateElev: Equatable {}
+
+extension PassInformation: Hashable {}
+extension PassInformation.Illumination: Hashable {}
+extension PassInformation.Illumination.Change: Hashable {}
+extension PassInformation.Visibility: Hashable {}
+extension PassInformation.DateElev: Hashable {}

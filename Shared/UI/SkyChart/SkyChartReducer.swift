@@ -13,7 +13,7 @@ extension Reducer where ActionType == SkyChartAction, StateType == SkyChartRootS
         switch action {
         case .onAppear:
             break
-        case let .loadedBackgroundSky(stars, constellations):
+        case let .generatedCachedResources(stars, constellations):
             state.stars = stars
             state.constellations = constellations
         }

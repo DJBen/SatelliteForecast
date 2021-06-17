@@ -220,8 +220,8 @@
 			isa = PBXGroup;
 			children = (
 				EF0FC06A2677D73000560AF0 /* AllPassesView */,
-				EF19FA07266EC34600D0B2CD /* SkyChart */,
 				EF1CAB43266C51F5006319C8 /* PassView */,
+				EF19FA07266EC34600D0B2CD /* SkyChart */,
 				EF1CAB34266B8747006319C8 /* SatelliteListView */,
 				EFAE1F0B2668B10F00A18A42 /* SatelliteElevationGraph.swift */,
 				EFAE1F122669E7A800A18A42 /* SunlightIndicator.swift */,
