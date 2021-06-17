@@ -1,5 +1,5 @@
 //
-//  PassViewMiddleware.swift
+//  AllPassesViewMiddleware.swift
 //  SatelliteForcast (iOS)
 //
 //  Created by Ben Lu on 6/7/21.
@@ -11,25 +11,27 @@ import Combine
 import CombineRex
 import SatelliteKit
 
-fileprivate let logger = Logger(subsystem: "io.djben.passView", category: "middleware")
+fileprivate let logger = Logger(subsystem: "io.djben.allPassesView", category: "middleware")
 
 extension EffectMiddleware where
-    InputActionType == PassViewAction,
+    InputActionType == AllPassesViewAction,
     OutputActionType == AppAction,
     StateType == AppState,
     Dependencies == Void {
 
-    /// A middeware that listens to `PassViewAction`.
+    /// A middeware that listens to `AllPassesViewAction`.
     /// - `onAppear`:
     ///   - Generate a coarse ephemeris of the satellite over a long future period.
     ///   - Find all the passes in the same period, and generate a fine ephemeris during each pass.
+    ///   - Rasterize all the satellite passes.
+    ///   - Select the first visible pass (if any).
     ///
-    ///   Thus this effect will have two action outputs before it completes.
-    static var passView: EffectMiddleware<PassViewAction, AppAction, AppState, Void> {
-        EffectMiddleware<PassViewAction, AppAction, AppState, Void>
+    ///   Thus this effect will have multiple action outputs before it completes.
+    static var allPassesView: EffectMiddleware<AllPassesViewAction, AppAction, AppState, Void> {
+        EffectMiddleware<AllPassesViewAction, AppAction, AppState, Void>
             .onAction { (action, _, getState) -> Effect<Void, AppAction> in
                 switch action {
-                case .onAppear:
+                case let .onAppear(colorScheme):
                     return Effect { context -> AnyPublisher<DispatchedAction<AppAction>, Never> in
                         let state = getState()
 
@@ -93,6 +95,31 @@ extension EffectMiddleware where
                                 )
                             )
 
+                            let traitCollection = UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
+
+                            for pass in passes {
+                                let snapshotsDuringPass = fineSnapshots.submap(from: pass.rise.julianDate, through: pass.set.julianDate)
+
+                                // Rasterize satellite paths in sky charts
+                                if let image = SkyChart.rasterizedPath(
+                                    rect: CGRect(origin: .zero, size: CGSize(width: 100, height: 100)),
+                                    snapshotsDuringPass: snapshotsDuringPass,
+                                    illuminatedColor: UIColor(named: "satellitePath_illuminated", in: nil, compatibleWith: traitCollection)!,
+                                    unlitColor: UIColor(named: "satellitePath_notIlluminated", in: nil, compatibleWith: traitCollection)!
+                                ) {
+                                    subject.send(
+                                        DispatchedAction<AppAction>(
+                                            .skyChart(
+                                                .rasterizedSatellitePath(
+                                                    image,
+                                                    pass: pass
+                                                )
+                                            )
+                                        )
+                                    )
+                                }
+                            }
+
                             subject.send(
                                 DispatchedAction<AppAction>(
                                     .tlePropagator(
@@ -107,6 +134,9 @@ extension EffectMiddleware where
                             .receive(on: OperationQueue.main)
                             .eraseToAnyPublisher()
                     }
+
+                case .selectPass:
+                    return .doNothing
                 }
             }
     }

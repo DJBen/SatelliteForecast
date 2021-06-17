@@ -28,6 +28,9 @@ class Store: ReduxStoreBase<AppAction, AppState> {
                 <> Reducer<SatelliteListViewAction, AppState>.satelliteListViewReducer
                 .lift(action: \.satelliteListView)
 
+                <> Reducer<AllPassesViewAction, AppState>.allPassesViewReducer
+                .lift(action: \.allPassesView)
+
                 <> Reducer<SkyChartAction, SkyChartRootState>.skyChartReducer
                 .lift(action: \.skyChart, state: \.skyChartState)
 
@@ -65,9 +68,9 @@ class Store: ReduxStoreBase<AppAction, AppState> {
                     inputAction: { $0.satelliteListView }
                 )
 
-                <> EffectMiddleware.passView
+                <> EffectMiddleware.allPassesView
                 .lift(
-                    inputAction: { $0.passView }
+                    inputAction: { $0.allPassesView }
                 )
 
                 <> EffectMiddleware.skyChart

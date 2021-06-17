@@ -17,13 +17,13 @@ struct PassPreviewCell: View {
     var indexOfPass: Int
     var skyChartProducer: ViewProducer<Int, SkyChart>
 
-    let formatter: DateFormatter = {
+    static let formatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.setLocalizedDateFormatFromTemplate("H:mm:ss")
         return formatter
     }()
 
-    let numberFormatter: NumberFormatter = {
+    static let numberFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.usesSignificantDigits = true
         formatter.maximumSignificantDigits = 3
@@ -41,40 +41,36 @@ struct PassPreviewCell: View {
         }
     }
 
-    var visibilityIndicatorStrip: some View {
-        Rectangle()
-            .foregroundColor(visiblityColor)
-            .frame(width: 8, height: .infinity, alignment: .leading)
-    }
-
     var body: some View {
         HStack {
-            visibilityIndicatorStrip
+            Rectangle()
+                .foregroundColor(visiblityColor)
+                .frame(width: 8, alignment: .leading)
 
             VStack {
                 Text(LocalizedStrings.PassPreviewCell.titleForPassVisibility(pass.visibility))
                     .font(.caption)
                     .italic()
 
-                Text("∠\(numberFormatter.string(from: NSNumber(value: pass.transit.elev))!)°")
+                Text("∠\(Self.numberFormatter.string(from: NSNumber(value: pass.transit.elev))!)°")
                     .font(.body)
 
                 HStack(spacing: 0) {
                     Image(systemName: "arrow.up")
                         .font(.caption)
-                    Text(formatter.string(from: Date(julianDate: pass.rise.julianDate)))
+                    Text(Self.formatter.string(from: Date(julianDate: pass.rise.julianDate)))
                         .font(.caption)
                 }
                 HStack(spacing: 0) {
                     Image(systemName: "arrow.up.to.line")
                         .font(.caption)
-                    Text(formatter.string(from: Date(julianDate: pass.transit.julianDate)))
+                    Text(Self.formatter.string(from: Date(julianDate: pass.transit.julianDate)))
                         .font(.caption)
                 }
                 HStack(spacing: 0) {
                     Image(systemName: "arrow.down")
                         .font(.caption)
-                    Text(formatter.string(from: Date(julianDate: pass.set.julianDate)))
+                    Text(Self.formatter.string(from: Date(julianDate: pass.set.julianDate)))
                         .font(.caption)
                 }
             }
@@ -82,7 +78,6 @@ struct PassPreviewCell: View {
             skyChartProducer.view(indexOfPass)
                 .padding(5)
         }
-        .background(Color.white)
     }
 }
 

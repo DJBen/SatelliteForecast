@@ -33,10 +33,11 @@ struct SkyChartRootState: Equatable {
 
 enum SkyChartAction {
     case onAppear
-    case generatedCachedResources(
+    case loadedBackgroundSky(
         stars: [Star],
         constellations: Set<Constellation>
     )
+    case rasterizedSatellitePath(UIImage, pass: PassInformation)
 }
 
 /// A state used in a single sky chart view
@@ -116,7 +117,7 @@ struct SkyChartViewState: Equatable {
         guard let observerCoodinate = state.coreLocationState.location.map(LatLonAlt.init) else {
             return SkyChartViewState(mode: .notReady)
         }
-        let firstPass: (PassInformation, Map<Double, SatelliteSnapshot>)? = {
+        let selectedPass: (PassInformation, Map<Double, SatelliteSnapshot>)? = {
             switch state.navigationState {
             case let .pass(noradIndex: noradIndex, selectedPassIndex: selectedPassIndex):
                 guard let satelliteState = state.satellites[noradIndex],
@@ -131,9 +132,10 @@ struct SkyChartViewState: Equatable {
             }
         }()
         return SkyChartViewState(
-            mode: firstPass.map { Mode.pass($0.0, snapshotsDuringPass: $0.1, observer: observerCoodinate) } ?? .notReady,
+            mode: selectedPass.map { Mode.pass($0.0, snapshotsDuringPass: $0.1, observer: observerCoodinate) } ?? .notReady,
             stars: state.skyChartState.stars,
-            constellations: state.skyChartState.constellations
+            constellations: state.skyChartState.constellations,
+            rasterizedSatellitePath: selectedPass.flatMap { state.skyChartState.rasterizedSatellitePaths[$0.0] }
         )
     }
 
@@ -152,29 +154,6 @@ struct SkyChart: View {
     ) {
         self.viewModel = viewModel
         self.configs = configs
-    }
-
-    static func radius(fromRect rect: CGRect) -> CGFloat {
-        return min(rect.width, rect.height) / 2
-    }
-
-    static func point(at coordinate: AziEleDst, rect: CGRect) -> CGPoint {
-        let dist = (90 - coordinate.elev) / 90.0 * Double(radius(fromRect: rect))
-        let xOffset = sin(coordinate.azim * deg2rad) * dist
-        let yOffset = cos(coordinate.azim * deg2rad) * dist
-        return CGPoint(x: rect.midX - CGFloat(xOffset), y: rect.midY - CGFloat(yOffset))
-    }
-
-    static func azimuthMarkPoints(azimuth: Double, length: CGFloat, rect: CGRect) -> (CGPoint, CGPoint) {
-        func point(_ azim: Double, dist: Double) -> CGPoint {
-            let xOffset = sin(azim * deg2rad) * dist
-            let yOffset = cos(azim * deg2rad) * dist
-            return CGPoint(x: rect.midX - CGFloat(xOffset), y: rect.midY - CGFloat(yOffset))
-        }
-        return (
-            point(azimuth, dist: Double(radius(fromRect: rect))),
-            point(azimuth, dist: Double(radius(fromRect: rect) + length))
-        )
     }
 
     struct PassInfoModifier: ViewModifier {
@@ -233,71 +212,20 @@ struct SkyChart: View {
         }
     }
 
-    static func rasterizePath(rect: CGRect, snapshotsDuringPass: Map<Double, SatelliteSnapshot>) -> UIImage {
-        let snapshotsByIllumination = snapshotsDuringPass.split(inclusivity: .includesSecondElementsInPreviousGroup) { (e1, e2) -> Bool in
-            return e1.1.isIlluminated != e2.1.isIlluminated
-        }
-        let renderer = UIGraphicsImageRenderer(size: rect.size)
-
-        return renderer.image { context in
-            for index in snapshotsByIllumination.indices {
-                let path = CGMutablePath()
-                let snapshotsGroup = snapshotsByIllumination[index]
-                for i in snapshotsGroup.indices where i < snapshotsGroup.index(before: snapshotsGroup.endIndex) {
-                    if i == snapshotsGroup.startIndex {
-                        let point = point(at: snapshotsGroup[i].1.position, rect: rect)
-                        path.move(to: point)
-                    }
-                    let nextPoint = point(at: snapshotsGroup[snapshotsGroup.index(after: i)].1.position, rect: rect)
-                    path.addLine(to: nextPoint)
-
-                    let color = snapshotsByIllumination[index].first!.1.isIlluminated ? Color("satellitePath_illuminated") : Color("satellitePath_notIlluminated")
-                    context.cgContext.addPath(path)
-                    context.cgContext.setStrokeColor(color.cgColor!)
-                    context.cgContext.setLineWidth(1)
-                    context.cgContext.drawPath(using: .fillStroke)
-                }
-            }
-        }
-    }
-
     private var satellitePath: some View {
-        switch viewModel.state.mode {
-        case .notReady:
-            return AnyView(EmptyView())
-        case let .pass(_, snapshotsDuringPass, _):
-            return AnyView(GeometryReader { geometry in
-                let rect = geometry.frame(in: .local)
+        GeometryReader { geometry in
+            let rect = geometry.frame(in: .local)
 
-                if snapshotsDuringPass.isEmpty {
-                    EmptyView()
-                } else {
-                    let snapshotsByIllumination = snapshotsDuringPass.split(inclusivity: .includesSecondElementsInPreviousGroup) { (e1, e2) -> Bool in
-                        return e1.1.isIlluminated != e2.1.isIlluminated
-                    }
-                    ZStack {
-                        ForEach(snapshotsByIllumination.indices, id: \.self) { (index) in
-                            Path { path in
-                                let snapshotsGroup = snapshotsByIllumination[index]
-                                for i in snapshotsGroup.indices where i < snapshotsGroup.index(before: snapshotsGroup.endIndex) {
-                                    if i == snapshotsGroup.startIndex {
-                                        let point = Self.point(at: snapshotsGroup[i].1.position, rect: rect)
-                                        path.move(to: point)
-                                    }
-                                    let nextPoint = Self.point(at: snapshotsGroup[snapshotsGroup.index(after: i)].1.position, rect: rect)
-                                    path.addLine(to: nextPoint)
-                                }
-                            }
-                            .stroke(
-                                snapshotsByIllumination[index].first!.1.isIlluminated ? Color("satellitePath_illuminated") : Color("satellitePath_notIlluminated"),
-                                lineWidth: 1
-                            )
-                        }
-                    }
-                }
-            })
-        case .sky(_, observer: _):
-            return AnyView(EmptyView())
+            if rect.size.width == 0 || rect.size.height == 0 {
+                AnyView(EmptyView())
+            } else if let image = viewModel.state.rasterizedSatellitePath {
+                AnyView(Image(uiImage: image)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: rect.width, height: rect.height, alignment: .center))
+            } else {
+                AnyView(EmptyView())
+            }
         }
     }
 
@@ -570,22 +498,19 @@ struct SkyChart: View {
     }
 
     var body: some View {
-        GeometryReader { geometry in
-            let rect = geometry.frame(in: .local)
-            starPath
-                .overlay(constellationLinesPath)
-                .overlay(moonView)
-                .overlay(sunView)
-                .overlay(satellitePath)
-                .clipShape(Circle())
-                .overlay(backgroundPath)
-                .overlay(azimuthMarks)
-                .overlay(azimuthMarkTexts)
-                .overlay(passInfoLabel)
-                .onAppear {
-                    viewModel.dispatch(.onAppear)
-                }
-        }
+        starPath
+            .overlay(constellationLinesPath)
+            .overlay(moonView)
+            .overlay(sunView)
+            .overlay(satellitePath)
+            .clipShape(Circle())
+            .overlay(backgroundPath)
+            .overlay(azimuthMarks)
+            .overlay(azimuthMarkTexts)
+            .overlay(passInfoLabel)
+            .onAppear {
+                viewModel.dispatch(.onAppear)
+            }
     }
 }
 
@@ -703,7 +628,13 @@ struct SkyChart_Previews: PreviewProvider {
                             observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0)
                         ),
                         stars: stars,
-                        constellations: constellations
+                        constellations: constellations,
+                        rasterizedSatellitePath: SkyChart.rasterizedPath(
+                            rect: CGRect(origin: .zero, size: CGSize(width: 375, height: 375)),
+                            snapshotsDuringPass: snapshots,
+                            illuminatedColor: UIColor(Color("satellitePath_illuminated")),
+                            unlitColor: UIColor(Color("satellitePath_notIlluminated"))
+                        )
                     )
                 ),
                 configs: .preset
@@ -723,7 +654,13 @@ struct SkyChart_Previews: PreviewProvider {
                         observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
                     ),
                     stars: stars,
-                    constellations: constellations
+                    constellations: constellations,
+                    rasterizedSatellitePath: SkyChart.rasterizedPath(
+                        rect: CGRect(origin: .zero, size: CGSize(width: 375, height: 375)),
+                        snapshotsDuringPass: snapshots,
+                        illuminatedColor: UIColor(Color("satellitePath_illuminated")),
+                        unlitColor: UIColor(Color("satellitePath_notIlluminated"))
+                    )
                 )
             ),
             configs: .preset

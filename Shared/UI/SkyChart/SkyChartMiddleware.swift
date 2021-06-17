@@ -35,18 +35,20 @@ extension EffectMiddleware where
 
                         DispatchQueue.global(qos: .userInitiated).async {
 
-                            let stars = Star.magitudeLessThan(4.5)
-                            let constellations = Constellation.all
-                            logger.info("Loaded background stars and constellations from DB")
-
-                            subject.send(DispatchedAction<SkyChartAction>(.generatedCachedResources(stars: stars, constellations: constellations)))
+//                            let stars = Star.magitudeLessThan(4.5)
+//                            let constellations = Constellation.all
+//                            logger.info("Loaded background stars and constellations from DB")
+//
+//                            subject.send(DispatchedAction<SkyChartAction>(.loadedBackgroundSky(stars: stars, constellations: constellations)))
 
                             subject.send(completion: .finished)
                         }
 
                         return subject.eraseToAnyPublisher()
                     }
-                case .generatedCachedResources(stars: _, constellations: _):
+                case .loadedBackgroundSky(stars: _, constellations: _):
+                    return .doNothing
+                case .rasterizedSatellitePath(_, pass: _):
                     return .doNothing
                 }
             }

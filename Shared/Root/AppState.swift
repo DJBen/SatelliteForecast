@@ -81,6 +81,15 @@ struct AppState: Equatable {
             .first { $0.noradIndex == index }
     }
 
+    var selectedSatellitePassIndex: Int? {
+        switch navigationState {
+        case let .pass(_, selectedPassIndex):
+            return selectedPassIndex
+        default:
+            return nil
+        }
+    }
+
     var selectedSatellitePass: PassInformation? {
         switch navigationState {
         case let .pass(noradIndex, selectedPassIndex):

@@ -13,6 +13,7 @@ enum AppAction {
     case tleLoaderInput(TLELoaderInputAction)
     case tleLoaderOutput(TLELoaderOutputAction)
     case satelliteListView(SatelliteListViewAction)
+    case allPassesView(AllPassesViewAction)
     case passView(PassViewAction)
     case satelliteElevationGraph(SatelliteElevationGraphAction)
     case skyChart(SkyChartAction)
@@ -84,6 +85,17 @@ extension AppAction {
         set {
             guard case .passView = self, let newValue = newValue else { return }
             self = .passView(newValue)
+        }
+    }
+
+    public var allPassesView: AllPassesViewAction? {
+        get {
+            guard case let .allPassesView(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .allPassesView = self, let newValue = newValue else { return }
+            self = .allPassesView(newValue)
         }
     }
 
