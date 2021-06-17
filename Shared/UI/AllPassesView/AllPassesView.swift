@@ -19,17 +19,16 @@ enum AllPassesViewAction {
 
 struct AllPassesViewState: Equatable {
     struct Item: Equatable, Identifiable {
-        let noradIndex: Int
         let index: Int
         let pass: PassInformation
 
         var id: Int {
             var hasher = Hasher()
-            hasher.combine(noradIndex)
             hasher.combine(index)
             return hasher.finalize()
         }
     }
+
     var visiblePasses: [Item] = []
     var invisiblePasses: [Item] = []
     var selectedPassIndex: Int?
@@ -39,7 +38,7 @@ struct AllPassesViewState: Equatable {
             let satelliteState = state.satellites[selectedNoradIndex] else {
             return .empty
         }
-        let items = satelliteState.passes.enumerated().map { Item(noradIndex: selectedNoradIndex, index: $0, pass: $1) }
+        let items = satelliteState.passes.enumerated().map { Item(index: $0, pass: $1) }
         let itemsByVisibility = Dictionary(grouping: items, by: \.pass.visibility)
         let visiblePasses = itemsByVisibility[.visible] ?? []
         let invisiblePasses = (itemsByVisibility[.daylight] ?? []) + (itemsByVisibility[.unlit] ?? [])
@@ -53,7 +52,7 @@ struct AllPassesViewState: Equatable {
     }
 
     static var empty: AllPassesViewState {
-        return AllPassesViewState()
+        AllPassesViewState()
     }
 }
 
@@ -81,51 +80,44 @@ struct AllPassesView: View {
     }
     
     var body: some View {
-        ScrollView {
-            LazyVGrid(
-                columns: [
-                    GridItem(.adaptive(minimum: 180), spacing: 0),
-                    GridItem(.adaptive(minimum: 180), spacing: 0)
-                ],
-                alignment: .center,
-                spacing: 16,
-                pinnedViews: [.sectionHeaders, .sectionFooters]
-            ) {
-                Section(header: Text("Visible Passes").font(.headline)) {
-                    if viewModel.state.visiblePasses.isEmpty {
-                        Text("No visible passes")
-                    } else {
-                        ForEach(viewModel.state.visiblePasses) { item in
-                            navigationLink(index: item.index) {
-                                PassPreviewCell(
-                                    pass: item.pass,
-                                    indexOfPass: item.index,
-                                    skyChartProducer: skyChartProducer
-                                )
-                                .frame(height: 110)
-                            }
-                        }
+        List {
+            Section(header: Text("Visible Passes").font(.headline)) {
+                if viewModel.state.visiblePasses.isEmpty {
+                    Text("No visible passes")
+                } else {
+                    ForEach(viewModel.state.visiblePasses) { item in
+//                        navigationLink(index: item.index) {
+                            PassPreviewCell(
+                                pass: item.pass,
+                                indexOfPass: item.index,
+                                skyChartProducer: skyChartProducer
+                            )
+                            .listRowInsets(EdgeInsets())
+                            .frame(height: 135)
+//                        }
                     }
                 }
+            }
 
-                Section(header: Text("Invisible Passes").font(.headline)) {
-                    if viewModel.state.invisiblePasses.isEmpty {
-                        Text("No invisible passes")
-                    } else {
-                        ForEach(viewModel.state.invisiblePasses) { item in
-                            navigationLink(index: item.index) {
-                                PassPreviewCell(
-                                    pass: item.pass,
-                                    indexOfPass: item.index,
-                                    skyChartProducer: skyChartProducer
-                                )
-                                .frame(height: 110)
-                            }
-                        }
+            Section(header: Text("Invisible Passes").font(.headline)) {
+                if viewModel.state.invisiblePasses.isEmpty {
+                    Text("No invisible passes")
+                } else {
+                    ForEach(viewModel.state.invisiblePasses) { item in
+//                        navigationLink(index: item.index) {
+                            PassPreviewCell(
+                                pass: item.pass,
+                                indexOfPass: item.index,
+                                skyChartProducer: skyChartProducer
+                            )
+                            .listRowInsets(EdgeInsets())
+                            .frame(height: 135)
+//                        }
                     }
                 }
             }
         }
+        .listStyle(GroupedListStyle())
         .onAppear {
             viewModel.dispatch(.onAppear(colorScheme: colorScheme))
         }
@@ -180,7 +172,7 @@ struct AllPassesView_Previews: PreviewProvider {
 
     static var previews: some View {
         let (passes, snapshots) = tianHePasses
-        let items = passes.enumerated().map { AllPassesViewState.Item(noradIndex: 0, index: $0, pass: $1) }
+        let items = passes.enumerated().map { AllPassesViewState.Item(index: $0, pass: $1) }
         let itemsByVisibility = Dictionary(grouping: items, by: \.pass.visibility)
         let visiblePasses = itemsByVisibility[.visible] ?? []
         let invisiblePasses = (itemsByVisibility[.daylight] ?? []) + (itemsByVisibility[.unlit] ?? [])

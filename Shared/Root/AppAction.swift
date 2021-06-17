@@ -8,6 +8,7 @@
 import Foundation
 
 enum AppAction {
+    case appDelegate(AppDelegateAction)
     case coreLocationInput(CoreLocationInputAction)
     case coreLocationOutput(CoreLocationOutputAction)
     case tleLoaderInput(TLELoaderInputAction)
@@ -22,6 +23,17 @@ enum AppAction {
 }
 
 extension AppAction {
+    public var appDelegate: AppDelegateAction? {
+        get {
+            guard case let .appDelegate(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .appDelegate = self, let newValue = newValue else { return }
+            self = .appDelegate(newValue)
+        }
+    }
+
     public var coreLocationInput: CoreLocationInputAction? {
         get {
             guard case let .coreLocationInput(value) = self else { return nil }

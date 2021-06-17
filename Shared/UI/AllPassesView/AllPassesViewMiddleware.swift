@@ -5,11 +5,13 @@
 //  Created by Ben Lu on 6/7/21.
 //
 
+import BTree
 import Foundation
 import os
 import Combine
 import CombineRex
 import SatelliteKit
+import SatelliteForcastCore
 
 fileprivate let logger = Logger(subsystem: "io.djben.allPassesView", category: "middleware")
 
@@ -47,57 +49,62 @@ extension EffectMiddleware where
                             return Empty().eraseToAnyPublisher()
                         }
 
-                        // Only populate satellite ephemerides if empty or outdated by more than 1 hour.
-                        guard state.currentSatelliteSnapshots.isEmpty || state.julianDateRange.lowerBound - state.currentSatelliteSnapshots.first!.1.julianDate > TimeConstants.hrs2day else {
-                            logger.debug("Ephemeride of \(noradIndex) are already generated. Skipping.")
-                            return Just(
-                                DispatchedAction<AppAction>(
-                                    .tlePropagator(
-                                        .selectVisiblePass
-                                    )
-                                )
-                            )
-                            .eraseToAnyPublisher()
-                        }
-
                         // Loads satellite passes
                         let subject = PassthroughSubject<DispatchedAction<AppAction>, Never>()
 
                         DispatchQueue.global(qos: .userInitiated).async {
-                            let satellite = Satellite(withTLE: tle)
-                            let snapshots = satellite
-                                .snapshots(
-                                    observer: observerCoordinate,
-                                    julianDateRange: state.julianDateRange,
-                                    interval: 30
-                                )
-                            subject.send(
-                                DispatchedAction<AppAction>(
-                                    .tlePropagator(.propagatedSnapshots(snapshots, noradIndex: noradIndex))
-                                )
-                            )
+                            let passes: [PassInformation]
+                            let fineSnapshots: Map<Double, SatelliteSnapshot>
 
-                            let (passes, fineSnapshots) = satellite
-                                .findPasses(
-                                    observer: observerCoordinate,
-                                    coarseSnapshots: snapshots
+                            // Use cached satellite ephemerides if calculated within the last hour.
+                            if let satelliteState = state.selectedSatelliteState,
+                               state.julianDateRange.lowerBound - satelliteState.snapshots.first!.1.julianDate < TimeConstants.hrs2day {
+                                passes = satelliteState.passes
+                                fineSnapshots = satelliteState.snapshots
+                                logger.debug("Ephemeride of \(noradIndex) are already generated. Skipping.")
+                            } else {
+                                let satellite = Satellite(withTLE: tle)
+                                let snapshots = satellite
+                                    .snapshots(
+                                        observer: observerCoordinate,
+                                        julianDateRange: state.julianDateRange,
+                                        interval: 30
+                                    )
+                                subject.send(
+                                    DispatchedAction<AppAction>(
+                                        .tlePropagator(.propagatedSnapshots(snapshots, noradIndex: noradIndex))
+                                    )
                                 )
 
-                            subject.send(
-                                DispatchedAction<AppAction>(
-                                    .tlePropagator(
-                                        .foundPasses(
-                                            passes,
-                                            fineSnapshots: fineSnapshots,
-                                            noradIndex: noradIndex
+                                (passes, fineSnapshots) = satellite
+                                    .findPasses(
+                                        observer: observerCoordinate,
+                                        coarseSnapshots: snapshots
+                                    )
+
+                                subject.send(
+                                    DispatchedAction<AppAction>(
+                                        .tlePropagator(
+                                            .foundPasses(
+                                                passes,
+                                                fineSnapshots: fineSnapshots,
+                                                noradIndex: noradIndex
+                                            )
                                         )
                                     )
                                 )
-                            )
+                                logger.debug("Generated emphemerides and passes of \(noradIndex).")
+                            }
 
                             let traitCollection = UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
 
                             for pass in passes {
+                                // Skip if image already generated.
+                                if let _ = state.skyChartState.rasterizedSatellitePaths[pass] {
+                                    logger.debug("\(noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate) already rasterized, skipping.")
+                                    continue
+                                }
+
                                 let snapshotsDuringPass = fineSnapshots.submap(from: pass.rise.julianDate, through: pass.set.julianDate)
 
                                 // Rasterize satellite paths in sky charts
@@ -107,6 +114,8 @@ extension EffectMiddleware where
                                     illuminatedColor: UIColor(named: "satellitePath_illuminated", in: nil, compatibleWith: traitCollection)!,
                                     unlitColor: UIColor(named: "satellitePath_notIlluminated", in: nil, compatibleWith: traitCollection)!
                                 ) {
+                                    logger.debug("Rasterized \(noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate).")
+
                                     subject.send(
                                         DispatchedAction<AppAction>(
                                             .skyChart(
@@ -120,13 +129,13 @@ extension EffectMiddleware where
                                 }
                             }
 
-                            subject.send(
-                                DispatchedAction<AppAction>(
-                                    .tlePropagator(
-                                        .selectVisiblePass
-                                    )
-                                )
-                            )
+//                            subject.send(
+//                                DispatchedAction<AppAction>(
+//                                    .tlePropagator(
+//                                        .selectVisiblePass
+//                                    )
+//                                )
+//                            )
 
                             subject.send(completion: .finished)
                         }

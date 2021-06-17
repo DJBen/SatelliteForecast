@@ -17,7 +17,14 @@ struct PassPreviewCell: View {
     var indexOfPass: Int
     var skyChartProducer: ViewProducer<Int, SkyChart>
 
-    static let formatter: DateFormatter = {
+    static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
+        return formatter
+    }()
+
+    static let timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.setLocalizedDateFormatFromTemplate("H:mm:ss")
         return formatter
@@ -42,36 +49,51 @@ struct PassPreviewCell: View {
     }
 
     var body: some View {
-        HStack {
+        HStack(alignment: .center) {
             Rectangle()
                 .foregroundColor(visiblityColor)
-                .frame(width: 8, alignment: .leading)
+                .frame(width: 12, alignment: .leading)
 
-            VStack {
+            VStack(alignment: .leading) {
                 Text(LocalizedStrings.PassPreviewCell.titleForPassVisibility(pass.visibility))
-                    .font(.caption)
-                    .italic()
-
+                    .font(.headline)
                 Text("∠\(Self.numberFormatter.string(from: NSNumber(value: pass.transit.elev))!)°")
                     .font(.body)
+            }
+            .frame(width: 80)
+
+            VStack(alignment: .leading) {
+                Text(Self.dateFormatter.string(from: Date(julianDate: pass.rise.julianDate)))
+                    .font(.headline)
+                    .padding([.bottom], 1)
 
                 HStack(spacing: 0) {
                     Image(systemName: "arrow.up")
-                        .font(.caption)
-                    Text(Self.formatter.string(from: Date(julianDate: pass.rise.julianDate)))
-                        .font(.caption)
+                        .font(.subheadline)
+                        .foregroundColor(Color(UIColor.secondaryLabel))
+
+                    Text(Self.timeFormatter.string(from: Date(julianDate: pass.rise.julianDate)))
+                        .font(.subheadline)
+                        .foregroundColor(Color(UIColor.secondaryLabel))
                 }
                 HStack(spacing: 0) {
                     Image(systemName: "arrow.up.to.line")
-                        .font(.caption)
-                    Text(Self.formatter.string(from: Date(julianDate: pass.transit.julianDate)))
-                        .font(.caption)
+                        .font(.subheadline)
+                        .foregroundColor(Color(UIColor.secondaryLabel))
+
+                    Text(Self.timeFormatter.string(from: Date(julianDate: pass.transit.julianDate)))
+                        .font(.subheadline)
+                        .foregroundColor(Color(UIColor.secondaryLabel))
                 }
                 HStack(spacing: 0) {
                     Image(systemName: "arrow.down")
-                        .font(.caption)
-                    Text(Self.formatter.string(from: Date(julianDate: pass.set.julianDate)))
-                        .font(.caption)
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                        .foregroundColor(Color(UIColor.secondaryLabel))
+
+                    Text(Self.timeFormatter.string(from: Date(julianDate: pass.set.julianDate)))
+                        .font(.subheadline)
+                        .foregroundColor(Color(UIColor.secondaryLabel))
                 }
             }
 
@@ -111,7 +133,7 @@ struct PassPreviewCell_Previews: PreviewProvider {
             let snapshotsDuringPass = fineSnapshots.submap(from: pass.rise.julianDate, through: pass.set.julianDate)
             return PassPreviewCell(
                 pass: pass,
-                indexOfPass: 0,
+                indexOfPass: index,
                 skyChartProducer: .pure(
                     SkyChart(
                         viewModel: .mock(
@@ -139,7 +161,7 @@ struct PassPreviewCell_Previews: PreviewProvider {
                     )
                 )
             )
-            .previewLayout(.fixed(width: 200, height: 100))
+            .previewLayout(.fixed(width: 375, height: 125))
         }
 
         return Group {

@@ -32,9 +32,8 @@ extension Reducer where ActionType == TLEPropagatorAction, StateType == Store.St
             //   civil twilight or dawn).
             // - Transit (maximum elevation) greater than 10 degrees above horizon
             // - Has any illuminated segment during the pass
-            switch state.navigationState {
-            case let .pass(noradIndex, selectedPassIndex: nil):
-                let selectedPassIndex = state.satellites[noradIndex]!.passes.firstIndex(
+            func selectedPassIndex(noradIndex: Int) -> Int? {
+                state.satellites[noradIndex]!.passes.firstIndex(
                     where: {
                         $0.rise.julianDate > state.tleLoaderState.referenceDate
                             && $0.illumination.hasAnyIllumination
@@ -42,8 +41,13 @@ extension Reducer where ActionType == TLEPropagatorAction, StateType == Store.St
                             && $0.transit.elev > 10
                     }
                 )
-                state.navigationState = .pass(noradIndex: noradIndex, selectedPassIndex: selectedPassIndex)
-            default:
+            }
+            switch state.navigationState {
+            case let .allPasses(noradIndex), let .pass(noradIndex, _):
+                if let index = selectedPassIndex(noradIndex: noradIndex) {
+                    state.navigationState = .pass(noradIndex: noradIndex, selectedPassIndex: index)
+                }
+            case .list:
                 break
             }
 

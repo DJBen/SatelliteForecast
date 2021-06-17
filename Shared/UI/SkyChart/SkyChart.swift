@@ -37,6 +37,7 @@ enum SkyChartAction {
         stars: [Star],
         constellations: Set<Constellation>
     )
+    /// A satellite path is rasterized, or the rasterized image is read from the cache.
     case rasterizedSatellitePath(UIImage, pass: PassInformation)
 }
 
@@ -113,6 +114,32 @@ struct SkyChartViewState: Equatable {
     // Derived information
     var directionArrow: DirectionArrow?
 
+    static func projectPreview(state: AppState, index: Int) -> SkyChartViewState {
+        guard let observerCoodinate = state.coreLocationState.location.map(LatLonAlt.init) else {
+            return SkyChartViewState(mode: .notReady)
+        }
+        let displayPass: (PassInformation, Map<Double, SatelliteSnapshot>)? = {
+            switch state.navigationState {
+            case let .allPasses(noradIndex: noradIndex):
+                guard let satelliteState = state.satellites[noradIndex], index < satelliteState.passes.count else {
+                    return nil
+                }
+                let pass = satelliteState.passes[index]
+                // TODO: conditionally generate submap, or rasterized path
+                let subMap = satelliteState.snapshots.submap(from: pass.rise.julianDate, through: pass.set.julianDate)
+                return (pass, subMap)
+            default:
+                return nil
+            }
+        }()
+        return SkyChartViewState(
+            mode: displayPass.map { Mode.pass($0.0, snapshotsDuringPass: $0.1, observer: observerCoodinate) } ?? .notReady,
+            stars: state.skyChartState.stars,
+            constellations: state.skyChartState.constellations,
+            rasterizedSatellitePath: displayPass.flatMap { state.skyChartState.rasterizedSatellitePaths[$0.0] }
+        )
+    }
+
     static func projectPassingMode(state: AppState) -> SkyChartViewState {
         guard let observerCoodinate = state.coreLocationState.location.map(LatLonAlt.init) else {
             return SkyChartViewState(mode: .notReady)
@@ -120,8 +147,7 @@ struct SkyChartViewState: Equatable {
         let selectedPass: (PassInformation, Map<Double, SatelliteSnapshot>)? = {
             switch state.navigationState {
             case let .pass(noradIndex: noradIndex, selectedPassIndex: selectedPassIndex):
-                guard let satelliteState = state.satellites[noradIndex],
-                      let selectedPassIndex = selectedPassIndex else {
+                guard let satelliteState = state.satellites[noradIndex] else {
                     return nil
                 }
                 let pass = satelliteState.passes[selectedPassIndex]
@@ -521,7 +547,7 @@ extension ViewProducer where Context == Int, ProducedView == SkyChart {
                 viewModel: viewModel
                     .projection(
                         action: { AppAction.skyChart($0) },
-                        state: SkyChartViewState.projectPassingMode(state:)
+                        state: { SkyChartViewState.projectPreview(state: $0, index: index) }
                     )
                     .asObservableViewModel(
                         initialState: .empty
@@ -530,10 +556,14 @@ extension ViewProducer where Context == Int, ProducedView == SkyChart {
                     backgroundSky: SkyChartConfigs.BackgroundSky(
                         showStars: false,
                         showConstellationLines: false,
-                        visibileBodies: []
+                        visibileBodies: [.sun, .moon],
+                        bodySymbol: .symbol
                     ),
+                    showAzimuthTexts: false,
                     azimuthMarkInterval: 90,
-                    azimuthMarkLength: 2
+                    azimuthMarkLength: 2,
+                    showDirections: false,
+                    showPassInfoLabels: false
                 )
             )
         }

@@ -24,7 +24,7 @@ struct AppState: Equatable {
     enum NavigationState: Equatable {
         case list
         case allPasses(noradIndex: Int)
-        case pass(noradIndex: Int, selectedPassIndex: Int? = nil)
+        case pass(noradIndex: Int, selectedPassIndex: Int)
     }
     var navigationState: NavigationState = .list
 
@@ -32,23 +32,32 @@ struct AppState: Equatable {
     var selectedSatelliteNoradIndex: Int? {
         get {
             switch navigationState {
-            case let .pass(noradIndex, _):
+            case let .allPasses(noradIndex), let .pass(noradIndex, _):
                 return noradIndex
-            default:
+            case .list:
                 return nil
             }
         }
 
         set {
             if let newValue = newValue {
-                if newValue == self.selectedSatelliteNoradIndex {
-                    return
+                switch navigationState {
+                case .list, .allPasses(noradIndex: _):
+                    self.navigationState = .allPasses(noradIndex: newValue)
+                case let .pass(noradIndex, selectedPassIndex):
+                    if newValue == noradIndex {
+                        return
+                    }
+                    self.navigationState = .pass(noradIndex: newValue, selectedPassIndex: selectedPassIndex)
                 }
-                self.navigationState = .pass(noradIndex: newValue, selectedPassIndex: nil)
             } else {
                 self.navigationState = .list
             }
         }
+    }
+
+    var selectedSatelliteState: SatelliteState? {
+        selectedSatelliteNoradIndex.flatMap { satellites[$0] }
     }
 
     static var empty: AppState {
@@ -93,9 +102,6 @@ struct AppState: Equatable {
     var selectedSatellitePass: PassInformation? {
         switch navigationState {
         case let .pass(noradIndex, selectedPassIndex):
-            guard let selectedPassIndex = selectedPassIndex else {
-                return nil
-            }
             return satellites[noradIndex]?.passes[selectedPassIndex]
         default:
             return nil
