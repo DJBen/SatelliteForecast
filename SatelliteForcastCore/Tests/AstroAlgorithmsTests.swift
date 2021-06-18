@@ -17,4 +17,21 @@ class AstroAlgorithmsTests: XCTestCase {
         let sun = Vector(122_233_179, -76_150_708, -33_016_374)
         XCTAssertTrue(AstroAlgorithms.hasLineOfSight(object1Geo: r1, object2Geo: sun))
     }
+
+    func testQuadraticInterpolate() {
+        let result = quadraticInterpolate(
+            [
+                (1, 1),
+                (2, 3),
+                (4, 8),
+                (5, 10),
+                (8, 20),
+                (11, 17),
+                (14, 13),
+                (22, 8),
+                (30, 0)
+            ], steps: 80)
+        XCTAssertEqual(result.count, 81)
+        print(result)
+    }
 }

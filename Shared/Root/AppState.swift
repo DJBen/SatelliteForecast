@@ -62,7 +62,7 @@ struct AppState: Equatable {
 
     static var empty: AppState {
         AppState(
-            julianDateRange: Date().advanced(by: -60 * 60 * 2).julianDate..<Date().advanced(by: 60 * 60 * 22).julianDate
+            julianDateRange: Date().advanced(by: -60 * 60 * 2).julianDate..<Date().advanced(by: 60 * 60 * 46).julianDate
         )
     }
 

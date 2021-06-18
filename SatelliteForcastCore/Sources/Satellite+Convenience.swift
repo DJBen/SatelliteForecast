@@ -83,7 +83,8 @@ extension Satellite {
         var snapshots = Map<Double, SatelliteSnapshot>()
         stride(
             from: julianDateRange.lowerBound,
-            through: julianDateRange.upperBound,
+            // Append interval to overshoot the upperBound and make sure it is included.
+            through: julianDateRange.upperBound + interval * TimeConstants.sec2day,
             by: interval * TimeConstants.sec2day
         )
         .forEach { (julianDate) in
