@@ -8,6 +8,7 @@
 import BTree
 import SatelliteForcastCore
 import SatelliteKit
+import StarryNight
 
 extension SkyChart {
     static func radius(fromRect rect: CGRect) -> CGFloat {
@@ -67,6 +68,71 @@ extension SkyChart {
             }
         }
     }
+
+    func rasterizedStarPath(
+        rect: CGRect,
+        stars: [Star],
+        constellations: [Constellation],
+        observer: LatLonAlt,
+        julianDate: Double,
+        starColor: UIColor,
+        constellationLineColor: UIColor,
+        constellationLineWidth: CGFloat = 1,
+        magToRadius: (Double) -> CGFloat = { CGFloat(3 * exp(0.425 * -$0)) }
+    ) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: rect.size)
+
+        return renderer.image { ctx in
+            ctx.cgContext.saveGState()
+            ctx.cgContext.setFillColor(starColor.cgColor)
+
+            for star in stars {
+                let (alt, azi) = azel(
+                    julianDate: julianDate,
+                    site: (observer.lat, observer.lon),
+                    cele: cartesianToRaDec(star.physicalInfo.coordinate))
+                if alt < 0 {
+                    continue
+                }
+                let point = Self.point(at: AziEleDst(azim: azi, elev: alt, dist: 0), rect: rect)
+
+                ctx.cgContext.move(to: point)
+
+                let radius = magToRadius(star.physicalInfo.apparentMagnitude)
+
+                ctx.cgContext.addEllipse(in: CGRect(x: point.x - radius, y: point.y - radius, width: radius * 2, height: radius * 2))
+            }
+            ctx.cgContext.drawPath(using: .fill)
+
+            ctx.cgContext.restoreGState()
+            ctx.cgContext.setStrokeColor(constellationLineColor.cgColor)
+            ctx.cgContext.setLineWidth(constellationLineWidth)
+
+            for constellation in constellations {
+                guard let center = constellation.displayCenter else {
+                    continue
+                }
+                let (alt, _) = azel(
+                    julianDate: julianDate,
+                    site: (observer.lat, observer.lon),
+                    cele: cartesianToRaDec(center)
+                )
+                if alt < 0 {
+                    continue
+                }
+                for line in constellation.connectionLines {
+                    let (alt1, azi1) = azel(julianDate: julianDate, site: (observer.lat, observer.lon), cele: cartesianToRaDec(line.star1.physicalInfo.coordinate))
+                    let (alt2, azi2) = azel(julianDate: julianDate, site: (observer.lat, observer.lon), cele: cartesianToRaDec(line.star2.physicalInfo.coordinate))
+                    let point1 = Self.point(at: AziEleDst(azim: azi1, elev: alt1, dist: 0), rect: rect)
+                    let point2 = Self.point(at: AziEleDst(azim: azi2, elev: alt2, dist: 0), rect: rect)
+
+                    ctx.cgContext.move(to: point1)
+                    ctx.cgContext.addLine(to: point2)
+                }
+                ctx.cgContext.drawPath(using: .stroke)
+            }
+        }
+    }
 }
 
 import SwiftUI
@@ -92,6 +158,7 @@ struct ImageRenderer_Previews: PreviewProvider {
         )
 
         return sat.findPasses(
+            noradIndex: tle.noradIndex,
             observer: observer,
             coarseSnapshots: snapshots
         )

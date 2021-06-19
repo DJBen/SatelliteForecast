@@ -14,7 +14,7 @@ struct AppState: Equatable {
     /// The date range from which ephemerides are generated.
     var julianDateRange: Range<Double>
     var satelliteElevationGraphConfigs: SatelliteElevationGraphConfigs = .preset
-    var skyChartState: SkyChartRootState = .empty
+    var skyChartState: SkyChartResources = .empty
     /// A mapping from NORAD ID to the satellite state.
     var satellites: [Int: SatelliteState] = [:]
     var tleLoaderState: TLELoaderState = .empty

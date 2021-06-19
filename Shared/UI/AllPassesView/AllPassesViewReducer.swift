@@ -26,6 +26,8 @@ extension Reducer where ActionType == AllPassesViewAction, StateType == Store.St
             default:
                 break
             }
+        case .backToList:
+            state.navigationState = .list
         }
     }
 }

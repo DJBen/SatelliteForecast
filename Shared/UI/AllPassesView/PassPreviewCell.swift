@@ -12,7 +12,11 @@ import SatelliteKit
 import CombineRex
 import CombineRextensions
 
-struct PassPreviewCell: View {
+struct PassPreviewCell: View, Equatable {
+    static func == (lhs: PassPreviewCell, rhs: PassPreviewCell) -> Bool {
+        return lhs.pass == rhs.pass && lhs.indexOfPass == rhs.indexOfPass
+    }
+
     var pass: PassInformation
     var indexOfPass: Int
     var skyChartProducer: ViewProducer<Int, SkyChart>
@@ -124,6 +128,7 @@ struct PassPreviewCell_Previews: PreviewProvider {
             interval: 60
         )
         let (passes, fineSnapshots) = sat.findPasses(
+            noradIndex: tle.noradIndex,
             observer: observerCoordinate,
             coarseSnapshots: snapshots
         )

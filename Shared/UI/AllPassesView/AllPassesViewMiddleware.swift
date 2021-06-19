@@ -78,6 +78,7 @@ extension EffectMiddleware where
 
                                 (passes, fineSnapshots) = satellite
                                     .findPasses(
+                                        noradIndex: Int(satellite.noradIdent)!,
                                         observer: observerCoordinate,
                                         coarseSnapshots: snapshots
                                     )
@@ -96,47 +97,6 @@ extension EffectMiddleware where
                                 logger.debug("Generated emphemerides and passes of \(noradIndex).")
                             }
 
-                            let traitCollection = UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
-
-                            for pass in passes {
-                                // Skip if image already generated.
-                                if let _ = state.skyChartState.rasterizedSatellitePaths[pass] {
-                                    logger.debug("\(noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate) already rasterized, skipping.")
-                                    continue
-                                }
-
-                                let snapshotsDuringPass = fineSnapshots.submap(from: pass.rise.julianDate, through: pass.set.julianDate)
-
-                                // Rasterize satellite paths in sky charts
-                                if let image = SkyChart.rasterizedPath(
-                                    rect: CGRect(origin: .zero, size: CGSize(width: 100, height: 100)),
-                                    snapshotsDuringPass: snapshotsDuringPass,
-                                    illuminatedColor: UIColor(named: "satellitePath_illuminated", in: nil, compatibleWith: traitCollection)!,
-                                    unlitColor: UIColor(named: "satellitePath_notIlluminated", in: nil, compatibleWith: traitCollection)!
-                                ) {
-                                    logger.debug("Rasterized \(noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate).")
-
-                                    subject.send(
-                                        DispatchedAction<AppAction>(
-                                            .skyChart(
-                                                .rasterizedSatellitePath(
-                                                    image,
-                                                    pass: pass
-                                                )
-                                            )
-                                        )
-                                    )
-                                }
-                            }
-
-//                            subject.send(
-//                                DispatchedAction<AppAction>(
-//                                    .tlePropagator(
-//                                        .selectVisiblePass
-//                                    )
-//                                )
-//                            )
-
                             subject.send(completion: .finished)
                         }
                         return subject
@@ -145,6 +105,8 @@ extension EffectMiddleware where
                     }
 
                 case .selectPass:
+                    return .doNothing
+                case .backToList:
                     return .doNothing
                 }
             }

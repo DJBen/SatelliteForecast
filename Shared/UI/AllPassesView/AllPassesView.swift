@@ -15,6 +15,7 @@ import SwiftUI
 enum AllPassesViewAction {
     case onAppear(colorScheme: ColorScheme)
     case selectPass(index: Int?)
+    case backToList
 }
 
 struct AllPassesViewState: Equatable {
@@ -59,6 +60,7 @@ struct AllPassesViewState: Equatable {
 struct AllPassesView: View {
     @ObservedObject var viewModel: ObservableViewModel<AllPassesViewAction, AllPassesViewState>
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.presentationMode) var presentationMode
 
     var skyChartProducer: ViewProducer<Int, SkyChart>
     var passViewProducer: ViewProducer<Void, PassView>
@@ -82,44 +84,41 @@ struct AllPassesView: View {
     var body: some View {
         List {
             Section(header: Text("Visible Passes").font(.headline)) {
-                if viewModel.state.visiblePasses.isEmpty {
-                    Text("No visible passes")
-                } else {
-                    ForEach(viewModel.state.visiblePasses) { item in
-//                        navigationLink(index: item.index) {
-                            PassPreviewCell(
-                                pass: item.pass,
-                                indexOfPass: item.index,
-                                skyChartProducer: skyChartProducer
-                            )
-                            .listRowInsets(EdgeInsets())
-                            .frame(height: 135)
-//                        }
+                ForEach(viewModel.state.visiblePasses) { item in
+                    navigationLink(index: item.index) {
+                        PassPreviewCell(
+                            pass: item.pass,
+                            indexOfPass: item.index,
+                            skyChartProducer: skyChartProducer
+                        )
                     }
+                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 25))
+                    .frame(height: 135)
                 }
             }
 
             Section(header: Text("Invisible Passes").font(.headline)) {
-                if viewModel.state.invisiblePasses.isEmpty {
-                    Text("No invisible passes")
-                } else {
-                    ForEach(viewModel.state.invisiblePasses) { item in
-//                        navigationLink(index: item.index) {
-                            PassPreviewCell(
-                                pass: item.pass,
-                                indexOfPass: item.index,
-                                skyChartProducer: skyChartProducer
-                            )
-                            .listRowInsets(EdgeInsets())
-                            .frame(height: 135)
-//                        }
+                ForEach(viewModel.state.invisiblePasses) { item in
+                    navigationLink(index: item.index) {
+                        PassPreviewCell(
+                            pass: item.pass,
+                            indexOfPass: item.index,
+                            skyChartProducer: skyChartProducer
+                        )
                     }
+                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 25))
+                    .frame(height: 135)
                 }
             }
         }
         .listStyle(GroupedListStyle())
         .onAppear {
             viewModel.dispatch(.onAppear(colorScheme: colorScheme))
+        }
+        .onChange(of: presentationMode.wrappedValue.isPresented) { [presentationMode] isPresented in
+            if presentationMode.wrappedValue.isPresented && !isPresented {
+                viewModel.dispatch(.backToList)
+            }
         }
         .navigationTitle("All Passes")
     }
@@ -165,6 +164,7 @@ struct AllPassesView_Previews: PreviewProvider {
         )
 
         return sat.findPasses(
+            noradIndex: tle.noradIndex,
             observer: observer,
             coarseSnapshots: snapshots
         )

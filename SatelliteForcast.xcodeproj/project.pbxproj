@@ -41,6 +41,7 @@
 		EF7A3194266B6B0B00CC33C0 /* AppAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A318E266B6AD800CC33C0 /* AppAction.swift */; };
 		EF7A3198266B6E4900CC33C0 /* SatelliteListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A3196266B6BBF00CC33C0 /* SatelliteListView.swift */; };
 		EF7A319B266B733C00CC33C0 /* LocalizedStrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A319A266B733C00CC33C0 /* LocalizedStrings.swift */; };
+		EF8A4235267C53630014AE17 /* PassViewReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8A4234267C53630014AE17 /* PassViewReducer.swift */; };
 		EF9D82A32661BBF100616C97 /* SatelliteForcastApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9D827A2661BBF000616C97 /* SatelliteForcastApp.swift */; };
 		EF9D82A72661BBF100616C97 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EF9D827C2661BBF000616C97 /* Assets.xcassets */; };
 		EFAE1F0C2668B10F00A18A42 /* SatelliteElevationGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F0B2668B10F00A18A42 /* SatelliteElevationGraph.swift */; };
@@ -126,6 +127,7 @@
 		EF7A3196266B6BBF00CC33C0 /* SatelliteListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteListView.swift; sourceTree = "<group>"; };
 		EF7A319A266B733C00CC33C0 /* LocalizedStrings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizedStrings.swift; sourceTree = "<group>"; };
 		EF864272266DFFE9004F0AFA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EF8A4234267C53630014AE17 /* PassViewReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassViewReducer.swift; sourceTree = "<group>"; };
 		EF9D827A2661BBF000616C97 /* SatelliteForcastApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteForcastApp.swift; sourceTree = "<group>"; };
 		EF9D827C2661BBF000616C97 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EF9D82812661BBF000616C97 /* SatelliteForcast.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SatelliteForcast.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -220,6 +222,7 @@
 			isa = PBXGroup;
 			children = (
 				EF1CAB31266B7ABF006319C8 /* PassView.swift */,
+				EF8A4234267C53630014AE17 /* PassViewReducer.swift */,
 			);
 			path = PassView;
 			sourceTree = "<group>";
@@ -533,6 +536,7 @@
 				EFAE1F0C2668B10F00A18A42 /* SatelliteElevationGraph.swift in Sources */,
 				EF7A3194266B6B0B00CC33C0 /* AppAction.swift in Sources */,
 				EF1CAB36266B87B6006319C8 /* SatelliteListViewReducer.swift in Sources */,
+				EF8A4235267C53630014AE17 /* PassViewReducer.swift in Sources */,
 				EF7A3125266B1A2500CC33C0 /* CoreLocationState.swift in Sources */,
 				EF46564F267B32D60040B762 /* SkyChart+Static.swift in Sources */,
 				EF1CAB39266B8934006319C8 /* SatelliteListViewMiddleware.swift in Sources */,

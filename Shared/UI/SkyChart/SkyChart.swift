@@ -13,36 +13,56 @@ import StarryNight
 import CombineRextensions
 import BTree
 
+struct SkyChartSatellitePathKey: Hashable {
+    let pass: PassInformation
+    let size: CGSize
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(pass)
+        hasher.combine(size.width)
+        hasher.combine(size.height)
+    }
+}
+
+struct SkyChartSatelliteBackgroundSkyKey: Hashable {
+    let observer: LatLonAlt
+    let julianDate: Double
+    let size: CGSize
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(size.width)
+        hasher.combine(size.height)
+    }
+}
+
 /// The root state of sky charts.
-struct SkyChartRootState: Equatable {
-    var configs: SkyChartConfigs = .preset
-
-    // Background sky that is async loaded
-    var stars: [Star] = []
-    var constellations: Set<Constellation> = []
-
+struct SkyChartResources: Equatable {
     /// A cache of the satellite paths that are ready for display.
     /// Instead of redrawing the pass consisting of thousands of points at each display,
     /// the cached version is just a cheap `UIImage`.
-    var rasterizedSatellitePaths: [PassInformation: UIImage] = [:]
+    var rasterizedSatellitePaths: [SkyChartSatellitePathKey: UIImage] = [:]
 
-    static var empty: SkyChartRootState {
-        return SkyChartRootState()
+    var rasterizedBackgroundSky: [SkyChartSatelliteBackgroundSkyKey: UIImage] = [:]
+
+    static var empty: SkyChartResources {
+        return SkyChartResources()
     }
 }
 
 enum SkyChartAction {
     case onAppear
-    case loadedBackgroundSky(
-        stars: [Star],
-        constellations: Set<Constellation>
-    )
+    case requestRasterizedSatellitePath(_ key: SkyChartSatellitePathKey, traitCollection: UITraitCollection)
+    case rasterizedBackgroundSky(UIImage)
     /// A satellite path is rasterized, or the rasterized image is read from the cache.
-    case rasterizedSatellitePath(UIImage, pass: PassInformation)
+    case rasterizedSatellitePath(UIImage, key: SkyChartSatellitePathKey)
 }
 
 /// A state used in a single sky chart view
 struct SkyChartViewState: Equatable {
+    static func == (lhs: SkyChartViewState, rhs: SkyChartViewState) -> Bool {
+        lhs.mode == rhs.mode
+    }
+
     enum Mode: Equatable {
         static func == (lhs: SkyChartViewState.Mode, rhs: SkyChartViewState.Mode) -> Bool {
             switch (lhs, rhs) {
@@ -99,20 +119,8 @@ struct SkyChartViewState: Equatable {
     }
 
     var mode: Mode = .notReady
-    var stars: [Star] = []
-    var constellations: Set<Constellation> = []
 
-    /// The satellite path will use this image if provided.
-    var rasterizedSatellitePath: UIImage?
-
-    struct DirectionArrow: Equatable {
-        let azimuth: Double
-        // 0 to 1
-        let dist: Double
-        let orientation: Double
-    }
-    // Derived information
-    var directionArrow: DirectionArrow?
+    var rasterizedSatellitePaths: [SkyChartSatellitePathKey: UIImage] = [:]
 
     static func projectPreview(state: AppState, index: Int) -> SkyChartViewState {
         guard let observerCoodinate = state.coreLocationState.location.map(LatLonAlt.init) else {
@@ -132,11 +140,10 @@ struct SkyChartViewState: Equatable {
                 return nil
             }
         }()
+
         return SkyChartViewState(
             mode: displayPass.map { Mode.pass($0.0, snapshotsDuringPass: $0.1, observer: observerCoodinate) } ?? .notReady,
-            stars: state.skyChartState.stars,
-            constellations: state.skyChartState.constellations,
-            rasterizedSatellitePath: displayPass.flatMap { state.skyChartState.rasterizedSatellitePaths[$0.0] }
+            rasterizedSatellitePaths: state.skyChartState.rasterizedSatellitePaths
         )
     }
 
@@ -159,9 +166,7 @@ struct SkyChartViewState: Equatable {
         }()
         return SkyChartViewState(
             mode: selectedPass.map { Mode.pass($0.0, snapshotsDuringPass: $0.1, observer: observerCoodinate) } ?? .notReady,
-            stars: state.skyChartState.stars,
-            constellations: state.skyChartState.constellations,
-            rasterizedSatellitePath: selectedPass.flatMap { state.skyChartState.rasterizedSatellitePaths[$0.0] }
+            rasterizedSatellitePaths: state.skyChartState.rasterizedSatellitePaths
         )
     }
 
@@ -171,7 +176,8 @@ struct SkyChartViewState: Equatable {
 }
 
 struct SkyChart: View {
-    private let viewModel: ObservableViewModel<SkyChartAction, SkyChartViewState>
+    @ObservedObject private var viewModel: ObservableViewModel<SkyChartAction, SkyChartViewState>
+    @Environment(\.colorScheme) var colorScheme
     private let configs: SkyChartConfigs
 
     init(
@@ -241,16 +247,31 @@ struct SkyChart: View {
     private var satellitePath: some View {
         GeometryReader { geometry in
             let rect = geometry.frame(in: .local)
+            let view: AnyView = {
+                if rect.size.width == 0 || rect.size.height == 0 {
+                    return AnyView(Color.clear)
+                } else if let pass = viewModel.state.mode.passInformation,
+                          let image = viewModel.state.rasterizedSatellitePaths[SkyChartSatellitePathKey(pass: pass, size: rect.size)] {
+                    return AnyView(Image(uiImage: image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: rect.width, height: rect.height, alignment: .center))
+                } else {
+                    return AnyView(Color.clear)
+                }
+            }()
 
-            if rect.size.width == 0 || rect.size.height == 0 {
-                AnyView(EmptyView())
-            } else if let image = viewModel.state.rasterizedSatellitePath {
-                AnyView(Image(uiImage: image)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: rect.width, height: rect.height, alignment: .center))
-            } else {
-                AnyView(EmptyView())
+            view
+                .modifier(SizeModifier())
+                .onPreferenceChange(SizePreferenceKey.self) { contentSize in
+                if let pass = viewModel.state.mode.passInformation {
+                    viewModel.dispatch(
+                        .requestRasterizedSatellitePath(
+                            SkyChartSatellitePathKey(pass: pass, size: contentSize),
+                            traitCollection: UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
+                        )
+                    )
+                }
             }
         }
     }
@@ -269,64 +290,6 @@ struct SkyChart: View {
                 path.closeSubpath()
             }
             .stroke(Color("skyChartStroke"), lineWidth: 1)
-        }
-    }
-
-    var starPath: some View {
-        GeometryReader { geometry in
-            if configs.backgroundSky.showStars,
-               let referenceDate = viewModel.state.mode.referenceDate,
-               let observerCoordinate = viewModel.state.mode.observer {
-                let rect = geometry.frame(in: .local)
-                Path { path in
-                    for star in viewModel.state.stars {
-                        let (alt, azi) = azel(
-                            julianDate: referenceDate,
-                            site: (observerCoordinate.lat, observerCoordinate.lon),
-                            cele: cartesianToRaDec(star.physicalInfo.coordinate))
-                        if alt < 0 {
-                            continue
-                        }
-                        let point = Self.point(at: AziEleDst(azim: azi, elev: alt, dist: 0), rect: rect)
-                        path.move(to: point)
-                        let radius = CGFloat(3 * exp(0.425 * -star.physicalInfo.apparentMagnitude))
-                        path.addEllipse(in: CGRect(x: point.x - radius, y: point.y - radius, width: radius * 2, height: radius * 2))
-                    }
-                }
-                .fill()
-                .foregroundColor(Color("star"))
-            }
-        }
-
-    }
-
-    var constellationLinesPath: some View {
-        GeometryReader { geometry in
-            if configs.backgroundSky.showConstellationLines,
-               let referenceDate = viewModel.state.mode.referenceDate,
-               let observerCoordinate = viewModel.state.mode.observer {
-                let rect = geometry.frame(in: .local)
-                Path { path in
-                    for constellation in viewModel.state.constellations {
-                        guard let center = constellation.displayCenter else {
-                            continue
-                        }
-                        let (alt, _) = azel(julianDate: referenceDate, site: (observerCoordinate.lat, observerCoordinate.lon), cele: cartesianToRaDec(center))
-                        if alt < 0 {
-                            continue
-                        }
-                        for line in constellation.connectionLines {
-                            let (alt1, azi1) = azel(julianDate: referenceDate, site: (observerCoordinate.lat, observerCoordinate.lon), cele: cartesianToRaDec(line.star1.physicalInfo.coordinate))
-                            let (alt2, azi2) = azel(julianDate: referenceDate, site: (observerCoordinate.lat, observerCoordinate.lon), cele: cartesianToRaDec(line.star2.physicalInfo.coordinate))
-                            let point1 = Self.point(at: AziEleDst(azim: azi1, elev: alt1, dist: 0), rect: rect)
-                            let point2 = Self.point(at: AziEleDst(azim: azi2, elev: alt2, dist: 0), rect: rect)
-                            path.move(to: point1)
-                            path.addLine(to: point2)
-                        }
-                    }
-                }
-                .stroke(Color("constellationLine"), lineWidth: 1)
-            }
         }
     }
 
@@ -524,9 +487,9 @@ struct SkyChart: View {
     }
 
     var body: some View {
-        starPath
-            .overlay(constellationLinesPath)
-            .overlay(moonView)
+//        starPath
+//            .overlay(constellationLinesPath)
+          moonView
             .overlay(sunView)
             .overlay(satellitePath)
             .clipShape(Circle())
@@ -609,6 +572,7 @@ struct SkyChart_Previews: PreviewProvider {
         )
 
         let (passes, fineSnapshots) = sat.findPasses(
+            noradIndex: tle.noradIndex,
             observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
             coarseSnapshots: snapshots
         )
@@ -636,6 +600,7 @@ struct SkyChart_Previews: PreviewProvider {
         )
 
         let (passes, fineSnapshots) = sat.findPasses(
+            noradIndex: tle.noradIndex,
             observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
             coarseSnapshots: snapshots
         )
@@ -644,8 +609,6 @@ struct SkyChart_Previews: PreviewProvider {
     }()
 
     static var previews: some View {
-        let stars = Star.magitudeLessThan(4.5)
-        let constellations = Constellation.all
         let (pass, snapshots) = issPass
 
         ForEach(ColorScheme.allCases, id: \.self) {
@@ -657,14 +620,14 @@ struct SkyChart_Previews: PreviewProvider {
                             snapshotsDuringPass: snapshots,
                             observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0)
                         ),
-                        stars: stars,
-                        constellations: constellations,
-                        rasterizedSatellitePath: SkyChart.rasterizedPath(
-                            rect: CGRect(origin: .zero, size: CGSize(width: 375, height: 375)),
-                            snapshotsDuringPass: snapshots,
-                            illuminatedColor: UIColor(Color("satellitePath_illuminated")),
-                            unlitColor: UIColor(Color("satellitePath_notIlluminated"))
-                        )
+                        rasterizedSatellitePaths: [
+                            SkyChartSatellitePathKey(pass: pass, size: CGSize(width: 388, height: 805)) : SkyChart.rasterizedPath(
+                                rect: CGRect(origin: .zero, size: CGSize(width: 388, height: 805)),
+                                snapshotsDuringPass: snapshots,
+                                illuminatedColor: UIColor(Color("satellitePath_illuminated")),
+                                unlitColor: UIColor(Color("satellitePath_notIlluminated"))
+                            )!
+                        ]
                     )
                 ),
                 configs: .preset
@@ -683,14 +646,14 @@ struct SkyChart_Previews: PreviewProvider {
                         snapshotsDuringPass: snapshots2,
                         observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
                     ),
-                    stars: stars,
-                    constellations: constellations,
-                    rasterizedSatellitePath: SkyChart.rasterizedPath(
-                        rect: CGRect(origin: .zero, size: CGSize(width: 375, height: 375)),
-                        snapshotsDuringPass: snapshots,
-                        illuminatedColor: UIColor(Color("satellitePath_illuminated")),
-                        unlitColor: UIColor(Color("satellitePath_notIlluminated"))
-                    )
+                    rasterizedSatellitePaths: [
+                        SkyChartSatellitePathKey(pass: pass, size: CGSize(width: 375, height: 375)) : SkyChart.rasterizedPath(
+                            rect: CGRect(origin: .zero, size: CGSize(width: 375, height: 375)),
+                            snapshotsDuringPass: snapshots,
+                            illuminatedColor: UIColor(Color("satellitePath_illuminated")),
+                            unlitColor: UIColor(Color("satellitePath_notIlluminated"))
+                        )!
+                    ]
                 )
             ),
             configs: .preset

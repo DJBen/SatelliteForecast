@@ -69,6 +69,7 @@ struct SatelliteListView: View {
                 }
             }
         }
+        .navigationViewStyle(StackNavigationViewStyle())
         .onAppear {
             viewModel.dispatch(.onAppear)
         }
