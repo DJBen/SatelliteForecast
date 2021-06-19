@@ -159,7 +159,8 @@ struct PassView_Previews: PreviewProvider {
                             state: appState
                         )
                     ),
-                    configs: .preset
+                    configs: .preset,
+                    usage: .preview
                 )
             )
         )

@@ -66,10 +66,10 @@ extension SkyChart {
         }
     }
 
-    func rasterizedStarPath(
+    static func rasterizedBackgroundSkyPath(
         rect: CGRect,
         stars: [Star],
-        constellations: [Constellation],
+        constellations: Set<Constellation>,
         observer: LatLonAlt,
         julianDate: Double,
         starColor: UIColor,

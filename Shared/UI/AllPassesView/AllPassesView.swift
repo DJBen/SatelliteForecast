@@ -23,9 +23,21 @@ struct AllPassesViewState: Equatable {
         let index: Int
         let pass: PassInformation
 
+        private let rasterizedSatellitePath: UIImage?
+        private let rasterizedBackgroundSky: UIImage?
+
+        init(index: Int, pass: PassInformation, rasterizedSatellitePath: UIImage? = nil, rasterizedBackgroundSky: UIImage? = nil) {
+            self.index = index
+            self.pass = pass
+            self.rasterizedSatellitePath = rasterizedSatellitePath
+            self.rasterizedBackgroundSky = rasterizedBackgroundSky
+        }
+
         var id: Int {
             var hasher = Hasher()
             hasher.combine(index)
+            hasher.combine(rasterizedSatellitePath)
+            hasher.combine(rasterizedBackgroundSky)
             return hasher.finalize()
         }
     }
@@ -39,7 +51,17 @@ struct AllPassesViewState: Equatable {
             let satelliteState = state.satellites[selectedNoradIndex] else {
             return .empty
         }
-        let items = satelliteState.passes.enumerated().map { Item(index: $0, pass: $1) }
+
+        let items = satelliteState.passes.enumerated().map { i, pass -> Item in
+            let rasterizedSatellitePath = state.skyChartState.rasterizedSatellitePaths[pass]?[.preview]
+            let rasterizedBackgroundSky: UIImage?
+            if let observer = state.coreLocationState.location.map(LatLonAlt.init) {
+                rasterizedBackgroundSky = state.skyChartState.rasterizedBackgroundSky[SkyChartSatelliteBackgroundSkyKey(observer: observer, julianDate: pass.rise.julianDate)]?[.preview]
+            } else {
+                rasterizedBackgroundSky = nil
+            }
+            return Item(index: i, pass: pass, rasterizedSatellitePath: rasterizedSatellitePath, rasterizedBackgroundSky: rasterizedBackgroundSky)
+        }
         let itemsByVisibility = Dictionary(grouping: items, by: \.pass.visibility)
         let visiblePasses = itemsByVisibility[.visible] ?? []
         let invisiblePasses = (itemsByVisibility[.daylight] ?? []) + (itemsByVisibility[.unlit] ?? [])
@@ -198,7 +220,7 @@ struct AllPassesView_Previews: PreviewProvider {
                     ),
                     configs: SkyChartConfigs(
                         backgroundSky: SkyChartConfigs.BackgroundSky(
-                            showStars: false,
+                            stars: .limitedMagnitude(2),
                             showConstellationLines: false,
                             visibileBodies: [.sun, .moon],
                             bodySymbol: .symbol
@@ -208,7 +230,8 @@ struct AllPassesView_Previews: PreviewProvider {
                         azimuthMarkLength: 2,
                         showDirections: false,
                         showPassInfoLabels: false
-                    )
+                    ),
+                    usage: .preview
                 )
             },
             passViewProducer: .crash

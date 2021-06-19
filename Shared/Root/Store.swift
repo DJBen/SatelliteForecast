@@ -84,7 +84,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
                     outputAction: AppAction.timer
                 )
 
-                <> LoggerMiddleware()
+//                <> LoggerMiddleware()
         )
     }
 }

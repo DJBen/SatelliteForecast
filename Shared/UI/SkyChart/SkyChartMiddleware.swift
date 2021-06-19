@@ -26,15 +26,46 @@ extension EffectMiddleware where
                 switch action {
                 case .onAppear:
                     return .doNothing
-                case .rasterizedBackgroundSky(_):
+                case .rasterizedBackgroundSky(_, usage: _, key: _):
                     return .doNothing
-                case .rasterizedSatellitePath(_, size: _, pass: _):
+                case .rasterizedSatellitePath(_, usage: _, pass: _):
                     return .doNothing
-                case let .requestRasterizedSatellitePath(size, pass, traitCollection):
+                case let .requestRasterizedBackgroundSky(usage, size, key, configs, traitCollection):
                     return .promise(token: "") { context, sink in
                         let state = getState()
                         // Skip if image already generated.
-                        if let _ = state.skyChartState.rasterizedSatellitePaths[pass]?[size] {
+                        if let _ = state.skyChartState.rasterizedBackgroundSky[key]?[usage] {
+                            return
+                        }
+
+                        let image = SkyChart.rasterizedBackgroundSkyPath(
+                            rect: CGRect(origin: .zero, size: size),
+                            stars: {
+                                switch configs.stars {
+                                case .none:
+                                    return []
+                                case let .limitedMagnitude(mag):
+                                    return Star.magitudeLessThan(mag)
+                                }
+                            }(),
+                            constellations: configs.showConstellationLines ? Constellation.all : [],
+                            observer: key.observer,
+                            julianDate: key.julianDate,
+                            starColor: UIColor(named: "star", in: nil, compatibleWith: traitCollection)!,
+                            constellationLineColor: UIColor(named: "constellationLine", in: nil, compatibleWith: traitCollection)!,
+                            magToRadius: configs.starMagToDisplayRadius
+                        )
+                        logger.debug("Rasterized background sky at observer coodinate \(String(describing: key.observer)) @ JD \(key.julianDate).")
+
+                        sink(
+                            .rasterizedBackgroundSky(image, usage: usage, key: key)
+                        )
+                    }
+                case let .requestRasterizedSatellitePath(usage, size, pass, traitCollection):
+                    return .promise(token: "") { context, sink in
+                        let state = getState()
+                        // Skip if image already generated.
+                        if let _ = state.skyChartState.rasterizedSatellitePaths[pass]?[usage] {
                             logger.debug("\(pass.noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate) already rasterized, skipping.")
                             return
                         }
@@ -58,7 +89,7 @@ extension EffectMiddleware where
                         sink(
                             .rasterizedSatellitePath(
                                 image,
-                                size: size,
+                                usage: usage,
                                 pass: pass
                             )
                         )

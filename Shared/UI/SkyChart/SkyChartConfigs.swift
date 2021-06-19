@@ -8,9 +8,14 @@
 import Foundation
 import CoreGraphics
 
-struct SkyChartConfigs: Equatable {
-    struct BackgroundSky: Equatable {
-        var showStars: Bool = true
+struct SkyChartConfigs {
+    struct BackgroundSky {
+        enum Stars {
+            case none
+            case limitedMagnitude(Double)
+        }
+        var stars: Stars = .limitedMagnitude(4.5)
+        var starMagToDisplayRadius: (Double) -> CGFloat = { CGFloat(3 * exp(0.425 * -$0)) }
         var showConstellationLines: Bool = true
 
         struct PlantaryBody: OptionSet {

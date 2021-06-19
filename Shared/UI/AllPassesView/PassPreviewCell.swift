@@ -152,7 +152,7 @@ struct PassPreviewCell_Previews: PreviewProvider {
                         ),
                         configs: SkyChartConfigs(
                             backgroundSky: SkyChartConfigs.BackgroundSky(
-                                showStars: false,
+                                stars: .limitedMagnitude(2),
                                 showConstellationLines: false,
                                 visibileBodies: [.sun, .moon],
                                 bodySymbol: .symbol
@@ -162,7 +162,8 @@ struct PassPreviewCell_Previews: PreviewProvider {
                             azimuthMarkLength: 2,
                             showDirections: false,
                             showPassInfoLabels: false
-                        )
+                        ),
+                        usage: .preview
                     )
                 )
             )
