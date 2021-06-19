@@ -40,10 +40,7 @@ extension SkyChart {
         lineWidth: CGFloat = 1,
         illuminatedColor: UIColor,
         unlitColor: UIColor
-    ) -> UIImage? {
-        if snapshotsDuringPass.isEmpty {
-            return nil
-        }
+    ) -> UIImage {
         let snapshotsByIllumination = snapshotsDuringPass.split(inclusivity: .includesSecondElementsInPreviousGroup) { (e1, e2) -> Bool in
             return e1.1.isIlluminated != e2.1.isIlluminated
         }
@@ -174,7 +171,7 @@ struct ImageRenderer_Previews: PreviewProvider {
                 snapshotsDuringPass: snapshotsDuringPass,
                 illuminatedColor: UIColor.black,
                 unlitColor: UIColor.gray
-            )!
+            )
         )
         .resizable()
         .aspectRatio(contentMode: .fit)

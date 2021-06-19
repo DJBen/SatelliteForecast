@@ -16,9 +16,13 @@ extension Reducer where ActionType == SkyChartAction, StateType == SkyChartResou
         case let .rasterizedBackgroundSky(image):
             // TODO: process rasterized background sky
             break
-        case let .rasterizedSatellitePath(image, key):
-            state.rasterizedSatellitePaths[key] = image
-        case .requestRasterizedSatellitePath(_, traitCollection: _):
+        case let .rasterizedSatellitePath(image, size, pass):
+            if let _ = state.rasterizedSatellitePaths[pass] {
+                state.rasterizedSatellitePaths[pass]![size] = image
+            } else {
+                state.rasterizedSatellitePaths[pass] = [size: image]
+            }
+        case .requestRasterizedSatellitePath(_, _, traitCollection: _):
             break
         }
     }

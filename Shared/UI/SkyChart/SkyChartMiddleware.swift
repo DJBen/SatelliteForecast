@@ -28,40 +28,40 @@ extension EffectMiddleware where
                     return .doNothing
                 case .rasterizedBackgroundSky(_):
                     return .doNothing
-                case .rasterizedSatellitePath(_, key: _):
+                case .rasterizedSatellitePath(_, size: _, pass: _):
                     return .doNothing
-                case let .requestRasterizedSatellitePath(key, traitCollection):
+                case let .requestRasterizedSatellitePath(size, pass, traitCollection):
                     return .promise(token: "") { context, sink in
                         let state = getState()
-                        let (pass, size) = (key.pass, key.size)
                         // Skip if image already generated.
-                        if let _ = state.skyChartState.rasterizedSatellitePaths[key] {
+                        if let _ = state.skyChartState.rasterizedSatellitePaths[pass]?[size] {
                             logger.debug("\(pass.noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate) already rasterized, skipping.")
                             return
                         }
 
                         guard let snapshots = state.satellites[pass.noradIndex]?.snapshots else {
+                            logger.debug("\(pass.noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate) lacks snapshots: rasterization on hold")
                             return
                         }
 
                         let snapshotsDuringPass = snapshots.submap(from: pass.rise.julianDate, through: pass.set.julianDate)
 
                         // Rasterize satellite paths in sky charts
-                        if let image = SkyChart.rasterizedPath(
+                        let image = SkyChart.rasterizedPath(
                             rect: CGRect(origin: .zero, size: size),
                             snapshotsDuringPass: snapshotsDuringPass,
                             illuminatedColor: UIColor(named: "satellitePath_illuminated", in: nil, compatibleWith: traitCollection)!,
                             unlitColor: UIColor(named: "satellitePath_notIlluminated", in: nil, compatibleWith: traitCollection)!
-                        ) {
-                            logger.debug("Rasterized \(pass.noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate).")
+                        )
+                        logger.debug("Rasterized \(pass.noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate).")
 
-                            sink(
-                                .rasterizedSatellitePath(
-                                    image,
-                                    key: key
-                                )
+                        sink(
+                            .rasterizedSatellitePath(
+                                image,
+                                size: size,
+                                pass: pass
                             )
-                        }
+                        )
                     }
                 }
             }

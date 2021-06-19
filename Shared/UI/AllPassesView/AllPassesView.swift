@@ -13,7 +13,7 @@ import SatelliteKit
 import SwiftUI
 
 enum AllPassesViewAction {
-    case onAppear(colorScheme: ColorScheme)
+    case onAppear
     case selectPass(index: Int?)
     case backToList
 }
@@ -59,7 +59,6 @@ struct AllPassesViewState: Equatable {
 
 struct AllPassesView: View {
     @ObservedObject var viewModel: ObservableViewModel<AllPassesViewAction, AllPassesViewState>
-    @Environment(\.colorScheme) var colorScheme
     @Environment(\.presentationMode) var presentationMode
 
     var skyChartProducer: ViewProducer<Int, SkyChart>
@@ -113,7 +112,7 @@ struct AllPassesView: View {
         }
         .listStyle(GroupedListStyle())
         .onAppear {
-            viewModel.dispatch(.onAppear(colorScheme: colorScheme))
+            viewModel.dispatch(.onAppear)
         }
         .onChange(of: presentationMode.wrappedValue.isPresented) { [presentationMode] isPresented in
             if presentationMode.wrappedValue.isPresented && !isPresented {

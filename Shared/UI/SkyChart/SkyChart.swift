@@ -13,17 +13,6 @@ import StarryNight
 import CombineRextensions
 import BTree
 
-struct SkyChartSatellitePathKey: Hashable {
-    let pass: PassInformation
-    let size: CGSize
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(pass)
-        hasher.combine(size.width)
-        hasher.combine(size.height)
-    }
-}
-
 struct SkyChartSatelliteBackgroundSkyKey: Hashable {
     let observer: LatLonAlt
     let julianDate: Double
@@ -40,7 +29,7 @@ struct SkyChartResources: Equatable {
     /// A cache of the satellite paths that are ready for display.
     /// Instead of redrawing the pass consisting of thousands of points at each display,
     /// the cached version is just a cheap `UIImage`.
-    var rasterizedSatellitePaths: [SkyChartSatellitePathKey: UIImage] = [:]
+    var rasterizedSatellitePaths: [PassInformation: [CGSize: UIImage]] = [:]
 
     var rasterizedBackgroundSky: [SkyChartSatelliteBackgroundSkyKey: UIImage] = [:]
 
@@ -51,10 +40,10 @@ struct SkyChartResources: Equatable {
 
 enum SkyChartAction {
     case onAppear
-    case requestRasterizedSatellitePath(_ key: SkyChartSatellitePathKey, traitCollection: UITraitCollection)
+    case requestRasterizedSatellitePath(size: CGSize, pass: PassInformation, traitCollection: UITraitCollection)
     case rasterizedBackgroundSky(UIImage)
     /// A satellite path is rasterized, or the rasterized image is read from the cache.
-    case rasterizedSatellitePath(UIImage, key: SkyChartSatellitePathKey)
+    case rasterizedSatellitePath(UIImage, size: CGSize, pass: PassInformation)
 }
 
 /// A state used in a single sky chart view
@@ -120,7 +109,7 @@ struct SkyChartViewState: Equatable {
 
     var mode: Mode = .notReady
 
-    var rasterizedSatellitePaths: [SkyChartSatellitePathKey: UIImage] = [:]
+    var rasterizedSatellitePaths: [CGSize: UIImage] = [:]
 
     static func projectPreview(state: AppState, index: Int) -> SkyChartViewState {
         guard let observerCoodinate = state.coreLocationState.location.map(LatLonAlt.init) else {
@@ -143,7 +132,7 @@ struct SkyChartViewState: Equatable {
 
         return SkyChartViewState(
             mode: displayPass.map { Mode.pass($0.0, snapshotsDuringPass: $0.1, observer: observerCoodinate) } ?? .notReady,
-            rasterizedSatellitePaths: state.skyChartState.rasterizedSatellitePaths
+            rasterizedSatellitePaths: displayPass.flatMap { state.skyChartState.rasterizedSatellitePaths[$0.0] } ?? [:]
         )
     }
 
@@ -166,7 +155,7 @@ struct SkyChartViewState: Equatable {
         }()
         return SkyChartViewState(
             mode: selectedPass.map { Mode.pass($0.0, snapshotsDuringPass: $0.1, observer: observerCoodinate) } ?? .notReady,
-            rasterizedSatellitePaths: state.skyChartState.rasterizedSatellitePaths
+            rasterizedSatellitePaths: selectedPass.flatMap { state.skyChartState.rasterizedSatellitePaths[$0.0] } ?? [:]
         )
     }
 
@@ -250,8 +239,7 @@ struct SkyChart: View {
             let view: AnyView = {
                 if rect.size.width == 0 || rect.size.height == 0 {
                     return AnyView(Color.clear)
-                } else if let pass = viewModel.state.mode.passInformation,
-                          let image = viewModel.state.rasterizedSatellitePaths[SkyChartSatellitePathKey(pass: pass, size: rect.size)] {
+                } else if let image = viewModel.state.rasterizedSatellitePaths[rect.size] {
                     return AnyView(Image(uiImage: image)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -267,7 +255,8 @@ struct SkyChart: View {
                 if let pass = viewModel.state.mode.passInformation {
                     viewModel.dispatch(
                         .requestRasterizedSatellitePath(
-                            SkyChartSatellitePathKey(pass: pass, size: contentSize),
+                            size: contentSize,
+                            pass: pass,
                             traitCollection: UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
                         )
                     )
@@ -621,12 +610,12 @@ struct SkyChart_Previews: PreviewProvider {
                             observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0)
                         ),
                         rasterizedSatellitePaths: [
-                            SkyChartSatellitePathKey(pass: pass, size: CGSize(width: 388, height: 805)) : SkyChart.rasterizedPath(
+                            CGSize(width: 388, height: 805): SkyChart.rasterizedPath(
                                 rect: CGRect(origin: .zero, size: CGSize(width: 388, height: 805)),
                                 snapshotsDuringPass: snapshots,
                                 illuminatedColor: UIColor(Color("satellitePath_illuminated")),
                                 unlitColor: UIColor(Color("satellitePath_notIlluminated"))
-                            )!
+                            )
                         ]
                     )
                 ),
@@ -647,12 +636,12 @@ struct SkyChart_Previews: PreviewProvider {
                         observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
                     ),
                     rasterizedSatellitePaths: [
-                        SkyChartSatellitePathKey(pass: pass, size: CGSize(width: 375, height: 375)) : SkyChart.rasterizedPath(
-                            rect: CGRect(origin: .zero, size: CGSize(width: 375, height: 375)),
+                        CGSize(width: 388, height: 805): SkyChart.rasterizedPath(
+                            rect: CGRect(origin: .zero, size: CGSize(width: 388, height: 805)),
                             snapshotsDuringPass: snapshots,
                             illuminatedColor: UIColor(Color("satellitePath_illuminated")),
                             unlitColor: UIColor(Color("satellitePath_notIlluminated"))
-                        )!
+                        )
                     ]
                 )
             ),
