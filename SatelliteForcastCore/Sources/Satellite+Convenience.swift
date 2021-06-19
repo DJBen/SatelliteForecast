@@ -83,7 +83,8 @@ extension Satellite {
         var snapshots = Map<Double, SatelliteSnapshot>()
         stride(
             from: julianDateRange.lowerBound,
-            through: julianDateRange.upperBound,
+            // Append interval to overshoot the upperBound and make sure it is included.
+            through: julianDateRange.upperBound + interval * TimeConstants.sec2day,
             by: interval * TimeConstants.sec2day
         )
         .forEach { (julianDate) in
@@ -93,6 +94,7 @@ extension Satellite {
     }
 
     private func generatePassInfo(
+        noradIndex: Int,
         observer: LatLonAlt,
         julianDateRange: Range<Double>,
         fineInterval: TimeInterval = 3
@@ -143,6 +145,7 @@ extension Satellite {
         ).alt
 
         let pass = PassInformation(
+            noradIndex: noradIndex,
             rise: risesAtPair.map { PassInformation.DateElev(julianDate: $0.0, elev: $0.1) }!,
             set: setsAtPair.map { PassInformation.DateElev(julianDate: $0.0, elev: $0.1) }!,
             transit: PassInformation.DateElev(
@@ -170,6 +173,7 @@ extension Satellite {
     ///   - passes: A list of satellite passes.
     ///   - snapshots: Resulting snapshots by merging the coarse snapshots and the generated fine snapshots.
     public func findPasses(
+        noradIndex: Int,
         observer: LatLonAlt,
         coarseSnapshots: Map<Double, SatelliteSnapshot>,
         fineInterval: TimeInterval = 3
@@ -193,6 +197,7 @@ extension Satellite {
 
             if let fromDate = snapshotBeforeRising?.julianDate, let toDate = snapshotAfterSetting?.julianDate, fromDate < toDate {
                 let (pass, snapshots) = generatePassInfo(
+                    noradIndex: noradIndex,
                     observer: observer,
                     julianDateRange: fromDate..<toDate,
                     fineInterval: fineInterval

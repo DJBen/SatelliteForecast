@@ -285,16 +285,20 @@ struct SatelliteElevationGraph: View {
 
     private var elevationText: some View {
         ZStack {
-            let elevIterator = stride(from: -90.0, to: 90.0, by: viewModel.state.elevationGridLineInterval)
+            if contentSize.width == 0 || contentSize.height == 0 {
+                EmptyView()
+            } else {
+                let elevIterator = stride(from: -90.0, to: 90.0, by: viewModel.state.elevationGridLineInterval)
 
-            ForEach(Array(elevIterator), id: \.self) { elev in
-                let y = CGFloat(elev + 90) / 180 * self.contentSize.height
+                ForEach(Array(elevIterator), id: \.self) { elev in
+                    let y = CGFloat(elev + 90) / 180 * self.contentSize.height
 
-                Text("\(Int(-elev))°")
-                    .font(.caption)
-                    .foregroundColor(.gray)
-                    .frame(height: 30, alignment: .bottomTrailing)
-                    .position(x: 15, y: y)
+                    Text("\(Int(-elev))°")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                        .frame(height: 30, alignment: .bottomTrailing)
+                        .position(x: 15, y: y)
+                }
             }
         }
     }
@@ -467,15 +471,19 @@ struct SatelliteElevationGraph: View {
                     showsIndicators: false,
                     content: {
                         ScrollViewReader { scrollViewProxy in
-                            innerViews(
-                                rect: rect
-                            )
-                            .onChange(
-                                of: viewModel.state.highlightedDateRange,
-                                perform: { _ in
-                                    scrollViewProxy.scrollTo("centerAtDate", anchor: .center)
-                                }
-                            )
+                            if rect.isEmpty {
+                                EmptyView()
+                            } else {
+                                innerViews(
+                                    rect: rect
+                                )
+                                .onChange(
+                                    of: viewModel.state.highlightedDateRange,
+                                    perform: { _ in
+                                        scrollViewProxy.scrollTo("centerAtDate", anchor: .center)
+                                    }
+                                )
+                            }
                         }
                     }
                 )
@@ -535,7 +543,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                     authorizationStatus: .authorizedWhenInUse,
                     location: location
                 ),
-                navigationState: .pass(noradIndex: Int(sat.noradIdent)!, selectedPassIndex: nil)
+                navigationState: .allPasses(noradIndex: Int(sat.noradIdent)!)
             )
         )
         SatelliteElevationGraph(viewModel: .mock(state: viewModel))
@@ -568,7 +576,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                     authorizationStatus: .authorizedWhenInUse,
                     location: location
                 ),
-                navigationState: .pass(noradIndex: Int(sat2.noradIdent)!, selectedPassIndex: nil)
+                navigationState: .allPasses(noradIndex: Int(sat2.noradIdent)!)
             )
         )
         SatelliteElevationGraph(viewModel: .mock(state: viewModel2))
@@ -601,7 +609,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                     authorizationStatus: .authorizedWhenInUse,
                     location: location
                 ),
-                navigationState: .pass(noradIndex: Int(sat3.noradIdent)!, selectedPassIndex: nil)
+                navigationState: .allPasses(noradIndex: Int(sat3.noradIdent)!)
             )
         )
         SatelliteElevationGraph(viewModel: .mock(state: viewModel3))

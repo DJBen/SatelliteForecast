@@ -14,7 +14,7 @@ struct AppState: Equatable {
     /// The date range from which ephemerides are generated.
     var julianDateRange: Range<Double>
     var satelliteElevationGraphConfigs: SatelliteElevationGraphConfigs = .preset
-    var skyChartState: SkyChartRootState = .empty
+    var skyChartState: SkyChartResources = .empty
     /// A mapping from NORAD ID to the satellite state.
     var satellites: [Int: SatelliteState] = [:]
     var tleLoaderState: TLELoaderState = .empty
@@ -24,7 +24,7 @@ struct AppState: Equatable {
     enum NavigationState: Equatable {
         case list
         case allPasses(noradIndex: Int)
-        case pass(noradIndex: Int, selectedPassIndex: Int? = nil)
+        case pass(noradIndex: Int, selectedPassIndex: Int)
     }
     var navigationState: NavigationState = .list
 
@@ -32,28 +32,37 @@ struct AppState: Equatable {
     var selectedSatelliteNoradIndex: Int? {
         get {
             switch navigationState {
-            case let .pass(noradIndex, _):
+            case let .allPasses(noradIndex), let .pass(noradIndex, _):
                 return noradIndex
-            default:
+            case .list:
                 return nil
             }
         }
 
         set {
             if let newValue = newValue {
-                if newValue == self.selectedSatelliteNoradIndex {
-                    return
+                switch navigationState {
+                case .list, .allPasses(noradIndex: _):
+                    self.navigationState = .allPasses(noradIndex: newValue)
+                case let .pass(noradIndex, selectedPassIndex):
+                    if newValue == noradIndex {
+                        return
+                    }
+                    self.navigationState = .pass(noradIndex: newValue, selectedPassIndex: selectedPassIndex)
                 }
-                self.navigationState = .pass(noradIndex: newValue, selectedPassIndex: nil)
             } else {
                 self.navigationState = .list
             }
         }
     }
 
+    var selectedSatelliteState: SatelliteState? {
+        selectedSatelliteNoradIndex.flatMap { satellites[$0] }
+    }
+
     static var empty: AppState {
         AppState(
-            julianDateRange: Date().advanced(by: -60 * 60 * 2).julianDate..<Date().advanced(by: 60 * 60 * 22).julianDate
+            julianDateRange: Date().advanced(by: -60 * 60 * 2).julianDate..<Date().advanced(by: 60 * 60 * 46).julianDate
         )
     }
 
@@ -81,12 +90,18 @@ struct AppState: Equatable {
             .first { $0.noradIndex == index }
     }
 
+    var selectedSatellitePassIndex: Int? {
+        switch navigationState {
+        case let .pass(_, selectedPassIndex):
+            return selectedPassIndex
+        default:
+            return nil
+        }
+    }
+
     var selectedSatellitePass: PassInformation? {
         switch navigationState {
         case let .pass(noradIndex, selectedPassIndex):
-            guard let selectedPassIndex = selectedPassIndex else {
-                return nil
-            }
             return satellites[noradIndex]?.passes[selectedPassIndex]
         default:
             return nil

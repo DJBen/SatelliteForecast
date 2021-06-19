@@ -27,9 +27,6 @@ public struct Constellation: Hashable {
         return lhs.iAUName == rhs.iAUName
     }
 
-    // IAU name -> constellation object
-    private static var cachedConstellations = [String: Constellation]()
-
     private static var lineMappings: [String: [(Int, Int)]] = {
         let content = try! String(contentsOfFile: StarryNight.Constellations.constellationLinePath)
         let lines = content.components(separatedBy: "\n").filter { (str) -> Bool in
@@ -53,6 +50,7 @@ public struct Constellation: Hashable {
     }()
 
     public static var all: Set<Constellation> {
+        var constellations = Set<Constellation>()
         for row in try! StarryNight.db.prepare(StarryNight.Constellations.table) {
             let iau = try! row.get(StarryNight.Constellations.dbIAUName)
             let con = Constellation(
@@ -60,11 +58,9 @@ public struct Constellation: Hashable {
                 iAUName: iau,
                 genitive: try! row.get(StarryNight.Constellations.dbGenitive)
             )
-            if cachedConstellations[iau] == nil {
-                cachedConstellations[iau] = con
-            }
+            constellations.insert(con)
         }
-        return Set<Constellation>(cachedConstellations.values)
+        return constellations
     }
 
     private var lines: [(Int, Int)] {
@@ -92,22 +88,16 @@ public struct Constellation: Hashable {
 
     private static func queryConstellation(_ query: Table) -> Constellation? {
         if let row = try! StarryNight.db.pluck(query) {
-            let con = Constellation(
+            return Constellation(
                 name: try! row.get(StarryNight.Constellations.dbName),
                 iAUName: try! row.get(StarryNight.Constellations.dbIAUName),
                 genitive: try! row.get(StarryNight.Constellations.dbGenitive)
             )
-            cachedConstellations[try! row.get(StarryNight.Constellations.dbIAUName)] = con
-            return con
         }
         return nil
     }
 
     public static func named(_ name: String) -> Constellation? {
-        if let conIndex: DictionaryIndex<String, Constellation> = cachedConstellations.firstIndex(where: { $1.name == name }) {
-            let (_, v) = cachedConstellations[conIndex]
-            return v
-        }
         let query = StarryNight.Constellations.table.select(
             StarryNight.Constellations.dbName,
             StarryNight.Constellations.dbIAUName,
@@ -117,9 +107,7 @@ public struct Constellation: Hashable {
     }
 
     public static func iau(_ iau: String) -> Constellation? {
-        if let con = cachedConstellations[iau] {
-            return con
-        }
+
         let query = StarryNight.Constellations.table.select(
             StarryNight.Constellations.dbName,
             StarryNight.Constellations.dbIAUName,

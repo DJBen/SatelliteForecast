@@ -26,6 +26,11 @@ extension Vector {
     }
 }
 
+/// Quadratic interpolate a list of (x, y) values with a given step n. Will produce n+1 value pairs.
+/// - Parameters:
+///   - pairs: Pairs of (x, y) values.
+///   - steps: Number of interpolation steps.
+/// - Returns: n+1 interpolated (x, y) value pairs.
 public func quadraticInterpolate(_ pairs: [(Double, Double)], steps: Int) -> [(Double, Double)] {
     if pairs.count < 3 {
         return []

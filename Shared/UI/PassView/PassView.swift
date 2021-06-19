@@ -13,6 +13,7 @@ import SwiftUI
 
 enum PassViewAction {
     case onAppear
+    case backToAllPasses
 }
 
 struct PassViewState: Equatable {
@@ -34,6 +35,7 @@ struct PassViewState: Equatable {
 /// The satellite detail view shows satellite passes and the sky chart during the first visible pass (if available).
 struct PassView: View {
     @ObservedObject var viewModel: ObservableViewModel<PassViewAction, PassViewState>
+    @Environment(\.presentationMode) var presentationMode
 
     var elevationGraphProducer: ViewProducer<Void, SatelliteElevationGraph>
     var skyChartProducer: ViewProducer<Void, SkyChart>
@@ -60,6 +62,11 @@ struct PassView: View {
                         }, label: {
                             Image(systemName: "square.stack.3d.up")
                         })
+                    }
+                }
+                .onChange(of: presentationMode.wrappedValue.isPresented) { [presentationMode] isPresented in
+                    if presentationMode.wrappedValue.isPresented && !isPresented {
+                        viewModel.dispatch(.backToAllPasses)
                     }
                 }
             }
@@ -107,7 +114,11 @@ struct PassView_Previews: PreviewProvider {
             observer: LatLonAlt(location: location),
             julianDateRange: julianDateRange
         )
-        let (passes, fineSnapshots) = sat.findPasses(observer: LatLonAlt(location: location), coarseSnapshots: snapshots)
+        let (passes, fineSnapshots) = sat.findPasses(
+            noradIndex: tle.noradIndex,
+            observer: LatLonAlt(location: location),
+            coarseSnapshots: snapshots
+        )
         let appState = AppState(
             julianDateRange: julianDateRange,
             satelliteElevationGraphConfigs: .preset,
@@ -148,7 +159,8 @@ struct PassView_Previews: PreviewProvider {
                             state: appState
                         )
                     ),
-                    configs: .preset
+                    configs: .preset,
+                    usage: .preview
                 )
             )
         )

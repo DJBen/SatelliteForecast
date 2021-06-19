@@ -9,10 +9,12 @@ import Foundation
 import os
 import SwiftRex
 
+fileprivate let logger = Logger(subsystem: "io.djben.logger", category: "middleware")
+
 class LoggerMiddleware: Middleware {
-    typealias InputActionType = AppAction // It wants to receive all possible app actions
-    typealias OutputActionType = AppAction          // No action is generated from this Middleware
-    typealias StateType = AppState        // It wants to read the whole app state
+    typealias InputActionType = AppAction
+    typealias OutputActionType = AppAction
+    typealias StateType = AppState
 
     var getState: GetState<AppState>!
 
@@ -21,15 +23,8 @@ class LoggerMiddleware: Middleware {
     }
 
     func handle(action: AppAction, from dispatcher: ActionSource, afterReducer: inout AfterReducer) {
-        let stateBefore: AppState = getState()
-        let dateBefore = Date()
-
         afterReducer = .do {
-            let stateAfter = self.getState()
-            let dateAfter = Date()
-            let source = "\(dispatcher.file):\(dispatcher.line) - \(dispatcher.function) | \(dispatcher.info ?? "")"
-
-            os_log("action: \(String(describing: action)), from: \(source), before: \(String(describing: stateBefore)), after: \(String(describing: stateAfter)), dateBefore: \(dateBefore), dateAfter: \(dateAfter)")
+            logger.info("\(String(describing: action))")
         }
     }
 }

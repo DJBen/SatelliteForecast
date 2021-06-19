@@ -35,7 +35,7 @@ struct SatelliteListViewState: Equatable {
 struct SatelliteListView: View {
     @ObservedObject var viewModel: ObservableViewModel<SatelliteListViewAction, SatelliteListViewState>
 
-    var detailViewProducer: ViewProducer<Void, PassView>
+    var allPassesViewProducer: ViewProducer<Void, AllPassesView>
 
     var body: some View {
         NavigationView {
@@ -52,7 +52,7 @@ struct SatelliteListView: View {
                         ) {
                             ForEach(viewModel.state.tlesByCategory[category] ?? [], id: \.noradIndex) { tle in
                                 NavigationLink(
-                                    destination: detailViewProducer.view(),
+                                    destination: allPassesViewProducer.view(),
                                     tag: tle.noradIndex,
                                     selection: Binding<Int?>(
                                         get: { viewModel.state.selectedNoradIndex },
@@ -69,6 +69,7 @@ struct SatelliteListView: View {
                 }
             }
         }
+        .navigationViewStyle(StackNavigationViewStyle())
         .onAppear {
             viewModel.dispatch(.onAppear)
         }
@@ -85,8 +86,8 @@ extension ViewProducer where Context == Void, ProducedView == SatelliteListView 
                         state: SatelliteListViewState.project(state:)
                     )
                     .asObservableViewModel(initialState: .empty),
-                detailViewProducer: ViewProducer<Void, PassView>
-                    .passView(viewModel: viewModel)
+                allPassesViewProducer: ViewProducer<Void, AllPassesView>
+                    .allPassesView(viewModel: viewModel)
             )
         }
     }
@@ -119,13 +120,7 @@ struct SatelliteListView_Previews: PreviewProvider {
                     ]
                 )
             ),
-            detailViewProducer: .pure(
-                PassView(
-                    viewModel: .mock(state: .empty),
-                    elevationGraphProducer: .crash,
-                    skyChartProducer: .crash
-                )
-            )
+            allPassesViewProducer: .crash
         )
     }
 }

@@ -12,18 +12,29 @@ import SatelliteKit
 import CombineRex
 import CombineRextensions
 
-struct PassPreviewCell: View {
+struct PassPreviewCell: View, Equatable {
+    static func == (lhs: PassPreviewCell, rhs: PassPreviewCell) -> Bool {
+        return lhs.pass == rhs.pass && lhs.indexOfPass == rhs.indexOfPass
+    }
+
     var pass: PassInformation
     var indexOfPass: Int
     var skyChartProducer: ViewProducer<Int, SkyChart>
 
-    let formatter: DateFormatter = {
+    static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
+        return formatter
+    }()
+
+    static let timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.setLocalizedDateFormatFromTemplate("H:mm:ss")
         return formatter
     }()
 
-    let numberFormatter: NumberFormatter = {
+    static let numberFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.usesSignificantDigits = true
         formatter.maximumSignificantDigits = 3
@@ -41,48 +52,58 @@ struct PassPreviewCell: View {
         }
     }
 
-    var visibilityIndicatorStrip: some View {
-        Rectangle()
-            .foregroundColor(visiblityColor)
-            .frame(width: 8, height: .infinity, alignment: .leading)
-    }
-
     var body: some View {
-        HStack {
-            visibilityIndicatorStrip
+        HStack(alignment: .center) {
+            Rectangle()
+                .foregroundColor(visiblityColor)
+                .frame(width: 12, alignment: .leading)
 
-            VStack {
+            VStack(alignment: .leading) {
                 Text(LocalizedStrings.PassPreviewCell.titleForPassVisibility(pass.visibility))
-                    .font(.caption)
-                    .italic()
-
-                Text("∠\(numberFormatter.string(from: NSNumber(value: pass.transit.elev))!)°")
+                    .font(.headline)
+                Text("∠\(Self.numberFormatter.string(from: NSNumber(value: pass.transit.elev))!)°")
                     .font(.body)
+            }
+            .frame(width: 80)
+
+            VStack(alignment: .leading) {
+                Text(Self.dateFormatter.string(from: Date(julianDate: pass.rise.julianDate)))
+                    .font(.headline)
+                    .padding([.bottom], 1)
 
                 HStack(spacing: 0) {
                     Image(systemName: "arrow.up")
-                        .font(.caption)
-                    Text(formatter.string(from: Date(julianDate: pass.rise.julianDate)))
-                        .font(.caption)
+                        .font(.subheadline)
+                        .foregroundColor(Color(UIColor.secondaryLabel))
+
+                    Text(Self.timeFormatter.string(from: Date(julianDate: pass.rise.julianDate)))
+                        .font(.subheadline)
+                        .foregroundColor(Color(UIColor.secondaryLabel))
                 }
                 HStack(spacing: 0) {
                     Image(systemName: "arrow.up.to.line")
-                        .font(.caption)
-                    Text(formatter.string(from: Date(julianDate: pass.transit.julianDate)))
-                        .font(.caption)
+                        .font(.subheadline)
+                        .foregroundColor(Color(UIColor.secondaryLabel))
+
+                    Text(Self.timeFormatter.string(from: Date(julianDate: pass.transit.julianDate)))
+                        .font(.subheadline)
+                        .foregroundColor(Color(UIColor.secondaryLabel))
                 }
                 HStack(spacing: 0) {
                     Image(systemName: "arrow.down")
-                        .font(.caption)
-                    Text(formatter.string(from: Date(julianDate: pass.set.julianDate)))
-                        .font(.caption)
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                        .foregroundColor(Color(UIColor.secondaryLabel))
+
+                    Text(Self.timeFormatter.string(from: Date(julianDate: pass.set.julianDate)))
+                        .font(.subheadline)
+                        .foregroundColor(Color(UIColor.secondaryLabel))
                 }
             }
 
             skyChartProducer.view(indexOfPass)
                 .padding(5)
         }
-        .background(Color.white)
     }
 }
 
@@ -107,6 +128,7 @@ struct PassPreviewCell_Previews: PreviewProvider {
             interval: 60
         )
         let (passes, fineSnapshots) = sat.findPasses(
+            noradIndex: tle.noradIndex,
             observer: observerCoordinate,
             coarseSnapshots: snapshots
         )
@@ -116,7 +138,7 @@ struct PassPreviewCell_Previews: PreviewProvider {
             let snapshotsDuringPass = fineSnapshots.submap(from: pass.rise.julianDate, through: pass.set.julianDate)
             return PassPreviewCell(
                 pass: pass,
-                indexOfPass: 0,
+                indexOfPass: index,
                 skyChartProducer: .pure(
                     SkyChart(
                         viewModel: .mock(
@@ -130,7 +152,7 @@ struct PassPreviewCell_Previews: PreviewProvider {
                         ),
                         configs: SkyChartConfigs(
                             backgroundSky: SkyChartConfigs.BackgroundSky(
-                                showStars: false,
+                                stars: .limitedMagnitude(2),
                                 showConstellationLines: false,
                                 visibileBodies: [.sun, .moon],
                                 bodySymbol: .symbol
@@ -140,11 +162,12 @@ struct PassPreviewCell_Previews: PreviewProvider {
                             azimuthMarkLength: 2,
                             showDirections: false,
                             showPassInfoLabels: false
-                        )
+                        ),
+                        usage: .preview
                     )
                 )
             )
-            .previewLayout(.fixed(width: 200, height: 100))
+            .previewLayout(.fixed(width: 375, height: 125))
         }
 
         return Group {

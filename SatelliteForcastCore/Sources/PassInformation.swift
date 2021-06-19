@@ -12,6 +12,8 @@ import BTree
 /// (point of higest elevation), any changes in illumination, and the elevation of the sun at transit.
 /// We can derive the visibility of the pass by combining these attributes together.
 public struct PassInformation {
+    public let noradIndex: Int
+    
     public struct DateElev {
         public let julianDate: Double
         public let elev: Double
@@ -85,3 +87,9 @@ extension PassInformation.Illumination: Equatable {}
 extension PassInformation.Illumination.Change: Equatable {}
 extension PassInformation.Visibility: Equatable {}
 extension PassInformation.DateElev: Equatable {}
+
+extension PassInformation: Hashable {}
+extension PassInformation.Illumination: Hashable {}
+extension PassInformation.Illumination.Change: Hashable {}
+extension PassInformation.Visibility: Hashable {}
+extension PassInformation.DateElev: Hashable {}

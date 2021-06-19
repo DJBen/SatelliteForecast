@@ -13,7 +13,9 @@ import SatelliteKit
 import SwiftUI
 
 enum AllPassesViewAction {
-    
+    case onAppear
+    case selectPass(index: Int?)
+    case backToList
 }
 
 struct AllPassesViewState: Equatable {
@@ -21,18 +23,45 @@ struct AllPassesViewState: Equatable {
         let index: Int
         let pass: PassInformation
 
+        private let rasterizedSatellitePath: UIImage?
+        private let rasterizedBackgroundSky: UIImage?
+
+        init(index: Int, pass: PassInformation, rasterizedSatellitePath: UIImage? = nil, rasterizedBackgroundSky: UIImage? = nil) {
+            self.index = index
+            self.pass = pass
+            self.rasterizedSatellitePath = rasterizedSatellitePath
+            self.rasterizedBackgroundSky = rasterizedBackgroundSky
+        }
+
         var id: Int {
-            return index
+            var hasher = Hasher()
+            hasher.combine(index)
+            hasher.combine(rasterizedSatellitePath)
+            hasher.combine(rasterizedBackgroundSky)
+            return hasher.finalize()
         }
     }
+
     var visiblePasses: [Item] = []
     var invisiblePasses: [Item] = []
+    var selectedPassIndex: Int?
 
     static func project(state: AppState) -> AllPassesViewState {
-        guard let satelliteState = state.satellites[state.selectedSatelliteNoradIndex!] else {
+        guard let selectedNoradIndex = state.selectedSatelliteNoradIndex,
+            let satelliteState = state.satellites[selectedNoradIndex] else {
             return .empty
         }
-        let items = satelliteState.passes.enumerated().map { Item(index: $0, pass: $1) }
+
+        let items = satelliteState.passes.enumerated().map { i, pass -> Item in
+            let rasterizedSatellitePath = state.skyChartState.rasterizedSatellitePaths[pass]?[.preview]
+            let rasterizedBackgroundSky: UIImage?
+            if let observer = state.coreLocationState.location.map(LatLonAlt.init) {
+                rasterizedBackgroundSky = state.skyChartState.rasterizedBackgroundSky[SkyChartSatelliteBackgroundSkyKey(observer: observer, julianDate: pass.rise.julianDate)]?[.preview]
+            } else {
+                rasterizedBackgroundSky = nil
+            }
+            return Item(index: i, pass: pass, rasterizedSatellitePath: rasterizedSatellitePath, rasterizedBackgroundSky: rasterizedBackgroundSky)
+        }
         let itemsByVisibility = Dictionary(grouping: items, by: \.pass.visibility)
         let visiblePasses = itemsByVisibility[.visible] ?? []
         let invisiblePasses = (itemsByVisibility[.daylight] ?? []) + (itemsByVisibility[.unlit] ?? [])
@@ -40,54 +69,79 @@ struct AllPassesViewState: Equatable {
             visiblePasses: visiblePasses
                 .sorted { $0.pass.rise.julianDate < $1.pass.rise.julianDate },
             invisiblePasses: invisiblePasses
-                .sorted { $0.pass.rise.julianDate < $1.pass.rise.julianDate }
+                .sorted { $0.pass.rise.julianDate < $1.pass.rise.julianDate },
+            selectedPassIndex: state.selectedSatellitePassIndex
         )
     }
 
     static var empty: AllPassesViewState {
-        return AllPassesViewState()
+        AllPassesViewState()
     }
 }
 
 struct AllPassesView: View {
     @ObservedObject var viewModel: ObservableViewModel<AllPassesViewAction, AllPassesViewState>
+    @Environment(\.presentationMode) var presentationMode
 
     var skyChartProducer: ViewProducer<Int, SkyChart>
+    var passViewProducer: ViewProducer<Void, PassView>
 
-    var body: some View {
-        ScrollView {
-            LazyVGrid(
-                columns: [
-                    GridItem(.flexible(minimum: 180), spacing: 0),
-                    GridItem(.flexible(minimum: 180), spacing: 0)
-                ],
-                alignment: .center,
-                spacing: 16,
-                pinnedViews: [.sectionHeaders, .sectionFooters]
-            ) {
-                Section(header: Text("Visible Passes").font(.title)) {
-                    ForEach(viewModel.state.visiblePasses) { item in
-                        PassPreviewCell(
-                            pass: item.pass,
-                            indexOfPass: item.index,
-                            skyChartProducer: skyChartProducer
-                        )
-                        .frame(height: 110)
-                    }
+    private func navigationLink<Label: View>(index: Int, @ViewBuilder label: () -> Label) -> some View {
+        NavigationLink(
+            destination: passViewProducer.view(),
+            tag: index,
+            selection: Binding<Int?>(
+                get: {
+                    viewModel.state.selectedPassIndex
+                },
+                set: {
+                    viewModel.dispatch(.selectPass(index: $0))
                 }
-
-                Section(header: Text("Invisible Passes").font(.title)) {
-                    ForEach(viewModel.state.invisiblePasses) { item in
+            ),
+            label: label
+        )
+    }
+    
+    var body: some View {
+        List {
+            Section(header: Text("Visible Passes").font(.headline)) {
+                ForEach(viewModel.state.visiblePasses) { item in
+                    navigationLink(index: item.index) {
                         PassPreviewCell(
                             pass: item.pass,
                             indexOfPass: item.index,
                             skyChartProducer: skyChartProducer
                         )
-                        .frame(height: 110)
                     }
+                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 25))
+                    .frame(height: 135)
+                }
+            }
+
+            Section(header: Text("Invisible Passes").font(.headline)) {
+                ForEach(viewModel.state.invisiblePasses) { item in
+                    navigationLink(index: item.index) {
+                        PassPreviewCell(
+                            pass: item.pass,
+                            indexOfPass: item.index,
+                            skyChartProducer: skyChartProducer
+                        )
+                    }
+                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 25))
+                    .frame(height: 135)
                 }
             }
         }
+        .listStyle(GroupedListStyle())
+        .onAppear {
+            viewModel.dispatch(.onAppear)
+        }
+        .onChange(of: presentationMode.wrappedValue.isPresented) { [presentationMode] isPresented in
+            if presentationMode.wrappedValue.isPresented && !isPresented {
+                viewModel.dispatch(.backToList)
+            }
+        }
+        .navigationTitle("All Passes")
     }
 }
 
@@ -97,12 +151,14 @@ extension ViewProducer where Context == Void, ProducedView == AllPassesView {
             AllPassesView(
                 viewModel: viewModel
                     .projection(
-                        action: { _ -> AppAction in },
+                        action: { AppAction.allPassesView($0) },
                         state: AllPassesViewState.project(state:)
                     )
                     .asObservableViewModel(initialState: .empty),
                 skyChartProducer: ViewProducer<Int, SkyChart>
-                    .skyChartAsPreview(viewModel: viewModel)
+                    .skyChartAsPreview(viewModel: viewModel),
+                passViewProducer: ViewProducer<Void, PassView>
+                    .passView(viewModel: viewModel)
             )
         }
     }
@@ -129,6 +185,7 @@ struct AllPassesView_Previews: PreviewProvider {
         )
 
         return sat.findPasses(
+            noradIndex: tle.noradIndex,
             observer: observer,
             coarseSnapshots: snapshots
         )
@@ -163,7 +220,7 @@ struct AllPassesView_Previews: PreviewProvider {
                     ),
                     configs: SkyChartConfigs(
                         backgroundSky: SkyChartConfigs.BackgroundSky(
-                            showStars: false,
+                            stars: .limitedMagnitude(2),
                             showConstellationLines: false,
                             visibileBodies: [.sun, .moon],
                             bodySymbol: .symbol
@@ -173,9 +230,11 @@ struct AllPassesView_Previews: PreviewProvider {
                         azimuthMarkLength: 2,
                         showDirections: false,
                         showPassInfoLabels: false
-                    )
+                    ),
+                    usage: .preview
                 )
-            }
+            },
+            passViewProducer: .crash
         )
     }
 }

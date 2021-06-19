@@ -13,29 +13,31 @@ import CombineRex
 class Store: ReduxStoreBase<AppAction, AppState> {
     static let shared = Store()
 
+    private let reducers: [Reducer<AppAction, AppState>] = [
+        Reducer<CoreLocationOutputAction, CoreLocationState>.coreLocationReducer
+            .lift(action: \.coreLocationOutput, state: \.coreLocationState),
+        Reducer<TLELoaderInputAction, TLELoaderState>.tleLoaderReducer
+            .lift(action: \.tleLoaderInput, state: \.tleLoaderState),
+        Reducer<TLELoaderOutputAction, TLELoaderState>.tleLoaderReducer
+            .lift(action: \.tleLoaderOutput, state: \.tleLoaderState),
+        Reducer<SatelliteListViewAction, AppState>.satelliteListViewReducer
+            .lift(action: \.satelliteListView),
+        Reducer<AllPassesViewAction, AppState>.allPassesViewReducer
+            .lift(action: \.allPassesView),
+        Reducer<PassViewAction, AppState>.passViewReducer
+            .lift(action: \.passView),
+        Reducer<SkyChartAction, SkyChartResources>.skyChartReducer
+            .lift(action: \.skyChart, state: \.skyChartState),
+        Reducer<TLEPropagatorAction, AppState>.tlePropagatorReducer
+            .lift(action: \.tlePropagator),
+        Reducer<TimerAction, AppState>.timerReducer
+            .lift(action: \.timer)
+    ]
+
     private init() {
         super.init(
             subject: .combine(initialValue: .empty),
-            reducer: Reducer<CoreLocationOutputAction, CoreLocationState>.coreLocationReducer
-                .lift(action: \.coreLocationOutput, state: \.coreLocationState)
-
-                <> Reducer<TLELoaderInputAction, TLELoaderState>.tleLoaderReducer
-                .lift(action: \.tleLoaderInput, state: \.tleLoaderState)
-
-                <> Reducer<TLELoaderOutputAction, TLELoaderState>.tleLoaderReducer
-                .lift(action: \.tleLoaderOutput, state: \.tleLoaderState)
-
-                <> Reducer<SatelliteListViewAction, AppState>.satelliteListViewReducer
-                .lift(action: \.satelliteListView)
-
-                <> Reducer<SkyChartAction, SkyChartRootState>.skyChartReducer
-                .lift(action: \.skyChart, state: \.skyChartState)
-
-                <> Reducer<TLEPropagatorAction, AppState>.tlePropagatorReducer
-                .lift(action: \.tlePropagator)
-
-                <> Reducer<TimerAction, AppState>.timerReducer
-                .lift(action: \.timer),
+            reducer: reducers.reduce(Reducer<AppAction, AppState>.identity, <>),
             middleware: CoreLocationMiddleware()
                 .lift(
                     inputAction: \AppAction.coreLocationInput,
@@ -65,16 +67,15 @@ class Store: ReduxStoreBase<AppAction, AppState> {
                     inputAction: { $0.satelliteListView }
                 )
 
-                <> EffectMiddleware.passView
+                <> EffectMiddleware.allPassesView
                 .lift(
-                    inputAction: { $0.passView }
+                    inputAction: { $0.allPassesView }
                 )
 
                 <> EffectMiddleware.skyChart
                 .lift(
                     inputAction: { $0.skyChart },
-                    outputAction: AppAction.skyChart,
-                    state: \.skyChartState
+                    outputAction: AppAction.skyChart
                 )
 
                 <> EffectMiddleware.timer

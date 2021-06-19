@@ -8,11 +8,13 @@
 import Foundation
 
 enum AppAction {
+    case appDelegate(AppDelegateAction)
     case coreLocationInput(CoreLocationInputAction)
     case coreLocationOutput(CoreLocationOutputAction)
     case tleLoaderInput(TLELoaderInputAction)
     case tleLoaderOutput(TLELoaderOutputAction)
     case satelliteListView(SatelliteListViewAction)
+    case allPassesView(AllPassesViewAction)
     case passView(PassViewAction)
     case satelliteElevationGraph(SatelliteElevationGraphAction)
     case skyChart(SkyChartAction)
@@ -21,6 +23,17 @@ enum AppAction {
 }
 
 extension AppAction {
+    public var appDelegate: AppDelegateAction? {
+        get {
+            guard case let .appDelegate(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .appDelegate = self, let newValue = newValue else { return }
+            self = .appDelegate(newValue)
+        }
+    }
+
     public var coreLocationInput: CoreLocationInputAction? {
         get {
             guard case let .coreLocationInput(value) = self else { return nil }
@@ -84,6 +97,17 @@ extension AppAction {
         set {
             guard case .passView = self, let newValue = newValue else { return }
             self = .passView(newValue)
+        }
+    }
+
+    public var allPassesView: AllPassesViewAction? {
+        get {
+            guard case let .allPassesView(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .allPassesView = self, let newValue = newValue else { return }
+            self = .allPassesView(newValue)
         }
     }
 
