@@ -110,6 +110,17 @@ extension AppAction {
             self = .allPassesView(newValue)
         }
     }
+    
+    public var satelliteElevationGraph: SatelliteElevationGraphAction? {
+        get {
+            guard case let .satelliteElevationGraph(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .satelliteElevationGraph = self, let newValue = newValue else { return }
+            self = .satelliteElevationGraph(newValue)
+        }
+    }
 
     public var skyChart: SkyChartAction? {
         get {

@@ -15,6 +15,7 @@ struct AppState: Equatable {
     var julianDateRange: Range<Double>
     var satelliteElevationGraphConfigs: SatelliteElevationGraphConfigs = .preset
     var skyChartState: SkyChartResources = .empty
+    var satelliteElevationGraphResources: SatelliteElevationGraphResources = .empty
     /// A mapping from NORAD ID to the satellite state.
     var satellites: [Int: SatelliteState] = [:]
     var tleLoaderState: TLELoaderState = .empty

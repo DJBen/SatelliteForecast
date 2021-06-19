@@ -33,7 +33,7 @@ extension EffectMiddleware where
         EffectMiddleware<AllPassesViewAction, AppAction, AppState, Void>
             .onAction { (action, _, getState) -> Effect<Void, AppAction> in
                 switch action {
-                case let .onAppear:
+                case .onAppear:
                     return Effect { context -> AnyPublisher<DispatchedAction<AppAction>, Never> in
                         let state = getState()
 

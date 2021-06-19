@@ -164,6 +164,7 @@ extension ViewProducer where Context == Void, ProducedView == AllPassesView {
     }
 }
 
+#if DEBUG
 struct AllPassesView_Previews: PreviewProvider {
     static let tianHePasses: (passes: [PassInformation], snapshots: Map<Double, SatelliteSnapshot>) = {
         let tle = try! TLE(
@@ -238,3 +239,4 @@ struct AllPassesView_Previews: PreviewProvider {
         )
     }
 }
+#endif

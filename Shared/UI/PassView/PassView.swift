@@ -97,6 +97,7 @@ extension ViewProducer where Context == Void, ProducedView == PassView {
 
 import CoreLocation
 
+#if DEBUG
 struct PassView_Previews: PreviewProvider {
     static var previews: some View {
         let tle = try! TLE(
@@ -166,3 +167,4 @@ struct PassView_Previews: PreviewProvider {
         )
     }
 }
+#endif

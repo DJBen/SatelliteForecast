@@ -37,15 +37,16 @@ struct SunlightIndicatorViewModel {
             }
         }
     }
+
     fileprivate let sunlightGradientStops: [Gradient.Stop]
     fileprivate let sunEventsXCoord: (CGRect) -> [(SunEvent, CGFloat)]
 
     init(
-        snapshots: Map<Double, SatelliteSnapshot>,
-        julianDateRange: Range<Double>
+        julianDateElevations: Map<Double, Double>
     ) {
         sunlightGradientStops = {
-            guard let (_, firstSnapshot) = snapshots.first else {
+            guard let (startDate, firstElevation) = julianDateElevations.first,
+                  let (endDate, lastElevation) = julianDateElevations.last else {
                 return []
             }
 
@@ -71,47 +72,49 @@ struct SunlightIndicatorViewModel {
                 fatalError("Elevation should between -90 and 90")
             }
             var stops = [Gradient.Stop]()
-            stops.append(Gradient.Stop(color: color(elevation: firstSnapshot.sunElevation), location: 0))
+            stops.append(Gradient.Stop(color: color(elevation: firstElevation), location: 0))
 
-            for index in snapshots.indices where index < snapshots.index(before: snapshots.endIndex) {
-                let s1 = snapshots[index].1
-                let s2 = snapshots[snapshots.index(after: index)].1
+            for index in julianDateElevations.indices where index < julianDateElevations.index(before: julianDateElevations.endIndex) {
+                let (d1, e1) = julianDateElevations[index]
+                let e2 = julianDateElevations[julianDateElevations.index(after: index)].1
 
-                let location: CGFloat = CGFloat((s1.julianDate - julianDateRange.lowerBound) / (julianDateRange.upperBound - julianDateRange.lowerBound))
+                let location: CGFloat = CGFloat((d1 - startDate) / (endDate - startDate))
 
                 for (boundary, color) in boundaries {
-                    if (s1.sunElevation > boundary && s2.sunElevation <= boundary) ||
-                        (s1.sunElevation < boundary && s2.sunElevation >= boundary) {
+                    if (e1 > boundary && e2 <= boundary) ||
+                        (e1 < boundary && e2 >= boundary) {
                         stops.append(Gradient.Stop(color: color, location: location))
                     }
                 }
             }
 
-            stops.append(Gradient.Stop(color: color(elevation: snapshots.last!.1.sunElevation), location: 1))
+            stops.append(Gradient.Stop(color: color(elevation: lastElevation), location: 1))
 
             return stops
         }()
 
-        let snapshotsSplitBySunriseOrSet = snapshots.split { s1, s2 in
-            (s1.1.sunElevation > 0 && s2.1.sunElevation <= 0) ||
-                (s1.1.sunElevation <= 0 && s2.1.sunElevation > 0)
+        let jdElevationsSplitBySunriseOrSet = julianDateElevations.split { s1, s2 in
+            (s1.1 > 0 && s2.1 <= 0) ||
+                (s1.1 <= 0 && s2.1 > 0)
         }
 
         let sunEventsXPercent: [(SunEvent, CGFloat)] = {
-            if snapshotsSplitBySunriseOrSet.isEmpty {
+            guard let (startDate, _) = julianDateElevations.first,
+                  let (endDate, _) = julianDateElevations.last else {
                 return []
             }
+
             var results = [(SunEvent, CGFloat)]()
-            for i in 0..<snapshotsSplitBySunriseOrSet.count - 1 {
-                let (s1, s2) = (snapshotsSplitBySunriseOrSet[i], snapshotsSplitBySunriseOrSet[i + 1])
-                guard let (_, last) = s1.last, let (_, first) = s2.first else {
+            for i in 0..<jdElevationsSplitBySunriseOrSet.count - 1 {
+                let (s1, s2) = (jdElevationsSplitBySunriseOrSet[i], jdElevationsSplitBySunriseOrSet[i + 1])
+                guard let (prevDate, prevElev) = s1.last, let (_, nextElev) = s2.first else {
                     continue
                 }
-                if last.sunElevation <= 0 && first.sunElevation > 0 {
-                    let percent = (last.julianDate - julianDateRange.lowerBound) / (julianDateRange.upperBound - julianDateRange.lowerBound)
+                if prevElev <= 0 && nextElev > 0 {
+                    let percent = (prevDate - startDate) / (endDate - startDate)
                     results.append((.rise, CGFloat(percent)))
-                } else if last.sunElevation > 0 && first.sunElevation <= 0 {
-                    let percent = (last.julianDate - julianDateRange.lowerBound) / (julianDateRange.upperBound - julianDateRange.lowerBound)
+                } else if prevElev > 0 && nextElev <= 0 {
+                    let percent = (prevDate - startDate) / (endDate - startDate)
                     results.append((.set, CGFloat(percent)))
                 }
             }
@@ -167,7 +170,7 @@ struct SunlightIndicator: View {
     }
 }
 
-
+#if DEBUG
 struct SunlightIndicator_Previews: PreviewProvider {
     static var previews: some View {
         let tle = try! TLE(
@@ -182,15 +185,19 @@ struct SunlightIndicator_Previews: PreviewProvider {
         let observerCoordinate = LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0)
         // Date range
         let julianDateRange = Date().advanced(by: -60 * 60 * 2).julianDate..<Date().advanced(by: 60 * 60 * 30).julianDate
+
+        let jdElevs = sat.snapshots(
+            observer: observerCoordinate,
+            julianDateRange: julianDateRange,
+            interval: 60
+        )
+        .map { ($0, $1.sunElevation) }
+        .reduce(into: Map<Double, Double>(), { $0[$1.0] = $1.1 })
         let viewModel = SunlightIndicatorViewModel(
-            snapshots: sat.snapshots(
-                observer: observerCoordinate,
-                julianDateRange: julianDateRange,
-                interval: 60
-            ),
-            julianDateRange: julianDateRange
+            julianDateElevations: jdElevs
         )
         SunlightIndicator(viewModel: viewModel)
             .previewLayout(.fixed(width: 320, height: 24))
     }
 }
+#endif

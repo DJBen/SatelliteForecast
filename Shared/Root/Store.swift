@@ -26,6 +26,8 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             .lift(action: \.allPassesView),
         Reducer<PassViewAction, AppState>.passViewReducer
             .lift(action: \.passView),
+        Reducer<SatelliteElevationGraphAction, SatelliteElevationGraphResources>.satelliteElevationGraphReducer
+            .lift(action: \.satelliteElevationGraph, state: \.satelliteElevationGraphResources),
         Reducer<SkyChartAction, SkyChartResources>.skyChartReducer
             .lift(action: \.skyChart, state: \.skyChartState),
         Reducer<TLEPropagatorAction, AppState>.tlePropagatorReducer
@@ -34,57 +36,76 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             .lift(action: \.timer)
     ]
 
+    let middleware: ComposedMiddleware<AppAction, AppAction, AppState> =
+        CoreLocationMiddleware()
+            .lift(
+                inputAction: \AppAction.coreLocationInput,
+                outputAction: AppAction.coreLocationOutput,
+                state: \AppState.coreLocationState
+            )
+        .eraseToAnyMiddleware()
+
+        <> EffectMiddleware.coreLocationLogger
+        .lift(
+            inputAction: { $0.coreLocationOutput },
+            outputAction: { _ -> AppAction in },
+            state: { _ in }
+        )
+        .eraseToAnyMiddleware()
+
+        <> EffectMiddleware.tleLoader
+        .lift(
+            inputAction: \AppAction.tleLoaderInput,
+            outputAction: AppAction.tleLoaderOutput,
+            state: \AppState.tleLoaderState
+        )
+        .inject(
+            TLELoaderDependencies()
+        )
+        .eraseToAnyMiddleware()
+
+        <> EffectMiddleware.satelliteListView
+        .lift(
+            inputAction: { $0.satelliteListView }
+        )
+        .eraseToAnyMiddleware()
+
+
+        <> EffectMiddleware.allPassesView
+        .lift(
+            inputAction: { $0.allPassesView }
+        )
+        .eraseToAnyMiddleware()
+
+
+        <> EffectMiddleware.skyChart
+        .lift(
+            inputAction: { $0.skyChart },
+            outputAction: AppAction.skyChart
+        )
+        .eraseToAnyMiddleware()
+
+        <> EffectMiddleware<SatelliteElevationGraphAction, SatelliteElevationGraphAction, AppState, Void>.satelliteElevationGraph
+        .lift(
+            inputAction: { $0.satelliteElevationGraph },
+            outputAction: AppAction.satelliteElevationGraph
+        )
+        .eraseToAnyMiddleware()
+
+        <> EffectMiddleware.timer
+        .lift(
+            inputAction: { $0.timer },
+            outputAction: AppAction.timer
+        )
+        .eraseToAnyMiddleware()
+
+        // <> LoggerMiddleware()
+
     private init() {
         super.init(
             subject: .combine(initialValue: .empty),
             reducer: reducers.reduce(Reducer<AppAction, AppState>.identity, <>),
-            middleware: CoreLocationMiddleware()
-                .lift(
-                    inputAction: \AppAction.coreLocationInput,
-                    outputAction: AppAction.coreLocationOutput,
-                    state: \.coreLocationState
-                )
-
-                <> EffectMiddleware.coreLocationLogger
-                .lift(
-                    inputAction: { $0.coreLocationOutput },
-                    outputAction: { _ -> AppAction in },
-                    state: { _ in }
-                )
-
-                <> EffectMiddleware.tleLoader
-                .lift(
-                    inputAction: \AppAction.tleLoaderInput,
-                    outputAction: AppAction.tleLoaderOutput,
-                    state: \AppState.tleLoaderState
-                )
-                .inject(
-                    TLELoaderDependencies()
-                )
-
-                <> EffectMiddleware.satelliteListView
-                .lift(
-                    inputAction: { $0.satelliteListView }
-                )
-
-                <> EffectMiddleware.allPassesView
-                .lift(
-                    inputAction: { $0.allPassesView }
-                )
-
-                <> EffectMiddleware.skyChart
-                .lift(
-                    inputAction: { $0.skyChart },
-                    outputAction: AppAction.skyChart
-                )
-
-                <> EffectMiddleware.timer
-                .lift(
-                    inputAction: { $0.timer },
-                    outputAction: AppAction.timer
-                )
-
-//                <> LoggerMiddleware()
+            middleware: middleware
         )
     }
 }

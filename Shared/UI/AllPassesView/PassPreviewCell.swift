@@ -107,6 +107,7 @@ struct PassPreviewCell: View, Equatable {
     }
 }
 
+#if DEBUG
 struct PassPreviewCell_Previews: PreviewProvider {
     static var previews: some View {
         let tle = try! TLE(
@@ -179,3 +180,4 @@ struct PassPreviewCell_Previews: PreviewProvider {
         }
     }
 }
+#endif

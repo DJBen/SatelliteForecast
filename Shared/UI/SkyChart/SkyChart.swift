@@ -574,6 +574,7 @@ extension ViewProducer where Context == Void, ProducedView == SkyChart {
     }
 }
 
+#if DEBUG
 struct SkyChart_Previews: PreviewProvider {
     static let issPass: (PassInformation, Map<Double, SatelliteSnapshot>) = {
         let tle = try! TLE(
@@ -634,7 +635,8 @@ struct SkyChart_Previews: PreviewProvider {
     static var previews: some View {
         let (pass, snapshots) = issPass
 
-        ForEach(ColorScheme.allCases, id: \.self) {
+        ForEach(ColorScheme.allCases, id: \.self) { colorScheme in
+            let traitCollection = UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
             SkyChart(
                 viewModel: .mock(
                     state: SkyChartViewState(
@@ -647,8 +649,8 @@ struct SkyChart_Previews: PreviewProvider {
                             .primary: SkyChart.rasterizedPath(
                                 rect: CGRect(origin: .zero, size: CGSize(width: 388, height: 805)),
                                 snapshotsDuringPass: snapshots,
-                                illuminatedColor: UIColor(Color("satellitePath_illuminated")),
-                                unlitColor: UIColor(Color("satellitePath_notIlluminated"))
+                                illuminatedColor: UIColor(named: "satellitePath_illuminated", in: nil, compatibleWith: traitCollection)!,
+                            unlitColor: UIColor(named: "satellitePath_notIlluminated", in: nil, compatibleWith: traitCollection)!
                             )
                         ]
                     )
@@ -657,7 +659,7 @@ struct SkyChart_Previews: PreviewProvider {
                 usage: .primary
             )
             .padding(20)
-            .preferredColorScheme($0)
+            .preferredColorScheme(colorScheme)
         }
 
         let (pass2, snapshots2) = tianHePass
@@ -694,3 +696,4 @@ struct SkyChart_Previews: PreviewProvider {
         .previewDisplayName("Placeholder")
     }
 }
+#endif

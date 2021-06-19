@@ -93,6 +93,7 @@ extension ViewProducer where Context == Void, ProducedView == SatelliteListView 
     }
 }
 
+#if DEBUG
 struct SatelliteListView_Previews: PreviewProvider {
     static var previews: some View {
         let brightest100 = [
@@ -124,3 +125,4 @@ struct SatelliteListView_Previews: PreviewProvider {
         )
     }
 }
+#endif
