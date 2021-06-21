@@ -108,7 +108,7 @@ struct AppState: Equatable {
     var selectedSatellitePass: PassInformation? {
         switch navigationState {
         case let .pass(noradIndex, selectedPassIndex):
-            return satellites[noradIndex]?.passes[selectedPassIndex]
+            return satellites[noradIndex]?.passes?[selectedPassIndex]
         default:
             return nil
         }

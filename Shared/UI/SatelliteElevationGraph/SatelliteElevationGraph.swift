@@ -437,7 +437,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                             julianDateRange: julianDateRange,
                             interval: 20
                         ),
-                        passes: []
+                        passes: nil
                     )
                 ],
                 tleLoaderState: TLELoaderState(standaloneTLEs: [tle]),
@@ -470,7 +470,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                             julianDateRange: julianDateRange,
                             interval: 20
                         ),
-                        passes: []
+                        passes: nil
                     )
                 ],
                 tleLoaderState: TLELoaderState(standaloneTLEs: [tle2]),
@@ -503,7 +503,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                             julianDateRange: julianDateRange,
                             interval: 20
                         ),
-                        passes: []
+                        passes: nil
                     )
                 ],
                 tleLoaderState: TLELoaderState(standaloneTLEs: [tle3]),

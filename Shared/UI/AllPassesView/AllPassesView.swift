@@ -42,18 +42,25 @@ struct AllPassesViewState: Equatable {
         }
     }
 
+    var satelliteName: String?
     var observer: LatLonAlt?
+    var isLoading: Bool = false
     var visiblePasses: [Item] = []
     var invisiblePasses: [Item] = []
     var selectedPassIndex: Int?
 
     static func project(state: AppState) -> AllPassesViewState {
         guard let selectedNoradIndex = state.selectedSatelliteNoradIndex,
-            let satelliteState = state.satellites[selectedNoradIndex] else {
+            let satelliteState = state.satellites[selectedNoradIndex],
+            let tle = state.selectedSatelliteTLE else {
             return .empty
         }
 
-        let items = satelliteState.passes.enumerated().map { i, pass -> Item in
+        guard let passes = satelliteState.passes else {
+            return AllPassesViewState(isLoading: true)
+        }
+
+        let items = passes.enumerated().map { i, pass -> Item in
             let rasterizedSatellitePath = state.skyChartState.rasterizedSatellitePaths[pass]?[.preview]
             let rasterizedBackgroundSky: UIImage?
             if let observer = state.observerForPasses {
@@ -67,6 +74,7 @@ struct AllPassesViewState: Equatable {
         let visiblePasses = itemsByVisibility[.visible] ?? []
         let invisiblePasses = (itemsByVisibility[.daylight] ?? []) + (itemsByVisibility[.unlit] ?? [])
         return AllPassesViewState(
+            satelliteName: tle.commonName,
             observer: state.observerForPasses,
             visiblePasses: visiblePasses
                 .sorted { $0.pass.rise.julianDate < $1.pass.rise.julianDate },
@@ -108,35 +116,35 @@ struct AllPassesView: View, Equatable {
             label: label
         )
     }
+
+    private func passesList(_ items: [AllPassesViewState.Item]) -> some View {
+        if viewModel.state.isLoading {
+            return AnyView(ProgressView("Calculating..."))
+        } else if items.isEmpty {
+            return AnyView(Text("No passes found"))
+        } else {
+            return AnyView(ForEach(items) { item in
+                navigationLink(index: item.index) {
+                    PassPreviewCell(
+                        pass: item.pass,
+                        indexOfPass: item.index,
+                        skyChartProducer: skyChartProducer
+                    )
+                }
+                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 25))
+                .frame(height: 135)
+            })
+        }
+    }
     
     var body: some View {
         List {
             Section(header: Text("Visible Passes").font(.headline)) {
-                ForEach(viewModel.state.visiblePasses) { item in
-                    navigationLink(index: item.index) {
-                        PassPreviewCell(
-                            pass: item.pass,
-                            indexOfPass: item.index,
-                            skyChartProducer: skyChartProducer
-                        )
-                    }
-                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 25))
-                    .frame(height: 135)
-                }
+                passesList(viewModel.state.visiblePasses)
             }
 
             Section(header: Text("Invisible Passes").font(.headline)) {
-                ForEach(viewModel.state.invisiblePasses) { item in
-                    navigationLink(index: item.index) {
-                        PassPreviewCell(
-                            pass: item.pass,
-                            indexOfPass: item.index,
-                            skyChartProducer: skyChartProducer
-                        )
-                    }
-                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 25))
-                    .frame(height: 135)
-                }
+                passesList(viewModel.state.invisiblePasses)
             }
         }
         .listStyle(GroupedListStyle())
@@ -148,7 +156,7 @@ struct AllPassesView: View, Equatable {
                 viewModel.dispatch(.backToList)
             }
         }
-        .navigationTitle("All Passes")
+        .navigationTitle(viewModel.state.satelliteName ?? "All Passes")
         .navigationBarTitleDisplayMode(.inline)
     }
 }
@@ -211,6 +219,37 @@ struct AllPassesView_Previews: PreviewProvider {
         let visiblePasses = itemsByVisibility[.visible] ?? []
         let invisiblePasses = (itemsByVisibility[.daylight] ?? []) + (itemsByVisibility[.unlit] ?? [])
         let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
+
+        AllPassesView(
+            viewModel: .mock(
+                state: AllPassesViewState(
+                    isLoading: true
+                )
+            ),
+            context: AllPassesViewContext(),
+            skyChartProducer: .pure(
+                SkyChart(
+                    viewModel: .mock(
+                        state: .empty
+                    ),
+                    configs: SkyChartConfigs(
+                        backgroundSky: SkyChartConfigs.BackgroundSky(
+                            stars: .limitedMagnitude(2),
+                            showConstellationLines: false,
+                            visibileBodies: [.sun, .moon],
+                            bodySymbol: .symbol
+                        ),
+                        showAzimuthTexts: false,
+                        azimuthMarkInterval: 90,
+                        azimuthMarkLength: 2,
+                        showDirections: false,
+                        showPassInfoLabels: false
+                    ),
+                    usage: .preview
+                )
+            ),
+            passViewProducer: .crash
+        )
 
         AllPassesView(
             viewModel: .mock(

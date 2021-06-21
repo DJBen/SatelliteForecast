@@ -60,8 +60,9 @@ extension EffectMiddleware where
 
                             // Use cached satellite ephemerides if calculated within the last hour.
                             if let satelliteState = state.selectedSatelliteState,
-                               state.julianDateRange.lowerBound - satelliteState.snapshots.first!.1.julianDate < TimeConstants.hrs2day {
-                                passes = satelliteState.passes
+                               state.julianDateRange.lowerBound - satelliteState.snapshots.first!.1.julianDate < TimeConstants.hrs2day,
+                               let existingPasses = satelliteState.passes {
+                                passes = existingPasses
                                 fineSnapshots = satelliteState.snapshots
                                 logger.debug("Ephemeride of \(noradIndex) are already generated. Skipping.")
                             } else {

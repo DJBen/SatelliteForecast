@@ -112,13 +112,16 @@ struct SkyChartViewState: Equatable {
         guard let observerCoodinate = state.observerForPasses else {
             return SkyChartViewState(mode: .notReady)
         }
+
         let displayPass: (PassInformation, Map<Double, SatelliteSnapshot>)? = {
             switch state.navigationState {
             case let .allPasses(noradIndex: noradIndex):
-                guard let satelliteState = state.satellites[noradIndex], index < satelliteState.passes.count else {
+                guard let satelliteState = state.satellites[noradIndex],
+                      let passes = satelliteState.passes,
+                      index < passes.count else {
                     return nil
                 }
-                let pass = satelliteState.passes[index]
+                let pass = passes[index]
                 // TODO: conditionally generate submap, or rasterized path
                 let subMap = satelliteState.snapshots.submap(from: pass.rise.julianDate, through: pass.set.julianDate)
                 return (pass, subMap)
@@ -141,10 +144,11 @@ struct SkyChartViewState: Equatable {
         let selectedPass: (PassInformation, Map<Double, SatelliteSnapshot>)? = {
             switch state.navigationState {
             case let .pass(noradIndex: noradIndex, selectedPassIndex: selectedPassIndex):
-                guard let satelliteState = state.satellites[noradIndex] else {
+                guard let satelliteState = state.satellites[noradIndex],
+                      let passes = satelliteState.passes else {
                     return nil
                 }
-                let pass = satelliteState.passes[selectedPassIndex]
+                let pass = passes[selectedPassIndex]
                 let subMap = satelliteState.snapshots.submap(from: pass.rise.julianDate, through: pass.set.julianDate)
                 return (pass, subMap)
             default:

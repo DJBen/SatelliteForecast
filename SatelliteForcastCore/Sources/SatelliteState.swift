@@ -16,11 +16,11 @@ import SatelliteKit
 /// - Passes The pass information describing the exact time of rise and set, and sun illumination changes during the pass.
 public struct SatelliteState: Equatable {
     public var snapshots: Map<Double, SatelliteSnapshot>
-    public var passes: [PassInformation]
+    public var passes: [PassInformation]?
 
     public init(
         snapshots: Map<Double, SatelliteSnapshot> = Map(),
-        passes: [PassInformation] = []
+        passes: [PassInformation]? = nil
     ) {
         self.snapshots = snapshots
         self.passes = passes
