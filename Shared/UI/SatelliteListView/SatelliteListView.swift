@@ -35,7 +35,14 @@ struct SatelliteListViewState: Equatable {
 struct SatelliteListView: View {
     @ObservedObject var viewModel: ObservableViewModel<SatelliteListViewAction, SatelliteListViewState>
 
-    var allPassesViewProducer: ViewProducer<Void, AllPassesView>
+    var allPassesViewProducer: ViewProducer<AllPassesViewContext, AllPassesView>
+
+    var destination: some View {
+        allPassesViewProducer.view(
+            AllPassesViewContext()
+        )
+        .equatable()
+    }
 
     var body: some View {
         NavigationView {
@@ -52,7 +59,7 @@ struct SatelliteListView: View {
                         ) {
                             ForEach(viewModel.state.tlesByCategory[category] ?? [], id: \.noradIndex) { tle in
                                 NavigationLink(
-                                    destination: allPassesViewProducer.view(),
+                                    destination: destination,
                                     tag: tle.noradIndex,
                                     selection: Binding<Int?>(
                                         get: { viewModel.state.selectedNoradIndex },
@@ -78,7 +85,7 @@ struct SatelliteListView: View {
 
 extension ViewProducer where Context == Void, ProducedView == SatelliteListView {
     static func satelliteListView<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
-        ViewProducer<Context, ProducedView> {
+        ViewProducer<Context, ProducedView> { context in
             SatelliteListView(
                 viewModel: viewModel
                     .projection(
@@ -86,7 +93,7 @@ extension ViewProducer where Context == Void, ProducedView == SatelliteListView 
                         state: SatelliteListViewState.project(state:)
                     )
                     .asObservableViewModel(initialState: .empty),
-                allPassesViewProducer: ViewProducer<Void, AllPassesView>
+                allPassesViewProducer: ViewProducer<AllPassesViewContext, AllPassesView>
                     .allPassesView(viewModel: viewModel)
             )
         }

@@ -22,7 +22,7 @@ public struct PassInformation {
     /// The time and elevation when satellite rises above the horizon.
     /// At least one of `rise` and `set` must exist.
     public let rise: DateElev
-    /// The time when satellite sets below the horizon.
+    /// The time and elevation when satellite sets below the horizon.
     /// At least one of `rise` and `set` must exist.
     public let set: DateElev
 

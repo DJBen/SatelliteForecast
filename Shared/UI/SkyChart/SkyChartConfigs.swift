@@ -16,6 +16,7 @@ struct SkyChartConfigs {
         }
         var stars: Stars = .limitedMagnitude(4.5)
         var starMagToDisplayRadius: (Double) -> CGFloat = { CGFloat(3 * exp(0.425 * -$0)) }
+        var hidesStarsDuringDay: Bool = true
         var showConstellationLines: Bool = true
 
         struct PlantaryBody: OptionSet {
@@ -64,5 +65,22 @@ struct SkyChartConfigs {
 
     static var preset: SkyChartConfigs {
         return SkyChartConfigs()
+    }
+
+    static var preview: SkyChartConfigs {
+        SkyChartConfigs(
+            backgroundSky: SkyChartConfigs.BackgroundSky(
+                stars: .limitedMagnitude(2.25),
+                starMagToDisplayRadius: { CGFloat(1.5 * exp(0.5 * -$0)) },
+                showConstellationLines: false,
+                visibileBodies: [.sun, .moon],
+                bodySymbol: .symbol
+            ),
+            showAzimuthTexts: false,
+            azimuthMarkInterval: 90,
+            azimuthMarkLength: 2,
+            showDirections: false,
+            showPassInfoLabels: false
+        )
     }
 }

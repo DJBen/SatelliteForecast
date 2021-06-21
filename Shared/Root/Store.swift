@@ -33,7 +33,8 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         Reducer<TLEPropagatorAction, AppState>.tlePropagatorReducer
             .lift(action: \.tlePropagator),
         Reducer<TimerAction, AppState>.timerReducer
-            .lift(action: \.timer)
+            .lift(action: \.timer),
+        Reducer<AppAction, AppState>.appStateReducer
     ]
 
     let middleware: ComposedMiddleware<AppAction, AppAction, AppState> =

@@ -66,12 +66,12 @@ extension EffectMiddleware where
                         let state = getState()
                         // Skip if image already generated.
                         if let _ = state.skyChartState.rasterizedSatellitePaths[pass]?[usage] {
-                            logger.debug("\(pass.noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate) already rasterized, skipping.")
+//                            logger.debug("\(pass.noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate) already rasterized, skipping.")
                             return
                         }
 
                         guard let snapshots = state.satellites[pass.noradIndex]?.snapshots else {
-                            logger.debug("\(pass.noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate) lacks snapshots: rasterization on hold")
+//                            logger.debug("\(pass.noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate) lacks snapshots: rasterization on hold")
                             return
                         }
 

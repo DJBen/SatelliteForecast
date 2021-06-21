@@ -19,7 +19,7 @@ struct PassPreviewCell: View, Equatable {
 
     var pass: PassInformation
     var indexOfPass: Int
-    var skyChartProducer: ViewProducer<Int, SkyChart>
+    var skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
 
     static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -101,8 +101,11 @@ struct PassPreviewCell: View, Equatable {
                 }
             }
 
-            skyChartProducer.view(indexOfPass)
-                .padding(5)
+            skyChartProducer.view(
+                SkyChartContext(usage: .preview(index: indexOfPass))
+            )
+            .equatable()
+            .padding(5)
         }
     }
 }

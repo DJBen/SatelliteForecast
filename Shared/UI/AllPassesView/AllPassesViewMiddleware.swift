@@ -44,8 +44,10 @@ extension EffectMiddleware where
                         }
 
                         // Precondition: An observer coordinate must exist
-                        guard let observerCoordinate = state.coreLocationState.location.map(LatLonAlt.init) else {
-                            logger.info("Will not generate satellite \(noradIndex) ephemerides: lack of user coordinate")
+                        // Freeze the coordinate during the pass viewing workflow, so the coordinate
+                        // stays the same.
+                        guard let observer = state.coreLocationState.location.map(LatLonAlt.init) else {
+                           logger.info("Will not generate satellite \(noradIndex) ephemerides: lack of core location coordinate")
                             return Empty().eraseToAnyPublisher()
                         }
 
@@ -66,10 +68,11 @@ extension EffectMiddleware where
                                 let satellite = Satellite(withTLE: tle)
                                 let snapshots = satellite
                                     .snapshots(
-                                        observer: observerCoordinate,
+                                        observer: observer,
                                         julianDateRange: state.julianDateRange,
                                         interval: 30
                                     )
+
                                 subject.send(
                                     DispatchedAction<AppAction>(
                                         .tlePropagator(.propagatedSnapshots(snapshots, noradIndex: noradIndex))
@@ -79,7 +82,7 @@ extension EffectMiddleware where
                                 (passes, fineSnapshots) = satellite
                                     .findPasses(
                                         noradIndex: Int(satellite.noradIdent)!,
-                                        observer: observerCoordinate,
+                                        observer: observer,
                                         coarseSnapshots: snapshots
                                     )
 

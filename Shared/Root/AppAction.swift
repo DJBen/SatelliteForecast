@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SatelliteKit
 
 enum AppAction {
     case appDelegate(AppDelegateAction)
@@ -20,6 +21,10 @@ enum AppAction {
     case skyChart(SkyChartAction)
     case tlePropagator(TLEPropagatorAction)
     case timer(TimerAction)
+
+    /// Freeze the observer location to be consumed by the passing view workflow, so that the location changes won't trigger reload
+    /// that drags performances and (in specific circumtances) cause UI bugs.
+    case freezeObserverLocation(LatLonAlt)
 }
 
 extension AppAction {
@@ -110,7 +115,7 @@ extension AppAction {
             self = .allPassesView(newValue)
         }
     }
-    
+
     public var satelliteElevationGraph: SatelliteElevationGraphAction? {
         get {
             guard case let .satelliteElevationGraph(value) = self else { return nil }

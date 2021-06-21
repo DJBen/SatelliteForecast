@@ -42,6 +42,7 @@ struct AllPassesViewState: Equatable {
         }
     }
 
+    var observer: LatLonAlt?
     var visiblePasses: [Item] = []
     var invisiblePasses: [Item] = []
     var selectedPassIndex: Int?
@@ -55,7 +56,7 @@ struct AllPassesViewState: Equatable {
         let items = satelliteState.passes.enumerated().map { i, pass -> Item in
             let rasterizedSatellitePath = state.skyChartState.rasterizedSatellitePaths[pass]?[.preview]
             let rasterizedBackgroundSky: UIImage?
-            if let observer = state.coreLocationState.location.map(LatLonAlt.init) {
+            if let observer = state.observerForPasses {
                 rasterizedBackgroundSky = state.skyChartState.rasterizedBackgroundSky[SkyChartSatelliteBackgroundSkyKey(observer: observer, julianDate: pass.rise.julianDate)]?[.preview]
             } else {
                 rasterizedBackgroundSky = nil
@@ -66,6 +67,7 @@ struct AllPassesViewState: Equatable {
         let visiblePasses = itemsByVisibility[.visible] ?? []
         let invisiblePasses = (itemsByVisibility[.daylight] ?? []) + (itemsByVisibility[.unlit] ?? [])
         return AllPassesViewState(
+            observer: state.observerForPasses,
             visiblePasses: visiblePasses
                 .sorted { $0.pass.rise.julianDate < $1.pass.rise.julianDate },
             invisiblePasses: invisiblePasses
@@ -79,16 +81,21 @@ struct AllPassesViewState: Equatable {
     }
 }
 
-struct AllPassesView: View {
+struct AllPassesView: View, Equatable {
+    static func == (lhs: AllPassesView, rhs: AllPassesView) -> Bool {
+        return lhs.viewModel.state == rhs.viewModel.state
+    }
+
     @ObservedObject var viewModel: ObservableViewModel<AllPassesViewAction, AllPassesViewState>
     @Environment(\.presentationMode) var presentationMode
 
-    var skyChartProducer: ViewProducer<Int, SkyChart>
-    var passViewProducer: ViewProducer<Void, PassView>
+    var context: AllPassesViewContext
+    var skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
+    var passViewProducer: ViewProducer<PassViewContext, PassView>
 
     private func navigationLink<Label: View>(index: Int, @ViewBuilder label: () -> Label) -> some View {
         NavigationLink(
-            destination: passViewProducer.view(),
+            destination: passViewProducer.view(PassViewContext()),
             tag: index,
             selection: Binding<Int?>(
                 get: {
@@ -142,12 +149,16 @@ struct AllPassesView: View {
             }
         }
         .navigationTitle("All Passes")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
-extension ViewProducer where Context == Void, ProducedView == AllPassesView {
+struct AllPassesViewContext {
+}
+
+extension ViewProducer where Context == AllPassesViewContext, ProducedView == AllPassesView {
     static func allPassesView<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
-        ViewProducer<Context, ProducedView> {
+        ViewProducer<Context, ProducedView> { context in
             AllPassesView(
                 viewModel: viewModel
                     .projection(
@@ -155,9 +166,10 @@ extension ViewProducer where Context == Void, ProducedView == AllPassesView {
                         state: AllPassesViewState.project(state:)
                     )
                     .asObservableViewModel(initialState: .empty),
-                skyChartProducer: ViewProducer<Int, SkyChart>
-                    .skyChartAsPreview(viewModel: viewModel),
-                passViewProducer: ViewProducer<Void, PassView>
+                context: context,
+                skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
+                    .skyChart(viewModel: viewModel),
+                passViewProducer: ViewProducer<PassViewContext, PassView>
                     .passView(viewModel: viewModel)
             )
         }
@@ -198,6 +210,7 @@ struct AllPassesView_Previews: PreviewProvider {
         let itemsByVisibility = Dictionary(grouping: items, by: \.pass.visibility)
         let visiblePasses = itemsByVisibility[.visible] ?? []
         let invisiblePasses = (itemsByVisibility[.daylight] ?? []) + (itemsByVisibility[.unlit] ?? [])
+        let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
 
         AllPassesView(
             viewModel: .mock(
@@ -206,7 +219,16 @@ struct AllPassesView_Previews: PreviewProvider {
                     invisiblePasses: invisiblePasses
                 )
             ),
-            skyChartProducer: ViewProducer<Int, SkyChart> { index in
+            context: AllPassesViewContext(),
+            skyChartProducer: ViewProducer<SkyChartContext, SkyChart> { context in
+                let index: Int = {
+                    switch context.usage {
+                    case let .preview(index: index):
+                        return index
+                    default:
+                        fatalError()
+                    }
+                }()
                 let pass = passes[index]
                 let snapshotsDuringPass = snapshots.submap(from: pass.rise.julianDate, through: pass.set.julianDate)
                 return SkyChart(
@@ -215,7 +237,7 @@ struct AllPassesView_Previews: PreviewProvider {
                             mode: .pass(
                                 pass,
                                 snapshotsDuringPass: snapshotsDuringPass,
-                                observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
+                                observer: observer
                             )
                         )
                     ),

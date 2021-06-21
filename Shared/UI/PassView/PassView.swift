@@ -33,12 +33,17 @@ struct PassViewState: Equatable {
 }
 
 /// The satellite detail view shows satellite passes and the sky chart during the first visible pass (if available).
-struct PassView: View {
+struct PassView: View, Equatable {
+    static func == (lhs: PassView, rhs: PassView) -> Bool {
+        lhs.viewModel.state == rhs.viewModel.state
+    }
+
     @ObservedObject var viewModel: ObservableViewModel<PassViewAction, PassViewState>
     @Environment(\.presentationMode) var presentationMode
 
+    var context: PassViewContext
     var elevationGraphProducer: ViewProducer<Void, SatelliteElevationGraph>
-    var skyChartProducer: ViewProducer<Void, SkyChart>
+    var skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
 
     var body: some View {
         if let tle = viewModel.state.tle {
@@ -47,11 +52,16 @@ struct PassView: View {
                 VStack(spacing: 20) {
                     elevationGraphProducer.view()
                         .frame(alignment: .leading)
-                    skyChartProducer.view()
-                        .frame(height: min(rect.width, rect.height))
+                    skyChartProducer.view(
+                        SkyChartContext(usage: .full)
+                    )
+                    .equatable()
+                    .frame(height: min(rect.width, rect.height))
                     Spacer(minLength: 10)
                 }
+                .clipShape(Rectangle())
                 .navigationTitle(tle.commonName)
+                .navigationBarTitleDisplayMode(.inline)
                 .onAppear {
                     viewModel.dispatch(.onAppear)
                 }
@@ -76,9 +86,12 @@ struct PassView: View {
     }
 }
 
-extension ViewProducer where Context == Void, ProducedView == PassView {
+struct PassViewContext {
+}
+
+extension ViewProducer where Context == PassViewContext, ProducedView == PassView {
     static func passView<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
-        ViewProducer<Void, PassView> { noradIndex in
+        ViewProducer<PassViewContext, PassView> { context in
             PassView(
                 viewModel: viewModel
                     .projection(
@@ -86,9 +99,10 @@ extension ViewProducer where Context == Void, ProducedView == PassView {
                         state: PassViewState.project(state:)
                     )
                     .asObservableViewModel(initialState: .empty),
+                context: context,
                 elevationGraphProducer: ViewProducer<Void, SatelliteElevationGraph>
                     .satelliteElevationGraph(viewModel: viewModel),
-                skyChartProducer: ViewProducer<Void, SkyChart>
+                skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
                     .skyChart(viewModel: viewModel)
             )
         }
@@ -144,6 +158,7 @@ struct PassView_Previews: PreviewProvider {
                     tle: tle
                 )
             ),
+            context: PassViewContext(),
             elevationGraphProducer: .pure(
                 SatelliteElevationGraph(
                     viewModel: .mock(
@@ -156,7 +171,7 @@ struct PassView_Previews: PreviewProvider {
             skyChartProducer: .pure(
                 SkyChart(
                     viewModel: .mock(
-                        state: SkyChartViewState.projectPassingMode(
+                        state: SkyChartViewState.project(
                             state: appState
                         )
                     ),

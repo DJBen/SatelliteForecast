@@ -20,6 +20,7 @@ struct AppState: Equatable {
     var satellites: [Int: SatelliteState] = [:]
     var tleLoaderState: TLELoaderState = .empty
     var coreLocationState: CoreLocationState = .empty
+    var observerForPasses: LatLonAlt?
 
     // Navigation
     enum NavigationState: Equatable {
@@ -27,7 +28,11 @@ struct AppState: Equatable {
         case allPasses(noradIndex: Int)
         case pass(noradIndex: Int, selectedPassIndex: Int)
     }
-    var navigationState: NavigationState = .list
+    var navigationState: NavigationState = .list {
+        willSet {
+            print("[Nav] state changed from \(self.navigationState) to \(newValue)")
+        }
+    }
 
     // MARK: Derived Properties
     var selectedSatelliteNoradIndex: Int? {

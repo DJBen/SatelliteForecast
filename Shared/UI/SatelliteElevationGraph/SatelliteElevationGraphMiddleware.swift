@@ -49,7 +49,7 @@ extension EffectMiddleware where
                             traitCollection: traitCollection
                         )
 
-                        logger.debug("Rasterized elevation graph for \(noradIndex) with range \(julianDateRange).")
+                        logger.debug("Rasterized elevation graph for \(noradIndex) with range \(julianDateRange), size \(String(describing: size)).")
 
                         sink(.rasterizedElevationGraph(image, size: size, noradIndex: noradIndex, julianDateRange: julianDateRange))
                     }

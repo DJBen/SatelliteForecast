@@ -168,6 +168,7 @@ extension Satellite {
     /// - Parameters:
     ///   - observer: The observer corodinate.
     ///   - coarseSnapshots: Coarse snapshots to find satellite passes.
+    ///   - DatePosition: The min elevation required for the pass to be considered valid.
     ///   - fineInterval: The fine interval in which the ephemerides and detailed pass info are generated.
     /// - Returns: A tuple containing the following:
     ///   - passes: A list of satellite passes.
@@ -176,6 +177,7 @@ extension Satellite {
         noradIndex: Int,
         observer: LatLonAlt,
         coarseSnapshots: Map<Double, SatelliteSnapshot>,
+        minElevation: Double = 10,
         fineInterval: TimeInterval = 3
     ) -> (passes: [PassInformation], snapshots: Map<Double, SatelliteSnapshot>) {
         var snapshotBeforeRising: SatelliteSnapshot?
@@ -202,8 +204,11 @@ extension Satellite {
                     julianDateRange: fromDate..<toDate,
                     fineInterval: fineInterval
                 )
-                passes.append(pass)
-                resultSnapshots = resultSnapshots.merging(snapshots)
+
+                if pass.transit.elev >= minElevation {
+                    passes.append(pass)
+                    resultSnapshots = resultSnapshots.merging(snapshots)
+                }
 
                 snapshotBeforeRising = nil
                 snapshotAfterSetting = nil

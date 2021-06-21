@@ -20,7 +20,8 @@ class CoreLocationMiddleware: NSObject, Middleware {
 
     func receiveContext(getState: @escaping GetState<CoreLocationState>, output: AnyActionHandler<CoreLocationOutputAction>) {
         locationManager = CLLocationManager()
-        locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
+        locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
+        locationManager.distanceFilter = 1000
         locationManager.startMonitoringSignificantLocationChanges()
         locationManager.startUpdatingLocation()
         locationManager.delegate = self

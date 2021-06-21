@@ -181,7 +181,10 @@ struct SatelliteElevationGraph: View {
             }
             .modifier(SizeModifier())
             .onPreferenceChange(SizePreferenceKey.self) { size in
-                self.graphingRegionSize = size
+                if graphingRegionSize == size {
+                    return
+                }
+                graphingRegionSize = size
 
                 if size.width == 0 || size.height == 0 {
                     return

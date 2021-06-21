@@ -35,7 +35,11 @@ extension EffectMiddleware where
                         .timer(.start)
                     )
                 case .selectSatellite:
-                    return .doNothing
+                    if let observer = getState().coreLocationState.location.map(LatLonAlt.init) {
+                        return .just(.freezeObserverLocation(observer))
+                    } else {
+                        return .doNothing
+                    }
                 }
             }
     }
