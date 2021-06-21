@@ -41,9 +41,12 @@ extension EffectMiddleware where
                         let image = SatelliteElevationGraph.rasterizedSatelliteElevationPath(
                             rect: CGRect(origin: .zero, size: size),
                             snapshotsSplitByIllumination: snapshots
-                                .split(shouldSplit: { (s1, s2) -> Bool in
-                                    return s1.1.isIlluminated != s2.1.isIlluminated
-                                })
+                                .split(
+                                    inclusivity: .includesSecondElementsInPreviousGroup,
+                                    shouldSplit: { (s1, s2) -> Bool in
+                                        return s1.1.isIlluminated != s2.1.isIlluminated
+                                    }
+                                )
                                 .map { ($0.first!.1.isIlluminated, $0) },
                             julianDateRange: julianDateRange,
                             traitCollection: traitCollection

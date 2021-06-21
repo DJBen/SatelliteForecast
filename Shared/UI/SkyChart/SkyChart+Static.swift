@@ -39,7 +39,8 @@ extension SkyChart {
         snapshotsDuringPass: Map<Double, SatelliteSnapshot>,
         lineWidth: CGFloat = 1,
         illuminatedColor: UIColor,
-        unlitColor: UIColor
+        unlitColor: UIColor,
+        arrowSize: CGFloat = 8
     ) -> UIImage {
         let snapshotsByIllumination = snapshotsDuringPass.split(inclusivity: .includesSecondElementsInPreviousGroup) { (e1, e2) -> Bool in
             return e1.1.isIlluminated != e2.1.isIlluminated
@@ -48,11 +49,30 @@ extension SkyChart {
 
         return renderer.image { ctx in
             for index in snapshotsByIllumination.indices {
-                let color = snapshotsByIllumination[index].first!.1.isIlluminated ? illuminatedColor : unlitColor
+                let isIlluminated = snapshotsByIllumination[index].first!.1.isIlluminated
+                let color = isIlluminated ? illuminatedColor : unlitColor
+                let snapshotsGroup = snapshotsByIllumination[index]
+
+                if isIlluminated && snapshotsGroup.count > 3 {
+                    ctx.cgContext.saveGState()
+                    let e1 = snapshotsGroup[snapshotsGroup.index(ofOffset: snapshotsGroup.count / 3 - 1)].1.position
+                    let e2 = snapshotsGroup[snapshotsGroup.index(ofOffset: snapshotsGroup.count / 3)].1.position
+                    let p1 = point(at: e1, rect: rect)
+                    let p2 = point(at: e2, rect: rect)
+                    let rot = atan2pi(Double(p2.y - p1.y), Double(p2.x - p1.x))
+                    ctx.cgContext.translateBy(x: p1.x, y: p1.y)
+                    ctx.cgContext.rotate(by: CGFloat(rot))
+                    ctx.cgContext.setFillColor(illuminatedColor.cgColor)
+                    let image = UIImage(systemName: "arrowtriangle.right.fill")!
+                    let imageRect = CGRect(origin: CGPoint(x: -arrowSize / 2, y: -arrowSize / 2), size: CGSize(width: arrowSize, height: arrowSize))
+                    image.draw(in: imageRect)
+                    ctx.cgContext.setBlendMode(.sourceAtop)
+                    ctx.cgContext.fill(imageRect)
+                    ctx.cgContext.restoreGState()
+                }
 
                 ctx.cgContext.setStrokeColor(color.cgColor)
                 ctx.cgContext.setLineWidth(lineWidth)
-                let snapshotsGroup = snapshotsByIllumination[index]
                 for i in snapshotsGroup.indices where i < snapshotsGroup.index(before: snapshotsGroup.endIndex) {
                     if i == snapshotsGroup.startIndex {
                         let point = point(at: snapshotsGroup[i].1.position, rect: rect)

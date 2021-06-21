@@ -77,22 +77,25 @@ extension EffectMiddleware where
 
                         let snapshotsDuringPass = snapshots.submap(from: pass.rise.julianDate, through: pass.set.julianDate)
 
-                        // Rasterize satellite paths in sky charts
-                        let image = SkyChart.rasterizedPath(
-                            rect: CGRect(origin: .zero, size: size),
-                            snapshotsDuringPass: snapshotsDuringPass,
-                            illuminatedColor: UIColor(named: "satellitePath_illuminated", in: nil, compatibleWith: traitCollection)!,
-                            unlitColor: UIColor(named: "satellitePath_notIlluminated", in: nil, compatibleWith: traitCollection)!
-                        )
-                        logger.debug("Rasterized \(pass.noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate).")
-
-                        sink(
-                            .rasterizedSatellitePath(
-                                image,
-                                usage: usage,
-                                pass: pass
+                        traitCollection.performAsCurrent {
+                            // Rasterize satellite paths in sky charts
+                            let image = SkyChart.rasterizedPath(
+                                rect: CGRect(origin: .zero, size: size),
+                                snapshotsDuringPass: snapshotsDuringPass,
+                                illuminatedColor: UIColor(named: "satellitePath_illuminated")!,
+                                unlitColor: UIColor(named: "satellitePath_notIlluminated")!,
+                                arrowSize: usage == .preview ? 8 : 16
                             )
-                        )
+                            logger.debug("Rasterized \(pass.noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate).")
+
+                            sink(
+                                .rasterizedSatellitePath(
+                                    image,
+                                    usage: usage,
+                                    pass: pass
+                                )
+                            )
+                        }
                     }
                 }
             }
