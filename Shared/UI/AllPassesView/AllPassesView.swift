@@ -21,12 +21,12 @@ enum AllPassesViewAction {
 struct AllPassesViewState: Equatable {
     struct Item: Equatable, Identifiable {
         let index: Int
-        let pass: PassInformation
+        let pass: Pass
 
         private let rasterizedSatellitePath: UIImage?
         private let rasterizedBackgroundSky: UIImage?
 
-        init(index: Int, pass: PassInformation, rasterizedSatellitePath: UIImage? = nil, rasterizedBackgroundSky: UIImage? = nil) {
+        init(index: Int, pass: Pass, rasterizedSatellitePath: UIImage? = nil, rasterizedBackgroundSky: UIImage? = nil) {
             self.index = index
             self.pass = pass
             self.rasterizedSatellitePath = rasterizedSatellitePath
@@ -186,7 +186,7 @@ extension ViewProducer where Context == AllPassesViewContext, ProducedView == Al
 
 #if DEBUG
 struct AllPassesView_Previews: PreviewProvider {
-    static let tianHePasses: (passes: [PassInformation], snapshots: Map<Double, SatelliteSnapshot>) = {
+    static let tianHePasses: (passes: [Pass], snapshots: Map<Double, SatelliteSnapshot>) = {
         let tle = try! TLE(
             raw: """
             TIANHE

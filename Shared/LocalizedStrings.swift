@@ -25,7 +25,7 @@ enum LocalizedStrings {
     }
 
     enum PassPreviewCell {
-        static func titleForPassVisibility(_ visibility: PassInformation.Visibility) -> String {
+        static func titleForPassVisibility(_ visibility: Pass.Visibility) -> String {
             switch visibility {
             case .visible:
                 return NSLocalizedString(

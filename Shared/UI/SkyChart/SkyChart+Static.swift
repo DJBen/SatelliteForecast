@@ -155,7 +155,7 @@ extension SkyChart {
 import SwiftUI
 
 struct ImageRenderer_Previews: PreviewProvider {
-    static let tianHePasses: (passes: [PassInformation], snapshots: Map<Double, SatelliteSnapshot>) = {
+    static let tianHePasses: (passes: [Pass], snapshots: Map<Double, SatelliteSnapshot>) = {
         let tle = try! TLE(
             raw: """
             TIANHE

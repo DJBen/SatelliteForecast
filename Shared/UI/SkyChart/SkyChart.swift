@@ -28,7 +28,7 @@ struct SkyChartResources: Equatable {
     /// A cache of the satellite paths that are ready for display.
     /// Instead of redrawing the pass consisting of thousands of points at each display,
     /// the cached version is just a cheap `UIImage`.
-    var rasterizedSatellitePaths: [PassInformation: [SkyChartUsage: UIImage]] = [:]
+    var rasterizedSatellitePaths: [Pass: [SkyChartUsage: UIImage]] = [:]
 
     var rasterizedBackgroundSky: [SkyChartSatelliteBackgroundSkyKey: [SkyChartUsage: UIImage]] = [:]
 
@@ -40,10 +40,10 @@ struct SkyChartResources: Equatable {
 enum SkyChartAction {
     case onAppear
     case requestRasterizedBackgroundSky(usage: SkyChartUsage, size: CGSize, key: SkyChartSatelliteBackgroundSkyKey, configs: SkyChartConfigs.BackgroundSky = .preset, traitCollection: UITraitCollection)
-    case requestRasterizedSatellitePath(usage: SkyChartUsage, size: CGSize, pass: PassInformation, traitCollection: UITraitCollection)
+    case requestRasterizedSatellitePath(usage: SkyChartUsage, size: CGSize, pass: Pass, traitCollection: UITraitCollection)
     case rasterizedBackgroundSky(UIImage, usage: SkyChartUsage, key: SkyChartSatelliteBackgroundSkyKey)
     /// A satellite path is rasterized, or the rasterized image is read from the cache.
-    case rasterizedSatellitePath(UIImage, usage: SkyChartUsage, pass: PassInformation)
+    case rasterizedSatellitePath(UIImage, usage: SkyChartUsage, pass: Pass)
 }
 
 /// A state used in a single sky chart view
@@ -67,7 +67,7 @@ struct SkyChartViewState: Equatable {
         /// Display the sky at julian date. This option will not show any satellite passes.
         case sky(Double, observer: LatLonAlt)
         /// Display a satellite pass. The background sky's date will be the approx time of higest elevation of the pass.
-        case pass(PassInformation, snapshotsDuringPass: Map<Double, SatelliteSnapshot>, observer: LatLonAlt)
+        case pass(Pass, snapshotsDuringPass: Map<Double, SatelliteSnapshot>, observer: LatLonAlt)
 
         /// The reference julian date for the background sky, if available.
         /// No background sky will be drawn if this returns `nil`.
@@ -75,8 +75,8 @@ struct SkyChartViewState: Equatable {
             switch self {
             case let .sky(date, _):
                 return date
-            case let .pass(passInformation, _, _):
-                return passInformation.rise.julianDate
+            case let .pass(pass, _, _):
+                return pass.rise.julianDate
             case .notReady:
                 return nil
             }
@@ -93,10 +93,10 @@ struct SkyChartViewState: Equatable {
             }
         }
 
-        var passInformation: PassInformation? {
+        var pass: Pass? {
             switch self {
-            case let .pass(passInformation, _, observer: _):
-                return passInformation
+            case let .pass(pass, _, observer: _):
+                return pass
             default:
                 return nil
             }
@@ -113,7 +113,7 @@ struct SkyChartViewState: Equatable {
             return SkyChartViewState(mode: .notReady)
         }
 
-        let displayPass: (PassInformation, Map<Double, SatelliteSnapshot>)? = {
+        let displayPass: (Pass, Map<Double, SatelliteSnapshot>)? = {
             switch state.navigationState {
             case let .allPasses(noradIndex: noradIndex):
                 guard let satelliteState = state.satellites[noradIndex],
@@ -141,7 +141,7 @@ struct SkyChartViewState: Equatable {
         guard let observerCoodinate = state.observerForPasses else {
             return SkyChartViewState(mode: .notReady)
         }
-        let selectedPass: (PassInformation, Map<Double, SatelliteSnapshot>)? = {
+        let selectedPass: (Pass, Map<Double, SatelliteSnapshot>)? = {
             switch state.navigationState {
             case let .pass(noradIndex: noradIndex, selectedPassIndex: selectedPassIndex):
                 guard let satelliteState = state.satellites[noradIndex],
@@ -268,7 +268,7 @@ struct SkyChart: View, Equatable {
             view
                 .modifier(SizeModifier())
                 .onPreferenceChange(SizePreferenceKey.self) { contentSize in
-                    if let pass = viewModel.state.mode.passInformation {
+                    if let pass = viewModel.state.mode.pass {
                         viewModel.dispatch(
                             .requestRasterizedSatellitePath(
                                 usage: usage,
@@ -384,7 +384,7 @@ struct SkyChart: View, Equatable {
 
     var planetaryBodiesView: some View {
         ZStack {
-            if let pass = viewModel.state.mode.passInformation,
+            if let pass = viewModel.state.mode.pass,
                let observer = viewModel.state.mode.observer {
                 ForEach(configs.backgroundSky.visibleBodies, id: \.self) { body in
                     PlanetaryBodyView(
@@ -400,7 +400,7 @@ struct SkyChart: View, Equatable {
     }
 
     var backgroundSky: some View {
-        if let pass = viewModel.state.mode.passInformation,
+        if let pass = viewModel.state.mode.pass,
            pass.sunElevationAtTransit > -6,
            configs.backgroundSky.hidesStarsDuringDay {
             return AnyView(EmptyView())
@@ -483,7 +483,7 @@ extension ViewProducer where Context == SkyChartContext, ProducedView == SkyChar
 
 #if DEBUG
 struct SkyChart_Previews: PreviewProvider {
-    static let issPass: (PassInformation, Map<Double, SatelliteSnapshot>) = {
+    static let issPass: (Pass, Map<Double, SatelliteSnapshot>) = {
         let tle = try! TLE(
             raw: """
             ISS (ZARYA)
@@ -511,7 +511,7 @@ struct SkyChart_Previews: PreviewProvider {
         return (firstPass, fineSnapshots.submap(from: firstPass.rise.julianDate, through: firstPass.set.julianDate))
     }()
 
-    static let tianHePass: (PassInformation, Map<Double, SatelliteSnapshot>) = {
+    static let tianHePass: (Pass, Map<Double, SatelliteSnapshot>) = {
         let tle = try! TLE(
             raw: """
             TIANHE

@@ -18,7 +18,7 @@ enum PassViewAction {
 
 struct PassViewState: Equatable {
     var tle: TLE?
-    var selectedPass: PassInformation?
+    var selectedPass: Pass?
 
     static func project(state: AppState) -> PassViewState {
         PassViewState(

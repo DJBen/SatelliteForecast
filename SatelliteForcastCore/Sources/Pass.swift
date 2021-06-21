@@ -1,5 +1,5 @@
 //
-//  PassInformation.swift
+//  Pass.swift
 //  SatelliteForcastCore
 //
 //  Created by Ben Lu on 6/7/21.
@@ -8,10 +8,10 @@
 import Foundation
 import BTree
 
-/// `PassInformation` is a summary of the physical characteristics about a satellite pass, including the times of rise, set, transit
+/// `Pass` is a summary of the physical characteristics about a satellite pass, including the times of rise, set, transit
 /// (point of higest elevation), any changes in illumination, and the elevation of the sun at transit.
 /// We can derive the visibility of the pass by combining these attributes together.
-public struct PassInformation {
+public struct Pass {
     public let noradIndex: Int
     
     public struct DateElev {
@@ -82,14 +82,14 @@ public struct PassInformation {
     }
 }
 
-extension PassInformation: Equatable {}
-extension PassInformation.Illumination: Equatable {}
-extension PassInformation.Illumination.Change: Equatable {}
-extension PassInformation.Visibility: Equatable {}
-extension PassInformation.DateElev: Equatable {}
+extension Pass: Equatable {}
+extension Pass.Illumination: Equatable {}
+extension Pass.Illumination.Change: Equatable {}
+extension Pass.Visibility: Equatable {}
+extension Pass.DateElev: Equatable {}
 
-extension PassInformation: Hashable {}
-extension PassInformation.Illumination: Hashable {}
-extension PassInformation.Illumination.Change: Hashable {}
-extension PassInformation.Visibility: Hashable {}
-extension PassInformation.DateElev: Hashable {}
+extension Pass: Hashable {}
+extension Pass.Illumination: Hashable {}
+extension Pass.Illumination.Change: Hashable {}
+extension Pass.Visibility: Hashable {}
+extension Pass.DateElev: Hashable {}

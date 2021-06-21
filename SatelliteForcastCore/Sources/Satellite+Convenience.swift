@@ -98,7 +98,7 @@ extension Satellite {
         observer: LatLonAlt,
         julianDateRange: Range<Double>,
         fineInterval: TimeInterval = 3
-    ) -> (pass: PassInformation, snapshots: Map<Double, SatelliteSnapshot>) {
+    ) -> (pass: Pass, snapshots: Map<Double, SatelliteSnapshot>) {
         let fineSnapshots = snapshots(
             observer: observer,
             julianDateRange: julianDateRange,
@@ -125,7 +125,7 @@ extension Satellite {
             return nil
         }()
 
-        var illuminationChanges = [PassInformation.Illumination.Change]()
+        var illuminationChanges = [Pass.Illumination.Change]()
 
         for index in fineSnapshots.indices where index < fineSnapshots.index(before: fineSnapshots.endIndex) {
             let snapshot1 = fineSnapshots[index].1
@@ -144,14 +144,14 @@ extension Satellite {
             cele: solarGeo(julianDays: maxElevPair.0)
         ).alt
 
-        let pass = PassInformation(
+        let pass = Pass(
             noradIndex: noradIndex,
-            rise: risesAtPair.map { PassInformation.DateElev(julianDate: $0.0, elev: $0.1) }!,
-            set: setsAtPair.map { PassInformation.DateElev(julianDate: $0.0, elev: $0.1) }!,
-            transit: PassInformation.DateElev(
+            rise: risesAtPair.map { Pass.DateElev(julianDate: $0.0, elev: $0.1) }!,
+            set: setsAtPair.map { Pass.DateElev(julianDate: $0.0, elev: $0.1) }!,
+            transit: Pass.DateElev(
                 julianDate: maxElevPair.0, elev: maxElevPair.1
             ),
-            illumination: PassInformation.Illumination(
+            illumination: Pass.Illumination(
                 initiallyIlluminated: fineSnapshots.first!.1.isIlluminated,
                 changes: illuminationChanges
             ),
@@ -179,10 +179,10 @@ extension Satellite {
         coarseSnapshots: Map<Double, SatelliteSnapshot>,
         minElevation: Double = 10,
         fineInterval: TimeInterval = 3
-    ) -> (passes: [PassInformation], snapshots: Map<Double, SatelliteSnapshot>) {
+    ) -> (passes: [Pass], snapshots: Map<Double, SatelliteSnapshot>) {
         var snapshotBeforeRising: SatelliteSnapshot?
         var snapshotAfterSetting: SatelliteSnapshot?
-        var passes = [PassInformation]()
+        var passes = [Pass]()
         var resultSnapshots = coarseSnapshots
 
         for index in coarseSnapshots.indices where index < coarseSnapshots.index(before: coarseSnapshots.endIndex) {

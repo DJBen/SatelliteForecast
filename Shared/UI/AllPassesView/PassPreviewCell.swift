@@ -17,7 +17,7 @@ struct PassPreviewCell: View, Equatable {
         return lhs.pass == rhs.pass && lhs.indexOfPass == rhs.indexOfPass
     }
 
-    var pass: PassInformation
+    var pass: Pass
     var indexOfPass: Int
     var skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
 

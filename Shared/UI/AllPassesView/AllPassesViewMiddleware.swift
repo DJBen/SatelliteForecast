@@ -55,7 +55,7 @@ extension EffectMiddleware where
                         let subject = PassthroughSubject<DispatchedAction<AppAction>, Never>()
 
                         DispatchQueue.global(qos: .userInitiated).async {
-                            let passes: [PassInformation]
+                            let passes: [Pass]
                             let fineSnapshots: Map<Double, SatelliteSnapshot>
 
                             // Use cached satellite ephemerides if calculated within the last hour.
