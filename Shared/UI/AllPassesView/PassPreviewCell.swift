@@ -158,7 +158,7 @@ struct PassPreviewCell_Previews: PreviewProvider {
                             backgroundSky: SkyChartConfigs.BackgroundSky(
                                 stars: .limitedMagnitude(2),
                                 showConstellationLines: false,
-                                visibileBodies: [.sun, .moon],
+                                visibleBodies: [.sun, .moon],
                                 bodySymbol: .symbol
                             ),
                             showAzimuthTexts: false,

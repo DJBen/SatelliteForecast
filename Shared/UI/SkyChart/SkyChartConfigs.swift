@@ -19,20 +19,16 @@ struct SkyChartConfigs {
         var hidesStarsDuringDay: Bool = true
         var showConstellationLines: Bool = true
 
-        struct PlantaryBody: OptionSet {
-            let rawValue: Int
-
-            static let sun = PlantaryBody(rawValue: 1 << 0)
-            static let moon = PlantaryBody(rawValue: 1 << 1)
-            static let mercury = PlantaryBody(rawValue: 1 << 2)
-            static let venus = PlantaryBody(rawValue: 1 << 3)
-            static let jupiter = PlantaryBody(rawValue: 1 << 4)
-            static let saturn = PlantaryBody(rawValue: 1 << 5)
-
-            static let all: PlantaryBody = [.sun, .moon, .mercury, .venus, .jupiter, .saturn]
+        enum PlantaryBody: Equatable, CaseIterable, Hashable {
+            case sun
+            case moon
+            case mercury
+            case venus
+            case jupiter
+            case saturn
         }
 
-        var visibileBodies: PlantaryBody = .all
+        var visibleBodies: [PlantaryBody] = PlantaryBody.allCases
 
         enum PlantaryBodyLabel {
             case text
@@ -73,7 +69,7 @@ struct SkyChartConfigs {
                 stars: .limitedMagnitude(2.25),
                 starMagToDisplayRadius: { CGFloat(1.5 * exp(0.5 * -$0)) },
                 showConstellationLines: false,
-                visibileBodies: [.sun, .moon],
+                visibleBodies: [.sun, .moon],
                 bodySymbol: .symbol
             ),
             showAzimuthTexts: false,

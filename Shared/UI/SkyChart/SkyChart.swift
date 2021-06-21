@@ -382,125 +382,20 @@ struct SkyChart: View, Equatable {
         }
     }
 
-    func planetView<Content: View>(
-        getRaDec: (Double) -> (ra: Double, dec: Double),
-        @ViewBuilder planetViewGenerator: @escaping (AziEleDst) -> Content
-    ) -> some View {
-        if let referenceDate = viewModel.state.mode.referenceDate,
-           let observerCoordinate = viewModel.state.mode.observer {
-            let (alt, azi) = azel(
-                julianDate: referenceDate,
-                site: (observerCoordinate.lat, observerCoordinate.lon),
-                cele: getRaDec(referenceDate)
-            )
-            let planetCoordinate = AziEleDst(azim: azi, elev: alt, dist: 0)
-
-            if planetCoordinate.elev < 0 {
-                return AnyView(EmptyView())
+    var planetaryBodiesView: some View {
+        ZStack {
+            if let pass = viewModel.state.mode.passInformation,
+               let observer = viewModel.state.mode.observer {
+                ForEach(configs.backgroundSky.visibleBodies, id: \.self) { body in
+                    PlanetaryBodyView(
+                        planetaryBody: body,
+                        label: configs.backgroundSky.bodySymbol,
+                        referenceDate: pass.rise.julianDate,
+                        observer: observer,
+                        sunElevation: pass.sunElevationAtTransit
+                    )
+                }
             }
-
-            return AnyView(GeometryReader { geometry in
-                ZStack {
-                    planetViewGenerator(planetCoordinate)
-                }
-            })
-        } else {
-            return AnyView(EmptyView())
-        }
-    }
-
-    var sunView: some View {
-        if configs.backgroundSky.visibileBodies.contains(.sun) {
-            return AnyView(GeometryReader { geometry in
-                let rect = geometry.frame(in: .local)
-                planetView(getRaDec: solarGeo) { planetCoordinate in
-                    let path = Path { path in
-                        path.addArc(
-                            center: CGPoint(x: rect.midX, y: rect.midY),
-                            radius: 8,
-                            startAngle: Angle(degrees: 0),
-                            endAngle: Angle(degrees: 360),
-                            clockwise: false
-                        )
-                    }
-                    .fill()
-                    .foregroundColor(.yellow)
-                    .shadow(color: .yellow, radius: 12, x: 0.0, y: 0.0)
-
-                    switch configs.backgroundSky.bodySymbol {
-                    case .text:
-                        HStack(spacing: 0) {
-                            path
-
-                            Text("Sun")
-                                .font(.caption2)
-                                .foregroundColor(.orange)
-                                .offset(x: 10)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                        .position(Self.point(at: planetCoordinate, rect: rect))
-
-                    case .symbol:
-                        ZStack {
-                            path
-                            Text("☉")
-                                .font(.system(size: 12))
-                                .foregroundColor(.white)
-                                .frame(alignment: .center)
-                        }
-                        .position(Self.point(at: planetCoordinate, rect: rect))
-                    }
-                }
-            })
-        } else {
-            return AnyView(EmptyView())
-        }
-    }
-
-    var moonView: some View {
-        if configs.backgroundSky.visibileBodies.contains(.moon) {
-            return AnyView(GeometryReader { geometry in
-                let rect = geometry.frame(in: .local)
-                planetView(getRaDec: lunarGeo) { planetCoordinate in
-                    let path = Path { path in
-                        path.addArc(
-                            center: CGPoint(x: rect.midX, y: rect.midY),
-                            radius: 5,
-                            startAngle: Angle(degrees: 0),
-                            endAngle: Angle(degrees: 360),
-                            clockwise: false
-                        )
-                    }
-                    .fill()
-                    .foregroundColor(.gray)
-                    .shadow(color: .yellow.opacity(0.7), radius: 8, x: 0.0, y: 0.0)
-
-                    switch configs.backgroundSky.bodySymbol {
-                    case .text:
-                        HStack(spacing: 0) {
-                            path
-                            Text("Moon")
-                                .font(.caption2)
-                                .foregroundColor(.blue)
-                                .offset(x: 8)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                        .position(Self.point(at: planetCoordinate, rect: rect))
-
-                    case .symbol:
-                        ZStack {
-                            path
-                            Text("☾")
-                                .font(.system(size: 8))
-                                .foregroundColor(.white)
-                                .frame(alignment: .center)
-                        }
-                        .position(Self.point(at: planetCoordinate, rect: rect))
-                    }
-                }
-            })
-        } else {
-            return AnyView(EmptyView())
         }
     }
 
@@ -524,8 +419,7 @@ struct SkyChart: View, Equatable {
 
     var body: some View {
         backgroundSky
-            .overlay(moonView)
-            .overlay(sunView)
+            .overlay(planetaryBodiesView)
             .overlay(satellitePath)
             .clipShape(Circle())
             .overlay(backgroundPath)

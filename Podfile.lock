@@ -1,7 +1,7 @@
 PODS:
   - BTree (4.1.0)
-  - CombineRex (0.8.4):
-    - SwiftRex (~> 0.8.4)
+  - CombineRex (0.8.6):
+    - SwiftRex (~> 0.8.6)
   - CombineRextensions (1.0.0.LOCAL):
     - CombineRex (~> 0.8.4)
   - SatelliteForcastCore (1.0.0.LOCAL):
@@ -17,7 +17,7 @@ PODS:
     - SQLite.swift (~> 0.12.2)
     - STRegex (~> 2.1)
   - STRegex (2.1.1)
-  - SwiftRex (0.8.4)
+  - SwiftRex (0.8.6)
   - TestingExtensions (1.0.0.LOCAL):
     - CombineRex (~> 0.8.4)
     - SnapshotTesting (~> 1.8.2)
@@ -61,12 +61,12 @@ CHECKOUT OPTIONS:
     :commit: 1af2ae022e80bd4f0bc8809321bf618a7410c6af
     :git: https://github.com/DJBen/CombineRextensions.git
   SwiftRex:
-    :commit: 085b4d68ec876bdaf223027c19f66f5f8c015eec
+    :commit: 261284ee9e63294783834713618b808ceca67a14
     :git: https://github.com/DJBen/SwiftRex.git
 
 SPEC CHECKSUMS:
   BTree: 99b99930790b88dc5e8bafbf666a5dfb8d7808b4
-  CombineRex: 5d4fdba0229b4243d853b4d8934a16367b338fb7
+  CombineRex: 8fa0193b70739542ba3ceaf7be7a586524509428
   CombineRextensions: 00444b1b96f1914c0c52d4498e0e90e89469540e
   SatelliteForcastCore: 4d40808d6f85011ca074a9e96527969e77c4693b
   SatelliteKit: c8bb99e36b2482d865495b387dc8908723241993
@@ -74,7 +74,7 @@ SPEC CHECKSUMS:
   SQLite.swift: d2b4642190917051ce6bd1d49aab565fe794eea3
   StarryNight: b8e4de06dc283f9fd80193ed71c2358d87fb664c
   STRegex: d49e88d0fe58538d3175fdd989bc1243b9be2a07
-  SwiftRex: 59a43c38f9c67b87dfcb79912577fbceede4345c
+  SwiftRex: 5f0e14fe9bb658405bdbc7e78f2a8677bedd2bda
   TestingExtensions: 037b8c0fd64a491192c4182b691a6388d280bb7c
 
 PODFILE CHECKSUM: 0de6fc1437dfca63f1898d3269768ca5dd8f1fac
