@@ -14,25 +14,25 @@ import BTree
 public struct Pass {
     public let noradIndex: Int
     
-    public struct DateElev {
+    public struct DatePosition {
         public let julianDate: Double
+        public let azim: Double
         public let elev: Double
     }
 
     /// The time and elevation when satellite rises above the horizon.
     /// At least one of `rise` and `set` must exist.
-    public let rise: DateElev
+    public let rise: DatePosition
     /// The time and elevation when satellite sets below the horizon.
     /// At least one of `rise` and `set` must exist.
-    public let set: DateElev
-
+    public let set: DatePosition
     /// The time and elelvation angle (in degrees) of the highest elevation point during the pass.
-    public let transit: DateElev
+    public let transit: DatePosition
 
     public struct Illumination {
         public enum Change {
-            case entersShadow(julianDate: Double)
-            case exitsShadow(julianDate: Double)
+            case entersShadow(DatePosition)
+            case exitsShadow(DatePosition)
         }
 
         public let initiallyIlluminated: Bool
@@ -42,7 +42,7 @@ public struct Pass {
         public var hasAnyIllumination: Bool {
             func hasExitsShadow(_ changes: Change) -> Bool {
                 switch changes {
-                case .exitsShadow(julianDate: _):
+                case .exitsShadow(_):
                     return true
                 default:
                     return false
@@ -86,10 +86,10 @@ extension Pass: Equatable {}
 extension Pass.Illumination: Equatable {}
 extension Pass.Illumination.Change: Equatable {}
 extension Pass.Visibility: Equatable {}
-extension Pass.DateElev: Equatable {}
+extension Pass.DatePosition: Equatable {}
 
 extension Pass: Hashable {}
 extension Pass.Illumination: Hashable {}
 extension Pass.Illumination.Change: Hashable {}
 extension Pass.Visibility: Hashable {}
-extension Pass.DateElev: Hashable {}
+extension Pass.DatePosition: Hashable {}

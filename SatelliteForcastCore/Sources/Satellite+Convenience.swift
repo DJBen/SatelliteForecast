@@ -106,23 +106,34 @@ extension Satellite {
         )
 
         // Use a cheaper quadratic interpolation to find RST times.
+        let azimInterp = quadraticInterpolate(fineSnapshots.map { ($0.0, $0.1.position.azim) }, steps: 3000)
         let elevInterp = quadraticInterpolate(fineSnapshots.map { ($0.0, $0.1.position.elev) }, steps: 3000)
-        let maxElevPair = elevInterp.max(by: { $0.1 < $1.1 })!
-        let risesAtPair: (Double, Double)? = {
-            for index in elevInterp.indices where index < elevInterp.index(before: elevInterp.endIndex) {
-                if elevInterp[index].1 <= 0 && elevInterp[elevInterp.index(after: index)].1 > 0 {
-                    return elevInterp[elevInterp.index(after: index)]
+        precondition(azimInterp.count == elevInterp.count)
+
+        let datePoses: [Pass.DatePosition] = zip(azimInterp, elevInterp).map { (azimPair, elevPair) in
+            let (azimDate, azim) = azimPair
+            let (elevDate, elev) = elevPair
+            if azimDate != elevDate {
+                fatalError()
+            }
+            return Pass.DatePosition(julianDate: azimDate, azim: azim, elev: elev)
+        }
+        let maxElevDatePos = datePoses.max(by: { $0.elev < $1.elev })!
+        let riseDatePos: Pass.DatePosition = {
+            for index in datePoses.indices where index < datePoses.index(before: datePoses.endIndex) {
+                if datePoses[index].elev <= 0 && datePoses[datePoses.index(after: index)].elev > 0 {
+                    return datePoses[datePoses.index(after: index)]
                 }
             }
-            return nil
+            fatalError()
         }()
-        let setsAtPair: (Double, Double)? = {
-            for index in elevInterp.indices where index < elevInterp.index(before: elevInterp.endIndex) {
-                if elevInterp[index].1 > 0 && elevInterp[elevInterp.index(after: index)].1 <= 0 {
-                    return elevInterp[elevInterp.index(after: index)]
+        let setDatePos: Pass.DatePosition = {
+            for index in datePoses.indices where index < datePoses.index(before: datePoses.endIndex) {
+                if datePoses[index].elev > 0 && datePoses[datePoses.index(after: index)].elev <= 0 {
+                    return datePoses[datePoses.index(after: index)]
                 }
             }
-            return nil
+            fatalError()
         }()
 
         var illuminationChanges = [Pass.Illumination.Change]()
@@ -132,25 +143,23 @@ extension Satellite {
             let snapshot2 = fineSnapshots[fineSnapshots.index(after: index)].1
 
             if snapshot1.isIlluminated && !snapshot2.isIlluminated {
-                illuminationChanges.append(.entersShadow(julianDate: snapshot2.julianDate))
+                illuminationChanges.append(.entersShadow(Pass.DatePosition(julianDate: snapshot1.julianDate, azim: snapshot1.position.azim, elev: snapshot1.position.elev)))
             } else if !snapshot1.isIlluminated && snapshot2.isIlluminated {
-                illuminationChanges.append(.exitsShadow(julianDate: snapshot2.julianDate))
+                illuminationChanges.append(.exitsShadow(Pass.DatePosition(julianDate: snapshot2.julianDate, azim: snapshot2.position.azim, elev: snapshot2.position.elev)))
             }
         }
 
         let sunElev = azel(
-            julianDate: maxElevPair.0,
+            julianDate: maxElevDatePos.julianDate,
             site: (observer.lat, observer.lon),
-            cele: solarGeo(julianDays: maxElevPair.0)
+            cele: solarGeo(julianDays: maxElevDatePos.julianDate)
         ).alt
 
         let pass = Pass(
             noradIndex: noradIndex,
-            rise: risesAtPair.map { Pass.DateElev(julianDate: $0.0, elev: $0.1) }!,
-            set: setsAtPair.map { Pass.DateElev(julianDate: $0.0, elev: $0.1) }!,
-            transit: Pass.DateElev(
-                julianDate: maxElevPair.0, elev: maxElevPair.1
-            ),
+            rise: riseDatePos,
+            set: setDatePos,
+            transit: maxElevDatePos,
             illumination: Pass.Illumination(
                 initiallyIlluminated: fineSnapshots.first!.1.isIlluminated,
                 changes: illuminationChanges
