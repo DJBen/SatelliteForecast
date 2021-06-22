@@ -139,7 +139,7 @@ struct PassPreviewCell_Previews: PreviewProvider {
 
         func viewAtPassIndex(_ index: Int) -> some View {
             let pass = passes[index]
-            let snapshotsDuringPass = fineSnapshots.submap(from: pass.rise.julianDate, through: pass.set.julianDate)
+            let snapshotsDuringPass = fineSnapshots.subtree(from: pass.rise.julianDate, through: pass.set.julianDate)
             return PassPreviewCell(
                 pass: pass,
                 indexOfPass: index,

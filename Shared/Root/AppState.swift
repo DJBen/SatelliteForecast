@@ -72,12 +72,12 @@ struct AppState: Equatable {
         )
     }
 
-    var currentSatelliteSnapshots: Map<Double, SatelliteSnapshot> {
+    var currentSatelliteSnapshots: BTree<Double, SatelliteSnapshot> {
         get {
             guard let selectedSatelliteNoradIndex = selectedSatelliteNoradIndex else {
-                return Map()
+                return BTree()
             }
-            return satellites[selectedSatelliteNoradIndex]?.snapshots ?? Map()
+            return satellites[selectedSatelliteNoradIndex]?.snapshots ?? BTree()
         }
         set {
             guard let selectedSatelliteNoradIndex = selectedSatelliteNoradIndex else {

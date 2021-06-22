@@ -139,7 +139,7 @@ struct PassView_Previews: PreviewProvider {
             satelliteElevationGraphConfigs: .preset,
             satellites: [
                 tle.noradIndex: SatelliteState(
-                    snapshots: snapshots.merging(fineSnapshots),
+                    snapshots: snapshots.union(fineSnapshots, by: .groupingMatches),
                     passes: passes
                 )
             ],

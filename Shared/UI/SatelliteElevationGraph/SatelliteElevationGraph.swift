@@ -62,7 +62,7 @@ struct SatelliteElevationGraphState: Equatable {
     let noradIndex: Int?
     let julianDateRange: Range<Double>
     let highlightedDateRange: Range<Double>?
-    let julianDateSunElevs: Map<Double, Double>
+    let julianDateSunElevs: BTree<Double, Double>
     let rasterizedElevationGraph: UIImage?
     let configs: SatelliteElevationGraphConfigs
 
@@ -73,7 +73,7 @@ struct SatelliteElevationGraphState: Equatable {
             noradIndex: nil,
             julianDateRange: Date().advanced(by: -60 * 60 * 2).julianDate..<Date().advanced(by: 60 * 60 * 22).julianDate,
             highlightedDateRange: nil,
-            julianDateSunElevs: Map(),
+            julianDateSunElevs: BTree(),
             rasterizedElevationGraph: nil,
             configs: .preset
         )
@@ -117,7 +117,7 @@ struct SatelliteElevationGraphState: Equatable {
                 return pass.rise.julianDate..<pass.set.julianDate
             },
             julianDateSunElevs: state.currentSatelliteSnapshots.map { ($0, $1.sunElevation) }
-                .reduce(into: Map<Double, Double>(), { $0[$1.0] = $1.1 }),
+                .reduce(into: BTree<Double, Double>(), { $0.insertOrReplace($1) }),
             rasterizedElevationGraph: state.selectedSatelliteNoradIndex.flatMap { noradIndex -> UIImage? in
                 guard let rangeImage = state.satelliteElevationGraphResources.rasterizedElevationGraphs[noradIndex] else {
                     return nil

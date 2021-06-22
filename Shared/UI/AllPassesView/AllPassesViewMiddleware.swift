@@ -56,7 +56,7 @@ extension EffectMiddleware where
 
                         DispatchQueue.global(qos: .userInitiated).async {
                             let passes: [Pass]
-                            let fineSnapshots: Map<Double, SatelliteSnapshot>
+                            let fineSnapshots: BTree<Double, SatelliteSnapshot>
 
                             // Use cached satellite ephemerides if calculated within the last hour.
                             if let satelliteState = state.selectedSatelliteState,

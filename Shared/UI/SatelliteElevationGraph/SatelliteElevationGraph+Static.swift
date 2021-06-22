@@ -19,7 +19,7 @@ extension SatelliteElevationGraph {
 
     static func rasterizedSatelliteElevationPath(
         rect: CGRect,
-        snapshotsSplitByIllumination: [(illuminated: Bool, snapshots: Map<Double, SatelliteSnapshot>)],
+        snapshotsSplitByIllumination: [(illuminated: Bool, snapshots: BTree<Double, SatelliteSnapshot>)],
         julianDateRange: Range<Double>,
         traitCollection: UITraitCollection
     ) -> UIImage {

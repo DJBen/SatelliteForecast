@@ -186,7 +186,7 @@ extension ViewProducer where Context == AllPassesViewContext, ProducedView == Al
 
 #if DEBUG
 struct AllPassesView_Previews: PreviewProvider {
-    static let tianHePasses: (passes: [Pass], snapshots: Map<Double, SatelliteSnapshot>) = {
+    static let tianHePasses: (passes: [Pass], snapshots: BTree<Double, SatelliteSnapshot>) = {
         let tle = try! TLE(
             raw: """
             TIANHE
@@ -269,7 +269,7 @@ struct AllPassesView_Previews: PreviewProvider {
                     }
                 }()
                 let pass = passes[index]
-                let snapshotsDuringPass = snapshots.submap(from: pass.rise.julianDate, through: pass.set.julianDate)
+                let snapshotsDuringPass = snapshots.subtree(from: pass.rise.julianDate, through: pass.set.julianDate)
                 return SkyChart(
                     viewModel: .mock(
                         state: SkyChartViewState(

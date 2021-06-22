@@ -42,7 +42,7 @@ struct SunlightIndicatorViewModel {
     fileprivate let sunEventsXCoord: (CGRect) -> [(SunEvent, CGFloat)]
 
     init(
-        julianDateElevations: Map<Double, Double>
+        julianDateElevations: BTree<Double, Double>
     ) {
         sunlightGradientStops = {
             guard let (startDate, firstElevation) = julianDateElevations.first,
@@ -192,7 +192,7 @@ struct SunlightIndicator_Previews: PreviewProvider {
             interval: 60
         )
         .map { ($0, $1.sunElevation) }
-        .reduce(into: Map<Double, Double>(), { $0[$1.0] = $1.1 })
+        .reduce(into: BTree<Double, Double>(), { $0.insertOrReplace($1) })
         let viewModel = SunlightIndicatorViewModel(
             julianDateElevations: jdElevs
         )

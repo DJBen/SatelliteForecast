@@ -79,8 +79,8 @@ extension Satellite {
         observer: LatLonAlt,
         julianDateRange: Range<Double>,
         interval: TimeInterval = 30
-    ) -> Map<Double, SatelliteSnapshot> {
-        var snapshots = Map<Double, SatelliteSnapshot>()
+    ) -> BTree<Double, SatelliteSnapshot> {
+        var snapshots = BTree<Double, SatelliteSnapshot>()
         stride(
             from: julianDateRange.lowerBound,
             // Append interval to overshoot the upperBound and make sure it is included.
@@ -88,7 +88,7 @@ extension Satellite {
             by: interval * TimeConstants.sec2day
         )
         .forEach { (julianDate) in
-            snapshots[julianDate] = snapshot(julianDate: julianDate, observer: observer)
+            snapshots.insertOrReplace((julianDate, snapshot(julianDate: julianDate, observer: observer)))
         }
         return snapshots
     }
@@ -98,7 +98,7 @@ extension Satellite {
         observer: LatLonAlt,
         julianDateRange: Range<Double>,
         fineInterval: TimeInterval = 3
-    ) -> (pass: Pass, snapshots: Map<Double, SatelliteSnapshot>) {
+    ) -> (pass: Pass, snapshots: BTree<Double, SatelliteSnapshot>) {
         let fineSnapshots = snapshots(
             observer: observer,
             julianDateRange: julianDateRange,
@@ -185,10 +185,10 @@ extension Satellite {
     public func findPasses(
         noradIndex: Int,
         observer: LatLonAlt,
-        coarseSnapshots: Map<Double, SatelliteSnapshot>,
+        coarseSnapshots: BTree<Double, SatelliteSnapshot>,
         minElevation: Double = 10,
         fineInterval: TimeInterval = 3
-    ) -> (passes: [Pass], snapshots: Map<Double, SatelliteSnapshot>) {
+    ) -> (passes: [Pass], snapshots: BTree<Double, SatelliteSnapshot>) {
         var snapshotBeforeRising: SatelliteSnapshot?
         var snapshotAfterSetting: SatelliteSnapshot?
         var passes = [Pass]()
@@ -216,7 +216,7 @@ extension Satellite {
 
                 if pass.transit.elev >= minElevation {
                     passes.append(pass)
-                    resultSnapshots = resultSnapshots.merging(snapshots)
+                    resultSnapshots = resultSnapshots.union(snapshots, by: .groupingMatches)
                 }
 
                 snapshotBeforeRising = nil

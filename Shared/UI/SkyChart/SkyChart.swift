@@ -67,7 +67,7 @@ struct SkyChartViewState: Equatable {
         /// Display the sky at julian date. This option will not show any satellite passes.
         case sky(Double, observer: LatLonAlt)
         /// Display a satellite pass. The background sky's date will be the approx time of higest elevation of the pass.
-        case pass(Pass, snapshotsDuringPass: Map<Double, SatelliteSnapshot>, observer: LatLonAlt)
+        case pass(Pass, snapshotsDuringPass: BTree<Double, SatelliteSnapshot>, observer: LatLonAlt)
 
         /// The reference julian date for the background sky, if available.
         /// No background sky will be drawn if this returns `nil`.
@@ -113,7 +113,7 @@ struct SkyChartViewState: Equatable {
             return SkyChartViewState(mode: .notReady)
         }
 
-        let displayPass: (Pass, Map<Double, SatelliteSnapshot>)? = {
+        let displayPass: (Pass, BTree<Double, SatelliteSnapshot>)? = {
             switch state.navigationState {
             case let .allPasses(noradIndex: noradIndex):
                 guard let satelliteState = state.satellites[noradIndex],
@@ -122,8 +122,8 @@ struct SkyChartViewState: Equatable {
                     return nil
                 }
                 let pass = passes[index]
-                // TODO: conditionally generate submap, or rasterized path
-                let subMap = satelliteState.snapshots.submap(from: pass.rise.julianDate, through: pass.set.julianDate)
+                // TODO: conditionally generate subtree, or rasterized path
+                let subMap = satelliteState.snapshots.subtree(from: pass.rise.julianDate, through: pass.set.julianDate)
                 return (pass, subMap)
             default:
                 return nil
@@ -141,7 +141,7 @@ struct SkyChartViewState: Equatable {
         guard let observerCoodinate = state.observerForPasses else {
             return SkyChartViewState(mode: .notReady)
         }
-        let selectedPass: (Pass, Map<Double, SatelliteSnapshot>)? = {
+        let selectedPass: (Pass, BTree<Double, SatelliteSnapshot>)? = {
             switch state.navigationState {
             case let .pass(noradIndex: noradIndex, selectedPassIndex: selectedPassIndex):
                 guard let satelliteState = state.satellites[noradIndex],
@@ -149,7 +149,7 @@ struct SkyChartViewState: Equatable {
                     return nil
                 }
                 let pass = passes[selectedPassIndex]
-                let subMap = satelliteState.snapshots.submap(from: pass.rise.julianDate, through: pass.set.julianDate)
+                let subMap = satelliteState.snapshots.subtree(from: pass.rise.julianDate, through: pass.set.julianDate)
                 return (pass, subMap)
             default:
                 return nil
@@ -193,17 +193,6 @@ struct SkyChart: View, Equatable {
         self.usage = usage
     }
 
-    struct PassInfoModifier: ViewModifier {
-        func body(content: Content) -> some View {
-            return content.fixedSize()
-                .padding(2)
-                .background(Color("passInfoLabel_background"))
-                .foregroundColor(Color("passInfoLabel_foreground"))
-                .font(.caption2)
-                .cornerRadius(4)
-        }
-    }
-
     private var passInfoLabel: some View {
         guard configs.showPassInfoLabels else {
             return AnyView(EmptyView())
@@ -226,22 +215,28 @@ struct SkyChart: View, Equatable {
                     return formatter
                 }()
                 ZStack {
-                    if let snapshot = snapshotsDuringPass.submap(from: pass.rise.julianDate, to: pass.rise.julianDate + TimeConstants.sec2day * 10).first {
-                        let textPosition = AziEleDst(azim: snapshot.1.position.azim, elev: snapshot.1.position.elev + 15, dist: 0)
+                    if let (snapshot, rot, offsetFactor) = Self.firstSnapshotAndRotation(snapshotsDuringPass, julianDate: pass.rise.julianDate, rect: rect, selector: .first) {
+                        let textPosition = AziEleDst(azim: snapshot.position.azim, elev: snapshot.position.elev, dist: 0)
                         Text("↑\(formatter.string(from: Date(julianDate: pass.rise.julianDate)))")
-                            .modifier(PassInfoModifier())
+                            .passInfoLabel()
+                            .offset(x: CGFloat(offsetFactor) * 50)
+                            .rotationEffect(.radians(rot))
                             .position(Self.point(at: textPosition, rect: rect))
                     }
-                    if let snapshot = snapshotsDuringPass.submap(from: pass.set.julianDate - TimeConstants.sec2day * 10, to: pass.set.julianDate).last {
-                        let textPosition = AziEleDst(azim: snapshot.1.position.azim, elev: snapshot.1.position.elev + 15, dist: 0)
+                    if let (snapshot, rot, offsetFactor) = Self.firstSnapshotAndRotation(snapshotsDuringPass, julianDate: pass.set.julianDate, rect: rect, selector: .last) {
+                        let textPosition = AziEleDst(azim: snapshot.position.azim, elev: snapshot.position.elev, dist: 0)
                         Text("↓\(formatter.string(from: Date(julianDate: pass.set.julianDate)))")
-                            .modifier(PassInfoModifier())
+                            .passInfoLabel()
+                            .offset(x: CGFloat(offsetFactor) * 50)
+                            .rotationEffect(.radians(rot))
                             .position(Self.point(at: textPosition, rect: rect))
                     }
-                    if let higestElevSnapshot = snapshotsDuringPass.submap(from: pass.transit.julianDate - TimeConstants.sec2day * 2, to: pass.transit.julianDate + TimeConstants.sec2day * 10).first {
-                        let textPosition = AziEleDst(azim: higestElevSnapshot.1.position.azim, elev: higestElevSnapshot.1.position.elev + 15, dist: 0)
+                    if let (higestElevSnapshot, rot, offsetFactor) = Self.firstSnapshotAndRotation(snapshotsDuringPass, julianDate: pass.transit.julianDate, rect: rect, selector: .first) {
+                        let textPosition = AziEleDst(azim: higestElevSnapshot.position.azim, elev: higestElevSnapshot.position.elev, dist: 0)
                         Text("\(formatter.string(from: Date(julianDate: pass.transit.julianDate))) \n∠\(numberFormatter.string(from: NSNumber(value: pass.transit.elev))!)°")
-                            .modifier(PassInfoModifier())
+                            .passInfoLabel()
+                            .offset(x: CGFloat(offsetFactor) * 50)
+                            .rotationEffect(.radians(rot))
                             .position(Self.point(at: textPosition, rect: rect))
                     }
                 }
@@ -441,6 +436,17 @@ struct SkyChartContext {
     let usage: Usage
 }
 
+fileprivate extension View {
+    func passInfoLabel() -> some View {
+        return fixedSize()
+            .padding(2)
+            .background(Color("passInfoLabel_background"))
+            .foregroundColor(Color("passInfoLabel_foreground"))
+            .font(.caption2)
+            .cornerRadius(4)
+    }
+}
+
 extension ViewProducer where Context == SkyChartContext, ProducedView == SkyChart {
     static func skyChart<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
         ViewProducer<Context, ProducedView> { context in
@@ -483,7 +489,7 @@ extension ViewProducer where Context == SkyChartContext, ProducedView == SkyChar
 
 #if DEBUG
 struct SkyChart_Previews: PreviewProvider {
-    static let issPass: (Pass, Map<Double, SatelliteSnapshot>) = {
+    static let issPass: (Pass, BTree<Double, SatelliteSnapshot>) = {
         let tle = try! TLE(
             raw: """
             ISS (ZARYA)
@@ -508,10 +514,10 @@ struct SkyChart_Previews: PreviewProvider {
             coarseSnapshots: snapshots
         )
         let firstPass = passes.first!
-        return (firstPass, fineSnapshots.submap(from: firstPass.rise.julianDate, through: firstPass.set.julianDate))
+        return (firstPass, fineSnapshots.subtree(from: firstPass.rise.julianDate, through: firstPass.set.julianDate))
     }()
 
-    static let tianHePass: (Pass, Map<Double, SatelliteSnapshot>) = {
+    static let tianHePass: (Pass, BTree<Double, SatelliteSnapshot>) = {
         let tle = try! TLE(
             raw: """
             TIANHE
@@ -536,7 +542,7 @@ struct SkyChart_Previews: PreviewProvider {
             coarseSnapshots: snapshots
         )
         let firstPass = passes.first!
-        return (firstPass, fineSnapshots.submap(from: firstPass.rise.julianDate, through: firstPass.set.julianDate))
+        return (firstPass, fineSnapshots.subtree(from: firstPass.rise.julianDate, through: firstPass.set.julianDate))
     }()
 
     static var previews: some View {
@@ -582,7 +588,7 @@ struct SkyChart_Previews: PreviewProvider {
                     rasterizedSatellitePaths: [
                         .primary: SkyChart.rasterizedPath(
                             rect: CGRect(origin: .zero, size: CGSize(width: 388, height: 805)),
-                            snapshotsDuringPass: snapshots,
+                            snapshotsDuringPass: snapshots2,
                             illuminatedColor: UIColor(Color("satellitePath_illuminated")),
                             unlitColor: UIColor(Color("satellitePath_notIlluminated"))
                         )
