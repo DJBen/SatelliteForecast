@@ -10,6 +10,40 @@ import SatelliteForcastCore
 import SatelliteKit
 import StarryNight
 
+extension SkyChartViewState {
+    static func snapshotsAroundPass(_ tree: BTree<Double, SatelliteSnapshot>, julianDate: Double, selector: BTreeKeySelector) -> SnapshotsAroundPass? {
+        var index = tree.index(forInserting: julianDate, at: selector)
+        if index == tree.endIndex {
+            index = tree.index(before: tree.endIndex)
+        }
+        if tree.count < 2 {
+            return nil
+        }
+
+        if selector == .first {
+            if index == tree.index(before: tree.endIndex) {
+                // Use before index
+                let beforeIndex = tree.index(before: index)
+                return SnapshotsAroundPass(tree[index].1, tree[beforeIndex].1)
+            } else {
+                // Use after index
+                let afterIndex = tree.index(after: index)
+                return SnapshotsAroundPass(tree[index].1, tree[afterIndex].1)
+            }
+        } else {
+            if index == tree.startIndex {
+                // Use after index
+                let afterIndex = tree.index(after: index)
+                return SnapshotsAroundPass(tree[index].1, tree[afterIndex].1)
+            } else {
+                // Use before index
+                let beforeIndex = tree.index(before: index)
+                return SnapshotsAroundPass(tree[index].1, tree[beforeIndex].1)
+            }
+        }
+    }
+}
+
 extension SkyChart {
     static func radius(fromRect rect: CGRect) -> CGFloat {
         return min(rect.width, rect.height) / 2
@@ -34,60 +68,17 @@ extension SkyChart {
         )
     }
 
-    static func firstSnapshotAndRotation(_ tree: BTree<Double, SatelliteSnapshot>, julianDate: Double, rect: CGRect, selector: BTreeKeySelector) -> (SatelliteSnapshot, Double, Double)? {
-        var index = tree.index(forInserting: julianDate, at: selector)
-        if index == tree.endIndex {
-            index = tree.index(before: tree.endIndex)
-        }
-        if tree.count < 2 {
-            return nil
-        }
+    static func rotationAndOffsetDirection(snapshotPair: SkyChartViewState.SnapshotsAroundPass, rect: CGRect) -> (Double, Double) {
 
-        let position = Self.point(at: tree[index].1.position, rect: rect)
-
-        if selector == .first {
-            if index == tree.index(before: tree.endIndex) {
-                // Use before index
-                let beforeIndex = tree.index(before: index)
-                let beforePosition = Self.point(at: tree[beforeIndex].1.position, rect: rect)
-                let rot = atan2(Double(position.y - beforePosition.y), Double(position.x - beforePosition.x))
-                let circumferenceRot = atan2(Double(position.y), Double(position.x)) + .pi / 2
-                let fac: Double = abs(fmod2pi_π(circumferenceRot) - fmod2pi_π(rot)) < .pi ? 1 : -1
-                let adjustedRot = rot > 0 ? rot - .pi / 2 : rot + .pi / 2
-                return (tree[index].1, adjustedRot, fac)
-            } else {
-                // Use after index
-                let afterIndex = tree.index(after: index)
-                let afterPosition = Self.point(at: tree[afterIndex].1.position, rect: rect)
-                let rot = atan2(Double(afterPosition.y - position.y), Double(afterPosition.x - position.x))
-                let circumferenceRot = atan2(Double(position.y), Double(position.x)) + .pi / 2
-                let fac: Double = abs(fmod2pi_π(circumferenceRot) - fmod2pi_π(rot)) < .pi ? 1 : -1
-                let adjustedRot = rot > 0 ? rot - .pi / 2 : rot + .pi / 2
-                return (tree[index].1, adjustedRot, fac)
-            }
-        } else {
-            if index == tree.startIndex {
-                // Use after index
-                let afterIndex = tree.index(after: index)
-                let afterPosition = Self.point(at: tree[afterIndex].1.position, rect: rect)
-                let rot = atan2(Double(afterPosition.y - position.y), Double(afterPosition.x - position.x))
-                let circumferenceRot = atan2(Double(position.y), Double(position.x)) + .pi / 2
-                let fac: Double = abs(fmod2pi_π(circumferenceRot) - fmod2pi_π(rot)) < .pi ? 1 : -1
-                let adjustedRot = rot > 0 ? rot - .pi / 2 : rot + .pi / 2
-                return (tree[index].1, adjustedRot, fac)
-            } else {
-                // Use before index
-                let beforeIndex = tree.index(before: index)
-                let beforePosition = Self.point(at: tree[beforeIndex].1.position, rect: rect)
-                let rot = atan2(Double(position.y - beforePosition.y), Double(position.x - beforePosition.x))
-                let circumferenceRot = atan2(Double(position.y), Double(position.x)) + .pi / 2
-                let fac: Double = abs(fmod2pi_π(circumferenceRot) - fmod2pi_π(rot)) < .pi ? 1 : -1
-                let adjustedRot = rot > 0 ? rot - .pi / 2 : rot + .pi / 2
-                return (tree[index].1, adjustedRot, fac)
-            }
-        }
+        let position = Self.point(at: snapshotPair.first.position, rect: rect)
+        let afterPosition = Self.point(at: snapshotPair.second.position, rect: rect)
+        let rot = atan2(Double(afterPosition.y - position.y), Double(afterPosition.x - position.x))
+        let circumferenceRot = atan2(Double(position.y), Double(position.x)) + .pi / 2
+        let fac: Double = abs(fmod2pi_π(circumferenceRot) - fmod2pi_π(rot)) < .pi ? 1 : -1
+        let adjustedRot = rot > 0 ? rot - .pi / 2 : rot + .pi / 2
+        return (adjustedRot, fac)
     }
-    
+
     static func rasterizedPath(
         rect: CGRect,
         snapshotsDuringPass: BTree<Double, SatelliteSnapshot>,

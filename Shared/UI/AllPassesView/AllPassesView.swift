@@ -269,14 +269,29 @@ struct AllPassesView_Previews: PreviewProvider {
                     }
                 }()
                 let pass = passes[index]
-                let snapshotsDuringPass = snapshots.subtree(from: pass.rise.julianDate, through: pass.set.julianDate)
                 return SkyChart(
                     viewModel: .mock(
                         state: SkyChartViewState(
                             mode: .pass(
                                 pass,
-                                snapshotsDuringPass: snapshotsDuringPass,
-                                observer: observer
+                                observer: observer,
+                                snapshots: SkyChartViewState.NotableSnapshots(
+                                    rise: SkyChartViewState.snapshotsAroundPass(
+                                        snapshots,
+                                        julianDate: pass.rise.julianDate,
+                                        selector: .first
+                                    )!,
+                                    transit: SkyChartViewState.snapshotsAroundPass(
+                                        snapshots,
+                                        julianDate: pass.transit.julianDate,
+                                        selector: .first
+                                    )!,
+                                    set: SkyChartViewState.snapshotsAroundPass(
+                                        snapshots,
+                                        julianDate: pass.set.julianDate,
+                                        selector: .last
+                                    )!
+                                )
                             )
                         )
                     ),

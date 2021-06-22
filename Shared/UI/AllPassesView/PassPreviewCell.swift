@@ -126,20 +126,19 @@ struct PassPreviewCell_Previews: PreviewProvider {
         // Date range
         let startDate = Date(timeIntervalSinceReferenceDate: 20 * 365 * 86400)
         let julianDateRange = startDate.advanced(by: -60 * 60 * 2).julianDate..<startDate.advanced(by: 60 * 60 * 30).julianDate
-        let snapshots = sat.snapshots(
+        let coarseSnapshots = sat.snapshots(
             observer: observerCoordinate,
             julianDateRange: julianDateRange,
             interval: 60
         )
-        let (passes, fineSnapshots) = sat.findPasses(
+        let (passes, snapshots) = sat.findPasses(
             noradIndex: tle.noradIndex,
             observer: observerCoordinate,
-            coarseSnapshots: snapshots
+            coarseSnapshots: coarseSnapshots
         )
 
         func viewAtPassIndex(_ index: Int) -> some View {
             let pass = passes[index]
-            let snapshotsDuringPass = fineSnapshots.subtree(from: pass.rise.julianDate, through: pass.set.julianDate)
             return PassPreviewCell(
                 pass: pass,
                 indexOfPass: index,
@@ -149,8 +148,24 @@ struct PassPreviewCell_Previews: PreviewProvider {
                             state: SkyChartViewState(
                                 mode: .pass(
                                     pass,
-                                    snapshotsDuringPass: snapshotsDuringPass,
-                                    observer: observerCoordinate
+                                    observer: observerCoordinate,
+                                    snapshots: SkyChartViewState.NotableSnapshots(
+                                        rise: SkyChartViewState.snapshotsAroundPass(
+                                            snapshots,
+                                            julianDate: pass.rise.julianDate,
+                                            selector: .first
+                                        )!,
+                                        transit: SkyChartViewState.snapshotsAroundPass(
+                                            snapshots,
+                                            julianDate: pass.transit.julianDate,
+                                            selector: .first
+                                        )!,
+                                        set: SkyChartViewState.snapshotsAroundPass(
+                                            snapshots,
+                                            julianDate: pass.set.julianDate,
+                                            selector: .last
+                                        )!
+                                    )
                                 )
                             )
                         ),
