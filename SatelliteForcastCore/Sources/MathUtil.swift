@@ -9,22 +9,15 @@ import Accelerate
 import Foundation
 import SatelliteKit
 
+/// Converts a ECEF cartesian coordinate (x, y, z) to (ra, dec).
+/// - Parameter vector: The cartesian coordiante.
+/// - Returns: The (ra, dec).
 public func cartesianToRaDec(_ vector: Vector) -> (ra: Double, dec: Double) {
     let (x, y, z) = (vector.x, vector.y, vector.z)
     return (atan2pi(y, x) * rad2deg, asin(z / (x * x + y * y + z * z).squareRoot()) * rad2deg)
 }
 
 public let au2Km: Double = 149_598_073
-
-extension Vector {
-    public func magnitudeSquared() -> Double {
-        return self.x*self.x + self.y*self.y + self.z*self.z
-    }
-
-    public static func * (lhs: Vector, scalar: Double) -> Vector {
-        return Vector(lhs.x * scalar, lhs.y * scalar, lhs.z * scalar)
-    }
-}
 
 /// Quadratic interpolate a list of (x, y) values with a given step n. Will produce n+1 value pairs.
 /// - Parameters:

@@ -90,6 +90,14 @@ public struct Vector {
     public func magnitude() -> Double {
         return (self.x*self.x + self.y*self.y + self.z*self.z).squareRoot()
     }
+
+    public func magnitudeSquared() -> Double {
+        return self.x*self.x + self.y*self.y + self.z*self.z
+    }
+
+    public static func * (lhs: Vector, scalar: Double) -> Vector {
+        return Vector(lhs.x * scalar, lhs.y * scalar, lhs.z * scalar)
+    }
 }
 
 /*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓

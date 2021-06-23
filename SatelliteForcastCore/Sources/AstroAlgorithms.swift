@@ -16,7 +16,8 @@ public enum AstroAlgorithms {
     ///   - object1Geo: The object1's geocentric vector in kilometers.
     ///   - object2Geo: The object1's geocentric vector in kilometers.
     public static func hasLineOfSight(object1Geo: Vector, object2Geo: Vector) -> Bool {
-        let τ_min = (object1Geo.magnitudeSquared() - dotProduct(object1Geo, object2Geo)) / ((object1Geo.magnitudeSquared() + object2Geo.magnitudeSquared()) - 2 * dotProduct(object1Geo, object2Geo))
+        let τ_min = (object1Geo.magnitudeSquared() - dotProduct(object1Geo, object2Geo))
+            / ((object1Geo.magnitudeSquared() + object2Geo.magnitudeSquared()) - 2 * dotProduct(object1Geo, object2Geo))
         if τ_min < 0 || τ_min > 1 {
             return true
         }
