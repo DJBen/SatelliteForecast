@@ -1,17 +1,9 @@
-#
-# Be sure to run `pod lib lint SatelliteForcastCore.podspec' to ensure this is a
-# valid spec before submitting.
-#
-# Any lines starting with a # are optional, but their use is encouraged
-# To learn more about a Podspec see https://guides.cocoapods.org/syntax/podspec.html
-#
-
 Pod::Spec.new do |s|
-  s.name             = 'SatelliteForcastCore'
+  s.name             = 'SatelliteCatalog'
   s.version          = '1.0.0.LOCAL'
-  s.summary          = 'A library that offers access to star and constellation data.'
+  s.summary          = 'A database for all satellites.'
 
-  s.homepage         = 'https://github.com/DJBen'
+  s.homepage         = 'https://github.com/DJBen/'
   s.license          = { :type => 'Proprietary', :text => '© 2021 DJBen' }
   s.author           = { 'Ben Lu' => 'sihao@squareup.com' }
   s.source           = { :git => 'Not Published', :tag => s.version.to_s }
@@ -20,10 +12,13 @@ Pod::Spec.new do |s|
 
   s.swift_version = ['5.4']
   s.source_files = 'Sources/**/*.swift'
+  
+  s.resource_bundles = {
+    'SatelliteCatalogResources' => ['Assets/*.*']
+  }
 
-  s.dependency 'SatelliteCatalog', '1.0.0.LOCAL'
   s.dependency 'SatelliteKit', '1.0.0.LOCAL'
-  s.dependency 'BTree', '~> 4.1.0'
+  s.dependency 'SQLite.swift', '~> 0.12.2'
 
   s.test_spec 'Tests' do |test_spec|
     test_spec.source_files = 'Tests/**/*.swift'

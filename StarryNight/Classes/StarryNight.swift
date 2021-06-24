@@ -9,8 +9,6 @@
 import Foundation
 import SQLite
 
-private class StarryNightClass: NSObject {}
-
 enum StarryNight {
     static let db = try! Connection(Bundle.starryNightResourcesBundle.path(forResource: "stars", ofType: "sqlite3")!)
 
