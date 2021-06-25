@@ -10,6 +10,7 @@ import SwiftUI
 import SwiftRex
 import CombineRextensions
 import SatelliteKit
+import SatelliteForcastCore
 
 enum SatelliteListViewAction {
     case onAppear
@@ -17,7 +18,7 @@ enum SatelliteListViewAction {
 }
 
 struct SatelliteListViewState: Equatable {
-    var tlesByCategory: [TLECategory: [TLE]] = [:]
+    var satellitesByCategory: [SatelliteCategory: [SatelliteInfo]] = [:]
     var selectedNoradIndex: Int?
 
     static var empty: SatelliteListViewState {
@@ -26,7 +27,7 @@ struct SatelliteListViewState: Equatable {
 
     static func project(state: Store.StateType) -> SatelliteListViewState {
         return SatelliteListViewState(
-            tlesByCategory: state.tleLoaderState.tles,
+            satellitesByCategory: state.satelliteLoaderState.info,
             selectedNoradIndex: state.selectedSatelliteNoradIndex
         )
     }
@@ -46,29 +47,29 @@ struct SatelliteListView: View {
 
     var body: some View {
         NavigationView {
-            if viewModel.state.tlesByCategory.isEmpty {
+            if viewModel.state.satellitesByCategory.isEmpty {
                 ProgressView {
                     Text("Loading...")
                 }
                 .navigationTitle("Satellites")
             } else {
                 List {
-                    ForEach(Array(viewModel.state.tlesByCategory.keys), id: \.self) { category in
+                    ForEach(Array(viewModel.state.satellitesByCategory.keys), id: \.self) { category in
                         Section(
                             header: Text(LocalizedStrings.SatelliteListView.sectionHeader(from: category))
                         ) {
-                            ForEach(viewModel.state.tlesByCategory[category] ?? [], id: \.noradIndex) { tle in
+                            ForEach(viewModel.state.satellitesByCategory[category] ?? [], id: \.noradIndex) { info in
                                 NavigationLink(
                                     destination: destination,
-                                    tag: tle.noradIndex,
+                                    tag: info.noradIndex,
                                     selection: Binding<Int?>(
                                         get: { viewModel.state.selectedNoradIndex },
                                         set: { viewModel.dispatch(.selectSatellite(noradIndex: $0)) }
                                     )
                                 ) {
-                                    Text(tle.commonName)
+                                    Text(info.satellite.commonName)
                                 }
-                                .id(tle.noradIndex)
+                                .id(info.noradIndex)
                             }
                         }
                     }
@@ -119,11 +120,12 @@ struct SatelliteListView_Previews: PreviewProvider {
                 """
             )
         ]
+        .map { SatelliteInfo(noradIndex: $0.noradIndex, satellite: Satellite(withTLE: $0)) } 
 
         SatelliteListView(
             viewModel: .mock(
                 state: SatelliteListViewState(
-                    tlesByCategory: [
+                    satellitesByCategory: [
                         .brightest100: brightest100
                     ]
                 )

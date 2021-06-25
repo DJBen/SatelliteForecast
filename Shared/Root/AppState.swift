@@ -17,8 +17,8 @@ struct AppState: Equatable {
     var skyChartState: SkyChartResources = .empty
     var satelliteElevationGraphResources: SatelliteElevationGraphResources = .empty
     /// A mapping from NORAD ID to the satellite state.
-    var satellites: [Int: SatelliteState] = [:]
-    var tleLoaderState: TLELoaderState = .empty
+    var satellites: [Int: SatelliteTrails] = [:]
+    var satelliteLoaderState: SatelliteLoaderState = .empty
     var coreLocationState: CoreLocationState = .empty
     var observerForPasses: LatLonAlt?
 
@@ -62,7 +62,7 @@ struct AppState: Equatable {
         }
     }
 
-    var selectedSatelliteState: SatelliteState? {
+    var selectedSatelliteState: SatelliteTrails? {
         selectedSatelliteNoradIndex.flatMap { satellites[$0] }
     }
 
@@ -87,11 +87,11 @@ struct AppState: Equatable {
         }
     }
 
-    var selectedSatelliteTLE: TLE? {
+    var selectedSatelliteInfo: SatelliteInfo? {
         guard let index = selectedSatelliteNoradIndex else {
             return nil
         }
-        return tleLoaderState.tles.values
+        return satelliteLoaderState.info.values
             .flatMap { $0 }
             .first { $0.noradIndex == index }
     }

@@ -52,7 +52,7 @@ struct AllPassesViewState: Equatable {
     static func project(state: AppState) -> AllPassesViewState {
         guard let selectedNoradIndex = state.selectedSatelliteNoradIndex,
             let satelliteState = state.satellites[selectedNoradIndex],
-            let tle = state.selectedSatelliteTLE else {
+            let info = state.selectedSatelliteInfo else {
             return .empty
         }
 
@@ -74,7 +74,7 @@ struct AllPassesViewState: Equatable {
         let visiblePasses = itemsByVisibility[.visible] ?? []
         let invisiblePasses = (itemsByVisibility[.daylight] ?? []) + (itemsByVisibility[.unlit] ?? [])
         return AllPassesViewState(
-            satelliteName: tle.commonName,
+            satelliteName: info.satellite.commonName,
             observer: state.observerForPasses,
             visiblePasses: visiblePasses
                 .sorted { $0.pass.rise.julianDate < $1.pass.rise.julianDate },

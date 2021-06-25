@@ -17,12 +17,12 @@ enum PassViewAction {
 }
 
 struct PassViewState: Equatable {
-    var tle: TLE?
+    var info: SatelliteInfo?
     var selectedPass: Pass?
 
     static func project(state: AppState) -> PassViewState {
         PassViewState(
-            tle: state.selectedSatelliteTLE,
+            info: state.selectedSatelliteInfo,
             selectedPass: state.selectedSatellitePass
         )
     }
@@ -46,7 +46,7 @@ struct PassView: View, Equatable {
     var skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
 
     var body: some View {
-        if let tle = viewModel.state.tle {
+        if let info = viewModel.state.info {
             GeometryReader { geometry in
                 let rect = geometry.frame(in: .local)
                 VStack(spacing: 20) {
@@ -60,7 +60,7 @@ struct PassView: View, Equatable {
                     Spacer(minLength: 10)
                 }
                 .clipShape(Rectangle())
-                .navigationTitle(tle.commonName)
+                .navigationTitle(info.satellite.commonName)
                 .navigationBarTitleDisplayMode(.inline)
                 .onAppear {
                     viewModel.dispatch(.onAppear)
@@ -138,13 +138,13 @@ struct PassView_Previews: PreviewProvider {
             julianDateRange: julianDateRange,
             satelliteElevationGraphConfigs: .preset,
             satellites: [
-                tle.noradIndex: SatelliteState(
+                tle.noradIndex: SatelliteTrails(
                     snapshots: snapshots.union(fineSnapshots, by: .groupingMatches),
                     passes: passes
                 )
             ],
-            tleLoaderState: TLELoaderState(
-                tles: [.brightest100: [tle]]
+            satelliteLoaderState: SatelliteLoaderState(
+                info: [.brightest100: [SatelliteInfo(noradIndex: tle.noradIndex, satellite: sat)]]
             ),
             coreLocationState: CoreLocationState(
                 authorizationStatus: .authorizedWhenInUse,
@@ -155,7 +155,7 @@ struct PassView_Previews: PreviewProvider {
         PassView(
             viewModel: .mock(
                 state: PassViewState(
-                    tle: tle
+                    info: SatelliteInfo(noradIndex: tle.noradIndex, satellite: sat)
                 )
             ),
             context: PassViewContext(),

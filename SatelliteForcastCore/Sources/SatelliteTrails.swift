@@ -14,7 +14,7 @@ import SatelliteKit
 /// It may unevenly contain ephemerides that are only a few seconds apart for the passes over observer's location, and contain coarse
 /// ones that are approximately minutes apart for the rest of their orbits.
 /// - Passes The pass information describing the exact time of rise and set, and sun illumination changes during the pass.
-public struct SatelliteState: Equatable {
+public struct SatelliteTrails: Equatable {
     public var snapshots: BTree<Double, SatelliteSnapshot>
     public var passes: [Pass]?
 
@@ -26,7 +26,7 @@ public struct SatelliteState: Equatable {
         self.passes = passes
     }
 
-    public static func == (lhs: SatelliteState, rhs: SatelliteState) -> Bool {
+    public static func == (lhs: SatelliteTrails, rhs: SatelliteTrails) -> Bool {
         return lhs.snapshots == rhs.snapshots && lhs.passes == rhs.passes
     }
 }

@@ -15,7 +15,7 @@ extension Reducer where ActionType == TimerAction, StateType == AppState {
         case .start:
             break
         case let .tick(currentDate):
-            state.tleLoaderState.referenceDate = currentDate
+            state.satelliteLoaderState.referenceDate = currentDate
 
             // Advance date range every 10 mins
             if currentDate - (state.julianDateRange.lowerBound + TimeConstants.hrs2day * 2) > 10 * TimeConstants.min2day {

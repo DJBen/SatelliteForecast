@@ -38,7 +38,7 @@ extension EffectMiddleware where
                         let state = getState()
 
                         // Precondition: TLE must be ready
-                        guard let noradIndex = state.selectedSatelliteNoradIndex, let tle = state.tleLoaderState.tle(noradIndex: noradIndex) else {
+                        guard let noradIndex = state.selectedSatelliteNoradIndex, let info = state.satelliteLoaderState.info(noradIndex: noradIndex) else {
                             logger.fault("TLE not ready when selecting satellites")
                             return Empty().eraseToAnyPublisher()
                         }
@@ -66,7 +66,7 @@ extension EffectMiddleware where
                                 fineSnapshots = satelliteState.snapshots
                                 logger.debug("Ephemeride of \(noradIndex) are already generated. Skipping.")
                             } else {
-                                let satellite = Satellite(withTLE: tle)
+                                let satellite = info.satellite
                                 let snapshots = satellite
                                     .snapshots(
                                         observer: observer,

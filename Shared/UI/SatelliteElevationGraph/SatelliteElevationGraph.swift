@@ -431,7 +431,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
             state: AppState(
                 julianDateRange: julianDateRange,
                 satellites: [
-                    Int(sat.noradIdent)!: SatelliteState(
+                    Int(sat.noradIdent)!: SatelliteTrails(
                         snapshots: sat.snapshots(
                             observer: LatLonAlt(location: location),
                             julianDateRange: julianDateRange,
@@ -440,7 +440,9 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                         passes: nil
                     )
                 ],
-                tleLoaderState: TLELoaderState(standaloneTLEs: [tle]),
+                satelliteLoaderState: SatelliteLoaderState(
+                    standaloneInfo: [SatelliteInfo(noradIndex: tle.noradIndex, satellite: sat)]
+                ),
                 coreLocationState: CoreLocationState(
                     authorizationStatus: .authorizedWhenInUse,
                     location: location
@@ -464,7 +466,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
             state: AppState(
                 julianDateRange: julianDateRange,
                 satellites: [
-                    Int(sat2.noradIdent)!: SatelliteState(
+                    Int(sat2.noradIdent)!: SatelliteTrails(
                         snapshots: sat2.snapshots(
                             observer: LatLonAlt(location: location),
                             julianDateRange: julianDateRange,
@@ -473,7 +475,9 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                         passes: nil
                     )
                 ],
-                tleLoaderState: TLELoaderState(standaloneTLEs: [tle2]),
+                satelliteLoaderState: SatelliteLoaderState(
+                    standaloneInfo: [SatelliteInfo(noradIndex: tle2.noradIndex, satellite: sat2)]
+                ),
                 coreLocationState: CoreLocationState(
                     authorizationStatus: .authorizedWhenInUse,
                     location: location
@@ -497,7 +501,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
             state: AppState(
                 julianDateRange: julianDateRange,
                 satellites: [
-                    Int(sat3.noradIdent)!: SatelliteState(
+                    Int(sat3.noradIdent)!: SatelliteTrails(
                         snapshots: sat3.snapshots(
                             observer: LatLonAlt(location: location),
                             julianDateRange: julianDateRange,
@@ -506,7 +510,9 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                         passes: nil
                     )
                 ],
-                tleLoaderState: TLELoaderState(standaloneTLEs: [tle3]),
+                satelliteLoaderState: SatelliteLoaderState(
+                    standaloneInfo: [SatelliteInfo(noradIndex: tle3.noradIndex, satellite: sat3)]
+                ),
                 coreLocationState: CoreLocationState(
                     authorizationStatus: .authorizedWhenInUse,
                     location: location

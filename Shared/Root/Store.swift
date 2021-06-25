@@ -16,10 +16,10 @@ class Store: ReduxStoreBase<AppAction, AppState> {
     private let reducers: [Reducer<AppAction, AppState>] = [
         Reducer<CoreLocationOutputAction, CoreLocationState>.coreLocationReducer
             .lift(action: \.coreLocationOutput, state: \.coreLocationState),
-        Reducer<TLELoaderInputAction, TLELoaderState>.tleLoaderReducer
-            .lift(action: \.tleLoaderInput, state: \.tleLoaderState),
-        Reducer<TLELoaderOutputAction, TLELoaderState>.tleLoaderReducer
-            .lift(action: \.tleLoaderOutput, state: \.tleLoaderState),
+        Reducer<SatelliteLoaderInputAction, SatelliteLoaderState>.satelliteLoaderReducer
+            .lift(action: \.satelliteLoaderInput, state: \.satelliteLoaderState),
+        Reducer<SatelliteLoaderOutputAction, SatelliteLoaderState>.satelliteLoaderReducer
+            .lift(action: \.satelliteLoaderOutput, state: \.satelliteLoaderState),
         Reducer<SatelliteListViewAction, AppState>.satelliteListViewReducer
             .lift(action: \.satelliteListView),
         Reducer<AllPassesViewAction, AppState>.allPassesViewReducer
@@ -54,14 +54,14 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         )
         .eraseToAnyMiddleware()
 
-        <> EffectMiddleware.tleLoader
+        <> EffectMiddleware.satelliteLoader
         .lift(
-            inputAction: \AppAction.tleLoaderInput,
-            outputAction: AppAction.tleLoaderOutput,
-            state: \AppState.tleLoaderState
+            inputAction: \AppAction.satelliteLoaderInput,
+            outputAction: AppAction.satelliteLoaderOutput,
+            state: \AppState.satelliteLoaderState
         )
         .inject(
-            TLELoaderDependencies()
+            SatelliteLoaderDependencies()
         )
         .eraseToAnyMiddleware()
 

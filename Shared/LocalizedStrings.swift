@@ -10,15 +10,31 @@ import SatelliteForcastCore
 
 enum LocalizedStrings {
     enum SatelliteListView {
-        static func sectionHeader(from category: TLECategory) -> String {
+        static func sectionHeader(from category: SatelliteCategory) -> String {
             switch category {
             case .brightest100:
                 return NSLocalizedString(
                     "SatelliteListView.sectionHeader.category.brightest100",
                     tableName: nil,
                     bundle: .main,
-                    value: "Brightest 100 Satellites",
+                    value: "Brightest 100 satellites",
                     comment: "The section header for the brightest 100 satellites"
+                )
+            case .last30DayLaunches:
+                return NSLocalizedString(
+                    "SatelliteListView.sectionHeader.category.last30DayLaunches",
+                    tableName: nil,
+                    bundle: .main,
+                    value: "Launches in the past 30 days",
+                    comment: "The section header for launches in the past 30 days"
+                )
+            case .active:
+                return NSLocalizedString(
+                    "SatelliteListView.sectionHeader.category.active",
+                    tableName: nil,
+                    bundle: .main,
+                    value: "All active satellites",
+                    comment: "The section header for all active satellites"
                 )
             }
         }

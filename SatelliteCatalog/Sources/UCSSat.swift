@@ -80,3 +80,5 @@ public struct UCSSat {
 
     public let sources: [String]
 }
+
+extension UCSSat: Equatable {}

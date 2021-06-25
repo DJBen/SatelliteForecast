@@ -31,7 +31,7 @@ extension EffectMiddleware where
                 case .onAppear:
                     return .sequence(
                         .coreLocationInput(.requestAuthorization),
-                        .tleLoaderInput(.loadTLECategory(.brightest100)),
+                        .satelliteLoaderInput(.loadSatelliteCategory(.brightest100)),
                         .timer(.start)
                     )
                 case .selectSatellite:

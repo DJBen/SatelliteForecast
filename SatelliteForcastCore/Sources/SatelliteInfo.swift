@@ -10,15 +10,22 @@ import SatelliteKit
 import SatelliteCatalog
 
 public struct SatelliteInfo {
+    public let noradIndex: Int
+
     public let satellite: Satellite
     public let satCat: SatCat?
+    public let ucsSat: UCSSat?
 
     public init(
+        noradIndex: Int,
         satellite: Satellite,
-        satCat: SatCat?
+        satCat: SatCat? = nil,
+        ucsSat: UCSSat? = nil
     ) {
         self.satellite = satellite
+        self.noradIndex = Int(satellite.noradIdent)!
         self.satCat = satCat
+        self.ucsSat = ucsSat
     }
 }
 

@@ -12,8 +12,8 @@ enum AppAction {
     case appDelegate(AppDelegateAction)
     case coreLocationInput(CoreLocationInputAction)
     case coreLocationOutput(CoreLocationOutputAction)
-    case tleLoaderInput(TLELoaderInputAction)
-    case tleLoaderOutput(TLELoaderOutputAction)
+    case satelliteLoaderInput(SatelliteLoaderInputAction)
+    case satelliteLoaderOutput(SatelliteLoaderOutputAction)
     case satelliteListView(SatelliteListViewAction)
     case allPassesView(AllPassesViewAction)
     case passView(PassViewAction)
@@ -61,25 +61,25 @@ extension AppAction {
         }
     }
 
-    public var tleLoaderInput: TLELoaderInputAction? {
+    public var satelliteLoaderInput: SatelliteLoaderInputAction? {
         get {
-            guard case let .tleLoaderInput(value) = self else { return nil }
+            guard case let .satelliteLoaderInput(value) = self else { return nil }
             return value
         }
         set {
-            guard case .tleLoaderInput = self, let newValue = newValue else { return }
-            self = .tleLoaderInput(newValue)
+            guard case .satelliteLoaderInput = self, let newValue = newValue else { return }
+            self = .satelliteLoaderInput(newValue)
         }
     }
 
-    public var tleLoaderOutput: TLELoaderOutputAction? {
+    public var satelliteLoaderOutput: SatelliteLoaderOutputAction? {
         get {
-            guard case let .tleLoaderOutput(value) = self else { return nil }
+            guard case let .satelliteLoaderOutput(value) = self else { return nil }
             return value
         }
         set {
-            guard case .tleLoaderOutput = self, let newValue = newValue else { return }
-            self = .tleLoaderOutput(newValue)
+            guard case .satelliteLoaderOutput = self, let newValue = newValue else { return }
+            self = .satelliteLoaderOutput(newValue)
         }
     }
 

@@ -22,7 +22,7 @@ extension Reducer where ActionType == TLEPropagatorAction, StateType == Store.St
                 state.satellites[noradIndex]!.snapshots = snapshots
                 state.satellites[noradIndex]!.passes = passes
             } else {
-                state.satellites[noradIndex] = SatelliteState(snapshots: snapshots, passes: passes)
+                state.satellites[noradIndex] = SatelliteTrails(snapshots: snapshots, passes: passes)
             }
 
         case .selectVisiblePass:
@@ -39,7 +39,7 @@ extension Reducer where ActionType == TLEPropagatorAction, StateType == Store.St
 
                 return passes.firstIndex(
                     where: {
-                        $0.rise.julianDate > state.tleLoaderState.referenceDate
+                        $0.rise.julianDate > state.satelliteLoaderState.referenceDate
                             && $0.illumination.hasAnyIllumination
                             && $0.sunElevationAtTransit < -6
                             && $0.transit.elev > 10
@@ -60,7 +60,7 @@ extension Reducer where ActionType == TLEPropagatorAction, StateType == Store.St
             if let _ = state.satellites[noradIndex] {
                 state.satellites[noradIndex]!.snapshots = satelliteSnapshots
             } else {
-                state.satellites[noradIndex] = SatelliteState(snapshots: satelliteSnapshots)
+                state.satellites[noradIndex] = SatelliteTrails(snapshots: satelliteSnapshots)
             }
         }
     }
