@@ -1,0 +1,310 @@
+//
+//  SatelliteCell.swift
+//  SatelliteForcast (iOS)
+//
+//  Created by Ben Lu on 6/25/21.
+//
+
+import SwiftUI
+import SatelliteCatalog
+import SatelliteKit
+import SatelliteForcastCore
+import Regex
+
+struct SatelliteCell: View {
+    let info: SatelliteInfo
+
+    var body: some View {
+        if let ucsSat = info.ucsSat, let satCat = info.satCat {
+            return AnyView(UCSSatCell(cat: satCat, sat: ucsSat))
+        } else if let satCat = info.satCat {
+            return AnyView(CatSatCell(cat: satCat))
+        } else {
+            return AnyView(Text(info.satellite.commonName))
+        }
+    }
+
+    static func image(cat: SatCat) -> UIImage? {
+        if let image = UIImage(named: "\(cat.noradID)") {
+            return image
+        } else if cat.name.contains("STARLINK") {
+            return UIImage(named: "starlink")
+        }
+        return nil
+    }
+}
+
+struct CatSatCell: View {
+    let cat: SatCat
+
+    let dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .none
+        return dateFormatter
+    }()
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            HStack(alignment: .top) {
+                Text(cat.name)
+                    .font(.headline)
+                    .bold()
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Spacer()
+
+                VStack(alignment: .trailing) {
+                    Text(String("NORAD #\(cat.noradID)"))
+                        .secondaryStyle()
+
+                    Text(cat.cosparID)
+                        .secondaryStyle()
+                }
+            }
+
+            Spacer().frame(height: 8)
+
+            HStack(alignment: .bottom) {
+                VStack(alignment: .leading) {
+                    if let (imageSystemName, status) = cat.operationalStatus
+                        .map(LocalizedStrings.SatelliteCell.operationalStatusLocalizedString) {
+                        Text("\(Image(systemName: imageSystemName)) \(status)")
+                            .secondaryStyle()
+                    }
+
+                    HStack(alignment: .firstTextBaseline) {
+                        Image(systemName: "calendar")
+                            .secondaryStyle()
+
+                        Text(dateFormatter.string(from: cat.launchDate))
+                            .secondaryStyle()
+                    }
+
+                    if let launchSite = cat.launchSite.fullName {
+                        HStack(alignment: .firstTextBaseline) {
+                            Image(systemName: "mappin.and.ellipse")
+                                .secondaryStyle()
+
+                            Text(launchSite)
+                                .secondaryStyle()
+                        }
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                if let image = SatelliteCell.image(cat: cat) {
+                    VStack(alignment: .leading) {
+                        Image(uiImage: image)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                    }
+                    .frame(
+                        maxWidth: 160,
+                        alignment: .trailing
+                    )
+                }
+            }
+        }
+    }
+}
+
+struct UCSSatCell: View {
+    let cat: SatCat
+    let sat: UCSSat
+
+    let dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .none
+        return dateFormatter
+    }()
+
+    let massFormatter: NumberFormatter = {
+        let numberFormatter = NumberFormatter()
+        numberFormatter.maximumFractionDigits = 1
+        return numberFormatter
+    }()
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            HStack(alignment: .top) {
+                Text(sat.name)
+                    .font(.headline)
+                    .bold()
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Spacer()
+
+                VStack(alignment: .trailing) {
+                    Text(String("NORAD #\(sat.noradID)"))
+                        .secondaryStyle()
+
+                    Text(sat.cosparID)
+                        .secondaryStyle()
+                }
+            }
+
+            Spacer().frame(height: 8)
+
+            HStack(alignment: .bottom) {
+                VStack(alignment: .leading) {
+                    HStack(alignment: .firstTextBaseline) {
+                        Image(systemName: "target")
+                            .secondaryStyle()
+
+                        Text(sat.purpose)
+                            .secondaryStyle()
+                    }
+
+                    HStack(alignment: .firstTextBaseline) {
+                        Image(systemName: "calendar")
+                            .secondaryStyle()
+
+                        Text(dateFormatter.string(from: sat.dateOfLaunch))
+                            .secondaryStyle()
+                    }
+
+                    HStack(alignment: .firstTextBaseline) {
+                        Image(systemName: "mappin.and.ellipse")
+                            .secondaryStyle()
+
+                        Text(sat.launchSite)
+                            .secondaryStyle()
+                    }
+
+                    if let dryMass = sat.dryMass {
+                        HStack(alignment: .firstTextBaseline) {
+                            Image(systemName: "scalemass")
+                                .secondaryStyle()
+
+                            Text("\(massFormatter.string(from: dryMass as NSNumber)!) kg")
+                                .secondaryStyle()
+
+                        }
+                    }
+                    HStack(alignment: .firstTextBaseline) {
+                        Image(systemName: "building.2")
+                            .secondaryStyle()
+
+                        Text(LocalizedStrings.SatelliteCell.operatorAndCountry(sat.operatorOrOwner, country: sat.countryOfOperatorOrOwner))
+                            .secondaryStyle()
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                if let image = SatelliteCell.image(cat: cat) {
+                    VStack(alignment: .leading) {
+                        Image(uiImage: image)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                    }
+                    .frame(
+                        maxWidth: 160,
+                        alignment: .trailing
+                    )
+                }
+            }
+        }
+    }
+}
+
+fileprivate extension View {
+    func secondaryStyle() -> some View {
+        font(.caption)
+        .foregroundColor(Color(UIColor.secondaryLabel))
+    }
+}
+
+#if DEBUG
+struct SatelliteCell_Previews: PreviewProvider {
+    static var previews: some View {
+        let tle = try! TLE(
+            raw: """
+            HXMT (HUIYAN)
+            1 42758U 17034A   21175.47270383  .00000190  00000-0  25345-4 0  9994
+            2 42758  43.0168 154.5968 0009214 212.9911 291.2910 15.09209474222077
+            """
+        )
+        SatelliteCell(
+            info: SatelliteInfo(
+                noradIndex: 42758,
+                satellite: Satellite(withTLE: tle),
+                satCat: SatCat.with(noradCatID: 42758),
+                ucsSat: UCSSat.with(noradCatID: 42758)
+            )
+        )
+        .previewLayout(.sizeThatFits)
+
+        let tle2 = try! TLE(
+            raw: """
+            Starlink-1234
+            1 45190U 20012N   21176.35506752 -.00001501  00000-0 -81927-4 0  9994
+            2 45190  53.0536 160.5308 0000470  74.2127 285.8914 15.06388268 76300
+            """
+        )
+        SatelliteCell(
+            info: SatelliteInfo(
+                noradIndex: 45190,
+                satellite: Satellite(withTLE: tle2),
+                satCat: SatCat.with(noradCatID: 45190),
+                ucsSat: UCSSat.with(noradCatID: 45190)
+            )
+        )
+        .previewLayout(.sizeThatFits)
+
+        let tle3 = try! TLE(
+            raw: """
+            ISS (ZARYA)
+            1 25544U 98067A   21152.11066515  .00000451  00000-0  16375-4 0  9992
+            2 25544  51.6453  62.2423 0003364  52.3737  88.5313 15.48937685286109
+            """
+        )
+        SatelliteCell(
+            info: SatelliteInfo(
+                noradIndex: 25544,
+                satellite: Satellite(withTLE: tle3),
+                satCat: SatCat.with(noradCatID: 25544),
+                ucsSat: UCSSat.with(noradCatID: 25544)
+            )
+        )
+        .previewLayout(.sizeThatFits)
+
+        let tle4 = try! TLE(
+            raw: """
+            TIANHE
+            1 48274U 21035A   21177.19899464  .00007627  00000-0  86624-4 0  9996
+            2 48274  41.4688 228.1337 0007784 358.0062 109.9650 15.62580486  9109
+            """
+        )
+        SatelliteCell(
+            info: SatelliteInfo(
+                noradIndex: 48274,
+                satellite: Satellite(withTLE: tle4),
+                satCat: SatCat.with(noradCatID: 48274),
+                ucsSat: UCSSat.with(noradCatID: 48274)
+            )
+        )
+        .previewLayout(.sizeThatFits)
+
+        let tle5 = try! TLE(
+            raw: """
+            SAOCOM 1-B
+            1 46265U 20059A   21177.18820872 -.00000213  00000-0 -20180-4 0  9996
+            2 46265  97.8880   3.0480 0001542  92.5054 267.6308 14.82153247 44352
+            """
+        )
+        SatelliteCell(
+            info: SatelliteInfo(
+                noradIndex: 46265,
+                satellite: Satellite(withTLE: tle5),
+                satCat: SatCat.with(noradCatID: 46265),
+                ucsSat: UCSSat.with(noradCatID: 46265)
+            )
+        )
+        .previewLayout(.sizeThatFits)
+    }
+}
+#endif

@@ -11,6 +11,7 @@ import SwiftRex
 import CombineRextensions
 import SatelliteKit
 import SatelliteForcastCore
+import SatelliteCatalog
 
 enum SatelliteListViewAction {
     case onAppear
@@ -67,7 +68,7 @@ struct SatelliteListView: View {
                                         set: { viewModel.dispatch(.selectSatellite(noradIndex: $0)) }
                                     )
                                 ) {
-                                    Text(info.satellite.commonName)
+                                    SatelliteCell(info: info)
                                 }
                                 .id(info.noradIndex)
                             }
@@ -120,7 +121,14 @@ struct SatelliteListView_Previews: PreviewProvider {
                 """
             )
         ]
-        .map { SatelliteInfo(noradIndex: $0.noradIndex, satellite: Satellite(withTLE: $0)) } 
+        .map {
+            SatelliteInfo(
+                noradIndex: $0.noradIndex,
+                satellite: Satellite(withTLE: $0),
+                satCat: SatCat.with(noradCatID: $0.noradIndex),
+                ucsSat: UCSSat.with(noradCatID: $0.noradIndex)
+            )
+        }
 
         SatelliteListView(
             viewModel: .mock(
@@ -130,7 +138,16 @@ struct SatelliteListView_Previews: PreviewProvider {
                     ]
                 )
             ),
-            allPassesViewProducer: .crash
+            allPassesViewProducer: .pure(
+                AllPassesView(
+                    viewModel: .mock(
+                        state: AllPassesViewState()
+                    ),
+                    context: AllPassesViewContext(),
+                    skyChartProducer: .crash,
+                    passViewProducer: .crash
+                )
+            )
         )
     }
 }

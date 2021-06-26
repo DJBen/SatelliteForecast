@@ -42,6 +42,8 @@ extension EffectMiddleware where
                         ucsSat: ucsSat
                     )
                 }
+                // Sort the satellite list in reverse chronological order of the freshness of TLE.
+                .sorted(by: { $0.satellite.t₀Days1950 > $1.satellite.t₀Days1950 })
                 return DispatchedAction<SatelliteLoaderOutputAction>(
                     .loadedSatelliteInfo(category, info)
                 )
