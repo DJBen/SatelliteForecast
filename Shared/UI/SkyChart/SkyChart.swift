@@ -118,7 +118,7 @@ struct SkyChartViewState: Equatable {
 
         let displayPass: (Pass, NotableSnapshots)? = {
             switch state.navigationState {
-            case let .allPasses(noradIndex: noradIndex):
+            case let .allPasses(_, noradIndex: noradIndex):
                 guard let satelliteState = state.satellites[noradIndex],
                       let passes = satelliteState.passes,
                       index < passes.count else {
@@ -151,7 +151,7 @@ struct SkyChartViewState: Equatable {
         }
         let selectedPass: (Pass, NotableSnapshots)? = {
             switch state.navigationState {
-            case let .pass(noradIndex: noradIndex, selectedPassIndex: selectedPassIndex):
+            case let .pass(_, noradIndex: noradIndex, selectedPassIndex: selectedPassIndex):
                 guard let satelliteState = state.satellites[noradIndex],
                       let passes = satelliteState.passes else {
                     return nil

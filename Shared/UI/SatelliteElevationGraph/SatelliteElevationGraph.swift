@@ -111,14 +111,14 @@ struct SatelliteElevationGraphState: Equatable {
         return SatelliteElevationGraphState(
             xPercentDatePair: xPercentDatePair,
             contentRect: contentRect,
-            noradIndex: state.selectedSatelliteNoradIndex,
+            noradIndex: state.navigationState.selectedSatelliteNoradIndex,
             julianDateRange: state.julianDateRange,
             highlightedDateRange: state.selectedSatellitePass.map { pass -> Range<Double> in
                 return pass.rise.julianDate..<pass.set.julianDate
             },
             julianDateSunElevs: state.currentSatelliteSnapshots.map { ($0, $1.sunElevation) }
                 .reduce(into: BTree<Double, Double>(), { $0.insertOrReplace($1) }),
-            rasterizedElevationGraph: state.selectedSatelliteNoradIndex.flatMap { noradIndex -> UIImage? in
+            rasterizedElevationGraph: state.navigationState.selectedSatelliteNoradIndex.flatMap { noradIndex -> UIImage? in
                 guard let rangeImage = state.satelliteElevationGraphResources.rasterizedElevationGraphs[noradIndex] else {
                     return nil
                 }
@@ -447,7 +447,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                     authorizationStatus: .authorizedWhenInUse,
                     location: location
                 ),
-                navigationState: .allPasses(noradIndex: Int(sat.noradIdent)!)
+                navigationState: .allPasses(category: nil, noradIndex: Int(sat.noradIdent)!)
             )
         )
         SatelliteElevationGraph(viewModel: .mock(state: viewModel))
@@ -482,7 +482,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                     authorizationStatus: .authorizedWhenInUse,
                     location: location
                 ),
-                navigationState: .allPasses(noradIndex: Int(sat2.noradIdent)!)
+                navigationState: .allPasses(category: nil, noradIndex: Int(sat2.noradIdent)!)
             )
         )
         SatelliteElevationGraph(viewModel: .mock(state: viewModel2))
@@ -517,7 +517,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                     authorizationStatus: .authorizedWhenInUse,
                     location: location
                 ),
-                navigationState: .allPasses(noradIndex: Int(sat3.noradIdent)!)
+                navigationState: .allPasses(category: nil, noradIndex: Int(sat3.noradIdent)!)
             )
         )
         SatelliteElevationGraph(viewModel: .mock(state: viewModel3))

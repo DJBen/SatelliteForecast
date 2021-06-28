@@ -10,6 +10,121 @@ import SatelliteForcastCore
 import SatelliteCatalog
 
 enum LocalizedStrings {
+    enum SatelliteOverviewView {
+        static func sectionTitle(_ section: SatelliteOverviewSection) -> String {
+            switch section {
+            case .satellitesOfSpecialInterest(_):
+                return NSLocalizedString(
+                    "SatelliteListView.sectionOverviewView.section.satellitesOfSpecialInterest",
+                    tableName: nil,
+                    bundle: .main,
+                    value: "Satellites of special interest",
+                    comment: "The section title for satellites of special interest"
+                )
+            case .categories(_):
+                return NSLocalizedString(
+                    "SatelliteListView.sectionOverviewView.section.satellitesByCategories",
+                    tableName: nil,
+                    bundle: .main,
+                    value: "Satellites by categories",
+                    comment: "The section title for satellites grouped by categories"
+                )
+            case .management(_):
+                return NSLocalizedString(
+                    "SatelliteListView.sectionOverviewView.section.Management",
+                    tableName: nil,
+                    bundle: .main,
+                    value: "Management",
+                    comment: "The section title for management"
+                )
+            }
+        }
+    }
+
+    enum SatelliteOverviewCell {
+        static func satelliteOfSpecialInterestLocalizedTitle(_ satellite: SatelliteOverviewItem.SatellitesOfSpecialInterest) -> String {
+            switch satellite {
+            case .iss:
+                return NSLocalizedString(
+                    "SatelliteListView.sectionOverviewCell.title.satellite.iss",
+                    tableName: nil,
+                    bundle: .main,
+                    value: "International Space Station",
+                    comment: "The title of ISS, displayed in the 'Satellite of special interest' section."
+                )
+            case .tianhe:
+                return NSLocalizedString(
+                    "SatelliteListView.sectionOverviewCell.title.satellite.tianhe",
+                    tableName: nil,
+                    bundle: .main,
+                    value: "Tianhe (CSS Core Module)",
+                    comment: "The title of Tianhe, displayed in the 'Satellite of special interest' section."
+                )
+            }
+        }
+        static func satelliteOfSpecialInterestLocalizedDescription(_ satellite: SatelliteOverviewItem.SatellitesOfSpecialInterest) -> String {
+            switch satellite {
+            case .iss:
+                return NSLocalizedString(
+                    "SatelliteListView.sectionOverviewCell.description.satellite.iss",
+                    tableName: nil,
+                    bundle: .main,
+                    value: """
+                    A multinational collaborative project featuring the largest spacecraft in orbit. 
+                    """,
+                    comment: "The description of ISS in overview page."
+                )
+            case .tianhe:
+                return NSLocalizedString(
+                    "SatelliteListView.sectionOverviewCell.description.satellite.tianhe",
+                    tableName: nil,
+                    bundle: .main,
+                    value: "The first module to launch of the Tiangong space station.",
+                    comment: "The description of Tianhe in overview page."
+                )
+            }
+        }
+        static func categoryLocalizedString(_ category: SatelliteCategory) -> String {
+            switch category {
+            case .brightest100:
+                return NSLocalizedString(
+                    "SatelliteListView.sectionOverviewCell.category.brightest100",
+                    tableName: nil,
+                    bundle: .main,
+                    value: "Brightest 100 satellites",
+                    comment: "The section header for the brightest 100 satellites"
+                )
+            case .last30DayLaunches:
+                return NSLocalizedString(
+                    "SatelliteListView.sectionOverviewCell.category.last30DayLaunches",
+                    tableName: nil,
+                    bundle: .main,
+                    value: "Launches in the past 30 days",
+                    comment: "The section header for launches in the past 30 days"
+                )
+            case .active:
+                return NSLocalizedString(
+                    "SatelliteListView.sectionOverviewCell.category.active",
+                    tableName: nil,
+                    bundle: .main,
+                    value: "All active satellites",
+                    comment: "The section header for all active satellites"
+                )
+            }
+        }
+
+        static func itemLocalizedString(_ item: SatelliteOverviewItem) -> String {
+            switch item {
+            case .specialSatellites(_):
+                return ""
+            case let .category(category):
+                return categoryLocalizedString(category)
+            case .management(_):
+                return ""
+            }
+        }
+    }
+
     enum SatelliteListView {
         static func sectionHeader(from category: SatelliteCategory) -> String {
             switch category {

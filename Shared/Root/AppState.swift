@@ -22,48 +22,10 @@ struct AppState: Equatable {
     var coreLocationState: CoreLocationState = .empty
     var observerForPasses: LatLonAlt?
 
-    // Navigation
-    enum NavigationState: Equatable {
-        case list
-        case allPasses(noradIndex: Int)
-        case pass(noradIndex: Int, selectedPassIndex: Int)
-    }
-    var navigationState: NavigationState = .list {
+    var navigationState: NavigationState = .overview {
         willSet {
             print("[Nav] state changed from \(self.navigationState) to \(newValue)")
         }
-    }
-
-    // MARK: Derived Properties
-    var selectedSatelliteNoradIndex: Int? {
-        get {
-            switch navigationState {
-            case let .allPasses(noradIndex), let .pass(noradIndex, _):
-                return noradIndex
-            case .list:
-                return nil
-            }
-        }
-
-        set {
-            if let newValue = newValue {
-                switch navigationState {
-                case .list, .allPasses(noradIndex: _):
-                    self.navigationState = .allPasses(noradIndex: newValue)
-                case let .pass(noradIndex, selectedPassIndex):
-                    if newValue == noradIndex {
-                        return
-                    }
-                    self.navigationState = .pass(noradIndex: newValue, selectedPassIndex: selectedPassIndex)
-                }
-            } else {
-                self.navigationState = .list
-            }
-        }
-    }
-
-    var selectedSatelliteState: SatelliteTrails? {
-        selectedSatelliteNoradIndex.flatMap { satellites[$0] }
     }
 
     static var empty: AppState {
@@ -72,15 +34,19 @@ struct AppState: Equatable {
         )
     }
 
+    var selectedSatelliteState: SatelliteTrails? {
+        navigationState.selectedSatelliteNoradIndex.flatMap { satellites[$0] }
+    }
+
     var currentSatelliteSnapshots: BTree<Double, SatelliteSnapshot> {
         get {
-            guard let selectedSatelliteNoradIndex = selectedSatelliteNoradIndex else {
+            guard let selectedSatelliteNoradIndex = navigationState.selectedSatelliteNoradIndex else {
                 return BTree()
             }
             return satellites[selectedSatelliteNoradIndex]?.snapshots ?? BTree()
         }
         set {
-            guard let selectedSatelliteNoradIndex = selectedSatelliteNoradIndex else {
+            guard let selectedSatelliteNoradIndex = navigationState.selectedSatelliteNoradIndex else {
                 return
             }
             satellites[selectedSatelliteNoradIndex]?.snapshots = newValue
@@ -88,7 +54,7 @@ struct AppState: Equatable {
     }
 
     var selectedSatelliteInfo: SatelliteInfo? {
-        guard let index = selectedSatelliteNoradIndex else {
+        guard let index = navigationState.selectedSatelliteNoradIndex else {
             return nil
         }
         return satelliteLoaderState.info.values
@@ -98,7 +64,7 @@ struct AppState: Equatable {
 
     var selectedSatellitePassIndex: Int? {
         switch navigationState {
-        case let .pass(_, selectedPassIndex):
+        case let .pass(_, _, selectedPassIndex):
             return selectedPassIndex
         default:
             return nil
@@ -107,7 +73,7 @@ struct AppState: Equatable {
 
     var selectedSatellitePass: Pass? {
         switch navigationState {
-        case let .pass(noradIndex, selectedPassIndex):
+        case let .pass(_, noradIndex, selectedPassIndex):
             return satellites[noradIndex]?.passes?[selectedPassIndex]
         default:
             return nil

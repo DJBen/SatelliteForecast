@@ -74,22 +74,12 @@ struct CatSatCell: View {
                             .secondaryStyle()
                     }
 
-                    HStack(alignment: .firstTextBaseline) {
-                        Image(systemName: "calendar")
-                            .secondaryStyle()
-
-                        Text(dateFormatter.string(from: cat.launchDate))
-                            .secondaryStyle()
-                    }
+                    Text("\(Image(systemName: "calendar")) \(dateFormatter.string(from: cat.launchDate))")
+                        .secondaryStyle()
 
                     if let launchSite = cat.launchSite.fullName {
-                        HStack(alignment: .firstTextBaseline) {
-                            Image(systemName: "mappin.and.ellipse")
-                                .secondaryStyle()
-
-                            Text(launchSite)
-                                .secondaryStyle()
-                        }
+                        Text("\(Image(systemName: "mappin.and.ellipse")) \(launchSite)")
+                            .secondaryStyle()
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -101,7 +91,7 @@ struct CatSatCell: View {
                             .aspectRatio(contentMode: .fit)
                     }
                     .frame(
-                        maxWidth: 160,
+                        maxWidth: 150,
                         alignment: .trailing
                     )
                 }
@@ -186,7 +176,7 @@ struct UCSSatCell: View {
                         }
                     }
                     HStack(alignment: .firstTextBaseline) {
-                        Image(systemName: "building.2")
+                        Image(systemName: "building.columns")
                             .secondaryStyle()
 
                         Text(LocalizedStrings.SatelliteCell.operatorAndCountry(sat.operatorOrOwner, country: sat.countryOfOperatorOrOwner))
@@ -202,7 +192,7 @@ struct UCSSatCell: View {
                             .aspectRatio(contentMode: .fit)
                     }
                     .frame(
-                        maxWidth: 160,
+                        maxWidth: 150,
                         alignment: .trailing
                     )
                 }

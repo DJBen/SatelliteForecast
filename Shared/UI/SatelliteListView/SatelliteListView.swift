@@ -19,8 +19,8 @@ enum SatelliteListViewAction {
 }
 
 struct SatelliteListViewState: Equatable {
-    var satellitesByCategory: [SatelliteCategory: [SatelliteInfo]] = [:]
-    var selectedNoradIndex: Int?
+    var satellites: [SatelliteInfo] = []
+    var indexPath: NavigationIndexPath?
 
     static var empty: SatelliteListViewState {
         return SatelliteListViewState()
@@ -28,8 +28,9 @@ struct SatelliteListViewState: Equatable {
 
     static func project(state: Store.StateType) -> SatelliteListViewState {
         return SatelliteListViewState(
-            satellitesByCategory: state.satelliteLoaderState.info,
-            selectedNoradIndex: state.selectedSatelliteNoradIndex
+            satellites: state.navigationState.selectedCategory
+                .flatMap { state.satelliteLoaderState.info[$0] } ?? [],
+            indexPath: state.navigationState.indexPath
         )
     }
 }
@@ -46,39 +47,54 @@ struct SatelliteListView: View {
         .equatable()
     }
 
+    private struct SatelliteNavTag: Equatable, Hashable {
+        let category: SatelliteCategory?
+        let noradIndex: Int?
+
+        init(_ navigationIndexPath: NavigationIndexPath) {
+            category = navigationIndexPath.category
+            noradIndex = navigationIndexPath.noradIndex
+        }
+
+        init(category: SatelliteCategory?, noradIndex: Int?) {
+            self.category = category
+            self.noradIndex = noradIndex
+        }
+    }
+
+    func progressView<Content: View>(@ViewBuilder builder: () -> Content) -> some View {
+        if viewModel.state.satellites.isEmpty {
+            // TODO: change this into progress view once it no longer crashes
+            return AnyView(Text("Loading..."))
+        } else {
+            return AnyView(builder())
+        }
+    }
+
     var body: some View {
-        NavigationView {
-            if viewModel.state.satellitesByCategory.isEmpty {
-                ProgressView {
-                    Text("Loading...")
+        progressView {
+            List {
+                ForEach(viewModel.state.satellites, id: \.noradIndex) { info in
+                    NavigationLink(
+                        destination: destination,
+                        tag: SatelliteNavTag(
+                            category: viewModel.state.indexPath?.category,
+                            noradIndex: info.noradIndex
+                        ),
+                        selection: Binding<SatelliteNavTag?>(
+                            get: { viewModel.state.indexPath.map(SatelliteNavTag.init) },
+                            set: {
+                                viewModel.dispatch(.selectSatellite(noradIndex: $0?.noradIndex))
+                            }
+                        )
+                    ) {
+                        SatelliteCell(info: info)
+                    }
+                    .id(info.noradIndex)
                 }
                 .navigationTitle("Satellites")
-            } else {
-                List {
-                    ForEach(Array(viewModel.state.satellitesByCategory.keys), id: \.self) { category in
-                        Section(
-                            header: Text(LocalizedStrings.SatelliteListView.sectionHeader(from: category))
-                        ) {
-                            ForEach(viewModel.state.satellitesByCategory[category] ?? [], id: \.noradIndex) { info in
-                                NavigationLink(
-                                    destination: destination,
-                                    tag: info.noradIndex,
-                                    selection: Binding<Int?>(
-                                        get: { viewModel.state.selectedNoradIndex },
-                                        set: { viewModel.dispatch(.selectSatellite(noradIndex: $0)) }
-                                    )
-                                ) {
-                                    SatelliteCell(info: info)
-                                }
-                                .id(info.noradIndex)
-                            }
-                        }
-                    }
-                    .navigationTitle("Satellites")
-                }
             }
         }
-        .navigationViewStyle(StackNavigationViewStyle())
         .onAppear {
             viewModel.dispatch(.onAppear)
         }
@@ -133,9 +149,7 @@ struct SatelliteListView_Previews: PreviewProvider {
         SatelliteListView(
             viewModel: .mock(
                 state: SatelliteListViewState(
-                    satellitesByCategory: [
-                        .brightest100: brightest100
-                    ]
+                    satellites: brightest100
                 )
             ),
             allPassesViewProducer: .pure(

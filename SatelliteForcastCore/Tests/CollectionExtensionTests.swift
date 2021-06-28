@@ -17,24 +17,24 @@ class CollectionExtensionTests: XCTestCase {
     }
 
     func testSplitMap() {
-        var map = Map<Int, String>()
-        map[10] = "Haha"
-        map[20] = "123"
-        map[40] = "qwer"
-        map[50] = "rtyu"
-        map[70] = "poiu"
+        var map = BTree<Int, String>()
+        map.insertOrReplace((10, "Haha"))
+        map.insertOrReplace((20, "123"))
+        map.insertOrReplace((40, "qwer"))
+        map.insertOrReplace((50, "rtyu"))
+        map.insertOrReplace((70, "poiu"))
         let result = map.split(shouldSplit: { $1.0 - $0.0 > 10 })
-        let map1: Map<Int, String> = [
-            10: "Haha",
-            20: "123"
-        ]
-        let map2: Map<Int, String> = [
-            40: "qwer",
-            50: "rtyu"
-        ]
-        let map3: Map<Int, String> = [
-            70: "poiu"
-        ]
+        let map1 = BTree<Int, String>([
+            (10, "Haha"),
+            (20, "123")
+        ])
+        let map2 = BTree<Int, String>([
+            (40, "qwer"),
+            (50, "rtyu")
+        ])
+        let map3 = BTree<Int, String>([
+            (70, "poiu")
+        ])
         XCTAssertTrue(result[0] == map1)
         XCTAssertTrue(result[1] == map2)
         XCTAssertTrue(result[2] == map3)

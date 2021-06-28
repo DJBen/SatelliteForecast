@@ -14,20 +14,11 @@ extension Reducer where ActionType == AllPassesViewAction, StateType == Store.St
         case .onAppear:
             break
         case let .selectPass(index):
-            switch state.navigationState {
-            case let .allPasses(noradIndex):
-                if let index = index {
-                    state.navigationState = .pass(noradIndex: noradIndex, selectedPassIndex: index)
-                }
-            case let .pass(noradIndex, selectedPassIndex):
-                if index == nil {
-                    state.navigationState = .allPasses(noradIndex: noradIndex)
-                }
-            default:
-                break
+            if let index = index {
+                state.navigationState.selectPassIndex(index)
+            } else {
+                state.navigationState.deselectPassIndex()
             }
-        case .backToList:
-            state.navigationState = .list
         }
     }
 }

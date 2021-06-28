@@ -23,6 +23,7 @@ PODS:
     - STRegex (~> 2.1)
   - STRegex (2.1.1)
   - SwiftRex (0.8.6)
+  - SwiftUIVisualEffects (1.0.0.LOCAL)
   - TestingExtensions (1.0.0.LOCAL):
     - CombineRex (~> 0.8.4)
     - SnapshotTesting (~> 1.8.2)
@@ -38,6 +39,7 @@ DEPENDENCIES:
   - SatelliteKit (from `./SatelliteKit`)
   - StarryNight (from `./StarryNight`)
   - SwiftRex (from `https://github.com/DJBen/SwiftRex.git`, branch `sihao/enable-testability`)
+  - SwiftUIVisualEffects (from `./SwiftUIVisualEffects`)
   - TestingExtensions (from `./TestingExtensions`)
 
 SPEC REPOS:
@@ -63,6 +65,8 @@ EXTERNAL SOURCES:
   SwiftRex:
     :branch: sihao/enable-testability
     :git: https://github.com/DJBen/SwiftRex.git
+  SwiftUIVisualEffects:
+    :path: "./SwiftUIVisualEffects"
   TestingExtensions:
     :path: "./TestingExtensions"
 
@@ -87,8 +91,9 @@ SPEC CHECKSUMS:
   StarryNight: b8e4de06dc283f9fd80193ed71c2358d87fb664c
   STRegex: d49e88d0fe58538d3175fdd989bc1243b9be2a07
   SwiftRex: 5f0e14fe9bb658405bdbc7e78f2a8677bedd2bda
+  SwiftUIVisualEffects: d2f3f8ffc12377fb0c98ceaebf58a0c8a95898aa
   TestingExtensions: 037b8c0fd64a491192c4182b691a6388d280bb7c
 
-PODFILE CHECKSUM: bbb0f47e9e8df1392c7eee4ca2996dff57fa6a79
+PODFILE CHECKSUM: 31777441b061df9b7e01d5837b280108d9293290
 
 COCOAPODS: 1.10.1

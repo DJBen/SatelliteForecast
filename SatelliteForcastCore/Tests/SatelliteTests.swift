@@ -32,6 +32,7 @@ class SatelliteTests: XCTestCase {
         let coarseSnapshots = sat.snapshots(observer: observer, julianDateRange: date.julianDate..<date.addingTimeInterval(800).julianDate)
 
         let (passes, snapshotsDuringPass) = sat.findPasses(
+            noradIndex: 25544,
             observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
             coarseSnapshots: coarseSnapshots
         )
