@@ -13,7 +13,6 @@ import SwiftUI
 
 enum PassViewAction {
     case onAppear
-    case backToAllPasses
 }
 
 struct PassViewState: Equatable {
@@ -39,7 +38,6 @@ struct PassView: View, Equatable {
     }
 
     @ObservedObject var viewModel: ObservableViewModel<PassViewAction, PassViewState>
-    @Environment(\.presentationMode) var presentationMode
 
     var context: PassViewContext
     var elevationGraphProducer: ViewProducer<Void, SatelliteElevationGraph>
@@ -72,11 +70,6 @@ struct PassView: View, Equatable {
                         }, label: {
                             Image(systemName: "square.stack.3d.up")
                         })
-                    }
-                }
-                .onChange(of: presentationMode.wrappedValue.isPresented) { [presentationMode] isPresented in
-                    if presentationMode.wrappedValue.isPresented && !isPresented {
-                        viewModel.dispatch(.backToAllPasses)
                     }
                 }
             }
@@ -150,7 +143,7 @@ struct PassView_Previews: PreviewProvider {
                 authorizationStatus: .authorizedWhenInUse,
                 location: location
             ),
-            navigationState: .pass(noradIndex: tle.noradIndex, selectedPassIndex: 0)
+            navigationState: .pass(category: .brightest100, noradIndex: tle.noradIndex, selectedPassIndex: 0)
         )
         PassView(
             viewModel: .mock(

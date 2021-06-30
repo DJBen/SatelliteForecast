@@ -15,7 +15,6 @@ import SwiftUI
 enum AllPassesViewAction {
     case onAppear
     case selectPass(index: Int?)
-    case backToList
 }
 
 struct AllPassesViewState: Equatable {
@@ -50,7 +49,7 @@ struct AllPassesViewState: Equatable {
     var selectedPassIndex: Int?
 
     static func project(state: AppState) -> AllPassesViewState {
-        guard let selectedNoradIndex = state.selectedSatelliteNoradIndex,
+        guard let selectedNoradIndex = state.navigationState.selectedSatelliteNoradIndex,
             let satelliteState = state.satellites[selectedNoradIndex],
             let info = state.selectedSatelliteInfo else {
             return .empty
@@ -95,7 +94,6 @@ struct AllPassesView: View, Equatable {
     }
 
     @ObservedObject var viewModel: ObservableViewModel<AllPassesViewAction, AllPassesViewState>
-    @Environment(\.presentationMode) var presentationMode
 
     var context: AllPassesViewContext
     var skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
@@ -150,11 +148,6 @@ struct AllPassesView: View, Equatable {
         .listStyle(GroupedListStyle())
         .onAppear {
             viewModel.dispatch(.onAppear)
-        }
-        .onChange(of: presentationMode.wrappedValue.isPresented) { [presentationMode] isPresented in
-            if presentationMode.wrappedValue.isPresented && !isPresented {
-                viewModel.dispatch(.backToList)
-            }
         }
         .navigationTitle(viewModel.state.satelliteName ?? "All Passes")
         .navigationBarTitleDisplayMode(.inline)

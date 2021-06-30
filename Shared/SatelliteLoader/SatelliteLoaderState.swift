@@ -10,6 +10,7 @@ import SatelliteForcastCore
 import SatelliteKit
 
 enum SatelliteCategory: Equatable, Hashable {
+    /// The brighest 100 (or so) satellites.
     case brightest100
 
     /// Satellites that are launched within last 30 days

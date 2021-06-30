@@ -12,6 +12,7 @@ target 'SatelliteForcast (iOS)' do
   pod "StarryNight", :path => './StarryNight'
   pod "SatelliteCatalog", :path => './SatelliteCatalog'
   pod "SatelliteForcastCore", :path => './SatelliteForcastCore'
+  pod "SwiftUIVisualEffects", :path => './SwiftUIVisualEffects'
 
   target 'Tests iOS' do
     pod "TestingExtensions", :path => './TestingExtensions'

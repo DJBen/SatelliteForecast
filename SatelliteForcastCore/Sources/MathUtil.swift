@@ -31,7 +31,7 @@ public func quadraticInterpolate(_ pairs: [(Double, Double)], steps: Int) -> [(D
     let a = pairs.map { $0.1 }
     let ori = pairs.map { $0.0 }
     let stepSize = Double(pairs.count - 1) / Double(steps)
-    let b: [Double] = Array(stride(from: 0.0, through: Double(pairs.count - 1), by: stepSize))
+    let b: [Double] = Array(stride(from: 0.0, to: Double(pairs.count - 1), by: stepSize))
     let strideB = vDSP_Stride(1)
     var c = [Double](repeating: 0, count: b.count)
     let strideC = vDSP_Stride(1)
@@ -39,10 +39,12 @@ public func quadraticInterpolate(_ pairs: [(Double, Double)], steps: Int) -> [(D
     let countA = vDSP_Length(a.count)
     vDSP_vqintD(a, b, strideB, &c, strideC, countC, countA)
 
-    return zip(b, c).enumerated().map { i, x in
+    var result: [(Double, Double)] = zip(b, c).enumerated().map { i, x in
         let (bv, cv) = x
         let fl = ori[Int(floor(bv))]
         let ce = ori[Int(ceil(bv))]
         return ((ce - fl) * (bv - floor(bv)) + fl, cv)
     }
+    result.append(pairs.last!)
+    return result
 }

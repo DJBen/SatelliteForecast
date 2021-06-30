@@ -29,11 +29,17 @@ extension EffectMiddleware where
             .onAction { (action, _, getState) -> Effect<Void, AppAction> in
                 switch action {
                 case .onAppear:
-                    return .sequence(
+                    var actions: [AppAction] = [
                         .coreLocationInput(.requestAuthorization),
-                        .satelliteLoaderInput(.loadSatelliteCategory(.brightest100)),
                         .timer(.start)
-                    )
+                    ]
+
+                    if let selectedCategory = getState().navigationState.selectedCategory {
+                        actions.append(.satelliteLoaderInput(.loadSatelliteCategory(selectedCategory)))
+                    }
+
+                    return .sequence(actions)
+
                 case .selectSatellite:
                     if let observer = getState().coreLocationState.location.map(LatLonAlt.init) {
                         return .just(.freezeObserverLocation(observer))

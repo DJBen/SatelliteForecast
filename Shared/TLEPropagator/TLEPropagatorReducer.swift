@@ -47,11 +47,11 @@ extension Reducer where ActionType == TLEPropagatorAction, StateType == Store.St
                 )
             }
             switch state.navigationState {
-            case let .allPasses(noradIndex), let .pass(noradIndex, _):
+            case let .allPasses(category, noradIndex), let .pass(category, noradIndex, _):
                 if let index = selectedPassIndex(noradIndex: noradIndex) {
-                    state.navigationState = .pass(noradIndex: noradIndex, selectedPassIndex: index)
+                    state.navigationState = .pass(category: category, noradIndex: noradIndex, selectedPassIndex: index)
                 }
-            case .list:
+            case .list, .overview:
                 break
             }
 

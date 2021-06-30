@@ -20,6 +20,8 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             .lift(action: \.satelliteLoaderInput, state: \.satelliteLoaderState),
         Reducer<SatelliteLoaderOutputAction, SatelliteLoaderState>.satelliteLoaderReducer
             .lift(action: \.satelliteLoaderOutput, state: \.satelliteLoaderState),
+        Reducer<SatelliteOverviewViewAction, AppState>.satelliteOverviewReducer
+            .lift(action: \.satelliteOverview),
         Reducer<SatelliteListViewAction, AppState>.satelliteListViewReducer
             .lift(action: \.satelliteListView),
         Reducer<AllPassesViewAction, AppState>.allPassesViewReducer

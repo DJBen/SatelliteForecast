@@ -20,6 +20,8 @@
 		EF3D099E26864DDF00B84232 /* SatelliteOverviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3D099D26864DDF00B84232 /* SatelliteOverviewCell.swift */; };
 		EF3D09A026864FD800B84232 /* SatelliteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3D099F26864FD800B84232 /* SatelliteCell.swift */; };
 		EF3D09A22686920800B84232 /* Satellites.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EF3D09A12686920800B84232 /* Satellites.xcassets */; };
+		EF3D09A5268875B100B84232 /* NavigationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3D09A4268875B100B84232 /* NavigationState.swift */; };
+		EF3D09A72689CA3D00B84232 /* SatelliteOverviewReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3D09A62689CA3D00B84232 /* SatelliteOverviewReducer.swift */; };
 		EF46564B2679C81F0040B762 /* PassPreviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF46564A2679C81F0040B762 /* PassPreviewCell.swift */; };
 		EF46564D267AF7070040B762 /* SkyChartConfigs.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF46564C267AF7070040B762 /* SkyChartConfigs.swift */; };
 		EF46564F267B32D60040B762 /* SkyChart+Static.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF46564E267B32D60040B762 /* SkyChart+Static.swift */; };
@@ -114,6 +116,8 @@
 		EF3D099D26864DDF00B84232 /* SatelliteOverviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteOverviewCell.swift; sourceTree = "<group>"; };
 		EF3D099F26864FD800B84232 /* SatelliteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteCell.swift; sourceTree = "<group>"; };
 		EF3D09A12686920800B84232 /* Satellites.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Satellites.xcassets; sourceTree = "<group>"; };
+		EF3D09A4268875B100B84232 /* NavigationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationState.swift; sourceTree = "<group>"; };
+		EF3D09A62689CA3D00B84232 /* SatelliteOverviewReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteOverviewReducer.swift; sourceTree = "<group>"; };
 		EF46564A2679C81F0040B762 /* PassPreviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassPreviewCell.swift; sourceTree = "<group>"; };
 		EF46564C267AF7070040B762 /* SkyChartConfigs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyChartConfigs.swift; sourceTree = "<group>"; };
 		EF46564E267B32D60040B762 /* SkyChart+Static.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SkyChart+Static.swift"; sourceTree = "<group>"; };
@@ -252,6 +256,7 @@
 			children = (
 				EF3D099B2685A12200B84232 /* SatelliteOverviewView.swift */,
 				EF3D099D26864DDF00B84232 /* SatelliteOverviewCell.swift */,
+				EF3D09A62689CA3D00B84232 /* SatelliteOverviewReducer.swift */,
 			);
 			path = SatelliteOverview;
 			sourceTree = "<group>";
@@ -317,6 +322,7 @@
 				EF7A3190266B6ADF00CC33C0 /* AppState.swift */,
 				EF7A318E266B6AD800CC33C0 /* AppAction.swift */,
 				EF8A423F26804A800014AE17 /* AppStateReducer.swift */,
+				EF3D09A4268875B100B84232 /* NavigationState.swift */,
 			);
 			path = Root;
 			sourceTree = "<group>";
@@ -587,6 +593,7 @@
 				EF8A4235267C53630014AE17 /* PassViewReducer.swift in Sources */,
 				EF7A3125266B1A2500CC33C0 /* CoreLocationState.swift in Sources */,
 				EF46564F267B32D60040B762 /* SkyChart+Static.swift in Sources */,
+				EF3D09A5268875B100B84232 /* NavigationState.swift in Sources */,
 				EF1CAB39266B8934006319C8 /* SatelliteListViewMiddleware.swift in Sources */,
 				EF1CAB32266B7ABF006319C8 /* PassView.swift in Sources */,
 				EF7A3128266B1A2D00CC33C0 /* CoreLocationAction.swift in Sources */,
@@ -612,6 +619,7 @@
 				EF3D099C2685A12200B84232 /* SatelliteOverviewView.swift in Sources */,
 				EF465651267B38780040B762 /* AllPassesViewReducer.swift in Sources */,
 				EF7A313E266B538900CC33C0 /* SatelliteLoaderReducer.swift in Sources */,
+				EF3D09A72689CA3D00B84232 /* SatelliteOverviewReducer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
