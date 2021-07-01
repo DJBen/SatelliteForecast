@@ -46,6 +46,9 @@ extension EffectMiddleware where
                     } else {
                         return .doNothing
                     }
+
+                case .satelliteSearchTextChanged(_):
+                    return .doNothing
                 }
             }
     }

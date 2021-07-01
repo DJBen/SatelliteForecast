@@ -51,7 +51,11 @@ struct SatelliteElevationGraphResources: Equatable {
 
 struct SatelliteElevationGraphState: Equatable {
     static func == (lhs: SatelliteElevationGraphState, rhs: SatelliteElevationGraphState) -> Bool {
-        return lhs.julianDateRange == rhs.julianDateRange && lhs.highlightedDateRange == rhs.highlightedDateRange && lhs.configs == rhs.configs
+        return lhs.julianDateRange == rhs.julianDateRange
+        && lhs.highlightedDateRange == rhs.highlightedDateRange
+        && lhs.julianDateSunElevs == rhs.julianDateSunElevs
+        && lhs.rasterizedElevationGraph == rhs.rasterizedElevationGraph
+        && lhs.configs == rhs.configs
     }
 
     // Generated data source
@@ -108,6 +112,19 @@ struct SatelliteElevationGraphState: Equatable {
             return CGRect(origin: initialRect.origin, size: CGSize(width: initialRect.width / widthPerSecond * max(widthPerSecond, state.satelliteElevationGraphConfigs.minimumHorizonalResolution), height: initialRect.height))
         }
 
+        let rasterizedElevationGraph = state.navigationState.selectedSatelliteNoradIndex.flatMap { noradIndex -> UIImage? in
+            guard let rangeImage = state.satelliteElevationGraphResources.rasterizedElevationGraphs[noradIndex] else {
+                return nil
+            }
+            let (julianDateRange, image) = (rangeImage.julianDateRange, rangeImage.image)
+            // Reuses the image if the previously calculated date range is within 10 mins away from current requested date range
+            if abs(julianDateRange.lowerBound - state.julianDateRange.lowerBound) < 10 * TimeConstants.min2day && abs(julianDateRange.upperBound - state.julianDateRange.upperBound) < 10 * TimeConstants.min2day  {
+                return image
+            }
+
+            return nil
+        }
+
         return SatelliteElevationGraphState(
             xPercentDatePair: xPercentDatePair,
             contentRect: contentRect,
@@ -118,18 +135,7 @@ struct SatelliteElevationGraphState: Equatable {
             },
             julianDateSunElevs: state.currentSatelliteSnapshots.map { ($0, $1.sunElevation) }
                 .reduce(into: BTree<Double, Double>(), { $0.insertOrReplace($1) }),
-            rasterizedElevationGraph: state.navigationState.selectedSatelliteNoradIndex.flatMap { noradIndex -> UIImage? in
-                guard let rangeImage = state.satelliteElevationGraphResources.rasterizedElevationGraphs[noradIndex] else {
-                    return nil
-                }
-                let (julianDateRange, image) = (rangeImage.julianDateRange, rangeImage.image)
-                // Reuses the image if the previously calculated date range is within 10 mins away from current requested date range
-                if abs(julianDateRange.lowerBound - state.julianDateRange.lowerBound) < 10 * TimeConstants.min2day && abs(julianDateRange.upperBound - state.julianDateRange.upperBound) < 10 * TimeConstants.min2day  {
-                    return image
-                }
-
-                return nil
-            },
+            rasterizedElevationGraph: rasterizedElevationGraph,
             configs: state.satelliteElevationGraphConfigs
         )
     }

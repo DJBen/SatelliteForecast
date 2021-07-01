@@ -97,6 +97,7 @@ struct SatelliteOverviewSpecialSatelliteCell: View {
 
                         Text(LocalizedStrings.SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedDescription(satellite))
                             .font(.caption)
+                            .multilineTextAlignment(.leading)
                             .foregroundColor(colorScheme == .light ? Color(UIColor.systemGray2) : Color(UIColor.systemGray4))
                             .vibrancyEffect()
                     }

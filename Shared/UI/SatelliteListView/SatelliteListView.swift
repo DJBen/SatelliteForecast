@@ -16,10 +16,45 @@ import SatelliteCatalog
 enum SatelliteListViewAction {
     case onAppear
     case selectSatellite(noradIndex: Int?)
+    case satelliteSearchTextChanged(String)
+}
+
+private let yearFormatter: DateFormatter = {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy"
+    return dateFormatter
+}()
+
+fileprivate extension SatelliteInfo {
+    func fitsSearchText(_ searchText: String) -> Bool {
+        guard !searchText.isEmpty else {
+            return true
+        }
+
+        let searchText = searchText.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if String(noradIndex).contains(searchText) {
+            return true
+        } else if satellite.commonName.lowercased().contains(searchText) {
+            return true
+        } else if satCat?.cosparID.lowercased().contains(searchText) ?? false {
+            return true
+        } else if satCat?.launchSite.code.lowercased().contains(searchText) ?? false {
+            return true
+        } else if let date = satCat?.launchDate, yearFormatter.string(from: date) == searchText {
+            return true
+        } else if let ucsSat = ucsSat {
+            return ucsSat.name.lowercased().contains(searchText)
+            || ucsSat.countryOfOperatorOrOwner.lowercased().contains(searchText)
+        }
+
+        return false
+    }
 }
 
 struct SatelliteListViewState: Equatable {
     var satellites: [SatelliteInfo] = []
+    var satelliteSearchText: String = ""
     var indexPath: NavigationIndexPath?
 
     static var empty: SatelliteListViewState {
@@ -27,9 +62,13 @@ struct SatelliteListViewState: Equatable {
     }
 
     static func project(state: Store.StateType) -> SatelliteListViewState {
+        let allSatellites = state.navigationState.selectedCategory
+            .flatMap { state.satelliteLoaderState.info[$0] } ?? []
+        let filteredSatellites = state.satelliteSearchText.isEmpty ? allSatellites : allSatellites.filter { $0.fitsSearchText(state.satelliteSearchText) }
+
         return SatelliteListViewState(
-            satellites: state.navigationState.selectedCategory
-                .flatMap { state.satelliteLoaderState.info[$0] } ?? [],
+            satellites: filteredSatellites,
+            satelliteSearchText: state.satelliteSearchText,
             indexPath: state.navigationState.indexPath
         )
     }
@@ -63,9 +102,8 @@ struct SatelliteListView: View {
     }
 
     func progressView<Content: View>(@ViewBuilder builder: () -> Content) -> some View {
-        if viewModel.state.satellites.isEmpty {
-            // TODO: change this into progress view once it no longer crashes
-            return AnyView(Text("Loading..."))
+        if viewModel.state.satellites.isEmpty && viewModel.state.satelliteSearchText.isEmpty {
+            return AnyView(ProgressView("Loading..."))
         } else {
             return AnyView(builder())
         }
@@ -92,8 +130,18 @@ struct SatelliteListView: View {
                     }
                     .id(info.noradIndex)
                 }
-                .navigationTitle("Satellites")
             }
+            .searchable(
+                text: Binding<String>(
+                    get: {
+                        viewModel.state.satelliteSearchText
+                    }, set: {
+                        viewModel.dispatch(.satelliteSearchTextChanged($0))
+                    }
+                ),
+                prompt: "Filter by name, ID, country, year..."
+            )
+            .navigationTitle("Satellites")
         }
         .onAppear {
             viewModel.dispatch(.onAppear)

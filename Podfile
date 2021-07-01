@@ -1,4 +1,4 @@
-platform :ios, '14.5'
+platform :ios, '15.0'
 
 target 'SatelliteForcast (iOS)' do
   use_frameworks!

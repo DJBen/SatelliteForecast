@@ -19,6 +19,9 @@ extension Reducer where ActionType == SatelliteListViewAction, StateType == Stor
             } else {
                 state.navigationState.deselectNoradIndex()
             }
+
+        case let .satelliteSearchTextChanged(searchText):
+            state.satelliteSearchText = searchText
         }
     }
 }

@@ -11,13 +11,9 @@ import SatelliteForcastCore
 import BTree
 
 struct SunlightIndicatorViewModel {
-    fileprivate enum SunEvent: Identifiable {
+    fileprivate enum SunEvent: Equatable, Hashable {
         case rise
         case set
-
-        var id: String {
-            return String(describing: self)
-        }
 
         fileprivate var imageName: String {
             switch self {
@@ -38,8 +34,17 @@ struct SunlightIndicatorViewModel {
         }
     }
 
+    fileprivate struct SunEventXCoord: Hashable, Identifiable {
+        let sunEvent: SunEvent
+        let xCoord: CGFloat
+
+        var id: String {
+            return String(describing: self)
+        }
+    }
+
     fileprivate let sunlightGradientStops: [Gradient.Stop]
-    fileprivate let sunEventsXCoord: (CGRect) -> [(SunEvent, CGFloat)]
+    fileprivate let sunEventsXCoord: (CGRect) -> [SunEventXCoord]
 
     init(
         julianDateElevations: BTree<Double, Double>
@@ -98,13 +103,13 @@ struct SunlightIndicatorViewModel {
                 (s1.1 <= 0 && s2.1 > 0)
         }
 
-        let sunEventsXPercent: [(SunEvent, CGFloat)] = {
+        let sunEventsXPercent: [SunEventXCoord] = {
             guard let (startDate, _) = julianDateElevations.first,
                   let (endDate, _) = julianDateElevations.last else {
                 return []
             }
 
-            var results = [(SunEvent, CGFloat)]()
+            var results = [SunEventXCoord]()
             for i in 0..<jdElevationsSplitBySunriseOrSet.count - 1 {
                 let (s1, s2) = (jdElevationsSplitBySunriseOrSet[i], jdElevationsSplitBySunriseOrSet[i + 1])
                 guard let (prevDate, prevElev) = s1.last, let (_, nextElev) = s2.first else {
@@ -112,17 +117,17 @@ struct SunlightIndicatorViewModel {
                 }
                 if prevElev <= 0 && nextElev > 0 {
                     let percent = (prevDate - startDate) / (endDate - startDate)
-                    results.append((.rise, CGFloat(percent)))
+                    results.append(SunEventXCoord(sunEvent: .rise, xCoord: CGFloat(percent)))
                 } else if prevElev > 0 && nextElev <= 0 {
                     let percent = (prevDate - startDate) / (endDate - startDate)
-                    results.append((.set, CGFloat(percent)))
+                    results.append(SunEventXCoord(sunEvent: .set, xCoord: CGFloat(percent)))
                 }
             }
             return results
         }()
 
         sunEventsXCoord = { rect in
-            sunEventsXPercent.map { ($0.0, $0.1 * rect.width) }
+            sunEventsXPercent.map { SunEventXCoord(sunEvent: $0.sunEvent, xCoord: $0.xCoord * rect.width) }
         }
     }
 }
@@ -156,14 +161,14 @@ struct SunlightIndicator: View {
             ZStack {
                 sunlightIndicator
 
-                ForEach(viewModel.sunEventsXCoord(rect), id: \.0) { (sunEvent, x) in
-                    Image(systemName: sunEvent.systemImageName)
+                ForEach(viewModel.sunEventsXCoord(rect)) { sunEventXCoord in
+                    Image(systemName: sunEventXCoord.sunEvent.systemImageName)
                         .renderingMode(.template)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .foregroundColor(.white)
                         .frame(height: 18)
-                        .position(x: x, y: rect.midY)
+                        .position(x: sunEventXCoord.xCoord, y: rect.midY)
                 }
             }
         }

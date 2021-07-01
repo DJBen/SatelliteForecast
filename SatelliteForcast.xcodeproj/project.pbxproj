@@ -16,6 +16,7 @@
 		EF1CAB36266B87B6006319C8 /* SatelliteListViewReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CAB35266B87B6006319C8 /* SatelliteListViewReducer.swift */; };
 		EF1CAB39266B8934006319C8 /* SatelliteListViewMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CAB38266B8934006319C8 /* SatelliteListViewMiddleware.swift */; };
 		EF1CAB4C266DBD38006319C8 /* SatelliteListViewMiddlewareTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CAB4B266DBD38006319C8 /* SatelliteListViewMiddlewareTests.swift */; platformFilter = ios; };
+		EF1EDA2C268D21BF0088DD65 /* SatelliteOverviewMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1EDA2B268D21BF0088DD65 /* SatelliteOverviewMiddleware.swift */; };
 		EF3D099C2685A12200B84232 /* SatelliteOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3D099B2685A12200B84232 /* SatelliteOverviewView.swift */; };
 		EF3D099E26864DDF00B84232 /* SatelliteOverviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3D099D26864DDF00B84232 /* SatelliteOverviewCell.swift */; };
 		EF3D09A026864FD800B84232 /* SatelliteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3D099F26864FD800B84232 /* SatelliteCell.swift */; };
@@ -112,6 +113,7 @@
 		EF1CAB35266B87B6006319C8 /* SatelliteListViewReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteListViewReducer.swift; sourceTree = "<group>"; };
 		EF1CAB38266B8934006319C8 /* SatelliteListViewMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteListViewMiddleware.swift; sourceTree = "<group>"; };
 		EF1CAB4B266DBD38006319C8 /* SatelliteListViewMiddlewareTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteListViewMiddlewareTests.swift; sourceTree = "<group>"; };
+		EF1EDA2B268D21BF0088DD65 /* SatelliteOverviewMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteOverviewMiddleware.swift; sourceTree = "<group>"; };
 		EF3D099B2685A12200B84232 /* SatelliteOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteOverviewView.swift; sourceTree = "<group>"; };
 		EF3D099D26864DDF00B84232 /* SatelliteOverviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteOverviewCell.swift; sourceTree = "<group>"; };
 		EF3D099F26864FD800B84232 /* SatelliteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteCell.swift; sourceTree = "<group>"; };
@@ -256,6 +258,7 @@
 			children = (
 				EF3D099B2685A12200B84232 /* SatelliteOverviewView.swift */,
 				EF3D099D26864DDF00B84232 /* SatelliteOverviewCell.swift */,
+				EF1EDA2B268D21BF0088DD65 /* SatelliteOverviewMiddleware.swift */,
 				EF3D09A62689CA3D00B84232 /* SatelliteOverviewReducer.swift */,
 			);
 			path = SatelliteOverview;
@@ -610,6 +613,7 @@
 				EF46564B2679C81F0040B762 /* PassPreviewCell.swift in Sources */,
 				EF7A3138266B4A5300CC33C0 /* SatelliteLoaderAction.swift in Sources */,
 				EF7A3135266B493E00CC33C0 /* SatelliteLoaderState.swift in Sources */,
+				EF1EDA2C268D21BF0088DD65 /* SatelliteOverviewMiddleware.swift in Sources */,
 				EFF750C8266F4DFF005222F8 /* SizeModifier.swift in Sources */,
 				EF5CB01D266E2933000019DA /* TLEPropagatorReducer.swift in Sources */,
 				EF5CB01E266E2933000019DA /* TLEPropagatorAction.swift in Sources */,
@@ -694,7 +698,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -749,7 +753,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -768,7 +772,7 @@
 				DEVELOPMENT_TEAM = 52RD2GH5DP;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Shared/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -791,7 +795,7 @@
 				DEVELOPMENT_TEAM = 52RD2GH5DP;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Shared/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -83,17 +83,17 @@ SPEC CHECKSUMS:
   CombineRex: 8fa0193b70739542ba3ceaf7be7a586524509428
   CombineRextensions: 00444b1b96f1914c0c52d4498e0e90e89469540e
   FlagKit: eca7dc89064b0c986302ba9acefad1bf80a435b1
-  SatelliteCatalog: 48e6b410f266a7b94c702a000631baee95e4185f
-  SatelliteForcastCore: c618ddd983451b93e602db48df3482d6f5eea097
-  SatelliteKit: c8bb99e36b2482d865495b387dc8908723241993
+  SatelliteCatalog: 03261393572b58b64f8b26d3456c75953f288d1b
+  SatelliteForcastCore: 9e3247d7e8c60c68eeea074f5cdfa59931ca21c2
+  SatelliteKit: 56c2f87ceb711c89f976509af9040059058e8a51
   SnapshotTesting: 38947050d13960d57a4a9c166fcf51bca7d56970
   SQLite.swift: d2b4642190917051ce6bd1d49aab565fe794eea3
-  StarryNight: b8e4de06dc283f9fd80193ed71c2358d87fb664c
+  StarryNight: 57aec7f59091bbbebab2471e391c19ba77b695d9
   STRegex: d49e88d0fe58538d3175fdd989bc1243b9be2a07
   SwiftRex: 5f0e14fe9bb658405bdbc7e78f2a8677bedd2bda
-  SwiftUIVisualEffects: d2f3f8ffc12377fb0c98ceaebf58a0c8a95898aa
-  TestingExtensions: 037b8c0fd64a491192c4182b691a6388d280bb7c
+  SwiftUIVisualEffects: 4e6f1fe8159a07e59eaf3918e5f8cd1fe52cadce
+  TestingExtensions: 9d0aedfff90a52837a5a0733d517a9c8493b123f
 
-PODFILE CHECKSUM: 31777441b061df9b7e01d5837b280108d9293290
+PODFILE CHECKSUM: f73940c15609c2d521db2040bf1e587f34e3885c
 
 COCOAPODS: 1.10.1

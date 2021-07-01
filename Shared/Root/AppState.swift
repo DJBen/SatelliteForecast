@@ -18,6 +18,7 @@ struct AppState: Equatable {
     var satelliteElevationGraphResources: SatelliteElevationGraphResources = .empty
     /// A mapping from NORAD ID to the satellite state.
     var satellites: [Int: SatelliteTrails] = [:]
+    var satelliteSearchText: String = ""
     var satelliteLoaderState: SatelliteLoaderState = .empty
     var coreLocationState: CoreLocationState = .empty
     var observerForPasses: LatLonAlt?

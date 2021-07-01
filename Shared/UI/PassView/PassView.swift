@@ -32,11 +32,7 @@ struct PassViewState: Equatable {
 }
 
 /// The satellite detail view shows satellite passes and the sky chart during the first visible pass (if available).
-struct PassView: View, Equatable {
-    static func == (lhs: PassView, rhs: PassView) -> Bool {
-        lhs.viewModel.state == rhs.viewModel.state
-    }
-
+struct PassView: View {
     @ObservedObject var viewModel: ObservableViewModel<PassViewAction, PassViewState>
 
     var context: PassViewContext
@@ -44,37 +40,24 @@ struct PassView: View, Equatable {
     var skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
 
     var body: some View {
-        if let info = viewModel.state.info {
-            GeometryReader { geometry in
-                let rect = geometry.frame(in: .local)
-                VStack(spacing: 20) {
-                    elevationGraphProducer.view()
-                        .frame(alignment: .leading)
-                    skyChartProducer.view(
-                        SkyChartContext(usage: .full)
-                    )
-                    .equatable()
-                    .frame(height: min(rect.width, rect.height))
-                    Spacer(minLength: 10)
-                }
-                .clipShape(Rectangle())
-                .navigationTitle(info.satellite.commonName)
-                .navigationBarTitleDisplayMode(.inline)
-                .onAppear {
-                    viewModel.dispatch(.onAppear)
-                }
-                .toolbar {
-                    ToolbarItem(placement: .bottomBar) {
-                        Button(action: {
-
-                        }, label: {
-                            Image(systemName: "square.stack.3d.up")
-                        })
-                    }
-                }
+        GeometryReader { geometry in
+            let rect = geometry.frame(in: .local)
+            VStack(spacing: 20) {
+                elevationGraphProducer.view()
+                    .frame(height: 250, alignment: .leading)
+                skyChartProducer.view(
+                    SkyChartContext(usage: .full)
+                )
+                .equatable()
+                .frame(height: min(rect.width, rect.height))
+                Spacer(minLength: 10)
             }
-        } else {
-            EmptyView()
+            .clipShape(Rectangle())
+            .navigationTitle(viewModel.state.info?.satellite.commonName ?? "")
+            .navigationBarTitleDisplayMode(.inline)
+        }
+        .onAppear {
+            viewModel.dispatch(.onAppear)
         }
     }
 }
