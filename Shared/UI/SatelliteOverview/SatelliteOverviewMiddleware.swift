@@ -23,8 +23,17 @@ extension EffectMiddleware where
                 switch action {
                 case .selectSpecialSatellite(noradIndex: _):
                     return .just(.satelliteLoaderInput(.loadSatelliteCategory(.brightest100)))
-                case .selectCategory(_):
-                    return .doNothing
+                case let .selectCategory(category):
+                    var actions: [AppAction] = [
+                        .coreLocationInput(.requestAuthorization),
+                        .timer(.start)
+                    ]
+
+                    if let category = category {
+                        actions.append(.satelliteLoaderInput(.loadSatelliteCategory(category)))
+                    }
+
+                    return .sequence(actions)
                 }
             }
     }

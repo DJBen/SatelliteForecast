@@ -37,18 +37,6 @@ enum SatelliteElevationGraphAction {
     case rasterizedElevationGraph(UIImage, size: CGSize, noradIndex: Int, julianDateRange: Range<Double>)
 }
 
-struct SatelliteElevationGraphResources: Equatable {
-    struct RangeImage: Equatable {
-        let julianDateRange: Range<Double>
-        let image: UIImage
-    }
-    var rasterizedElevationGraphs: [Int: RangeImage] = [:]
-
-    static var empty: SatelliteElevationGraphResources {
-        SatelliteElevationGraphResources()
-    }
-}
-
 struct SatelliteElevationGraphState: Equatable {
     static func == (lhs: SatelliteElevationGraphState, rhs: SatelliteElevationGraphState) -> Bool {
         return lhs.julianDateRange == rhs.julianDateRange
@@ -60,8 +48,6 @@ struct SatelliteElevationGraphState: Equatable {
 
     // Generated data source
     let xPercentDatePair: [(Double, Double, Int)]
-    let contentRect: (CGRect) -> CGRect
-
     /// Date range for display.
     let noradIndex: Int?
     let julianDateRange: Range<Double>
@@ -73,7 +59,6 @@ struct SatelliteElevationGraphState: Equatable {
     static var empty: SatelliteElevationGraphState {
         .init(
             xPercentDatePair: [],
-            contentRect: { $0 },
             noradIndex: nil,
             julianDateRange: Date().advanced(by: -60 * 60 * 2).julianDate..<Date().advanced(by: 60 * 60 * 22).julianDate,
             highlightedDateRange: nil,
@@ -107,11 +92,6 @@ struct SatelliteElevationGraphState: Equatable {
             return results
         }()
 
-        let contentRect: (CGRect) -> CGRect = { initialRect in
-            let widthPerSecond = initialRect.width / CGFloat((state.julianDateRange.upperBound - state.julianDateRange.lowerBound) * TimeConstants.day2sec)
-            return CGRect(origin: initialRect.origin, size: CGSize(width: initialRect.width / widthPerSecond * max(widthPerSecond, state.satelliteElevationGraphConfigs.minimumHorizonalResolution), height: initialRect.height))
-        }
-
         let rasterizedElevationGraph = state.navigationState.selectedSatelliteNoradIndex.flatMap { noradIndex -> UIImage? in
             guard let rangeImage = state.satelliteElevationGraphResources.rasterizedElevationGraphs[noradIndex] else {
                 return nil
@@ -127,7 +107,6 @@ struct SatelliteElevationGraphState: Equatable {
 
         return SatelliteElevationGraphState(
             xPercentDatePair: xPercentDatePair,
-            contentRect: contentRect,
             noradIndex: state.navigationState.selectedSatelliteNoradIndex,
             julianDateRange: state.julianDateRange,
             highlightedDateRange: state.selectedSatellitePass.map { pass -> Range<Double> in
@@ -367,10 +346,15 @@ struct SatelliteElevationGraph: View {
         )
     }
 
+    private func contentRect(_ initialRect: CGRect) -> CGRect {
+        let widthPerSecond = initialRect.width / CGFloat((viewModel.state.julianDateRange.upperBound - viewModel.state.julianDateRange.lowerBound) * TimeConstants.day2sec)
+        return CGRect(origin: initialRect.origin, size: CGSize(width: initialRect.width / widthPerSecond * max(widthPerSecond, viewModel.state.configs.minimumHorizonalResolution), height: initialRect.height))
+    }
+
     var body: some View {
         GeometryReader { geometry in
             let initialRect = geometry.frame(in: .local)
-            let rect = viewModel.state.contentRect(initialRect)
+            let rect = contentRect(initialRect)
 
             ZStack {
                 ScrollView(

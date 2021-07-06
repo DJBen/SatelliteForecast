@@ -18,7 +18,6 @@ extension EffectMiddleware where
     Dependencies == Void {
 
     /// A middeware that listens to `SatelliteListViewAction`.
-    /// - `onAppear`: It bootstraps the flow with some side effects including loading the TLEs and requesting core location authorization.
     /// - `selectSatellite(noradIndex)`: It asynchronously does two things:
     ///   - Generate a coarse ephemeris of the satellite over a long future period.
     ///   - Find all the passes in the same period, and generate a fine ephemeris during each pass.
@@ -28,18 +27,6 @@ extension EffectMiddleware where
         EffectMiddleware<SatelliteListViewAction, AppAction, AppState, Void>
             .onAction { (action, _, getState) -> Effect<Void, AppAction> in
                 switch action {
-                case .onAppear:
-                    var actions: [AppAction] = [
-                        .coreLocationInput(.requestAuthorization),
-                        .timer(.start)
-                    ]
-
-                    if let selectedCategory = getState().navigationState.selectedCategory {
-                        actions.append(.satelliteLoaderInput(.loadSatelliteCategory(selectedCategory)))
-                    }
-
-                    return .sequence(actions)
-
                 case .selectSatellite:
                     if let observer = getState().coreLocationState.location.map(LatLonAlt.init) {
                         return .just(.freezeObserverLocation(observer))

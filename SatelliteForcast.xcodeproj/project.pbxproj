@@ -17,6 +17,8 @@
 		EF1CAB39266B8934006319C8 /* SatelliteListViewMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CAB38266B8934006319C8 /* SatelliteListViewMiddleware.swift */; };
 		EF1CAB4C266DBD38006319C8 /* SatelliteListViewMiddlewareTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CAB4B266DBD38006319C8 /* SatelliteListViewMiddlewareTests.swift */; platformFilter = ios; };
 		EF1EDA2C268D21BF0088DD65 /* SatelliteOverviewMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1EDA2B268D21BF0088DD65 /* SatelliteOverviewMiddleware.swift */; };
+		EF1EDA2E269200B60088DD65 /* SatelliteElevationGraphResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1EDA2D269200B60088DD65 /* SatelliteElevationGraphResources.swift */; };
+		EF1EDA30269204420088DD65 /* SkyChartResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1EDA2F269204420088DD65 /* SkyChartResources.swift */; };
 		EF3D099C2685A12200B84232 /* SatelliteOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3D099B2685A12200B84232 /* SatelliteOverviewView.swift */; };
 		EF3D099E26864DDF00B84232 /* SatelliteOverviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3D099D26864DDF00B84232 /* SatelliteOverviewCell.swift */; };
 		EF3D09A026864FD800B84232 /* SatelliteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3D099F26864FD800B84232 /* SatelliteCell.swift */; };
@@ -114,6 +116,8 @@
 		EF1CAB38266B8934006319C8 /* SatelliteListViewMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteListViewMiddleware.swift; sourceTree = "<group>"; };
 		EF1CAB4B266DBD38006319C8 /* SatelliteListViewMiddlewareTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteListViewMiddlewareTests.swift; sourceTree = "<group>"; };
 		EF1EDA2B268D21BF0088DD65 /* SatelliteOverviewMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteOverviewMiddleware.swift; sourceTree = "<group>"; };
+		EF1EDA2D269200B60088DD65 /* SatelliteElevationGraphResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteElevationGraphResources.swift; sourceTree = "<group>"; };
+		EF1EDA2F269204420088DD65 /* SkyChartResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyChartResources.swift; sourceTree = "<group>"; };
 		EF3D099B2685A12200B84232 /* SatelliteOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteOverviewView.swift; sourceTree = "<group>"; };
 		EF3D099D26864DDF00B84232 /* SatelliteOverviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteOverviewCell.swift; sourceTree = "<group>"; };
 		EF3D099F26864FD800B84232 /* SatelliteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteCell.swift; sourceTree = "<group>"; };
@@ -228,6 +232,7 @@
 				EF19FA08266EC38200D0B2CD /* SkyChartMiddleware.swift */,
 				EF19FA0A266EC7CE00D0B2CD /* SkyChartReducer.swift */,
 				EF46564C267AF7070040B762 /* SkyChartConfigs.swift */,
+				EF1EDA2F269204420088DD65 /* SkyChartResources.swift */,
 				EF8A424126812A940014AE17 /* PlanetaryBodyView.swift */,
 			);
 			path = SkyChart;
@@ -338,6 +343,7 @@
 				EF8A423D267EA3970014AE17 /* SatelliteElevationGraphReducer.swift */,
 				EF8A4239267E87740014AE17 /* SatelliteElevationGraph+Static.swift */,
 				EFAE1F122669E7A800A18A42 /* SunlightIndicator.swift */,
+				EF1EDA2D269200B60088DD65 /* SatelliteElevationGraphResources.swift */,
 			);
 			path = SatelliteElevationGraph;
 			sourceTree = "<group>";
@@ -589,6 +595,7 @@
 				EF5CB022266EAF6F000019DA /* AllPassesViewMiddleware.swift in Sources */,
 				EFAE1F132669E7A800A18A42 /* SunlightIndicator.swift in Sources */,
 				EFAE1F0C2668B10F00A18A42 /* SatelliteElevationGraph.swift in Sources */,
+				EF1EDA2E269200B60088DD65 /* SatelliteElevationGraphResources.swift in Sources */,
 				EF7A3194266B6B0B00CC33C0 /* AppAction.swift in Sources */,
 				EF3D09A026864FD800B84232 /* SatelliteCell.swift in Sources */,
 				EF8A423E267EA3970014AE17 /* SatelliteElevationGraphReducer.swift in Sources */,
@@ -602,6 +609,7 @@
 				EF7A3128266B1A2D00CC33C0 /* CoreLocationAction.swift in Sources */,
 				EF8A423C267EA38C0014AE17 /* SatelliteElevationGraphMiddleware.swift in Sources */,
 				EF7A3198266B6E4900CC33C0 /* SatelliteListView.swift in Sources */,
+				EF1EDA30269204420088DD65 /* SkyChartResources.swift in Sources */,
 				EF465653267BE7680040B762 /* AppDelegate.swift in Sources */,
 				EF8A423A267E87740014AE17 /* SatelliteElevationGraph+Static.swift in Sources */,
 				EF5CB019266E28FC000019DA /* TimerMiddleware.swift in Sources */,

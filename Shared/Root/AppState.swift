@@ -54,15 +54,6 @@ struct AppState: Equatable {
         }
     }
 
-    var selectedSatelliteInfo: SatelliteInfo? {
-        guard let index = navigationState.selectedSatelliteNoradIndex else {
-            return nil
-        }
-        return satelliteLoaderState.info.values
-            .flatMap { $0 }
-            .first { $0.noradIndex == index }
-    }
-
     var selectedSatellitePassIndex: Int? {
         switch navigationState {
         case let .pass(_, _, selectedPassIndex):

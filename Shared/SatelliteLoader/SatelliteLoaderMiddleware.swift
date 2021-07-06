@@ -71,9 +71,9 @@ extension EffectMiddleware where
             switch inputAction {
             case let .loadSatelliteCategory(category):
                 return Effect(token: category) { context -> AnyPublisher<DispatchedAction<SatelliteLoaderOutputAction>, Never> in
-                    if let info = getState().info[category] {
+                    if let result = getState().info[category], let info = result.successValue {
                         let averageTLEAge = info.map {
-                            Date(julianDate: getState().referenceDate).timeIntervalSince(Date(daysSince1950: $0.satellite.tle.t₀))
+                            Date(julianDate: getState().referenceDate).timeIntervalSince(Date(daysSince1950: $1.satellite.tle.t₀))
                         }
                         .reduce(0, +) / Double(info.count)
 
