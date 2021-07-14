@@ -14,7 +14,7 @@ fileprivate let logger = Logger(subsystem: "io.djben.satelliteLoader", category:
 extension Reducer where ActionType == SatelliteLoaderAction, StateType == SatelliteLoaderState {
     static let satelliteLoaderReducer = Reducer.reduce { action, state in
         switch action {
-        case .loadSatelliteCategory(_):
+        case .loadSatelliteCategory(_, _):
             break
         case let .loadedSatelliteInfo(category, info):
             state.info[category] = .success(info)

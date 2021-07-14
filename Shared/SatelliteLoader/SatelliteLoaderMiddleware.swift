@@ -49,17 +49,17 @@ extension EffectMiddleware where
                     }
 
                     if let result = getState().info[category], let info = result.successValue {
-                        let averageTLEAge = info.map {
+                        let mostRecentTLEAge = info.map {
                             Date(julianDate: getState().referenceDate).timeIntervalSince(Date(daysSince1950: $1.satellite.tle.t₀))
                         }
-                        .reduce(0, +) / Double(info.count)
+                        .max() ?? 0
 
-                        if averageTLEAge > context.dependencies.updateInterval {
-                            logger.notice("Avg TLE age \(averageTLEAge) too old: updating.")
+                        if mostRecentTLEAge > context.dependencies.updateInterval {
+                            logger.notice("Most recent TLE age \(mostRecentTLEAge) too old: updating.")
                             return loadSatellitePublisher()
                         }
 
-                        logger.notice("Avg TLE age \(averageTLEAge) is new: skip update.")
+                        logger.notice("Most recent TLE age \(mostRecentTLEAge) is new: skip update.")
                         return Empty<DispatchedAction<AppAction>, Never>()
                             .eraseToAnyPublisher()
                     }
