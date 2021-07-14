@@ -59,7 +59,7 @@ extension EffectMiddleware where
                             let fineSnapshots: BTree<Double, SatelliteSnapshot>
 
                             // Use cached satellite ephemerides if calculated within the last hour.
-                            if let satelliteState = state.selectedSatelliteState,
+                            if let satelliteState = state.selectedSatelliteTrails,
                                state.julianDateRange.lowerBound - satelliteState.snapshots.first!.1.julianDate < TimeConstants.hrs2day,
                                let existingPasses = satelliteState.passes {
                                 passes = existingPasses

@@ -431,7 +431,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                     )
                 ],
                 satelliteLoaderState: SatelliteLoaderState(
-                    standaloneInfo: [SatelliteInfo(noradIndex: tle.noradIndex, satellite: sat)]
+                    standaloneInfo: [tle.noradIndex: SatelliteInfo(noradIndex: tle.noradIndex, satellite: sat)]
                 ),
                 coreLocationState: CoreLocationState(
                     authorizationStatus: .authorizedWhenInUse,
@@ -466,7 +466,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                     )
                 ],
                 satelliteLoaderState: SatelliteLoaderState(
-                    standaloneInfo: [SatelliteInfo(noradIndex: tle2.noradIndex, satellite: sat2)]
+                    standaloneInfo: [tle2.noradIndex: SatelliteInfo(noradIndex: tle2.noradIndex, satellite: sat2)]
                 ),
                 coreLocationState: CoreLocationState(
                     authorizationStatus: .authorizedWhenInUse,
@@ -501,7 +501,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                     )
                 ],
                 satelliteLoaderState: SatelliteLoaderState(
-                    standaloneInfo: [SatelliteInfo(noradIndex: tle3.noradIndex, satellite: sat3)]
+                    standaloneInfo: [tle3.noradIndex: SatelliteInfo(noradIndex: tle3.noradIndex, satellite: sat3)]
                 ),
                 coreLocationState: CoreLocationState(
                     authorizationStatus: .authorizedWhenInUse,

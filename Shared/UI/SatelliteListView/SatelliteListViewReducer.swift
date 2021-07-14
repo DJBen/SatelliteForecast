@@ -20,6 +20,9 @@ extension Reducer where ActionType == SatelliteListViewAction, StateType == Stor
 
         case let .satelliteSearchTextChanged(searchText):
             state.satelliteSearchText = searchText
+
+        case .retryLoadingSatelliteList:
+            break
         }
     }
 }

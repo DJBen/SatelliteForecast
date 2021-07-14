@@ -35,8 +35,12 @@ struct AppState: Equatable {
         )
     }
 
-    var selectedSatelliteState: SatelliteTrails? {
+    var selectedSatelliteTrails: SatelliteTrails? {
         navigationState.selectedSatelliteNoradIndex.flatMap { satellites[$0] }
+    }
+
+    var selectedSatelliteInfo: SatelliteInfo? {
+        navigationState.selectedSatelliteNoradIndex.flatMap { satelliteLoaderState[$0] }
     }
 
     var currentSatelliteSnapshots: BTree<Double, SatelliteSnapshot> {

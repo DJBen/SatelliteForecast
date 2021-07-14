@@ -51,7 +51,7 @@ struct AllPassesViewState: Equatable {
     static func project(state: AppState) -> AllPassesViewState {
         guard let selectedNoradIndex = state.navigationState.selectedSatelliteNoradIndex,
             let satelliteState = state.satellites[selectedNoradIndex],
-            let info = state.selectedSatelliteInfo else {
+            let info = state.satelliteLoaderState[selectedNoradIndex] else {
             return .empty
         }
 

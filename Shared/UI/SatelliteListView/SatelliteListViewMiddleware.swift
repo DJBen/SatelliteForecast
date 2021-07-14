@@ -36,6 +36,15 @@ extension EffectMiddleware where
 
                 case .satelliteSearchTextChanged(_):
                     return .doNothing
+
+                case .retryLoadingSatelliteList:
+                    guard let category = getState().navigationState.selectedCategory else {
+                        return .doNothing
+                    }
+
+                    return SatelliteLoader.loadSatelliteCategoryPublisher(category: category)
+                        .map(AppAction.satelliteLoaderOutput)
+                        .asEffect(info: nil)
                 }
             }
     }

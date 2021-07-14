@@ -79,13 +79,17 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         )
         .eraseToAnyMiddleware()
 
+        <> EffectMiddleware.singleSatelliteWrappingView
+        .lift(
+            inputAction: { $0.singleSatelliteWrappingView }
+        )
+        .eraseToAnyMiddleware()
 
         <> EffectMiddleware.allPassesView
         .lift(
             inputAction: { $0.allPassesView }
         )
         .eraseToAnyMiddleware()
-
 
         <> EffectMiddleware.skyChart
         .lift(

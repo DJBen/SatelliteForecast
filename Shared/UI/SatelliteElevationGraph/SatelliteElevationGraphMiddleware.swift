@@ -35,7 +35,7 @@ extension EffectMiddleware where
                                 return
                             }
 
-                            guard let snapshots = getState().selectedSatelliteState?.snapshots else {
+                            guard let snapshots = getState().selectedSatelliteTrails?.snapshots else {
                                 return
                             }
 

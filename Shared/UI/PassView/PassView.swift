@@ -22,7 +22,7 @@ struct PassViewState: Equatable {
 
     static func project(state: AppState) -> PassViewState {
         PassViewState(
-            info: state.selectedSatelliteInfo,
+            info: state.navigationState.selectedSatelliteNoradIndex.flatMap { state.satelliteLoaderState[$0] },
             selectedPass: state.selectedSatellitePass
         )
     }

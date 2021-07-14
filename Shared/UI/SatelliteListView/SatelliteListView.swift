@@ -17,6 +17,7 @@ import SatelliteCatalog
 enum SatelliteListViewAction {
     case selectSatellite(noradIndex: Int?)
     case satelliteSearchTextChanged(String)
+    case retryLoadingSatelliteList
 }
 
 private let yearFormatter: DateFormatter = {
@@ -164,13 +165,26 @@ struct SatelliteListView: View {
         .navigationTitle("Satellites")
     }
 
+    private func failureView(_ error: Error) -> some View {
+        VStack(spacing: 16) {
+            Text(error.localizedDescription)
+
+            Button(
+                "Retry",
+                action: { viewModel.dispatch(.retryLoadingSatelliteList) }
+            )
+            .font(Font.headline)
+            .foregroundColor(Color(UIColor.systemBlue))
+        }
+    }
+
     var body: some View {
         satelliteContent(
             contentBuilder: { satellites in
                 satellitesView(satellites)
             },
             failedContentBuilder: { error in
-                EmptyView()
+                failureView(error)
             }
         )
     }

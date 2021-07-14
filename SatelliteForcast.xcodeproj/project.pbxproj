@@ -50,6 +50,10 @@
 		EF7A3194266B6B0B00CC33C0 /* AppAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A318E266B6AD800CC33C0 /* AppAction.swift */; };
 		EF7A3198266B6E4900CC33C0 /* SatelliteListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A3196266B6BBF00CC33C0 /* SatelliteListView.swift */; };
 		EF7A319B266B733C00CC33C0 /* LocalizedStrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A319A266B733C00CC33C0 /* LocalizedStrings.swift */; };
+		EF7C6651269918060017A007 /* SatelliteLoaderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7C6650269918060017A007 /* SatelliteLoaderError.swift */; };
+		EF7C665326992FF80017A007 /* SatelliteLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7C665226992FF80017A007 /* SatelliteLoader.swift */; };
+		EF7C6656269930B40017A007 /* SingleSatelliteWrappingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7C6655269930B40017A007 /* SingleSatelliteWrappingView.swift */; };
+		EF7C6658269AA0D00017A007 /* SingleSatelliteWrappingViewMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7C6657269AA0D00017A007 /* SingleSatelliteWrappingViewMiddleware.swift */; };
 		EF8A4235267C53630014AE17 /* PassViewReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8A4234267C53630014AE17 /* PassViewReducer.swift */; };
 		EF8A423A267E87740014AE17 /* SatelliteElevationGraph+Static.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8A4239267E87740014AE17 /* SatelliteElevationGraph+Static.swift */; };
 		EF8A423C267EA38C0014AE17 /* SatelliteElevationGraphMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8A423B267EA38C0014AE17 /* SatelliteElevationGraphMiddleware.swift */; };
@@ -149,6 +153,10 @@
 		EF7A3190266B6ADF00CC33C0 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		EF7A3196266B6BBF00CC33C0 /* SatelliteListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteListView.swift; sourceTree = "<group>"; };
 		EF7A319A266B733C00CC33C0 /* LocalizedStrings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizedStrings.swift; sourceTree = "<group>"; };
+		EF7C6650269918060017A007 /* SatelliteLoaderError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteLoaderError.swift; sourceTree = "<group>"; };
+		EF7C665226992FF80017A007 /* SatelliteLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteLoader.swift; sourceTree = "<group>"; };
+		EF7C6655269930B40017A007 /* SingleSatelliteWrappingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleSatelliteWrappingView.swift; sourceTree = "<group>"; };
+		EF7C6657269AA0D00017A007 /* SingleSatelliteWrappingViewMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleSatelliteWrappingViewMiddleware.swift; sourceTree = "<group>"; };
 		EF864272266DFFE9004F0AFA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EF8A4234267C53630014AE17 /* PassViewReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassViewReducer.swift; sourceTree = "<group>"; };
 		EF8A4239267E87740014AE17 /* SatelliteElevationGraph+Static.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SatelliteElevationGraph+Static.swift"; sourceTree = "<group>"; };
@@ -272,6 +280,7 @@
 		EF4AF76A266434A500D28F47 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				EF7C6654269930970017A007 /* SingleSatelliteWrapperView */,
 				EF3D099A2685A10F00B84232 /* SatelliteOverview */,
 				EF1CAB34266B8747006319C8 /* SatelliteListView */,
 				EF0FC06A2677D73000560AF0 /* AllPassesView */,
@@ -319,6 +328,8 @@
 				EF7A313D266B538900CC33C0 /* SatelliteLoaderReducer.swift */,
 				EF7A3137266B4A5300CC33C0 /* SatelliteLoaderAction.swift */,
 				EF7A3134266B493E00CC33C0 /* SatelliteLoaderState.swift */,
+				EF7C6650269918060017A007 /* SatelliteLoaderError.swift */,
+				EF7C665226992FF80017A007 /* SatelliteLoader.swift */,
 			);
 			path = SatelliteLoader;
 			sourceTree = "<group>";
@@ -333,6 +344,15 @@
 				EF3D09A4268875B100B84232 /* NavigationState.swift */,
 			);
 			path = Root;
+			sourceTree = "<group>";
+		};
+		EF7C6654269930970017A007 /* SingleSatelliteWrapperView */ = {
+			isa = PBXGroup;
+			children = (
+				EF7C6655269930B40017A007 /* SingleSatelliteWrappingView.swift */,
+				EF7C6657269AA0D00017A007 /* SingleSatelliteWrappingViewMiddleware.swift */,
+			);
+			path = SingleSatelliteWrapperView;
 			sourceTree = "<group>";
 		};
 		EF8A4238267E86700014AE17 /* SatelliteElevationGraph */ = {
@@ -599,9 +619,11 @@
 				EF7A3194266B6B0B00CC33C0 /* AppAction.swift in Sources */,
 				EF3D09A026864FD800B84232 /* SatelliteCell.swift in Sources */,
 				EF8A423E267EA3970014AE17 /* SatelliteElevationGraphReducer.swift in Sources */,
+				EF7C6656269930B40017A007 /* SingleSatelliteWrappingView.swift in Sources */,
 				EF1CAB36266B87B6006319C8 /* SatelliteListViewReducer.swift in Sources */,
 				EF8A4235267C53630014AE17 /* PassViewReducer.swift in Sources */,
 				EF7A3125266B1A2500CC33C0 /* CoreLocationState.swift in Sources */,
+				EF7C6658269AA0D00017A007 /* SingleSatelliteWrappingViewMiddleware.swift in Sources */,
 				EF46564F267B32D60040B762 /* SkyChart+Static.swift in Sources */,
 				EF3D09A5268875B100B84232 /* NavigationState.swift in Sources */,
 				EF1CAB39266B8934006319C8 /* SatelliteListViewMiddleware.swift in Sources */,
@@ -616,10 +638,12 @@
 				EF7A3192266B6AFC00CC33C0 /* AppState.swift in Sources */,
 				EF4AF76C266434CC00D28F47 /* SkyChart.swift in Sources */,
 				EF0FC06C2677D7A200560AF0 /* AllPassesView.swift in Sources */,
+				EF7C6651269918060017A007 /* SatelliteLoaderError.swift in Sources */,
 				EF19FA0B266EC7CE00D0B2CD /* SkyChartReducer.swift in Sources */,
 				EF8A424026804A800014AE17 /* AppStateReducer.swift in Sources */,
 				EF46564B2679C81F0040B762 /* PassPreviewCell.swift in Sources */,
 				EF7A3138266B4A5300CC33C0 /* SatelliteLoaderAction.swift in Sources */,
+				EF7C665326992FF80017A007 /* SatelliteLoader.swift in Sources */,
 				EF7A3135266B493E00CC33C0 /* SatelliteLoaderState.swift in Sources */,
 				EF1EDA2C268D21BF0088DD65 /* SatelliteOverviewMiddleware.swift in Sources */,
 				EFF750C8266F4DFF005222F8 /* SizeModifier.swift in Sources */,

@@ -7,6 +7,7 @@
 
 import Foundation
 import os
+import BTree
 import Combine
 import CombineRex
 import SatelliteKit
@@ -25,49 +26,9 @@ extension EffectMiddleware where
     StateType == SatelliteLoaderState,
     Dependencies == SatelliteLoaderDependencies {
 
-    private static func publisher(category: SatelliteCategory) -> AnyPublisher<DispatchedAction<SatelliteLoaderOutputAction>, Never> {
-        URLSession.shared
-            .dataTaskPublisher(for: URLRequest(url: category.url))
-            .mapError { SatelliteLoaderError.other($0) }
-            .tryMap { result -> DispatchedAction<SatelliteLoaderOutputAction> in
-                precondition(!Thread.isMainThread)
-                let tles = try TLE.load(chunk: String(data: result.data, encoding: .utf8)!)
-                let info = tles.map { tle -> SatelliteInfo in
-                    let satCat = SatCat.with(noradCatID: tle.noradIndex)
-                    let ucsSat = UCSSat.with(noradCatID: tle.noradIndex)
-                    return SatelliteInfo(
-                        noradIndex: tle.noradIndex,
-                        satellite: Satellite(withTLE: tle),
-                        satCat: satCat,
-                        ucsSat: ucsSat
-                    )
-                }
-                // Sort the satellite list in reverse chronological order of the freshness of TLE.
-                .sorted(by: { $0.satellite.t₀Days1950 > $1.satellite.t₀Days1950 })
-                return DispatchedAction<SatelliteLoaderOutputAction>(
-                    .loadedSatelliteInfo(category, info)
-                )
-            }
-            .mapError { error in
-                if let satKitError = error as? SatKitError {
-                    return .tle(satKitError)
-                } else {
-                    return .other(error)
-                }
-            }
-            .catch { error in
-                Just(
-                    DispatchedAction<SatelliteLoaderOutputAction>(
-                        .failedLoadingTLEFile(category, error)
-                    )
-                )
-            }
-            .eraseToAnyPublisher()
-    }
-
     static var satelliteLoader: MiddlewareReader<SatelliteLoaderDependencies, EffectMiddleware<SatelliteLoaderInputAction, SatelliteLoaderOutputAction, SatelliteLoaderState, SatelliteLoaderDependencies>> {
         EffectMiddleware<SatelliteLoaderInputAction, SatelliteLoaderOutputAction, SatelliteLoaderState, SatelliteLoaderDependencies>
-            .onAction { (inputAction, _, getState) -> Effect<SatelliteLoaderDependencies, SatelliteLoaderOutputAction> in
+            .onAction { (inputAction, dispatcher, getState) -> Effect<SatelliteLoaderDependencies, SatelliteLoaderOutputAction> in
             switch inputAction {
             case let .loadSatelliteCategory(category):
                 return Effect(token: category) { context -> AnyPublisher<DispatchedAction<SatelliteLoaderOutputAction>, Never> in
@@ -79,7 +40,9 @@ extension EffectMiddleware where
 
                         if averageTLEAge > context.dependencies.updateInterval {
                             logger.notice("Avg TLE age \(averageTLEAge) too old: updating.")
-                            return publisher(category: category)
+                            return SatelliteLoader.loadSatelliteCategoryPublisher(category: category)
+                                .map { DispatchedAction<SatelliteLoaderOutputAction>($0, dispatcher: dispatcher) }
+                                .eraseToAnyPublisher()
                         }
 
                         logger.notice("Avg TLE age \(averageTLEAge) is new: skip update.")
@@ -87,7 +50,9 @@ extension EffectMiddleware where
                             .eraseToAnyPublisher()
                     }
 
-                    return publisher(category: category)
+                    return SatelliteLoader.loadSatelliteCategoryPublisher(category: category)
+                        .map { DispatchedAction<SatelliteLoaderOutputAction>($0, dispatcher: dispatcher) }
+                        .eraseToAnyPublisher()
                 }
             }
         }
