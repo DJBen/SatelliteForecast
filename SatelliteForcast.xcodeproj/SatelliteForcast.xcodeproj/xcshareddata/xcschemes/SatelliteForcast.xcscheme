@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "EF9D82802661BBF000616C97"
                BuildableName = "SatelliteForcast.app"
-               BlueprintName = "SatelliteForcast (iOS)"
+               BlueprintName = "SatelliteForcast"
                ReferencedContainer = "container:SatelliteForcast.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -44,7 +44,6 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      enableASanStackUseAfterReturn = "YES"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
@@ -57,7 +56,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "EF9D82802661BBF000616C97"
             BuildableName = "SatelliteForcast.app"
-            BlueprintName = "SatelliteForcast (iOS)"
+            BlueprintName = "SatelliteForcast"
             ReferencedContainer = "container:SatelliteForcast.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -74,7 +73,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "EF9D82802661BBF000616C97"
             BuildableName = "SatelliteForcast.app"
-            BlueprintName = "SatelliteForcast (iOS)"
+            BlueprintName = "SatelliteForcast"
             ReferencedContainer = "container:SatelliteForcast.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

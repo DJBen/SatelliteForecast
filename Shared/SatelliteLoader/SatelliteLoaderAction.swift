@@ -5,24 +5,19 @@
 //  Created by Ben Lu on 6/4/21.
 //
 
+import BTree
 import Foundation
 import SatelliteForcastCore
-import SatelliteKit
 
-enum SatelliteLoaderError: Error {
-    case tle(SatKitError)
-    case other(Error)
-}
+enum SatelliteLoaderAction {
+    // Input
+    case loadSatelliteCategory(SatelliteCategory, shouldCalculatePasses: Bool = false)
 
-enum SatelliteLoaderInputAction {
-    case loadSatelliteCategory((SatelliteCategory))
-}
-
-enum SatelliteLoaderOutputAction {
-    case loadedSatelliteInfo(SatelliteCategory, [SatelliteInfo])
+    // Output
+    case loadedSatelliteInfo(SatelliteCategory, Map<Int, SatelliteInfo>)
     case failedLoadingTLEFile(SatelliteCategory, SatelliteLoaderError)
 }
 
-extension SatelliteLoaderOutputAction {
+extension SatelliteLoaderAction {
 
 }

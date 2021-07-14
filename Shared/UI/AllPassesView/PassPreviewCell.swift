@@ -1,6 +1,6 @@
 //
 //  PassPreviewCell.swift
-//  SatelliteForcast (iOS)
+//  SatelliteForcast
 //
 //  Created by Ben Lu on 6/15/21.
 //

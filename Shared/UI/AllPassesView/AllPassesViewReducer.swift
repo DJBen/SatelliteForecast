@@ -1,6 +1,6 @@
 //
 //  AllPassesViewReducer.swift
-//  SatelliteForcast (iOS)
+//  SatelliteForcast
 //
 //  Created by Ben Lu on 6/17/21.
 //
@@ -11,7 +11,7 @@ import SwiftRex
 extension Reducer where ActionType == AllPassesViewAction, StateType == Store.StateType {
     static let allPassesViewReducer = Reducer.reduce { action, state in
         switch action {
-        case .onAppear:
+        case .calculatePasses:
             break
         case let .selectPass(index):
             if let index = index {

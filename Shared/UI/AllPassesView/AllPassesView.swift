@@ -1,6 +1,6 @@
 //
 //  AllPassesView.swift
-//  SatelliteForcast (iOS)
+//  SatelliteForcast
 //
 //  Created by Ben Lu on 6/14/21.
 //
@@ -13,7 +13,7 @@ import SatelliteKit
 import SwiftUI
 
 enum AllPassesViewAction {
-    case onAppear
+    case calculatePasses
     case selectPass(index: Int?)
 }
 
@@ -51,7 +51,7 @@ struct AllPassesViewState: Equatable {
     static func project(state: AppState) -> AllPassesViewState {
         guard let selectedNoradIndex = state.navigationState.selectedSatelliteNoradIndex,
             let satelliteState = state.satellites[selectedNoradIndex],
-            let info = state.selectedSatelliteInfo else {
+            let info = state.satelliteLoaderState[selectedNoradIndex] else {
             return .empty
         }
 
@@ -146,9 +146,6 @@ struct AllPassesView: View, Equatable {
             }
         }
         .listStyle(GroupedListStyle())
-        .onAppear {
-            viewModel.dispatch(.onAppear)
-        }
         .navigationTitle(viewModel.state.satelliteName ?? "All Passes")
         .navigationBarTitleDisplayMode(.inline)
     }

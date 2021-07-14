@@ -1,6 +1,6 @@
 //
 //  AllPassesViewMiddleware.swift
-//  SatelliteForcast (iOS)
+//  SatelliteForcast
 //
 //  Created by Ben Lu on 6/7/21.
 //
@@ -33,13 +33,13 @@ extension EffectMiddleware where
         EffectMiddleware<AllPassesViewAction, AppAction, AppState, Void>
             .onAction { (action, _, getState) -> Effect<Void, AppAction> in
                 switch action {
-                case .onAppear:
+                case .calculatePasses:
                     return Effect { context -> AnyPublisher<DispatchedAction<AppAction>, Never> in
                         let state = getState()
 
                         // Precondition: TLE must be ready
-                        guard let noradIndex = state.navigationState.selectedSatelliteNoradIndex, let info = state.satelliteLoaderState.info(noradIndex: noradIndex) else {
-                            logger.fault("TLE not ready when selecting satellites")
+                        guard let noradIndex = state.navigationState.selectedSatelliteNoradIndex, let info = state.satelliteLoaderState[noradIndex] else {
+                            logger.fault("TLE not ready for the selected satellite when calculating passes")
                             return Empty().eraseToAnyPublisher()
                         }
 
@@ -59,7 +59,7 @@ extension EffectMiddleware where
                             let fineSnapshots: BTree<Double, SatelliteSnapshot>
 
                             // Use cached satellite ephemerides if calculated within the last hour.
-                            if let satelliteState = state.selectedSatelliteState,
+                            if let satelliteState = state.selectedSatelliteTrails,
                                state.julianDateRange.lowerBound - satelliteState.snapshots.first!.1.julianDate < TimeConstants.hrs2day,
                                let existingPasses = satelliteState.passes {
                                 passes = existingPasses
@@ -104,7 +104,6 @@ extension EffectMiddleware where
                             subject.send(completion: .finished)
                         }
                         return subject
-                            .receive(on: OperationQueue.main)
                             .eraseToAnyPublisher()
                     }
 

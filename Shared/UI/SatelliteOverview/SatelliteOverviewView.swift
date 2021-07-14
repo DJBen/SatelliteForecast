@@ -1,6 +1,6 @@
 //
 //  SatelliteOverviewView.swift
-//  SatelliteForcast (iOS)
+//  SatelliteForcast
 //
 //  Created by Ben Lu on 6/24/21.
 //
@@ -43,7 +43,7 @@ fileprivate extension SatelliteOverviewItem {
 struct SatelliteOverviewView: View {
     @ObservedObject var viewModel: ObservableViewModel<SatelliteOverviewViewAction, SatelliteOverviewViewState>
     let listViewProducer: ViewProducer<Void, SatelliteListView>
-    let allPassesViewProducer: ViewProducer<AllPassesViewContext, AllPassesView>
+    let singleSatelliteWrappingViewProducer: ViewProducer<Void, SingleSatelliteWrappingView>
 
     let sections: [SatelliteOverviewSection] = [
         .satellitesOfSpecialInterest([
@@ -60,7 +60,7 @@ struct SatelliteOverviewView: View {
     private func destination(for item: SatelliteOverviewItem) -> some View {
         switch item {
         case .specialSatellites(_):
-            return AnyView(allPassesViewProducer.view(AllPassesViewContext()))
+            return AnyView(singleSatelliteWrappingViewProducer.view())
         case .category(_):
             return AnyView(listViewProducer.view())
         case .management(_):
@@ -166,7 +166,7 @@ extension ViewProducer where Context == Void, ProducedView == SatelliteOverviewV
                 .asObservableViewModel(initialState: .initial),
                 listViewProducer: ViewProducer<Void, SatelliteListView>
                     .satelliteListView(viewModel: viewModel),
-                allPassesViewProducer: ViewProducer<AllPassesViewContext, AllPassesView>.allPassesView(viewModel: viewModel)
+                singleSatelliteWrappingViewProducer: ViewProducer<Void, SingleSatelliteWrappingView>.singleSatelliteWrappingView(viewModel: viewModel)
             )
         }
     }
@@ -180,7 +180,7 @@ struct SatelliteOverviewView_Previews: PreviewProvider {
                 state: SatelliteOverviewViewState(navigationState: .overview)
             ),
             listViewProducer: .crash,
-            allPassesViewProducer: .crash
+            singleSatelliteWrappingViewProducer: .crash
         )
     }
 }

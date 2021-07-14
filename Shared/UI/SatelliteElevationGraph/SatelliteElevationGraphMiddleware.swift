@@ -1,6 +1,6 @@
 //
 //  SatelliteElevationGraphMiddleware.swift
-//  SatelliteForcast (iOS)
+//  SatelliteForcast
 //
 //  Created by Ben Lu on 6/19/21.
 //
@@ -35,7 +35,7 @@ extension EffectMiddleware where
                                 return
                             }
 
-                            guard let snapshots = getState().selectedSatelliteState?.snapshots else {
+                            guard let snapshots = getState().selectedSatelliteTrails?.snapshots else {
                                 return
                             }
 

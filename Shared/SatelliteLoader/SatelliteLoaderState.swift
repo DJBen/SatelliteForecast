@@ -5,6 +5,7 @@
 //  Created by Ben Lu on 6/4/21.
 //
 
+import BTree
 import Foundation
 import SatelliteForcastCore
 import SatelliteKit
@@ -31,18 +32,29 @@ enum SatelliteCategory: Equatable, Hashable {
     }
 }
 
+extension Map: Equatable where Key == Int, Value == SatelliteInfo {
+
+}
+
 struct SatelliteLoaderState: Equatable {
+    static func == (lhs: SatelliteLoaderState, rhs: SatelliteLoaderState) -> Bool {
+        return lhs.referenceDate == rhs.referenceDate
+        && lhs.info == rhs.info
+        && lhs.standaloneInfo == rhs.standaloneInfo
+    }
+
     /// A date that mostly approximates the current date.
     var referenceDate: Double = Date().julianDate
-    var info: [SatelliteCategory: [SatelliteInfo]] = [:]
-    var standaloneInfo: [SatelliteInfo] = []
+    var info: [SatelliteCategory: Result<Map<Int, SatelliteInfo>, SatelliteLoaderError>] = [:]
+    var standaloneInfo: Map<Int, SatelliteInfo> = [:]
 
     static var empty: SatelliteLoaderState {
         return SatelliteLoaderState()
     }
 
-    func info(noradIndex: Int) -> SatelliteInfo? {
-        return info.values.flatMap { $0 }
-            .first { $0.noradIndex == noradIndex } ?? standaloneInfo.first { $0.noradIndex == noradIndex }
+    subscript(noradIndex: Int) -> SatelliteInfo? {
+        return info.values
+            .first { $0.successValue?[noradIndex] != nil }
+            .flatMap { $0.successValue?[noradIndex] } ?? standaloneInfo[noradIndex]
     }
 }

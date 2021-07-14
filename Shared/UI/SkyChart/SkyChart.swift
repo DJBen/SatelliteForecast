@@ -23,20 +23,6 @@ enum SkyChartUsage: Equatable, Hashable {
     case primary
 }
 
-/// The root state of sky charts.
-struct SkyChartResources: Equatable {
-    /// A cache of the satellite paths that are ready for display.
-    /// Instead of redrawing the pass consisting of thousands of points at each display,
-    /// the cached version is just a cheap `UIImage`.
-    var rasterizedSatellitePaths: [Pass: [SkyChartUsage: UIImage]] = [:]
-
-    var rasterizedBackgroundSky: [SkyChartSatelliteBackgroundSkyKey: [SkyChartUsage: UIImage]] = [:]
-
-    static var empty: SkyChartResources {
-        return SkyChartResources()
-    }
-}
-
 enum SkyChartAction {
     case onAppear
     case requestRasterizedBackgroundSky(usage: SkyChartUsage, size: CGSize, key: SkyChartSatelliteBackgroundSkyKey, configs: SkyChartConfigs.BackgroundSky = .preset, traitCollection: UITraitCollection)

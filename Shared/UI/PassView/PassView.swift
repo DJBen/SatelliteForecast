@@ -5,6 +5,7 @@
 //  Created by Ben Lu on 6/5/21.
 //
 
+import BTree
 import CombineRex
 import CombineRextensions
 import SatelliteForcastCore
@@ -21,7 +22,7 @@ struct PassViewState: Equatable {
 
     static func project(state: AppState) -> PassViewState {
         PassViewState(
-            info: state.selectedSatelliteInfo,
+            info: state.navigationState.selectedSatelliteNoradIndex.flatMap { state.satelliteLoaderState[$0] },
             selectedPass: state.selectedSatellitePass
         )
     }
@@ -48,7 +49,6 @@ struct PassView: View {
                 skyChartProducer.view(
                     SkyChartContext(usage: .full)
                 )
-                .equatable()
                 .frame(height: min(rect.width, rect.height))
                 Spacer(minLength: 10)
             }
@@ -110,6 +110,7 @@ struct PassView_Previews: PreviewProvider {
             observer: LatLonAlt(location: location),
             coarseSnapshots: snapshots
         )
+        let brightest100: Map<Int, SatelliteInfo> = [tle.noradIndex: SatelliteInfo(noradIndex: tle.noradIndex, satellite: sat)]
         let appState = AppState(
             julianDateRange: julianDateRange,
             satelliteElevationGraphConfigs: .preset,
@@ -120,7 +121,9 @@ struct PassView_Previews: PreviewProvider {
                 )
             ],
             satelliteLoaderState: SatelliteLoaderState(
-                info: [.brightest100: [SatelliteInfo(noradIndex: tle.noradIndex, satellite: sat)]]
+                info: [
+                    .brightest100: .success(brightest100)
+                ]
             ),
             coreLocationState: CoreLocationState(
                 authorizationStatus: .authorizedWhenInUse,

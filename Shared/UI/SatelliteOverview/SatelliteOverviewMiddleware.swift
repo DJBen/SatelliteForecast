@@ -1,6 +1,6 @@
 //
 //  SatelliteOverviewMiddleware.swift
-//  SatelliteForcast (iOS)
+//  SatelliteForcast
 //
 //  Created by Ben Lu on 6/30/21.
 //
@@ -21,10 +21,23 @@ extension EffectMiddleware where
         EffectMiddleware<SatelliteOverviewViewAction, AppAction, AppState, Void>
             .onAction { action, _, state in
                 switch action {
-                case .selectSpecialSatellite(noradIndex: _):
-                    return .just(.satelliteLoaderInput(.loadSatelliteCategory(.brightest100)))
-                case .selectCategory(_):
-                    return .doNothing
+                case let .selectSpecialSatellite(noradIndex):
+                    if let _ = noradIndex {
+                        return .just(.singleSatelliteWrappingView(.loadSatelliteList))
+                    } else {
+                        return .doNothing
+                    }
+                case let .selectCategory(category):
+                    var actions: [AppAction] = [
+                        .coreLocation(.requestAuthorization),
+                        .timer(.start)
+                    ]
+
+                    if let category = category {
+                        actions.append(.satelliteLoader(.loadSatelliteCategory(category)))
+                    }
+
+                    return .sequence(actions)
                 }
             }
     }

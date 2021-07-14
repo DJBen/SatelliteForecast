@@ -10,7 +10,7 @@ import Foundation
 // swiftlint:disable identifier_name
 // swiftlint:disable function_body_length
 
-public enum SatKitError: Error {
+public enum SatKitError: Error, Equatable {
     case TLE(String)
     case SGP(String)
 }

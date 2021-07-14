@@ -35,8 +35,12 @@ struct AppState: Equatable {
         )
     }
 
-    var selectedSatelliteState: SatelliteTrails? {
+    var selectedSatelliteTrails: SatelliteTrails? {
         navigationState.selectedSatelliteNoradIndex.flatMap { satellites[$0] }
+    }
+
+    var selectedSatelliteInfo: SatelliteInfo? {
+        navigationState.selectedSatelliteNoradIndex.flatMap { satelliteLoaderState[$0] }
     }
 
     var currentSatelliteSnapshots: BTree<Double, SatelliteSnapshot> {
@@ -52,15 +56,6 @@ struct AppState: Equatable {
             }
             satellites[selectedSatelliteNoradIndex]?.snapshots = newValue
         }
-    }
-
-    var selectedSatelliteInfo: SatelliteInfo? {
-        guard let index = navigationState.selectedSatelliteNoradIndex else {
-            return nil
-        }
-        return satelliteLoaderState.info.values
-            .flatMap { $0 }
-            .first { $0.noradIndex == index }
     }
 
     var selectedSatellitePassIndex: Int? {

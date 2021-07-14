@@ -5,6 +5,7 @@
 //  Created by Ben Lu on 6/5/21.
 //
 
+import BTree
 import CombineRex
 import SwiftUI
 import SwiftRex
@@ -14,9 +15,9 @@ import SatelliteForcastCore
 import SatelliteCatalog
 
 enum SatelliteListViewAction {
-    case onAppear
     case selectSatellite(noradIndex: Int?)
     case satelliteSearchTextChanged(String)
+    case retryLoadingSatelliteList
 }
 
 private let yearFormatter: DateFormatter = {
@@ -52,24 +53,54 @@ fileprivate extension SatelliteInfo {
     }
 }
 
+struct SatelliteNavTag: Equatable, Hashable {
+    let category: SatelliteCategory?
+    let noradIndex: Int?
+
+    init(_ navigationIndexPath: NavigationIndexPath) {
+        category = navigationIndexPath.category
+        noradIndex = navigationIndexPath.noradIndex
+    }
+
+    init(category: SatelliteCategory? = nil, noradIndex: Int? = nil) {
+        self.category = category
+        self.noradIndex = noradIndex
+    }
+}
+
 struct SatelliteListViewState: Equatable {
-    var satellites: [SatelliteInfo] = []
+    var satellites: Result<Map<Int, SatelliteInfo>, SatelliteLoaderError>?
     var satelliteSearchText: String = ""
-    var indexPath: NavigationIndexPath?
+    var navTag: SatelliteNavTag
 
     static var empty: SatelliteListViewState {
-        return SatelliteListViewState()
+        return SatelliteListViewState(navTag: SatelliteNavTag())
     }
 
     static func project(state: Store.StateType) -> SatelliteListViewState {
-        let allSatellites = state.navigationState.selectedCategory
-            .flatMap { state.satelliteLoaderState.info[$0] } ?? []
-        let filteredSatellites = state.satelliteSearchText.isEmpty ? allSatellites : allSatellites.filter { $0.fitsSearchText(state.satelliteSearchText) }
+        func filterSatellites(info: Map<Int, SatelliteInfo>) -> Map<Int, SatelliteInfo> {
+            if state.satelliteSearchText.isEmpty {
+                return info
+            } else {
+                var map = Map<Int, SatelliteInfo>()
+                info.forEach { (noradIndex, value) in
+                    if value.fitsSearchText(state.satelliteSearchText) {
+                        map[noradIndex] = value
+                    }
+                }
+                return map
+            }
+        }
+
+        let satellites: Result<Map<Int, SatelliteInfo>, SatelliteLoaderError>? = state.navigationState.selectedCategory
+            .flatMap { category in
+                state.satelliteLoaderState.info[category]?.map(filterSatellites(info:))
+            }
 
         return SatelliteListViewState(
-            satellites: filteredSatellites,
+            satellites: satellites,
             satelliteSearchText: state.satelliteSearchText,
-            indexPath: state.navigationState.indexPath
+            navTag: SatelliteNavTag(state.navigationState.indexPath)
         )
     }
 }
@@ -86,66 +117,76 @@ struct SatelliteListView: View {
         .equatable()
     }
 
-    private struct SatelliteNavTag: Equatable, Hashable {
-        let category: SatelliteCategory?
-        let noradIndex: Int?
-
-        init(_ navigationIndexPath: NavigationIndexPath) {
-            category = navigationIndexPath.category
-            noradIndex = navigationIndexPath.noradIndex
-        }
-
-        init(category: SatelliteCategory?, noradIndex: Int?) {
-            self.category = category
-            self.noradIndex = noradIndex
+    func satelliteContent<Content: View, FailedContent: View>(
+        @ViewBuilder contentBuilder: (Map<Int, SatelliteInfo>) -> Content,
+        @ViewBuilder failedContentBuilder: (SatelliteLoaderError) -> FailedContent
+    ) -> some View {
+        switch viewModel.state.satellites {
+        case .none:
+            return AnyView(ProgressView("Loading..."))
+        case let .success(satellites):
+            return AnyView(contentBuilder(satellites))
+        case let .failure(error):
+            return AnyView(failedContentBuilder(error))
         }
     }
 
-    func progressView<Content: View>(@ViewBuilder builder: () -> Content) -> some View {
-        if viewModel.state.satellites.isEmpty && viewModel.state.satelliteSearchText.isEmpty {
-            return AnyView(ProgressView("Loading..."))
-        } else {
-            return AnyView(builder())
+    private func satellitesView(_ satellites: Map<Int, SatelliteInfo>) -> some View {
+        List {
+            ForEach(Array(satellites.keys), id: \.self) { noradIndex in
+                NavigationLink(
+                    destination: destination,
+                    tag: SatelliteNavTag(
+                        category: viewModel.state.navTag.category,
+                        noradIndex: noradIndex
+                    ),
+                    selection: Binding<SatelliteNavTag?>(
+                        get: { viewModel.state.navTag },
+                        set: {
+                            viewModel.dispatch(.selectSatellite(noradIndex: $0?.noradIndex))
+                        }
+                    )
+                ) {
+                    SatelliteCell(info: satellites[noradIndex]!)
+                }
+                .id(noradIndex)
+            }
+        }
+        .searchable(
+            text: Binding<String>(
+                get: {
+                    viewModel.state.satelliteSearchText
+                }, set: {
+                    viewModel.dispatch(.satelliteSearchTextChanged($0))
+                }
+            ),
+            prompt: "Filter by name, ID, country, year..."
+        )
+        .navigationTitle("Satellites")
+    }
+
+    private func failureView(_ error: Error) -> some View {
+        VStack(spacing: 16) {
+            Text(error.localizedDescription)
+
+            Button(
+                "Retry",
+                action: { viewModel.dispatch(.retryLoadingSatelliteList) }
+            )
+            .font(Font.headline)
+            .foregroundColor(Color(UIColor.systemBlue))
         }
     }
 
     var body: some View {
-        progressView {
-            List {
-                ForEach(viewModel.state.satellites, id: \.noradIndex) { info in
-                    NavigationLink(
-                        destination: destination,
-                        tag: SatelliteNavTag(
-                            category: viewModel.state.indexPath?.category,
-                            noradIndex: info.noradIndex
-                        ),
-                        selection: Binding<SatelliteNavTag?>(
-                            get: { viewModel.state.indexPath.map(SatelliteNavTag.init) },
-                            set: {
-                                viewModel.dispatch(.selectSatellite(noradIndex: $0?.noradIndex))
-                            }
-                        )
-                    ) {
-                        SatelliteCell(info: info)
-                    }
-                    .id(info.noradIndex)
-                }
+        satelliteContent(
+            contentBuilder: { satellites in
+                satellitesView(satellites)
+            },
+            failedContentBuilder: { error in
+                failureView(error)
             }
-            .searchable(
-                text: Binding<String>(
-                    get: {
-                        viewModel.state.satelliteSearchText
-                    }, set: {
-                        viewModel.dispatch(.satelliteSearchTextChanged($0))
-                    }
-                ),
-                prompt: "Filter by name, ID, country, year..."
-            )
-            .navigationTitle("Satellites")
-        }
-        .onAppear {
-            viewModel.dispatch(.onAppear)
-        }
+        )
     }
 }
 
@@ -193,11 +234,13 @@ struct SatelliteListView_Previews: PreviewProvider {
                 ucsSat: UCSSat.with(noradCatID: $0.noradIndex)
             )
         }
+        .reduce(into: Map<Int, SatelliteInfo>(), { $0[$1.noradIndex] = $1 })
 
         SatelliteListView(
             viewModel: .mock(
                 state: SatelliteListViewState(
-                    satellites: brightest100
+                    satellites: .success(brightest100),
+                    navTag: SatelliteNavTag(category: .brightest100)
                 )
             ),
             allPassesViewProducer: .pure(

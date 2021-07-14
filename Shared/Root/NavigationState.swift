@@ -1,6 +1,6 @@
 //
 //  NavigationState.swift
-//  SatelliteForcast (iOS)
+//  SatelliteForcast
 //
 //  Created by Ben Lu on 6/27/21.
 //
