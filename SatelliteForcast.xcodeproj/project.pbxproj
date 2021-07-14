@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6123BAE10FF7244A7EA8E614 /* libPods-SatelliteForcast (iOS).a in Frameworks */ = {isa = PBXBuildFile; fileRef = B89958B1CAE84D465BB0B4A6 /* libPods-SatelliteForcast (iOS).a */; };
-		BF58D8D21B80AC3570788259 /* libPods-SatelliteForcast (iOS)-Tests iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AC84A1CB759FA2427D7E482B /* libPods-SatelliteForcast (iOS)-Tests iOS.a */; };
+		07DC474C6447CCAE81C5E8C1 /* libPods-SatelliteForcast-Tests iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B80EE208C7D48CE282063E2 /* libPods-SatelliteForcast-Tests iOS.a */; };
+		1C774C82F91DD0D17C32D289 /* libPods-SatelliteForcast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6581B2FE61F57F2687355D65 /* libPods-SatelliteForcast.a */; };
 		EF0FC06C2677D7A200560AF0 /* AllPassesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0FC06B2677D7A200560AF0 /* AllPassesView.swift */; };
 		EF19FA09266EC38200D0B2CD /* SkyChartMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF19FA08266EC38200D0B2CD /* SkyChartMiddleware.swift */; };
 		EF19FA0B266EC7CE00D0B2CD /* SkyChartReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF19FA0A266EC7CE00D0B2CD /* SkyChartReducer.swift */; };
@@ -72,7 +72,7 @@
 			containerPortal = EF9D82752661BBEF00616C97 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = EF9D82802661BBF000616C97;
-			remoteInfo = "SatelliteForcast (iOS)";
+			remoteInfo = SatelliteForcast;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -100,17 +100,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		2336545E290A0B67DF2A4890 /* Pods_SatelliteForcastCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SatelliteForcastCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		3279C35B434DC32EB9BC1F6C /* Pods_SatelliteKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SatelliteKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		38FCA424B0A1D65F8B701E01 /* Pods-SatelliteForcast (iOS).release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForcast (iOS).release.xcconfig"; path = "Target Support Files/Pods-SatelliteForcast (iOS)/Pods-SatelliteForcast (iOS).release.xcconfig"; sourceTree = "<group>"; };
-		41F15B40A192E810B2E1C8BC /* Pods-SatelliteKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteKit.debug.xcconfig"; path = "Target Support Files/Pods-SatelliteKit/Pods-SatelliteKit.debug.xcconfig"; sourceTree = "<group>"; };
-		596FFA4E17E070755304A8F4 /* Pods-SatelliteForcast (iOS)-Tests iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForcast (iOS)-Tests iOS.debug.xcconfig"; path = "Target Support Files/Pods-SatelliteForcast (iOS)-Tests iOS/Pods-SatelliteForcast (iOS)-Tests iOS.debug.xcconfig"; sourceTree = "<group>"; };
-		61783FB0BE184CFDD83C7BEE /* Pods-SatelliteForcast (iOS)-Tests iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForcast (iOS)-Tests iOS.release.xcconfig"; path = "Target Support Files/Pods-SatelliteForcast (iOS)-Tests iOS/Pods-SatelliteForcast (iOS)-Tests iOS.release.xcconfig"; sourceTree = "<group>"; };
-		9907431CCC757C4BD4653927 /* Pods-SatelliteForcast (iOS).debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForcast (iOS).debug.xcconfig"; path = "Target Support Files/Pods-SatelliteForcast (iOS)/Pods-SatelliteForcast (iOS).debug.xcconfig"; sourceTree = "<group>"; };
-		AC84A1CB759FA2427D7E482B /* libPods-SatelliteForcast (iOS)-Tests iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SatelliteForcast (iOS)-Tests iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B30832459D7AAF36D6E158F4 /* Pods-SatelliteForcastCore.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForcastCore.debug.xcconfig"; path = "Target Support Files/Pods-SatelliteForcastCore/Pods-SatelliteForcastCore.debug.xcconfig"; sourceTree = "<group>"; };
-		B89958B1CAE84D465BB0B4A6 /* libPods-SatelliteForcast (iOS).a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SatelliteForcast (iOS).a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B8CDE26BA13420CACBBAA0DD /* Pods-SatelliteForcastCore.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForcastCore.release.xcconfig"; path = "Target Support Files/Pods-SatelliteForcastCore/Pods-SatelliteForcastCore.release.xcconfig"; sourceTree = "<group>"; };
+		26DB4AC3DD10BC56AEF63C36 /* Pods-SatelliteForcast-Tests iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForcast-Tests iOS.release.xcconfig"; path = "Target Support Files/Pods-SatelliteForcast-Tests iOS/Pods-SatelliteForcast-Tests iOS.release.xcconfig"; sourceTree = "<group>"; };
+		6581B2FE61F57F2687355D65 /* libPods-SatelliteForcast.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SatelliteForcast.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8CD0DAC46C959BAC32510315 /* Pods-SatelliteForcast.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForcast.release.xcconfig"; path = "Target Support Files/Pods-SatelliteForcast/Pods-SatelliteForcast.release.xcconfig"; sourceTree = "<group>"; };
+		9B80EE208C7D48CE282063E2 /* libPods-SatelliteForcast-Tests iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SatelliteForcast-Tests iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3D1DF133040C54DFB687DA9 /* Pods-SatelliteForcast-Tests iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForcast-Tests iOS.debug.xcconfig"; path = "Target Support Files/Pods-SatelliteForcast-Tests iOS/Pods-SatelliteForcast-Tests iOS.debug.xcconfig"; sourceTree = "<group>"; };
 		EF0FC06B2677D7A200560AF0 /* AllPassesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllPassesView.swift; sourceTree = "<group>"; };
 		EF19FA08266EC38200D0B2CD /* SkyChartMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyChartMiddleware.swift; sourceTree = "<group>"; };
 		EF19FA0A266EC7CE00D0B2CD /* SkyChartReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyChartReducer.swift; sourceTree = "<group>"; };
@@ -172,7 +166,7 @@
 		EFAE1F0B2668B10F00A18A42 /* SatelliteElevationGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteElevationGraph.swift; sourceTree = "<group>"; };
 		EFAE1F122669E7A800A18A42 /* SunlightIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunlightIndicator.swift; sourceTree = "<group>"; };
 		EFF750C7266F4DFF005222F8 /* SizeModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeModifier.swift; sourceTree = "<group>"; };
-		FB835F01E06946970289CB6C /* Pods-SatelliteKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteKit.release.xcconfig"; path = "Target Support Files/Pods-SatelliteKit/Pods-SatelliteKit.release.xcconfig"; sourceTree = "<group>"; };
+		FFBAC0101780C17137C6F080 /* Pods-SatelliteForcast.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForcast.debug.xcconfig"; path = "Target Support Files/Pods-SatelliteForcast/Pods-SatelliteForcast.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -180,7 +174,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6123BAE10FF7244A7EA8E614 /* libPods-SatelliteForcast (iOS).a in Frameworks */,
+				1C774C82F91DD0D17C32D289 /* libPods-SatelliteForcast.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -188,7 +182,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BF58D8D21B80AC3570788259 /* libPods-SatelliteForcast (iOS)-Tests iOS.a in Frameworks */,
+				07DC474C6447CCAE81C5E8C1 /* libPods-SatelliteForcast-Tests iOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -198,25 +192,19 @@
 		38032A026A794DBA01ED4368 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				9907431CCC757C4BD4653927 /* Pods-SatelliteForcast (iOS).debug.xcconfig */,
-				38FCA424B0A1D65F8B701E01 /* Pods-SatelliteForcast (iOS).release.xcconfig */,
-				B30832459D7AAF36D6E158F4 /* Pods-SatelliteForcastCore.debug.xcconfig */,
-				B8CDE26BA13420CACBBAA0DD /* Pods-SatelliteForcastCore.release.xcconfig */,
-				41F15B40A192E810B2E1C8BC /* Pods-SatelliteKit.debug.xcconfig */,
-				FB835F01E06946970289CB6C /* Pods-SatelliteKit.release.xcconfig */,
-				596FFA4E17E070755304A8F4 /* Pods-SatelliteForcast (iOS)-Tests iOS.debug.xcconfig */,
-				61783FB0BE184CFDD83C7BEE /* Pods-SatelliteForcast (iOS)-Tests iOS.release.xcconfig */,
+				FFBAC0101780C17137C6F080 /* Pods-SatelliteForcast.debug.xcconfig */,
+				8CD0DAC46C959BAC32510315 /* Pods-SatelliteForcast.release.xcconfig */,
+				B3D1DF133040C54DFB687DA9 /* Pods-SatelliteForcast-Tests iOS.debug.xcconfig */,
+				26DB4AC3DD10BC56AEF63C36 /* Pods-SatelliteForcast-Tests iOS.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		EC932DBEBD7F42A47E1A7B1F /* Frameworks */ = {
+		3B70B0D288A1DACB0692D798 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				2336545E290A0B67DF2A4890 /* Pods_SatelliteForcastCore.framework */,
-				3279C35B434DC32EB9BC1F6C /* Pods_SatelliteKit.framework */,
-				B89958B1CAE84D465BB0B4A6 /* libPods-SatelliteForcast (iOS).a */,
-				AC84A1CB759FA2427D7E482B /* libPods-SatelliteForcast (iOS)-Tests iOS.a */,
+				6581B2FE61F57F2687355D65 /* libPods-SatelliteForcast.a */,
+				9B80EE208C7D48CE282063E2 /* libPods-SatelliteForcast-Tests iOS.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -375,8 +363,8 @@
 				EF9D82792661BBEF00616C97 /* Shared */,
 				EF9D82942661BBF100616C97 /* Tests iOS */,
 				EF9D82822661BBF000616C97 /* Products */,
-				EC932DBEBD7F42A47E1A7B1F /* Frameworks */,
 				38032A026A794DBA01ED4368 /* Pods */,
+				3B70B0D288A1DACB0692D798 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -421,22 +409,22 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		EF9D82802661BBF000616C97 /* SatelliteForcast (iOS) */ = {
+		EF9D82802661BBF000616C97 /* SatelliteForcast */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EF9D82AB2661BBF100616C97 /* Build configuration list for PBXNativeTarget "SatelliteForcast (iOS)" */;
+			buildConfigurationList = EF9D82AB2661BBF100616C97 /* Build configuration list for PBXNativeTarget "SatelliteForcast" */;
 			buildPhases = (
-				86AFB52D865BF13B31DC75FF /* [CP] Check Pods Manifest.lock */,
+				2C5709BE5EC1440046370670 /* [CP] Check Pods Manifest.lock */,
 				EF9D827D2661BBF000616C97 /* Sources */,
 				EF9D827E2661BBF000616C97 /* Frameworks */,
 				EFAE1EF5266862B500A18A42 /* Embed Frameworks */,
-				FC8D8A5B64D16D55D610F246 /* [CP] Copy Pods Resources */,
+				621EF0E372D8D23A20C7D7A0 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = "SatelliteForcast (iOS)";
-			productName = "SatelliteForcast (iOS)";
+			name = SatelliteForcast;
+			productName = SatelliteForcast;
 			productReference = EF9D82812661BBF000616C97 /* SatelliteForcast.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -444,12 +432,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = EF9D82B12661BBF100616C97 /* Build configuration list for PBXNativeTarget "Tests iOS" */;
 			buildPhases = (
-				A9F3CE5EABAEFB1C81E536FC /* [CP] Check Pods Manifest.lock */,
+				5A5E45309CCA66A59C74FBC9 /* [CP] Check Pods Manifest.lock */,
 				EF9D828D2661BBF000616C97 /* Sources */,
 				EF9D828E2661BBF000616C97 /* Frameworks */,
 				EF9D828F2661BBF000616C97 /* Resources */,
 				EFD6E14C266DC53A00B90C0B /* Embed Frameworks */,
-				75EB35F75FC542E1CB0E7F3A /* [CP] Copy Pods Resources */,
+				86568B052FEB60EBC2B2E294 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -492,7 +480,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				EF9D82802661BBF000616C97 /* SatelliteForcast (iOS) */,
+				EF9D82802661BBF000616C97 /* SatelliteForcast */,
 				EF9D82902661BBF000616C97 /* Tests iOS */,
 			);
 		};
@@ -509,24 +497,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		75EB35F75FC542E1CB0E7F3A /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SatelliteForcast (iOS)-Tests iOS/Pods-SatelliteForcast (iOS)-Tests iOS-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SatelliteForcast (iOS)-Tests iOS/Pods-SatelliteForcast (iOS)-Tests iOS-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SatelliteForcast (iOS)-Tests iOS/Pods-SatelliteForcast (iOS)-Tests iOS-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		86AFB52D865BF13B31DC75FF /* [CP] Check Pods Manifest.lock */ = {
+		2C5709BE5EC1440046370670 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -541,14 +512,14 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SatelliteForcast (iOS)-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-SatelliteForcast-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		A9F3CE5EABAEFB1C81E536FC /* [CP] Check Pods Manifest.lock */ = {
+		5A5E45309CCA66A59C74FBC9 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -563,28 +534,45 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SatelliteForcast (iOS)-Tests iOS-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-SatelliteForcast-Tests iOS-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		FC8D8A5B64D16D55D610F246 /* [CP] Copy Pods Resources */ = {
+		621EF0E372D8D23A20C7D7A0 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SatelliteForcast (iOS)/Pods-SatelliteForcast (iOS)-resources-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-SatelliteForcast/Pods-SatelliteForcast-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SatelliteForcast (iOS)/Pods-SatelliteForcast (iOS)-resources-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-SatelliteForcast/Pods-SatelliteForcast-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SatelliteForcast (iOS)/Pods-SatelliteForcast (iOS)-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SatelliteForcast/Pods-SatelliteForcast-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		86568B052FEB60EBC2B2E294 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SatelliteForcast-Tests iOS/Pods-SatelliteForcast-Tests iOS-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SatelliteForcast-Tests iOS/Pods-SatelliteForcast-Tests iOS-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SatelliteForcast-Tests iOS/Pods-SatelliteForcast-Tests iOS-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -665,7 +653,7 @@
 		EF9D82932661BBF100616C97 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			platformFilter = ios;
-			target = EF9D82802661BBF000616C97 /* SatelliteForcast (iOS) */;
+			target = EF9D82802661BBF000616C97 /* SatelliteForcast */;
 			targetProxy = EF9D82922661BBF100616C97 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -788,7 +776,7 @@
 		};
 		EF9D82AC2661BBF100616C97 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9907431CCC757C4BD4653927 /* Pods-SatelliteForcast (iOS).debug.xcconfig */;
+			baseConfigurationReference = FFBAC0101780C17137C6F080 /* Pods-SatelliteForcast.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -812,7 +800,7 @@
 		};
 		EF9D82AD2661BBF100616C97 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 38FCA424B0A1D65F8B701E01 /* Pods-SatelliteForcast (iOS).release.xcconfig */;
+			baseConfigurationReference = 8CD0DAC46C959BAC32510315 /* Pods-SatelliteForcast.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -837,7 +825,7 @@
 		};
 		EF9D82B22661BBF100616C97 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 596FFA4E17E070755304A8F4 /* Pods-SatelliteForcast (iOS)-Tests iOS.debug.xcconfig */;
+			baseConfigurationReference = B3D1DF133040C54DFB687DA9 /* Pods-SatelliteForcast-Tests iOS.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = "Tests iOS/Info.plist";
@@ -852,13 +840,13 @@
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "SatelliteForcast (iOS)";
+				TEST_TARGET_NAME = SatelliteForcast;
 			};
 			name = Debug;
 		};
 		EF9D82B32661BBF100616C97 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 61783FB0BE184CFDD83C7BEE /* Pods-SatelliteForcast (iOS)-Tests iOS.release.xcconfig */;
+			baseConfigurationReference = 26DB4AC3DD10BC56AEF63C36 /* Pods-SatelliteForcast-Tests iOS.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = "Tests iOS/Info.plist";
@@ -873,7 +861,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "SatelliteForcast (iOS)";
+				TEST_TARGET_NAME = SatelliteForcast;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -890,7 +878,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EF9D82AB2661BBF100616C97 /* Build configuration list for PBXNativeTarget "SatelliteForcast (iOS)" */ = {
+		EF9D82AB2661BBF100616C97 /* Build configuration list for PBXNativeTarget "SatelliteForcast" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EF9D82AC2661BBF100616C97 /* Debug */,

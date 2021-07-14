@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  SatelliteForcast (iOS)
+//  SatelliteForcast
 //
 //  Created by Ben Lu on 6/17/21.
 //

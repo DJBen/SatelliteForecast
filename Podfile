@@ -1,6 +1,6 @@
 platform :ios, '15.0'
 
-target 'SatelliteForcast (iOS)' do
+target 'SatelliteForcast' do
   pod "BTree", "~> 4.1.0"
   pod "CombineRex", "~> 0.8.4"
   pod "CombineRextensions", :git => 'https://github.com/DJBen/CombineRextensions.git'

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1250"
+   LastUpgradeVersion = "1300"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "EF9D82802661BBF000616C97"
                BuildableName = "SatelliteForcast.app"
-               BlueprintName = "SatelliteForcast (iOS)"
+               BlueprintName = "SatelliteForcast"
                ReferencedContainer = "container:SatelliteForcast.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -28,16 +28,6 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "EF9D82902661BBF000616C97"
-               BuildableName = "Tests iOS.xctest"
-               BlueprintName = "Tests iOS"
-               ReferencedContainer = "container:SatelliteForcast.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
@@ -56,7 +46,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "EF9D82802661BBF000616C97"
             BuildableName = "SatelliteForcast.app"
-            BlueprintName = "SatelliteForcast (iOS)"
+            BlueprintName = "SatelliteForcast"
             ReferencedContainer = "container:SatelliteForcast.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -73,7 +63,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "EF9D82802661BBF000616C97"
             BuildableName = "SatelliteForcast.app"
-            BlueprintName = "SatelliteForcast (iOS)"
+            BlueprintName = "SatelliteForcast"
             ReferencedContainer = "container:SatelliteForcast.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

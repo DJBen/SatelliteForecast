@@ -1,6 +1,6 @@
 //
 //  AllPassesView.swift
-//  SatelliteForcast (iOS)
+//  SatelliteForcast
 //
 //  Created by Ben Lu on 6/14/21.
 //

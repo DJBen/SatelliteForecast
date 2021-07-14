@@ -1,6 +1,6 @@
 //
 //  SingleSatelliteWrappingView.swift
-//  SatelliteForcast (iOS)
+//  SatelliteForcast
 //
 //  Created by Ben Lu on 7/9/21.
 //
