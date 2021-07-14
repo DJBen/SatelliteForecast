@@ -9,15 +9,15 @@ import BTree
 import Foundation
 import SatelliteForcastCore
 
-enum SatelliteLoaderInputAction {
-    case loadSatelliteCategory((SatelliteCategory))
-}
+enum SatelliteLoaderAction {
+    // Input
+    case loadSatelliteCategory(SatelliteCategory)
 
-enum SatelliteLoaderOutputAction {
+    // Output
     case loadedSatelliteInfo(SatelliteCategory, Map<Int, SatelliteInfo>)
     case failedLoadingTLEFile(SatelliteCategory, SatelliteLoaderError)
 }
 
-extension SatelliteLoaderOutputAction {
+extension SatelliteLoaderAction {
 
 }

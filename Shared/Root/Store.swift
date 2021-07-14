@@ -14,12 +14,10 @@ class Store: ReduxStoreBase<AppAction, AppState> {
     static let shared = Store()
 
     private let reducers: [Reducer<AppAction, AppState>] = [
-        Reducer<CoreLocationOutputAction, CoreLocationState>.coreLocationReducer
-            .lift(action: \.coreLocationOutput, state: \.coreLocationState),
-        Reducer<SatelliteLoaderInputAction, SatelliteLoaderState>.satelliteLoaderReducer
-            .lift(action: \.satelliteLoaderInput, state: \.satelliteLoaderState),
-        Reducer<SatelliteLoaderOutputAction, SatelliteLoaderState>.satelliteLoaderReducer
-            .lift(action: \.satelliteLoaderOutput, state: \.satelliteLoaderState),
+        Reducer<CoreLocationAction, CoreLocationState>.coreLocationReducer
+            .lift(action: \.coreLocation, state: \.coreLocationState),
+        Reducer<SatelliteLoaderAction, SatelliteLoaderState>.satelliteLoaderReducer
+            .lift(action: \.satelliteLoader, state: \.satelliteLoaderState),
         Reducer<SatelliteOverviewViewAction, AppState>.satelliteOverviewReducer
             .lift(action: \.satelliteOverview),
         Reducer<SatelliteListViewAction, AppState>.satelliteListViewReducer
@@ -40,28 +38,12 @@ class Store: ReduxStoreBase<AppAction, AppState> {
     ]
 
     let middleware: ComposedMiddleware<AppAction, AppAction, AppState> =
-        CoreLocationMiddleware()
-            .lift(
-                inputAction: \AppAction.coreLocationInput,
-                outputAction: AppAction.coreLocationOutput,
-                state: \AppState.coreLocationState
-            )
-        .eraseToAnyMiddleware()
+        CoreLocationMiddleware().lifted
 
-        <> EffectMiddleware.coreLocationLogger
-        .lift(
-            inputAction: { $0.coreLocationOutput },
-            outputAction: { _ -> AppAction in },
-            state: { _ in }
-        )
-        .eraseToAnyMiddleware()
+        <> EffectMiddleware.coreLocationLogger.lifted
 
         <> EffectMiddleware.satelliteLoader
-        .lift(
-            inputAction: \AppAction.satelliteLoaderInput,
-            outputAction: AppAction.satelliteLoaderOutput,
-            state: \AppState.satelliteLoaderState
-        )
+        .lifted
         .inject(
             SatelliteLoaderDependencies()
         )

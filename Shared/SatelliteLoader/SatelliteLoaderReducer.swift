@@ -11,18 +11,11 @@ import SwiftRex
 
 fileprivate let logger = Logger(subsystem: "io.djben.satelliteLoader", category: "reducer")
 
-extension Reducer where ActionType == SatelliteLoaderInputAction, StateType == SatelliteLoaderState {
+extension Reducer where ActionType == SatelliteLoaderAction, StateType == SatelliteLoaderState {
     static let satelliteLoaderReducer = Reducer.reduce { action, state in
         switch action {
         case .loadSatelliteCategory(_):
             break
-        }
-    }
-}
-
-extension Reducer where ActionType == SatelliteLoaderOutputAction, StateType == SatelliteLoaderState {
-    static let satelliteLoaderReducer = Reducer.reduce { action, state in
-        switch action {
         case let .loadedSatelliteInfo(category, info):
             state.info[category] = .success(info)
             logger.notice("Loaded \(info.count) TLE entries")

@@ -43,7 +43,7 @@ extension EffectMiddleware where
                     }
 
                     return SatelliteLoader.loadSatelliteCategoryPublisher(category: category)
-                        .map(AppAction.satelliteLoaderOutput)
+                        .map(AppAction.satelliteLoader)
                         .asEffect(info: nil)
                 }
             }

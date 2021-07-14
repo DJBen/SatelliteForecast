@@ -13,11 +13,11 @@ import SatelliteKit
 
 /// Abstracts common logic of satellite loader into publishers.
 enum SatelliteLoader {
-    static func loadSatelliteCategoryPublisher(category: SatelliteCategory) -> AnyPublisher<SatelliteLoaderOutputAction, Never> {
+    static func loadSatelliteCategoryPublisher(category: SatelliteCategory) -> AnyPublisher<SatelliteLoaderAction, Never> {
         URLSession.shared
             .dataTaskPublisher(for: URLRequest(url: category.url))
             .mapError { SatelliteLoaderError.other($0) }
-            .tryMap { result -> SatelliteLoaderOutputAction in
+            .tryMap { result -> SatelliteLoaderAction in
                 precondition(!Thread.isMainThread)
                 let tles = try TLE.load(chunk: String(data: result.data, encoding: .utf8)!)
                 let info = tles.map { tle -> SatelliteInfo in

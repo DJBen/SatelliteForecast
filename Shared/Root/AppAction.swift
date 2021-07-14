@@ -10,10 +10,8 @@ import SatelliteKit
 
 enum AppAction {
     case appDelegate(AppDelegateAction)
-    case coreLocationInput(CoreLocationInputAction)
-    case coreLocationOutput(CoreLocationOutputAction)
-    case satelliteLoaderInput(SatelliteLoaderInputAction)
-    case satelliteLoaderOutput(SatelliteLoaderOutputAction)
+    case coreLocation(CoreLocationAction)
+    case satelliteLoader(SatelliteLoaderAction)
     case satelliteOverview(SatelliteOverviewViewAction)
     case satelliteListView(SatelliteListViewAction)
     case singleSatelliteWrappingView(SingleSatelliteWrappingViewAction)
@@ -41,47 +39,25 @@ extension AppAction {
         }
     }
 
-    public var coreLocationInput: CoreLocationInputAction? {
+    public var coreLocation: CoreLocationAction? {
         get {
-            guard case let .coreLocationInput(value) = self else { return nil }
+            guard case let .coreLocation(value) = self else { return nil }
             return value
         }
         set {
-            guard case .coreLocationInput = self, let newValue = newValue else { return }
-            self = .coreLocationInput(newValue)
+            guard case .coreLocation = self, let newValue = newValue else { return }
+            self = .coreLocation(newValue)
         }
     }
 
-    public var coreLocationOutput: CoreLocationOutputAction? {
+    public var satelliteLoader: SatelliteLoaderAction? {
         get {
-            guard case let .coreLocationOutput(value) = self else { return nil }
+            guard case let .satelliteLoader(value) = self else { return nil }
             return value
         }
         set {
-            guard case .coreLocationOutput = self, let newValue = newValue else { return }
-            self = .coreLocationOutput(newValue)
-        }
-    }
-
-    public var satelliteLoaderInput: SatelliteLoaderInputAction? {
-        get {
-            guard case let .satelliteLoaderInput(value) = self else { return nil }
-            return value
-        }
-        set {
-            guard case .satelliteLoaderInput = self, let newValue = newValue else { return }
-            self = .satelliteLoaderInput(newValue)
-        }
-    }
-
-    public var satelliteLoaderOutput: SatelliteLoaderOutputAction? {
-        get {
-            guard case let .satelliteLoaderOutput(value) = self else { return nil }
-            return value
-        }
-        set {
-            guard case .satelliteLoaderOutput = self, let newValue = newValue else { return }
-            self = .satelliteLoaderOutput(newValue)
+            guard case .satelliteLoader = self, let newValue = newValue else { return }
+            self = .satelliteLoader(newValue)
         }
     }
 

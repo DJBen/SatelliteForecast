@@ -8,16 +8,16 @@
 import Foundation
 import CoreLocation
 
-enum CoreLocationInputAction {
+enum CoreLocationAction {
+    // Input
     case requestAuthorization
-}
 
-enum CoreLocationOutputAction {
+    // Output
     case authorizationDidChange(CLAuthorizationStatus)
     case locationChanged(CLLocation)
 }
 
-extension CoreLocationOutputAction {
+extension CoreLocationAction {
     public var authorization: CLAuthorizationStatus? {
         get {
             guard case let .authorizationDidChange(value) = self else { return nil }

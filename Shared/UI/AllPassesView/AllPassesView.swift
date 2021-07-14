@@ -13,7 +13,7 @@ import SatelliteKit
 import SwiftUI
 
 enum AllPassesViewAction {
-    case onAppear
+    case calculatePasses
     case selectPass(index: Int?)
 }
 
@@ -146,9 +146,6 @@ struct AllPassesView: View, Equatable {
             }
         }
         .listStyle(GroupedListStyle())
-        .onAppear {
-            viewModel.dispatch(.onAppear)
-        }
         .navigationTitle(viewModel.state.satelliteName ?? "All Passes")
         .navigationBarTitleDisplayMode(.inline)
     }

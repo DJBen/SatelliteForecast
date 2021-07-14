@@ -60,7 +60,8 @@ struct SingleSatelliteWrappingView: View {
     var body: some View {
         satelliteContent { satellite in
             allPassesViewProducer.view(AllPassesViewContext())
-        } failedContentBuilder: { error in
+        }
+        failedContentBuilder: { error in
             VStack(spacing: 16) {
                 Text(error.localizedDescription)
 

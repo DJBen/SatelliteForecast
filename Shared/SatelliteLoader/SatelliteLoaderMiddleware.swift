@@ -21,17 +21,17 @@ struct SatelliteLoaderDependencies {
 }
 
 extension EffectMiddleware where
-    InputActionType == SatelliteLoaderInputAction,
-    OutputActionType == SatelliteLoaderOutputAction,
+    InputActionType == SatelliteLoaderAction,
+    OutputActionType == SatelliteLoaderAction,
     StateType == SatelliteLoaderState,
     Dependencies == SatelliteLoaderDependencies {
 
-    static var satelliteLoader: MiddlewareReader<SatelliteLoaderDependencies, EffectMiddleware<SatelliteLoaderInputAction, SatelliteLoaderOutputAction, SatelliteLoaderState, SatelliteLoaderDependencies>> {
-        EffectMiddleware<SatelliteLoaderInputAction, SatelliteLoaderOutputAction, SatelliteLoaderState, SatelliteLoaderDependencies>
-            .onAction { (inputAction, dispatcher, getState) -> Effect<SatelliteLoaderDependencies, SatelliteLoaderOutputAction> in
+    static var satelliteLoader: MiddlewareReader<SatelliteLoaderDependencies, EffectMiddleware<SatelliteLoaderAction, SatelliteLoaderAction, SatelliteLoaderState, SatelliteLoaderDependencies>> {
+        EffectMiddleware<SatelliteLoaderAction, SatelliteLoaderAction, SatelliteLoaderState, SatelliteLoaderDependencies>
+        .onAction { (inputAction, dispatcher, getState) -> Effect<SatelliteLoaderDependencies, SatelliteLoaderAction> in
             switch inputAction {
             case let .loadSatelliteCategory(category):
-                return Effect(token: category) { context -> AnyPublisher<DispatchedAction<SatelliteLoaderOutputAction>, Never> in
+                return Effect(token: category) { context -> AnyPublisher<DispatchedAction<SatelliteLoaderAction>, Never> in
                     if let result = getState().info[category], let info = result.successValue {
                         let averageTLEAge = info.map {
                             Date(julianDate: getState().referenceDate).timeIntervalSince(Date(daysSince1950: $1.satellite.tle.t₀))
@@ -41,19 +41,23 @@ extension EffectMiddleware where
                         if averageTLEAge > context.dependencies.updateInterval {
                             logger.notice("Avg TLE age \(averageTLEAge) too old: updating.")
                             return SatelliteLoader.loadSatelliteCategoryPublisher(category: category)
-                                .map { DispatchedAction<SatelliteLoaderOutputAction>($0, dispatcher: dispatcher) }
+                                .map { DispatchedAction<SatelliteLoaderAction>($0, dispatcher: dispatcher) }
                                 .eraseToAnyPublisher()
                         }
 
                         logger.notice("Avg TLE age \(averageTLEAge) is new: skip update.")
-                        return Empty<DispatchedAction<SatelliteLoaderOutputAction>, Never>()
+                        return Empty<DispatchedAction<SatelliteLoaderAction>, Never>()
                             .eraseToAnyPublisher()
                     }
 
                     return SatelliteLoader.loadSatelliteCategoryPublisher(category: category)
-                        .map { DispatchedAction<SatelliteLoaderOutputAction>($0, dispatcher: dispatcher) }
+                        .map { DispatchedAction<SatelliteLoaderAction>($0, dispatcher: dispatcher) }
                         .eraseToAnyPublisher()
                 }
+            case .loadedSatelliteInfo(_, _):
+                return .doNothing
+            case .failedLoadingTLEFile(_, _):
+                return .doNothing
             }
         }
     }

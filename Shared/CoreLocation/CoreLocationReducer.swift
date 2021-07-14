@@ -8,9 +8,11 @@
 import Foundation
 import SwiftRex
 
-extension Reducer where ActionType == CoreLocationOutputAction, StateType == CoreLocationState {
+extension Reducer where ActionType == CoreLocationAction, StateType == CoreLocationState {
     static let coreLocationReducer = Reducer.reduce { action, state in
         switch action {
+        case .requestAuthorization:
+            break
         case let .authorizationDidChange(authorizationStatus):
             state.authorizationStatus = authorizationStatus
         case let .locationChanged(location):

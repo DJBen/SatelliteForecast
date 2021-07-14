@@ -22,7 +22,7 @@ extension EffectMiddleware where
             .onAction { action, _, state in
                 switch action {
                 case .loadSatelliteList:
-                    return .just(.satelliteLoaderInput(.loadSatelliteCategory(.brightest100)))
+                    return .just(.satelliteLoader(.loadSatelliteCategory(.brightest100)))
                 }
             }
     }
