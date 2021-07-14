@@ -29,11 +29,13 @@ extension EffectMiddleware where
                 switch action {
                 case .selectSatellite:
                     if let observer = getState().coreLocationState.location.map(LatLonAlt.init) {
-                        return .just(.freezeObserverLocation(observer))
+                        return .sequence([
+                            .freezeObserverLocation(observer),
+                            .allPassesView(.calculatePasses)
+                        ])
                     } else {
                         return .doNothing
                     }
-
                 case .satelliteSearchTextChanged(_):
                     return .doNothing
 

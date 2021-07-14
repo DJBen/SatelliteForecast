@@ -8,11 +8,10 @@
 import Foundation
 import CombineRex
 
-extension MiddlewareReader where MiddlewareType == EffectMiddleware<SatelliteLoaderAction, SatelliteLoaderAction, SatelliteLoaderState, SatelliteLoaderDependencies>, Dependencies == SatelliteLoaderDependencies {
-    var lifted: MiddlewareReader<SatelliteLoaderDependencies, LiftMiddleware<AppAction, AppAction, AppState, EffectMiddleware<SatelliteLoaderAction, SatelliteLoaderAction, SatelliteLoaderState, SatelliteLoaderDependencies>>> {
+extension MiddlewareReader where MiddlewareType == EffectMiddleware<SatelliteLoaderAction, AppAction, SatelliteLoaderState, SatelliteLoaderDependencies>, Dependencies == SatelliteLoaderDependencies {
+    var lifted: MiddlewareReader<SatelliteLoaderDependencies, LiftMiddleware<AppAction, AppAction, AppState, EffectMiddleware<SatelliteLoaderAction, AppAction, SatelliteLoaderState, SatelliteLoaderDependencies>>> {
         return lift(
             inputAction: \AppAction.satelliteLoader,
-            outputAction: AppAction.satelliteLoader,
             state: \AppState.satelliteLoaderState
         )
     }

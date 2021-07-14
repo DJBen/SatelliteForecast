@@ -22,16 +22,32 @@ struct SatelliteLoaderDependencies {
 
 extension EffectMiddleware where
     InputActionType == SatelliteLoaderAction,
-    OutputActionType == SatelliteLoaderAction,
+    OutputActionType == AppAction,
     StateType == SatelliteLoaderState,
     Dependencies == SatelliteLoaderDependencies {
 
-    static var satelliteLoader: MiddlewareReader<SatelliteLoaderDependencies, EffectMiddleware<SatelliteLoaderAction, SatelliteLoaderAction, SatelliteLoaderState, SatelliteLoaderDependencies>> {
-        EffectMiddleware<SatelliteLoaderAction, SatelliteLoaderAction, SatelliteLoaderState, SatelliteLoaderDependencies>
-        .onAction { (inputAction, dispatcher, getState) -> Effect<SatelliteLoaderDependencies, SatelliteLoaderAction> in
+    static var satelliteLoader: MiddlewareReader<SatelliteLoaderDependencies, EffectMiddleware<SatelliteLoaderAction, AppAction, SatelliteLoaderState, SatelliteLoaderDependencies>> {
+        EffectMiddleware<SatelliteLoaderAction, AppAction, SatelliteLoaderState, SatelliteLoaderDependencies>
+        .onAction { (inputAction, dispatcher, getState) -> Effect<SatelliteLoaderDependencies, AppAction> in
             switch inputAction {
-            case let .loadSatelliteCategory(category):
-                return Effect(token: category) { context -> AnyPublisher<DispatchedAction<SatelliteLoaderAction>, Never> in
+            case let .loadSatelliteCategory(category, shouldCalculatePasses):
+                return Effect(token: category) { context -> AnyPublisher<DispatchedAction<AppAction>, Never> in
+
+                    func loadSatellitePublisher() -> AnyPublisher<DispatchedAction<AppAction>, Never> {
+                        SatelliteLoader.loadSatelliteCategoryPublisher(category: category)
+                            .map { DispatchedAction<AppAction>(.satelliteLoader($0), dispatcher: dispatcher) }
+                            .flatMap { action -> AnyPublisher<DispatchedAction<AppAction>, Never> in
+                                if shouldCalculatePasses {
+                                    return Just(action)
+                                        .merge(with: Just(DispatchedAction<AppAction>(.allPassesView(.calculatePasses), dispatcher: dispatcher)))
+                                        .eraseToAnyPublisher()
+                                } else {
+                                    return Just(action).eraseToAnyPublisher()
+                                }
+                            }
+                            .eraseToAnyPublisher()
+                    }
+
                     if let result = getState().info[category], let info = result.successValue {
                         let averageTLEAge = info.map {
                             Date(julianDate: getState().referenceDate).timeIntervalSince(Date(daysSince1950: $1.satellite.tle.t₀))
@@ -40,19 +56,15 @@ extension EffectMiddleware where
 
                         if averageTLEAge > context.dependencies.updateInterval {
                             logger.notice("Avg TLE age \(averageTLEAge) too old: updating.")
-                            return SatelliteLoader.loadSatelliteCategoryPublisher(category: category)
-                                .map { DispatchedAction<SatelliteLoaderAction>($0, dispatcher: dispatcher) }
-                                .eraseToAnyPublisher()
+                            return loadSatellitePublisher()
                         }
 
                         logger.notice("Avg TLE age \(averageTLEAge) is new: skip update.")
-                        return Empty<DispatchedAction<SatelliteLoaderAction>, Never>()
+                        return Empty<DispatchedAction<AppAction>, Never>()
                             .eraseToAnyPublisher()
                     }
 
-                    return SatelliteLoader.loadSatelliteCategoryPublisher(category: category)
-                        .map { DispatchedAction<SatelliteLoaderAction>($0, dispatcher: dispatcher) }
-                        .eraseToAnyPublisher()
+                    return loadSatellitePublisher()
                 }
             case .loadedSatelliteInfo(_, _):
                 return .doNothing

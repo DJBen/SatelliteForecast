@@ -39,7 +39,7 @@ extension EffectMiddleware where
 
                         // Precondition: TLE must be ready
                         guard let noradIndex = state.navigationState.selectedSatelliteNoradIndex, let info = state.satelliteLoaderState[noradIndex] else {
-                            logger.fault("TLE not ready when selecting satellites")
+                            logger.fault("TLE not ready for the selected satellite when calculating passes")
                             return Empty().eraseToAnyPublisher()
                         }
 
@@ -104,7 +104,6 @@ extension EffectMiddleware where
                             subject.send(completion: .finished)
                         }
                         return subject
-                            .receive(on: OperationQueue.main)
                             .eraseToAnyPublisher()
                     }
 

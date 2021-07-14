@@ -19,10 +19,17 @@ extension EffectMiddleware where
 
     static var singleSatelliteWrappingView: EffectMiddleware<SingleSatelliteWrappingViewAction, AppAction, AppState, Void> {
         EffectMiddleware<SingleSatelliteWrappingViewAction, AppAction, AppState, Void>
-            .onAction { action, _, state in
+            .onAction { action, _, getState in
                 switch action {
                 case .loadSatelliteList:
-                    return .just(.satelliteLoader(.loadSatelliteCategory(.brightest100)))
+                    if let observer = getState().coreLocationState.location.map(LatLonAlt.init) {
+                        return .sequence([
+                            .freezeObserverLocation(observer),
+                            .satelliteLoader(.loadSatelliteCategory(.brightest100, shouldCalculatePasses: true))
+                        ])
+                    } else {
+                        return .doNothing
+                    }
                 }
             }
     }
