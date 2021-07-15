@@ -69,20 +69,26 @@ struct SatelliteElevationGraphState: Equatable {
     }
 
     static func project(state: Store.StateType) -> SatelliteElevationGraphState {
+        let satelliteElevationGraphConfigs: SatelliteElevationGraphConfigs = .preset
+
+        guard let refJulianDateRange = state.julianDateRange else {
+            return .empty
+        }
+
         let xPercentDatePair: [(Double, Double, Int)] = {
             let calendar = Calendar(identifier: .gregorian)
-            let components = calendar.dateComponents([.year, .month, .day, .hour], from: Date(julianDate: state.julianDateRange.lowerBound))
+            let components = calendar.dateComponents([.year, .month, .day, .hour], from: Date(julianDate: refJulianDateRange.lowerBound))
             var julianDate: Double = calendar.date(from: components)!.julianDate
             var results = [(Double, Double, Int)]()
             var index: Int = 0
             while true {
                 defer {
-                    julianDate += TimeConstants.sec2day * state.satelliteElevationGraphConfigs.timeGridLineInterval
+                    julianDate += TimeConstants.sec2day * satelliteElevationGraphConfigs.timeGridLineInterval
                 }
-                if julianDate < state.julianDateRange.lowerBound {
+                if julianDate < refJulianDateRange.lowerBound {
                     continue
                 }
-                let xPercent = (julianDate - state.julianDateRange.lowerBound) / (state.julianDateRange.upperBound - state.julianDateRange.lowerBound)
+                let xPercent = (julianDate - refJulianDateRange.lowerBound) / (refJulianDateRange.upperBound - refJulianDateRange.lowerBound)
                 if xPercent > 1 {
                     break
                 }
@@ -98,7 +104,7 @@ struct SatelliteElevationGraphState: Equatable {
             }
             let (julianDateRange, image) = (rangeImage.julianDateRange, rangeImage.image)
             // Reuses the image if the previously calculated date range is within 10 mins away from current requested date range
-            if abs(julianDateRange.lowerBound - state.julianDateRange.lowerBound) < 10 * TimeConstants.min2day && abs(julianDateRange.upperBound - state.julianDateRange.upperBound) < 10 * TimeConstants.min2day  {
+            if abs(julianDateRange.lowerBound - refJulianDateRange.lowerBound) < 10 * TimeConstants.min2day && abs(julianDateRange.upperBound - refJulianDateRange.upperBound) < 10 * TimeConstants.min2day  {
                 return image
             }
 
@@ -108,14 +114,14 @@ struct SatelliteElevationGraphState: Equatable {
         return SatelliteElevationGraphState(
             xPercentDatePair: xPercentDatePair,
             noradIndex: state.navigationState.selectedSatelliteNoradIndex,
-            julianDateRange: state.julianDateRange,
+            julianDateRange: refJulianDateRange,
             highlightedDateRange: state.selectedSatellitePass.map { pass -> Range<Double> in
                 return pass.rise.julianDate..<pass.set.julianDate
             },
             julianDateSunElevs: state.currentSatelliteSnapshots.map { ($0, $1.sunElevation) }
                 .reduce(into: BTree<Double, Double>(), { $0.insertOrReplace($1) }),
             rasterizedElevationGraph: rasterizedElevationGraph,
-            configs: state.satelliteElevationGraphConfigs
+            configs: satelliteElevationGraphConfigs
         )
     }
 }
@@ -419,7 +425,6 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         let location = CLLocation(latitude: 37.486743000691185, longitude: -122.22655970246515)
         let viewModel = SatelliteElevationGraphState.project(
             state: AppState(
-                julianDateRange: julianDateRange,
                 satellites: [
                     Int(sat.noradIdent)!: SatelliteTrails(
                         snapshots: sat.snapshots(
@@ -437,6 +442,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                     authorizationStatus: .authorizedWhenInUse,
                     location: location
                 ),
+                julianDateRange: julianDateRange,
                 navigationState: .allPasses(category: nil, noradIndex: Int(sat.noradIdent)!)
             )
         )
@@ -454,7 +460,6 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         let sat2 = Satellite(withTLE: tle2)
         let viewModel2 = SatelliteElevationGraphState.project(
             state: AppState(
-                julianDateRange: julianDateRange,
                 satellites: [
                     Int(sat2.noradIdent)!: SatelliteTrails(
                         snapshots: sat2.snapshots(
@@ -472,6 +477,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                     authorizationStatus: .authorizedWhenInUse,
                     location: location
                 ),
+                julianDateRange: julianDateRange,
                 navigationState: .allPasses(category: nil, noradIndex: Int(sat2.noradIdent)!)
             )
         )
@@ -489,7 +495,6 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         let sat3 = Satellite(withTLE: tle3)
         let viewModel3 = SatelliteElevationGraphState.project(
             state: AppState(
-                julianDateRange: julianDateRange,
                 satellites: [
                     Int(sat3.noradIdent)!: SatelliteTrails(
                         snapshots: sat3.snapshots(
@@ -507,6 +512,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                     authorizationStatus: .authorizedWhenInUse,
                     location: location
                 ),
+                julianDateRange: julianDateRange,
                 navigationState: .allPasses(category: nil, noradIndex: Int(sat3.noradIdent)!)
             )
         )

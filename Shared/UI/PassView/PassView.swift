@@ -112,8 +112,6 @@ struct PassView_Previews: PreviewProvider {
         )
         let brightest100: Map<Int, SatelliteInfo> = [tle.noradIndex: SatelliteInfo(noradIndex: tle.noradIndex, satellite: sat)]
         let appState = AppState(
-            julianDateRange: julianDateRange,
-            satelliteElevationGraphConfigs: .preset,
             satellites: [
                 tle.noradIndex: SatelliteTrails(
                     snapshots: snapshots.union(fineSnapshots, by: .groupingMatches),
@@ -129,6 +127,7 @@ struct PassView_Previews: PreviewProvider {
                 authorizationStatus: .authorizedWhenInUse,
                 location: location
             ),
+            julianDateRange: julianDateRange,
             navigationState: .pass(category: .brightest100, noradIndex: tle.noradIndex, selectedPassIndex: 0)
         )
         PassView(

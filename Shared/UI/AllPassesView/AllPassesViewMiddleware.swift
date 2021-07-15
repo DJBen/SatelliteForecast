@@ -51,6 +51,11 @@ extension EffectMiddleware where
                             return Empty().eraseToAnyPublisher()
                         }
 
+                        guard let julianDateRange = state.julianDateRange else {
+                            logger.warning("Will not generate satellite \(noradIndex) ephemerides: missing julian date range")
+                            return Empty().eraseToAnyPublisher()
+                        }
+
                         // Loads satellite passes
                         let subject = PassthroughSubject<DispatchedAction<AppAction>, Never>()
 
@@ -60,17 +65,19 @@ extension EffectMiddleware where
 
                             // Use cached satellite ephemerides if calculated within the last hour.
                             if let satelliteState = state.selectedSatelliteTrails,
-                               state.julianDateRange.lowerBound - satelliteState.snapshots.first!.1.julianDate < TimeConstants.hrs2day,
+                               julianDateRange.lowerBound - satelliteState.snapshots.first!.1.julianDate < TimeConstants.hrs2day,
                                let existingPasses = satelliteState.passes {
                                 passes = existingPasses
                                 fineSnapshots = satelliteState.snapshots
                                 logger.debug("Ephemeride of \(noradIndex) are already generated. Skipping.")
                             } else {
                                 let satellite = info.satellite
+                                logger.debug("Calculating pass within date range \(julianDateRange) for \(String(describing: observer)) at interval of 30s")
+
                                 let snapshots = satellite
                                     .snapshots(
                                         observer: observer,
-                                        julianDateRange: state.julianDateRange,
+                                        julianDateRange: julianDateRange,
                                         interval: 30
                                     )
 

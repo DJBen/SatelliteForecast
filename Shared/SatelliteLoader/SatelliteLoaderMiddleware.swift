@@ -52,7 +52,7 @@ extension EffectMiddleware where
                         let mostRecentTLEAge = info.map {
                             Date(julianDate: getState().referenceDate).timeIntervalSince(Date(daysSince1950: $1.satellite.tle.t₀))
                         }
-                        .max() ?? 0
+                        .min() ?? 0
 
                         if mostRecentTLEAge > context.dependencies.updateInterval {
                             logger.notice("Most recent TLE age \(mostRecentTLEAge) too old: updating.")
@@ -60,6 +60,11 @@ extension EffectMiddleware where
                         }
 
                         logger.notice("Most recent TLE age \(mostRecentTLEAge) is new: skip update.")
+
+                        if shouldCalculatePasses {
+                            return Just(DispatchedAction<AppAction>(.allPassesView(.calculatePasses), dispatcher: dispatcher))
+                                .eraseToAnyPublisher()
+                        }
                         return Empty<DispatchedAction<AppAction>, Never>()
                             .eraseToAnyPublisher()
                     }

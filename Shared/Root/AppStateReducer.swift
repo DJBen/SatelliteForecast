@@ -14,8 +14,9 @@ fileprivate let logger = Logger(subsystem: "io.djben.appState", category: "reduc
 extension Reducer where ActionType == AppAction, StateType == Store.StateType {
     static let appStateReducer = Reducer.reduce { action, state in
         switch action {
-        case let .freezeObserverLocation(observer):
+        case let .freezeObservingParams(observer, julianDateRange):
             state.observerForPasses = observer
+            state.julianDateRange = julianDateRange
             logger.debug("Freezes observer coordinate to \(String(describing: observer))")
         default:
             break

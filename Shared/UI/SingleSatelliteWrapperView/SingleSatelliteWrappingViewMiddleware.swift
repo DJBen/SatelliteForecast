@@ -23,9 +23,13 @@ extension EffectMiddleware where
                 switch action {
                 case .loadSatelliteList:
                     if let observer = getState().coreLocationState.location.map(LatLonAlt.init) {
+                        let julianDate = getState().satelliteLoaderState.referenceDate
                         return .sequence([
-                            .freezeObserverLocation(observer),
-                            .satelliteLoader(.loadSatelliteCategory(.brightest100, shouldCalculatePasses: true))
+                            .freezeObservingParams(
+                                observer: observer,
+                                julianDateRange: julianDate.advanced(by: -TimeConstants.hrs2day * 2)..<julianDate.advanced(by: TimeConstants.hrs2day * 22)
+                            ),
+                            .satelliteLoader(.loadSatelliteCategory(.brightest100, shouldCalculatePasses: true)),
                         ])
                     } else {
                         return .doNothing
