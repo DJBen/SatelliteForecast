@@ -79,7 +79,7 @@ extension SkyChart {
         return (adjustedRot, fac)
     }
 
-    static func rasterizedPath(
+    static func rasterizedSatellitePassPath(
         rect: CGRect,
         snapshotsDuringPass: BTree<Double, SatelliteSnapshot>,
         lineWidth: CGFloat = 1,
@@ -231,7 +231,7 @@ struct ImageRenderer_Previews: PreviewProvider {
         let pass = passes.first!
         let snapshotsDuringPass = snapshots.subtree(from: pass.rise.julianDate, through: pass.set.julianDate)
         Image(
-            uiImage: SkyChart.rasterizedPath(
+            uiImage: SkyChart.rasterizedSatellitePassPath(
                 rect: CGRect(origin: .zero, size: CGSize(width: 375, height: 375)),
                 snapshotsDuringPass: snapshotsDuringPass,
                 illuminatedColor: UIColor.black,

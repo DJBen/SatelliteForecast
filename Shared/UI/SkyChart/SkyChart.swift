@@ -603,7 +603,7 @@ struct SkyChart_Previews: PreviewProvider {
                             )
                         ),
                         rasterizedSatellitePaths: [
-                            .primary: SkyChart.rasterizedPath(
+                            .primary: SkyChart.rasterizedSatellitePassPath(
                                 rect: CGRect(origin: .zero, size: CGSize(width: 388, height: 805)),
                                 snapshotsDuringPass: snapshots,
                                 illuminatedColor: UIColor(named: "satellitePath_illuminated", in: nil, compatibleWith: traitCollection)!,
@@ -646,7 +646,7 @@ struct SkyChart_Previews: PreviewProvider {
                         )
                     ),
                     rasterizedSatellitePaths: [
-                        .primary: SkyChart.rasterizedPath(
+                        .primary: SkyChart.rasterizedSatellitePassPath(
                             rect: CGRect(origin: .zero, size: CGSize(width: 388, height: 805)),
                             snapshotsDuringPass: snapshots2,
                             illuminatedColor: UIColor(Color("satellitePath_illuminated")),

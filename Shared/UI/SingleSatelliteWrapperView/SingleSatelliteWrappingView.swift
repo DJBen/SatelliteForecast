@@ -92,6 +92,7 @@ extension ViewProducer where Context == Void, ProducedView == SingleSatelliteWra
     }
 }
 
+#if DEBUG
 struct SingleSatelliteWrappingView_Previews: PreviewProvider {
     static var previews: some View {
         SingleSatelliteWrappingView(
@@ -100,3 +101,4 @@ struct SingleSatelliteWrappingView_Previews: PreviewProvider {
         )
     }
 }
+#endif

@@ -11,11 +11,7 @@ import CombineRex
 import SatelliteKit
 
 
-extension EffectMiddleware where
-    InputActionType == SatelliteListViewAction,
-    OutputActionType == AppAction,
-    StateType == AppState,
-    Dependencies == Void {
+extension EffectMiddleware where InputActionType == SatelliteListViewAction, OutputActionType == AppAction, StateType == AppState, Dependencies == Void {
 
     /// A middeware that listens to `SatelliteListViewAction`.
     /// - `selectSatellite(noradIndex)`: It asynchronously does two things:
@@ -23,7 +19,7 @@ extension EffectMiddleware where
     ///   - Find all the passes in the same period, and generate a fine ephemeris during each pass.
     ///
     ///   Thus this effect will have two action outputs before it completes.
-    static var satelliteListView: EffectMiddleware<SatelliteListViewAction, AppAction, AppState, Void> {
+    static func satelliteListView(satelliteLoader: SatelliteLoader) -> EffectMiddleware<SatelliteListViewAction, AppAction, AppState, Void> {
         EffectMiddleware<SatelliteListViewAction, AppAction, AppState, Void>
             .onAction { (action, _, getState) -> Effect<Void, AppAction> in
                 switch action {
@@ -49,7 +45,7 @@ extension EffectMiddleware where
                         return .doNothing
                     }
 
-                    return SatelliteLoader.loadSatelliteCategoryPublisher(category: category)
+                    return satelliteLoader.loadSatelliteCategoryPublisher(category: category)
                         .map(AppAction.satelliteLoader)
                         .asEffect(info: nil)
                 }

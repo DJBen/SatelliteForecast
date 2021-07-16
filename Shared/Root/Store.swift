@@ -37,70 +37,69 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         Reducer<AppAction, AppState>.appStateReducer
     ]
 
-    let middleware: ComposedMiddleware<AppAction, AppAction, AppState> =
-        CoreLocationMiddleware().lifted
-
-        <> EffectMiddleware.coreLocationLogger.lifted
-
-        <> EffectMiddleware.satelliteLoader
-        .lifted
-        .inject(
-            SatelliteLoaderDependencies()
-        )
-        .eraseToAnyMiddleware()
-
-        <> EffectMiddleware.satelliteOverview
-        .lift(
-            inputAction: { $0.satelliteOverview }
-        )
-        .eraseToAnyMiddleware()
-
-        <> EffectMiddleware.satelliteListView
-        .lift(
-            inputAction: { $0.satelliteListView }
-        )
-        .eraseToAnyMiddleware()
-
-        <> EffectMiddleware.singleSatelliteWrappingView
-        .lift(
-            inputAction: { $0.singleSatelliteWrappingView }
-        )
-        .eraseToAnyMiddleware()
-
-        <> EffectMiddleware.allPassesView
-        .lift(
-            inputAction: { $0.allPassesView }
-        )
-        .eraseToAnyMiddleware()
-
-        <> EffectMiddleware.skyChart
-        .lift(
-            inputAction: { $0.skyChart },
-            outputAction: AppAction.skyChart
-        )
-        .eraseToAnyMiddleware()
-
-        <> EffectMiddleware<SatelliteElevationGraphAction, SatelliteElevationGraphAction, AppState, Void>.satelliteElevationGraph
-        .lift(
-            inputAction: { $0.satelliteElevationGraph },
-            outputAction: AppAction.satelliteElevationGraph
-        )
-        .eraseToAnyMiddleware()
-
-        <> EffectMiddleware.timer
-        .lift(
-            inputAction: { $0.timer },
-            outputAction: AppAction.timer
-        )
-        .eraseToAnyMiddleware()
-
-        // <> LoggerMiddleware()
-
     private init() {
+        let satelliteLoader: SatelliteLoader = SatelliteLoaderImpl(session: URLSession.shared)
+
         super.init(
             subject: .combine(initialValue: .empty),
             reducer: reducers.reduce(Reducer<AppAction, AppState>.identity, <>),
-            middleware: middleware
+            middleware: CoreLocationMiddleware().lifted
+
+            <> EffectMiddleware.coreLocationLogger.lifted
+
+            <> EffectMiddleware.satelliteLoader(satelliteLoader)
+                .lifted
+                .inject(
+                    SatelliteLoaderDependencies()
+                )
+                .eraseToAnyMiddleware()
+
+            <> EffectMiddleware.satelliteOverview
+                .lift(
+                    inputAction: { $0.satelliteOverview }
+                )
+                .eraseToAnyMiddleware()
+
+            <> EffectMiddleware.satelliteListView(satelliteLoader: satelliteLoader)
+                .lift(
+                    inputAction: { $0.satelliteListView }
+                )
+                .eraseToAnyMiddleware()
+
+            <> EffectMiddleware.singleSatelliteWrappingView
+                .lift(
+                    inputAction: { $0.singleSatelliteWrappingView }
+                )
+                .eraseToAnyMiddleware()
+
+            <> EffectMiddleware.allPassesView
+                .lift(
+                    inputAction: { $0.allPassesView }
+                )
+                .eraseToAnyMiddleware()
+
+            <> EffectMiddleware.skyChart
+                .lift(
+                    inputAction: { $0.skyChart },
+                    outputAction: AppAction.skyChart
+                )
+                .eraseToAnyMiddleware()
+
+            <> EffectMiddleware.satelliteElevationGraph
+                .lift(
+                    inputAction: { $0.satelliteElevationGraph },
+                    outputAction: AppAction.satelliteElevationGraph
+                )
+                .eraseToAnyMiddleware()
+
+            <> EffectMiddleware.timer
+                .lift(
+                    inputAction: { $0.timer },
+                    outputAction: AppAction.timer
+                )
+                .eraseToAnyMiddleware()
+
+            // <> LoggerMiddleware()
         )
     }
 }

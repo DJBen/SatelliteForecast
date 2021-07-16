@@ -115,6 +115,7 @@ struct SatelliteListView: View {
             AllPassesViewContext()
         )
         .equatable()
+        .id(viewModel.state.navTag)
     }
 
     func satelliteContent<Content: View, FailedContent: View>(
@@ -135,7 +136,7 @@ struct SatelliteListView: View {
         List {
             ForEach(Array(satellites.keys), id: \.self) { noradIndex in
                 NavigationLink(
-                    destination: destination,
+                    destination: LazyView(destination),
                     tag: SatelliteNavTag(
                         category: viewModel.state.navTag.category,
                         noradIndex: noradIndex

@@ -43,9 +43,8 @@ struct AllPassesViewState: Equatable {
 
     var satelliteName: String?
     var observer: LatLonAlt?
-    var isLoading: Bool = false
-    var visiblePasses: [Item] = []
-    var invisiblePasses: [Item] = []
+    var visiblePasses: [Item]?
+    var invisiblePasses: [Item]?
     var selectedPassIndex: Int?
 
     static func project(state: AppState) -> AllPassesViewState {
@@ -55,32 +54,38 @@ struct AllPassesViewState: Equatable {
             return .empty
         }
 
-        guard let passes = satelliteState.passes else {
-            return AllPassesViewState(isLoading: true)
-        }
-
-        let items = passes.enumerated().map { i, pass -> Item in
-            let rasterizedSatellitePath = state.skyChartState.rasterizedSatellitePaths[pass]?[.preview]
-            let rasterizedBackgroundSky: UIImage?
-            if let observer = state.observerForPasses {
-                rasterizedBackgroundSky = state.skyChartState.rasterizedBackgroundSky[SkyChartSatelliteBackgroundSkyKey(observer: observer, julianDate: pass.rise.julianDate)]?[.preview]
-            } else {
-                rasterizedBackgroundSky = nil
+        if let passes = satelliteState.passes {
+            let items = passes.enumerated().map { i, pass -> Item in
+                let rasterizedSatellitePath = state.skyChartState.rasterizedSatellitePaths[pass]?[.preview]
+                let rasterizedBackgroundSky: UIImage?
+                if let observer = state.observerForPasses {
+                    rasterizedBackgroundSky = state.skyChartState.rasterizedBackgroundSky[SkyChartSatelliteBackgroundSkyKey(observer: observer, julianDate: pass.rise.julianDate)]?[.preview]
+                } else {
+                    rasterizedBackgroundSky = nil
+                }
+                return Item(index: i, pass: pass, rasterizedSatellitePath: rasterizedSatellitePath, rasterizedBackgroundSky: rasterizedBackgroundSky)
             }
-            return Item(index: i, pass: pass, rasterizedSatellitePath: rasterizedSatellitePath, rasterizedBackgroundSky: rasterizedBackgroundSky)
+            let itemsByVisibility = Dictionary(grouping: items, by: \.pass.visibility)
+            let visiblePasses = itemsByVisibility[.visible] ?? []
+            let invisiblePasses = (itemsByVisibility[.daylight] ?? []) + (itemsByVisibility[.unlit] ?? [])
+            return AllPassesViewState(
+                satelliteName: info.satellite.commonName,
+                observer: state.observerForPasses,
+                visiblePasses: visiblePasses
+                    .sorted { $0.pass.rise.julianDate < $1.pass.rise.julianDate },
+                invisiblePasses: invisiblePasses
+                    .sorted { $0.pass.rise.julianDate < $1.pass.rise.julianDate },
+                selectedPassIndex: state.selectedSatellitePassIndex
+            )
+        } else {
+            return AllPassesViewState(
+                satelliteName: info.satellite.commonName,
+                observer: state.observerForPasses,
+                visiblePasses: nil,
+                invisiblePasses: nil,
+                selectedPassIndex: state.selectedSatellitePassIndex
+            )
         }
-        let itemsByVisibility = Dictionary(grouping: items, by: \.pass.visibility)
-        let visiblePasses = itemsByVisibility[.visible] ?? []
-        let invisiblePasses = (itemsByVisibility[.daylight] ?? []) + (itemsByVisibility[.unlit] ?? [])
-        return AllPassesViewState(
-            satelliteName: info.satellite.commonName,
-            observer: state.observerForPasses,
-            visiblePasses: visiblePasses
-                .sorted { $0.pass.rise.julianDate < $1.pass.rise.julianDate },
-            invisiblePasses: invisiblePasses
-                .sorted { $0.pass.rise.julianDate < $1.pass.rise.julianDate },
-            selectedPassIndex: state.selectedSatellitePassIndex
-        )
     }
 
     static var empty: AllPassesViewState {
@@ -101,7 +106,7 @@ struct AllPassesView: View, Equatable {
 
     private func navigationLink<Label: View>(index: Int, @ViewBuilder label: () -> Label) -> some View {
         NavigationLink(
-            destination: passViewProducer.view(PassViewContext()),
+            destination: LazyView(passViewProducer.view(PassViewContext())),
             tag: index,
             selection: Binding<Int?>(
                 get: {
@@ -115,23 +120,25 @@ struct AllPassesView: View, Equatable {
         )
     }
 
-    private func passesList(_ items: [AllPassesViewState.Item]) -> some View {
-        if viewModel.state.isLoading {
-            return AnyView(ProgressView("Calculating..."))
-        } else if items.isEmpty {
-            return AnyView(Text("No passes found"))
+    private func passesList(_ items: [AllPassesViewState.Item]?) -> some View {
+        if let items = items {
+            if items.isEmpty {
+                return AnyView(Text("No passes found"))
+            } else {
+                return AnyView(ForEach(items) { item in
+                    navigationLink(index: item.index) {
+                        PassPreviewCell(
+                            pass: item.pass,
+                            indexOfPass: item.index,
+                            skyChartProducer: skyChartProducer
+                        )
+                    }
+                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 25))
+                    .frame(height: 135)
+                })
+            }
         } else {
-            return AnyView(ForEach(items) { item in
-                navigationLink(index: item.index) {
-                    PassPreviewCell(
-                        pass: item.pass,
-                        indexOfPass: item.index,
-                        skyChartProducer: skyChartProducer
-                    )
-                }
-                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 25))
-                .frame(height: 135)
-            })
+            return AnyView(ProgressView("Calculating..."))
         }
     }
     
@@ -212,9 +219,7 @@ struct AllPassesView_Previews: PreviewProvider {
 
         AllPassesView(
             viewModel: .mock(
-                state: AllPassesViewState(
-                    isLoading: true
-                )
+                state: AllPassesViewState()
             ),
             context: AllPassesViewContext(),
             skyChartProducer: .pure(

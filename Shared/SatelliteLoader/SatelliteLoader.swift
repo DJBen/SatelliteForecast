@@ -12,9 +12,17 @@ import SatelliteForcastCore
 import SatelliteKit
 
 /// Abstracts common logic of satellite loader into publishers.
-enum SatelliteLoader {
-    static func loadSatelliteCategoryPublisher(category: SatelliteCategory) -> AnyPublisher<SatelliteLoaderAction, Never> {
-        URLSession.shared
+protocol SatelliteLoader {
+    func loadSatelliteCategoryPublisher(category: SatelliteCategory) -> AnyPublisher<SatelliteLoaderAction, Never>
+}
+
+struct SatelliteLoaderImpl {
+    let session: URLSession
+}
+
+extension SatelliteLoaderImpl: SatelliteLoader {
+    func loadSatelliteCategoryPublisher(category: SatelliteCategory) -> AnyPublisher<SatelliteLoaderAction, Never> {
+        session
             .dataTaskPublisher(for: URLRequest(url: category.url))
             .mapError { SatelliteLoaderError.other($0) }
             .tryMap { result -> SatelliteLoaderAction in

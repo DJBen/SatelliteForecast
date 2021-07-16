@@ -82,7 +82,7 @@ extension EffectMiddleware where
 
                             traitCollection.performAsCurrent {
                                 // Rasterize satellite paths in sky charts
-                                let image = SkyChart.rasterizedPath(
+                                let image = SkyChart.rasterizedSatellitePassPath(
                                     rect: CGRect(origin: .zero, size: size),
                                     snapshotsDuringPass: snapshotsDuringPass,
                                     illuminatedColor: UIColor(named: "satellitePath_illuminated")!,

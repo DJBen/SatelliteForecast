@@ -26,7 +26,7 @@ extension EffectMiddleware where
     StateType == SatelliteLoaderState,
     Dependencies == SatelliteLoaderDependencies {
 
-    static var satelliteLoader: MiddlewareReader<SatelliteLoaderDependencies, EffectMiddleware<SatelliteLoaderAction, AppAction, SatelliteLoaderState, SatelliteLoaderDependencies>> {
+    static func satelliteLoader(_ satelliteLoader: SatelliteLoader) -> MiddlewareReader<SatelliteLoaderDependencies, EffectMiddleware<SatelliteLoaderAction, AppAction, SatelliteLoaderState, SatelliteLoaderDependencies>> {
         EffectMiddleware<SatelliteLoaderAction, AppAction, SatelliteLoaderState, SatelliteLoaderDependencies>
         .onAction { (inputAction, dispatcher, getState) -> Effect<SatelliteLoaderDependencies, AppAction> in
             switch inputAction {
@@ -34,7 +34,7 @@ extension EffectMiddleware where
                 return Effect(token: category) { context -> AnyPublisher<DispatchedAction<AppAction>, Never> in
 
                     func loadSatellitePublisher() -> AnyPublisher<DispatchedAction<AppAction>, Never> {
-                        SatelliteLoader.loadSatelliteCategoryPublisher(category: category)
+                        satelliteLoader.loadSatelliteCategoryPublisher(category: category)
                             .map { DispatchedAction<AppAction>(.satelliteLoader($0), dispatcher: dispatcher) }
                             .flatMap { action -> AnyPublisher<DispatchedAction<AppAction>, Never> in
                                 if shouldCalculatePasses {

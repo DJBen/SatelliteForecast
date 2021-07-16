@@ -93,7 +93,7 @@ struct SatelliteOverviewView: View {
         switch item {
         case .specialSatellites:
             return AnyView(NavigationLink(
-                destination: destination(for: item),
+                destination: LazyView(destination(for: item)),
                 tag: SpecialSatelliteNavTag(item.navigationIndexPath),
                 selection: Binding<SpecialSatelliteNavTag?>(
                     get: { SpecialSatelliteNavTag(viewModel.state.navigationState.indexPath) },
@@ -103,7 +103,7 @@ struct SatelliteOverviewView: View {
             ))
         case .category:
             return AnyView(NavigationLink(
-                destination: destination(for: item),
+                destination: LazyView(destination(for: item)),
                 tag: CategoryNavTag(item.navigationIndexPath),
                 selection: Binding<CategoryNavTag?>(
                     get: { CategoryNavTag(viewModel.state.navigationState.indexPath) },
