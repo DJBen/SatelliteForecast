@@ -18,7 +18,7 @@ enum AllPassesViewAction {
 }
 
 struct AllPassesViewState: Equatable {
-    struct Item: Equatable, Identifiable {
+    struct Item: Equatable {
         let index: Int
         let pass: Pass
 
@@ -30,14 +30,6 @@ struct AllPassesViewState: Equatable {
             self.pass = pass
             self.rasterizedSatellitePath = rasterizedSatellitePath
             self.rasterizedBackgroundSky = rasterizedBackgroundSky
-        }
-
-        var id: Int {
-            var hasher = Hasher()
-            hasher.combine(index)
-            hasher.combine(rasterizedSatellitePath)
-            hasher.combine(rasterizedBackgroundSky)
-            return hasher.finalize()
         }
     }
 
@@ -125,7 +117,7 @@ struct AllPassesView: View, Equatable {
             if items.isEmpty {
                 return AnyView(Text("No passes found"))
             } else {
-                return AnyView(ForEach(items) { item in
+                return AnyView(ForEach(items, id: \.index) { item in
                     navigationLink(index: item.index) {
                         PassPreviewCell(
                             pass: item.pass,
