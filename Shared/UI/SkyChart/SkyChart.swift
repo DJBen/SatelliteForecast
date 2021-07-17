@@ -16,6 +16,7 @@ import BTree
 struct SkyChartSatelliteBackgroundSkyKey: Hashable {
     let observer: LatLonAlt
     let julianDate: Double
+    let configs: SkyChartConfigs.BackgroundSky
 }
 
 enum SkyChartUsage: Equatable, Hashable {
@@ -97,7 +98,7 @@ struct SkyChartViewState: Equatable {
     var rasterizedSatellitePaths: [SkyChartUsage: UIImage]?
     var rasterizedBackgroundSky: [SkyChartUsage: UIImage]?
 
-    static func projectPreview(state: AppState, index: Int) -> SkyChartViewState {
+    static func projectPreview(state: AppState, index: Int, backgroundSkyConfigs: SkyChartConfigs.BackgroundSky) -> SkyChartViewState {
         guard let observerCoodinate = state.observerForPasses else {
             return SkyChartViewState(mode: .notReady)
         }
@@ -124,14 +125,20 @@ struct SkyChartViewState: Equatable {
             return SkyChartViewState(
                 mode: Mode.pass(displayPass.0, observer: observerCoodinate, snapshots: displayPass.1),
                 rasterizedSatellitePaths: state.skyChartState.rasterizedSatellitePaths[displayPass.0],
-                rasterizedBackgroundSky: state.skyChartState.rasterizedBackgroundSky[SkyChartSatelliteBackgroundSkyKey(observer: observerCoodinate, julianDate: displayPass.0.rise.julianDate)]
+                rasterizedBackgroundSky: state.skyChartState.rasterizedBackgroundSky[
+                    SkyChartSatelliteBackgroundSkyKey(
+                        observer: observerCoodinate,
+                        julianDate: displayPass.0.rise.julianDate,
+                        configs: backgroundSkyConfigs
+                    )
+                ]
             )
         } else {
             return .empty
         }
     }
 
-    static func project(state: AppState) -> SkyChartViewState {
+    static func project(state: AppState, backgroundSkyConfigs: SkyChartConfigs.BackgroundSky) -> SkyChartViewState {
         guard let observerCoodinate = state.observerForPasses else {
             return SkyChartViewState(mode: .notReady)
         }
@@ -156,7 +163,13 @@ struct SkyChartViewState: Equatable {
             return SkyChartViewState(
                 mode: Mode.pass(selectedPass.0, observer: observerCoodinate, snapshots: selectedPass.1),
                 rasterizedSatellitePaths: state.skyChartState.rasterizedSatellitePaths[selectedPass.0],
-                rasterizedBackgroundSky: state.skyChartState.rasterizedBackgroundSky[SkyChartSatelliteBackgroundSkyKey(observer: observerCoodinate, julianDate: selectedPass.0.rise.julianDate)]
+                rasterizedBackgroundSky: state.skyChartState.rasterizedBackgroundSky[
+                    SkyChartSatelliteBackgroundSkyKey(
+                        observer: observerCoodinate,
+                        julianDate: selectedPass.0.rise.julianDate,
+                        configs: backgroundSkyConfigs
+                    )
+                ]
             )
         } else {
             return .empty
@@ -168,12 +181,9 @@ struct SkyChartViewState: Equatable {
     }
 }
 
-struct SkyChart: View, Equatable {
-    static func == (lhs: SkyChart, rhs: SkyChart) -> Bool {
-        lhs.viewModel.state == rhs.viewModel.state
-    }
-
+struct SkyChart: View {
     @ObservedObject private var viewModel: ObservableViewModel<SkyChartAction, SkyChartViewState>
+    @Binding private var contentSize: CGSize
     private let configs: SkyChartConfigs
     private let usage: SkyChartUsage
 
@@ -181,10 +191,12 @@ struct SkyChart: View, Equatable {
 
     init(
         viewModel: ObservableViewModel<SkyChartAction, SkyChartViewState>,
+        contentSize: Binding<CGSize>,
         configs: SkyChartConfigs,
         usage: SkyChartUsage
     ) {
         self.viewModel = viewModel
+        self._contentSize = contentSize
         self.configs = configs
         self.usage = usage
     }
@@ -282,6 +294,7 @@ struct SkyChart: View, Equatable {
             view
                 .modifier(SizeModifier())
                 .onPreferenceChange(SizePreferenceKey.self) { contentSize in
+                    self.contentSize = contentSize
                     if let pass = viewModel.state.mode.pass {
                         viewModel.dispatch(
                             .requestRasterizedSatellitePath(
@@ -297,7 +310,11 @@ struct SkyChart: View, Equatable {
                                 .requestRasterizedBackgroundSky(
                                     usage: usage,
                                     size: contentSize,
-                                    key: SkyChartSatelliteBackgroundSkyKey(observer: observer, julianDate: date),
+                                    key: SkyChartSatelliteBackgroundSkyKey(
+                                        observer: observer,
+                                        julianDate: date,
+                                        configs: configs.backgroundSky
+                                    ),
                                     configs: configs.backgroundSky,
                                     traitCollection: UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
                                 )
@@ -440,15 +457,17 @@ struct SkyChart: View, Equatable {
     }
 
     var body: some View {
-        backgroundSky
-            .overlay(loadingIndicator)
-            .overlay(planetaryBodiesView)
-            .overlay(satellitePath)
-            .clipShape(Circle())
-            .overlay(backgroundPath)
+        backgroundPath
             .overlay(azimuthMarks)
             .overlay(azimuthMarkTexts)
             .overlay(passInfoLabel)
+            .background(
+                backgroundSky
+                    .overlay(loadingIndicator)
+                    .overlay(planetaryBodiesView)
+                    .overlay(satellitePath)
+                    .clipShape(Circle())
+            )
             .onAppear {
                 viewModel.dispatch(.onAppear)
             }
@@ -462,6 +481,7 @@ struct SkyChartContext {
     }
 
     let usage: Usage
+    let contentSize: Binding<CGSize>
 }
 
 fileprivate extension View {
@@ -478,30 +498,40 @@ fileprivate extension View {
 extension ViewProducer where Context == SkyChartContext, ProducedView == SkyChart {
     static func skyChart<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
         ViewProducer<Context, ProducedView> { context in
-            SkyChart(
+            let configs: SkyChartConfigs = {
+                switch context.usage {
+                case .preview:
+                    return .preview
+                case .full:
+                    return .preset
+                }
+            }()
+
+            return SkyChart(
                 viewModel: viewModel
                     .projection(
                         action: { AppAction.skyChart($0) },
                         state: { state in
                             switch context.usage {
                             case let .preview(index):
-                                return SkyChartViewState.projectPreview(state: state, index: index)
+                                return SkyChartViewState.projectPreview(
+                                    state: state,
+                                    index: index,
+                                    backgroundSkyConfigs: configs.backgroundSky
+                                )
                             case .full:
-                                return SkyChartViewState.project(state: state)
+                                return SkyChartViewState.project(
+                                    state: state,
+                                    backgroundSkyConfigs: configs.backgroundSky
+                                )
                             }
                         }
                     )
                     .asObservableViewModel(
                         initialState: .empty
                     ),
-                configs: {
-                    switch context.usage {
-                    case .preview:
-                        return .preview
-                    case .full:
-                        return .preset
-                    }
-                }(),
+                contentSize: context.contentSize,
+                configs: configs,
                 usage: {
                     switch context.usage {
                     case .preview:
@@ -612,6 +642,7 @@ struct SkyChart_Previews: PreviewProvider {
                         ]
                     )
                 ),
+                contentSize: .constant(.zero),
                 configs: .preset,
                 usage: .primary
             )
@@ -655,6 +686,7 @@ struct SkyChart_Previews: PreviewProvider {
                     ]
                 )
             ),
+            contentSize: .constant(.zero),
             configs: .preset,
             usage: .primary
         )
@@ -662,6 +694,7 @@ struct SkyChart_Previews: PreviewProvider {
 
         SkyChart(
             viewModel: .mock(state: .empty),
+            contentSize: .constant(.zero),
             configs: .preset,
             usage: .primary
         )

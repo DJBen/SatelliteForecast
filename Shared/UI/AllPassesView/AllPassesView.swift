@@ -51,7 +51,13 @@ struct AllPassesViewState: Equatable {
                 let rasterizedSatellitePath = state.skyChartState.rasterizedSatellitePaths[pass]?[.preview]
                 let rasterizedBackgroundSky: UIImage?
                 if let observer = state.observerForPasses {
-                    rasterizedBackgroundSky = state.skyChartState.rasterizedBackgroundSky[SkyChartSatelliteBackgroundSkyKey(observer: observer, julianDate: pass.rise.julianDate)]?[.preview]
+                    rasterizedBackgroundSky = state.skyChartState.rasterizedBackgroundSky[
+                        SkyChartSatelliteBackgroundSkyKey(
+                            observer: observer,
+                            julianDate: pass.rise.julianDate,
+                            configs: .preset
+                        )
+                    ]?[.preview]
                 } else {
                     rasterizedBackgroundSky = nil
                 }
@@ -122,7 +128,8 @@ struct AllPassesView: View, Equatable {
                         PassPreviewCell(
                             pass: item.pass,
                             indexOfPass: item.index,
-                            skyChartProducer: skyChartProducer
+                            skyChartProducer: skyChartProducer,
+                            skyChartContentSize: .constant(.zero)
                         )
                     }
                     .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 25))
@@ -219,6 +226,7 @@ struct AllPassesView_Previews: PreviewProvider {
                     viewModel: .mock(
                         state: .empty
                     ),
+                    contentSize: .constant(.zero),
                     configs: SkyChartConfigs(
                         backgroundSky: SkyChartConfigs.BackgroundSky(
                             stars: .limitedMagnitude(2),
@@ -282,6 +290,7 @@ struct AllPassesView_Previews: PreviewProvider {
                             )
                         )
                     ),
+                    contentSize: .constant(.zero),
                     configs: SkyChartConfigs(
                         backgroundSky: SkyChartConfigs.BackgroundSky(
                             stars: .limitedMagnitude(2),

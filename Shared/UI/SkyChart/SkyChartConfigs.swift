@@ -8,14 +8,30 @@
 import Foundation
 import CoreGraphics
 
-struct SkyChartConfigs {
-    struct BackgroundSky {
-        enum Stars {
+struct SkyChartConfigs: Equatable, Hashable {
+    struct BackgroundSky: Equatable, Hashable {
+        enum Stars: Equatable, Hashable {
             case none
             case limitedMagnitude(Double)
         }
         var stars: Stars = .limitedMagnitude(4.5)
-        var starMagToDisplayRadius: (Double) -> CGFloat = { CGFloat(3 * exp(0.425 * -$0)) }
+
+
+        struct StarMagToDisplayRadiusMappingFunction: Equatable, Hashable {
+            let multiplier: Double
+            let exponent: Double
+
+            init(multipler: Double = 3, exponent: Double = -0.425) {
+                self.multiplier = multipler
+                self.exponent = exponent
+            }
+
+            func apply(_ value: Double) -> CGFloat {
+                CGFloat(multiplier * exp(exponent * value))
+            }
+        }
+
+        var starMagToDisplayRadiusMappingFunction = StarMagToDisplayRadiusMappingFunction()
         var hidesStarsDuringDay: Bool = true
         var showConstellationLines: Bool = true
 
@@ -30,7 +46,7 @@ struct SkyChartConfigs {
 
         var visibleBodies: [PlantaryBody] = PlantaryBody.allCases
 
-        enum PlantaryBodyLabel {
+        enum PlantaryBodyLabel: Equatable, Hashable {
             case text
             case symbol
         }
@@ -67,7 +83,7 @@ struct SkyChartConfigs {
         SkyChartConfigs(
             backgroundSky: SkyChartConfigs.BackgroundSky(
                 stars: .limitedMagnitude(2.25),
-                starMagToDisplayRadius: { CGFloat(1.5 * exp(0.5 * -$0)) },
+                starMagToDisplayRadiusMappingFunction: BackgroundSky.StarMagToDisplayRadiusMappingFunction(multipler: 1.5, exponent: -0.5),
                 showConstellationLines: false,
                 visibleBodies: [.sun, .moon],
                 bodySymbol: .symbol

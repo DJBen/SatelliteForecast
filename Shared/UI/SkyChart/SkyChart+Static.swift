@@ -140,7 +140,7 @@ extension SkyChart {
         starColor: UIColor,
         constellationLineColor: UIColor,
         constellationLineWidth: CGFloat = 1,
-        magToRadius: (Double) -> CGFloat = { CGFloat(3 * exp(0.425 * -$0)) }
+        magToRadius: (Double) -> CGFloat
     ) -> UIImage {
         let renderer = UIGraphicsImageRenderer(size: rect.size)
 

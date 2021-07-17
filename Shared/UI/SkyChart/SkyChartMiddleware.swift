@@ -54,7 +54,7 @@ extension EffectMiddleware where
                                 julianDate: key.julianDate,
                                 starColor: UIColor(named: "star", in: nil, compatibleWith: traitCollection)!,
                                 constellationLineColor: UIColor(named: "constellationLine", in: nil, compatibleWith: traitCollection)!,
-                                magToRadius: configs.starMagToDisplayRadius
+                                magToRadius: configs.starMagToDisplayRadiusMappingFunction.apply
                             )
                             logger.debug("Rasterized background sky at observer coodinate \(String(describing: key.observer)) @ JD \(key.julianDate).")
 

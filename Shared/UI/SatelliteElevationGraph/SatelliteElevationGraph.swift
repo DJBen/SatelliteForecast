@@ -374,6 +374,11 @@ struct SatelliteElevationGraph: View {
                                 innerViews(
                                     rect: rect
                                 )
+                                .onAppear {
+                                    if let _ = viewModel.state.highlightedDateRange {
+                                        scrollViewProxy.scrollTo("centerAtDate", anchor: .center)
+                                    }
+                                }
                                 .onChange(
                                     of: viewModel.state.highlightedDateRange,
                                     perform: { _ in

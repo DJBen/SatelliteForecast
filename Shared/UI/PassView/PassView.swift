@@ -40,6 +40,8 @@ struct PassView: View {
     var elevationGraphProducer: ViewProducer<Void, SatelliteElevationGraph>
     var skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
 
+    @State var skyChartContentSize: CGSize = .zero
+
     var body: some View {
         GeometryReader { geometry in
             let rect = geometry.frame(in: .local)
@@ -47,7 +49,7 @@ struct PassView: View {
                 elevationGraphProducer.view()
                     .frame(height: 250, alignment: .leading)
                 skyChartProducer.view(
-                    SkyChartContext(usage: .full)
+                    SkyChartContext(usage: .full, contentSize: $skyChartContentSize)
                 )
                 .frame(height: min(rect.width, rect.height))
                 Spacer(minLength: 10)
@@ -58,6 +60,9 @@ struct PassView: View {
         }
         .onAppear {
             viewModel.dispatch(.onAppear)
+        }
+        .onChange(of: skyChartContentSize) { newSkyChartContentSize in
+            print(newSkyChartContentSize)
         }
     }
 }
@@ -150,9 +155,11 @@ struct PassView_Previews: PreviewProvider {
                 SkyChart(
                     viewModel: .mock(
                         state: SkyChartViewState.project(
-                            state: appState
+                            state: appState,
+                            backgroundSkyConfigs: .preset
                         )
                     ),
+                    contentSize: .constant(.zero),
                     configs: .preset,
                     usage: .preview
                 )

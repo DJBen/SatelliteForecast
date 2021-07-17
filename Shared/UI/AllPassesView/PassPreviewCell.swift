@@ -20,6 +20,7 @@ struct PassPreviewCell: View, Equatable {
     var pass: Pass
     var indexOfPass: Int
     var skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
+    @Binding var skyChartContentSize: CGSize
 
     static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -102,9 +103,11 @@ struct PassPreviewCell: View, Equatable {
             }
 
             skyChartProducer.view(
-                SkyChartContext(usage: .preview(index: indexOfPass))
+                SkyChartContext(
+                    usage: .preview(index: indexOfPass),
+                    contentSize: $skyChartContentSize
+                )
             )
-            .equatable()
             .padding(5)
         }
     }
@@ -169,6 +172,7 @@ struct PassPreviewCell_Previews: PreviewProvider {
                                 )
                             )
                         ),
+                        contentSize: .constant(.zero),
                         configs: SkyChartConfigs(
                             backgroundSky: SkyChartConfigs.BackgroundSky(
                                 stars: .limitedMagnitude(2),
@@ -184,7 +188,8 @@ struct PassPreviewCell_Previews: PreviewProvider {
                         ),
                         usage: .preview
                     )
-                )
+                ),
+                skyChartContentSize: .constant(.zero)
             )
             .previewLayout(.fixed(width: 375, height: 125))
         }
