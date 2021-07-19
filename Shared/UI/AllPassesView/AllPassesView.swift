@@ -52,7 +52,7 @@ struct AllPassesViewState: Equatable {
                 let rasterizedBackgroundSky: UIImage?
                 if let observer = state.observerForPasses {
                     rasterizedBackgroundSky = state.skyChartState.rasterizedBackgroundSky[
-                        SkyChartSatelliteBackgroundSkyKey(
+                        SkyChartBackgroundSkyKey(
                             observer: observer,
                             julianDate: pass.rise.julianDate,
                             configs: .preset

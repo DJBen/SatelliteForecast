@@ -13,7 +13,8 @@ import StarryNight
 import CombineRextensions
 import BTree
 
-struct SkyChartSatelliteBackgroundSkyKey: Hashable {
+/// A key uniquely determining the rendering of a sky chart's background. Same key is guaranteed to render the same background.
+struct SkyChartBackgroundSkyKey: Equatable, Hashable {
     let observer: LatLonAlt
     let julianDate: Double
     let configs: SkyChartConfigs.BackgroundSky
@@ -26,9 +27,9 @@ enum SkyChartUsage: Equatable, Hashable {
 
 enum SkyChartAction {
     case onAppear
-    case requestRasterizedBackgroundSky(usage: SkyChartUsage, size: CGSize, key: SkyChartSatelliteBackgroundSkyKey, configs: SkyChartConfigs.BackgroundSky = .preset, traitCollection: UITraitCollection)
+    case requestRasterizedBackgroundSky(usage: SkyChartUsage, size: CGSize, key: SkyChartBackgroundSkyKey, traitCollection: UITraitCollection)
     case requestRasterizedSatellitePath(usage: SkyChartUsage, size: CGSize, pass: Pass, traitCollection: UITraitCollection)
-    case rasterizedBackgroundSky(UIImage, usage: SkyChartUsage, key: SkyChartSatelliteBackgroundSkyKey)
+    case rasterizedBackgroundSky(UIImage, usage: SkyChartUsage, key: SkyChartBackgroundSkyKey)
     /// A satellite path is rasterized, or the rasterized image is read from the cache.
     case rasterizedSatellitePath(UIImage, usage: SkyChartUsage, pass: Pass)
 }
@@ -126,7 +127,7 @@ struct SkyChartViewState: Equatable {
                 mode: Mode.pass(displayPass.0, observer: observerCoodinate, snapshots: displayPass.1),
                 rasterizedSatellitePaths: state.skyChartState.rasterizedSatellitePaths[displayPass.0],
                 rasterizedBackgroundSky: state.skyChartState.rasterizedBackgroundSky[
-                    SkyChartSatelliteBackgroundSkyKey(
+                    SkyChartBackgroundSkyKey(
                         observer: observerCoodinate,
                         julianDate: displayPass.0.rise.julianDate,
                         configs: backgroundSkyConfigs
@@ -164,7 +165,7 @@ struct SkyChartViewState: Equatable {
                 mode: Mode.pass(selectedPass.0, observer: observerCoodinate, snapshots: selectedPass.1),
                 rasterizedSatellitePaths: state.skyChartState.rasterizedSatellitePaths[selectedPass.0],
                 rasterizedBackgroundSky: state.skyChartState.rasterizedBackgroundSky[
-                    SkyChartSatelliteBackgroundSkyKey(
+                    SkyChartBackgroundSkyKey(
                         observer: observerCoodinate,
                         julianDate: selectedPass.0.rise.julianDate,
                         configs: backgroundSkyConfigs
@@ -310,12 +311,11 @@ struct SkyChart: View {
                                 .requestRasterizedBackgroundSky(
                                     usage: usage,
                                     size: contentSize,
-                                    key: SkyChartSatelliteBackgroundSkyKey(
+                                    key: SkyChartBackgroundSkyKey(
                                         observer: observer,
                                         julianDate: date,
                                         configs: configs.backgroundSky
                                     ),
-                                    configs: configs.backgroundSky,
                                     traitCollection: UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
                                 )
                             )

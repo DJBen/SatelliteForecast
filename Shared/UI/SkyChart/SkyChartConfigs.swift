@@ -16,7 +16,7 @@ struct SkyChartConfigs: Equatable, Hashable {
         }
         var stars: Stars = .limitedMagnitude(4.5)
 
-
+        /// A mapping function between the star's magitude to the display radius
         struct StarMagToDisplayRadiusMappingFunction: Equatable, Hashable {
             let multiplier: Double
             let exponent: Double
