@@ -140,18 +140,38 @@ struct AllPassesView: View, Equatable {
             return AnyView(ProgressView("Calculating..."))
         }
     }
+
+    private var visiblePassHeader: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("Visible Passes")
+                .font(.headline.lowercaseSmallCaps())
+            Text("Satellite is illuminated by the sun for a significant portion of the pass in contrast to a sufficiently dark sky.")
+                .font(.caption)
+        }
+        .textCase(nil)
+    }
+
+    private var invisiblePassHeader: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("Invisible Passes")
+                .font(.headline.lowercaseSmallCaps())
+            Text("Satellite is either blocked by earth's shadow or outshone by the sunlight.")
+                .font(.caption)
+        }
+        .textCase(nil)
+    }
     
     var body: some View {
         List {
-            Section(header: Text("Visible Passes").font(.headline)) {
+            Section(header: visiblePassHeader) {
                 passesList(viewModel.state.visiblePasses)
             }
 
-            Section(header: Text("Invisible Passes").font(.headline)) {
+            Section(header: invisiblePassHeader) {
                 passesList(viewModel.state.invisiblePasses)
             }
         }
-        .listStyle(GroupedListStyle())
+        .listStyle(.grouped)
         .navigationTitle(viewModel.state.satelliteName ?? "All Passes")
         .navigationBarTitleDisplayMode(.inline)
     }

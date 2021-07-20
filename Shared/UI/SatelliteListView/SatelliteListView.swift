@@ -161,8 +161,10 @@ struct SatelliteListView: View {
                     viewModel.dispatch(.satelliteSearchTextChanged($0))
                 }
             ),
+            placement: .navigationBarDrawer(displayMode: .always),
             prompt: "Filter by name, ID, country, year..."
         )
+        .listStyle(.insetGrouped)
         .navigationTitle("Satellites")
     }
 

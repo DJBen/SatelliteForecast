@@ -61,9 +61,6 @@ struct PassView: View {
         .onAppear {
             viewModel.dispatch(.onAppear)
         }
-        .onChange(of: skyChartContentSize) { newSkyChartContentSize in
-            print(newSkyChartContentSize)
-        }
     }
 }
 
