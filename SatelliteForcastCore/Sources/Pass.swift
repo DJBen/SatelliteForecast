@@ -38,12 +38,12 @@ public struct Pass {
         public let initiallyIlluminated: Bool
         public let changes: [Change]
 
-        /// Whether any part of the pass is illuminated.
-        public var hasAnyIllumination: Bool {
+        /// Whether any part of the pass above a certain elevation is illuminated.
+        public func hasAnyIllumination(aboveElevation elev: Double = 10) -> Bool {
             func hasExitsShadow(_ changes: Change) -> Bool {
                 switch changes {
-                case .exitsShadow(_):
-                    return true
+                case let .exitsShadow(datePosition):
+                    return datePosition.elev >= elev
                 default:
                     return false
                 }
@@ -69,12 +69,17 @@ public struct Pass {
         case unlit
     }
 
+    /// The visibility of the pass.
+    /// A visible pass must satisfy these criteria.
+    /// 1. Sun eleavtion is below -6 degrees (civil dawn / twilight)
+    /// 2. Has any illumination above 10 degrees above horizon.
+    /// If 1) is not satisfied, the visibility is *daylight*; if 2) is not satisfied, the visibility is *unlit*.
     public var visibility: Visibility {
         if sunElevationAtTransit > -6 {
             return .daylight
         }
 
-        if illumination.hasAnyIllumination {
+        if illumination.hasAnyIllumination() {
             return .visible
         } else {
             return .unlit
