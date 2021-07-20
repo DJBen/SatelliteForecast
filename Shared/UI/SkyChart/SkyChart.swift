@@ -7,13 +7,15 @@
 
 import CombineRex
 import SwiftUI
+import SwiftUIVisualEffects
 import SatelliteKit
 import SatelliteForcastCore
 import StarryNight
 import CombineRextensions
 import BTree
 
-struct SkyChartSatelliteBackgroundSkyKey: Hashable {
+/// A key uniquely determining the rendering of a sky chart's background. Same key is guaranteed to render the same background.
+struct SkyChartBackgroundSkyKey: Equatable, Hashable {
     let observer: LatLonAlt
     let julianDate: Double
     let configs: SkyChartConfigs.BackgroundSky
@@ -26,9 +28,9 @@ enum SkyChartUsage: Equatable, Hashable {
 
 enum SkyChartAction {
     case onAppear
-    case requestRasterizedBackgroundSky(usage: SkyChartUsage, size: CGSize, key: SkyChartSatelliteBackgroundSkyKey, configs: SkyChartConfigs.BackgroundSky = .preset, traitCollection: UITraitCollection)
+    case requestRasterizedBackgroundSky(usage: SkyChartUsage, size: CGSize, key: SkyChartBackgroundSkyKey, traitCollection: UITraitCollection)
     case requestRasterizedSatellitePath(usage: SkyChartUsage, size: CGSize, pass: Pass, traitCollection: UITraitCollection)
-    case rasterizedBackgroundSky(UIImage, usage: SkyChartUsage, key: SkyChartSatelliteBackgroundSkyKey)
+    case rasterizedBackgroundSky(UIImage, usage: SkyChartUsage, key: SkyChartBackgroundSkyKey)
     /// A satellite path is rasterized, or the rasterized image is read from the cache.
     case rasterizedSatellitePath(UIImage, usage: SkyChartUsage, pass: Pass)
 }
@@ -126,7 +128,7 @@ struct SkyChartViewState: Equatable {
                 mode: Mode.pass(displayPass.0, observer: observerCoodinate, snapshots: displayPass.1),
                 rasterizedSatellitePaths: state.skyChartState.rasterizedSatellitePaths[displayPass.0],
                 rasterizedBackgroundSky: state.skyChartState.rasterizedBackgroundSky[
-                    SkyChartSatelliteBackgroundSkyKey(
+                    SkyChartBackgroundSkyKey(
                         observer: observerCoodinate,
                         julianDate: displayPass.0.rise.julianDate,
                         configs: backgroundSkyConfigs
@@ -164,7 +166,7 @@ struct SkyChartViewState: Equatable {
                 mode: Mode.pass(selectedPass.0, observer: observerCoodinate, snapshots: selectedPass.1),
                 rasterizedSatellitePaths: state.skyChartState.rasterizedSatellitePaths[selectedPass.0],
                 rasterizedBackgroundSky: state.skyChartState.rasterizedBackgroundSky[
-                    SkyChartSatelliteBackgroundSkyKey(
+                    SkyChartBackgroundSkyKey(
                         observer: observerCoodinate,
                         julianDate: selectedPass.0.rise.julianDate,
                         configs: backgroundSkyConfigs
@@ -201,39 +203,14 @@ struct SkyChart: View {
         self.usage = usage
     }
 
-    private func passInfoLabel(
-        observer: LatLonAlt,
-        text: String,
-        snapshotPair: SkyChartViewState.SnapshotsAroundPass,
-        rect: CGRect
-    ) -> some View {
-        let (rot, offsetFactor) = Self.rotationAndOffsetDirection(snapshotPair: snapshotPair, rect: rect)
-        let textPosition = AziEleDst(azim: snapshotPair.first.position.azim, elev: snapshotPair.first.position.elev, dist: 0)
-        return HStack(spacing: 2) {
-            Path { path in
-                path.move(to: CGPoint(x: rect.midX, y: rect.midY))
-                path.addLine(to: CGPoint(x: rect.midX + 20, y: rect.midY))
-            }
-            .stroke(Color.gray)
-            .frame(alignment: .leading)
-
-            Text(text)
-                .passInfoLabelModifiers()
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .offset(x: 20 * CGFloat(offsetFactor), y: 0)
-        }
-        .rotationEffect(.radians(rot))
-        .position(Self.point(at: textPosition, rect: rect))
-    }
-
-    private var passInfoLabel: some View {
+    private var passInfoLabels: some View {
         guard configs.showPassInfoLabels else {
             return AnyView(EmptyView())
         }
         switch viewModel.state.mode {
         case .notReady, .sky(_, observer: _):
             return AnyView(EmptyView())
-        case let .pass(pass, observer, snapshots):
+        case let .pass(pass, _, snapshots):
             return AnyView(GeometryReader { geometry in
                 let rect = geometry.frame(in: .local)
 
@@ -245,32 +222,31 @@ struct SkyChart: View {
 
                 let numberFormatter: NumberFormatter = {
                     let formatter = NumberFormatter()
-                    formatter.maximumFractionDigits = 1
+                    formatter.maximumFractionDigits = 0
                     return formatter
                 }()
 
                 ZStack {
-                    passInfoLabel(
-                        observer: observer,
-                        text: "↑\(dateFormatter.string(from: Date(julianDate: pass.rise.julianDate)))",
+                    PassLabel(
+                        text: "↑ \(dateFormatter.string(from: Date(julianDate: pass.rise.julianDate)))",
                         snapshotPair: snapshots.rise,
                         rect: rect
                     )
 
-                    passInfoLabel(
-                        observer: observer,
-                        text: "↓\(dateFormatter.string(from: Date(julianDate: pass.set.julianDate)))",
+                    PassLabel(
+                        text: "↓ \(dateFormatter.string(from: Date(julianDate: pass.set.julianDate)))",
                         snapshotPair: snapshots.set,
                         rect: rect
                     )
 
-                    passInfoLabel(
-                        observer: observer,
-                        text: "\(dateFormatter.string(from: Date(julianDate: pass.transit.julianDate))) \n∠\(numberFormatter.string(from: NSNumber(value: pass.transit.elev))!)°",
+                    PassLabel(
+                        text: "∠\(numberFormatter.string(from: NSNumber(value: pass.transit.elev))!)° \(dateFormatter.string(from: Date(julianDate: pass.transit.julianDate)))",
                         snapshotPair: snapshots.transit,
                         rect: rect
                     )
                 }
+                .blurEffectStyle(colorScheme == .light ? .systemMaterialDark : .systemMaterialLight)
+                .vibrancyEffectStyle(.fill)
             })
         }
     }
@@ -310,12 +286,11 @@ struct SkyChart: View {
                                 .requestRasterizedBackgroundSky(
                                     usage: usage,
                                     size: contentSize,
-                                    key: SkyChartSatelliteBackgroundSkyKey(
+                                    key: SkyChartBackgroundSkyKey(
                                         observer: observer,
                                         julianDate: date,
                                         configs: configs.backgroundSky
                                     ),
-                                    configs: configs.backgroundSky,
                                     traitCollection: UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
                                 )
                             )
@@ -460,7 +435,7 @@ struct SkyChart: View {
         backgroundPath
             .overlay(azimuthMarks)
             .overlay(azimuthMarkTexts)
-            .overlay(passInfoLabel)
+            .overlay(passInfoLabels)
             .background(
                 backgroundSky
                     .overlay(loadingIndicator)
@@ -482,17 +457,6 @@ struct SkyChartContext {
 
     let usage: Usage
     let contentSize: Binding<CGSize>
-}
-
-fileprivate extension View {
-    func passInfoLabelModifiers() -> some View {
-        return fixedSize()
-            .padding(2)
-            .background(Color("passInfoLabel_background"))
-            .foregroundColor(Color("passInfoLabel_foreground"))
-            .font(.caption2)
-            .cornerRadius(4)
-    }
 }
 
 extension ViewProducer where Context == SkyChartContext, ProducedView == SkyChart {

@@ -30,7 +30,7 @@ extension EffectMiddleware where
                     return .doNothing
                 case .rasterizedSatellitePath(_, usage: _, pass: _):
                     return .doNothing
-                case let .requestRasterizedBackgroundSky(usage, size, key, configs, traitCollection):
+                case let .requestRasterizedBackgroundSky(usage, size, key, traitCollection):
                     return .promise(token: "") { context, sink in
                         DispatchQueue.global(qos: .userInitiated).async {
                             let state = getState()
@@ -42,19 +42,19 @@ extension EffectMiddleware where
                             let image = SkyChart.rasterizedBackgroundSkyPath(
                                 rect: CGRect(origin: .zero, size: size),
                                 stars: {
-                                    switch configs.stars {
+                                    switch key.configs.stars {
                                     case .none:
                                         return []
                                     case let .limitedMagnitude(mag):
                                         return Star.magitudeLessThan(mag)
                                     }
                                 }(),
-                                constellations: configs.showConstellationLines ? Constellation.all : [],
+                                constellations: key.configs.showConstellationLines ? Constellation.all : [],
                                 observer: key.observer,
                                 julianDate: key.julianDate,
                                 starColor: UIColor(named: "star", in: nil, compatibleWith: traitCollection)!,
                                 constellationLineColor: UIColor(named: "constellationLine", in: nil, compatibleWith: traitCollection)!,
-                                magToRadius: configs.starMagToDisplayRadiusMappingFunction.apply
+                                magToRadius: key.configs.starMagToDisplayRadiusMappingFunction.apply
                             )
                             logger.debug("Rasterized background sky at observer coodinate \(String(describing: key.observer)) @ JD \(key.julianDate).")
 

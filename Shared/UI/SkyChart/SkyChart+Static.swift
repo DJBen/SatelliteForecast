@@ -68,15 +68,23 @@ extension SkyChart {
         )
     }
 
-    static func rotationAndOffsetDirection(snapshotPair: SkyChartViewState.SnapshotsAroundPass, rect: CGRect) -> (Double, Double) {
-
+    /// The rotation angle in radians, and the rotation angle for the text to be the most easily legible.
+    /// - Parameters:
+    ///   - snapshotPair: A pair of satellite snapshots.
+    ///   - rect: The rectangle of the view.
+    /// - Returns: The rotation angle in radians, and the rotation angle for the text to be the most easily legible.
+    static func rotationAndTextRotation(snapshotPair: SkyChartViewState.SnapshotsAroundPass, rect: CGRect) -> (Double, Double) {
         let position = Self.point(at: snapshotPair.first.position, rect: rect)
         let afterPosition = Self.point(at: snapshotPair.second.position, rect: rect)
+        let satellitePositionVector = Vector(Double(afterPosition.x - position.x), Double(afterPosition.y - position.y), 0)
+        // A vector from origin to the position
+        let originVector = Vector(Double(afterPosition.x - rect.midX), Double(afterPosition.y - rect.midY), 0)
+        let normal = crossProduct(satellitePositionVector, originVector)
         let rot = atan2(Double(afterPosition.y - position.y), Double(afterPosition.x - position.x))
-        let circumferenceRot = atan2(Double(position.y), Double(position.x)) + .pi / 2
-        let fac: Double = abs(fmod2pi_π(circumferenceRot) - fmod2pi_π(rot)) < .pi ? 1 : -1
-        let adjustedRot = rot > 0 ? rot - .pi / 2 : rot + .pi / 2
-        return (adjustedRot, fac)
+        let factor: Double = normal.z > 0 ? -1 : 1
+        let adjustedRot = factor > 0 ? rot + .pi / 2 : rot - .pi / 2
+        let textRot = fmod2pi_0(adjustedRot) > .pi / 2 || fmod2pi_0(adjustedRot) < -.pi / 2 ? .pi : 0
+        return (adjustedRot, textRot)
     }
 
     static func rasterizedSatellitePassPath(
@@ -98,16 +106,16 @@ extension SkyChart {
                 let color = isIlluminated ? illuminatedColor : unlitColor
                 let snapshotsGroup = snapshotsByIllumination[index]
 
-                if isIlluminated && snapshotsGroup.count > 3 {
+                if snapshotsGroup.count > 3 {
                     ctx.cgContext.saveGState()
-                    let e1 = snapshotsGroup[snapshotsGroup.index(ofOffset: snapshotsGroup.count / 3 - 1)].1.position
-                    let e2 = snapshotsGroup[snapshotsGroup.index(ofOffset: snapshotsGroup.count / 3)].1.position
+                    let e1 = snapshotsGroup[snapshotsGroup.index(ofOffset: snapshotsGroup.count / 2 - 1)].1.position
+                    let e2 = snapshotsGroup[snapshotsGroup.index(ofOffset: snapshotsGroup.count / 2)].1.position
                     let p1 = point(at: e1, rect: rect)
                     let p2 = point(at: e2, rect: rect)
                     let rot = atan2pi(Double(p2.y - p1.y), Double(p2.x - p1.x))
                     ctx.cgContext.translateBy(x: p1.x, y: p1.y)
                     ctx.cgContext.rotate(by: CGFloat(rot))
-                    ctx.cgContext.setFillColor(illuminatedColor.cgColor)
+                    ctx.cgContext.setFillColor(color.cgColor)
                     let image = UIImage(systemName: "arrowtriangle.right.fill")!
                     let imageRect = CGRect(origin: CGPoint(x: -arrowSize / 2, y: -arrowSize / 2), size: CGSize(width: arrowSize, height: arrowSize))
                     image.draw(in: imageRect)
@@ -226,20 +234,67 @@ struct ImageRenderer_Previews: PreviewProvider {
         )
     }()
 
+    struct Preview: View {
+        let pass: Pass
+        let snapshots: BTree<Double, SatelliteSnapshot>
+
+        var body: some View {
+            let snapshotsDuringPass = snapshots.subtree(from: pass.rise.julianDate, through: pass.set.julianDate)
+            let rect = CGRect(origin: .zero, size: CGSize(width: 250, height: 250))
+
+            Image(
+                uiImage: SkyChart.rasterizedSatellitePassPath(
+                    rect: rect,
+                    snapshotsDuringPass: snapshotsDuringPass,
+                    illuminatedColor: UIColor.black,
+                    unlitColor: UIColor.lightGray
+                )
+            )
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .overlay(
+                SkyChart.PassLabel(
+                    text: "Rise",
+                    snapshotPair: SkyChartViewState.snapshotsAroundPass(snapshotsDuringPass, julianDate: pass.rise.julianDate, selector: .first)!,
+                    rect: rect
+                )
+            )
+            .overlay(
+                SkyChart.PassLabel(
+                    text: "Transit",
+                    snapshotPair: SkyChartViewState.snapshotsAroundPass(snapshotsDuringPass, julianDate: pass.transit.julianDate, selector: .first)!,
+                    rect: rect
+                )
+            )
+            .overlay(
+                SkyChart.PassLabel(
+                    text: "Set",
+                    snapshotPair: SkyChartViewState.snapshotsAroundPass(snapshotsDuringPass, julianDate: pass.set.julianDate, selector: .last)!,
+                    rect: rect
+                )
+            )
+            .background(
+                Path { path in
+                    path.addArc(
+                        center: CGPoint(x: rect.midX, y: rect.midY),
+                        radius: SkyChart.radius(fromRect: rect),
+                        startAngle: Angle(degrees: 0),
+                        endAngle: Angle(degrees: 360),
+                        clockwise: false
+                    )
+                    path.closeSubpath()
+                }
+                .stroke(Color("skyChartStroke"), lineWidth: 1)
+            )
+        }
+    }
+
     static var previews: some View {
         let (passes, snapshots) = tianHePasses
-        let pass = passes.first!
-        let snapshotsDuringPass = snapshots.subtree(from: pass.rise.julianDate, through: pass.set.julianDate)
-        Image(
-            uiImage: SkyChart.rasterizedSatellitePassPath(
-                rect: CGRect(origin: .zero, size: CGSize(width: 375, height: 375)),
-                snapshotsDuringPass: snapshotsDuringPass,
-                illuminatedColor: UIColor.black,
-                unlitColor: UIColor.gray
-            )
-        )
-        .resizable()
-        .aspectRatio(contentMode: .fit)
-        .previewLayout(.fixed(width: 250, height: 250))
+
+        ForEach(enumerated: passes, id: \.self.rise.julianDate) { index, pass in
+            Preview(pass: pass, snapshots: snapshots)
+                .previewLayout(.fixed(width: 500, height: 500))
+        }
     }
 }

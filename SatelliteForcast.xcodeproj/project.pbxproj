@@ -31,6 +31,7 @@
 		EF465653267BE7680040B762 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF465652267BE7680040B762 /* AppDelegate.swift */; };
 		EF4AF76C266434CC00D28F47 /* SkyChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4AF76B266434CC00D28F47 /* SkyChart.swift */; };
 		EF4F99B2269E850C00A92BD3 /* Middleware+Root.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4F99B1269E850C00A92BD3 /* Middleware+Root.swift */; };
+		EF58EC1426A6325B0026ADB9 /* PassLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF58EC1326A6325B0026ADB9 /* PassLabel.swift */; };
 		EF5A9080269FA50900EADA2D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EF9D827C2661BBF000616C97 /* Assets.xcassets */; };
 		EF5A9081269FA50900EADA2D /* Satellites.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EF3D09A12686920800B84232 /* Satellites.xcassets */; };
 		EF5A908426A0D68400EADA2D /* LazyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5A908326A0D68400EADA2D /* LazyView.swift */; };
@@ -131,6 +132,7 @@
 		EF465652267BE7680040B762 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EF4AF76B266434CC00D28F47 /* SkyChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyChart.swift; sourceTree = "<group>"; };
 		EF4F99B1269E850C00A92BD3 /* Middleware+Root.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Middleware+Root.swift"; sourceTree = "<group>"; };
+		EF58EC1326A6325B0026ADB9 /* PassLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassLabel.swift; sourceTree = "<group>"; };
 		EF5A908326A0D68400EADA2D /* LazyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyView.swift; sourceTree = "<group>"; };
 		EF5CB016266E28EE000019DA /* TimerReducer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimerReducer.swift; sourceTree = "<group>"; };
 		EF5CB018266E28FC000019DA /* TimerMiddleware.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimerMiddleware.swift; sourceTree = "<group>"; };
@@ -234,6 +236,7 @@
 				EF46564C267AF7070040B762 /* SkyChartConfigs.swift */,
 				EF1EDA2F269204420088DD65 /* SkyChartResources.swift */,
 				EF8A424126812A940014AE17 /* PlanetaryBodyView.swift */,
+				EF58EC1326A6325B0026ADB9 /* PassLabel.swift */,
 			);
 			path = SkyChart;
 			sourceTree = "<group>";
@@ -654,6 +657,7 @@
 				EF5CB01E266E2933000019DA /* TLEPropagatorAction.swift in Sources */,
 				EF7A319B266B733C00CC33C0 /* LocalizedStrings.swift in Sources */,
 				EF9D82A32661BBF100616C97 /* SatelliteForcastApp.swift in Sources */,
+				EF58EC1426A6325B0026ADB9 /* PassLabel.swift in Sources */,
 				EF7A312E266B1D7B00CC33C0 /* LoggerMiddleware.swift in Sources */,
 				EF4F99B2269E850C00A92BD3 /* Middleware+Root.swift in Sources */,
 				EF3D099C2685A12200B84232 /* SatelliteOverviewView.swift in Sources */,

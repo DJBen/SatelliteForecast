@@ -15,7 +15,7 @@ struct SkyChartResources: Equatable {
     /// the cached version is just a cheap `UIImage`.
     var rasterizedSatellitePaths: [Pass: [SkyChartUsage: UIImage]] = [:]
 
-    var rasterizedBackgroundSky: [SkyChartSatelliteBackgroundSkyKey: [SkyChartUsage: UIImage]] = [:]
+    var rasterizedBackgroundSky: [SkyChartBackgroundSkyKey: [SkyChartUsage: UIImage]] = [:]
 
     static var empty: SkyChartResources {
         return SkyChartResources()

@@ -25,7 +25,7 @@ extension Reducer where ActionType == SkyChartAction, StateType == SkyChartResou
             } else {
                 state.rasterizedSatellitePaths[pass] = [usage: image]
             }
-        case .requestRasterizedBackgroundSky(_, _, _, _, traitCollection: _):
+        case .requestRasterizedBackgroundSky(_, _, _, traitCollection: _):
             break
         case .requestRasterizedSatellitePath(_, _, _, traitCollection: _):
             break

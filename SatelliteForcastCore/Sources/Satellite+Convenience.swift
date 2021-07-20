@@ -142,6 +142,10 @@ extension Satellite {
             let snapshot1 = fineSnapshots[index].1
             let snapshot2 = fineSnapshots[fineSnapshots.index(after: index)].1
 
+            guard snapshot1.position.elev > 0 && snapshot2.position.elev > 0 else {
+                continue
+            }
+
             if snapshot1.isIlluminated && !snapshot2.isIlluminated {
                 illuminationChanges.append(.entersShadow(Pass.DatePosition(julianDate: snapshot1.julianDate, azim: snapshot1.position.azim, elev: snapshot1.position.elev)))
             } else if !snapshot1.isIlluminated && snapshot2.isIlluminated {
