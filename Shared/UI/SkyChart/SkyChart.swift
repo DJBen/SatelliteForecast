@@ -48,9 +48,20 @@ struct SkyChartViewState: Equatable {
     }
 
     struct NotableSnapshots: Equatable {
+        static func == (lhs: SkyChartViewState.NotableSnapshots, rhs: SkyChartViewState.NotableSnapshots) -> Bool {
+            return lhs.rise == rhs.rise && lhs.transit == rhs.transit && lhs.set == rhs.set && lhs.illuminationChanges == rhs.illuminationChanges
+        }
+
         var rise: SnapshotsAroundPass
         var transit: SnapshotsAroundPass
         var set: SnapshotsAroundPass
+
+        struct IlluminationChangeAndSnapshots: Equatable {
+            let change: Pass.Illumination.Change
+            let snapshots: SnapshotsAroundPass
+        }
+
+        var illuminationChanges: BTree<Double, IlluminationChangeAndSnapshots>
     }
 
     enum Mode: Equatable {
@@ -100,37 +111,34 @@ struct SkyChartViewState: Equatable {
     var rasterizedSatellitePaths: [SkyChartUsage: UIImage]?
     var rasterizedBackgroundSky: [SkyChartUsage: UIImage]?
 
-    static func projectPreview(state: AppState, index: Int, backgroundSkyConfigs: SkyChartConfigs.BackgroundSky) -> SkyChartViewState {
+    private static func project(state: AppState, pass: Pass, backgroundSkyConfigs: SkyChartConfigs.BackgroundSky) -> SkyChartViewState {
         guard let observerCoodinate = state.observerForPasses else {
             return SkyChartViewState(mode: .notReady)
         }
 
-        let displayPass: (Pass, NotableSnapshots)? = {
-            switch state.navigationState {
-            case let .allPasses(_, noradIndex: noradIndex):
-                guard let satelliteState = state.satellites[noradIndex],
-                      let passes = satelliteState.passes,
-                      index < passes.count else {
-                    return nil
-                }
-                let pass = passes[index]
-                let rise = snapshotsAroundPass(satelliteState.snapshots, julianDate: pass.rise.julianDate, selector: .first)!
-                let transit = snapshotsAroundPass(satelliteState.snapshots, julianDate: pass.transit.julianDate, selector: .first)!
-                let set = snapshotsAroundPass(satelliteState.snapshots, julianDate: pass.set.julianDate, selector: .last)!
-                return (pass, NotableSnapshots(rise: rise, transit: transit, set: set))
-            default:
+        let passAndSnapshots: (pass: Pass, snapshots: NotableSnapshots)? = {
+            guard let satelliteState = state.satellites[pass.noradIndex] else {
                 return nil
             }
+            let rise = snapshotsAroundPass(satelliteState.snapshots, julianDate: pass.rise.julianDate, selector: .first)!
+            let transit = snapshotsAroundPass(satelliteState.snapshots, julianDate: pass.transit.julianDate, selector: .first)!
+            let set = snapshotsAroundPass(satelliteState.snapshots, julianDate: pass.set.julianDate, selector: .last)!
+            let illuminationChanges = pass.illumination.changes.compactMap { change -> NotableSnapshots.IlluminationChangeAndSnapshots? in
+                snapshotsAroundPass(satelliteState.snapshots, julianDate: change.datePosition.julianDate, selector: .first).flatMap { NotableSnapshots.IlluminationChangeAndSnapshots(change: change, snapshots: $0) }
+            }
+            .reduce(into: BTree<Double, NotableSnapshots.IlluminationChangeAndSnapshots>(), { $0.insert(($1.change.datePosition.julianDate, $1)) })
+            let notableSnapshots = NotableSnapshots(rise: rise, transit: transit, set: set, illuminationChanges: illuminationChanges)
+            return (pass, notableSnapshots)
         }()
 
-        if let displayPass = displayPass {
+        if let passAndSnapshots = passAndSnapshots {
             return SkyChartViewState(
-                mode: Mode.pass(displayPass.0, observer: observerCoodinate, snapshots: displayPass.1),
-                rasterizedSatellitePaths: state.skyChartState.rasterizedSatellitePaths[displayPass.0],
+                mode: Mode.pass(passAndSnapshots.pass, observer: observerCoodinate, snapshots: passAndSnapshots.snapshots),
+                rasterizedSatellitePaths: state.skyChartState.rasterizedSatellitePaths[passAndSnapshots.pass],
                 rasterizedBackgroundSky: state.skyChartState.rasterizedBackgroundSky[
                     SkyChartBackgroundSkyKey(
                         observer: observerCoodinate,
-                        julianDate: displayPass.0.rise.julianDate,
+                        julianDate: passAndSnapshots.pass.rise.julianDate,
                         configs: backgroundSkyConfigs
                     )
                 ]
@@ -140,42 +148,43 @@ struct SkyChartViewState: Equatable {
         }
     }
 
+    static func projectPreview(state: AppState, index: Int, backgroundSkyConfigs: SkyChartConfigs.BackgroundSky) -> SkyChartViewState {
+        let pass: Pass? = {
+            switch state.navigationState {
+            case let .allPasses(_, noradIndex: noradIndex):
+                guard let satelliteState = state.satellites[noradIndex],
+                      let passes = satelliteState.passes,
+                      index < passes.count else {
+                    return nil
+                }
+                return passes[index]
+            default:
+                return nil
+            }
+        }()
+
+        return pass.map {
+            project(state: state, pass: $0, backgroundSkyConfigs: backgroundSkyConfigs)
+        } ?? .empty
+    }
+
     static func project(state: AppState, backgroundSkyConfigs: SkyChartConfigs.BackgroundSky) -> SkyChartViewState {
-        guard let observerCoodinate = state.observerForPasses else {
-            return SkyChartViewState(mode: .notReady)
-        }
-        let selectedPass: (Pass, NotableSnapshots)? = {
+        let pass: Pass? = {
             switch state.navigationState {
             case let .pass(_, noradIndex: noradIndex, selectedPassIndex: selectedPassIndex):
                 guard let satelliteState = state.satellites[noradIndex],
                       let passes = satelliteState.passes else {
                     return nil
                 }
-                let pass = passes[selectedPassIndex]
-                let rise = snapshotsAroundPass(satelliteState.snapshots, julianDate: pass.rise.julianDate, selector: .first)!
-                let transit = snapshotsAroundPass(satelliteState.snapshots, julianDate: pass.transit.julianDate, selector: .first)!
-                let set = snapshotsAroundPass(satelliteState.snapshots, julianDate: pass.set.julianDate, selector: .last)!
-                return (pass, NotableSnapshots(rise: rise, transit: transit, set: set))
+                return passes[selectedPassIndex]
             default:
                 return nil
             }
         }()
 
-        if let selectedPass = selectedPass {
-            return SkyChartViewState(
-                mode: Mode.pass(selectedPass.0, observer: observerCoodinate, snapshots: selectedPass.1),
-                rasterizedSatellitePaths: state.skyChartState.rasterizedSatellitePaths[selectedPass.0],
-                rasterizedBackgroundSky: state.skyChartState.rasterizedBackgroundSky[
-                    SkyChartBackgroundSkyKey(
-                        observer: observerCoodinate,
-                        julianDate: selectedPass.0.rise.julianDate,
-                        configs: backgroundSkyConfigs
-                    )
-                ]
-            )
-        } else {
-            return .empty
-        }
+        return pass.map {
+            project(state: state, pass: $0, backgroundSkyConfigs: backgroundSkyConfigs)
+        } ?? .empty
     }
 
     static var empty: SkyChartViewState {
@@ -244,6 +253,19 @@ struct SkyChart: View {
                         snapshotPair: snapshots.transit,
                         rect: rect
                     )
+
+                    ForEach(pass.illumination.changes, id: \.datePosition) { change in
+                        if let illuminationChangeAndSnapshots = snapshots.illuminationChanges.value(of: change.datePosition.julianDate) {
+                            PassLabel(
+                                text: LocalizedStrings.SkyChart.PassLabel.textForIlluminationChange(
+                                    change,
+                                    dateFormatter: dateFormatter
+                                ),
+                                snapshotPair: illuminationChangeAndSnapshots.snapshots,
+                                rect: rect
+                            )
+                        }
+                    }
                 }
                 .blurEffectStyle(colorScheme == .light ? .systemMaterialDark : .systemMaterialLight)
                 .vibrancyEffectStyle(.fill)
@@ -593,7 +615,8 @@ struct SkyChart_Previews: PreviewProvider {
                                     snapshots,
                                     julianDate: pass.set.julianDate,
                                     selector: .first
-                                )!
+                                )!,
+                                illuminationChanges: BTree()
                             )
                         ),
                         rasterizedSatellitePaths: [
@@ -637,7 +660,8 @@ struct SkyChart_Previews: PreviewProvider {
                                 snapshots2,
                                 julianDate: pass2.set.julianDate,
                                 selector: .first
-                            )!
+                            )!,
+                            illuminationChanges: BTree()
                         )
                     ),
                     rasterizedSatellitePaths: [

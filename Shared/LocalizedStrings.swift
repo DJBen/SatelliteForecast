@@ -277,4 +277,40 @@ enum LocalizedStrings {
             }
         }
     }
+
+    enum SkyChart {
+        enum PassLabel {
+            static func textForIlluminationChange(
+                _ change: Pass.Illumination.Change,
+                dateFormatter: DateFormatter
+            ) -> String {
+                switch change {
+                case let .entersShadow(datePosition):
+                    let format = NSLocalizedString(
+                        "SkyChart.PassLabel.text.illuminationChange.entersShadow",
+                        tableName: nil,
+                        bundle: .main,
+                        value: """
+                        Enters shadow
+                        %@
+                        """,
+                        comment: "The pass label format text of an illumination change: enters shadow"
+                    )
+                    return String(format: format, dateFormatter.string(from: Date(julianDate: datePosition.julianDate)))
+                case let .exitsShadow(datePosition):
+                    let format = NSLocalizedString(
+                        "SkyChart.PassLabel.text.illuminationChange.exitsShadow",
+                        tableName: nil,
+                        bundle: .main,
+                        value: """
+                        Exits shadow
+                        %@
+                        """,
+                        comment: "The pass label format text of an illumination change: exits shadow"
+                    )
+                    return String(format: format, dateFormatter.string(from: Date(julianDate: datePosition.julianDate)))
+                }
+            }
+        }
+    }
 }

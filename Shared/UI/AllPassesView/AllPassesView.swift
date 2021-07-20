@@ -285,7 +285,8 @@ struct AllPassesView_Previews: PreviewProvider {
                                         snapshots,
                                         julianDate: pass.set.julianDate,
                                         selector: .last
-                                    )!
+                                    )!,
+                                    illuminationChanges: BTree()
                                 )
                             )
                         )

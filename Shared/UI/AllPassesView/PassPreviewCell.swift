@@ -37,8 +37,7 @@ struct PassPreviewCell: View, Equatable {
 
     static let numberFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
-        formatter.usesSignificantDigits = true
-        formatter.maximumSignificantDigits = 3
+        formatter.maximumFractionDigits = 1
         return formatter
     }()
 
@@ -167,7 +166,8 @@ struct PassPreviewCell_Previews: PreviewProvider {
                                             snapshots,
                                             julianDate: pass.set.julianDate,
                                             selector: .last
-                                        )!
+                                        )!,
+                                        illuminationChanges: BTree()
                                     )
                                 )
                             )

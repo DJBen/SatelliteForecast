@@ -33,6 +33,14 @@ public struct Pass {
         public enum Change {
             case entersShadow(DatePosition)
             case exitsShadow(DatePosition)
+
+            public var datePosition: DatePosition {
+                switch self {
+                case let .entersShadow(datePosition),
+                    let .exitsShadow(datePosition):
+                    return datePosition
+                }
+            }
         }
 
         public let initiallyIlluminated: Bool
