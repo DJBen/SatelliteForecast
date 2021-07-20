@@ -143,9 +143,9 @@ struct AllPassesView: View, Equatable {
 
     private var visiblePassHeader: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text("Visible Passes")
+            Text(LocalizedStrings.AllPassesView.Section.VisiblePasses.header)
                 .font(.headline.lowercaseSmallCaps())
-            Text("Satellite is illuminated by the sun for a significant portion of the pass in contrast to a sufficiently dark sky.")
+            Text(LocalizedStrings.AllPassesView.Section.VisiblePasses.headerCaption)
                 .font(.caption)
         }
         .textCase(nil)
@@ -153,9 +153,9 @@ struct AllPassesView: View, Equatable {
 
     private var invisiblePassHeader: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text("Invisible Passes")
+            Text(LocalizedStrings.AllPassesView.Section.InvisiblePasses.header)
                 .font(.headline.lowercaseSmallCaps())
-            Text("Satellite is either blocked by earth's shadow or outshone by the sunlight.")
+            Text(LocalizedStrings.AllPassesView.Section.InvisiblePasses.headerCaption)
                 .font(.caption)
         }
         .textCase(nil)

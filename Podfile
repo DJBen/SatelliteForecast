@@ -4,10 +4,10 @@ target 'SatelliteForcast' do
   use_frameworks!
   
   pod "BTree", "~> 4.1.0"
-  pod "CombineRex", "~> 0.8.4"
-  pod "CombineRextensions", :git => 'https://github.com/DJBen/CombineRextensions.git'
+  pod "CombineRex", "~> 0.8.6"
+  pod "CombineRextensions", :git => 'https://github.com/DJBen/CombineRextensions.git', :branch => 'add-podspec'
   pod "FlagKit"
-  pod "SwiftRex", :git => 'https://github.com/DJBen/SwiftRex.git', :branch => 'sihao/enable-testability'
+  pod "SwiftRex", "~> 0.8.6"
   pod "SatelliteKit", :path => './SatelliteKit'
   pod "StarryNight", :path => './StarryNight'
   pod "SatelliteCatalog", :path => './SatelliteCatalog'
@@ -15,6 +15,6 @@ target 'SatelliteForcast' do
   pod "SwiftUIVisualEffects", :path => './SwiftUIVisualEffects'
 
   target 'Tests iOS' do
-    pod "TestingExtensions", :path => './TestingExtensions'
+    pod "TestingExtensions", :git => 'https://github.com/DJBen/TestingExtensions.git', :branch => 'add-podspec'
   end
 end

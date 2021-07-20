@@ -2,8 +2,8 @@ PODS:
   - BTree (4.1.0)
   - CombineRex (0.8.6):
     - SwiftRex (~> 0.8.6)
-  - CombineRextensions (1.0.0.LOCAL):
-    - CombineRex (~> 0.8.4)
+  - CombineRextensions (0.1.6):
+    - CombineRex (~> 0.8.6)
   - FlagKit (2.2)
   - SatelliteCatalog (1.0.0.LOCAL):
     - SatelliteKit (= 1.0.0.LOCAL)
@@ -24,23 +24,23 @@ PODS:
   - STRegex (2.1.1)
   - SwiftRex (0.8.6)
   - SwiftUIVisualEffects (1.0.0.LOCAL)
-  - TestingExtensions (1.0.0.LOCAL):
-    - CombineRex (~> 0.8.4)
+  - TestingExtensions (0.2.7):
+    - CombineRex (~> 0.8.6)
     - SnapshotTesting (~> 1.8.2)
-    - SwiftRex (~> 0.8.4)
+    - SwiftRex (~> 0.8.6)
 
 DEPENDENCIES:
   - BTree (~> 4.1.0)
-  - CombineRex (~> 0.8.4)
-  - CombineRextensions (from `https://github.com/DJBen/CombineRextensions.git`)
+  - CombineRex (~> 0.8.6)
+  - CombineRextensions (from `https://github.com/DJBen/CombineRextensions.git`, branch `add-podspec`)
   - FlagKit
   - SatelliteCatalog (from `./SatelliteCatalog`)
   - SatelliteForcastCore (from `./SatelliteForcastCore`)
   - SatelliteKit (from `./SatelliteKit`)
   - StarryNight (from `./StarryNight`)
-  - SwiftRex (from `https://github.com/DJBen/SwiftRex.git`, branch `sihao/enable-testability`)
+  - SwiftRex (~> 0.8.6)
   - SwiftUIVisualEffects (from `./SwiftUIVisualEffects`)
-  - TestingExtensions (from `./TestingExtensions`)
+  - TestingExtensions (from `https://github.com/DJBen/TestingExtensions.git`, branch `add-podspec`)
 
 SPEC REPOS:
   trunk:
@@ -50,9 +50,11 @@ SPEC REPOS:
     - SnapshotTesting
     - SQLite.swift
     - STRegex
+    - SwiftRex
 
 EXTERNAL SOURCES:
   CombineRextensions:
+    :branch: add-podspec
     :git: https://github.com/DJBen/CombineRextensions.git
   SatelliteCatalog:
     :path: "./SatelliteCatalog"
@@ -62,26 +64,24 @@ EXTERNAL SOURCES:
     :path: "./SatelliteKit"
   StarryNight:
     :path: "./StarryNight"
-  SwiftRex:
-    :branch: sihao/enable-testability
-    :git: https://github.com/DJBen/SwiftRex.git
   SwiftUIVisualEffects:
     :path: "./SwiftUIVisualEffects"
   TestingExtensions:
-    :path: "./TestingExtensions"
+    :branch: add-podspec
+    :git: https://github.com/DJBen/TestingExtensions.git
 
 CHECKOUT OPTIONS:
   CombineRextensions:
-    :commit: 1af2ae022e80bd4f0bc8809321bf618a7410c6af
+    :commit: fc00973c9309edc6369d5b2b597881a9c8a400ea
     :git: https://github.com/DJBen/CombineRextensions.git
-  SwiftRex:
-    :commit: 261284ee9e63294783834713618b808ceca67a14
-    :git: https://github.com/DJBen/SwiftRex.git
+  TestingExtensions:
+    :commit: 9829dce246ec943c1034e8f12b5a89bf3497706b
+    :git: https://github.com/DJBen/TestingExtensions.git
 
 SPEC CHECKSUMS:
   BTree: 99b99930790b88dc5e8bafbf666a5dfb8d7808b4
   CombineRex: 8fa0193b70739542ba3ceaf7be7a586524509428
-  CombineRextensions: 00444b1b96f1914c0c52d4498e0e90e89469540e
+  CombineRextensions: 0771bb5dd2db8bc3a5a191ac361f045c574552ea
   FlagKit: eca7dc89064b0c986302ba9acefad1bf80a435b1
   SatelliteCatalog: 03261393572b58b64f8b26d3456c75953f288d1b
   SatelliteForcastCore: 9e3247d7e8c60c68eeea074f5cdfa59931ca21c2
@@ -90,10 +90,10 @@ SPEC CHECKSUMS:
   SQLite.swift: d2b4642190917051ce6bd1d49aab565fe794eea3
   StarryNight: 57aec7f59091bbbebab2471e391c19ba77b695d9
   STRegex: d49e88d0fe58538d3175fdd989bc1243b9be2a07
-  SwiftRex: 5f0e14fe9bb658405bdbc7e78f2a8677bedd2bda
+  SwiftRex: d2450a0555690b8b0f703260d3a8ffbc12edc218
   SwiftUIVisualEffects: 4e6f1fe8159a07e59eaf3918e5f8cd1fe52cadce
-  TestingExtensions: 9d0aedfff90a52837a5a0733d517a9c8493b123f
+  TestingExtensions: a5591da2681222d3714684fcae6ca8560664c453
 
-PODFILE CHECKSUM: 7da952aea27de8ec32db49b9849591a0d9368b1c
+PODFILE CHECKSUM: 24e5d6d5c3baaa30bcc26cc9cad32159ed7c6d6b
 
 COCOAPODS: 1.10.1

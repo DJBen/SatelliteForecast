@@ -247,6 +247,54 @@ enum LocalizedStrings {
         }
     }
 
+    enum AllPassesView {
+        enum Section {
+            enum VisiblePasses {
+                static var header: String {
+                    NSLocalizedString(
+                        "AllPassesView.section.visible.header",
+                        tableName: nil,
+                        bundle: .main,
+                        value: "Visible Passes",
+                        comment: "The header of visible passes"
+                    )
+                }
+
+                static var headerCaption: String {
+                    NSLocalizedString(
+                        "AllPassesView.section.visible.headerCaption",
+                        tableName: nil,
+                        bundle: .main,
+                        value: "Satellite is illuminated by the sun for a significant portion of the pass in contrast to a sufficiently dark sky.",
+                        comment: "The caption under the header of visible passes"
+                    )
+                }
+            }
+
+            enum InvisiblePasses {
+                static var header: String {
+                    NSLocalizedString(
+                        "AllPassesView.section.invisible.header",
+                        tableName: nil,
+                        bundle: .main,
+                        value: "Invisible Passes",
+                        comment: "The header of invisible passes"
+                    )
+                }
+
+                static var headerCaption: String {
+                    NSLocalizedString(
+                        "AllPassesView.section.invisible.headerCaption",
+                        tableName: nil,
+                        bundle: .main,
+                        value: "Satellite is either blocked by earth's shadow or outshone by the sunlight.",
+                        comment: "The caption under the header of invisible passes"
+                    )
+                }
+            }
+        }
+    }
+
     enum PassPreviewCell {
         static func titleForPassVisibility(_ visibility: Pass.Visibility) -> String {
             switch visibility {
