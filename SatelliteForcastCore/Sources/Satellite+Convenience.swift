@@ -58,17 +58,6 @@ extension Satellite {
         )
     }
 
-    /// Construct a snapshot of the satellite given a date and observer coordinate.
-    /// - Parameters:
-    ///   - date: The date.
-    ///   - observer: The observer coordinate in latitude, longitude and altitude.
-    public func snapshot(
-        date: Date,
-        observer: LatLonAlt
-    ) -> SatelliteSnapshot {
-        return snapshot(julianDate: date.julianDate, observer: observer)
-    }
-
     /// Generate satellite snapshots over a date range with a given interval at an observer location.
     /// - Parameters:
     ///   - observer: Observer coordinate.

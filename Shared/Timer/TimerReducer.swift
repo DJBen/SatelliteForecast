@@ -6,8 +6,11 @@
 //
 
 import Foundation
+import os
 import SwiftRex
 import SatelliteKit
+
+fileprivate let logger = Logger(subsystem: "io.djben.timer", category: "reducer")
 
 extension Reducer where ActionType == TimerAction, StateType == AppState {
     static let timerReducer = Reducer.reduce { action, state in
@@ -16,6 +19,8 @@ extension Reducer where ActionType == TimerAction, StateType == AppState {
             break
         case let .tick(currentDate):
             state.satelliteLoaderState.referenceDate = currentDate
+
+//            logger.info("Ticking time to \(currentDate)")
         }
     }
 }

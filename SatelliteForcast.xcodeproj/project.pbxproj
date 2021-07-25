@@ -64,6 +64,7 @@
 		EF8A423E267EA3970014AE17 /* SatelliteElevationGraphReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8A423D267EA3970014AE17 /* SatelliteElevationGraphReducer.swift */; };
 		EF8A424026804A800014AE17 /* AppStateReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8A423F26804A800014AE17 /* AppStateReducer.swift */; };
 		EF8A424226812A940014AE17 /* PlanetaryBodyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8A424126812A940014AE17 /* PlanetaryBodyView.swift */; };
+		EF98F86026ABDA7B0086B2FA /* CurrentIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF98F85F26ABDA7B0086B2FA /* CurrentIndicator.swift */; };
 		EF9D82A32661BBF100616C97 /* SatelliteForcastApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9D827A2661BBF000616C97 /* SatelliteForcastApp.swift */; };
 		EFAE1F0C2668B10F00A18A42 /* SatelliteElevationGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F0B2668B10F00A18A42 /* SatelliteElevationGraph.swift */; };
 		EFAE1F132669E7A800A18A42 /* SunlightIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F122669E7A800A18A42 /* SunlightIndicator.swift */; };
@@ -164,6 +165,7 @@
 		EF8A423D267EA3970014AE17 /* SatelliteElevationGraphReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteElevationGraphReducer.swift; sourceTree = "<group>"; };
 		EF8A423F26804A800014AE17 /* AppStateReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateReducer.swift; sourceTree = "<group>"; };
 		EF8A424126812A940014AE17 /* PlanetaryBodyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanetaryBodyView.swift; sourceTree = "<group>"; };
+		EF98F85F26ABDA7B0086B2FA /* CurrentIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentIndicator.swift; sourceTree = "<group>"; };
 		EF9D827A2661BBF000616C97 /* SatelliteForcastApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteForcastApp.swift; sourceTree = "<group>"; };
 		EF9D827C2661BBF000616C97 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EF9D82812661BBF000616C97 /* SatelliteForcast.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SatelliteForcast.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -369,6 +371,7 @@
 				EF8A4239267E87740014AE17 /* SatelliteElevationGraph+Static.swift */,
 				EFAE1F122669E7A800A18A42 /* SunlightIndicator.swift */,
 				EF1EDA2D269200B60088DD65 /* SatelliteElevationGraphResources.swift */,
+				EF98F85F26ABDA7B0086B2FA /* CurrentIndicator.swift */,
 			);
 			path = SatelliteElevationGraph;
 			sourceTree = "<group>";
@@ -611,6 +614,7 @@
 				EF7A3122266B03B400CC33C0 /* CoreLocationMiddleware.swift in Sources */,
 				EF7A311E266AFBF800CC33C0 /* Store.swift in Sources */,
 				EF8A424226812A940014AE17 /* PlanetaryBodyView.swift in Sources */,
+				EF98F86026ABDA7B0086B2FA /* CurrentIndicator.swift in Sources */,
 				EF46564D267AF7070040B762 /* SkyChartConfigs.swift in Sources */,
 				EF5CB017266E28EE000019DA /* TimerReducer.swift in Sources */,
 				EF3D099E26864DDF00B84232 /* SatelliteOverviewCell.swift in Sources */,

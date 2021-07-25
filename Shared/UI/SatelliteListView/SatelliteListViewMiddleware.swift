@@ -23,8 +23,9 @@ extension EffectMiddleware where InputActionType == SatelliteListViewAction, Out
         EffectMiddleware<SatelliteListViewAction, AppAction, AppState, Void>
             .onAction { (action, _, getState) -> Effect<Void, AppAction> in
                 switch action {
-                case .selectSatellite:
-                    if let observer = getState().coreLocationState.location.map(LatLonAlt.init) {
+                case let .selectSatellite(noradIndex):
+                    if let observer = getState().coreLocationState.location.map(LatLonAlt.init),
+                       let _ = noradIndex {
                         let julianDate = getState().satelliteLoaderState.referenceDate
 
                         return .sequence([

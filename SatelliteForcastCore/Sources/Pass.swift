@@ -45,23 +45,47 @@ public struct Pass {
 
         public let initiallyIlluminated: Bool
         public let changes: [Change]
-
-        /// Whether any part of the pass above a certain elevation is illuminated.
-        public func hasAnyIllumination(aboveElevation elev: Double = 10) -> Bool {
-            func hasExitsShadow(_ changes: Change) -> Bool {
-                switch changes {
-                case let .exitsShadow(datePosition):
-                    return datePosition.elev >= elev
-                default:
-                    return false
-                }
-            }
-            return initiallyIlluminated || changes.contains { hasExitsShadow($0) }
-        }
     }
 
     /// The satellite illumination ifnformation.
     public let illumination: Illumination
+
+    /// Whether any part of the pass above a certain elevation is illuminated.
+    public func hasAnyIllumination(aboveElevation elev: Double = 10) -> Bool {
+        func highestIlluminatedElevation() -> Double {
+            if illumination.changes.isEmpty {
+                if illumination.initiallyIlluminated {
+                    return transit.elev
+                } else {
+                    return 0
+                }
+            } else {
+                var highest: Double = 0
+                var lastIlluminationStartJulianDate: Double?
+                if illumination.initiallyIlluminated {
+                    lastIlluminationStartJulianDate = rise.julianDate
+                }
+
+                for change in illumination.changes {
+                    switch change {
+                    case let .exitsShadow(datePosition):
+                        highest = max(highest, datePosition.elev)
+                        lastIlluminationStartJulianDate = datePosition.julianDate
+                    case let .entersShadow(datePosition):
+                        if let lastIlluminationStartJulianDate = lastIlluminationStartJulianDate,
+                           lastIlluminationStartJulianDate < transit.julianDate && datePosition.julianDate >= transit.julianDate {
+                            highest = transit.elev
+                        } else {
+                            highest = max(highest, datePosition.elev)
+                        }
+                    }
+                }
+                return highest
+            }
+        }
+
+        return highestIlluminatedElevation() >= elev
+    }
 
     /// The elevation of the sun at transit. A satellite pass can usually only be seen after civil twilight or before civil dawn when sun is
     /// below -6 degrees.
@@ -87,7 +111,7 @@ public struct Pass {
             return .daylight
         }
 
-        if illumination.hasAnyIllumination() {
+        if hasAnyIllumination() {
             return .visible
         } else {
             return .unlit
