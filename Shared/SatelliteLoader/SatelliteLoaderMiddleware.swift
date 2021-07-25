@@ -50,7 +50,7 @@ extension EffectMiddleware where
 
                     if let result = getState().info[category], let info = result.successValue {
                         let mostRecentTLEAge = info.map {
-                            Date(julianDate: getState().referenceDate).timeIntervalSince(Date(daysSince1950: $1.satellite.tle.t₀))
+                            Date(julianDate: getState().currentDate).timeIntervalSince(Date(daysSince1950: $1.satellite.tle.t₀))
                         }
                         .min() ?? 0
 

@@ -22,6 +22,14 @@ struct AppState: Equatable {
 
     var julianDateRange: Range<Double>?
     var observerForPasses: LatLonAlt?
+    var debugMenu: DebugMenuConfig = .empty
+
+    /// The julian date for consumptions of display and calculation.
+    /// This julian date will take into account of artificial offsets in debug mode, and is not always a true representation
+    /// of the current date.
+    var julianDate: Double {
+        satelliteLoaderState.currentDate + (debugMenu.mockedOffsetOn ? debugMenu.mockedOffset : 0)
+    }
 
     var navigationState: NavigationState = .overview {
         willSet {

@@ -26,7 +26,7 @@ extension EffectMiddleware where InputActionType == SatelliteListViewAction, Out
                 case let .selectSatellite(noradIndex):
                     if let observer = getState().coreLocationState.location.map(LatLonAlt.init),
                        let _ = noradIndex {
-                        let julianDate = getState().satelliteLoaderState.referenceDate
+                        let julianDate = getState().julianDate
 
                         return .sequence([
                             .freezeObservingParams(

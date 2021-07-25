@@ -39,7 +39,7 @@ extension Reducer where ActionType == TLEPropagatorAction, StateType == Store.St
 
                 return passes.firstIndex(
                     where: {
-                        $0.rise.julianDate > state.satelliteLoaderState.referenceDate
+                        $0.rise.julianDate > state.julianDate
                             && $0.hasAnyIllumination()
                             && $0.sunElevationAtTransit < -6
                             && $0.transit.elev > 10

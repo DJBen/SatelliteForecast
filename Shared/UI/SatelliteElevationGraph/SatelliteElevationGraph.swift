@@ -41,6 +41,8 @@ struct SatelliteElevationGraphState: Equatable {
     static func == (lhs: SatelliteElevationGraphState, rhs: SatelliteElevationGraphState) -> Bool {
         return lhs.noradIndex == rhs.noradIndex &&
         lhs.julianDateRange == rhs.julianDateRange &&
+        lhs.currentJulianDate == rhs.currentJulianDate &&
+        lhs.currentSnapshot == rhs.currentSnapshot &&
         lhs.highlightedDateRange == rhs.highlightedDateRange &&
         lhs.julianDateSunElevs == rhs.julianDateSunElevs &&
         lhs.rasterizedElevationGraph == rhs.rasterizedElevationGraph &&
@@ -114,9 +116,9 @@ struct SatelliteElevationGraphState: Equatable {
         return SatelliteElevationGraphState(
             xPercentDatePair: xPercentDatePair,
             noradIndex: noradIndex,
-            currentJulianDate: state.satelliteLoaderState.referenceDate,
+            currentJulianDate: state.julianDate,
             currentSnapshot: satellite.satellite.snapshot(
-                julianDate: state.satelliteLoaderState.referenceDate,
+                julianDate: state.julianDate,
                 observer: observer
             ),
             julianDateRange: refJulianDateRange,

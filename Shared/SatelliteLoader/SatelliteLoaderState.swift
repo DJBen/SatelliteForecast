@@ -37,14 +37,8 @@ extension Map: Equatable where Key == Int, Value == SatelliteInfo {
 }
 
 struct SatelliteLoaderState: Equatable {
-    static func == (lhs: SatelliteLoaderState, rhs: SatelliteLoaderState) -> Bool {
-        return lhs.referenceDate == rhs.referenceDate
-        && lhs.info == rhs.info
-        && lhs.standaloneInfo == rhs.standaloneInfo
-    }
-
     /// A date that mostly approximates the current date.
-    var referenceDate: Double = Date().julianDate
+    var currentDate: Double = Date().julianDate
     var info: [SatelliteCategory: Result<Map<Int, SatelliteInfo>, SatelliteLoaderError>] = [:]
     var standaloneInfo: Map<Int, SatelliteInfo> = [:]
 

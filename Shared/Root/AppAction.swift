@@ -21,6 +21,7 @@ enum AppAction {
     case skyChart(SkyChartAction)
     case tlePropagator(TLEPropagatorAction)
     case timer(TimerAction)
+    case debugMenu(DebugMenuAction)
 
     /// Freeze the observer location and date range to be consumed by the passing view workflow,
     /// so that the location changes won't trigger reload
@@ -158,6 +159,17 @@ extension AppAction {
         set {
             guard case .timer = self, let newValue = newValue else { return }
             self = .timer(newValue)
+        }
+    }
+
+    public var debugMenu: DebugMenuAction? {
+        get {
+            guard case let .debugMenu(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .debugMenu = self, let newValue = newValue else { return }
+            self = .debugMenu(newValue)
         }
     }
 }
