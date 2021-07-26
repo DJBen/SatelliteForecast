@@ -7,6 +7,7 @@ target 'SatelliteForcast' do
   pod "CombineRex", "~> 0.8.6"
   pod "CombineRextensions", :git => 'https://github.com/DJBen/CombineRextensions.git', :branch => 'add-podspec'
   pod "FlagKit"
+  pod 'SwiftDate', '~> 5.0'
   pod "SwiftRex", "~> 0.8.6"
   pod "SatelliteKit", :path => './SatelliteKit'
   pod "StarryNight", :path => './StarryNight'

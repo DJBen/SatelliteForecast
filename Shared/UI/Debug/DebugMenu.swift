@@ -48,11 +48,9 @@ struct DebugMenu: View {
     @ObservedObject var viewModel: ObservableViewModel<DebugMenuAction, DebugMenuState?>
     @State var dateWithinPicker: Date = Date()
 
-    private func unwrapState<Content: View>(@ViewBuilder content: (DebugMenuState) -> Content) -> some View {
+    @ViewBuilder private func unwrapState<Content: View>(@ViewBuilder content: (DebugMenuState) -> Content) -> some View {
         if let state = viewModel.state {
-            return AnyView(content(state))
-        } else {
-            return AnyView(EmptyView())
+            content(state)
         }
     }
 

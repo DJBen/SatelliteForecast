@@ -14,7 +14,7 @@ extension SatelliteElevationGraph {
         @State private var scale: CGFloat = 1
         @State private var opacity: Double = 1
 
-        var repeatingAnimation: Animation {
+        private var repeatingAnimation: Animation {
             Animation
                 .easeInOut(duration: 3)
                 .repeatForever(autoreverses: false)

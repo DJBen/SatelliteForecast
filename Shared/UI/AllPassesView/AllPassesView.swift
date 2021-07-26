@@ -128,8 +128,7 @@ struct AllPassesView: View, Equatable {
                         PassPreviewCell(
                             pass: item.pass,
                             indexOfPass: item.index,
-                            skyChartProducer: skyChartProducer,
-                            skyChartContentSize: .constant(.zero)
+                            skyChartProducer: skyChartProducer
                         )
                     }
                     .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 25))
@@ -244,9 +243,8 @@ struct AllPassesView_Previews: PreviewProvider {
             skyChartProducer: .pure(
                 SkyChart(
                     viewModel: .mock(
-                        state: .empty
+                        state: nil
                     ),
-                    contentSize: .constant(.zero),
                     configs: SkyChartConfigs(
                         backgroundSky: SkyChartConfigs.BackgroundSky(
                             stars: .limitedMagnitude(2),
@@ -287,31 +285,29 @@ struct AllPassesView_Previews: PreviewProvider {
                 return SkyChart(
                     viewModel: .mock(
                         state: SkyChartViewState(
-                            mode: .pass(
-                                pass,
-                                observer: observer,
-                                snapshots: SkyChartViewState.NotableSnapshots(
-                                    rise: SkyChartViewState.snapshotsAroundPass(
-                                        snapshots,
-                                        julianDate: pass.rise.julianDate,
-                                        selector: .first
-                                    )!,
-                                    transit: SkyChartViewState.snapshotsAroundPass(
-                                        snapshots,
-                                        julianDate: pass.transit.julianDate,
-                                        selector: .first
-                                    )!,
-                                    set: SkyChartViewState.snapshotsAroundPass(
-                                        snapshots,
-                                        julianDate: pass.set.julianDate,
-                                        selector: .last
-                                    )!,
-                                    illuminationChanges: BTree()
-                                )
-                            )
+                            pass: pass,
+                            observer: observer,
+                            snapshots: SkyChartViewState.NotableSnapshots(
+                                rise: SkyChartViewState.snapshotsAroundPass(
+                                    snapshots,
+                                    julianDate: pass.rise.julianDate,
+                                    selector: .first
+                                )!,
+                                transit: SkyChartViewState.snapshotsAroundPass(
+                                    snapshots,
+                                    julianDate: pass.transit.julianDate,
+                                    selector: .first
+                                )!,
+                                set: SkyChartViewState.snapshotsAroundPass(
+                                    snapshots,
+                                    julianDate: pass.set.julianDate,
+                                    selector: .last
+                                )!,
+                                illuminationChanges: BTree()
+                            ),
+                            referenceDate: pass.rise.julianDate
                         )
                     ),
-                    contentSize: .constant(.zero),
                     configs: SkyChartConfigs(
                         backgroundSky: SkyChartConfigs.BackgroundSky(
                             stars: .limitedMagnitude(2),

@@ -20,7 +20,6 @@ struct PassPreviewCell: View, Equatable {
     var pass: Pass
     var indexOfPass: Int
     var skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
-    @Binding var skyChartContentSize: CGSize
 
     static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -103,8 +102,7 @@ struct PassPreviewCell: View, Equatable {
 
             skyChartProducer.view(
                 SkyChartContext(
-                    usage: .preview(index: indexOfPass),
-                    contentSize: $skyChartContentSize
+                    usage: .preview(index: indexOfPass)
                 )
             )
             .padding(5)
@@ -148,31 +146,29 @@ struct PassPreviewCell_Previews: PreviewProvider {
                     SkyChart(
                         viewModel: .mock(
                             state: SkyChartViewState(
-                                mode: .pass(
-                                    pass,
-                                    observer: observerCoordinate,
-                                    snapshots: SkyChartViewState.NotableSnapshots(
-                                        rise: SkyChartViewState.snapshotsAroundPass(
-                                            snapshots,
-                                            julianDate: pass.rise.julianDate,
-                                            selector: .first
-                                        )!,
-                                        transit: SkyChartViewState.snapshotsAroundPass(
-                                            snapshots,
-                                            julianDate: pass.transit.julianDate,
-                                            selector: .first
-                                        )!,
-                                        set: SkyChartViewState.snapshotsAroundPass(
-                                            snapshots,
-                                            julianDate: pass.set.julianDate,
-                                            selector: .last
-                                        )!,
-                                        illuminationChanges: BTree()
-                                    )
-                                )
+                                pass: pass,
+                                observer: observerCoordinate,
+                                snapshots: SkyChartViewState.NotableSnapshots(
+                                    rise: SkyChartViewState.snapshotsAroundPass(
+                                        snapshots,
+                                        julianDate: pass.rise.julianDate,
+                                        selector: .first
+                                    )!,
+                                    transit: SkyChartViewState.snapshotsAroundPass(
+                                        snapshots,
+                                        julianDate: pass.transit.julianDate,
+                                        selector: .first
+                                    )!,
+                                    set: SkyChartViewState.snapshotsAroundPass(
+                                        snapshots,
+                                        julianDate: pass.set.julianDate,
+                                        selector: .last
+                                    )!,
+                                    illuminationChanges: BTree()
+                                ),
+                                referenceDate: pass.rise.julianDate
                             )
                         ),
-                        contentSize: .constant(.zero),
                         configs: SkyChartConfigs(
                             backgroundSky: SkyChartConfigs.BackgroundSky(
                                 stars: .limitedMagnitude(2),
@@ -188,8 +184,7 @@ struct PassPreviewCell_Previews: PreviewProvider {
                         ),
                         usage: .preview
                     )
-                ),
-                skyChartContentSize: .constant(.zero)
+                )
             )
             .previewLayout(.fixed(width: 375, height: 125))
         }
