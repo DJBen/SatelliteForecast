@@ -62,6 +62,7 @@
 		EF833AFC26ADE9B0003EEBB6 /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF833AFB26ADE9B0003EEBB6 /* Background.swift */; };
 		EF833AFE26ADF421003EEBB6 /* DateFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF833AFD26ADF421003EEBB6 /* DateFooter.swift */; };
 		EF833B0026AE2515003EEBB6 /* CurrentPositionIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF833AFF26AE2515003EEBB6 /* CurrentPositionIndicator.swift */; };
+		EF833B0426AEA8B8003EEBB6 /* BTree+Equatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF833B0326AEA8B8003EEBB6 /* BTree+Equatable.swift */; };
 		EF8A4235267C53630014AE17 /* PassViewReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8A4234267C53630014AE17 /* PassViewReducer.swift */; };
 		EF8A423A267E87740014AE17 /* SatelliteElevationGraph+Static.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8A4239267E87740014AE17 /* SatelliteElevationGraph+Static.swift */; };
 		EF8A423C267EA38C0014AE17 /* SatelliteElevationGraphMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8A423B267EA38C0014AE17 /* SatelliteElevationGraphMiddleware.swift */; };
@@ -169,6 +170,7 @@
 		EF833AFB26ADE9B0003EEBB6 /* Background.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Background.swift; sourceTree = "<group>"; };
 		EF833AFD26ADF421003EEBB6 /* DateFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFooter.swift; sourceTree = "<group>"; };
 		EF833AFF26AE2515003EEBB6 /* CurrentPositionIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentPositionIndicator.swift; sourceTree = "<group>"; };
+		EF833B0326AEA8B8003EEBB6 /* BTree+Equatable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BTree+Equatable.swift"; sourceTree = "<group>"; };
 		EF864272266DFFE9004F0AFA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EF8A4234267C53630014AE17 /* PassViewReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassViewReducer.swift; sourceTree = "<group>"; };
 		EF8A4239267E87740014AE17 /* SatelliteElevationGraph+Static.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SatelliteElevationGraph+Static.swift"; sourceTree = "<group>"; };
@@ -420,6 +422,7 @@
 				EF465652267BE7680040B762 /* AppDelegate.swift */,
 				EF7A319A266B733C00CC33C0 /* LocalizedStrings.swift */,
 				EF7A312D266B1D7B00CC33C0 /* LoggerMiddleware.swift */,
+				EF833B0326AEA8B8003EEBB6 /* BTree+Equatable.swift */,
 				EF864272266DFFE9004F0AFA /* Info.plist */,
 				EF9D827C2661BBF000616C97 /* Assets.xcassets */,
 				EF3D09A12686920800B84232 /* Satellites.xcassets */,
@@ -649,6 +652,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EF7A3122266B03B400CC33C0 /* CoreLocationMiddleware.swift in Sources */,
+				EF833B0426AEA8B8003EEBB6 /* BTree+Equatable.swift in Sources */,
 				EF7A311E266AFBF800CC33C0 /* Store.swift in Sources */,
 				EFCF20F426AD545400D87E8B /* DebugMenuMiddleware.swift in Sources */,
 				EF8A424226812A940014AE17 /* PlanetaryBodyView.swift in Sources */,

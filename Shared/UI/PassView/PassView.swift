@@ -154,8 +154,7 @@ struct PassView_Previews: PreviewProvider {
                             backgroundSkyConfigs: .preset
                         )
                     ),
-                    configs: .preset,
-                    usage: .preview
+                    configs: .preset
                 )
             )
         )

@@ -48,16 +48,15 @@ struct AllPassesViewState: Equatable {
 
         if let passes = satelliteState.passes {
             let items = passes.enumerated().map { i, pass -> Item in
-                let rasterizedSatellitePath = state.skyChartState.rasterizedSatellitePaths[pass]?[.preview]
+                let rasterizedSatellitePath = state.skyChartState.previewSatellitePaths[pass]
                 let rasterizedBackgroundSky: UIImage?
                 if let observer = state.observerForPasses {
-                    rasterizedBackgroundSky = state.skyChartState.rasterizedBackgroundSky[
+                    rasterizedBackgroundSky = state.skyChartState.previewBackgroundSkies[
                         SkyChartBackgroundSkyKey(
                             observer: observer,
-                            julianDate: pass.rise.julianDate,
                             configs: .preset
                         )
-                    ]?[.preview]
+                    ]?.value(closestTo: pass.rise.julianDate)
                 } else {
                     rasterizedBackgroundSky = nil
                 }
@@ -257,8 +256,7 @@ struct AllPassesView_Previews: PreviewProvider {
                         azimuthMarkLength: 2,
                         showDirections: false,
                         showPassInfoLabels: false
-                    ),
-                    usage: .preview
+                    )
                 )
             ),
             passViewProducer: .crash
@@ -305,7 +303,8 @@ struct AllPassesView_Previews: PreviewProvider {
                                 )!,
                                 illuminationChanges: BTree()
                             ),
-                            referenceDate: pass.rise.julianDate
+                            referenceDate: pass.rise.julianDate,
+                            quality: .preview
                         )
                     ),
                     configs: SkyChartConfigs(
@@ -320,8 +319,7 @@ struct AllPassesView_Previews: PreviewProvider {
                         azimuthMarkLength: 2,
                         showDirections: false,
                         showPassInfoLabels: false
-                    ),
-                    usage: .preview
+                    )
                 )
             },
             passViewProducer: .crash

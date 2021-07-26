@@ -18,13 +18,7 @@ import BTree
 /// A key uniquely determining the rendering of a sky chart's background. Same key is guaranteed to render the same background.
 struct SkyChartBackgroundSkyKey: Equatable, Hashable {
     let observer: LatLonAlt
-    let julianDate: Double
     let configs: SkyChartConfigs.BackgroundSky
-}
-
-enum SkyChartUsage: Equatable, Hashable {
-    case preview
-    case primary
 }
 
 enum SkyChartAction {
@@ -32,11 +26,11 @@ enum SkyChartAction {
 
     /// Request a rasterized version of the background sky.
     /// The caller should group the call and reduce frequency by rounding the date to a nearest minute, for example.
-    case requestRasterizedBackgroundSky(usage: SkyChartUsage, size: CGSize, key: SkyChartBackgroundSkyKey, traitCollection: UITraitCollection)
-    case requestRasterizedSatellitePath(usage: SkyChartUsage, size: CGSize, pass: Pass, traitCollection: UITraitCollection)
-    case rasterizedBackgroundSky(UIImage, usage: SkyChartUsage, key: SkyChartBackgroundSkyKey)
+    case requestRasterizedBackgroundSky(size: CGSize, quality: SkyChartResources.Quality, julianDate: Double, key: SkyChartBackgroundSkyKey, traitCollection: UITraitCollection)
+    case requestRasterizedSatellitePath(size: CGSize, quality: SkyChartResources.Quality, pass: Pass, traitCollection: UITraitCollection)
+    case rasterizedBackgroundSky(UIImage, quality: SkyChartResources.Quality, julianDate: Double, key: SkyChartBackgroundSkyKey)
     /// A satellite path is rasterized, or the rasterized image is read from the cache.
-    case rasterizedSatellitePath(UIImage, usage: SkyChartUsage, pass: Pass)
+    case rasterizedSatellitePath(UIImage, quality: SkyChartResources.Quality, pass: Pass)
 }
 
 /// A state used in a single sky chart view
@@ -73,14 +67,16 @@ struct SkyChartViewState: Equatable {
     var snapshots: NotableSnapshots
     var referenceDate: Double
     var snapshotAtReferenceDate: SatelliteSnapshot?
-    var rasterizedSatellitePaths: [SkyChartUsage: UIImage]?
-    var rasterizedBackgroundSky: [SkyChartUsage: UIImage]?
+    var quality: SkyChartResources.Quality
+    var rasterizedSatellitePaths: UIImage?
+    var rasterizedBackgroundSky: UIImage?
 
     private static func project(
         state: AppState,
         pass: Pass,
         referenceDate: Double,
-        backgroundSkyConfigs: SkyChartConfigs.BackgroundSky
+        quality: SkyChartResources.Quality,
+        rasterizedBackgroundSky: UIImage?
     ) -> SkyChartViewState? {
         guard let info = state.satelliteLoaderState[pass.noradIndex],
                 let satelliteState = state.satellites[pass.noradIndex],
@@ -111,24 +107,31 @@ struct SkyChartViewState: Equatable {
             )
         }()
 
+        let rasterizedSatellitePaths: UIImage? = {
+            switch quality {
+            case .full:
+                return state.skyChartState.rasterizedSatellitePaths[passAndSnapshots.pass]
+            case .preview:
+                return state.skyChartState.previewSatellitePaths[passAndSnapshots.pass]
+            }
+        }()
+
         return SkyChartViewState(
             pass: passAndSnapshots.pass,
             observer: observer,
             snapshots: passAndSnapshots.snapshots,
             referenceDate: referenceDate,
             snapshotAtReferenceDate: snapshotAtReferenceDate,
-            rasterizedSatellitePaths: state.skyChartState.rasterizedSatellitePaths[passAndSnapshots.pass],
-            rasterizedBackgroundSky: state.skyChartState.rasterizedBackgroundSky[
-                SkyChartBackgroundSkyKey(
-                    observer: observer,
-                    julianDate: referenceDate.julianDateRoundedToNearestMinute(),
-                    configs: backgroundSkyConfigs
-                )
-            ]
+            quality: quality,
+            rasterizedSatellitePaths: rasterizedSatellitePaths,
+            rasterizedBackgroundSky: rasterizedBackgroundSky
         )
     }
 
     static func projectPreview(state: AppState, index: Int, backgroundSkyConfigs: SkyChartConfigs.BackgroundSky) -> SkyChartViewState? {
+        guard let observer = state.observerForPasses else {
+            return nil
+        }
         let pass: Pass? = {
             switch state.navigationState {
             case let .allPasses(_, noradIndex: noradIndex):
@@ -148,12 +151,21 @@ struct SkyChartViewState: Equatable {
                 state: state,
                 pass: $0,
                 referenceDate: $0.rise.julianDate,
-                backgroundSkyConfigs: backgroundSkyConfigs
+                quality: .preview,
+                rasterizedBackgroundSky: state.skyChartState.previewBackgroundSkies[
+                    SkyChartBackgroundSkyKey(
+                        observer: observer,
+                        configs: backgroundSkyConfigs
+                    )
+                ]?.value(closestTo: $0.rise.julianDate.julianDateRoundedToNearestMinute())
             )
         }
     }
 
     static func project(state: AppState, backgroundSkyConfigs: SkyChartConfigs.BackgroundSky) -> SkyChartViewState? {
+        guard let observer = state.observerForPasses else {
+            return nil
+        }
         let pass: Pass? = {
             switch state.navigationState {
             case let .pass(_, noradIndex: noradIndex, selectedPassIndex: selectedPassIndex):
@@ -172,7 +184,13 @@ struct SkyChartViewState: Equatable {
                 state: state,
                 pass: $0,
                 referenceDate: state.julianDate,
-                backgroundSkyConfigs: backgroundSkyConfigs
+                quality: .full,
+                rasterizedBackgroundSky: state.skyChartState.rasterizedBackgroundSky[
+                    SkyChartBackgroundSkyKey(
+                        observer: observer,
+                        configs: backgroundSkyConfigs
+                    )
+                ]?.value(closestTo: $0.rise.julianDate.julianDateRoundedToNearestMinute())
             )
         }
     }
@@ -181,7 +199,6 @@ struct SkyChartViewState: Equatable {
 struct SkyChart: View {
     @ObservedObject var viewModel: ObservableViewModel<SkyChartAction, SkyChartViewState?>
     let configs: SkyChartConfigs
-    let usage: SkyChartUsage
 
     @State private var contentSize: CGSize = .zero
 
@@ -257,7 +274,7 @@ struct SkyChart: View {
                 let view: AnyView = {
                     if rect.size.width == 0 || rect.size.height == 0 {
                         return AnyView(Color.clear)
-                    } else if let image = state.rasterizedSatellitePaths?[usage] {
+                    } else if let image = state.rasterizedSatellitePaths {
                         return AnyView(Image(uiImage: image)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
@@ -274,8 +291,8 @@ struct SkyChart: View {
 
                         viewModel.dispatch(
                             .requestRasterizedSatellitePath(
-                                usage: usage,
                                 size: contentSize,
+                                quality: state.quality,
                                 pass: state.pass,
                                 traitCollection: UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
                             )
@@ -283,12 +300,12 @@ struct SkyChart: View {
 
                         viewModel.dispatch(
                             .requestRasterizedBackgroundSky(
-                                usage: usage,
                                 size: contentSize,
+                                quality: state.quality,
+                                // Round date to nearest minute
+                                julianDate: state.referenceDate.julianDateRoundedToNearestMinute(),
                                 key: SkyChartBackgroundSkyKey(
                                     observer: state.observer,
-                                    // Round date to nearest minute
-                                    julianDate: state.referenceDate.julianDateRoundedToNearestMinute(),
                                     configs: configs.backgroundSky
                                 ),
                                 traitCollection: UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
@@ -302,12 +319,12 @@ struct SkyChart: View {
 
                         viewModel.dispatch(
                             .requestRasterizedBackgroundSky(
-                                usage: usage,
                                 size: contentSize,
+                                quality: state.quality,
+                                // Round date to nearest minute
+                                julianDate: newReferenceDate.julianDateRoundedToNearestMinute(),
                                 key: SkyChartBackgroundSkyKey(
                                     observer: state.observer,
-                                    // Round date to nearest minute
-                                    julianDate: newReferenceDate.julianDateRoundedToNearestMinute(),
                                     configs: configs.backgroundSky
                                 ),
                                 traitCollection: UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
@@ -429,7 +446,7 @@ struct SkyChart: View {
                configs.backgroundSky.hidesStarsDuringDay) {
                 GeometryReader { geometry in
                     let rect = geometry.frame(in: .local)
-                    if let image = state.rasterizedBackgroundSky?[usage] {
+                    if let image = state.rasterizedBackgroundSky {
                         Image(uiImage: image)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
@@ -525,15 +542,7 @@ extension ViewProducer where Context == SkyChartContext, ProducedView == SkyChar
                     .asObservableViewModel(
                         initialState: nil
                     ),
-                configs: configs,
-                usage: {
-                    switch context.usage {
-                    case .preview:
-                        return .preview
-                    case .full:
-                        return .primary
-                    }
-                }()
+                configs: configs
             )
         }
     }
@@ -633,18 +642,16 @@ struct SkyChart_Previews: PreviewProvider {
                             illuminationChanges: BTree()
                         ),
                         referenceDate: pass.transit.julianDate.advanced(by: 20 * TimeConstants.sec2day),
-                        rasterizedSatellitePaths: [
-                            .primary: SkyChart.rasterizedSatellitePassPath(
-                                rect: CGRect(origin: .zero, size: CGSize(width: 388, height: 805)),
-                                snapshotsDuringPass: snapshots,
-                                illuminatedColor: UIColor(named: "satellitePath_illuminated", in: nil, compatibleWith: traitCollection)!,
+                        quality: .full,
+                        rasterizedSatellitePaths: SkyChart.rasterizedSatellitePassPath(
+                            rect: CGRect(origin: .zero, size: CGSize(width: 388, height: 805)),
+                            snapshotsDuringPass: snapshots,
+                            illuminatedColor: UIColor(named: "satellitePath_illuminated", in: nil, compatibleWith: traitCollection)!,
                             unlitColor: UIColor(named: "satellitePath_notIlluminated", in: nil, compatibleWith: traitCollection)!
-                            )
-                        ]
+                        )
                     )
                 ),
-                configs: .preset,
-                usage: .primary
+                configs: .preset
             )
             .padding(20)
             .preferredColorScheme(colorScheme)
@@ -676,25 +683,22 @@ struct SkyChart_Previews: PreviewProvider {
                         illuminationChanges: BTree()
                     ),
                     referenceDate: pass2.rise.julianDate,
-                    rasterizedSatellitePaths: [
-                        .primary: SkyChart.rasterizedSatellitePassPath(
-                            rect: CGRect(origin: .zero, size: CGSize(width: 388, height: 805)),
-                            snapshotsDuringPass: snapshots2,
-                            illuminatedColor: UIColor(Color("satellitePath_illuminated")),
-                            unlitColor: UIColor(Color("satellitePath_notIlluminated"))
-                        )
-                    ]
+                    quality: .full,
+                    rasterizedSatellitePaths: SkyChart.rasterizedSatellitePassPath(
+                        rect: CGRect(origin: .zero, size: CGSize(width: 388, height: 805)),
+                        snapshotsDuringPass: snapshots2,
+                        illuminatedColor: UIColor(Color("satellitePath_illuminated")),
+                        unlitColor: UIColor(Color("satellitePath_notIlluminated"))
+                    )
                 )
             ),
-            configs: .preset,
-            usage: .primary
+            configs: .preset
         )
         .padding(20)
 
         SkyChart(
             viewModel: .mock(state: nil),
-            configs: .preset,
-            usage: .primary
+            configs: .preset
         )
         .padding(20)
         .previewDisplayName("Placeholder")

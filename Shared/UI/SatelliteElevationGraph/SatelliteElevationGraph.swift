@@ -37,8 +37,6 @@ enum SatelliteElevationGraphAction {
     case rasterizedElevationGraph(UIImage, size: CGSize, noradIndex: Int, julianDateRange: Range<Double>)
 }
 
-extension BTree: Equatable where Key == Double, Value == Double {}
-
 struct SatelliteElevationGraphState: Equatable {
     let noradIndex: Int
     let currentJulianDate: Double

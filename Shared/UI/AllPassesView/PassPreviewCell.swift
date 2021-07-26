@@ -166,7 +166,8 @@ struct PassPreviewCell_Previews: PreviewProvider {
                                     )!,
                                     illuminationChanges: BTree()
                                 ),
-                                referenceDate: pass.rise.julianDate
+                                referenceDate: pass.rise.julianDate,
+                                quality: .preview
                             )
                         ),
                         configs: SkyChartConfigs(
@@ -181,8 +182,7 @@ struct PassPreviewCell_Previews: PreviewProvider {
                             azimuthMarkLength: 2,
                             showDirections: false,
                             showPassInfoLabels: false
-                        ),
-                        usage: .preview
+                        )
                     )
                 )
             )
