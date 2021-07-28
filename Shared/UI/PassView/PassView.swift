@@ -112,6 +112,12 @@ struct PassView_Previews: PreviewProvider {
         )
         let brightest100: Map<Int, SatelliteInfo> = [tle.noradIndex: SatelliteInfo(noradIndex: tle.noradIndex, satellite: sat)]
         let appState = AppState(
+            skyChartState: SkyChartResources(
+                rasterizedSatellitePaths: [:],
+                previewSatellitePaths: [:],
+                rasterizedBackgroundSky: [:],
+                previewBackgroundSkies: [:]
+            ),
             satellites: [
                 tle.noradIndex: SatelliteTrails(
                     snapshots: snapshots.union(fineSnapshots, by: .groupingMatches),

@@ -230,14 +230,14 @@ struct SatelliteElevationGraph: View {
             let x = (state.currentJulianDate - state.julianDateRange.lowerBound) / (state.julianDateRange.upperBound - state.julianDateRange.lowerBound)
             let y = 1 - (state.currentSnapshot.position.elev + 90) / 180
 
-            SatelliteElevationGraph.CurrentIndicator(percentageCoordinate: CGPoint(x: x, y: y))
+            SatelliteElevationGraphCurrentIndicator(percentageCoordinate: CGPoint(x: x, y: y))
         }
     }
 
     @ViewBuilder private var background: some View {
         unwrapState { state in
-            Background(
-                state: BackgroundState(julianDateRange: state.julianDateRange, configs: state.configs),
+            SatelliteElevationGraphBackground(
+                state: SatelliteElevationGraphBackgroundState(julianDateRange: state.julianDateRange, configs: state.configs),
                 graphingRegionSize: $graphingRegionSize
             )
             .equatable()
