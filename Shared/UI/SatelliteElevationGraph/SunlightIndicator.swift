@@ -1,13 +1,13 @@
 //
 //  SunlightIndicator.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 6/3/21.
 //
 
 import SwiftUI
 import SatelliteKit
-import SatelliteForcastCore
+import SatelliteForecastCore
 import BTree
 
 struct SunlightIndicatorViewModel: Equatable {

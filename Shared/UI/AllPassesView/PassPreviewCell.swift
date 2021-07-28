@@ -1,13 +1,13 @@
 //
 //  PassPreviewCell.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 6/15/21.
 //
 
 import BTree
 import SwiftUI
-import SatelliteForcastCore
+import SatelliteForecastCore
 import SatelliteKit
 import CombineRex
 import CombineRextensions

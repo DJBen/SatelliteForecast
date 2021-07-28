@@ -1,13 +1,13 @@
 //
 //  SatelliteLoaderState.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 6/4/21.
 //
 
 import BTree
 import Foundation
-import SatelliteForcastCore
+import SatelliteForecastCore
 import SatelliteKit
 
 enum SatelliteCategory: Equatable, Hashable {

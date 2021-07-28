@@ -1,6 +1,6 @@
 //
 //  SatelliteElevationGraphResources.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 7/4/21.
 //

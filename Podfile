@@ -1,6 +1,6 @@
 platform :ios, '15.0'
 
-target 'SatelliteForcast' do
+target 'SatelliteForecast' do
   use_frameworks!
   
   pod "BTree", "~> 4.1.0"
@@ -12,7 +12,7 @@ target 'SatelliteForcast' do
   pod "SatelliteKit", :path => './SatelliteKit'
   pod "StarryNight", :path => './StarryNight'
   pod "SatelliteCatalog", :path => './SatelliteCatalog'
-  pod "SatelliteForcastCore", :path => './SatelliteForcastCore'
+  pod "SatelliteForecastCore", :path => './SatelliteForecastCore'
   pod "SwiftUIVisualEffects", :path => './SwiftUIVisualEffects'
 
   target 'Tests iOS' do

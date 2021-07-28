@@ -1,6 +1,6 @@
 //
 //  DebugMenu.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 7/24/21.
 //

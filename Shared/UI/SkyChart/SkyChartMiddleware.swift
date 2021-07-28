@@ -1,6 +1,6 @@
 //
 //  SkyChartMiddleware.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 6/7/21.
 //
@@ -9,7 +9,7 @@ import Foundation
 import os
 import Combine
 import CombineRex
-import SatelliteForcastCore
+import SatelliteForecastCore
 import SatelliteKit
 import StarryNight
 

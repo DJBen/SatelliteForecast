@@ -1,6 +1,6 @@
 //
 //  PassView.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 6/5/21.
 //
@@ -8,7 +8,7 @@
 import BTree
 import CombineRex
 import CombineRextensions
-import SatelliteForcastCore
+import SatelliteForecastCore
 import SatelliteKit
 import SwiftUI
 

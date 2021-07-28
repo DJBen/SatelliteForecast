@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftUIVisualEffects
 import SatelliteKit
-import SatelliteForcastCore
+import SatelliteForecastCore
 
 extension SkyChart {
     struct PassLabel: View {

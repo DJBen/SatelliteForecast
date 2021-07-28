@@ -1,6 +1,6 @@
 //
 //  SkyChart.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 5/30/21.
 //
@@ -10,7 +10,7 @@ import SwiftDate
 import SwiftUI
 import SwiftUIVisualEffects
 import SatelliteKit
-import SatelliteForcastCore
+import SatelliteForecastCore
 import StarryNight
 import CombineRextensions
 import BTree

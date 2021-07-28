@@ -7,7 +7,7 @@
 
 import Foundation
 import SatelliteKit
-import SatelliteForcastCore
+import SatelliteForecastCore
 import BTree
 
 struct AppState: Equatable {

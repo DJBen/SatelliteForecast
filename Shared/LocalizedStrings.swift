@@ -1,12 +1,12 @@
 //
 //  LocalizedStrings.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 6/5/21.
 //
 
 import Foundation
-import SatelliteForcastCore
+import SatelliteForecastCore
 import SatelliteCatalog
 
 enum LocalizedStrings {

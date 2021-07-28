@@ -1,6 +1,6 @@
 //
 //  SkyChartConfigs.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 6/16/21.
 //

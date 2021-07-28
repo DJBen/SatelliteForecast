@@ -11,7 +11,7 @@ import SwiftUI
 import SwiftRex
 import CombineRextensions
 import SatelliteKit
-import SatelliteForcastCore
+import SatelliteForecastCore
 import SatelliteCatalog
 
 enum SatelliteListViewAction {

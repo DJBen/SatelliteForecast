@@ -1,13 +1,13 @@
 //
 //  SkyChartResources.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 7/4/21.
 //
 
 import Foundation
 import BTree
-import SatelliteForcastCore
+import SatelliteForecastCore
 
 /// The root state of sky charts.
 struct SkyChartResources: Equatable {

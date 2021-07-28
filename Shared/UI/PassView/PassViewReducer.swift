@@ -1,6 +1,6 @@
 //
 //  PassViewReducer.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 6/17/21.
 //

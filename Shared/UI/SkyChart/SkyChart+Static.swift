@@ -1,12 +1,12 @@
 //
 //  SkyChart+Static.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 6/17/21.
 //
 
 import BTree
-import SatelliteForcastCore
+import SatelliteForecastCore
 import SatelliteKit
 import StarryNight
 

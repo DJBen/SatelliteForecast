@@ -1,12 +1,12 @@
 //
 //  Store.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 6/4/21.
 //
 
 import SatelliteKit
-import SatelliteForcastCore
+import SatelliteForecastCore
 import SwiftRex
 import CombineRex
 

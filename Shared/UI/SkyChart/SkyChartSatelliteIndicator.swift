@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import SatelliteForcastCore
+import SatelliteForecastCore
 import SatelliteKit
 
 struct SkyChartSatelliteIndicatorState: Equatable {

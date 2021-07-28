@@ -1,6 +1,6 @@
 //
 //  SatelliteLoader.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 7/9/21.
 //
@@ -8,7 +8,7 @@
 import BTree
 import Combine
 import SatelliteCatalog
-import SatelliteForcastCore
+import SatelliteForecastCore
 import SatelliteKit
 
 /// Abstracts common logic of satellite loader into publishers.

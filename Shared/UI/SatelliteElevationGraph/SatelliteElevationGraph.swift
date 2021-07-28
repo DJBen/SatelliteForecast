@@ -1,6 +1,6 @@
 //
 //  SatelliteElevationGraph.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 6/2/21.
 //
@@ -9,7 +9,7 @@ import BTree
 import CombineRex
 import SwiftUI
 import SatelliteKit
-import SatelliteForcastCore
+import SatelliteForecastCore
 import CoreLocation
 import CombineRextensions
 

@@ -1,6 +1,6 @@
 //
 //  LazyView.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 7/15/21.
 //

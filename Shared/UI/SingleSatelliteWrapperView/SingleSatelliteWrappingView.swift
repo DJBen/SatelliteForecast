@@ -1,6 +1,6 @@
 //
 //  SingleSatelliteWrappingView.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 7/9/21.
 //
@@ -8,7 +8,7 @@
 import SwiftUI
 import CombineRex
 import CombineRextensions
-import SatelliteForcastCore
+import SatelliteForecastCore
 
 enum SingleSatelliteWrappingViewAction {
     case loadSatelliteList

@@ -1,6 +1,6 @@
 //
 //  TimerReducer.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 6/7/21.
 //
