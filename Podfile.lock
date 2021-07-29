@@ -8,10 +8,11 @@ PODS:
   - SatelliteCatalog (1.0.0.LOCAL):
     - SatelliteKit (= 1.0.0.LOCAL)
     - SQLite.swift (~> 0.12.2)
-  - SatelliteForcastCore (1.0.0.LOCAL):
+  - SatelliteForecastCore (1.0.0.LOCAL):
     - BTree (~> 4.1.0)
     - SatelliteCatalog (= 1.0.0.LOCAL)
     - SatelliteKit (= 1.0.0.LOCAL)
+    - SwiftDate (~> 5.0)
   - SatelliteKit (1.0.0.LOCAL)
   - SnapshotTesting (1.8.2)
   - SQLite.swift (0.12.2):
@@ -22,6 +23,7 @@ PODS:
     - SQLite.swift (~> 0.12.2)
     - STRegex (~> 2.1)
   - STRegex (2.1.1)
+  - SwiftDate (5.1.0)
   - SwiftRex (0.8.6)
   - SwiftUIVisualEffects (1.0.0.LOCAL)
   - TestingExtensions (0.2.7):
@@ -35,9 +37,10 @@ DEPENDENCIES:
   - CombineRextensions (from `https://github.com/DJBen/CombineRextensions.git`, branch `add-podspec`)
   - FlagKit
   - SatelliteCatalog (from `./SatelliteCatalog`)
-  - SatelliteForcastCore (from `./SatelliteForcastCore`)
+  - SatelliteForecastCore (from `./SatelliteForecastCore`)
   - SatelliteKit (from `./SatelliteKit`)
   - StarryNight (from `./StarryNight`)
+  - SwiftDate (~> 5.0)
   - SwiftRex (~> 0.8.6)
   - SwiftUIVisualEffects (from `./SwiftUIVisualEffects`)
   - TestingExtensions (from `https://github.com/DJBen/TestingExtensions.git`, branch `add-podspec`)
@@ -50,6 +53,7 @@ SPEC REPOS:
     - SnapshotTesting
     - SQLite.swift
     - STRegex
+    - SwiftDate
     - SwiftRex
 
 EXTERNAL SOURCES:
@@ -58,8 +62,8 @@ EXTERNAL SOURCES:
     :git: https://github.com/DJBen/CombineRextensions.git
   SatelliteCatalog:
     :path: "./SatelliteCatalog"
-  SatelliteForcastCore:
-    :path: "./SatelliteForcastCore"
+  SatelliteForecastCore:
+    :path: "./SatelliteForecastCore"
   SatelliteKit:
     :path: "./SatelliteKit"
   StarryNight:
@@ -84,16 +88,17 @@ SPEC CHECKSUMS:
   CombineRextensions: 0771bb5dd2db8bc3a5a191ac361f045c574552ea
   FlagKit: eca7dc89064b0c986302ba9acefad1bf80a435b1
   SatelliteCatalog: 03261393572b58b64f8b26d3456c75953f288d1b
-  SatelliteForcastCore: 9e3247d7e8c60c68eeea074f5cdfa59931ca21c2
+  SatelliteForecastCore: 7b6dfe0ac9bd94531da395702ce321a80e9fcd26
   SatelliteKit: 56c2f87ceb711c89f976509af9040059058e8a51
   SnapshotTesting: 38947050d13960d57a4a9c166fcf51bca7d56970
   SQLite.swift: d2b4642190917051ce6bd1d49aab565fe794eea3
   StarryNight: 57aec7f59091bbbebab2471e391c19ba77b695d9
   STRegex: d49e88d0fe58538d3175fdd989bc1243b9be2a07
+  SwiftDate: 6329e58969a2de31cea7f1ee1143b247693196e7
   SwiftRex: d2450a0555690b8b0f703260d3a8ffbc12edc218
   SwiftUIVisualEffects: 4e6f1fe8159a07e59eaf3918e5f8cd1fe52cadce
   TestingExtensions: a5591da2681222d3714684fcae6ca8560664c453
 
-PODFILE CHECKSUM: 24e5d6d5c3baaa30bcc26cc9cad32159ed7c6d6b
+PODFILE CHECKSUM: 75cda0b265c86e5469e3341b9404da2ecffc7123
 
 COCOAPODS: 1.10.1

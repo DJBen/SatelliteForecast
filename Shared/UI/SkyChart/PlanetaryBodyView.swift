@@ -1,6 +1,6 @@
 //
 //  PlanetaryBodyView.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 6/21/21.
 //

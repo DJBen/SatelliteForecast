@@ -1,13 +1,13 @@
 //
 //  NavigationState.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 6/27/21.
 //
 
 import Foundation
 import SatelliteKit
-import SatelliteForcastCore
+import SatelliteForecastCore
 
 struct NavigationIndexPath: Equatable, Hashable {
     let category: SatelliteCategory?

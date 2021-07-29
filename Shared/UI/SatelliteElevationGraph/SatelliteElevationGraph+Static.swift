@@ -1,6 +1,6 @@
 //
 //  SatelliteElevationGraph+Static.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 6/19/21.
 //
@@ -8,13 +8,35 @@
 import BTree
 import Foundation
 import CoreGraphics
-import SatelliteForcastCore
+import SatelliteForecastCore
+import SatelliteKit
 
 extension SatelliteElevationGraph {
     private static func snapshotPoint(_ snapshot: SatelliteSnapshot, xPercent: CGFloat, rect: CGRect) -> CGPoint {
         let x = rect.width * xPercent
         let y = CGFloat(snapshot.position.elev + 90) / 180 * -rect.height + rect.height
         return CGPoint(x: x, y: y)
+    }
+
+    static func xPercentDatePair(julianDateRange: Range<Double>, configs: SatelliteElevationGraphConfigs) -> [PercentDate] {
+        let calendar = Calendar(identifier: .gregorian)
+        let components = calendar.dateComponents([.year, .month, .day, .hour], from: Date(julianDate: julianDateRange.lowerBound))
+        var julianDate: Double = calendar.date(from: components)!.julianDate
+        var results = [PercentDate]()
+        while true {
+            defer {
+                julianDate += TimeConstants.sec2day * configs.timeGridLineInterval
+            }
+            if julianDate < julianDateRange.lowerBound {
+                continue
+            }
+            let xPercent = (julianDate - julianDateRange.lowerBound) / (julianDateRange.upperBound - julianDateRange.lowerBound)
+            if xPercent > 1 {
+                break
+            }
+            results.append(PercentDate(percent: xPercent, julianDate: julianDate))
+        }
+        return results
     }
 
     static func rasterizedSatelliteElevationPath(

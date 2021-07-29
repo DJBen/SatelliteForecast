@@ -1,12 +1,12 @@
 //
 //  SkyChart+Static.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 6/17/21.
 //
 
 import BTree
-import SatelliteForcastCore
+import SatelliteForecastCore
 import SatelliteKit
 import StarryNight
 
@@ -45,6 +45,18 @@ extension SkyChartViewState {
 }
 
 extension SkyChart {
+    static let labelDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.setLocalizedDateFormatFromTemplate("H:mm:ss")
+        return formatter
+    }()
+
+    static let labelAngleFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.maximumFractionDigits = 0
+        return formatter
+    }()
+    
     static func radius(fromRect rect: CGRect) -> CGFloat {
         return min(rect.width, rect.height) / 2
     }

@@ -1,6 +1,6 @@
 //
 //  AllPassesView.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 6/14/21.
 //
@@ -8,7 +8,7 @@
 import BTree
 import CombineRex
 import CombineRextensions
-import SatelliteForcastCore
+import SatelliteForecastCore
 import SatelliteKit
 import SwiftUI
 
@@ -48,16 +48,15 @@ struct AllPassesViewState: Equatable {
 
         if let passes = satelliteState.passes {
             let items = passes.enumerated().map { i, pass -> Item in
-                let rasterizedSatellitePath = state.skyChartState.rasterizedSatellitePaths[pass]?[.preview]
+                let rasterizedSatellitePath = state.skyChartState.previewSatellitePaths[pass]
                 let rasterizedBackgroundSky: UIImage?
                 if let observer = state.observerForPasses {
-                    rasterizedBackgroundSky = state.skyChartState.rasterizedBackgroundSky[
+                    rasterizedBackgroundSky = state.skyChartState.previewBackgroundSkies[
                         SkyChartBackgroundSkyKey(
                             observer: observer,
-                            julianDate: pass.rise.julianDate,
                             configs: .preset
                         )
-                    ]?[.preview]
+                    ]?.value(closestTo: pass.rise.julianDate)
                 } else {
                     rasterizedBackgroundSky = nil
                 }
@@ -128,8 +127,7 @@ struct AllPassesView: View, Equatable {
                         PassPreviewCell(
                             pass: item.pass,
                             indexOfPass: item.index,
-                            skyChartProducer: skyChartProducer,
-                            skyChartContentSize: .constant(.zero)
+                            skyChartProducer: skyChartProducer
                         )
                     }
                     .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 25))
@@ -202,7 +200,7 @@ extension ViewProducer where Context == AllPassesViewContext, ProducedView == Al
 
 #if DEBUG
 struct AllPassesView_Previews: PreviewProvider {
-    static let tianHePasses: (passes: [Pass], snapshots: BTree<Double, SatelliteSnapshot>) = {
+    static let tianHe: Satellite = {
         let tle = try! TLE(
             raw: """
             TIANHE
@@ -210,7 +208,11 @@ struct AllPassesView_Previews: PreviewProvider {
             2 48274  41.4713  16.3199 0005053  25.9394 109.3813 15.65195495  5304
             """
         )
-        let sat = Satellite(withTLE: tle)
+        return Satellite(withTLE: tle)
+    }()
+
+    static let tianHePasses: (passes: [Pass], snapshots: BTree<Double, SatelliteSnapshot>) = {
+        let sat = tianHe
 
         let formatter = ISO8601DateFormatter()
         let date = formatter.date(from: "2021-06-02T06:29:00-0600")!
@@ -222,7 +224,7 @@ struct AllPassesView_Previews: PreviewProvider {
         )
 
         return sat.findPasses(
-            noradIndex: tle.noradIndex,
+            noradIndex: sat.tle.noradIndex,
             observer: observer,
             coarseSnapshots: snapshots
         )
@@ -244,9 +246,8 @@ struct AllPassesView_Previews: PreviewProvider {
             skyChartProducer: .pure(
                 SkyChart(
                     viewModel: .mock(
-                        state: .empty
+                        state: nil
                     ),
-                    contentSize: .constant(.zero),
                     configs: SkyChartConfigs(
                         backgroundSky: SkyChartConfigs.BackgroundSky(
                             stars: .limitedMagnitude(2),
@@ -259,8 +260,7 @@ struct AllPassesView_Previews: PreviewProvider {
                         azimuthMarkLength: 2,
                         showDirections: false,
                         showPassInfoLabels: false
-                    ),
-                    usage: .preview
+                    )
                 )
             ),
             passViewProducer: .crash
@@ -287,31 +287,31 @@ struct AllPassesView_Previews: PreviewProvider {
                 return SkyChart(
                     viewModel: .mock(
                         state: SkyChartViewState(
-                            mode: .pass(
-                                pass,
-                                observer: observer,
-                                snapshots: SkyChartViewState.NotableSnapshots(
-                                    rise: SkyChartViewState.snapshotsAroundPass(
-                                        snapshots,
-                                        julianDate: pass.rise.julianDate,
-                                        selector: .first
-                                    )!,
-                                    transit: SkyChartViewState.snapshotsAroundPass(
-                                        snapshots,
-                                        julianDate: pass.transit.julianDate,
-                                        selector: .first
-                                    )!,
-                                    set: SkyChartViewState.snapshotsAroundPass(
-                                        snapshots,
-                                        julianDate: pass.set.julianDate,
-                                        selector: .last
-                                    )!,
-                                    illuminationChanges: BTree()
-                                )
-                            )
+                            satellite: tianHe,
+                            pass: pass,
+                            observer: observer,
+                            snapshots: SkyChartViewState.NotableSnapshots(
+                                rise: SkyChartViewState.snapshotsAroundPass(
+                                    snapshots,
+                                    julianDate: pass.rise.julianDate,
+                                    selector: .first
+                                )!,
+                                transit: SkyChartViewState.snapshotsAroundPass(
+                                    snapshots,
+                                    julianDate: pass.transit.julianDate,
+                                    selector: .first
+                                )!,
+                                set: SkyChartViewState.snapshotsAroundPass(
+                                    snapshots,
+                                    julianDate: pass.set.julianDate,
+                                    selector: .last
+                                )!,
+                                illuminationChanges: BTree()
+                            ),
+                            referenceDate: pass.rise.julianDate,
+                            quality: .preview
                         )
                     ),
-                    contentSize: .constant(.zero),
                     configs: SkyChartConfigs(
                         backgroundSky: SkyChartConfigs.BackgroundSky(
                             stars: .limitedMagnitude(2),
@@ -324,8 +324,7 @@ struct AllPassesView_Previews: PreviewProvider {
                         azimuthMarkLength: 2,
                         showDirections: false,
                         showPassInfoLabels: false
-                    ),
-                    usage: .preview
+                    )
                 )
             },
             passViewProducer: .crash

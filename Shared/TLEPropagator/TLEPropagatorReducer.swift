@@ -1,6 +1,6 @@
 //
 //  TLEPropagatorReducer.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 6/7/21.
 //
@@ -8,7 +8,7 @@
 import Foundation
 import os
 import SwiftRex
-import SatelliteForcastCore
+import SatelliteForecastCore
 import BTree
 
 fileprivate let logger = Logger(subsystem: "io.djben.TLEPropagator", category: "reducer")

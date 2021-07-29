@@ -1,6 +1,6 @@
 //
 //  PassView.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 6/5/21.
 //
@@ -8,7 +8,7 @@
 import BTree
 import CombineRex
 import CombineRextensions
-import SatelliteForcastCore
+import SatelliteForecastCore
 import SatelliteKit
 import SwiftUI
 
@@ -40,8 +40,6 @@ struct PassView: View {
     var elevationGraphProducer: ViewProducer<Void, SatelliteElevationGraph>
     var skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
 
-    @State var skyChartContentSize: CGSize = .zero
-
     var body: some View {
         GeometryReader { geometry in
             let rect = geometry.frame(in: .local)
@@ -49,7 +47,7 @@ struct PassView: View {
                 elevationGraphProducer.view()
                     .frame(height: 250, alignment: .leading)
                 skyChartProducer.view(
-                    SkyChartContext(usage: .full, contentSize: $skyChartContentSize)
+                    SkyChartContext(usage: .full)
                 )
                 .frame(height: min(rect.width, rect.height))
                 Spacer(minLength: 10)
@@ -114,6 +112,12 @@ struct PassView_Previews: PreviewProvider {
         )
         let brightest100: Map<Int, SatelliteInfo> = [tle.noradIndex: SatelliteInfo(noradIndex: tle.noradIndex, satellite: sat)]
         let appState = AppState(
+            skyChartState: SkyChartResources(
+                rasterizedSatellitePaths: [:],
+                previewSatellitePaths: [:],
+                rasterizedBackgroundSky: [:],
+                previewBackgroundSkies: [:]
+            ),
             satellites: [
                 tle.noradIndex: SatelliteTrails(
                     snapshots: snapshots.union(fineSnapshots, by: .groupingMatches),
@@ -156,9 +160,7 @@ struct PassView_Previews: PreviewProvider {
                             backgroundSkyConfigs: .preset
                         )
                     ),
-                    contentSize: .constant(.zero),
-                    configs: .preset,
-                    usage: .preview
+                    configs: .preset
                 )
             )
         )

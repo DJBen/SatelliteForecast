@@ -1,17 +1,17 @@
 //
 //  SunlightIndicator.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 6/3/21.
 //
 
 import SwiftUI
 import SatelliteKit
-import SatelliteForcastCore
+import SatelliteForecastCore
 import BTree
 
-struct SunlightIndicatorViewModel {
-    fileprivate enum SunEvent: Equatable, Hashable {
+struct SunlightIndicatorViewModel: Equatable {
+    enum SunEvent: Equatable, Hashable {
         case rise
         case set
 
@@ -34,7 +34,7 @@ struct SunlightIndicatorViewModel {
         }
     }
 
-    fileprivate struct SunEventXCoord: Hashable, Identifiable {
+    struct SunEventXCoord: Hashable, Identifiable {
         let sunEvent: SunEvent
         let xCoord: CGFloat
 
@@ -43,8 +43,8 @@ struct SunlightIndicatorViewModel {
         }
     }
 
-    fileprivate let sunlightGradientStops: [Gradient.Stop]
-    fileprivate let sunEventsXCoord: (CGRect) -> [SunEventXCoord]
+    let sunlightGradientStops: [Gradient.Stop]
+    let sunEventsXPercent: [SunEventXCoord]
 
     init(
         julianDateElevations: BTree<Double, Double>
@@ -103,7 +103,7 @@ struct SunlightIndicatorViewModel {
                 (s1.1 <= 0 && s2.1 > 0)
         }
 
-        let sunEventsXPercent: [SunEventXCoord] = {
+        sunEventsXPercent = {
             guard let (startDate, _) = julianDateElevations.first,
                   let (endDate, _) = julianDateElevations.last else {
                 return []
@@ -125,14 +125,10 @@ struct SunlightIndicatorViewModel {
             }
             return results
         }()
-
-        sunEventsXCoord = { rect in
-            sunEventsXPercent.map { SunEventXCoord(sunEvent: $0.sunEvent, xCoord: $0.xCoord * rect.width) }
-        }
     }
 }
 
-struct SunlightIndicator: View {
+struct SunlightIndicator: View, Equatable {
     var viewModel: SunlightIndicatorViewModel
 
     /// A gradient colored indicator at the bottom to indicate sunlight at the observer's location.
@@ -155,13 +151,19 @@ struct SunlightIndicator: View {
         }
     }
 
+    private func sunEventsXCoord(rect: CGRect) -> [SunlightIndicatorViewModel.SunEventXCoord] {
+        viewModel.sunEventsXPercent.map {
+            SunlightIndicatorViewModel.SunEventXCoord(sunEvent: $0.sunEvent, xCoord: $0.xCoord * rect.width)
+        }
+    }
+
     var body: some View {
         GeometryReader { geometry in
             let rect = geometry.frame(in: .local)
             ZStack {
                 sunlightIndicator
 
-                ForEach(viewModel.sunEventsXCoord(rect)) { sunEventXCoord in
+                ForEach(sunEventsXCoord(rect: rect)) { sunEventXCoord in
                     Image(systemName: sunEventXCoord.sunEvent.systemImageName)
                         .renderingMode(.template)
                         .resizable()

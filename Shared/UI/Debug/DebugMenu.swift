@@ -1,6 +1,6 @@
 //
 //  DebugMenu.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 7/24/21.
 //
@@ -27,6 +27,11 @@ struct DebugMenuConfig: Equatable {
     /// while negative value means mocked date is in the past.
     var mockedOffset: Double = 0
 
+    /// The julian date offset in effect.
+    var effectiveOffset: Double {
+        mockedOffsetOn ? mockedOffset : 0
+    }
+
     static var empty: DebugMenuConfig {
         return DebugMenuConfig()
     }
@@ -48,11 +53,9 @@ struct DebugMenu: View {
     @ObservedObject var viewModel: ObservableViewModel<DebugMenuAction, DebugMenuState?>
     @State var dateWithinPicker: Date = Date()
 
-    private func unwrapState<Content: View>(@ViewBuilder content: (DebugMenuState) -> Content) -> some View {
+    @ViewBuilder private func unwrapState<Content: View>(@ViewBuilder content: (DebugMenuState) -> Content) -> some View {
         if let state = viewModel.state {
-            return AnyView(content(state))
-        } else {
-            return AnyView(EmptyView())
+            content(state)
         }
     }
 

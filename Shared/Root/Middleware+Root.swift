@@ -1,6 +1,6 @@
 //
 //  Middleware+Root.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 7/13/21.
 //

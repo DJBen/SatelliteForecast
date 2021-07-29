@@ -1,12 +1,12 @@
 //
 //  TLEPropagatorAction.swift
-//  SatelliteForcastCore
+//  SatelliteForecastCore
 //
 //  Created by Ben Lu on 6/6/21.
 //
 
 import Foundation
-import SatelliteForcastCore
+import SatelliteForecastCore
 import BTree
 
 enum TLEPropagatorAction {

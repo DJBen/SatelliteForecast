@@ -8,8 +8,8 @@
 import XCTest
 import CombineRex
 import TestingExtensions
-@testable import SatelliteForcast
-import SatelliteForcastCore
+@testable import SatelliteForecast
+import SatelliteForecastCore
 
 class SatelliteListViewMiddlewareTests: XCTestCase {
 

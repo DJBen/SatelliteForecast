@@ -1,6 +1,6 @@
 //
 //  SatelliteLoaderMiddleware.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 6/4/21.
 //
@@ -11,7 +11,7 @@ import BTree
 import Combine
 import CombineRex
 import SatelliteKit
-import SatelliteForcastCore
+import SatelliteForecastCore
 import SatelliteCatalog
 
 fileprivate let logger = Logger(subsystem: "io.djben.satelliteLoader", category: "middleware")

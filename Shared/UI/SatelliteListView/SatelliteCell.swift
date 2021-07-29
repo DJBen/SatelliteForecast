@@ -1,6 +1,6 @@
 //
 //  SatelliteCell.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 6/25/21.
 //
@@ -8,7 +8,7 @@
 import SwiftUI
 import SatelliteCatalog
 import SatelliteKit
-import SatelliteForcastCore
+import SatelliteForecastCore
 import Regex
 
 struct SatelliteCell: View {

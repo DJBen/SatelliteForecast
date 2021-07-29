@@ -1,6 +1,6 @@
 //
 //  SatelliteListViewMiddleware.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 6/5/21.
 //

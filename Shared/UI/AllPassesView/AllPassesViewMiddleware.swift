@@ -1,6 +1,6 @@
 //
 //  AllPassesViewMiddleware.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 6/7/21.
 //
@@ -11,7 +11,7 @@ import os
 import Combine
 import CombineRex
 import SatelliteKit
-import SatelliteForcastCore
+import SatelliteForecastCore
 
 fileprivate let logger = Logger(subsystem: "io.djben.allPassesView", category: "middleware")
 

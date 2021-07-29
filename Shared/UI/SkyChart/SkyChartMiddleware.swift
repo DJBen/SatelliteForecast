@@ -1,6 +1,6 @@
 //
 //  SkyChartMiddleware.swift
-//  SatelliteForcast
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 6/7/21.
 //
@@ -9,6 +9,7 @@ import Foundation
 import os
 import Combine
 import CombineRex
+import SatelliteForecastCore
 import SatelliteKit
 import StarryNight
 
@@ -26,16 +27,17 @@ extension EffectMiddleware where
                 switch action {
                 case .onAppear:
                     return .doNothing
-                case .rasterizedBackgroundSky(_, usage: _, key: _):
+                case .rasterizedBackgroundSky(_, quality: _, julianDate: _, key: _):
                     return .doNothing
-                case .rasterizedSatellitePath(_, usage: _, pass: _):
+                case .rasterizedSatellitePath(_, quality: _, pass: _):
                     return .doNothing
-                case let .requestRasterizedBackgroundSky(usage, size, key, traitCollection):
+                case let .requestRasterizedBackgroundSky(size, quality, julianDate, key, traitCollection):
                     return .promise(token: "") { context, sink in
                         DispatchQueue.global(qos: .userInitiated).async {
                             let state = getState()
-                            // Skip if image already generated.
-                            if let _ = state.skyChartState.rasterizedBackgroundSky[key]?[usage] {
+                            let dataSource = quality == .full ? state.skyChartState.rasterizedBackgroundSky : state.skyChartState.previewBackgroundSkies
+                            // Skip if image already generated within the last minute.
+                            if let _ = dataSource[key]?.value(closestTo: julianDate, within: TimeConstants.sec2day) {
                                 return
                             }
 
@@ -51,24 +53,26 @@ extension EffectMiddleware where
                                 }(),
                                 constellations: key.configs.showConstellationLines ? Constellation.all : [],
                                 observer: key.observer,
-                                julianDate: key.julianDate,
+                                julianDate: julianDate,
                                 starColor: UIColor(named: "star", in: nil, compatibleWith: traitCollection)!,
                                 constellationLineColor: UIColor(named: "constellationLine", in: nil, compatibleWith: traitCollection)!,
                                 magToRadius: key.configs.starMagToDisplayRadiusMappingFunction.apply
                             )
-                            logger.debug("Rasterized background sky at observer coodinate \(String(describing: key.observer)) @ JD \(key.julianDate).")
+
+                            logger.debug("Rasterized background sky at observer coodinate \(String(describing: key.observer)) @ JD \(julianDate).")
 
                             sink(
-                                .rasterizedBackgroundSky(image, usage: usage, key: key)
+                                .rasterizedBackgroundSky(image, quality: quality, julianDate: julianDate, key: key)
                             )
                         }
                     }
-                case let .requestRasterizedSatellitePath(usage, size, pass, traitCollection):
+                case let .requestRasterizedSatellitePath(size, quality, pass, traitCollection):
                     return .promise(token: "") { context, sink in
                         DispatchQueue.global(qos: .userInitiated).async {
                             let state = getState()
+                            let dataSource = quality == .full ? state.skyChartState.rasterizedSatellitePaths : state.skyChartState.previewSatellitePaths
                             // Skip if image already generated.
-                            if let _ = state.skyChartState.rasterizedSatellitePaths[pass]?[usage] {
+                            if let _ = dataSource[pass] {
     //                            logger.debug("\(pass.noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate) already rasterized, skipping.")
                                 return
                             }
@@ -87,14 +91,14 @@ extension EffectMiddleware where
                                     snapshotsDuringPass: snapshotsDuringPass,
                                     illuminatedColor: UIColor(named: "satellitePath_illuminated")!,
                                     unlitColor: UIColor(named: "satellitePath_notIlluminated")!,
-                                    arrowSize: usage == .preview ? 8 : 16
+                                    arrowSize: quality == .preview ? 8 : 16
                                 )
                                 logger.debug("Rasterized \(pass.noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate).")
 
                                 sink(
                                     .rasterizedSatellitePath(
                                         image,
-                                        usage: usage,
+                                        quality: quality,
                                         pass: pass
                                     )
                                 )
