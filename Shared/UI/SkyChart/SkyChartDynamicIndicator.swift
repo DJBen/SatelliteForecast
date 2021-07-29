@@ -65,7 +65,8 @@ struct SkyChartDynamicIndicator: View {
                     \(Self.labelDateFormatter.string(from: Date(julianDate: snapshotPair.first.julianDate)))
                     """,
                     snapshotPair: snapshotPair,
-                    rect: rect
+                    rect: rect,
+                    modifierFactory: HighlightedPassLabelModifier.curry(shouldHighlight: snapshotPair.first.isIlluminated)
                 )
                 .blurEffectStyle(colorScheme == .light ? .systemMaterialDark : .systemMaterialLight)
                 .vibrancyEffectStyle(.fill)

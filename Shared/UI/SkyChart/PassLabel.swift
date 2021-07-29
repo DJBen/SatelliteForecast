@@ -11,10 +11,11 @@ import SatelliteKit
 import SatelliteForecastCore
 
 extension SkyChart {
-    struct PassLabel: View {
+    struct PassLabel<BackgroundModifier: ViewModifier>: View {
         let text: String
         let snapshotPair: SkyChartViewState.SnapshotsAroundPass
         let rect: CGRect
+        let modifierFactory: (Angle) -> BackgroundModifier
         
         var body: some View {
             let (rot, textRotation) = SkyChart.rotationAndTextRotation(snapshotPair: snapshotPair, rect: rect)
@@ -28,7 +29,7 @@ extension SkyChart {
                 .frame(alignment: .leading)
 
                 Text(text)
-                    .passInfoLabelModifiers()
+                    .modifier(modifierFactory(.radians(textRotation)))
                     .rotationEffect(.radians(textRotation))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .offset(x: 20, y: 0)
@@ -39,15 +40,36 @@ extension SkyChart {
     }
 }
 
-fileprivate extension View {
-    func passInfoLabelModifiers() -> some View {
-        return fixedSize()
-            .padding(4)
+struct PassLabelModifier: ViewModifier {
+    var rotationAngle: Angle = .zero
+
+    func body(content: Content) -> some View {
+        content.fixedSize()
+            .padding(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
             .foregroundColor(Color("passInfoLabel_foreground"))
             .font(.caption.weight(.semibold).monospaced())
-            .background(
-                Color.clear.blurEffect()
-                    .cornerRadius(8)
-            )
+            .background(LinearGradient(gradient: Gradient(colors: [Color(UIColor.systemIndigo), Color(UIColor.systemBlue)]), startPoint: .leading, endPoint: .trailing).rotationEffect(rotationAngle))
+            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+    }
+}
+
+struct HighlightedPassLabelModifier: ViewModifier {
+    var rotationAngle: Angle = .zero
+    var shouldHighlight: Bool = true
+
+    static func curry(shouldHighlight: Bool) -> (Angle) -> HighlightedPassLabelModifier {
+        {
+            self.init(rotationAngle: $0, shouldHighlight: shouldHighlight)
+        }
+    }
+
+    func body(content: Content) -> some View {
+        let gradient = shouldHighlight ? Gradient(colors: [Color(UIColor.systemPink), Color(UIColor.systemOrange)]) : Gradient(colors: [Color(UIColor.systemGray), Color(UIColor.systemGray2)])
+        content.fixedSize()
+            .padding(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
+            .foregroundColor(Color("passInfoLabel_foreground"))
+            .font(.caption.weight(.semibold).monospaced())
+            .background(LinearGradient(gradient: gradient, startPoint: .leading, endPoint: .trailing).rotationEffect(rotationAngle))
+            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 }

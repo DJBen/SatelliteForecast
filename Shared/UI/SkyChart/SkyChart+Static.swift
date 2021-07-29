@@ -56,7 +56,7 @@ extension SkyChart {
         formatter.maximumFractionDigits = 0
         return formatter
     }()
-    
+
     static func radius(fromRect rect: CGRect) -> CGFloat {
         return min(rect.width, rect.height) / 2
     }
@@ -252,7 +252,7 @@ struct ImageRenderer_Previews: PreviewProvider {
 
         var body: some View {
             let snapshotsDuringPass = snapshots.subtree(from: pass.rise.julianDate, through: pass.set.julianDate)
-            let rect = CGRect(origin: .zero, size: CGSize(width: 250, height: 250))
+            let rect = CGRect(origin: .zero, size: CGSize(width: 350, height: 350))
 
             Image(
                 uiImage: SkyChart.rasterizedSatellitePassPath(
@@ -268,21 +268,32 @@ struct ImageRenderer_Previews: PreviewProvider {
                 SkyChart.PassLabel(
                     text: "Rise",
                     snapshotPair: SkyChartViewState.snapshotsAroundPass(snapshotsDuringPass, julianDate: pass.rise.julianDate, selector: .first)!,
-                    rect: rect
+                    rect: rect,
+                    modifierFactory: PassLabelModifier.init(rotationAngle:)
                 )
             )
             .overlay(
                 SkyChart.PassLabel(
                     text: "Transit",
                     snapshotPair: SkyChartViewState.snapshotsAroundPass(snapshotsDuringPass, julianDate: pass.transit.julianDate, selector: .first)!,
-                    rect: rect
+                    rect: rect,
+                    modifierFactory: PassLabelModifier.init(rotationAngle:)
                 )
             )
             .overlay(
                 SkyChart.PassLabel(
                     text: "Set",
                     snapshotPair: SkyChartViewState.snapshotsAroundPass(snapshotsDuringPass, julianDate: pass.set.julianDate, selector: .last)!,
-                    rect: rect
+                    rect: rect,
+                    modifierFactory: PassLabelModifier.init(rotationAngle:)
+                )
+            )
+            .overlay(
+                SkyChart.PassLabel(
+                    text: "Special",
+                    snapshotPair: SkyChartViewState.snapshotsAroundPass(snapshotsDuringPass, julianDate: pass.rise.julianDate + 180 * TimeConstants.sec2day, selector: .last)!,
+                    rect: rect,
+                    modifierFactory: HighlightedPassLabelModifier.curry(shouldHighlight: true)
                 )
             )
             .background(
@@ -306,7 +317,7 @@ struct ImageRenderer_Previews: PreviewProvider {
 
         ForEach(enumerated: passes, id: \.self.rise.julianDate) { index, pass in
             Preview(pass: pass, snapshots: snapshots)
-                .previewLayout(.fixed(width: 500, height: 500))
+                .previewLayout(.fixed(width: 350, height: 350))
         }
     }
 }

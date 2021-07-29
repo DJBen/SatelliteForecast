@@ -220,19 +220,22 @@ struct SkyChart: View {
                         PassLabel(
                             text: "↑ \(Self.labelDateFormatter.string(from: Date(julianDate: state.pass.rise.julianDate)))",
                             snapshotPair: state.snapshots.rise,
-                            rect: rect
+                            rect: rect,
+                            modifierFactory: PassLabelModifier.init(rotationAngle:)
                         )
 
                         PassLabel(
                             text: "↓ \(Self.labelDateFormatter.string(from: Date(julianDate: state.pass.set.julianDate)))",
                             snapshotPair: state.snapshots.set,
-                            rect: rect
+                            rect: rect,
+                            modifierFactory: PassLabelModifier.init(rotationAngle:)
                         )
 
                         PassLabel(
                             text: "∠\(Self.labelAngleFormatter.string(from: NSNumber(value: state.pass.transit.elev))!)° \(Self.labelDateFormatter.string(from: Date(julianDate: state.pass.transit.julianDate)))",
                             snapshotPair: state.snapshots.transit,
-                            rect: rect
+                            rect: rect,
+                            modifierFactory: PassLabelModifier.init(rotationAngle:)
                         )
 
                         ForEach(state.pass.illumination.changes, id: \.datePosition) { change in
@@ -243,7 +246,8 @@ struct SkyChart: View {
                                         dateFormatter: Self.labelDateFormatter
                                     ),
                                     snapshotPair: illuminationChangeAndSnapshots.snapshots,
-                                    rect: rect
+                                    rect: rect,
+                                    modifierFactory: PassLabelModifier.init(rotationAngle:)
                                 )
                             }
                         }
