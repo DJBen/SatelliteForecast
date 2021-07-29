@@ -146,6 +146,7 @@ struct PassPreviewCell_Previews: PreviewProvider {
                     SkyChart(
                         viewModel: .mock(
                             state: SkyChartViewState(
+                                satellite: sat,
                                 pass: pass,
                                 observer: observerCoordinate,
                                 snapshots: SkyChartViewState.NotableSnapshots(

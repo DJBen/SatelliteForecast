@@ -62,11 +62,15 @@ struct SkyChartViewState: Equatable {
         var illuminationChanges: BTree<Double, IlluminationChangeAndSnapshots>
     }
 
+    var satellite: Satellite
     var pass: Pass
     var observer: LatLonAlt
     var snapshots: NotableSnapshots
+    /// The reference date of the background sky. For performance concerns, this value might be jumpy, e.g. refreshes once every 10 seconds.
     var referenceDate: Double
-    var snapshotAtReferenceDate: SatelliteSnapshot?
+    /// The julian date offset between the julian date in display and the actual julian date.
+    /// This property is being used by the dynamic label
+    var julianDateOffset: Double = 0
     var quality: SkyChartResources.Quality
     var rasterizedSatellitePaths: UIImage?
     var rasterizedBackgroundSky: UIImage?
@@ -96,17 +100,6 @@ struct SkyChartViewState: Equatable {
             return (pass, notableSnapshots)
         }()
 
-        let snapshotAtReferenceDate: SatelliteSnapshot? = {
-            guard (pass.rise.julianDate ..< pass.set.julianDate).contains(referenceDate) else {
-                return nil
-            }
-
-            return info.satellite.snapshot(
-                julianDate: referenceDate,
-                observer: observer
-            )
-        }()
-
         let rasterizedSatellitePaths: UIImage? = {
             switch quality {
             case .full:
@@ -117,11 +110,12 @@ struct SkyChartViewState: Equatable {
         }()
 
         return SkyChartViewState(
+            satellite: info.satellite,
             pass: passAndSnapshots.pass,
             observer: observer,
             snapshots: passAndSnapshots.snapshots,
             referenceDate: referenceDate,
-            snapshotAtReferenceDate: snapshotAtReferenceDate,
+            julianDateOffset: state.debugMenu.effectiveOffset,
             quality: quality,
             rasterizedSatellitePaths: rasterizedSatellitePaths,
             rasterizedBackgroundSky: rasterizedBackgroundSky
@@ -179,18 +173,24 @@ struct SkyChartViewState: Equatable {
             }
         }()
 
-        return pass.flatMap {
+        return pass.flatMap { pass in
             project(
                 state: state,
-                pass: $0,
-                referenceDate: state.julianDate,
+                pass: pass,
+                referenceDate: {
+                    if (pass.rise.julianDate..<pass.set.julianDate).contains(state.julianDate) {
+                        return state.julianDate
+                    } else {
+                        return pass.rise.julianDate
+                    }
+                }(),
                 quality: .full,
                 rasterizedBackgroundSky: state.skyChartState.rasterizedBackgroundSky[
                     SkyChartBackgroundSkyKey(
                         observer: observer,
                         configs: backgroundSkyConfigs
                     )
-                ]?.value(closestTo: $0.rise.julianDate.julianDateRoundedToNearestMinute())
+                ]?.value(closestTo: pass.rise.julianDate.julianDateRoundedToNearestMinute())
             )
         }
     }
@@ -216,33 +216,21 @@ struct SkyChart: View {
                 GeometryReader { geometry in
                     let rect = geometry.frame(in: .local)
 
-                    let dateFormatter: DateFormatter = {
-                        let formatter = DateFormatter()
-                        formatter.setLocalizedDateFormatFromTemplate("H:mm:ss")
-                        return formatter
-                    }()
-
-                    let numberFormatter: NumberFormatter = {
-                        let formatter = NumberFormatter()
-                        formatter.maximumFractionDigits = 0
-                        return formatter
-                    }()
-
                     ZStack {
                         PassLabel(
-                            text: "↑ \(dateFormatter.string(from: Date(julianDate: state.pass.rise.julianDate)))",
+                            text: "↑ \(Self.labelDateFormatter.string(from: Date(julianDate: state.pass.rise.julianDate)))",
                             snapshotPair: state.snapshots.rise,
                             rect: rect
                         )
 
                         PassLabel(
-                            text: "↓ \(dateFormatter.string(from: Date(julianDate: state.pass.set.julianDate)))",
+                            text: "↓ \(Self.labelDateFormatter.string(from: Date(julianDate: state.pass.set.julianDate)))",
                             snapshotPair: state.snapshots.set,
                             rect: rect
                         )
 
                         PassLabel(
-                            text: "∠\(numberFormatter.string(from: NSNumber(value: state.pass.transit.elev))!)° \(dateFormatter.string(from: Date(julianDate: state.pass.transit.julianDate)))",
+                            text: "∠\(Self.labelAngleFormatter.string(from: NSNumber(value: state.pass.transit.elev))!)° \(Self.labelDateFormatter.string(from: Date(julianDate: state.pass.transit.julianDate)))",
                             snapshotPair: state.snapshots.transit,
                             rect: rect
                         )
@@ -252,7 +240,7 @@ struct SkyChart: View {
                                 PassLabel(
                                     text: LocalizedStrings.SkyChart.PassLabel.textForIlluminationChange(
                                         change,
-                                        dateFormatter: dateFormatter
+                                        dateFormatter: Self.labelDateFormatter
                                     ),
                                     snapshotPair: illuminationChangeAndSnapshots.snapshots,
                                     rect: rect
@@ -385,25 +373,24 @@ struct SkyChart: View {
         }
     }
 
-    @ViewBuilder var currentPositionIndicator: some View {
-        unwrapState { state in
-            if let snapshot = state.snapshotAtReferenceDate {
-                SkyChartSatelliteIndicator(
-                    state: SkyChartSatelliteIndicatorState(
-                        coordinate: snapshot.position
-                    )
-                )
-            }
-        }
-    }
-
     var body: some View {
         unwrapState { state in
             SkyChartBackground(
                 state: SkyChartBackgroundState(observer: state.observer),
                 configs: configs
             )
+            .equatable()
             .overlay(passInfoLabels)
+            .overlay(
+                SkyChartDynamicIndicator(
+                    state: SkyChartDynamicIndicatorState(
+                        satellite: state.satellite,
+                        pass: state.pass,
+                        observer: state.observer,
+                        julianDateOffset: state.julianDateOffset
+                    )
+                ).clipShape(Circle())
+            )
             .background(
                 backgroundSky
                     .overlay(loadingIndicator)
@@ -476,7 +463,7 @@ fileprivate extension Double {
 
 #if DEBUG
 struct SkyChart_Previews: PreviewProvider {
-    static let issPass: (Pass, BTree<Double, SatelliteSnapshot>) = {
+    static let issPass: (Satellite, Pass, BTree<Double, SatelliteSnapshot>) = {
         let tle = try! TLE(
             raw: """
             ISS (ZARYA)
@@ -501,10 +488,10 @@ struct SkyChart_Previews: PreviewProvider {
             coarseSnapshots: snapshots
         )
         let firstPass = passes.first!
-        return (firstPass, fineSnapshots.subtree(from: firstPass.rise.julianDate, through: firstPass.set.julianDate))
+        return (sat, firstPass, fineSnapshots.subtree(from: firstPass.rise.julianDate, through: firstPass.set.julianDate))
     }()
 
-    static let tianHePass: (Pass, BTree<Double, SatelliteSnapshot>) = {
+    static let tianHePass: (Satellite, Pass, BTree<Double, SatelliteSnapshot>) = {
         let tle = try! TLE(
             raw: """
             TIANHE
@@ -529,17 +516,18 @@ struct SkyChart_Previews: PreviewProvider {
             coarseSnapshots: snapshots
         )
         let firstPass = passes.first!
-        return (firstPass, fineSnapshots.subtree(from: firstPass.rise.julianDate, through: firstPass.set.julianDate))
+        return (sat, firstPass, fineSnapshots.subtree(from: firstPass.rise.julianDate, through: firstPass.set.julianDate))
     }()
 
     static var previews: some View {
-        let (pass, snapshots) = issPass
+        let (satellite, pass, snapshots) = issPass
 
         ForEach(ColorScheme.allCases, id: \.self) { colorScheme in
             let traitCollection = UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
             SkyChart(
                 viewModel: .mock(
                     state: SkyChartViewState(
+                        satellite: satellite,
                         pass: pass,
                         observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
                         snapshots: SkyChartViewState.NotableSnapshots(
@@ -576,11 +564,12 @@ struct SkyChart_Previews: PreviewProvider {
             .preferredColorScheme(colorScheme)
         }
 
-        let (pass2, snapshots2) = tianHePass
+        let (satellite2, pass2, snapshots2) = tianHePass
 
         SkyChart(
             viewModel: .mock(
                 state: SkyChartViewState(
+                    satellite: satellite2,
                     pass: pass2,
                     observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
                     snapshots: SkyChartViewState.NotableSnapshots(

@@ -200,7 +200,7 @@ extension ViewProducer where Context == AllPassesViewContext, ProducedView == Al
 
 #if DEBUG
 struct AllPassesView_Previews: PreviewProvider {
-    static let tianHePasses: (passes: [Pass], snapshots: BTree<Double, SatelliteSnapshot>) = {
+    static let tianHe: Satellite = {
         let tle = try! TLE(
             raw: """
             TIANHE
@@ -208,7 +208,11 @@ struct AllPassesView_Previews: PreviewProvider {
             2 48274  41.4713  16.3199 0005053  25.9394 109.3813 15.65195495  5304
             """
         )
-        let sat = Satellite(withTLE: tle)
+        return Satellite(withTLE: tle)
+    }()
+
+    static let tianHePasses: (passes: [Pass], snapshots: BTree<Double, SatelliteSnapshot>) = {
+        let sat = tianHe
 
         let formatter = ISO8601DateFormatter()
         let date = formatter.date(from: "2021-06-02T06:29:00-0600")!
@@ -220,7 +224,7 @@ struct AllPassesView_Previews: PreviewProvider {
         )
 
         return sat.findPasses(
-            noradIndex: tle.noradIndex,
+            noradIndex: sat.tle.noradIndex,
             observer: observer,
             coarseSnapshots: snapshots
         )
@@ -283,6 +287,7 @@ struct AllPassesView_Previews: PreviewProvider {
                 return SkyChart(
                     viewModel: .mock(
                         state: SkyChartViewState(
+                            satellite: tianHe,
                             pass: pass,
                             observer: observer,
                             snapshots: SkyChartViewState.NotableSnapshots(

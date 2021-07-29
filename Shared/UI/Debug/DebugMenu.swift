@@ -27,6 +27,11 @@ struct DebugMenuConfig: Equatable {
     /// while negative value means mocked date is in the past.
     var mockedOffset: Double = 0
 
+    /// The julian date offset in effect.
+    var effectiveOffset: Double {
+        mockedOffsetOn ? mockedOffset : 0
+    }
+
     static var empty: DebugMenuConfig {
         return DebugMenuConfig()
     }

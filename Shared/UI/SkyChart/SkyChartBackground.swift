@@ -12,7 +12,7 @@ struct SkyChartBackgroundState: Equatable {
     var observer: LatLonAlt
 }
 
-struct SkyChartBackground: View {
+struct SkyChartBackground: View, Equatable {
     var state: SkyChartBackgroundState
     var configs: SkyChartConfigs
 
