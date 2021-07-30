@@ -17,47 +17,65 @@ enum PassViewAction {
 }
 
 struct PassViewState: Equatable {
-    var info: SatelliteInfo?
-    var selectedPass: Pass?
+    var info: SatelliteInfo
+    var pass: Pass
 
-    static func project(state: AppState) -> PassViewState {
-        PassViewState(
-            info: state.navigationState.selectedSatelliteNoradIndex.flatMap { state.satelliteLoaderState[$0] },
-            selectedPass: state.selectedSatellitePass
+    static func project(state: AppState) -> PassViewState? {
+        guard let info = state.navigationState.selectedSatelliteNoradIndex.flatMap({ state.satelliteLoaderState[$0] }),
+              let selectedPass = state.selectedSatellitePass else {
+            return nil
+        }
+        return PassViewState(
+            info: info,
+            pass: selectedPass
         )
-    }
-
-    static var empty: PassViewState {
-        return PassViewState()
     }
 }
 
 /// The satellite detail view shows satellite passes and the sky chart during the first visible pass (if available).
 struct PassView: View {
-    @ObservedObject var viewModel: ObservableViewModel<PassViewAction, PassViewState>
+    @ObservedObject var viewModel: ObservableViewModel<PassViewAction, PassViewState?>
 
     var context: PassViewContext
     var elevationGraphProducer: ViewProducer<Void, SatelliteElevationGraph>
     var skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
 
     var body: some View {
-        GeometryReader { geometry in
-            let rect = geometry.frame(in: .local)
-            VStack(spacing: 20) {
-                elevationGraphProducer.view()
-                    .frame(height: 250, alignment: .leading)
-                skyChartProducer.view(
-                    SkyChartContext(usage: .full)
-                )
-                .frame(height: min(rect.width, rect.height))
-                Spacer(minLength: 10)
+        if let state = viewModel.state {
+            GeometryReader { geometry in
+                let rect = geometry.frame(in: .local)
+                VStack(spacing: 20) {
+                    elevationGraphProducer.view()
+                        .frame(height: 250, alignment: .leading)
+                    skyChartProducer.view(
+                        SkyChartContext(usage: .full)
+                    )
+                    .frame(height: min(rect.width, rect.height))
+                    Spacer(minLength: 10)
+                }
+                .clipShape(Rectangle())
+                .navigationTitle(Date(julianDate: state.pass.rise.julianDate).formatted(date: .abbreviated, time: .shortened))
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        VStack(alignment: .center, spacing: 4) {
+                            Text(Date(julianDate: state.pass.rise.julianDate).formatted(date: .abbreviated, time: .shortened))
+                                .font(.headline)
+                                .frame(alignment: .center)
+                                .multilineTextAlignment(.center)
+                            Text(LocalizedStrings.PassView.descriptionToolbarText(for: state.pass))
+                                .lineLimit(2)
+                                .font(.caption)
+                                .frame(alignment: .center)
+                                .multilineTextAlignment(.center)
+                            Color.clear
+                        }
+                    }
+                }
             }
-            .clipShape(Rectangle())
-            .navigationTitle(viewModel.state.info?.satellite.commonName ?? "")
-            .navigationBarTitleDisplayMode(.inline)
-        }
-        .onAppear {
-            viewModel.dispatch(.onAppear)
+            .onAppear {
+                viewModel.dispatch(.onAppear)
+            }
         }
     }
 }
@@ -74,7 +92,7 @@ extension ViewProducer where Context == PassViewContext, ProducedView == PassVie
                         action: AppAction.passView,
                         state: PassViewState.project(state:)
                     )
-                    .asObservableViewModel(initialState: .empty),
+                    .asObservableViewModel(initialState: nil),
                 context: context,
                 elevationGraphProducer: ViewProducer<Void, SatelliteElevationGraph>
                     .satelliteElevationGraph(viewModel: viewModel),
@@ -139,7 +157,8 @@ struct PassView_Previews: PreviewProvider {
         PassView(
             viewModel: .mock(
                 state: PassViewState(
-                    info: SatelliteInfo(noradIndex: tle.noradIndex, satellite: sat)
+                    info: SatelliteInfo(noradIndex: tle.noradIndex, satellite: sat),
+                    pass: passes[0]
                 )
             ),
             context: PassViewContext(),

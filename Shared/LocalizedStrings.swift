@@ -249,6 +249,28 @@ enum LocalizedStrings {
     }
 
     enum AllPassesView {
+        private static let dateFormatter: DateFormatter = {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .medium
+            formatter.timeStyle = .none
+            return formatter
+        }()
+
+        static func searchPassRangeToolbarText(range: Range<Double>, now: Double) -> String {
+            let format = NSLocalizedString(
+                "AllPassesView.searchPassRangeToolbar.text",
+                tableName: nil,
+                bundle: .main,
+                value: "Showing passes up to %1$@",
+                comment: "The auxiliary text under the navigation title detailing the search date range of the passes."
+            )
+
+            return String(
+                format: format,
+                dateFormatter.string(from: Date(julianDate: range.upperBound))
+            )
+        }
+
         enum Section {
             enum VisiblePasses {
                 static var header: String {
@@ -293,6 +315,78 @@ enum LocalizedStrings {
                     )
                 }
             }
+        }
+    }
+
+    enum PassView {
+        static func descriptionToolbarText(for pass: Pass) -> String {
+            let north = NSLocalizedString(
+                "PassView.direction.north",
+                tableName: nil,
+                bundle: .main,
+                value: "north",
+                comment: ""
+            )
+            let northEast = NSLocalizedString(
+                "PassView.direction.northeast",
+                tableName: nil,
+                bundle: .main,
+                value: "northeast",
+                comment: ""
+            )
+            let east = NSLocalizedString(
+                "PassView.direction.east",
+                tableName: nil,
+                bundle: .main,
+                value: "east",
+                comment: ""
+            )
+            let southeast = NSLocalizedString(
+                "PassView.direction.southeast",
+                tableName: nil,
+                bundle: .main,
+                value: "southeast",
+                comment: ""
+            )
+            let south = NSLocalizedString(
+                "PassView.direction.south",
+                tableName: nil,
+                bundle: .main,
+                value: "south",
+                comment: ""
+            )
+            let southwest = NSLocalizedString(
+                "PassView.direction.southwest",
+                tableName: nil,
+                bundle: .main,
+                value: "southwest",
+                comment: ""
+            )
+            let west = NSLocalizedString(
+                "PassView.direction.west",
+                tableName: nil,
+                bundle: .main,
+                value: "west",
+                comment: ""
+            )
+            let northwest = NSLocalizedString(
+                "PassView.direction.northwest",
+                tableName: nil,
+                bundle: .main,
+                value: "northwest",
+                comment: ""
+            )
+            let angles: [String] = [north, northEast, east, southeast, south, southwest, west, northwest, north]
+            let riseDirection = angles[Int(floor(limit360(pass.rise.azim) / 45))]
+            let setDirection = angles[Int(floor(limit360(pass.set.azim) / 45))]
+            let format = NSLocalizedString(
+                "PassView.descriptionToolbar.text",
+                tableName: nil,
+                bundle: .main,
+                value: "Rises from %2$@ and sets into %3$@",
+                comment: "The toolbar of the pass view describing the direction of the pass. The first and second arguments correspond to the directions of rising and setting."
+            )
+            return String(format: format, riseDirection, setDirection)
         }
     }
 
