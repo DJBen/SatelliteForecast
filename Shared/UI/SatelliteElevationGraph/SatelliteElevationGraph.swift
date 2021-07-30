@@ -88,8 +88,7 @@ struct SatelliteElevationGraphState: Equatable {
             highlightedDateRange: state.selectedSatellitePass.map { pass -> Range<Double> in
                 return pass.rise.julianDate..<pass.set.julianDate
             },
-            julianDateSunElevs: state.currentSatelliteSnapshots.map { ($0, $1.sunElevation) }
-                .reduce(into: BTree<Double, Double>(), { $0.insertOrReplace($1) }),
+            julianDateSunElevs: SunlightIndicator.snapshotsToSunElevs(state.currentSatelliteSnapshots),
             rasterizedElevationGraph: rasterizedElevationGraph,
             configs: satelliteElevationGraphConfigs
         )
@@ -285,6 +284,7 @@ struct SatelliteElevationGraph: View {
                 )
                 .equatable()
                 .frame(height: 24)
+                .drawingGroup()
 
                 DateFooter(
                     state: DateFooterState(

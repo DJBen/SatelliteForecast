@@ -150,6 +150,24 @@ struct SunlightIndicator: View, Equatable {
                 )
         }
     }
+    
+    /// An efficient function to map dense satellite snapshots over a date range to a sparser JD -> sun elevation tree.
+    /// - Parameter snapshots: The snapshots.
+    /// - Returns: A tree mapping from JD -> sun elevations.
+    static func snapshotsToSunElevs(_ snapshots: BTree<Double, SatelliteSnapshot>) -> BTree<Double, Double> {
+        guard let (startDate, _) = snapshots.first, let (endDate, _) = snapshots.last else {
+            return BTree()
+        }
+        var julianDateElevations = BTree<Double, Double>()
+        // Stride in a 10 minute interval across the julian date to improve performance
+        stride(from: startDate, through: endDate, by: 10 * TimeConstants.min2day).forEach { julianDate in
+            guard let closestValue = snapshots.value(closestTo: julianDate) else {
+                return
+            }
+            julianDateElevations.insert((julianDate, closestValue.sunElevation))
+        }
+        return julianDateElevations
+    }
 
     private func sunEventsXCoord(rect: CGRect) -> [SunlightIndicatorViewModel.SunEventXCoord] {
         viewModel.sunEventsXPercent.map {
