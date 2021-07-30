@@ -6,8 +6,9 @@
 //
 
 import Foundation
-import SatelliteForecastCore
 import SatelliteCatalog
+import SatelliteForecastCore
+import SatelliteKit
 
 enum LocalizedStrings {
     enum SatelliteOverviewView {
@@ -321,6 +322,50 @@ enum LocalizedStrings {
                     bundle: .main,
                     value: "Unlit",
                     comment: "The pass happens entirely unlit"
+                )
+            }
+        }
+
+        private static let durationFormatter: RelativeDateTimeFormatter = {
+            let formatter = RelativeDateTimeFormatter()
+            formatter.dateTimeStyle = .named
+            return formatter
+        }()
+
+        static func relativeDate(pass: Pass, referenceDate: Double) -> String {
+            if referenceDate < pass.rise.julianDate {
+                let format = NSLocalizedString(
+                    "PassPreviewCell.relativeDate.riseInTheFuture",
+                    tableName: nil,
+                    bundle: .main,
+                    value: "Rising %@",
+                    comment: "A string describing that the satellite rises in a specific time in the future"
+                )
+                return String(
+                    format: format,
+                    durationFormatter.localizedString(
+                        fromTimeInterval: (pass.rise.julianDate - referenceDate) * TimeConstants.day2sec)
+                )
+            } else if referenceDate > pass.set.julianDate {
+                let format = NSLocalizedString(
+                    "PassPreviewCell.relativeDate.alreadyPassed",
+                    tableName: nil,
+                    bundle: .main,
+                    value: "Passed %@",
+                    comment: "A string describing that the satellite has already set in a specific time in the past"
+                )
+                return String(
+                    format: format,
+                    durationFormatter.localizedString(
+                        fromTimeInterval: (pass.set.julianDate - referenceDate) * TimeConstants.day2sec)
+                )
+            } else {
+                return NSLocalizedString(
+                    "PassPreviewCell.relativeDate.passing",
+                    tableName: nil,
+                    bundle: .main,
+                    value: "Passing now",
+                    comment: "A string describing that the satellite is currently passing"
                 )
             }
         }

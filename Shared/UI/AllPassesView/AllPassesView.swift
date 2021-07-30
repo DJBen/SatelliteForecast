@@ -33,17 +33,18 @@ struct AllPassesViewState: Equatable {
         }
     }
 
-    var satelliteName: String?
+    var satelliteName: String
+    var julianDate: Double
     var observer: LatLonAlt?
     var visiblePasses: [Item]?
     var invisiblePasses: [Item]?
     var selectedPassIndex: Int?
 
-    static func project(state: AppState) -> AllPassesViewState {
+    static func project(state: AppState) -> AllPassesViewState? {
         guard let selectedNoradIndex = state.navigationState.selectedSatelliteNoradIndex,
             let satelliteState = state.satellites[selectedNoradIndex],
             let info = state.satelliteLoaderState[selectedNoradIndex] else {
-            return .empty
+            return nil
         }
 
         if let passes = satelliteState.passes {
@@ -67,6 +68,7 @@ struct AllPassesViewState: Equatable {
             let invisiblePasses = (itemsByVisibility[.daylight] ?? []) + (itemsByVisibility[.unlit] ?? [])
             return AllPassesViewState(
                 satelliteName: info.satellite.commonName,
+                julianDate: state.julianDate,
                 observer: state.observerForPasses,
                 visiblePasses: visiblePasses
                     .sorted { $0.pass.rise.julianDate < $1.pass.rise.julianDate },
@@ -77,16 +79,13 @@ struct AllPassesViewState: Equatable {
         } else {
             return AllPassesViewState(
                 satelliteName: info.satellite.commonName,
+                julianDate: state.julianDate,
                 observer: state.observerForPasses,
                 visiblePasses: nil,
                 invisiblePasses: nil,
                 selectedPassIndex: state.selectedSatellitePassIndex
             )
         }
-    }
-
-    static var empty: AllPassesViewState {
-        AllPassesViewState()
     }
 }
 
@@ -95,11 +94,17 @@ struct AllPassesView: View, Equatable {
         return lhs.viewModel.state == rhs.viewModel.state
     }
 
-    @ObservedObject var viewModel: ObservableViewModel<AllPassesViewAction, AllPassesViewState>
+    @ObservedObject var viewModel: ObservableViewModel<AllPassesViewAction, AllPassesViewState?>
 
     var context: AllPassesViewContext
     var skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
     var passViewProducer: ViewProducer<PassViewContext, PassView>
+
+    @ViewBuilder private func unwrapState<Content: View>(@ViewBuilder content: (AllPassesViewState) -> Content) -> some View {
+        if let state = viewModel.state {
+            content(state)
+        }
+    }
 
     private func navigationLink<Label: View>(index: Int, @ViewBuilder label: () -> Label) -> some View {
         NavigationLink(
@@ -107,7 +112,7 @@ struct AllPassesView: View, Equatable {
             tag: index,
             selection: Binding<Int?>(
                 get: {
-                    viewModel.state.selectedPassIndex
+                    viewModel.state?.selectedPassIndex
                 },
                 set: {
                     viewModel.dispatch(.selectPass(index: $0))
@@ -117,25 +122,28 @@ struct AllPassesView: View, Equatable {
         )
     }
 
-    private func passesList(_ items: [AllPassesViewState.Item]?) -> some View {
-        if let items = items {
-            if items.isEmpty {
-                return AnyView(Text("No passes found"))
-            } else {
-                return AnyView(ForEach(items, id: \.index) { item in
-                    navigationLink(index: item.index) {
-                        PassPreviewCell(
-                            pass: item.pass,
-                            indexOfPass: item.index,
-                            skyChartProducer: skyChartProducer
-                        )
+    @ViewBuilder private func passesList(_ items: [AllPassesViewState.Item]?) -> some View {
+        unwrapState { state in
+            if let items = items {
+                if items.isEmpty {
+                    Text("No passes found")
+                } else {
+                    ForEach(items, id: \.index) { item in
+                        navigationLink(index: item.index) {
+                            PassPreviewCell(
+                                pass: item.pass,
+                                referenceDate: state.julianDate,
+                                indexOfPass: item.index,
+                                skyChartProducer: skyChartProducer
+                            )
+                        }
+                        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 25))
+                        .frame(height: 135)
                     }
-                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 25))
-                    .frame(height: 135)
-                })
+                }
+            } else {
+                ProgressView("Calculating...")
             }
-        } else {
-            return AnyView(ProgressView("Calculating..."))
         }
     }
 
@@ -160,18 +168,20 @@ struct AllPassesView: View, Equatable {
     }
     
     var body: some View {
-        List {
-            Section(header: visiblePassHeader) {
-                passesList(viewModel.state.visiblePasses)
-            }
+        unwrapState { state in
+            List {
+                Section(header: visiblePassHeader) {
+                    passesList(state.visiblePasses)
+                }
 
-            Section(header: invisiblePassHeader) {
-                passesList(viewModel.state.invisiblePasses)
+                Section(header: invisiblePassHeader) {
+                    passesList(state.invisiblePasses)
+                }
             }
+            .listStyle(.grouped)
+            .navigationTitle(state.satelliteName)
+            .navigationBarTitleDisplayMode(.inline)
         }
-        .listStyle(.grouped)
-        .navigationTitle(viewModel.state.satelliteName ?? "All Passes")
-        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
@@ -187,7 +197,7 @@ extension ViewProducer where Context == AllPassesViewContext, ProducedView == Al
                         action: { AppAction.allPassesView($0) },
                         state: AllPassesViewState.project(state:)
                     )
-                    .asObservableViewModel(initialState: .empty),
+                    .asObservableViewModel(initialState: nil),
                 context: context,
                 skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
                     .skyChart(viewModel: viewModel),
@@ -240,7 +250,7 @@ struct AllPassesView_Previews: PreviewProvider {
 
         AllPassesView(
             viewModel: .mock(
-                state: AllPassesViewState()
+                state: nil
             ),
             context: AllPassesViewContext(),
             skyChartProducer: .pure(
@@ -269,6 +279,8 @@ struct AllPassesView_Previews: PreviewProvider {
         AllPassesView(
             viewModel: .mock(
                 state: AllPassesViewState(
+                    satelliteName: tianHe.commonName,
+                    julianDate: Date().julianDate,
                     visiblePasses: visiblePasses,
                     invisiblePasses: invisiblePasses
                 )

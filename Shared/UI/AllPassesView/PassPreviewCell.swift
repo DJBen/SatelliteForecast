@@ -18,6 +18,7 @@ struct PassPreviewCell: View, Equatable {
     }
 
     var pass: Pass
+    var referenceDate: Double
     var indexOfPass: Int
     var skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
 
@@ -57,47 +58,56 @@ struct PassPreviewCell: View, Equatable {
                 .foregroundColor(visiblityColor)
                 .frame(width: 12, alignment: .leading)
 
-            VStack(alignment: .leading) {
-                Text(LocalizedStrings.PassPreviewCell.titleForPassVisibility(pass.visibility))
-                    .font(.headline)
-                Text("∠\(Self.numberFormatter.string(from: NSNumber(value: pass.transit.elev))!)°")
-                    .font(.body)
-            }
-            .frame(width: 80)
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text(LocalizedStrings.PassPreviewCell.titleForPassVisibility(pass.visibility))
+                            .font(.headline)
+                        Text("∠\(Self.numberFormatter.string(from: NSNumber(value: pass.transit.elev))!)°")
+                            .font(.body)
+                    }
+                    .frame(width: 72)
 
-            VStack(alignment: .leading) {
-                Text(Self.dateFormatter.string(from: Date(julianDate: pass.rise.julianDate)))
-                    .font(.headline)
-                    .padding([.bottom], 1)
+                    VStack(alignment: .leading) {
+                        Text(Self.dateFormatter.string(from: Date(julianDate: pass.rise.julianDate)))
+                            .font(.headline)
+                            .padding([.bottom], 1)
 
-                HStack(spacing: 0) {
-                    Image(systemName: "arrow.up")
-                        .font(.subheadline)
-                        .foregroundColor(Color(UIColor.secondaryLabel))
+                        HStack(spacing: 0) {
+                            Image(systemName: "arrow.up")
+                                .font(.subheadline)
+                                .foregroundColor(Color(UIColor.secondaryLabel))
 
-                    Text(Self.timeFormatter.string(from: Date(julianDate: pass.rise.julianDate)))
-                        .font(.subheadline)
-                        .foregroundColor(Color(UIColor.secondaryLabel))
+                            Text(Self.timeFormatter.string(from: Date(julianDate: pass.rise.julianDate)))
+                                .font(.subheadline)
+                                .foregroundColor(Color(UIColor.secondaryLabel))
+                        }
+                        HStack(spacing: 0) {
+                            Image(systemName: "arrow.up.to.line")
+                                .font(.subheadline)
+                                .foregroundColor(Color(UIColor.secondaryLabel))
+
+                            Text(Self.timeFormatter.string(from: Date(julianDate: pass.transit.julianDate)))
+                                .font(.subheadline)
+                                .foregroundColor(Color(UIColor.secondaryLabel))
+                        }
+                        HStack(spacing: 0) {
+                            Image(systemName: "arrow.down")
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
+                                .foregroundColor(Color(UIColor.secondaryLabel))
+
+                            Text(Self.timeFormatter.string(from: Date(julianDate: pass.set.julianDate)))
+                                .font(.subheadline)
+                                .foregroundColor(Color(UIColor.secondaryLabel))
+                        }
+                    }
                 }
-                HStack(spacing: 0) {
-                    Image(systemName: "arrow.up.to.line")
-                        .font(.subheadline)
-                        .foregroundColor(Color(UIColor.secondaryLabel))
+                .fixedSize()
 
-                    Text(Self.timeFormatter.string(from: Date(julianDate: pass.transit.julianDate)))
-                        .font(.subheadline)
-                        .foregroundColor(Color(UIColor.secondaryLabel))
-                }
-                HStack(spacing: 0) {
-                    Image(systemName: "arrow.down")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                        .foregroundColor(Color(UIColor.secondaryLabel))
-
-                    Text(Self.timeFormatter.string(from: Date(julianDate: pass.set.julianDate)))
-                        .font(.subheadline)
-                        .foregroundColor(Color(UIColor.secondaryLabel))
-                }
+                Text(LocalizedStrings.PassPreviewCell.relativeDate(pass: pass, referenceDate: referenceDate))
+                    .font(.caption)
+                    .foregroundColor(Color(UIColor.secondaryLabel))
             }
 
             skyChartProducer.view(
@@ -141,6 +151,7 @@ struct PassPreviewCell_Previews: PreviewProvider {
             let pass = passes[index]
             return PassPreviewCell(
                 pass: pass,
+                referenceDate: startDate.julianDate,
                 indexOfPass: index,
                 skyChartProducer: .pure(
                     SkyChart(
@@ -195,7 +206,6 @@ struct PassPreviewCell_Previews: PreviewProvider {
             viewAtPassIndex(2)
             viewAtPassIndex(3)
             viewAtPassIndex(4)
-            viewAtPassIndex(5)
         }
     }
 }

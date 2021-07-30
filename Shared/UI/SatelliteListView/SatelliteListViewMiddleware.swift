@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 import CombineRex
+import SatelliteForecastCore
 import SatelliteKit
 
 
@@ -31,7 +32,7 @@ extension EffectMiddleware where InputActionType == SatelliteListViewAction, Out
                         return .sequence([
                             .freezeObservingParams(
                                 observer: observer,
-                                julianDateRange: julianDate.advanced(by: -TimeConstants.hrs2day * 2)..<julianDate.advanced(by: TimeConstants.hrs2day * 22)
+                                julianDateRange: JulianDateUtil.createJulianDateRange(now: julianDate)
                             ),
                             .allPassesView(.calculatePasses)
                         ])

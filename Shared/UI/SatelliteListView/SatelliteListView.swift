@@ -249,7 +249,7 @@ struct SatelliteListView_Previews: PreviewProvider {
             allPassesViewProducer: .pure(
                 AllPassesView(
                     viewModel: .mock(
-                        state: AllPassesViewState()
+                        state: nil
                     ),
                     context: AllPassesViewContext(),
                     skyChartProducer: .crash,

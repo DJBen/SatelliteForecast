@@ -31,7 +31,7 @@ extension EffectMiddleware where
                             // Skip if image already generated.
                             // Reuses the image if the previously calculated date range is within 10 mins away from current requested date range
                             if let rangeImage = state.satelliteElevationGraphResources.rasterizedElevationGraphs[noradIndex],
-                               abs(rangeImage.julianDateRange.lowerBound - julianDateRange.lowerBound) < 10 * TimeConstants.min2day && abs(rangeImage.julianDateRange.upperBound - julianDateRange.upperBound) < 10 * TimeConstants.min2day {
+                               rangeImage.julianDateRange.roundJulianDate(.to10Mins) == julianDateRange.roundJulianDate(.to10Mins) {
                                 logger.debug("Elevation graph already rasterized for \(noradIndex) with range \(julianDateRange), skipping.")
                                 return
                             }

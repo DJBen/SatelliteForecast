@@ -51,7 +51,7 @@ struct SatelliteElevationGraphState: Equatable {
     static func project(state: Store.StateType) -> SatelliteElevationGraphState? {
         let satelliteElevationGraphConfigs: SatelliteElevationGraphConfigs = .preset
 
-        guard let refJulianDateRange = state.julianDateRange else {
+        guard let julianDateRange = state.julianDateRange else {
             return nil
         }
 
@@ -68,9 +68,9 @@ struct SatelliteElevationGraphState: Equatable {
             guard let rangeImage = state.satelliteElevationGraphResources.rasterizedElevationGraphs[noradIndex] else {
                 return nil
             }
-            let (julianDateRange, image) = (rangeImage.julianDateRange, rangeImage.image)
+            let (imageJulianDateRange, image) = (rangeImage.julianDateRange, rangeImage.image)
             // Reuses the image if the previously calculated date range is within 10 mins away from current requested date range
-            if abs(julianDateRange.lowerBound - refJulianDateRange.lowerBound) < 10 * TimeConstants.min2day && abs(julianDateRange.upperBound - refJulianDateRange.upperBound) < 10 * TimeConstants.min2day  {
+            if abs(imageJulianDateRange.lowerBound - julianDateRange.lowerBound) < 10 * TimeConstants.min2day && abs(imageJulianDateRange.upperBound - julianDateRange.upperBound) < 10 * TimeConstants.min2day  {
                 return image
             }
 
@@ -84,7 +84,7 @@ struct SatelliteElevationGraphState: Equatable {
                 julianDate: state.julianDate,
                 observer: observer
             ),
-            julianDateRange: refJulianDateRange,
+            julianDateRange: julianDateRange,
             highlightedDateRange: state.selectedSatellitePass.map { pass -> Range<Double> in
                 return pass.rise.julianDate..<pass.set.julianDate
             },
