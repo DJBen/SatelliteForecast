@@ -10,7 +10,7 @@ import SatelliteKit
 
 enum AppAction {
     case appDelegate(AppDelegateAction)
-    case coreLocation(CoreLocationAction)
+    case location(LocationAction)
     case satelliteLoader(SatelliteLoaderAction)
     case satelliteOverview(SatelliteOverviewViewAction)
     case satelliteListView(SatelliteListViewAction)
@@ -22,6 +22,7 @@ enum AppAction {
     case tlePropagator(TLEPropagatorAction)
     case timer(TimerAction)
     case debugMenu(DebugMenuAction)
+    case observerCell(ObserverCellAction)
 
     /// Freeze the observer location and date range to be consumed by the passing view workflow,
     /// so that the location changes won't trigger reload
@@ -41,14 +42,14 @@ extension AppAction {
         }
     }
 
-    public var coreLocation: CoreLocationAction? {
+    public var location: LocationAction? {
         get {
-            guard case let .coreLocation(value) = self else { return nil }
+            guard case let .location(value) = self else { return nil }
             return value
         }
         set {
-            guard case .coreLocation = self, let newValue = newValue else { return }
-            self = .coreLocation(newValue)
+            guard case .location = self, let newValue = newValue else { return }
+            self = .location(newValue)
         }
     }
 
@@ -170,6 +171,17 @@ extension AppAction {
         set {
             guard case .debugMenu = self, let newValue = newValue else { return }
             self = .debugMenu(newValue)
+        }
+    }
+
+    public var observerCell: ObserverCellAction? {
+        get {
+            guard case let .observerCell(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .observerCell = self, let newValue = newValue else { return }
+            self = .observerCell(newValue)
         }
     }
 }

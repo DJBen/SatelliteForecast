@@ -23,7 +23,7 @@ extension EffectMiddleware where
             .onAction { action, _, getState in
                 switch action {
                 case .loadSatelliteList:
-                    if let observer = getState().coreLocationState.location.map(LatLonAlt.init) {
+                    if let observer = getState().locationState.location.map(LatLonAlt.init) {
                         let julianDate = getState().julianDate
                         return .sequence([
                             .freezeObservingParams(

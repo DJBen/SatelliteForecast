@@ -56,7 +56,7 @@ struct AllPassesViewState: Equatable {
             let items = passes.enumerated().map { i, pass -> Item in
                 let rasterizedSatellitePath = state.skyChartState.previewSatellitePaths[pass]
                 let rasterizedBackgroundSky: UIImage?
-                if let observer = state.observerForPasses {
+                if let observer = state.observer {
                     rasterizedBackgroundSky = state.skyChartState.previewBackgroundSkies[
                         SkyChartBackgroundSkyKey(
                             observer: observer,
@@ -75,7 +75,7 @@ struct AllPassesViewState: Equatable {
                 satelliteName: info.satellite.commonName,
                 julianDate: state.julianDate,
                 julianDateRange: julianDateRange,
-                observer: state.observerForPasses,
+                observer: state.observer,
                 visiblePasses: visiblePasses
                     .sorted { $0.pass.rise.julianDate < $1.pass.rise.julianDate },
                 invisiblePasses: invisiblePasses
@@ -87,7 +87,7 @@ struct AllPassesViewState: Equatable {
                 satelliteName: info.satellite.commonName,
                 julianDate: state.julianDate,
                 julianDateRange: julianDateRange,
-                observer: state.observerForPasses,
+                observer: state.observer,
                 visiblePasses: nil,
                 invisiblePasses: nil,
                 selectedPassIndex: state.selectedSatellitePassIndex
@@ -220,7 +220,7 @@ extension ViewProducer where Context == AllPassesViewContext, ProducedView == Al
                         action: { AppAction.allPassesView($0) },
                         state: AllPassesViewState.project(state:)
                     )
-                    .asObservableViewModel(initialState: nil),
+                    .asObservableViewModel(initialState: nil, emitsValue: .whenDifferent),
                 context: context,
                 skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
                     .skyChart(viewModel: viewModel),

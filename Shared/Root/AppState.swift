@@ -18,10 +18,10 @@ struct AppState: Equatable {
     var satellites: [Int: SatelliteTrails] = [:]
     var satelliteSearchText: String = ""
     var satelliteLoaderState: SatelliteLoaderState = .empty
-    var coreLocationState: CoreLocationState = .empty
+    var locationState: LocationState = .empty
 
     var julianDateRange: Range<Double>?
-    var observerForPasses: LatLonAlt?
+    var observer: LatLonAlt?
     var debugMenu: DebugMenuConfig = .empty
 
     /// The julian date for consumptions of display and calculation.

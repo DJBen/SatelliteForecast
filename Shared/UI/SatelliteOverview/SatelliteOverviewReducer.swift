@@ -12,17 +12,13 @@ extension Reducer where ActionType == SatelliteOverviewViewAction, StateType == 
     static let satelliteOverviewReducer = Reducer.reduce { action, state in
         switch action {
         case let .selectSpecialSatellite(noradIndex):
-            if let noradIndex = noradIndex {
-                state.navigationState.selectNoradIndex(noradIndex)
-            } else {
-                state.navigationState.deselectNoradIndex()
-            }
+            state.navigationState.selectNoradIndex(noradIndex)
         case let .selectCategory(category):
-            if let category = category {
-                state.navigationState.selectCategory(category)
-            } else {
-                state.navigationState.deselectCategory()
-            }
+            state.navigationState.selectCategory(category)
+        case .selectObserver:
+            state.navigationState.selectObserver()
+        case .returnToSatelliteOverview:
+            state.navigationState.deselectSatelliteOverviewItem()
         }
     }
 }

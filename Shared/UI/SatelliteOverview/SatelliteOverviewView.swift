@@ -11,8 +11,10 @@ import CombineRex
 import CombineRextensions
 
 enum SatelliteOverviewViewAction {
-    case selectSpecialSatellite(noradIndex: Int?)
-    case selectCategory(SatelliteCategory?)
+    case selectSpecialSatellite(noradIndex: Int)
+    case selectCategory(SatelliteCategory)
+    case selectObserver
+    case returnToSatelliteOverview
 }
 
 struct SatelliteOverviewViewState: Equatable {
@@ -27,23 +29,11 @@ struct SatelliteOverviewViewState: Equatable {
     }
 }
 
-fileprivate extension SatelliteOverviewItem {
-    var navigationIndexPath: NavigationIndexPath {
-        switch self {
-        case let .specialSatellites(satellite):
-            return NavigationIndexPath(category: nil, noradIndex: satellite.rawValue)
-        case let .category(category):
-            return NavigationIndexPath(category: category)
-        case .management(_):
-            fatalError("Unimplemented")
-        }
-    }
-}
-
 struct SatelliteOverviewView: View {
     @ObservedObject var viewModel: ObservableViewModel<SatelliteOverviewViewAction, SatelliteOverviewViewState>
     let listViewProducer: ViewProducer<Void, SatelliteListView>
     let singleSatelliteWrappingViewProducer: ViewProducer<Void, SingleSatelliteWrappingView>
+    let observerCellViewProducer: ViewProducer<Void, ObserverCell>
 
     let sections: [SatelliteOverviewSection] = [
         .satellitesOfSpecialInterest([
@@ -54,77 +44,64 @@ struct SatelliteOverviewView: View {
             .category(.brightest100),
             .category(.active),
             .category(.last30DayLaunches)
+        ]),
+        .observerSettings([
+            .observerSettings
         ])
     ]
 
-    private func destination(for item: SatelliteOverviewItem) -> some View {
+    @ViewBuilder private func destination(for item: SatelliteOverviewItem) -> some View {
         switch item {
         case .specialSatellites(_):
-            return AnyView(singleSatelliteWrappingViewProducer.view())
+            singleSatelliteWrappingViewProducer.view()
         case .category(_):
-            return AnyView(listViewProducer.view())
-        case .management(_):
+            listViewProducer.view()
+        case .observerSettings:
             fatalError("Unimplemented")
         }
     }
 
-    private struct SpecialSatelliteNavTag: Equatable, Hashable {
-        let category: SatelliteCategory?
-        let noradIndex: Int?
-
-        init(_ navigationIndexPath: NavigationIndexPath) {
-            category = navigationIndexPath.category
-            noradIndex = navigationIndexPath.noradIndex
-        }
-    }
-
-    private struct CategoryNavTag: Equatable, Hashable {
-        let category: SatelliteCategory?
-
-        init(_ navigationIndexPath: NavigationIndexPath) {
-            category = navigationIndexPath.category
-        }
-    }
-
-    private func navigationLink<Label: View>(
-        for item: SatelliteOverviewItem,
-        @ViewBuilder label: () -> Label
-    ) -> some View {
+    private func setNavigationItem(_ item: SatelliteOverviewItem?) {
         switch item {
-        case .specialSatellites:
-            return AnyView(NavigationLink(
-                destination: LazyView(destination(for: item)),
-                tag: SpecialSatelliteNavTag(item.navigationIndexPath),
-                selection: Binding<SpecialSatelliteNavTag?>(
-                    get: { SpecialSatelliteNavTag(viewModel.state.navigationState.indexPath) },
-                    set: { viewModel.dispatch(.selectSpecialSatellite(noradIndex: $0?.noradIndex)) }
-                ),
-                label: label
-            ))
-        case .category:
-            return AnyView(NavigationLink(
-                destination: LazyView(destination(for: item)),
-                tag: CategoryNavTag(item.navigationIndexPath),
-                selection: Binding<CategoryNavTag?>(
-                    get: { CategoryNavTag(viewModel.state.navigationState.indexPath) },
-                    set: {
-                        viewModel.dispatch(.selectCategory($0?.category))
-                    }
-                ),
-                label: label
-            ))
-        case .management(_):
-            fatalError()
+        case let .specialSatellites(satellite):
+            viewModel.dispatch(.selectSpecialSatellite(noradIndex: satellite.rawValue))
+        case let .category(category):
+            viewModel.dispatch(.selectCategory(category))
+        case .observerSettings:
+            viewModel.dispatch(.selectObserver)
+        case .none:
+            viewModel.dispatch(.returnToSatelliteOverview)
         }
+    }
+
+    @ViewBuilder private func navigationLink(
+        for item: SatelliteOverviewItem
+    ) -> some View {
+        NavigationLink(
+            destination: LazyView(destination(for: item)),
+            tag: item,
+            selection: Binding<SatelliteOverviewItem?>(
+                get: {
+                    viewModel.state.navigationState.selectedSatelliteOverviewItem
+                },
+                set: self.setNavigationItem
+            ),
+            label: {
+                SatelliteOverviewCell(
+                    model: SatelliteOverviewCellModel(
+                        item: item
+                    ),
+                    observerCellViewProducer: observerCellViewProducer
+                )
+                .fixedSize(horizontal: false, vertical: true)
+            }
+        )
     }
 
     private func sectionView(_ section: SatelliteOverviewSection) -> some View {
         ForEach(section.items, id: \.self) { item in
-            navigationLink(for: item) {
-                SatelliteOverviewCell(model: SatelliteOverviewCellModel(item: item))
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            .id(item)
+            navigationLink(for: item)
+                .id(item)
         }
     }
 
@@ -145,6 +122,10 @@ struct SatelliteOverviewView: View {
                             sectionView(section)
                         }
                     }
+
+                    // I don't know why, but the LazyVStack doesn't manage to calculate the content
+                    // size correctly, so this padding at the end of the list is needed.
+                    Spacer(minLength: 160)
                 }
                 .padding()
             }
@@ -163,10 +144,11 @@ extension ViewProducer where Context == Void, ProducedView == SatelliteOverviewV
                     action: AppAction.satelliteOverview,
                     state: SatelliteOverviewViewState.project(state:)
                 )
-                .asObservableViewModel(initialState: .initial),
+                .asObservableViewModel(initialState: .initial, emitsValue: .whenDifferent),
                 listViewProducer: ViewProducer<Void, SatelliteListView>
                     .satelliteListView(viewModel: viewModel),
-                singleSatelliteWrappingViewProducer: ViewProducer<Void, SingleSatelliteWrappingView>.singleSatelliteWrappingView(viewModel: viewModel)
+                singleSatelliteWrappingViewProducer: ViewProducer<Void, SingleSatelliteWrappingView>.singleSatelliteWrappingView(viewModel: viewModel),
+                observerCellViewProducer: ViewProducer<Void, ObserverCell>.observerCell(viewModel: viewModel)
             )
         }
     }
@@ -180,7 +162,8 @@ struct SatelliteOverviewView_Previews: PreviewProvider {
                 state: SatelliteOverviewViewState(navigationState: .overview)
             ),
             listViewProducer: .crash,
-            singleSatelliteWrappingViewProducer: .crash
+            singleSatelliteWrappingViewProducer: .crash,
+            observerCellViewProducer: .crash
         )
     }
 }

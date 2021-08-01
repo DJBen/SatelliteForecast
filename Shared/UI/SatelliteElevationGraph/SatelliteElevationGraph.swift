@@ -55,7 +55,7 @@ struct SatelliteElevationGraphState: Equatable {
             return nil
         }
 
-        guard let observer = state.observerForPasses else {
+        guard let observer = state.observer else {
             return nil
         }
 
@@ -229,7 +229,10 @@ struct SatelliteElevationGraph: View {
             let x = (state.currentJulianDate - state.julianDateRange.lowerBound) / (state.julianDateRange.upperBound - state.julianDateRange.lowerBound)
             let y = 1 - (state.currentSnapshot.position.elev + 90) / 180
 
-            SatelliteElevationGraphCurrentIndicator(percentageCoordinate: CGPoint(x: x, y: y))
+            SatelliteElevationGraphCurrentIndicator(
+                percentageCoordinate: CGPoint(x: x, y: y),
+                currentJulianDate: state.currentJulianDate
+            )
         }
     }
 
@@ -356,7 +359,7 @@ extension ViewProducer where Context == Void, ProducedView == SatelliteElevation
                         action: { AppAction.satelliteElevationGraph($0) },
                         state: SatelliteElevationGraphState.project(state:)
                     )
-                    .asObservableViewModel(initialState: nil)
+                    .asObservableViewModel(initialState: nil, emitsValue: .whenDifferent)
             )
         }
     }
@@ -392,7 +395,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                 satelliteLoaderState: SatelliteLoaderState(
                     standaloneInfo: [tle.noradIndex: SatelliteInfo(noradIndex: tle.noradIndex, satellite: sat)]
                 ),
-                coreLocationState: CoreLocationState(
+                locationState: LocationState(
                     authorizationStatus: .authorizedWhenInUse,
                     location: location
                 ),
@@ -427,7 +430,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                 satelliteLoaderState: SatelliteLoaderState(
                     standaloneInfo: [tle2.noradIndex: SatelliteInfo(noradIndex: tle2.noradIndex, satellite: sat2)]
                 ),
-                coreLocationState: CoreLocationState(
+                locationState: LocationState(
                     authorizationStatus: .authorizedWhenInUse,
                     location: location
                 ),
@@ -462,7 +465,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                 satelliteLoaderState: SatelliteLoaderState(
                     standaloneInfo: [tle3.noradIndex: SatelliteInfo(noradIndex: tle3.noradIndex, satellite: sat3)]
                 ),
-                coreLocationState: CoreLocationState(
+                locationState: LocationState(
                     authorizationStatus: .authorizedWhenInUse,
                     location: location
                 ),

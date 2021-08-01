@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SatelliteElevationGraphCurrentIndicator: View {
     let percentageCoordinate: CGPoint
+    let currentJulianDate: Double
 
     @State private var scale: CGFloat = 1
     @State private var opacity: Double = 1
@@ -24,12 +25,21 @@ struct SatelliteElevationGraphCurrentIndicator: View {
             let rect = geometry.frame(in: .local)
 
             ZStack {
-                Path { path in
-                    path.move(to: CGPoint(x: rect.maxX * percentageCoordinate.x, y: 0))
-                    path.addLine(to: CGPoint(x: rect.maxX * percentageCoordinate.x, y: rect.maxY))
+                HStack {
+                    Path { path in
+                        path.move(to: CGPoint(x: rect.maxX * percentageCoordinate.x, y: 0))
+                        path.addLine(to: CGPoint(x: rect.maxX * percentageCoordinate.x, y: rect.maxY))
+                    }
+                    .stroke(style: StrokeStyle(lineWidth: 1, dash: [2]))
+                    .foregroundColor(.blue)
+                    .frame(width: 20)
+
+                    Text(Date(julianDate: currentJulianDate).formatted(date: .omitted, time: .shortened))
+                        .position(x: rect.maxX * percentageCoordinate.x, y: 0)
+                        .foregroundColor(.gray)
+                        .font(.caption2)
+                        .offset(x: 0, y: 8)
                 }
-                .stroke(style: StrokeStyle(lineWidth: 1, dash: [2]))
-                .foregroundColor(.blue)
 
                 Group {
                     Circle(
@@ -63,8 +73,10 @@ struct SatelliteElevationGraphCurrentIndicator: View {
 
 struct SatelliteElevationGraphCurrentIndicator_Previews: PreviewProvider {
     static var previews: some View {
-        SatelliteElevationGraphCurrentIndicator(percentageCoordinate: CGPoint(x: 0.3, y: 0.3))
-            .frame(width: 100, height: 100)
-            .previewLayout(.fixed(width: 100, height: 100))
+        SatelliteElevationGraphCurrentIndicator(
+            percentageCoordinate: CGPoint(x: 0.3, y: 0.3),
+            currentJulianDate: Date().julianDate
+        )
+        .previewLayout(.fixed(width: 100, height: 100))
     }
 }

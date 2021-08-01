@@ -30,15 +30,27 @@ enum LocalizedStrings {
                     value: "Satellites by categories",
                     comment: "The section title for satellites grouped by categories"
                 )
-            case .management(_):
+            case .observerSettings:
                 return NSLocalizedString(
-                    "SatelliteListView.sectionOverviewView.section.Management",
+                    "SatelliteListView.sectionOverviewView.section.locationSettings",
                     tableName: nil,
                     bundle: .main,
-                    value: "Management",
-                    comment: "The section title for management"
+                    value: "Location settings",
+                    comment: "The section title for location settings"
                 )
             }
+        }
+    }
+
+    enum ObserverCell {
+        enum Title {
+            static let currentLocation: String = NSLocalizedString(
+                "SatelliteListView.observerCell.title.currentLocation",
+                tableName: nil,
+                bundle: .main,
+                value: "Current Location",
+                comment: "The current location text, indicating that the observer location is the current location."
+            )
         }
     }
 
@@ -111,17 +123,6 @@ enum LocalizedStrings {
                     value: "All active satellites",
                     comment: "The section header for all active satellites"
                 )
-            }
-        }
-
-        static func itemLocalizedString(_ item: SatelliteOverviewItem) -> String {
-            switch item {
-            case .specialSatellites(_):
-                return ""
-            case let .category(category):
-                return categoryLocalizedString(category)
-            case .management(_):
-                return ""
             }
         }
     }

@@ -139,7 +139,7 @@ extension ViewProducer where Context == Void, ProducedView == DebugMenu {
                     action: AppAction.debugMenu,
                     state: DebugMenuState.project(state:)
                 )
-                .asObservableViewModel(initialState: nil)
+                .asObservableViewModel(initialState: nil, emitsValue: .whenDifferent)
             )
         }
     }

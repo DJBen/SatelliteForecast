@@ -8,8 +8,8 @@
 import Foundation
 import SwiftRex
 
-extension Reducer where ActionType == CoreLocationAction, StateType == CoreLocationState {
-    static let coreLocationReducer = Reducer.reduce { action, state in
+extension Reducer where ActionType == LocationAction, StateType == LocationState {
+    static let locationReducer = Reducer.reduce { action, state in
         switch action {
         case .requestAuthorization:
             break

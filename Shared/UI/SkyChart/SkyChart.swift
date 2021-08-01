@@ -84,7 +84,7 @@ struct SkyChartViewState: Equatable {
     ) -> SkyChartViewState? {
         guard let info = state.satelliteLoaderState[pass.noradIndex],
                 let satelliteState = state.satellites[pass.noradIndex],
-                let observer = state.observerForPasses else {
+                let observer = state.observer else {
             return nil
         }
 
@@ -123,7 +123,7 @@ struct SkyChartViewState: Equatable {
     }
 
     static func projectPreview(state: AppState, index: Int, backgroundSkyConfigs: SkyChartConfigs.BackgroundSky) -> SkyChartViewState? {
-        guard let observer = state.observerForPasses else {
+        guard let observer = state.observer else {
             return nil
         }
         let pass: Pass? = {
@@ -157,7 +157,7 @@ struct SkyChartViewState: Equatable {
     }
 
     static func project(state: AppState, backgroundSkyConfigs: SkyChartConfigs.BackgroundSky) -> SkyChartViewState? {
-        guard let observer = state.observerForPasses else {
+        guard let observer = state.observer else {
             return nil
         }
         let pass: Pass? = {

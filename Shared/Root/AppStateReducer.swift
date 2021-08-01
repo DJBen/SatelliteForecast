@@ -15,7 +15,7 @@ extension Reducer where ActionType == AppAction, StateType == Store.StateType {
     static let appStateReducer = Reducer.reduce { action, state in
         switch action {
         case let .freezeObservingParams(observer, julianDateRange):
-            state.observerForPasses = observer
+            state.observer = observer
             state.julianDateRange = julianDateRange
             logger.debug("Freezes observer coordinate to \(String(describing: observer))")
         default:

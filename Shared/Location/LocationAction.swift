@@ -1,5 +1,5 @@
 //
-//  CoreLocationAction.swift
+//  LocationAction.swift
 //  SatelliteForecast
 //
 //  Created by Ben Lu on 6/4/21.
@@ -8,7 +8,7 @@
 import Foundation
 import CoreLocation
 
-enum CoreLocationAction {
+enum LocationAction {
     // Input
     case requestAuthorization
 
@@ -17,7 +17,7 @@ enum CoreLocationAction {
     case locationChanged(CLLocation)
 }
 
-extension CoreLocationAction {
+extension LocationAction {
     public var authorization: CLAuthorizationStatus? {
         get {
             guard case let .authorizationDidChange(value) = self else { return nil }

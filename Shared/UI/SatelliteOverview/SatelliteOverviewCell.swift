@@ -7,35 +7,8 @@
 
 import SwiftUI
 import SwiftUIVisualEffects
-
-enum SatelliteOverviewSection: Equatable, Hashable {
-    case satellitesOfSpecialInterest([SatelliteOverviewItem])
-    case categories([SatelliteOverviewItem])
-    case management([SatelliteOverviewItem])
-
-    var items: [SatelliteOverviewItem] {
-        switch self {
-        case let .satellitesOfSpecialInterest(items),
-             let .categories(items),
-             let .management(items):
-            return items
-        }
-    }
-}
-
-enum SatelliteOverviewItem: Equatable, Hashable {
-    enum SatellitesOfSpecialInterest: Int, Equatable, Hashable {
-        case iss = 25544
-        case tianhe = 48274
-    }
-    case specialSatellites(SatellitesOfSpecialInterest)
-    case category(SatelliteCategory)
-
-    enum Management: Equatable, Hashable {
-        case alert
-    }
-    case management(Management)
-}
+import CombineRex
+import CombineRextensions
 
 struct SatelliteOverviewCellModel {
     let item: SatelliteOverviewItem
@@ -44,15 +17,16 @@ struct SatelliteOverviewCellModel {
 /// An overview cell contains a category of satellites.
 struct SatelliteOverviewCell: View {
     let model: SatelliteOverviewCellModel
+    let observerCellViewProducer: ViewProducer<Void, ObserverCell>
 
-    var body: some View {
+    @ViewBuilder var body: some View {
         switch model.item {
         case let .specialSatellites(satellite):
-            return AnyView(SatelliteOverviewSpecialSatelliteCell(satellite: satellite))
+            SatelliteOverviewSpecialSatelliteCell(satellite: satellite)
         case let .category(category):
-            return AnyView(SatelliteOverviewCategoryCell(category: category))
-        case .management(_):
-            return AnyView(EmptyView())
+            SatelliteOverviewCategoryCell(category: category)
+        case .observerSettings:
+            observerCellViewProducer.view()
         }
     }
 }
@@ -202,27 +176,32 @@ struct SatelliteOverviewCell_Previews: PreviewProvider {
                     SatelliteOverviewCell(
                         model: SatelliteOverviewCellModel(
                             item: .specialSatellites(.iss)
-                        )
+                        ),
+                        observerCellViewProducer: .crash
                     )
                     SatelliteOverviewCell(
                         model: SatelliteOverviewCellModel(
                             item: .specialSatellites(.tianhe)
-                        )
+                        ),
+                        observerCellViewProducer: .crash
                     )
                     SatelliteOverviewCell(
                         model: SatelliteOverviewCellModel(
                             item: .category(.brightest100)
-                        )
+                        ),
+                        observerCellViewProducer: .crash
                     )
                     SatelliteOverviewCell(
                         model: SatelliteOverviewCellModel(
                             item: .category(.active)
-                        )
+                        ),
+                        observerCellViewProducer: .crash
                     )
                     SatelliteOverviewCell(
                         model: SatelliteOverviewCellModel(
                             item: .category(.last30DayLaunches)
-                        )
+                        ),
+                        observerCellViewProducer: .crash
                     )
                 }
             )

@@ -1,5 +1,5 @@
 //
-//  CoreLocationMiddleware.swift
+//  LocationMiddleware.swift
 //  SatelliteForecast
 //
 //  Created by Ben Lu on 6/4/21.
@@ -10,15 +10,15 @@ import CombineRex
 import SwiftRex
 import CoreLocation
 
-class CoreLocationMiddleware: NSObject, Middleware {
-    typealias InputActionType = CoreLocationAction
-    typealias OutputActionType = CoreLocationAction
-    typealias StateType = CoreLocationState
+class LocationMiddleware: NSObject, Middleware {
+    typealias InputActionType = LocationAction
+    typealias OutputActionType = LocationAction
+    typealias StateType = LocationState
 
     var locationManager: CLLocationManager!
-    var output: AnyActionHandler<CoreLocationAction>!
+    var output: AnyActionHandler<LocationAction>!
 
-    func receiveContext(getState: @escaping GetState<CoreLocationState>, output: AnyActionHandler<CoreLocationAction>) {
+    func receiveContext(getState: @escaping GetState<LocationState>, output: AnyActionHandler<LocationAction>) {
         locationManager = CLLocationManager()
         locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
         locationManager.distanceFilter = 1000
@@ -31,7 +31,7 @@ class CoreLocationMiddleware: NSObject, Middleware {
         output.dispatch(.authorizationDidChange(locationManager.authorizationStatus))
     }
 
-    func handle(action: CoreLocationAction, from dispatcher: ActionSource, afterReducer: inout AfterReducer) {
+    func handle(action: LocationAction, from dispatcher: ActionSource, afterReducer: inout AfterReducer) {
         switch action {
         case .requestAuthorization:
             locationManager.requestWhenInUseAuthorization()
@@ -43,7 +43,7 @@ class CoreLocationMiddleware: NSObject, Middleware {
     }
 }
 
-extension CoreLocationMiddleware: CLLocationManagerDelegate {
+extension LocationMiddleware: CLLocationManagerDelegate {
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         output.dispatch(.authorizationDidChange(manager.authorizationStatus))
     }
@@ -56,11 +56,11 @@ extension CoreLocationMiddleware: CLLocationManagerDelegate {
     }
 }
 
-fileprivate let logger = Logger(subsystem: "io.djben.coreLocation", category: "middleware")
+fileprivate let logger = Logger(subsystem: "io.djben.location", category: "middleware")
 
-extension EffectMiddleware where InputActionType == CoreLocationAction, OutputActionType == Never, StateType == Void, Dependencies == Void {
-    static var coreLocationLogger: EffectMiddleware<CoreLocationAction, Never, Void, Void> {
-        EffectMiddleware<CoreLocationAction, Never, Void, Void>
+extension EffectMiddleware where InputActionType == LocationAction, OutputActionType == Never, StateType == Void, Dependencies == Void {
+    static var locationLogger: EffectMiddleware<LocationAction, Never, Void, Void> {
+        EffectMiddleware<LocationAction, Never, Void, Void>
             .onAction { action, _, getState in
                 switch action {
                 case .requestAuthorization:
