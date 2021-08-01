@@ -309,6 +309,7 @@
 				EFCF20EE26AD020400D87E8B /* Debug */,
 				EF5A908226A0D66B00EADA2D /* Utilities */,
 				EF3D099A2685A10F00B84232 /* SatelliteOverview */,
+				EFFD227626B6B6D40010E1F6 /* LocationSettingsView */,
 				EF7C6654269930970017A007 /* SingleSatelliteWrapperView */,
 				EF1CAB34266B8747006319C8 /* SatelliteListView */,
 				EF0FC06A2677D73000560AF0 /* AllPassesView */,
@@ -349,8 +350,8 @@
 		EF7A3120266B03A100CC33C0 /* Location */ = {
 			isa = PBXGroup;
 			children = (
-				EF7A3121266B03B400CC33C0 /* LocationMiddleware.swift */,
 				EF7A3124266B1A2500CC33C0 /* LocationState.swift */,
+				EF7A3121266B03B400CC33C0 /* LocationMiddleware.swift */,
 				EF7A3127266B1A2D00CC33C0 /* LocationAction.swift */,
 				EF7A312A266B1A3800CC33C0 /* LocationReducer.swift */,
 			);
@@ -475,6 +476,13 @@
 				EFCF20F126AD4E7E00D87E8B /* DebugMenuReducer.swift */,
 			);
 			path = Debug;
+			sourceTree = "<group>";
+		};
+		EFFD227626B6B6D40010E1F6 /* LocationSettingsView */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = LocationSettingsView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

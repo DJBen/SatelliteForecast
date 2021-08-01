@@ -16,6 +16,7 @@ class LocationMiddleware: NSObject, Middleware {
     typealias StateType = LocationState
 
     var locationManager: CLLocationManager!
+    var geocoder: CLGeocoder!
     var output: AnyActionHandler<LocationAction>!
 
     func receiveContext(getState: @escaping GetState<LocationState>, output: AnyActionHandler<LocationAction>) {
@@ -25,6 +26,9 @@ class LocationMiddleware: NSObject, Middleware {
         locationManager.startMonitoringSignificantLocationChanges()
         locationManager.startUpdatingLocation()
         locationManager.delegate = self
+
+        geocoder = CLGeocoder()
+
         self.output = output
 
         // Output the initial authorization status
@@ -32,13 +36,25 @@ class LocationMiddleware: NSObject, Middleware {
     }
 
     func handle(action: LocationAction, from dispatcher: ActionSource, afterReducer: inout AfterReducer) {
-        switch action {
-        case .requestAuthorization:
-            locationManager.requestWhenInUseAuthorization()
-        case .authorizationDidChange(_):
-            break
-        case .locationChanged(_):
-            break
+        afterReducer = .do { [weak self] in
+            switch action {
+            case .requestAuthorization:
+                self?.locationManager.requestWhenInUseAuthorization()
+            case let .requestReverseGeocoding(location):
+                self?.geocoder.reverseGeocodeLocation(location) { placemarks, error in
+                    if let placemarks = placemarks {
+                        self?.output.dispatch(.reverseGeocodingFinished(.success(placemarks)))
+                    } else if let error = error {
+                        self?.output.dispatch(.reverseGeocodingFinished(.failure(error)))
+                    }
+                }
+            case .authorizationDidChange(_):
+                break
+            case let .locationChanged(location):
+                self?.output.dispatch(.requestReverseGeocoding(location))
+            case .reverseGeocodingFinished(_):
+                break
+            }
         }
     }
 }
@@ -65,10 +81,19 @@ extension EffectMiddleware where InputActionType == LocationAction, OutputAction
                 switch action {
                 case .requestAuthorization:
                     break
+                case .requestReverseGeocoding(_):
+                    break
                 case let .authorizationDidChange(authorizationStatus):
-                    logger.info("[CoreLocation] authorization changed: \(authorizationStatus.rawValue))")
+                    logger.info("[Location] authorization changed: \(authorizationStatus.rawValue))")
                 case let .locationChanged(location):
-                    logger.info("[CoreLocation] location changed: \(location)")
+                    logger.info("[Location] location changed: \(location)")
+                case let .reverseGeocodingFinished(result):
+                    switch result {
+                    case let .success(placemarks):
+                        logger.info("[Location] reverse geocoded to \(placemarks)")
+                    case let .failure(error):
+                        logger.error("\(error.localizedDescription)")
+                    }
                 }
 
                 return .doNothing

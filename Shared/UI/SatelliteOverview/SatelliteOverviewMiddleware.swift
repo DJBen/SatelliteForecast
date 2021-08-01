@@ -21,7 +21,7 @@ extension EffectMiddleware where
         EffectMiddleware<SatelliteOverviewViewAction, AppAction, AppState, Void>
             .onAction { action, _, state in
                 switch action {
-                case let .selectSpecialSatellite(_):
+                case .selectSpecialSatellite(_):
                     return .just(.singleSatelliteWrappingView(.loadSatelliteList))
                 case let .selectCategory(category):
                     return .just(.satelliteLoader(.loadSatelliteCategory(category)))

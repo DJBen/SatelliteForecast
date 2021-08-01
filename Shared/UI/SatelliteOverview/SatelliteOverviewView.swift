@@ -122,10 +122,6 @@ struct SatelliteOverviewView: View {
                             sectionView(section)
                         }
                     }
-
-                    // I don't know why, but the LazyVStack doesn't manage to calculate the content
-                    // size correctly, so this padding at the end of the list is needed.
-                    Spacer(minLength: 160)
                 }
                 .padding()
             }

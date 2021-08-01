@@ -5,6 +5,7 @@
 //  Created by Ben Lu on 7/31/21.
 //
 
+import Contacts
 import CombineRex
 import CombineRextensions
 import MapKit
@@ -17,19 +18,23 @@ enum ObserverCellAction {
 }
 
 struct ObserverCellState: Equatable {
-    var observer: CLLocation
+    var locationState: LocationState
 
-    static func project(state: AppState) -> ObserverCellState? {
-        state.locationState.location.map { ObserverCellState(observer: $0) }
+    static func project(state: AppState) -> ObserverCellState {
+        ObserverCellState(locationState: state.locationState)
+    }
+
+    static var empty: ObserverCellState {
+        ObserverCellState(locationState: .empty)
     }
 }
 
 struct ObserverCell: View {
-    @ObservedObject var viewModel: ObservableViewModel<ObserverCellAction, ObserverCellState?>
+    @ObservedObject var viewModel: ObservableViewModel<ObserverCellAction, ObserverCellState>
 
     @Environment(\.colorScheme) private var colorScheme
 
-    private func region(coordinate: CLLocationCoordinate2D, parentRect: CGRect, delta: CLLocationDegrees = 1) -> MKCoordinateRegion {
+    private func region(coordinate: CLLocationCoordinate2D, parentRect: CGRect, delta: CLLocationDegrees) -> MKCoordinateRegion {
         let offset = delta / Double(parentRect.width) * 60
         return MKCoordinateRegion(
             center: CLLocationCoordinate2D(latitude: coordinate.latitude - offset, longitude: coordinate.longitude),
@@ -37,76 +42,140 @@ struct ObserverCell: View {
         )
     }
 
-    @ViewBuilder private func unwrapState<Content: View>(@ViewBuilder content: (ObserverCellState) -> Content) -> some View {
-        if let state = viewModel.state {
-            content(state)
-        }
+    @ViewBuilder func map(coordinate: CLLocationCoordinate2D, rect: CGRect, delta: CLLocationDegrees = 0.5) -> some View {
+        Map(
+            coordinateRegion: Binding<MKCoordinateRegion>(
+                get: {
+                    self.region(
+                        coordinate: coordinate,
+                        parentRect: rect,
+                        delta: delta
+                    )
+                },
+                set: { region in
+
+                }
+            ),
+            interactionModes: [],
+            showsUserLocation: true
+        )
     }
 
-    @ViewBuilder func backgroundMap(rect: CGRect) -> some View {
-        unwrapState { state in
+    @ViewBuilder var background: some View {
+        GeometryReader { geometry in
+            let rect = geometry.frame(in: .local)
+
             if rect.isEmpty {
                 EmptyView()
             } else {
-                Map(
-                    coordinateRegion: Binding<MKCoordinateRegion>(
-                        get: {
-                            self.region(coordinate: state.observer.coordinate, parentRect: rect)
-                        },
-                        set: { region in
-
+                let locationState = viewModel.state.locationState
+                switch locationState.authorizationStatus {
+                case .authorizedAlways, .authorizedWhenInUse:
+                    if let location = viewModel.state.locationState.location {
+                        map(coordinate: location.coordinate, rect: rect)
+                    } else {
+                        ZStack {
+                            Color.gray
+                            ProgressView()
+                                .offset(x: 0, y: -(rect.height - 120) / 2)
                         }
-                    ),
-                    interactionModes: [],
-                    showsUserLocation: true
-                )
+                    }
+                case .denied, .restricted:
+                    ZStack {
+                        map(coordinate: CLLocationCoordinate2D(), rect: rect, delta: 90)
+                        Text("\(Image(systemName: "nosign")) Location access denied")
+                            .foregroundColor(Color("locationAccessDenied_foreground"))
+                            .fontWeight(.semibold)
+                            .offset(x: 0, y: -(rect.height - 120) / 2)
+                    }
+                case .notDetermined:
+                    EmptyView()
+                @unknown default:
+                    EmptyView()
+                }
             }
+        }
+    }
+
+    static let addressFormatter: CNPostalAddressFormatter = {
+        let formatter = CNPostalAddressFormatter()
+        formatter.style = .mailingAddress
+        return formatter
+    }()
+
+    var secondaryLabelText: String? {
+        let locationState = viewModel.state.locationState
+
+        switch locationState.authorizationStatus {
+        case .authorizedAlways, .authorizedWhenInUse:
+            if let placemark = locationState.placemark {
+                guard let postalAddress = placemark.postalAddress else { return nil }
+                let formatterString = Self.addressFormatter.string(from: postalAddress)
+                return formatterString.replacingOccurrences(of: "\n", with: ", ")
+            } else {
+                return nil
+            }
+        case .denied:
+            return "Tap to manually select a location"
+        case .restricted, .notDetermined:
+            return nil
+        @unknown default:
+            return nil
+        }
+    }
+
+    var titleText: String {
+        let locationState = viewModel.state.locationState
+
+        switch locationState.selection {
+        case .userLocation:
+            return LocalizedStrings.ObserverCell.Title.currentLocation
+        case let .custom(name, _):
+            return name
         }
     }
 
     var body: some View {
-        GeometryReader { geometry in
-            let rect = geometry.frame(in: .local)
+        HStack(alignment: .center) {
+            VStack(alignment: .leading) {
+                Spacer()
+                    .frame(height: 120)
 
-            HStack(alignment: .center) {
-                VStack(alignment: .leading) {
-                    Spacer()
-                        .frame(height: 120)
+                ZStack {
+                    Color.clear
+                        .blurEffect()
 
-                    ZStack {
-                        Color.clear
-                            .blurEffect()
-
-                        VStack(alignment: .leading, spacing: 4) {
-                            HStack {
-                                Text(LocalizedStrings.ObserverCell.Title.currentLocation)
-                                    .font(.headline)
-                                    .foregroundColor(Color(UIColor.label))
-                                Spacer()
-                            }
-
-//                        Text(LocalizedStrings.SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedDescription(satellite))
-//                            .font(.caption)
-//                            .multilineTextAlignment(.leading)
-//                            .foregroundColor(colorScheme == .light ? Color(UIColor.systemGray2) : Color(UIColor.systemGray4))
-//                            .vibrancyEffect()
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Text(titleText)
+                                .font(.headline)
+                                .foregroundColor(Color(UIColor.label))
+                            Spacer()
                         }
-                        .padding()
-                    }
-                    .blurEffectStyle(colorScheme == .light ? .systemChromeMaterialLight : .systemChromeMaterialDark)
-                    .vibrancyEffectStyle(.fill)
-                }
-                .background(backgroundMap(rect: rect))
-                .clipShape(
-                    RoundedRectangle(
-                        cornerRadius: 8,
-                        style: .continuous
-                    )
-                )
 
-                Image(systemName: "chevron.right")
-                    .foregroundColor(Color(UIColor.secondaryLabel))
+                        if let secondaryLabelText = secondaryLabelText {
+                            Text(secondaryLabelText)
+                                .font(.caption)
+                                .multilineTextAlignment(.leading)
+                                .foregroundColor(colorScheme == .light ? Color(UIColor.systemGray2) : Color(UIColor.systemGray4))
+                                .vibrancyEffect()
+                        }
+                    }
+                    .padding()
+                }
+                .blurEffectStyle(colorScheme == .light ? .systemChromeMaterialLight : .systemChromeMaterialDark)
+                .vibrancyEffectStyle(.fill)
             }
+            .background(background)
+            .clipShape(
+                RoundedRectangle(
+                    cornerRadius: 8,
+                    style: .continuous
+                )
+            )
+
+            Image(systemName: "chevron.right")
+                .foregroundColor(Color(UIColor.secondaryLabel))
         }
     }
 }
@@ -119,7 +188,7 @@ extension ViewProducer where Context == Void, ProducedView == ObserverCell {
                     action: AppAction.observerCell,
                     state: ObserverCellState.project(state:)
                 )
-                .asObservableViewModel(initialState: nil, emitsValue: .whenDifferent)
+                .asObservableViewModel(initialState: .empty, emitsValue: .whenDifferent)
             )
         }
     }
@@ -129,8 +198,29 @@ extension ViewProducer where Context == Void, ProducedView == ObserverCell {
 struct ObserverCell_Previews: PreviewProvider {
     static var previews: some View {
         // 2000 Broadway, Redwood City, CA 94063
-        let observer = CLLocation(latitude: 37.486743000691185, longitude: -122.22655970246515)
-        ObserverCell(viewModel: .mock(state: ObserverCellState(observer: observer)))
+        let location = CLLocation(latitude: 37.486743000691185, longitude: -122.22655970246515)
+        ObserverCell(
+            viewModel: .mock(
+                state: ObserverCellState(
+                    locationState: LocationState(
+                        authorizationStatus: .authorizedAlways,
+                        currentLocation: location
+                    )
+                )
+            )
+        )
+        .fixedSize(horizontal: false, vertical: true)
+
+        ObserverCell(
+            viewModel: .mock(
+                state: ObserverCellState(
+                    locationState: LocationState(
+                        authorizationStatus: .denied
+                    )
+                )
+            )
+        )
+        .fixedSize(horizontal: false, vertical: true)
     }
 }
 #endif

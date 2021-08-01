@@ -397,7 +397,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                 ),
                 locationState: LocationState(
                     authorizationStatus: .authorizedWhenInUse,
-                    location: location
+                    currentLocation: location
                 ),
                 julianDateRange: julianDateRange,
                 navigationState: .allPasses(category: nil, noradIndex: Int(sat.noradIdent)!)
@@ -432,7 +432,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                 ),
                 locationState: LocationState(
                     authorizationStatus: .authorizedWhenInUse,
-                    location: location
+                    currentLocation: location
                 ),
                 julianDateRange: julianDateRange,
                 navigationState: .allPasses(category: nil, noradIndex: Int(sat2.noradIdent)!)
@@ -467,7 +467,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                 ),
                 locationState: LocationState(
                     authorizationStatus: .authorizedWhenInUse,
-                    location: location
+                    currentLocation: location
                 ),
                 julianDateRange: julianDateRange,
                 navigationState: .allPasses(category: nil, noradIndex: Int(sat3.noradIdent)!)

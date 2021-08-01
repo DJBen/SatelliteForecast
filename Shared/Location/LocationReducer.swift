@@ -13,10 +13,20 @@ extension Reducer where ActionType == LocationAction, StateType == LocationState
         switch action {
         case .requestAuthorization:
             break
+        case .requestReverseGeocoding(_):
+            break
         case let .authorizationDidChange(authorizationStatus):
             state.authorizationStatus = authorizationStatus
         case let .locationChanged(location):
-            state.location = location
+            state.currentLocation = location
+            state.placemark = nil
+        case let .reverseGeocodingFinished(result):
+            switch result {
+            case let .success(placemarks):
+                state.placemark = placemarks.first
+            case .failure(_):
+                break
+            }
         }
     }
 }

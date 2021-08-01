@@ -149,7 +149,7 @@ struct PassView_Previews: PreviewProvider {
             ),
             locationState: LocationState(
                 authorizationStatus: .authorizedWhenInUse,
-                location: location
+                currentLocation: location
             ),
             julianDateRange: julianDateRange,
             navigationState: .pass(category: .brightest100, noradIndex: tle.noradIndex, selectedPassIndex: 0)

@@ -11,10 +11,12 @@ import CoreLocation
 enum LocationAction {
     // Input
     case requestAuthorization
+    case requestReverseGeocoding(CLLocation)
 
     // Output
     case authorizationDidChange(CLAuthorizationStatus)
     case locationChanged(CLLocation)
+    case reverseGeocodingFinished(Result<[CLPlacemark], Error>)
 }
 
 extension LocationAction {
