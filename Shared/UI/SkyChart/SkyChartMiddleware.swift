@@ -77,7 +77,7 @@ extension EffectMiddleware where
                                 return
                             }
 
-                            guard let snapshots = state.satellites[pass.noradIndex]?.snapshots else {
+                            guard let snapshots = state.satelliteTrails[pass.noradIndex]?.snapshots else {
     //                            logger.debug("\(pass.noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate) lacks snapshots: rasterization on hold")
                                 return
                             }

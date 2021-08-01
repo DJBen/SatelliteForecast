@@ -27,7 +27,7 @@ enum AppAction {
     /// Freeze the observer location and date range to be consumed by the passing view workflow,
     /// so that the location changes won't trigger reload
     /// that drags performances and (in specific circumtances) cause UI bugs.
-    case freezeObservingParams(observer: LatLonAlt, julianDateRange: Range<Double>)
+    case freezeObservingParams(observer: LatLonAlt?, julianDateRange: Range<Double>)
 }
 
 extension AppAction {

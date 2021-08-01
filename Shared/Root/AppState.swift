@@ -15,7 +15,7 @@ struct AppState: Equatable {
     var skyChartState: SkyChartResources = .empty
     var satelliteElevationGraphResources: SatelliteElevationGraphResources = .empty
     /// A mapping from NORAD ID to the satellite state.
-    var satellites: [Int: SatelliteTrails] = [:]
+    var satelliteTrails: [Int: SatelliteTrails] = [:]
     var satelliteSearchText: String = ""
     var satelliteLoaderState: SatelliteLoaderState = .empty
     var locationState: LocationState = .empty
@@ -42,7 +42,7 @@ struct AppState: Equatable {
     }
 
     var selectedSatelliteTrails: SatelliteTrails? {
-        navigationState.selectedSatelliteNoradIndex.flatMap { satellites[$0] }
+        navigationState.selectedSatelliteNoradIndex.flatMap { satelliteTrails[$0] }
     }
 
     var selectedSatelliteInfo: SatelliteInfo? {
@@ -54,13 +54,13 @@ struct AppState: Equatable {
             guard let selectedSatelliteNoradIndex = navigationState.selectedSatelliteNoradIndex else {
                 return BTree()
             }
-            return satellites[selectedSatelliteNoradIndex]?.snapshots ?? BTree()
+            return satelliteTrails[selectedSatelliteNoradIndex]?.snapshots ?? BTree()
         }
         set {
             guard let selectedSatelliteNoradIndex = navigationState.selectedSatelliteNoradIndex else {
                 return
             }
-            satellites[selectedSatelliteNoradIndex]?.snapshots = newValue
+            satelliteTrails[selectedSatelliteNoradIndex]?.snapshots = newValue
         }
     }
 
@@ -76,7 +76,7 @@ struct AppState: Equatable {
     var selectedSatellitePass: Pass? {
         switch navigationState {
         case let .pass(_, noradIndex, selectedPassIndex):
-            return satellites[noradIndex]?.passes?[selectedPassIndex]
+            return satelliteTrails[noradIndex]?.passes?[selectedPassIndex]
         default:
             return nil
         }

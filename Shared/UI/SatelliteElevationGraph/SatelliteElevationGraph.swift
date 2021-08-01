@@ -382,7 +382,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         let location = CLLocation(latitude: 37.486743000691185, longitude: -122.22655970246515)
         let viewModel = SatelliteElevationGraphState.project(
             state: AppState(
-                satellites: [
+                satelliteTrails: [
                     Int(sat.noradIdent)!: SatelliteTrails(
                         snapshots: sat.snapshots(
                             observer: LatLonAlt(location: location),
@@ -417,7 +417,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         let sat2 = Satellite(withTLE: tle2)
         let viewModel2 = SatelliteElevationGraphState.project(
             state: AppState(
-                satellites: [
+                satelliteTrails: [
                     Int(sat2.noradIdent)!: SatelliteTrails(
                         snapshots: sat2.snapshots(
                             observer: LatLonAlt(location: location),
@@ -452,7 +452,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         let sat3 = Satellite(withTLE: tle3)
         let viewModel3 = SatelliteElevationGraphState.project(
             state: AppState(
-                satellites: [
+                satelliteTrails: [
                     Int(sat3.noradIdent)!: SatelliteTrails(
                         snapshots: sat3.snapshots(
                             observer: LatLonAlt(location: location),

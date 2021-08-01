@@ -136,7 +136,7 @@ struct PassView_Previews: PreviewProvider {
                 rasterizedBackgroundSky: [:],
                 previewBackgroundSkies: [:]
             ),
-            satellites: [
+            satelliteTrails: [
                 tle.noradIndex: SatelliteTrails(
                     snapshots: snapshots.union(fineSnapshots, by: .groupingMatches),
                     passes: passes

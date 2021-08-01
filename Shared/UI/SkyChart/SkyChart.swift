@@ -83,7 +83,7 @@ struct SkyChartViewState: Equatable {
         rasterizedBackgroundSky: UIImage?
     ) -> SkyChartViewState? {
         guard let info = state.satelliteLoaderState[pass.noradIndex],
-                let satelliteState = state.satellites[pass.noradIndex],
+                let satelliteState = state.satelliteTrails[pass.noradIndex],
                 let observer = state.observer else {
             return nil
         }
@@ -129,7 +129,7 @@ struct SkyChartViewState: Equatable {
         let pass: Pass? = {
             switch state.navigationState {
             case let .allPasses(_, noradIndex: noradIndex):
-                guard let satelliteState = state.satellites[noradIndex],
+                guard let satelliteState = state.satelliteTrails[noradIndex],
                       let passes = satelliteState.passes,
                       index < passes.count else {
                     return nil
@@ -163,7 +163,7 @@ struct SkyChartViewState: Equatable {
         let pass: Pass? = {
             switch state.navigationState {
             case let .pass(_, noradIndex: noradIndex, selectedPassIndex: selectedPassIndex):
-                guard let satelliteState = state.satellites[noradIndex],
+                guard let satelliteState = state.satelliteTrails[noradIndex],
                       let passes = satelliteState.passes else {
                     return nil
                 }

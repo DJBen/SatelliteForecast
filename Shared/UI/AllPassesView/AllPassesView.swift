@@ -43,7 +43,6 @@ struct AllPassesViewState: Equatable {
 
     static func project(state: AppState) -> AllPassesViewState? {
         guard let selectedNoradIndex = state.navigationState.selectedSatelliteNoradIndex,
-            let satelliteState = state.satellites[selectedNoradIndex],
             let info = state.satelliteLoaderState[selectedNoradIndex] else {
             return nil
         }
@@ -52,7 +51,7 @@ struct AllPassesViewState: Equatable {
             return nil
         }
 
-        if let passes = satelliteState.passes {
+        if let passes = state.satelliteTrails[selectedNoradIndex]?.passes {
             let items = passes.enumerated().map { i, pass -> Item in
                 let rasterizedSatellitePath = state.skyChartState.previewSatellitePaths[pass]
                 let rasterizedBackgroundSky: UIImage?
@@ -176,16 +175,33 @@ struct AllPassesView: View, Equatable {
     
     var body: some View {
         unwrapState { state in
-            List {
-                Section(header: visiblePassHeader) {
-                    passesList(state.visiblePasses)
-                }
+            Group {
+                if state.observer != nil {
+                    List {
+                        Section(header: visiblePassHeader) {
+                            passesList(state.visiblePasses)
+                        }
 
-                Section(header: invisiblePassHeader) {
-                    passesList(state.invisiblePasses)
+                        Section(header: invisiblePassHeader) {
+                            passesList(state.invisiblePasses)
+                        }
+                    }
+                    .listStyle(.grouped)
+                } else {
+                    VStack(spacing: 8) {
+                        Image(systemName: "questionmark.circle")
+                            .font(.title)
+                        Text(
+                            """
+                            Unable to find satellite passes due to lack of a location. You may set one up within location settings.
+                            """
+                        )
+                        .foregroundColor(Color(UIColor.secondaryLabel))
+                        .multilineTextAlignment(.center)
+                        .padding(EdgeInsets(top: 0, leading: 32, bottom: 0, trailing: 32))
+                    }
                 }
             }
-            .listStyle(.grouped)
             .navigationTitle(state.satelliteName)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -195,11 +211,16 @@ struct AllPassesView: View, Equatable {
                             .font(.headline)
                             .frame(alignment: .center)
                             .multilineTextAlignment(.center)
-                        Text(LocalizedStrings.AllPassesView.searchPassRangeToolbarText(range: state.julianDateRange, now: state.julianDate))
-                            .lineLimit(2)
-                            .font(.caption)
-                            .frame(alignment: .center)
-                            .multilineTextAlignment(.center)
+                        Text(
+                            LocalizedStrings.AllPassesView.searchPassRangeToolbarText(
+                                range: state.julianDateRange,
+                                now: state.julianDate
+                            )
+                        )
+                        .lineLimit(2)
+                        .font(.caption)
+                        .frame(alignment: .center)
+                        .multilineTextAlignment(.center)
                         Color.clear
                     }
                 }

@@ -23,18 +23,13 @@ extension EffectMiddleware where
             .onAction { action, _, getState in
                 switch action {
                 case .loadSatelliteList:
-                    if let observer = getState().locationState.location.map(LatLonAlt.init) {
-                        let julianDate = getState().julianDate
-                        return .sequence([
-                            .freezeObservingParams(
-                                observer: observer,
-                                julianDateRange: JulianDateUtil.createJulianDateRange(now: julianDate)
-                            ),
-                            .satelliteLoader(.loadSatelliteCategory(.brightest100, shouldCalculatePasses: true)),
-                        ])
-                    } else {
-                        return .doNothing
-                    }
+                    return .sequence([
+                        .freezeObservingParams(
+                            observer: getState().locationState.location.map(LatLonAlt.init),
+                            julianDateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate)
+                        ),
+                        .satelliteLoader(.loadSatelliteCategory(.brightest100, shouldCalculatePasses: true)),
+                    ])
                 }
             }
     }

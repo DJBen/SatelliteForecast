@@ -18,19 +18,19 @@ extension Reducer where ActionType == TLEPropagatorAction, StateType == Store.St
         switch action {
         case let .foundPasses(passes, snapshots, noradIndex):
             logger.info("Found \(passes.count) passes for \(noradIndex). Detailed snapshots count: \(snapshots.count)")
-            if let _ = state.satellites[noradIndex] {
-                state.satellites[noradIndex]!.snapshots = snapshots
-                state.satellites[noradIndex]!.passes = passes
+            if let _ = state.satelliteTrails[noradIndex] {
+                state.satelliteTrails[noradIndex]!.snapshots = snapshots
+                state.satelliteTrails[noradIndex]!.passes = passes
             } else {
-                state.satellites[noradIndex] = SatelliteTrails(snapshots: snapshots, passes: passes)
+                state.satelliteTrails[noradIndex] = SatelliteTrails(snapshots: snapshots, passes: passes)
             }
 
         case let .propagatedSnapshots(satelliteSnapshots, noradIndex):
             logger.info("Propagated \(satelliteSnapshots.count) snapshots for \(noradIndex).")
-            if let _ = state.satellites[noradIndex] {
-                state.satellites[noradIndex]!.snapshots = satelliteSnapshots
+            if let _ = state.satelliteTrails[noradIndex] {
+                state.satelliteTrails[noradIndex]!.snapshots = satelliteSnapshots
             } else {
-                state.satellites[noradIndex] = SatelliteTrails(snapshots: satelliteSnapshots)
+                state.satelliteTrails[noradIndex] = SatelliteTrails(snapshots: satelliteSnapshots)
             }
         }
     }
