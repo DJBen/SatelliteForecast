@@ -9,64 +9,21 @@ import Foundation
 import SatelliteKit
 import SatelliteForecastCore
 
-struct NavigationIndexPath: Equatable, Hashable {
-    let category: SatelliteCategory?
-    let noradIndex: Int?
-    let selectedPassIndex: Int?
-
-    init(
-        category: SatelliteCategory? = nil,
-        noradIndex: Int? = nil,
-        selectedPassIndex: Int? = nil
-    ) {
-        self.category = category
-        self.noradIndex = noradIndex
-        self.selectedPassIndex = selectedPassIndex
-    }
-}
-
 enum NavigationState: Equatable {
+    /// The satellite overview screen; also the homepage.
     case overview
+    /// The observer configuration screen.
+    case observer
+
     case list(category: SatelliteCategory)
     // When navigating directly from overview, the category is `nil`.
     case allPasses(category: SatelliteCategory?, noradIndex: Int)
     // When navigating directly from overview, the category is `nil`.
     case pass(category: SatelliteCategory?, noradIndex: Int, selectedPassIndex: Int)
 
-    var indexPath: NavigationIndexPath {
-        get {
-            switch self {
-            case .overview:
-                return NavigationIndexPath(category: nil, noradIndex: nil, selectedPassIndex: nil)
-            case let .list(category):
-                return NavigationIndexPath(category: category, noradIndex: nil, selectedPassIndex: nil)
-            case let .allPasses(category, noradIndex):
-                return NavigationIndexPath(category: category, noradIndex: noradIndex, selectedPassIndex: nil)
-            case let .pass(category, noradIndex, selectedPassIndex):
-                return NavigationIndexPath(category: category, noradIndex: noradIndex, selectedPassIndex: selectedPassIndex)
-            }
-        }
-
-        set {
-            if let noradIndex = newValue.noradIndex {
-                if let selectedPassIndex = newValue.selectedPassIndex {
-                    self = .pass(category: newValue.category, noradIndex: noradIndex, selectedPassIndex: selectedPassIndex)
-                } else {
-                    self = .allPasses(category: newValue.category, noradIndex: noradIndex)
-                }
-            } else {
-                if let category = newValue.category {
-                    self = .list(category: category)
-                } else {
-                    self = .overview
-                }
-            }
-        }
-    }
-
     var selectedCategory: SatelliteCategory? {
         switch self {
-        case .overview:
+        case .overview, .observer:
             return nil
         case let .list(category):
             return category
@@ -81,7 +38,7 @@ enum NavigationState: Equatable {
         switch self {
         case let .allPasses(_, noradIndex), let .pass(_, noradIndex, _):
             return noradIndex
-        case .list, .overview:
+        case .list, .overview, .observer:
             return nil
         }
     }
@@ -96,6 +53,8 @@ enum NavigationState: Equatable {
              .allPasses(category: _, noradIndex: _),
              .pass(category: _, noradIndex: _, selectedPassIndex: _):
             return self
+        case .observer:
+            fatalError("Should never happen")
         }
     }
 
@@ -103,21 +62,38 @@ enum NavigationState: Equatable {
         self = selectingCategory(category)
     }
 
-    func deselectingCategory() -> NavigationState {
+    func delectingSatelliteOverviewItem() -> NavigationState {
         switch self {
         case .overview:
             return self
-        case .list:
+        case .list, .allPasses(category: nil, noradIndex: _), .observer:
             return .overview
-        case .allPasses(category: _, noradIndex: _):
-            fatalError("Should not happen")
         case .pass(category: _, noradIndex: _, selectedPassIndex: _):
+            fatalError("Should not happen")
+        default:
             fatalError("Should not happen")
         }
     }
 
-    mutating func deselectCategory() {
-        self = deselectingCategory()
+    mutating func deselectSatelliteOverviewItem() {
+        self = delectingSatelliteOverviewItem()
+    }
+
+    func selectingObserver() -> NavigationState {
+        switch self {
+        case .overview:
+            return .observer
+        case .observer:
+            return self
+        case .list,
+            .allPasses(category: _, noradIndex: _),
+            .pass(category: _, noradIndex: _, selectedPassIndex: _):
+            fatalError("Should not happen")
+        }
+    }
+
+    mutating func selectObserver() {
+        self = selectingObserver()
     }
 
     func selectingNoradIndex(_ noradIndex: Int) -> NavigationState {
@@ -126,9 +102,9 @@ enum NavigationState: Equatable {
             return .allPasses(category: nil, noradIndex: noradIndex)
         case let .list(category):
             return .allPasses(category: category, noradIndex: noradIndex)
-        case .allPasses(category: _, noradIndex: _):
-            fatalError("Should not happen")
-        case .pass(category: _, noradIndex: _, selectedPassIndex: _):
+        case .allPasses(category: _, noradIndex: _),
+                .pass(category: _, noradIndex: _, selectedPassIndex: _),
+                .observer:
             fatalError("Should not happen")
         }
     }
@@ -139,7 +115,7 @@ enum NavigationState: Equatable {
 
     func deselectingNoradIndex() -> NavigationState {
         switch self {
-        case .overview:
+        case .overview, .observer:
             fatalError("Should not happen")
         case .list(category: _):
             return self
@@ -160,7 +136,7 @@ enum NavigationState: Equatable {
 
     func selectingPassIndex(_ index: Int) -> NavigationState {
         switch self {
-        case .overview:
+        case .overview, .observer:
             fatalError("Should not happen")
         case .list(category: _):
             fatalError("Should not happen")
@@ -177,7 +153,7 @@ enum NavigationState: Equatable {
 
     func deselectingPassIndex() -> NavigationState {
         switch self {
-        case .overview:
+        case .overview, .observer:
             fatalError("Should not happen")
         case .list(category: _):
             fatalError("Should not happen")

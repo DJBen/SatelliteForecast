@@ -1,5 +1,5 @@
 //
-//  CoreLocationAction.swift
+//  LocationAction.swift
 //  SatelliteForecast
 //
 //  Created by Ben Lu on 6/4/21.
@@ -7,17 +7,23 @@
 
 import Foundation
 import CoreLocation
+import MapKit
 
-enum CoreLocationAction {
+enum LocationAction {
     // Input
     case requestAuthorization
+    case requestReverseGeocoding(CLLocation)
+    case requestAutoCompletion(String)
+    case selectLocation(LocationState.Selection)
 
     // Output
     case authorizationDidChange(CLAuthorizationStatus)
     case locationChanged(CLLocation)
+    case reverseGeocodingFinished(Result<[CLPlacemark], Error>)
+    case autocompletionFinished(Result<[MKLocalSearchCompletion], Error>)
 }
 
-extension CoreLocationAction {
+extension LocationAction {
     public var authorization: CLAuthorizationStatus? {
         get {
             guard case let .authorizationDidChange(value) = self else { return nil }

@@ -92,7 +92,7 @@ extension ViewProducer where Context == PassViewContext, ProducedView == PassVie
                         action: AppAction.passView,
                         state: PassViewState.project(state:)
                     )
-                    .asObservableViewModel(initialState: nil),
+                    .asObservableViewModel(initialState: nil, emitsValue: .whenDifferent),
                 context: context,
                 elevationGraphProducer: ViewProducer<Void, SatelliteElevationGraph>
                     .satelliteElevationGraph(viewModel: viewModel),
@@ -136,7 +136,7 @@ struct PassView_Previews: PreviewProvider {
                 rasterizedBackgroundSky: [:],
                 previewBackgroundSkies: [:]
             ),
-            satellites: [
+            satelliteTrails: [
                 tle.noradIndex: SatelliteTrails(
                     snapshots: snapshots.union(fineSnapshots, by: .groupingMatches),
                     passes: passes
@@ -147,9 +147,9 @@ struct PassView_Previews: PreviewProvider {
                     .brightest100: .success(brightest100)
                 ]
             ),
-            coreLocationState: CoreLocationState(
+            locationState: LocationState(
                 authorizationStatus: .authorizedWhenInUse,
-                location: location
+                currentLocation: location
             ),
             julianDateRange: julianDateRange,
             navigationState: .pass(category: .brightest100, noradIndex: tle.noradIndex, selectedPassIndex: 0)

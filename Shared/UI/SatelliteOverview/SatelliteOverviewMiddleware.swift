@@ -21,18 +21,14 @@ extension EffectMiddleware where
         EffectMiddleware<SatelliteOverviewViewAction, AppAction, AppState, Void>
             .onAction { action, _, state in
                 switch action {
-                case let .selectSpecialSatellite(noradIndex):
-                    if let _ = noradIndex {
-                        return .just(.singleSatelliteWrappingView(.loadSatelliteList))
-                    } else {
-                        return .doNothing
-                    }
+                case .selectSpecialSatellite(_):
+                    return .just(.singleSatelliteWrappingView(.loadSatelliteList))
                 case let .selectCategory(category):
-                    if let category = category {
-                        return .just(.satelliteLoader(.loadSatelliteCategory(category)))
-                    } else {
-                        return .doNothing
-                    }
+                    return .just(.satelliteLoader(.loadSatelliteCategory(category)))
+                case .selectObserver:
+                    return .doNothing
+                case .returnToSatelliteOverview:
+                    return .doNothing
                 }
             }
     }

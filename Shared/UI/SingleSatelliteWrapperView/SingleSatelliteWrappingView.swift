@@ -84,7 +84,7 @@ extension ViewProducer where Context == Void, ProducedView == SingleSatelliteWra
                     action: AppAction.singleSatelliteWrappingView,
                     state: SingleSatelliteWrappingViewState.project(state:)
                 )
-                .asObservableViewModel(initialState: .empty),
+                .asObservableViewModel(initialState: .empty, emitsValue: .whenDifferent),
                 allPassesViewProducer: ViewProducer<AllPassesViewContext, AllPassesView>
                     .allPassesView(viewModel: viewModel)
             )

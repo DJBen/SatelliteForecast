@@ -53,32 +53,18 @@ fileprivate extension SatelliteInfo {
     }
 }
 
-struct SatelliteNavTag: Equatable, Hashable {
-    let category: SatelliteCategory?
-    let noradIndex: Int?
-
-    init(_ navigationIndexPath: NavigationIndexPath) {
-        category = navigationIndexPath.category
-        noradIndex = navigationIndexPath.noradIndex
-    }
-
-    init(category: SatelliteCategory? = nil, noradIndex: Int? = nil) {
-        self.category = category
-        self.noradIndex = noradIndex
-    }
-}
-
 struct SatelliteListViewState: Equatable {
     var satellites: Result<Map<Int, SatelliteInfo>, SatelliteLoaderError>?
     var satelliteSearchText: String = ""
-    var navTag: SatelliteNavTag
+    var category: SatelliteCategory
+    var selectedNoradIndex: Int?
 
-    static var empty: SatelliteListViewState {
-        return SatelliteListViewState(navTag: SatelliteNavTag())
-    }
+    static func project(state: Store.StateType) -> SatelliteListViewState? {
+        guard let category = state.navigationState.selectedCategory else {
+            return nil
+        }
 
-    static func project(state: Store.StateType) -> SatelliteListViewState {
-        func filterSatellites(info: Map<Int, SatelliteInfo>) -> Map<Int, SatelliteInfo> {
+        let satellites: Result<Map<Int, SatelliteInfo>, SatelliteLoaderError>? = state.satelliteLoaderState.info[category]?.map { info in
             if state.satelliteSearchText.isEmpty {
                 return info
             } else {
@@ -92,80 +78,80 @@ struct SatelliteListViewState: Equatable {
             }
         }
 
-        let satellites: Result<Map<Int, SatelliteInfo>, SatelliteLoaderError>? = state.navigationState.selectedCategory
-            .flatMap { category in
-                state.satelliteLoaderState.info[category]?.map(filterSatellites(info:))
-            }
-
         return SatelliteListViewState(
             satellites: satellites,
             satelliteSearchText: state.satelliteSearchText,
-            navTag: SatelliteNavTag(state.navigationState.indexPath)
+            category: category,
+            selectedNoradIndex: state.navigationState.selectedSatelliteNoradIndex
         )
     }
 }
 
 struct SatelliteListView: View {
-    @ObservedObject var viewModel: ObservableViewModel<SatelliteListViewAction, SatelliteListViewState>
+    @ObservedObject var viewModel: ObservableViewModel<SatelliteListViewAction, SatelliteListViewState?>
 
     var allPassesViewProducer: ViewProducer<AllPassesViewContext, AllPassesView>
+
+    @ViewBuilder private func unwrapState<Content: View>(@ViewBuilder content: (SatelliteListViewState) -> Content) -> some View {
+        if let state = viewModel.state {
+            content(state)
+        }
+    }
 
     var destination: some View {
         allPassesViewProducer.view(
             AllPassesViewContext()
         )
         .equatable()
-        .id(viewModel.state.navTag)
     }
 
-    func satelliteContent<Content: View, FailedContent: View>(
+    @ViewBuilder func satelliteContent<Content: View, FailedContent: View>(
         @ViewBuilder contentBuilder: (Map<Int, SatelliteInfo>) -> Content,
         @ViewBuilder failedContentBuilder: (SatelliteLoaderError) -> FailedContent
     ) -> some View {
-        switch viewModel.state.satellites {
+        switch viewModel.state?.satellites {
         case .none:
-            return AnyView(ProgressView("Loading..."))
+            ProgressView("Loading...")
         case let .success(satellites):
-            return AnyView(contentBuilder(satellites))
+            contentBuilder(satellites)
         case let .failure(error):
-            return AnyView(failedContentBuilder(error))
+            failedContentBuilder(error)
         }
     }
 
     private func satellitesView(_ satellites: Map<Int, SatelliteInfo>) -> some View {
-        List {
-            ForEach(Array(satellites.keys), id: \.self) { noradIndex in
-                NavigationLink(
-                    destination: LazyView(destination),
-                    tag: SatelliteNavTag(
-                        category: viewModel.state.navTag.category,
-                        noradIndex: noradIndex
-                    ),
-                    selection: Binding<SatelliteNavTag?>(
-                        get: { viewModel.state.navTag },
-                        set: {
-                            viewModel.dispatch(.selectSatellite(noradIndex: $0?.noradIndex))
-                        }
-                    )
-                ) {
-                    SatelliteCell(info: satellites[noradIndex]!)
+        unwrapState { state in
+            List {
+                ForEach(Array(satellites.keys), id: \.self) { noradIndex in
+                    NavigationLink(
+                        destination: LazyView(destination),
+                        tag: noradIndex,
+                        selection: Binding<Int?>(
+                            get: { state.selectedNoradIndex },
+                            set: {
+                                viewModel.dispatch(.selectSatellite(noradIndex: $0))
+                            }
+                        )
+                    ) {
+                        SatelliteCell(info: satellites[noradIndex]!)
+                    }
+                    .id(noradIndex)
                 }
-                .id(noradIndex)
             }
+            .searchable(
+                text: Binding<String>(
+                    get: {
+                        state.satelliteSearchText
+                    }, set: {
+                        viewModel.dispatch(.satelliteSearchTextChanged($0))
+                    }
+                ),
+                placement: .navigationBarDrawer(displayMode: .always),
+                prompt: "Filter by name, ID, country, year..."
+            )
+            .listStyle(.insetGrouped)
+            .navigationTitle("Satellites")
         }
-        .searchable(
-            text: Binding<String>(
-                get: {
-                    viewModel.state.satelliteSearchText
-                }, set: {
-                    viewModel.dispatch(.satelliteSearchTextChanged($0))
-                }
-            ),
-            placement: .navigationBarDrawer(displayMode: .always),
-            prompt: "Filter by name, ID, country, year..."
-        )
-        .listStyle(.insetGrouped)
-        .navigationTitle("Satellites")
     }
 
     private func failureView(_ error: Error) -> some View {
@@ -202,7 +188,7 @@ extension ViewProducer where Context == Void, ProducedView == SatelliteListView 
                         action: AppAction.satelliteListView,
                         state: SatelliteListViewState.project(state:)
                     )
-                    .asObservableViewModel(initialState: .empty),
+                    .asObservableViewModel(initialState: nil, emitsValue: .whenDifferent),
                 allPassesViewProducer: ViewProducer<AllPassesViewContext, AllPassesView>
                     .allPassesView(viewModel: viewModel)
             )
@@ -243,7 +229,8 @@ struct SatelliteListView_Previews: PreviewProvider {
             viewModel: .mock(
                 state: SatelliteListViewState(
                     satellites: .success(brightest100),
-                    navTag: SatelliteNavTag(category: .brightest100)
+                    category: .brightest100,
+                    selectedNoradIndex: nil
                 )
             ),
             allPassesViewProducer: .pure(

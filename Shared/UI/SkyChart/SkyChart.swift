@@ -83,8 +83,8 @@ struct SkyChartViewState: Equatable {
         rasterizedBackgroundSky: UIImage?
     ) -> SkyChartViewState? {
         guard let info = state.satelliteLoaderState[pass.noradIndex],
-                let satelliteState = state.satellites[pass.noradIndex],
-                let observer = state.observerForPasses else {
+                let satelliteState = state.satelliteTrails[pass.noradIndex],
+                let observer = state.observer else {
             return nil
         }
 
@@ -123,13 +123,13 @@ struct SkyChartViewState: Equatable {
     }
 
     static func projectPreview(state: AppState, index: Int, backgroundSkyConfigs: SkyChartConfigs.BackgroundSky) -> SkyChartViewState? {
-        guard let observer = state.observerForPasses else {
+        guard let observer = state.observer else {
             return nil
         }
         let pass: Pass? = {
             switch state.navigationState {
             case let .allPasses(_, noradIndex: noradIndex):
-                guard let satelliteState = state.satellites[noradIndex],
+                guard let satelliteState = state.satelliteTrails[noradIndex],
                       let passes = satelliteState.passes,
                       index < passes.count else {
                     return nil
@@ -157,13 +157,13 @@ struct SkyChartViewState: Equatable {
     }
 
     static func project(state: AppState, backgroundSkyConfigs: SkyChartConfigs.BackgroundSky) -> SkyChartViewState? {
-        guard let observer = state.observerForPasses else {
+        guard let observer = state.observer else {
             return nil
         }
         let pass: Pass? = {
             switch state.navigationState {
             case let .pass(_, noradIndex: noradIndex, selectedPassIndex: selectedPassIndex):
-                guard let satelliteState = state.satellites[noradIndex],
+                guard let satelliteState = state.satelliteTrails[noradIndex],
                       let passes = satelliteState.passes else {
                     return nil
                 }

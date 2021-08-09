@@ -46,7 +46,7 @@ extension EffectMiddleware where
                         // Precondition: An observer coordinate must exist
                         // Freeze the coordinate during the pass viewing workflow, so the coordinate
                         // stays the same.
-                        guard let observer = state.coreLocationState.location.map(LatLonAlt.init) else {
+                        guard let observer = state.locationState.location.map(LatLonAlt.init) else {
                            logger.info("Will not generate satellite \(noradIndex) ephemerides: lack of core location coordinate")
                             return Empty().eraseToAnyPublisher()
                         }

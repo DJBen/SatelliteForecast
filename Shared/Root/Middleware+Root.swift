@@ -17,21 +17,20 @@ extension MiddlewareReader where MiddlewareType == EffectMiddleware<SatelliteLoa
     }
 }
 
-extension CoreLocationMiddleware {
+extension LocationMiddleware {
     var lifted: AnyMiddleware<AppAction, AppAction, AppState> {
         return lift(
-            inputAction: \AppAction.coreLocation,
-            outputAction: AppAction.coreLocation,
-            state: \AppState.coreLocationState
+            inputAction: \AppAction.location,
+            state: \AppState.locationState
         )
         .eraseToAnyMiddleware()
     }
 }
 
-extension EffectMiddleware where InputActionType == CoreLocationAction, OutputActionType == Never, StateType == Void, Dependencies == Void {
+extension EffectMiddleware where InputActionType == LocationAction, OutputActionType == Never, StateType == Void, Dependencies == Void {
     var lifted: AnyMiddleware<AppAction, AppAction, AppState> {
         return lift(
-            inputAction: { $0.coreLocation },
+            inputAction: { $0.location },
             outputAction: { _ -> AppAction in },
             state: { _ in }
         )

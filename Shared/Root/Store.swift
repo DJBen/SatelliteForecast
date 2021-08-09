@@ -14,8 +14,8 @@ class Store: ReduxStoreBase<AppAction, AppState> {
     static let shared = Store()
 
     static let reducer: Reducer<AppAction, AppState> = [
-        Reducer<CoreLocationAction, CoreLocationState>.coreLocationReducer
-            .lift(action: \.coreLocation, state: \.coreLocationState),
+        Reducer<LocationAction, LocationState>.locationReducer
+            .lift(action: \.location, state: \.locationState),
         Reducer<SatelliteLoaderAction, SatelliteLoaderState>.satelliteLoaderReducer
             .lift(action: \.satelliteLoader, state: \.satelliteLoaderState),
         Reducer<SatelliteOverviewViewAction, AppState>.satelliteOverviewReducer
@@ -36,7 +36,9 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             .lift(action: \.timer),
         Reducer<DebugMenuAction, AppState>.debugMenuReducer
             .lift(action: \.debugMenu),
-        Reducer<AppAction, AppState>.appStateReducer
+        Reducer<AppAction, AppState>.appStateReducer,
+        Reducer<NavigationAction, NavigationState>.navigationReducer
+            .lift(action: \.navigation, state: \.navigationState)
     ]
     .reduce(Reducer<AppAction, AppState>.identity, <>)
 
@@ -44,9 +46,9 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         satelliteLoader: SatelliteLoader
     ) -> AnyMiddleware<AppAction, AppAction, AppState> {
 
-        let composedMiddleware = CoreLocationMiddleware().lifted
+        let composedMiddleware = LocationMiddleware().lifted
 
-        <> EffectMiddleware.coreLocationLogger.lifted
+        <> EffectMiddleware.locationLogger.lifted
 
         <> EffectMiddleware.satelliteLoader(satelliteLoader)
             .lifted

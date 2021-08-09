@@ -15,21 +15,17 @@ struct AppState: Equatable {
     var skyChartState: SkyChartResources = .empty
     var satelliteElevationGraphResources: SatelliteElevationGraphResources = .empty
     /// A mapping from NORAD ID to the satellite state.
-    var satellites: [Int: SatelliteTrails] = [:]
+    var satelliteTrails: [Int: SatelliteTrails] = [:]
     var satelliteSearchText: String = ""
+    /// Location agnostic satellite information, including its orbit and metadata.
     var satelliteLoaderState: SatelliteLoaderState = .empty
-    var coreLocationState: CoreLocationState = .empty
+    var locationState: LocationState = .empty
 
     var julianDateRange: Range<Double>?
-    var observerForPasses: LatLonAlt?
-    var debugMenu: DebugMenuConfig = .empty
 
-    /// The julian date for consumptions of display and calculation.
-    /// This julian date will take into account of artificial offsets in debug mode, and is not always a true representation
-    /// of the current date.
-    var julianDate: Double {
-        satelliteLoaderState.currentDate + debugMenu.effectiveOffset
-    }
+    /// The observer coordinate. This value will be "frozen" when the user views any satellite passes.
+    var observer: LatLonAlt?
+    var debugMenu: DebugMenuConfig = .empty
 
     var navigationState: NavigationState = .overview {
         willSet {
@@ -41,8 +37,17 @@ struct AppState: Equatable {
         AppState()
     }
 
+    // MARK: - Derived properties
+
+    /// The julian date for consumptions of display and calculation.
+    /// This julian date will take into account of artificial offsets in debug mode, and is not always a true representation
+    /// of the current date.
+    var julianDate: Double {
+        satelliteLoaderState.currentDate + debugMenu.effectiveOffset
+    }
+
     var selectedSatelliteTrails: SatelliteTrails? {
-        navigationState.selectedSatelliteNoradIndex.flatMap { satellites[$0] }
+        navigationState.selectedSatelliteNoradIndex.flatMap { satelliteTrails[$0] }
     }
 
     var selectedSatelliteInfo: SatelliteInfo? {
@@ -54,13 +59,13 @@ struct AppState: Equatable {
             guard let selectedSatelliteNoradIndex = navigationState.selectedSatelliteNoradIndex else {
                 return BTree()
             }
-            return satellites[selectedSatelliteNoradIndex]?.snapshots ?? BTree()
+            return satelliteTrails[selectedSatelliteNoradIndex]?.snapshots ?? BTree()
         }
         set {
             guard let selectedSatelliteNoradIndex = navigationState.selectedSatelliteNoradIndex else {
                 return
             }
-            satellites[selectedSatelliteNoradIndex]?.snapshots = newValue
+            satelliteTrails[selectedSatelliteNoradIndex]?.snapshots = newValue
         }
     }
 
@@ -76,7 +81,7 @@ struct AppState: Equatable {
     var selectedSatellitePass: Pass? {
         switch navigationState {
         case let .pass(_, noradIndex, selectedPassIndex):
-            return satellites[noradIndex]?.passes?[selectedPassIndex]
+            return satelliteTrails[noradIndex]?.passes?[selectedPassIndex]
         default:
             return nil
         }

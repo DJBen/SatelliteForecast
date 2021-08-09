@@ -43,7 +43,6 @@ struct AllPassesViewState: Equatable {
 
     static func project(state: AppState) -> AllPassesViewState? {
         guard let selectedNoradIndex = state.navigationState.selectedSatelliteNoradIndex,
-            let satelliteState = state.satellites[selectedNoradIndex],
             let info = state.satelliteLoaderState[selectedNoradIndex] else {
             return nil
         }
@@ -52,11 +51,11 @@ struct AllPassesViewState: Equatable {
             return nil
         }
 
-        if let passes = satelliteState.passes {
+        if let passes = state.satelliteTrails[selectedNoradIndex]?.passes {
             let items = passes.enumerated().map { i, pass -> Item in
                 let rasterizedSatellitePath = state.skyChartState.previewSatellitePaths[pass]
                 let rasterizedBackgroundSky: UIImage?
-                if let observer = state.observerForPasses {
+                if let observer = state.observer {
                     rasterizedBackgroundSky = state.skyChartState.previewBackgroundSkies[
                         SkyChartBackgroundSkyKey(
                             observer: observer,
@@ -75,7 +74,7 @@ struct AllPassesViewState: Equatable {
                 satelliteName: info.satellite.commonName,
                 julianDate: state.julianDate,
                 julianDateRange: julianDateRange,
-                observer: state.observerForPasses,
+                observer: state.observer,
                 visiblePasses: visiblePasses
                     .sorted { $0.pass.rise.julianDate < $1.pass.rise.julianDate },
                 invisiblePasses: invisiblePasses
@@ -87,7 +86,7 @@ struct AllPassesViewState: Equatable {
                 satelliteName: info.satellite.commonName,
                 julianDate: state.julianDate,
                 julianDateRange: julianDateRange,
-                observer: state.observerForPasses,
+                observer: state.observer,
                 visiblePasses: nil,
                 invisiblePasses: nil,
                 selectedPassIndex: state.selectedSatellitePassIndex
@@ -176,16 +175,33 @@ struct AllPassesView: View, Equatable {
     
     var body: some View {
         unwrapState { state in
-            List {
-                Section(header: visiblePassHeader) {
-                    passesList(state.visiblePasses)
-                }
+            Group {
+                if state.observer != nil {
+                    List {
+                        Section(header: visiblePassHeader) {
+                            passesList(state.visiblePasses)
+                        }
 
-                Section(header: invisiblePassHeader) {
-                    passesList(state.invisiblePasses)
+                        Section(header: invisiblePassHeader) {
+                            passesList(state.invisiblePasses)
+                        }
+                    }
+                    .listStyle(.grouped)
+                } else {
+                    VStack(spacing: 8) {
+                        Image(systemName: "questionmark.circle")
+                            .font(.title)
+                        Text(
+                            """
+                            We need a location to find satellite passes. You may set one up within location settings.
+                            """
+                        )
+                        .foregroundColor(Color(UIColor.secondaryLabel))
+                        .multilineTextAlignment(.center)
+                        .padding(EdgeInsets(top: 0, leading: 32, bottom: 0, trailing: 32))
+                    }
                 }
             }
-            .listStyle(.grouped)
             .navigationTitle(state.satelliteName)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -195,11 +211,16 @@ struct AllPassesView: View, Equatable {
                             .font(.headline)
                             .frame(alignment: .center)
                             .multilineTextAlignment(.center)
-                        Text(LocalizedStrings.AllPassesView.searchPassRangeToolbarText(range: state.julianDateRange, now: state.julianDate))
-                            .lineLimit(2)
-                            .font(.caption)
-                            .frame(alignment: .center)
-                            .multilineTextAlignment(.center)
+                        Text(
+                            LocalizedStrings.AllPassesView.searchPassRangeToolbarText(
+                                range: state.julianDateRange,
+                                now: state.julianDate
+                            )
+                        )
+                        .lineLimit(2)
+                        .font(.caption)
+                        .frame(alignment: .center)
+                        .multilineTextAlignment(.center)
                         Color.clear
                     }
                 }
@@ -220,7 +241,7 @@ extension ViewProducer where Context == AllPassesViewContext, ProducedView == Al
                         action: { AppAction.allPassesView($0) },
                         state: AllPassesViewState.project(state:)
                     )
-                    .asObservableViewModel(initialState: nil),
+                    .asObservableViewModel(initialState: nil, emitsValue: .whenDifferent),
                 context: context,
                 skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
                     .skyChart(viewModel: viewModel),

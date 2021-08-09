@@ -25,14 +25,11 @@ extension EffectMiddleware where InputActionType == SatelliteListViewAction, Out
             .onAction { (action, _, getState) -> Effect<Void, AppAction> in
                 switch action {
                 case let .selectSatellite(noradIndex):
-                    if let observer = getState().coreLocationState.location.map(LatLonAlt.init),
-                       let _ = noradIndex {
-                        let julianDate = getState().julianDate
-
+                    if let _ = noradIndex {
                         return .sequence([
                             .freezeObservingParams(
-                                observer: observer,
-                                julianDateRange: JulianDateUtil.createJulianDateRange(now: julianDate)
+                                observer: getState().locationState.location.map(LatLonAlt.init),
+                                julianDateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate)
                             ),
                             .allPassesView(.calculatePasses)
                         ])
