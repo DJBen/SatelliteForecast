@@ -48,8 +48,16 @@ enum LocalizedStrings {
                 "SatelliteListView.observerCell.title.currentLocation",
                 tableName: nil,
                 bundle: .main,
-                value: "Current Location",
+                value: "Current location",
                 comment: "The current location text, indicating that the observer location is the current location."
+            )
+
+            static let requiresLocationSelection: String = NSLocalizedString(
+                "SatelliteListView.observerCell.title.requiresLocationSelection",
+                tableName: nil,
+                bundle: .main,
+                value: "Requires location selection",
+                comment: "The text indicating that location service is not available, nor has the user selecetd a location manually."
             )
         }
     }
@@ -123,6 +131,30 @@ enum LocalizedStrings {
                     value: "All active satellites",
                     comment: "The section header for all active satellites"
                 )
+            }
+        }
+    }
+
+    enum LocationSettingsView {
+        static func alertMessage(from locationSelection: LocationState.Selection) -> String {
+            switch locationSelection {
+            case .currentLocation:
+                return NSLocalizedString(
+                    "SatelliteListView.locationSettingsView.alert.message.currentLocation",
+                    tableName: nil,
+                    bundle: .main,
+                    value: "Please confirm to change location to your current location. This will affect all the satellite predictions.",
+                    comment: "The alert message to confirm that the user is changing into his/her current location."
+                )
+            case let .custom(completion, _):
+                let format = NSLocalizedString(
+                    "SatelliteListView.locationSettingsView.alert.message.custom",
+                    tableName: nil,
+                    bundle: .main,
+                    value: "Please confirm to change location to %@. This will affect all the satellite predictions.",
+                    comment: "The alert message to confirm that the user is changing into a custom location."
+                )
+                return String(format: format, completion.title)
             }
         }
     }

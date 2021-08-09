@@ -34,6 +34,7 @@ struct SatelliteOverviewView: View {
     let listViewProducer: ViewProducer<Void, SatelliteListView>
     let singleSatelliteWrappingViewProducer: ViewProducer<Void, SingleSatelliteWrappingView>
     let observerCellViewProducer: ViewProducer<Void, ObserverCell>
+    let locationSettingsViewProducer: ViewProducer<Void, LocationSettingsView>
 
     let sections: [SatelliteOverviewSection] = [
         .satellitesOfSpecialInterest([
@@ -57,7 +58,7 @@ struct SatelliteOverviewView: View {
         case .category(_):
             listViewProducer.view()
         case .observerSettings:
-            fatalError("Unimplemented")
+            locationSettingsViewProducer.view()
         }
     }
 
@@ -144,7 +145,8 @@ extension ViewProducer where Context == Void, ProducedView == SatelliteOverviewV
                 listViewProducer: ViewProducer<Void, SatelliteListView>
                     .satelliteListView(viewModel: viewModel),
                 singleSatelliteWrappingViewProducer: ViewProducer<Void, SingleSatelliteWrappingView>.singleSatelliteWrappingView(viewModel: viewModel),
-                observerCellViewProducer: ViewProducer<Void, ObserverCell>.observerCell(viewModel: viewModel)
+                observerCellViewProducer: ViewProducer<Void, ObserverCell>.observerCell(viewModel: viewModel),
+                locationSettingsViewProducer: ViewProducer<Void, LocationSettingsView>.locationSettings(viewModel: viewModel)
             )
         }
     }
@@ -159,7 +161,8 @@ struct SatelliteOverviewView_Previews: PreviewProvider {
             ),
             listViewProducer: .crash,
             singleSatelliteWrappingViewProducer: .crash,
-            observerCellViewProducer: .crash
+            observerCellViewProducer: .crash,
+            locationSettingsViewProducer: .crash
         )
     }
 }

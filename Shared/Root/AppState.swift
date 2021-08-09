@@ -17,19 +17,15 @@ struct AppState: Equatable {
     /// A mapping from NORAD ID to the satellite state.
     var satelliteTrails: [Int: SatelliteTrails] = [:]
     var satelliteSearchText: String = ""
+    /// Location agnostic satellite information, including its orbit and metadata.
     var satelliteLoaderState: SatelliteLoaderState = .empty
     var locationState: LocationState = .empty
 
     var julianDateRange: Range<Double>?
+
+    /// The observer coordinate. This value will be "frozen" when the user views any satellite passes.
     var observer: LatLonAlt?
     var debugMenu: DebugMenuConfig = .empty
-
-    /// The julian date for consumptions of display and calculation.
-    /// This julian date will take into account of artificial offsets in debug mode, and is not always a true representation
-    /// of the current date.
-    var julianDate: Double {
-        satelliteLoaderState.currentDate + debugMenu.effectiveOffset
-    }
 
     var navigationState: NavigationState = .overview {
         willSet {
@@ -39,6 +35,15 @@ struct AppState: Equatable {
 
     static var empty: AppState {
         AppState()
+    }
+
+    // MARK: - Derived properties
+
+    /// The julian date for consumptions of display and calculation.
+    /// This julian date will take into account of artificial offsets in debug mode, and is not always a true representation
+    /// of the current date.
+    var julianDate: Double {
+        satelliteLoaderState.currentDate + debugMenu.effectiveOffset
     }
 
     var selectedSatelliteTrails: SatelliteTrails? {

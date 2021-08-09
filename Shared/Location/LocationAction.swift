@@ -7,16 +7,20 @@
 
 import Foundation
 import CoreLocation
+import MapKit
 
 enum LocationAction {
     // Input
     case requestAuthorization
     case requestReverseGeocoding(CLLocation)
+    case requestAutoCompletion(String)
+    case selectLocation(LocationState.Selection)
 
     // Output
     case authorizationDidChange(CLAuthorizationStatus)
     case locationChanged(CLLocation)
     case reverseGeocodingFinished(Result<[CLPlacemark], Error>)
+    case autocompletionFinished(Result<[MKLocalSearchCompletion], Error>)
 }
 
 extension LocationAction {

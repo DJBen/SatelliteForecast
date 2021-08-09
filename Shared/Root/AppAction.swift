@@ -10,6 +10,7 @@ import SatelliteKit
 
 enum AppAction {
     case appDelegate(AppDelegateAction)
+    case navigation(NavigationAction)
     case location(LocationAction)
     case satelliteLoader(SatelliteLoaderAction)
     case satelliteOverview(SatelliteOverviewViewAction)
@@ -39,6 +40,17 @@ extension AppAction {
         set {
             guard case .appDelegate = self, let newValue = newValue else { return }
             self = .appDelegate(newValue)
+        }
+    }
+
+    public var navigation: NavigationAction? {
+        get {
+            guard case let .navigation(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .navigation = self, let newValue = newValue else { return }
+            self = .navigation(newValue)
         }
     }
 

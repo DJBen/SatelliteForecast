@@ -193,7 +193,7 @@ struct AllPassesView: View, Equatable {
                             .font(.title)
                         Text(
                             """
-                            Unable to find satellite passes due to lack of a location. You may set one up within location settings.
+                            We need a location to find satellite passes. You may set one up within location settings.
                             """
                         )
                         .foregroundColor(Color(UIColor.secondaryLabel))

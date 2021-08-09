@@ -42,7 +42,31 @@ struct ObserverCell: View {
         )
     }
 
-    @ViewBuilder func map(coordinate: CLLocationCoordinate2D, rect: CGRect, delta: CLLocationDegrees = 0.5) -> some View {
+    struct CustomLocationMarker: Identifiable {
+        let autocompletion: MKLocalSearchCompletion
+        var location: MapMarker
+
+        var id: String {
+            autocompletion.title + autocompletion.subtitle
+        }
+    }
+
+    private var annotationItems: [CustomLocationMarker] {
+        let locationState = viewModel.state.locationState
+        switch locationState.selection {
+        case let .custom(completion, placemark):
+            return [
+                CustomLocationMarker(
+                    autocompletion: completion,
+                    location: MapMarker(coordinate: placemark.coordinate)
+                )
+            ]
+        case .currentLocation:  
+            return []
+        }
+    }
+
+    @ViewBuilder func map(coordinate: CLLocationCoordinate2D, rect: CGRect, delta: CLLocationDegrees = 0.1) -> some View {
         Map(
             coordinateRegion: Binding<MKCoordinateRegion>(
                 get: {
@@ -57,7 +81,9 @@ struct ObserverCell: View {
                 }
             ),
             interactionModes: [],
-            showsUserLocation: true
+            showsUserLocation: true,
+            annotationItems: annotationItems,
+            annotationContent: { $0.location }
         )
     }
 
@@ -81,12 +107,16 @@ struct ObserverCell: View {
                         }
                     }
                 case .denied, .restricted:
-                    ZStack {
-                        map(coordinate: CLLocationCoordinate2D(), rect: rect, delta: 90)
-                        Text("\(Image(systemName: "nosign")) Location access denied")
-                            .foregroundColor(Color("locationAccessDenied_foreground"))
-                            .fontWeight(.semibold)
-                            .offset(x: 0, y: -(rect.height - 120) / 2)
+                    if let location = viewModel.state.locationState.location {
+                        map(coordinate: location.coordinate, rect: rect)
+                    } else {
+                        ZStack {
+                            map(coordinate: CLLocationCoordinate2D(), rect: rect, delta: 90)
+                            Text("\(Image(systemName: "nosign")) Location access denied")
+                                .foregroundColor(Color("locationAccessDenied_foreground"))
+                                .fontWeight(.semibold)
+                                .offset(x: 0, y: -(rect.height - 120) / 2)
+                        }
                     }
                 case .notDetermined:
                     EmptyView()
@@ -97,28 +127,28 @@ struct ObserverCell: View {
         }
     }
 
-    static let addressFormatter: CNPostalAddressFormatter = {
-        let formatter = CNPostalAddressFormatter()
-        formatter.style = .mailingAddress
-        return formatter
-    }()
-
     var secondaryLabelText: String? {
         let locationState = viewModel.state.locationState
 
         switch locationState.authorizationStatus {
         case .authorizedAlways, .authorizedWhenInUse:
             if let placemark = locationState.placemark {
-                guard let postalAddress = placemark.postalAddress else { return nil }
-                let formatterString = Self.addressFormatter.string(from: postalAddress)
-                return formatterString.replacingOccurrences(of: "\n", with: ", ")
+                return placemark.formattedString
             } else {
                 return nil
             }
         case .denied:
-            return "Tap to manually select a location"
+            if let placemark = locationState.placemark {
+                return placemark.formattedString
+            } else {
+                return "Tap to manually select a location"
+            }
         case .restricted, .notDetermined:
-            return nil
+            if let placemark = locationState.placemark {
+                return placemark.formattedString
+            } else {
+                return nil
+            }
         @unknown default:
             return nil
         }
@@ -128,10 +158,25 @@ struct ObserverCell: View {
         let locationState = viewModel.state.locationState
 
         switch locationState.selection {
-        case .userLocation:
-            return LocalizedStrings.ObserverCell.Title.currentLocation
-        case let .custom(name, _):
-            return name
+        case .currentLocation:
+            switch locationState.authorizationStatus {
+            case .denied, .restricted:
+                return LocalizedStrings.ObserverCell.Title.requiresLocationSelection
+            default:
+                return LocalizedStrings.ObserverCell.Title.currentLocation
+            }
+        case let .custom(completion, _):
+            return completion.title
+        }
+    }
+
+    private struct SecondaryLabelModifier: ViewModifier {
+        @Environment(\.colorScheme) private var colorScheme
+
+        func body(content: Content) -> some View {
+            content.font(.caption)
+                .multilineTextAlignment(.leading)
+                .foregroundColor(colorScheme == .light ? Color(UIColor.systemGray2) : Color(UIColor.systemGray4))
         }
     }
 
@@ -155,9 +200,13 @@ struct ObserverCell: View {
 
                         if let secondaryLabelText = secondaryLabelText {
                             Text(secondaryLabelText)
-                                .font(.caption)
-                                .multilineTextAlignment(.leading)
-                                .foregroundColor(colorScheme == .light ? Color(UIColor.systemGray2) : Color(UIColor.systemGray4))
+                                .modifier(SecondaryLabelModifier())
+                                .vibrancyEffect()
+                        }
+
+                        if let coordinate = viewModel.state.locationState.location?.coordinate {
+                            Text(coordinate.formattedString)
+                                .modifier(SecondaryLabelModifier())
                                 .vibrancyEffect()
                         }
                     }

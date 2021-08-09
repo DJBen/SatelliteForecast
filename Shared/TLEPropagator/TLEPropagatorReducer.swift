@@ -32,6 +32,8 @@ extension Reducer where ActionType == TLEPropagatorAction, StateType == Store.St
             } else {
                 state.satelliteTrails[noradIndex] = SatelliteTrails(snapshots: satelliteSnapshots)
             }
+        case .purgePassesAndSnapshots:
+            state.satelliteTrails = [:]
         }
     }
 }

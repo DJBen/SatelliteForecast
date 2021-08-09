@@ -14,4 +14,5 @@ enum TLEPropagatorAction {
     /// during the pass.
     case foundPasses([Pass], fineSnapshots: BTree<Double, SatelliteSnapshot>, noradIndex: Int)
     case propagatedSnapshots(BTree<Double, SatelliteSnapshot>, noradIndex: Int)
+    case purgePassesAndSnapshots
 }

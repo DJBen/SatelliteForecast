@@ -15,18 +15,27 @@ extension Reducer where ActionType == LocationAction, StateType == LocationState
             break
         case .requestReverseGeocoding(_):
             break
+        case .requestAutoCompletion(_):
+            break
+        case let .selectLocation(selection):
+            if selection == .currentLocation && state.currentLocation == nil {
+                break
+            }
+            state.selection = selection
         case let .authorizationDidChange(authorizationStatus):
             state.authorizationStatus = authorizationStatus
         case let .locationChanged(location):
             state.currentLocation = location
-            state.placemark = nil
+            state.currentLocationPlacemark = nil
         case let .reverseGeocodingFinished(result):
             switch result {
             case let .success(placemarks):
-                state.placemark = placemarks.first
+                state.currentLocationPlacemark = placemarks.first
             case .failure(_):
                 break
             }
+        case let .autocompletionFinished(result):
+            state.autocompletionResult = result
         }
     }
 }

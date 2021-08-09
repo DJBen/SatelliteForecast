@@ -21,7 +21,6 @@ extension LocationMiddleware {
     var lifted: AnyMiddleware<AppAction, AppAction, AppState> {
         return lift(
             inputAction: \AppAction.location,
-            outputAction: AppAction.location,
             state: \AppState.locationState
         )
         .eraseToAnyMiddleware()

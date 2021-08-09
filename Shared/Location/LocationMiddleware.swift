@@ -9,17 +9,21 @@ import os
 import CombineRex
 import SwiftRex
 import CoreLocation
+import MapKit
 
 class LocationMiddleware: NSObject, Middleware {
     typealias InputActionType = LocationAction
-    typealias OutputActionType = LocationAction
+    typealias OutputActionType = AppAction
     typealias StateType = LocationState
 
     var locationManager: CLLocationManager!
     var geocoder: CLGeocoder!
-    var output: AnyActionHandler<LocationAction>!
+    var searchCompleter: MKLocalSearchCompleter!
 
-    func receiveContext(getState: @escaping GetState<LocationState>, output: AnyActionHandler<LocationAction>) {
+    private var getState: GetState<StateType>!
+    private var output: AnyActionHandler<AppAction>!
+
+    func receiveContext(getState: @escaping GetState<LocationState>, output: AnyActionHandler<AppAction>) {
         locationManager = CLLocationManager()
         locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
         locationManager.distanceFilter = 1000
@@ -28,11 +32,14 @@ class LocationMiddleware: NSObject, Middleware {
         locationManager.delegate = self
 
         geocoder = CLGeocoder()
+        searchCompleter = MKLocalSearchCompleter()
+        searchCompleter.delegate = self
 
+        self.getState = getState
         self.output = output
 
         // Output the initial authorization status
-        output.dispatch(.authorizationDidChange(locationManager.authorizationStatus))
+        output.dispatch(.location(.authorizationDidChange(locationManager.authorizationStatus)))
     }
 
     func handle(action: LocationAction, from dispatcher: ActionSource, afterReducer: inout AfterReducer) {
@@ -43,16 +50,37 @@ class LocationMiddleware: NSObject, Middleware {
             case let .requestReverseGeocoding(location):
                 self?.geocoder.reverseGeocodeLocation(location) { placemarks, error in
                     if let placemarks = placemarks {
-                        self?.output.dispatch(.reverseGeocodingFinished(.success(placemarks)))
+                        self?.output.dispatch(.location(.reverseGeocodingFinished(.success(placemarks))))
                     } else if let error = error {
-                        self?.output.dispatch(.reverseGeocodingFinished(.failure(error)))
+                        self?.output.dispatch(.location(.reverseGeocodingFinished(.failure(error))))
                     }
                 }
+            case let .requestAutoCompletion(searchTerm):
+                self?.searchCompleter.queryFragment = searchTerm
+            case let .selectLocation(selection):
+                switch selection {
+                case .currentLocation:
+                    if self?.getState().currentLocation == nil {
+                        UIApplication.shared.open(
+                            URL(string: UIApplication.openSettingsURLString)!,
+                            options: [:],
+                            completionHandler: nil
+                        )
+                        return
+                    }
+                case .custom(_, _):
+                    break
+                }
+                self?.output.dispatch(.tlePropagator(.purgePassesAndSnapshots))
+                self?.output.dispatch(.navigation(.dismissLocationSettings))
             case .authorizationDidChange(_):
                 break
             case let .locationChanged(location):
-                self?.output.dispatch(.requestReverseGeocoding(location))
+                self?.output.dispatch(.location(.requestReverseGeocoding(location)))
+                self?.output.dispatch(.tlePropagator(.purgePassesAndSnapshots))
             case .reverseGeocodingFinished(_):
+                break
+            case .autocompletionFinished(_):
                 break
             }
         }
@@ -61,14 +89,24 @@ class LocationMiddleware: NSObject, Middleware {
 
 extension LocationMiddleware: CLLocationManagerDelegate {
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        output.dispatch(.authorizationDidChange(manager.authorizationStatus))
+        output.dispatch(.location(.authorizationDidChange(manager.authorizationStatus)))
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let lastLocation = locations.last else {
             return
         }
-        output.dispatch(.locationChanged(lastLocation))
+        output.dispatch(.location(.locationChanged(lastLocation)))
+    }
+}
+
+extension LocationMiddleware: MKLocalSearchCompleterDelegate {
+    func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
+        output.dispatch(.location(.autocompletionFinished(.success(completer.results))))
+    }
+
+    func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
+        output.dispatch(.location(.autocompletionFinished(.failure(error))))
     }
 }
 
@@ -83,6 +121,10 @@ extension EffectMiddleware where InputActionType == LocationAction, OutputAction
                     break
                 case .requestReverseGeocoding(_):
                     break
+                case .requestAutoCompletion(_):
+                    break
+                case .selectLocation(_):
+                    break
                 case let .authorizationDidChange(authorizationStatus):
                     logger.info("[Location] authorization changed: \(authorizationStatus.rawValue))")
                 case let .locationChanged(location):
@@ -92,11 +134,17 @@ extension EffectMiddleware where InputActionType == LocationAction, OutputAction
                     case let .success(placemarks):
                         logger.info("[Location] reverse geocoded to \(placemarks)")
                     case let .failure(error):
-                        logger.error("\(error.localizedDescription)")
+                        logger.error("[Location] reverse geocoding failed \(error.localizedDescription)")
+                    }
+                case let .autocompletionFinished(result):
+                    switch result {
+                    case .success(_):
+                        break
+                    case let .failure(error):
+                        logger.error("[Map] autocompletion failed \(error.localizedDescription)")
                     }
                 }
-
-                return .doNothing
-            }
+            return .doNothing
+        }
     }
 }

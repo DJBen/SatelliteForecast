@@ -36,7 +36,9 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             .lift(action: \.timer),
         Reducer<DebugMenuAction, AppState>.debugMenuReducer
             .lift(action: \.debugMenu),
-        Reducer<AppAction, AppState>.appStateReducer
+        Reducer<AppAction, AppState>.appStateReducer,
+        Reducer<NavigationAction, NavigationState>.navigationReducer
+            .lift(action: \.navigation, state: \.navigationState)
     ]
     .reduce(Reducer<AppAction, AppState>.identity, <>)
 
