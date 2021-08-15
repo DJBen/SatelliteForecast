@@ -25,8 +25,4 @@ public struct SatelliteTrails: Equatable {
         self.snapshots = snapshots
         self.passes = passes
     }
-
-    public static func == (lhs: SatelliteTrails, rhs: SatelliteTrails) -> Bool {
-        return lhs.snapshots == rhs.snapshots && lhs.passes == rhs.passes
-    }
 }

@@ -30,10 +30,17 @@ enum SatelliteCategory: Equatable, Hashable {
             return URL(string: "https://celestrak.com/NORAD/elements/active.txt")!
         }
     }
-}
 
-extension Map: Equatable where Key == Int, Value == SatelliteInfo {
-
+    var localFilename: String {
+        switch self {
+        case .brightest100:
+            return "visual"
+        case .last30DayLaunches:
+            return "tle-new"
+        case .active:
+            return "active"
+        }
+    }
 }
 
 struct SatelliteLoaderState: Equatable {

@@ -1,6 +1,6 @@
 //
-//  BTree+Equatable.swift
-//  BTree+Equatable
+//  BTree+Convenience.swift
+//  BTree+Convenience
 //
 //  Created by Ben Lu on 7/26/21.
 //
@@ -8,13 +8,11 @@
 import Foundation
 import BTree
 
-extension BTree: Equatable where Key: Equatable, Value: Equatable {}
-
 extension BTree where Key: AdditiveArithmetic & SignedNumeric & Comparable {
     /// Return the value whose key is the closest to the given key based on arithmatic distance.
     /// - Parameter key: The key.
     /// - Returns: The value.
-    func value(closestTo key: Key, within tolerance: Key? = nil) -> Value? {
+    public func value(closestTo key: Key, within tolerance: Key? = nil) -> Value? {
         if isEmpty {
             return nil
         }
