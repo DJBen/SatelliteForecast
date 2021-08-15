@@ -2,7 +2,7 @@ PODS:
   - BTree (4.1.0)
   - CombineRex (0.8.6):
     - SwiftRex (~> 0.8.6)
-  - CombineRextensions (0.1.6):
+  - CombineRextensions (0.1.7):
     - CombineRex (~> 0.8.6)
   - FlagKit (2.2)
   - SatelliteCatalog (1.0.0.LOCAL):
@@ -26,7 +26,7 @@ PODS:
   - SwiftDate (5.1.0)
   - SwiftRex (0.8.6)
   - SwiftUIVisualEffects (1.0.0.LOCAL)
-  - TestingExtensions (0.2.7):
+  - TestingExtensions (0.2.8):
     - CombineRex (~> 0.8.6)
     - SnapshotTesting (~> 1.8.2)
     - SwiftRex (~> 0.8.6)
@@ -34,7 +34,7 @@ PODS:
 DEPENDENCIES:
   - BTree (~> 4.1.0)
   - CombineRex (~> 0.8.6)
-  - CombineRextensions (from `https://github.com/DJBen/CombineRextensions.git`, branch `add-podspec`)
+  - CombineRextensions
   - FlagKit
   - SatelliteCatalog (from `./SatelliteCatalog`)
   - SatelliteForecastCore (from `./SatelliteForecastCore`)
@@ -43,23 +43,22 @@ DEPENDENCIES:
   - SwiftDate (~> 5.0)
   - SwiftRex (~> 0.8.6)
   - SwiftUIVisualEffects (from `./SwiftUIVisualEffects`)
-  - TestingExtensions (from `https://github.com/DJBen/TestingExtensions.git`, branch `add-podspec`)
+  - TestingExtensions
 
 SPEC REPOS:
   trunk:
     - BTree
     - CombineRex
+    - CombineRextensions
     - FlagKit
     - SnapshotTesting
     - SQLite.swift
     - STRegex
     - SwiftDate
     - SwiftRex
+    - TestingExtensions
 
 EXTERNAL SOURCES:
-  CombineRextensions:
-    :branch: add-podspec
-    :git: https://github.com/DJBen/CombineRextensions.git
   SatelliteCatalog:
     :path: "./SatelliteCatalog"
   SatelliteForecastCore:
@@ -70,22 +69,11 @@ EXTERNAL SOURCES:
     :path: "./StarryNight"
   SwiftUIVisualEffects:
     :path: "./SwiftUIVisualEffects"
-  TestingExtensions:
-    :branch: add-podspec
-    :git: https://github.com/DJBen/TestingExtensions.git
-
-CHECKOUT OPTIONS:
-  CombineRextensions:
-    :commit: fc00973c9309edc6369d5b2b597881a9c8a400ea
-    :git: https://github.com/DJBen/CombineRextensions.git
-  TestingExtensions:
-    :commit: 9829dce246ec943c1034e8f12b5a89bf3497706b
-    :git: https://github.com/DJBen/TestingExtensions.git
 
 SPEC CHECKSUMS:
   BTree: 99b99930790b88dc5e8bafbf666a5dfb8d7808b4
   CombineRex: 8fa0193b70739542ba3ceaf7be7a586524509428
-  CombineRextensions: 0771bb5dd2db8bc3a5a191ac361f045c574552ea
+  CombineRextensions: f334525cda6b04493782e80491b1aa45c4429f13
   FlagKit: eca7dc89064b0c986302ba9acefad1bf80a435b1
   SatelliteCatalog: 03261393572b58b64f8b26d3456c75953f288d1b
   SatelliteForecastCore: 7b6dfe0ac9bd94531da395702ce321a80e9fcd26
@@ -97,8 +85,8 @@ SPEC CHECKSUMS:
   SwiftDate: 6329e58969a2de31cea7f1ee1143b247693196e7
   SwiftRex: d2450a0555690b8b0f703260d3a8ffbc12edc218
   SwiftUIVisualEffects: 4e6f1fe8159a07e59eaf3918e5f8cd1fe52cadce
-  TestingExtensions: a5591da2681222d3714684fcae6ca8560664c453
+  TestingExtensions: 0a33876fca093566758346817266e1d4de924a91
 
-PODFILE CHECKSUM: 75cda0b265c86e5469e3341b9404da2ecffc7123
+PODFILE CHECKSUM: 819aef164c14c90bcf5595e54a3b54360e9d093f
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.10.2
