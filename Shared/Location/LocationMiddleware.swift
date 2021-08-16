@@ -77,7 +77,6 @@ class LocationMiddleware: NSObject, Middleware {
                 break
             case let .locationChanged(location):
                 self?.output.dispatch(.location(.requestReverseGeocoding(location)))
-                self?.output.dispatch(.tlePropagator(.purgePassesAndSnapshots))
             case .reverseGeocodingFinished(_):
                 break
             case .autocompletionFinished(_):

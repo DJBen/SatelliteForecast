@@ -138,6 +138,7 @@ struct PassView_Previews: PreviewProvider {
             ),
             satelliteTrails: [
                 tle.noradIndex: SatelliteTrails(
+                    observer: LatLonAlt(location: location),
                     snapshots: snapshots.union(fineSnapshots, by: .groupingMatches),
                     passes: passes
                 )
