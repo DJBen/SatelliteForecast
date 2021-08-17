@@ -46,10 +46,6 @@ struct SkyChartViewState: Equatable {
     }
 
     struct NotableSnapshots: Equatable {
-        static func == (lhs: SkyChartViewState.NotableSnapshots, rhs: SkyChartViewState.NotableSnapshots) -> Bool {
-            return lhs.rise == rhs.rise && lhs.transit == rhs.transit && lhs.set == rhs.set && lhs.illuminationChanges == rhs.illuminationChanges
-        }
-
         var rise: SnapshotsAroundPass
         var transit: SnapshotsAroundPass
         var set: SnapshotsAroundPass

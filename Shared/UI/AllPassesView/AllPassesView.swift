@@ -6,6 +6,7 @@
 //
 
 import BTree
+import CoreLocation
 import CombineRex
 import CombineRextensions
 import SatelliteForecastCore
@@ -13,7 +14,10 @@ import SatelliteKit
 import SwiftUI
 
 enum AllPassesViewAction {
+    /// Calculate the passes.
     case calculatePasses
+    /// Recaculate passes using the latest location.
+    case recalculatePasses
     case selectPass(index: Int?)
 }
 
@@ -40,6 +44,7 @@ struct AllPassesViewState: Equatable {
     var visiblePasses: [Item]?
     var invisiblePasses: [Item]?
     var selectedPassIndex: Int?
+    var locationChangeWarningState: AllPassesLocationChangeWarningState?
 
     static func project(state: AppState) -> AllPassesViewState? {
         guard let selectedNoradIndex = state.navigationState.selectedSatelliteNoradIndex,
@@ -70,6 +75,22 @@ struct AllPassesViewState: Equatable {
             let itemsByVisibility = Dictionary(grouping: items, by: \.pass.visibility)
             let visiblePasses = itemsByVisibility[.visible] ?? []
             let invisiblePasses = (itemsByVisibility[.daylight] ?? []) + (itemsByVisibility[.unlit] ?? [])
+            let locationStateChangeWarning: AllPassesLocationChangeWarningState? = {
+                guard let observer = state.observer.map({ CLLocation($0).coordinate }),
+                        let newObserver = state.locationState.location?.coordinate else {
+                    return nil
+                }
+                if observer != newObserver {
+                    return AllPassesLocationChangeWarningState(
+                        observer: newObserver,
+                        observerDescription: state.locationState.placemark?.formattedString,
+                        oldObserver: observer
+                    )
+                } else {
+                    return nil
+                }
+            }()
+            
             return AllPassesViewState(
                 satelliteName: info.satellite.commonName,
                 julianDate: state.julianDate,
@@ -79,7 +100,8 @@ struct AllPassesViewState: Equatable {
                     .sorted { $0.pass.rise.julianDate < $1.pass.rise.julianDate },
                 invisiblePasses: invisiblePasses
                     .sorted { $0.pass.rise.julianDate < $1.pass.rise.julianDate },
-                selectedPassIndex: state.selectedSatellitePassIndex
+                selectedPassIndex: state.selectedSatellitePassIndex,
+                locationChangeWarningState: locationStateChangeWarning
             )
         } else {
             return AllPassesViewState(
@@ -175,7 +197,16 @@ struct AllPassesView: View, Equatable {
     
     var body: some View {
         unwrapState { state in
-            Group {
+            VStack(spacing: 0) {
+                if let locationChangeWarningState = state.locationChangeWarningState {
+                    AllPassesLocationChangeWarning(
+                        state: locationChangeWarningState,
+                        onRecalculatePasses: {
+                            viewModel.dispatch(.recalculatePasses)
+                        }
+                    )
+                }
+                
                 if state.observer != nil {
                     List {
                         Section(header: visiblePassHeader) {
@@ -202,6 +233,7 @@ struct AllPassesView: View, Equatable {
                     }
                 }
             }
+            .frame(maxWidth: .infinity)
             .navigationTitle(state.satelliteName)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

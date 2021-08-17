@@ -33,6 +33,11 @@ extension EffectMiddleware where
         EffectMiddleware<AllPassesViewAction, AppAction, AppState, Void>
             .onAction { (action, _, getState) -> Effect<Void, AppAction> in
                 switch action {
+                case .recalculatePasses:
+                    return .sequence([
+                        .tlePropagator(.purgePassesAndSnapshots),
+                        .allPassesView(.calculatePasses)
+                    ])
                 case .calculatePasses:
                     return Effect { context -> AnyPublisher<DispatchedAction<AppAction>, Never> in
                         let state = getState()
@@ -83,7 +88,13 @@ extension EffectMiddleware where
 
                                 subject.send(
                                     DispatchedAction<AppAction>(
-                                        .tlePropagator(.propagatedSnapshots(snapshots, noradIndex: noradIndex))
+                                        .tlePropagator(
+                                            .propagatedSnapshots(
+                                                snapshots,
+                                                noradIndex: noradIndex,
+                                                observer: observer
+                                            )
+                                        )
                                     )
                                 )
 
@@ -100,7 +111,8 @@ extension EffectMiddleware where
                                             .foundPasses(
                                                 passes,
                                                 fineSnapshots: fineSnapshots,
-                                                noradIndex: noradIndex
+                                                noradIndex: noradIndex,
+                                                observer: observer
                                             )
                                         )
                                     )

@@ -15,18 +15,17 @@ import SatelliteKit
 /// ones that are approximately minutes apart for the rest of their orbits.
 /// - Passes The pass information describing the exact time of rise and set, and sun illumination changes during the pass.
 public struct SatelliteTrails: Equatable {
+    public var observer: LatLonAlt
     public var snapshots: BTree<Double, SatelliteSnapshot>
     public var passes: [Pass]?
 
     public init(
+        observer: LatLonAlt,
         snapshots: BTree<Double, SatelliteSnapshot> = BTree(),
         passes: [Pass]? = nil
     ) {
+        self.observer = observer
         self.snapshots = snapshots
         self.passes = passes
-    }
-
-    public static func == (lhs: SatelliteTrails, rhs: SatelliteTrails) -> Bool {
-        return lhs.snapshots == rhs.snapshots && lhs.passes == rhs.passes
     }
 }

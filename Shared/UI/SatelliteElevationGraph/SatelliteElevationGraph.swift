@@ -384,6 +384,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
             state: AppState(
                 satelliteTrails: [
                     Int(sat.noradIdent)!: SatelliteTrails(
+                        observer: LatLonAlt(location: location),
                         snapshots: sat.snapshots(
                             observer: LatLonAlt(location: location),
                             julianDateRange: julianDateRange,
@@ -419,6 +420,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
             state: AppState(
                 satelliteTrails: [
                     Int(sat2.noradIdent)!: SatelliteTrails(
+                        observer: LatLonAlt(location: location),
                         snapshots: sat2.snapshots(
                             observer: LatLonAlt(location: location),
                             julianDateRange: julianDateRange,
@@ -454,6 +456,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
             state: AppState(
                 satelliteTrails: [
                     Int(sat3.noradIdent)!: SatelliteTrails(
+                        observer: LatLonAlt(location: location),
                         snapshots: sat3.snapshots(
                             observer: LatLonAlt(location: location),
                             julianDateRange: julianDateRange,
