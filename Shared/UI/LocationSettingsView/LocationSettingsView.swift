@@ -122,7 +122,9 @@ struct LocationSettingsView: View {
         List {
             Section(content: {
                 Button(action: {
-                    if viewModel.state.locationSelection != .currentLocation {
+                    if viewModel.state.currentLocation == nil {
+                        UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+                    } else if viewModel.state.locationSelection != .currentLocation {
                         nextLocationSelection = .currentLocation
                     }
                 }) {

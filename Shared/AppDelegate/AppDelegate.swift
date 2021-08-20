@@ -7,10 +7,13 @@
 
 import Foundation
 import CombineRex
+import SwiftUI
 
 enum AppDelegateAction {
     case didRegisterForRemoteNotificationsWithDeviceToken(Data)
     case didFinishLaunchingWithOptions([UIApplication.LaunchOptionsKey : Any]? = nil)
+    
+    case scenePhaseDidChange(ScenePhase)
 }
 
 class AppDelegate: NSObject, UIApplicationDelegate {

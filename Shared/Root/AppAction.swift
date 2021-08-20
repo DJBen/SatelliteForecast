@@ -10,6 +10,8 @@ import SatelliteKit
 
 enum AppAction {
     case appDelegate(AppDelegateAction)
+    case backgroundTask(BackgroundTask)
+    case notification(NotificationAction)
     case navigation(NavigationAction)
     case location(LocationAction)
     case satelliteLoader(SatelliteLoaderAction)
@@ -24,6 +26,8 @@ enum AppAction {
     case timer(TimerAction)
     case debugMenu(DebugMenuAction)
     case observerCell(ObserverCellAction)
+    case alarmSettingsCell(AlarmSettingsCellAction)
+    case alarmSettingsView(AlarmSettingsViewAction)
 
     /// Freeze the observer location and date range to be consumed by the passing view workflow,
     /// so that the location changes won't trigger reload
@@ -43,6 +47,28 @@ extension AppAction {
         }
     }
 
+    public var backgroundTask: BackgroundTask? {
+        get {
+            guard case let .backgroundTask(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .backgroundTask = self, let newValue = newValue else { return }
+            self = .backgroundTask(newValue)
+        }
+    }
+    
+    public var notification: NotificationAction? {
+        get {
+            guard case let .notification(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .notification = self, let newValue = newValue else { return }
+            self = .notification(newValue)
+        }
+    }
+    
     public var navigation: NavigationAction? {
         get {
             guard case let .navigation(value) = self else { return nil }
@@ -194,6 +220,28 @@ extension AppAction {
         set {
             guard case .observerCell = self, let newValue = newValue else { return }
             self = .observerCell(newValue)
+        }
+    }
+    
+    public var alarmSettingsCell: AlarmSettingsCellAction? {
+        get {
+            guard case let .alarmSettingsCell(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .alarmSettingsCell = self, let newValue = newValue else { return }
+            self = .alarmSettingsCell(newValue)
+        }
+    }
+    
+    public var alarmSettingsView: AlarmSettingsViewAction? {
+        get {
+            guard case let .alarmSettingsView(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .alarmSettingsView = self, let newValue = newValue else { return }
+            self = .alarmSettingsView(newValue)
         }
     }
 }

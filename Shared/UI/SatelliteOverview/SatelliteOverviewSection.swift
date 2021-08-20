@@ -10,13 +10,13 @@ import Foundation
 enum SatelliteOverviewSection: Equatable, Hashable {
     case satellitesOfSpecialInterest([SatelliteOverviewItem])
     case categories([SatelliteOverviewItem])
-    case observerSettings([SatelliteOverviewItem])
+    case settings([SatelliteOverviewItem])
 
     var items: [SatelliteOverviewItem] {
         switch self {
         case let .satellitesOfSpecialInterest(items),
              let .categories(items),
-             let .observerSettings(items):
+             let .settings(items):
             return items
         }
     }
@@ -30,11 +30,11 @@ enum SatelliteOverviewItem: Equatable, Hashable {
     case specialSatellites(SatellitesOfSpecialInterest)
     case category(SatelliteCategory)
 
-    enum Management: Equatable, Hashable {
+    enum Settings: Equatable, Hashable {
         case observer
         case alert
     }
-    case observerSettings
+    case settings(Settings)
 }
 
 extension NavigationState {
@@ -51,7 +51,9 @@ extension NavigationState {
                 return .specialSatellites(SatelliteOverviewItem.SatellitesOfSpecialInterest(rawValue: noradIndex)!)
             }
         case .observer:
-            return .observerSettings
+            return .settings(.observer)
+        case .alarm:
+            return .settings(.alert)
         }
     }
 }

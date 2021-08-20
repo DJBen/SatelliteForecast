@@ -14,6 +14,7 @@ enum SatelliteOverviewViewAction {
     case selectSpecialSatellite(noradIndex: Int)
     case selectCategory(SatelliteCategory)
     case selectObserver
+    case selectAlert
     case returnToSatelliteOverview
 }
 
@@ -35,6 +36,8 @@ struct SatelliteOverviewView: View {
     let singleSatelliteWrappingViewProducer: ViewProducer<Void, SingleSatelliteWrappingView>
     let observerCellViewProducer: ViewProducer<Void, ObserverCell>
     let locationSettingsViewProducer: ViewProducer<Void, LocationSettingsView>
+    let alarmSettingsCellProducer: ViewProducer<Void, AlarmSettingsCell>
+    let alarmSettingsViewProducer: ViewProducer<Void, AlarmSettingsView>
 
     let sections: [SatelliteOverviewSection] = [
         .satellitesOfSpecialInterest([
@@ -46,8 +49,9 @@ struct SatelliteOverviewView: View {
             .category(.active),
             .category(.last30DayLaunches)
         ]),
-        .observerSettings([
-            .observerSettings
+        .settings([
+            .settings(.alert),
+            .settings(.observer)
         ])
     ]
 
@@ -57,8 +61,13 @@ struct SatelliteOverviewView: View {
             singleSatelliteWrappingViewProducer.view()
         case .category(_):
             listViewProducer.view()
-        case .observerSettings:
-            locationSettingsViewProducer.view()
+        case let .settings(settings):
+            switch settings {
+            case .observer:
+                locationSettingsViewProducer.view()
+            case .alert:
+                alarmSettingsViewProducer.view()
+            }
         }
     }
 
@@ -68,8 +77,13 @@ struct SatelliteOverviewView: View {
             viewModel.dispatch(.selectSpecialSatellite(noradIndex: satellite.rawValue))
         case let .category(category):
             viewModel.dispatch(.selectCategory(category))
-        case .observerSettings:
-            viewModel.dispatch(.selectObserver)
+        case let .settings(settings):
+            switch settings {
+            case .observer:
+                viewModel.dispatch(.selectObserver)
+            case .alert:
+                viewModel.dispatch(.selectAlert)
+            }
         case .none:
             viewModel.dispatch(.returnToSatelliteOverview)
         }
@@ -92,7 +106,8 @@ struct SatelliteOverviewView: View {
                     model: SatelliteOverviewCellModel(
                         item: item
                     ),
-                    observerCellViewProducer: observerCellViewProducer
+                    observerCellViewProducer: observerCellViewProducer,
+                    alarmSettingsCellProducer: alarmSettingsCellProducer
                 )
                 .fixedSize(horizontal: false, vertical: true)
             }
@@ -112,7 +127,7 @@ struct SatelliteOverviewView: View {
                 LazyVStack(
                     alignment: .leading,
                     spacing: 10,
-                    pinnedViews: .sectionHeaders
+                    pinnedViews: []
                 ) {
                     ForEach(sections, id: \.self) { section in
                         Section(
@@ -146,7 +161,9 @@ extension ViewProducer where Context == Void, ProducedView == SatelliteOverviewV
                     .satelliteListView(viewModel: viewModel),
                 singleSatelliteWrappingViewProducer: ViewProducer<Void, SingleSatelliteWrappingView>.singleSatelliteWrappingView(viewModel: viewModel),
                 observerCellViewProducer: ViewProducer<Void, ObserverCell>.observerCell(viewModel: viewModel),
-                locationSettingsViewProducer: ViewProducer<Void, LocationSettingsView>.locationSettings(viewModel: viewModel)
+                locationSettingsViewProducer: ViewProducer<Void, LocationSettingsView>.locationSettings(viewModel: viewModel),
+                alarmSettingsCellProducer: ViewProducer<Void, AlarmSettingsCell>.alarmSettingsCell(viewModel: viewModel),
+                alarmSettingsViewProducer: ViewProducer<Void, AlarmSettingsView>.alarmSettingsView(viewModel: viewModel)
             )
         }
     }
@@ -162,7 +179,9 @@ struct SatelliteOverviewView_Previews: PreviewProvider {
             listViewProducer: .crash,
             singleSatelliteWrappingViewProducer: .crash,
             observerCellViewProducer: .crash,
-            locationSettingsViewProducer: .crash
+            locationSettingsViewProducer: .crash,
+            alarmSettingsCellProducer: .crash,
+            alarmSettingsViewProducer: .crash
         )
     }
 }

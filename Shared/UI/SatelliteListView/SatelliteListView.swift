@@ -102,7 +102,6 @@ struct SatelliteListView: View {
         allPassesViewProducer.view(
             AllPassesViewContext()
         )
-        .equatable()
     }
 
     @ViewBuilder func satelliteContent<Content: View, FailedContent: View>(

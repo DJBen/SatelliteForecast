@@ -27,6 +27,8 @@ extension EffectMiddleware where
                     return .just(.satelliteLoader(.loadSatelliteCategory(category)))
                 case .selectObserver:
                     return .doNothing
+                case .selectAlert:
+                    return .just(.navigation(.showAlertSettings))
                 case .returnToSatelliteOverview:
                     return .doNothing
                 }

@@ -36,6 +36,8 @@ extension Reducer where ActionType == LocationAction, StateType == LocationState
             }
         case let .autocompletionFinished(result):
             state.autocompletionResult = result
+        case .persistLocation(_):
+            break
         }
     }
 }

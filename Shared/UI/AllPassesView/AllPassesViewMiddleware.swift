@@ -12,6 +12,7 @@ import Combine
 import CombineRex
 import SatelliteKit
 import SatelliteForecastCore
+import UserNotifications
 
 fileprivate let logger = Logger(subsystem: "io.djben.allPassesView", category: "middleware")
 
@@ -21,14 +22,6 @@ extension EffectMiddleware where
     StateType == AppState,
     Dependencies == Void {
 
-    /// A middeware that listens to `AllPassesViewAction`.
-    /// - `onAppear`:
-    ///   - Generate a coarse ephemeris of the satellite over a long future period.
-    ///   - Find all the passes in the same period, and generate a fine ephemeris during each pass.
-    ///   - Rasterize all the satellite passes.
-    ///   - Select the first visible pass (if any).
-    ///
-    ///   Thus this effect will have multiple action outputs before it completes.
     static var allPassesView: EffectMiddleware<AllPassesViewAction, AppAction, AppState, Void> {
         EffectMiddleware<AllPassesViewAction, AppAction, AppState, Void>
             .onAction { (action, _, getState) -> Effect<Void, AppAction> in
@@ -128,6 +121,12 @@ extension EffectMiddleware where
 
                 case .selectPass:
                     return .doNothing
+                    
+                case let .scheduleNotification(passNotification):
+                    return .just(.notification(.requestNotificationAuthorization(pendingNotification: passNotification)))
+                    
+                case let .unscheduleNotification(id):
+                    return .just(.notification(.cancelNotifications(ids: [id])))
                 }
             }
     }

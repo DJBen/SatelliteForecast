@@ -130,3 +130,9 @@ extension Pass.Illumination: Hashable {}
 extension Pass.Illumination.Change: Hashable {}
 extension Pass.Visibility: Hashable {}
 extension Pass.DatePosition: Hashable {}
+
+extension Pass: Codable {}
+extension Pass.Illumination: Codable {}
+extension Pass.Illumination.Change: Codable {}
+extension Pass.Visibility: Codable {}
+extension Pass.DatePosition: Codable {}

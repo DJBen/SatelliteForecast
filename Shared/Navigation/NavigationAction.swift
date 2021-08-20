@@ -9,4 +9,7 @@ import Foundation
 
 enum NavigationAction {
     case dismissLocationSettings
+    
+    case showAlertSettings
+    case dismissAlertSettings
 }

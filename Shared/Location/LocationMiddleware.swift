@@ -10,6 +10,7 @@ import CombineRex
 import SwiftRex
 import CoreLocation
 import MapKit
+import SatelliteKit
 
 class LocationMiddleware: NSObject, Middleware {
     typealias InputActionType = LocationAction
@@ -25,8 +26,9 @@ class LocationMiddleware: NSObject, Middleware {
 
     func receiveContext(getState: @escaping GetState<LocationState>, output: AnyActionHandler<AppAction>) {
         locationManager = CLLocationManager()
+        locationManager.allowsBackgroundLocationUpdates = true
         locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
-        locationManager.distanceFilter = 1000
+        locationManager.distanceFilter = 2000
         locationManager.startMonitoringSignificantLocationChanges()
         locationManager.startUpdatingLocation()
         locationManager.delegate = self
@@ -60,7 +62,9 @@ class LocationMiddleware: NSObject, Middleware {
             case let .selectLocation(selection):
                 switch selection {
                 case .currentLocation:
-                    if self?.getState().currentLocation == nil {
+                    if let currentLocation = self?.getState().currentLocation {
+                        self?.output.dispatch(.location(.persistLocation(currentLocation)))
+                    } else {
                         UIApplication.shared.open(
                             URL(string: UIApplication.openSettingsURLString)!,
                             options: [:],
@@ -68,7 +72,10 @@ class LocationMiddleware: NSObject, Middleware {
                         )
                         return
                     }
-                case .custom(_, _):
+                case let .custom(_, placemark):
+                    if let location = placemark.location {
+                        self?.output.dispatch(.location(.persistLocation(location)))
+                    }
                     break
                 }
                 self?.output.dispatch(.tlePropagator(.purgePassesAndSnapshots))
@@ -77,10 +84,18 @@ class LocationMiddleware: NSObject, Middleware {
                 break
             case let .locationChanged(location):
                 self?.output.dispatch(.location(.requestReverseGeocoding(location)))
+                
+                if self?.getState().selection == .currentLocation {
+                    self?.output.dispatch(.location(.persistLocation(location)))
+                }
             case .reverseGeocodingFinished(_):
                 break
             case .autocompletionFinished(_):
                 break
+            case let .persistLocation(location):
+                let encoder = JSONEncoder()
+                let data = try! encoder.encode(LatLonAlt(location: location))
+                UserDefaults.standard.set(data, forKey: "lastUsedLocation")
             }
         }
     }
@@ -142,6 +157,8 @@ extension EffectMiddleware where InputActionType == LocationAction, OutputAction
                     case let .failure(error):
                         logger.error("[Map] autocompletion failed \(error.localizedDescription)")
                     }
+                case let .persistLocation(location):
+                    logger.info("Persisted last location \(location)")
                 }
             return .doNothing
         }

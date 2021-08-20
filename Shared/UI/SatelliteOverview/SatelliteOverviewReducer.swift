@@ -17,6 +17,8 @@ extension Reducer where ActionType == SatelliteOverviewViewAction, StateType == 
             state.navigationState.selectCategory(category)
         case .selectObserver:
             state.navigationState.selectObserver()
+        case .selectAlert:
+            break
         case .returnToSatelliteOverview:
             state.navigationState.deselectSatelliteOverviewItem()
         }

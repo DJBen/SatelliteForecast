@@ -18,6 +18,7 @@ struct SatelliteOverviewCellModel {
 struct SatelliteOverviewCell: View {
     let model: SatelliteOverviewCellModel
     let observerCellViewProducer: ViewProducer<Void, ObserverCell>
+    let alarmSettingsCellProducer: ViewProducer<Void, AlarmSettingsCell>
 
     @ViewBuilder var body: some View {
         switch model.item {
@@ -25,8 +26,13 @@ struct SatelliteOverviewCell: View {
             SatelliteOverviewSpecialSatelliteCell(satellite: satellite)
         case let .category(category):
             SatelliteOverviewCategoryCell(category: category)
-        case .observerSettings:
-            observerCellViewProducer.view()
+        case let .settings(settings):
+            switch settings {
+            case .observer:
+                observerCellViewProducer.view()
+            case .alert:
+                alarmSettingsCellProducer.view()
+            }
         }
     }
 }
@@ -52,61 +58,39 @@ struct SatelliteOverviewSpecialSatelliteCell: View {
     }
 
     var body: some View {
-        HStack(alignment: .center) {
-            VStack(alignment: .leading) {
-                Spacer()
-                    .frame(height: 120)
+        VStack(alignment: .leading) {
+            Spacer()
+                .frame(height: 120)
 
-                ZStack {
-                    Color.clear
-                        .blurEffect()
+            ZStack {
+                Color.clear
+                    .blurEffect()
 
-                    VStack(alignment: .leading, spacing: 4) {
-                        HStack {
-                            Text(LocalizedStrings.SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedTitle(satellite))
-                                .font(.headline)
-                                .foregroundColor(Color(UIColor.label))
-                            Spacer()
-                        }
-
-                        Text(LocalizedStrings.SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedDescription(satellite))
-                            .font(.caption)
-                            .multilineTextAlignment(.leading)
-                            .foregroundColor(colorScheme == .light ? Color(UIColor.systemGray2) : Color(UIColor.systemGray4))
-                            .vibrancyEffect()
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        Text(LocalizedStrings.SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedTitle(satellite))
+                            .font(.headline)
+                            .foregroundColor(Color(UIColor.label))
+                        Spacer()
                     }
-                    .padding()
+
+                    Text(LocalizedStrings.SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedDescription(satellite))
+                        .font(.caption)
+                        .multilineTextAlignment(.leading)
+                        .foregroundColor(colorScheme == .light ? Color(UIColor.systemGray2) : Color(UIColor.systemGray4))
+                        .vibrancyEffect()
                 }
-                .blurEffectStyle(colorScheme == .light ? .systemChromeMaterialLight : .systemChromeMaterialDark)
-                .vibrancyEffectStyle(.fill)
+                .padding()
             }
-            .background(background(satellite: satellite))
-            .clipShape(
-                RoundedRectangle(
-                    cornerRadius: 8,
-                    style: .continuous
-                )
-            )
-
-            Image(systemName: "chevron.right")
-                .foregroundColor(Color(UIColor.secondaryLabel))
+            .blurEffectStyle(colorScheme == .light ? .systemChromeMaterialLight : .systemChromeMaterialDark)
+            .vibrancyEffectStyle(.fill)
         }
-    }
-}
-
-fileprivate extension UIColor {
-    func darken(by val: CGFloat) -> UIColor {
-        var h: CGFloat = 0, s: CGFloat = 0
-        var b: CGFloat = 0, a: CGFloat = 0
-
-        guard getHue(&h, saturation: &s, brightness: &b, alpha: &a)
-            else {return self}
-
-        return UIColor(
-            hue: h,
-            saturation: s,
-            brightness: max(b - val, 0.0),
-            alpha: a
+        .background(background(satellite: satellite))
+        .clipShape(
+            RoundedRectangle(
+                cornerRadius: 8,
+                style: .continuous
+            )
         )
     }
 }
@@ -140,25 +124,20 @@ struct SatelliteOverviewCategoryCell: View {
 
     var body: some View {
         HStack {
-            HStack {
-                Text(LocalizedStrings.SatelliteOverviewCell.categoryLocalizedString(category))
-                    .font(.headline)
-                    .foregroundColor(Color(UIColor.label))
+            Text(LocalizedStrings.SatelliteOverviewCell.categoryLocalizedString(category))
+                .font(.headline)
+                .foregroundColor(Color(UIColor.label))
 
-                Spacer()
-            }
-            .padding()
-            .background(background(category: category))
-            .clipShape(
-                RoundedRectangle(
-                    cornerRadius: 8,
-                    style: .continuous
-                )
-            )
-
-            Image(systemName: "chevron.right")
-                .foregroundColor(Color(UIColor.secondaryLabel))
+            Spacer()
         }
+        .padding()
+        .background(background(category: category))
+        .clipShape(
+            RoundedRectangle(
+                cornerRadius: 8,
+                style: .continuous
+            )
+        )
     }
 }
 
@@ -177,31 +156,36 @@ struct SatelliteOverviewCell_Previews: PreviewProvider {
                         model: SatelliteOverviewCellModel(
                             item: .specialSatellites(.iss)
                         ),
-                        observerCellViewProducer: .crash
+                        observerCellViewProducer: .crash,
+                        alarmSettingsCellProducer: .crash
                     )
                     SatelliteOverviewCell(
                         model: SatelliteOverviewCellModel(
                             item: .specialSatellites(.tianhe)
                         ),
-                        observerCellViewProducer: .crash
+                        observerCellViewProducer: .crash,
+                        alarmSettingsCellProducer: .crash
                     )
                     SatelliteOverviewCell(
                         model: SatelliteOverviewCellModel(
                             item: .category(.brightest100)
                         ),
-                        observerCellViewProducer: .crash
+                        observerCellViewProducer: .crash,
+                        alarmSettingsCellProducer: .crash
                     )
                     SatelliteOverviewCell(
                         model: SatelliteOverviewCellModel(
                             item: .category(.active)
                         ),
-                        observerCellViewProducer: .crash
+                        observerCellViewProducer: .crash,
+                        alarmSettingsCellProducer: .crash
                     )
                     SatelliteOverviewCell(
                         model: SatelliteOverviewCellModel(
                             item: .category(.last30DayLaunches)
                         ),
-                        observerCellViewProducer: .crash
+                        observerCellViewProducer: .crash,
+                        alarmSettingsCellProducer: .crash
                     )
                 }
             )

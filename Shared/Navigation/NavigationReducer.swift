@@ -22,7 +22,34 @@ extension Reducer where ActionType == NavigationAction, StateType == NavigationS
                 state = .overview
             case .list,
                 .allPasses(category: _, noradIndex: _),
-                .pass(category: _, noradIndex: _, selectedPassIndex: _):
+                .pass(category: _, noradIndex: _, selectedPassIndex: _),
+                .alarm:
+                fatalError("Should not happen")
+            }
+            
+        case .showAlertSettings:
+            switch state {
+            case .overview:
+                state = .alarm
+            case .alarm:
+                break
+            case .list,
+                .allPasses(category: _, noradIndex: _),
+                .pass(category: _, noradIndex: _, selectedPassIndex: _),
+                .observer:
+                fatalError("Should not happen")
+            }
+            
+        case .dismissAlertSettings:
+            switch state {
+            case .overview:
+                break
+            case .alarm:
+                state = .overview
+            case .list,
+                .allPasses(category: _, noradIndex: _),
+                .pass(category: _, noradIndex: _, selectedPassIndex: _),
+                .observer:
                 fatalError("Should not happen")
             }
         }

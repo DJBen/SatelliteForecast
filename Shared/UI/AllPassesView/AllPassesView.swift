@@ -19,21 +19,35 @@ enum AllPassesViewAction {
     /// Recaculate passes using the latest location.
     case recalculatePasses
     case selectPass(index: Int?)
+    case scheduleNotification(PassNotification)
+    case unscheduleNotification(id: String)
 }
 
 struct AllPassesViewState: Equatable {
-    struct Item: Equatable {
+    struct Item: Equatable, Identifiable {
         let index: Int
         let pass: Pass
-
+        let hasScheduledAlert: Bool
+        
         private let rasterizedSatellitePath: UIImage?
         private let rasterizedBackgroundSky: UIImage?
 
-        init(index: Int, pass: Pass, rasterizedSatellitePath: UIImage? = nil, rasterizedBackgroundSky: UIImage? = nil) {
+        init(
+            index: Int,
+            pass: Pass,
+            hasScheduledAlert: Bool,
+            rasterizedSatellitePath: UIImage? = nil,
+            rasterizedBackgroundSky: UIImage? = nil
+        ) {
             self.index = index
             self.pass = pass
+            self.hasScheduledAlert = hasScheduledAlert
             self.rasterizedSatellitePath = rasterizedSatellitePath
             self.rasterizedBackgroundSky = rasterizedBackgroundSky
+        }
+        
+        var id: String {
+            return "\(pass.notificationIdentifier)-scheduled:\(hasScheduledAlert)"
         }
     }
 
@@ -57,7 +71,7 @@ struct AllPassesViewState: Equatable {
         }
 
         if let passes = state.satelliteTrails[selectedNoradIndex]?.passes {
-            let items = passes.enumerated().map { i, pass -> Item in
+            let items = passes.enumerated().map { index, pass -> Item in
                 let rasterizedSatellitePath = state.skyChartState.previewSatellitePaths[pass]
                 let rasterizedBackgroundSky: UIImage?
                 if let observer = state.observer {
@@ -70,7 +84,13 @@ struct AllPassesViewState: Equatable {
                 } else {
                     rasterizedBackgroundSky = nil
                 }
-                return Item(index: i, pass: pass, rasterizedSatellitePath: rasterizedSatellitePath, rasterizedBackgroundSky: rasterizedBackgroundSky)
+                return Item(
+                    index: index,
+                    pass: pass,
+                    hasScheduledAlert: state.notificationState.scheduledPassNotifications.contains(where: { $0.id == pass.notificationIdentifier }),
+                    rasterizedSatellitePath: rasterizedSatellitePath,
+                    rasterizedBackgroundSky: rasterizedBackgroundSky
+                )
             }
             let itemsByVisibility = Dictionary(grouping: items, by: \.pass.visibility)
             let visiblePasses = itemsByVisibility[.visible] ?? []
@@ -117,11 +137,7 @@ struct AllPassesViewState: Equatable {
     }
 }
 
-struct AllPassesView: View, Equatable {
-    static func == (lhs: AllPassesView, rhs: AllPassesView) -> Bool {
-        return lhs.viewModel.state == rhs.viewModel.state
-    }
-
+struct AllPassesView: View {
     @ObservedObject var viewModel: ObservableViewModel<AllPassesViewAction, AllPassesViewState?>
 
     var context: AllPassesViewContext
@@ -149,6 +165,43 @@ struct AllPassesView: View, Equatable {
             label: label
         )
     }
+    
+    @ViewBuilder private func swipeActionLeftButtons(item: AllPassesViewState.Item) -> some View {
+        unwrapState { state in
+            if item.hasScheduledAlert {
+                Button {
+                    // We want to trigger the change after animation has been completed to avoid interruptions
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+                        viewModel.dispatch(
+                            .unscheduleNotification(id: item.pass.notificationIdentifier)
+                        )
+                    }
+                } label: {
+                    Label("Cancel alarm", systemImage: "bell.slash.fill")
+                }
+                .tint(.red)
+            } else {
+                Button {
+                    // We want to trigger the change after animation has been completed to avoid interruptions
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+                        viewModel.dispatch(
+                            .scheduleNotification(
+                                PassNotification(
+                                    pass: item.pass,
+                                    satelliteName: state.satelliteName,
+                                    observer: state.observer!,
+                                    timeOffset: 0
+                                )
+                            )
+                        )
+                    }
+                } label: {
+                    Label("Alarm", systemImage: "bell.fill")
+                }
+                .tint(.orange)
+            }
+        }
+    }
 
     @ViewBuilder private func passesList(_ items: [AllPassesViewState.Item]?) -> some View {
         unwrapState { state in
@@ -156,17 +209,23 @@ struct AllPassesView: View, Equatable {
                 if items.isEmpty {
                     Text("No passes found")
                 } else {
-                    ForEach(items, id: \.index) { item in
+                    ForEach(items) { item in
                         navigationLink(index: item.index) {
                             PassPreviewCell(
                                 pass: item.pass,
                                 referenceDate: state.julianDate,
                                 indexOfPass: item.index,
+                                hasScheduledAlert: item.hasScheduledAlert,
                                 skyChartProducer: skyChartProducer
                             )
                         }
                         .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 25))
                         .frame(height: 135)
+                        .swipeActions(
+                            edge: .leading
+                        ) {
+                            swipeActionLeftButtons(item: item)
+                        }
                     }
                 }
             } else {
@@ -318,12 +377,11 @@ struct AllPassesView_Previews: PreviewProvider {
 
     static var previews: some View {
         let (passes, snapshots) = tianHePasses
-        let items = passes.enumerated().map { AllPassesViewState.Item(index: $0, pass: $1) }
+        let items = passes.enumerated().map { AllPassesViewState.Item(index: $0, pass: $1, hasScheduledAlert: false) }
         let itemsByVisibility = Dictionary(grouping: items, by: \.pass.visibility)
         let visiblePasses = itemsByVisibility[.visible] ?? []
         let invisiblePasses = (itemsByVisibility[.daylight] ?? []) + (itemsByVisibility[.unlit] ?? [])
         let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
-
 
         NavigationView {
             AllPassesView(

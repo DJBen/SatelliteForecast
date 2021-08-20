@@ -25,6 +25,10 @@ extension Reducer where ActionType == AllPassesViewAction, StateType == Store.St
             } else {
                 state.navigationState.deselectPassIndex()
             }
+        case .scheduleNotification(_):
+            break
+        case .unscheduleNotification(_):
+            break
         }
     }
 }

@@ -14,6 +14,8 @@ enum NavigationState: Equatable {
     case overview
     /// The observer configuration screen.
     case observer
+    /// The alarm configuration screen.
+    case alarm
 
     case list(category: SatelliteCategory)
     // When navigating directly from overview, the category is `nil`.
@@ -23,7 +25,7 @@ enum NavigationState: Equatable {
 
     var selectedCategory: SatelliteCategory? {
         switch self {
-        case .overview, .observer:
+        case .overview, .observer, .alarm:
             return nil
         case let .list(category):
             return category
@@ -38,7 +40,7 @@ enum NavigationState: Equatable {
         switch self {
         case let .allPasses(_, noradIndex), let .pass(_, noradIndex, _):
             return noradIndex
-        case .list, .overview, .observer:
+        case .list, .overview, .observer, .alarm:
             return nil
         }
     }
@@ -53,7 +55,7 @@ enum NavigationState: Equatable {
              .allPasses(category: _, noradIndex: _),
              .pass(category: _, noradIndex: _, selectedPassIndex: _):
             return self
-        case .observer:
+        case .observer, .alarm:
             fatalError("Should never happen")
         }
     }
@@ -66,7 +68,7 @@ enum NavigationState: Equatable {
         switch self {
         case .overview:
             return self
-        case .list, .allPasses(category: nil, noradIndex: _), .observer:
+        case .list, .allPasses(category: nil, noradIndex: _), .observer, .alarm:
             return .overview
         case .pass(category: _, noradIndex: _, selectedPassIndex: _):
             fatalError("Should not happen")
@@ -87,7 +89,8 @@ enum NavigationState: Equatable {
             return self
         case .list,
             .allPasses(category: _, noradIndex: _),
-            .pass(category: _, noradIndex: _, selectedPassIndex: _):
+            .pass(category: _, noradIndex: _, selectedPassIndex: _),
+            .alarm:
             fatalError("Should not happen")
         }
     }
@@ -103,8 +106,9 @@ enum NavigationState: Equatable {
         case let .list(category):
             return .allPasses(category: category, noradIndex: noradIndex)
         case .allPasses(category: _, noradIndex: _),
-                .pass(category: _, noradIndex: _, selectedPassIndex: _),
-                .observer:
+            .pass(category: _, noradIndex: _, selectedPassIndex: _),
+            .observer,
+            .alarm:
             fatalError("Should not happen")
         }
     }
@@ -115,7 +119,7 @@ enum NavigationState: Equatable {
 
     func deselectingNoradIndex() -> NavigationState {
         switch self {
-        case .overview, .observer:
+        case .overview, .observer, .alarm:
             fatalError("Should not happen")
         case .list(category: _):
             return self
@@ -136,7 +140,7 @@ enum NavigationState: Equatable {
 
     func selectingPassIndex(_ index: Int) -> NavigationState {
         switch self {
-        case .overview, .observer:
+        case .overview, .observer, .alarm:
             fatalError("Should not happen")
         case .list(category: _):
             fatalError("Should not happen")
@@ -153,7 +157,7 @@ enum NavigationState: Equatable {
 
     func deselectingPassIndex() -> NavigationState {
         switch self {
-        case .overview, .observer:
+        case .overview, .observer, .alarm:
             fatalError("Should not happen")
         case .list(category: _):
             fatalError("Should not happen")
