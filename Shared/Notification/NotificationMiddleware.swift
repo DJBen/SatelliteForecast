@@ -31,17 +31,14 @@ extension EffectMiddleware where
 
                     let dateComponents = Date(julianDate: passNotification.pass.rise.julianDate).dateComponents
                     let julianDateDiff = passNotification.pass.rise.julianDate - getState().julianDate
-                    
+                    let timeInterval = getState().debugMenu.rapidNotificationDelivery ? 10 : julianDateDiff * TimeConstants.day2sec
                     let trigger = UNTimeIntervalNotificationTrigger(
-                        timeInterval: julianDateDiff * TimeConstants.day2sec,
+                        timeInterval: timeInterval,
                         repeats: false
                     )
                     let content = UNMutableNotificationContent()
-                    content.title = passNotification.satelliteName
-                    content.body = LocalizedStrings.Notification.description(
-                        pass: passNotification.pass,
-                        satelliteName: passNotification.satelliteName
-                    )
+                    content.title = LocalizedStrings.Notification.title(passNotification: passNotification)
+                    content.body = LocalizedStrings.Notification.description(passNotification: passNotification)
                     
                     let request = UNNotificationRequest(
                         identifier: passNotification.pass.notificationIdentifier,

@@ -62,7 +62,7 @@ struct AlarmSettingsCell: View {
                 Text(LocalizedStrings.AlarmSettingsCell.description(numberOfAlerts: viewModel.state.scheduledPassNotifications.count))
                     .font(.caption)
                     .multilineTextAlignment(.leading)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(Color(UIColor.label))
             }
         
         }

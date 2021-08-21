@@ -28,6 +28,8 @@ extension EffectMiddleware where
                     return .just(.timer(.tick(Date().julianDate)))
                 case .setMockedDateOffset(_):
                     return .just(.timer(.tick(Date().julianDate)))
+                case .toggleRapidNotificationDelivery(_):
+                    return .doNothing
                 case .fetchNotifications:
                     return .sequence([
                         .notification(.fetchPendingNotificationRequests),

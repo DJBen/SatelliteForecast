@@ -78,7 +78,7 @@ struct AlarmSettingsView: View {
                         
             VStack(alignment: .leading, spacing: 4) {
                 Text(LocalizedStrings.AlarmSettingsView.passDescription(pass: item.passNotification.pass))
-                    .font(.captio  n)
+                    .font(.caption)
                     .multilineTextAlignment(.leading)
                     .foregroundColor(.primary)
                 

@@ -30,6 +30,9 @@ extension Reducer where ActionType == DebugMenuAction, StateType == AppState {
                 state.debugMenu.frozenAt = state.satelliteLoaderState.currentDate + (state.debugMenu.mockedOffsetOn ? state.debugMenu.mockedOffset : 0)
             }
             
+        case let .toggleRapidNotificationDelivery(isOn):
+            state.debugMenu.rapidNotificationDelivery = isOn
+            
         case .fetchNotifications:
             break
         }

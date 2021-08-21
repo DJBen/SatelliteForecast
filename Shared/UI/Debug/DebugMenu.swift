@@ -17,6 +17,7 @@ enum DebugMenuAction {
     case toggleFreezeTime(_ isOn: Bool)
     case toggleMockedOffset(_ isOn: Bool)
     case setMockedDateOffset(_ offset: Double)
+    case toggleRapidNotificationDelivery(_ isOn: Bool)
     
     case fetchNotifications
 }
@@ -25,6 +26,7 @@ struct DebugMenuConfig: Equatable {
     var isDebugMenuVisible: Bool = false
     var frozenAt: Double?
     var mockedOffsetOn: Bool = false
+    var rapidNotificationDelivery: Bool = false
 
     /// Offset in days between the real julian date and the mocked julian date. Positive value means mocked date is in the future,
     /// while negative value means mocked date is in the past.
@@ -128,7 +130,7 @@ struct DebugMenu: View {
             
             if let deliveredDate = deliveredDate {
                 Text("Delivered at \(deliveredDate.formatted())")
-                    .font(.body)
+                    .font(.caption)
                     .multilineTextAlignment(.leading)
                     .foregroundColor(.secondary)
             }
@@ -139,7 +141,7 @@ struct DebugMenu: View {
                     .multilineTextAlignment(.leading)
                     .foregroundColor(.secondary)
             } else if let timeIntervalTrigger = request.trigger as? UNTimeIntervalNotificationTrigger {
-                Text(timeIntervalTrigger.timeInterval.formatted())
+                Text("Time interval \(timeIntervalTrigger.timeInterval.formatted())")
                     .font(.caption)
                     .multilineTextAlignment(.leading)
                     .foregroundColor(.secondary)
@@ -182,6 +184,21 @@ struct DebugMenu: View {
                             Text("Mock time \(Date(julianDate: state.trueJulianDate + state.config.mockedOffset).formatted(date: .long, time: .standard))\nOffset \(state.config.mockedOffset.formatted()) JD")
                         } else {
                             Text("Real time \(Date(julianDate: state.trueJulianDate).formatted(date: .long, time: .standard))")
+                        }
+                    }
+                    
+                    Section {
+                        Toggle(
+                            isOn: Binding<Bool>(
+                                get: {
+                                    state.config.rapidNotificationDelivery
+                                },
+                                set: { newValue in
+                                    viewModel.dispatch(.toggleRapidNotificationDelivery(newValue))
+                                }
+                            )
+                        ) {
+                            Text("Deliver notifications 10 seconds after scheduled")
                         }
                     }
 
@@ -266,6 +283,9 @@ struct DebugMenu_Previews: PreviewProvider {
 
                     case let .setMockedDateOffset(offset):
                         state?.config.mockedOffset = offset
+                        
+                    case let .toggleRapidNotificationDelivery(isOn):
+                        state?.config.rapidNotificationDelivery = isOn
                         
                     case .fetchNotifications:
                         break
