@@ -258,21 +258,91 @@ enum LocalizedStrings {
     }
     
     enum AlarmSettingsView {
+        static func alarmOffsetDescription(timeInterval: TimeInterval) -> String {
+            let beforeFormat = NSLocalizedString(
+                "AlarmSettingsView.alarmOffsetDescription.before",
+                tableName: nil,
+                bundle: .main,
+                value: "%@ before rise",
+                comment: "The time interval description for each alarm in the alarm settings view"
+            )
+            
+            let afterFormat = NSLocalizedString(
+                "AlarmSettingsView.alarmOffsetDescription.after",
+                tableName: nil,
+                bundle: .main,
+                value: "%@ after rise",
+                comment: "The time interval description for each alarm in the alarm settings view"
+            )
+            
+            let formatter = DateComponentsFormatter()
+            formatter.allowedUnits = [.hour, .minute]
+            formatter.unitsStyle = .short
+
+            return String(
+                format: timeInterval > 0 ? afterFormat : beforeFormat,
+                formatter.string(from: abs(timeInterval))!
+            )
+        }
+        
         static func passDescription(pass: Pass) -> String {
             let format = NSLocalizedString(
                 "AlarmSettingsView.passDescription",
                 tableName: nil,
                 bundle: .main,
-                value: "Rises at %@ and sets at %@. Max elevation %.1f degrees.",
+                value: "Rises at %@ and sets at %@.",
                 comment: "The pass description for each alarm in the alarm settings view"
             )
             
             return String(
                 format: format,
-                Date(julianDate: pass.rise.julianDate).formatted(),
-                Date(julianDate: pass.set.julianDate).formatted(),
-                pass.transit.elev
+                Date(julianDate: pass.rise.julianDate).formatted(date: .omitted, time: .standard),
+                Date(julianDate: pass.set.julianDate).formatted(date: .omitted, time: .standard)
             )
+        }
+        
+        static func passVisibilityDescription(pass: Pass) -> String {
+            let visibleFormat = NSLocalizedString(
+                "AlarmSettingsView.passVisibilityDescription.visible",
+                tableName: nil,
+                bundle: .main,
+                value: "Max visible elevation %.1f degrees.",
+                comment: "The pass description for each alarm in the alarm settings view"
+            )
+            
+            let daytimeFormat = NSLocalizedString(
+                "AlarmSettingsView.passVisibilityDescription.daytime",
+                tableName: nil,
+                bundle: .main,
+                value: "The pass occurs during daylight with a max elevation of %.1f degrees.",
+                comment: "The pass description for each alarm in the alarm settings view"
+            )
+            
+            let unlitFormat = NSLocalizedString(
+                "AlarmSettingsView.passVisibilityDescription.unlit",
+                tableName: nil,
+                bundle: .main,
+                value: "The pass is not illuminated with a max elevation of %.1f degrees.",
+                comment: "The pass description for each alarm in the alarm settings view"
+            )
+                        
+            switch pass.visibility {
+            case .visible:
+                return String(
+                    format: visibleFormat,
+                    pass.highestIlluminatedElevation
+                )
+            case .daylight:
+                return String(
+                    format: daytimeFormat,
+                    pass.transit.elev
+                )
+            case .unlit:
+                return String(
+                    format: unlitFormat,
+                    pass.transit.elev
+                )
+            }
         }
     }
 

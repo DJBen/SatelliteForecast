@@ -28,6 +28,10 @@ struct PassNotification {
     let satelliteName: String
     let observer: LatLonAlt
     let timeOffset: TimeInterval
+    
+    var alertJulianDate: Double {
+        pass.rise.julianDate + timeOffset * TimeConstants.sec2day
+    }
 }
 
 extension PassNotification: Equatable {}
