@@ -148,8 +148,33 @@ extension EffectMiddleware where
                 return .doNothing
 
             case .loadNotificationsFromPersistenceStorage:
-                return .doNothing
+                return Effect { context -> AnyPublisher<DispatchedAction<AppAction>, Never> in
+                    let subject = PassthroughSubject<DispatchedAction<AppAction>, Never>()
+
+                    let decoder = JSONDecoder()
+                    let notifications = (UserDefaults.standard.object(forKey: "scheduledLocalNotifications") as? Data).flatMap {
+                        try? decoder.decode([ScheduledPassNotification].self, from: $0)
+                    }
+                    .map(Set.init) ?? []
+                    
+                    UNUserNotificationCenter.current().getPendingNotificationRequests { requests in
+                        
+                        // Leave pending notifications and remove the already delivered ones
+                        let pendingNotifications = notifications.filter {
+                            requests.map(\.identifier).contains($0.id)
+                        }
+                        
+                        subject.send(DispatchedAction<AppAction>(.notification(.loadedNoficationsFromPersistenceStorage(pendingNotifications))))
+                        
+                        subject.send(completion: .finished)
+                    }
+
+                    return subject.eraseToAnyPublisher()
+                }
                 
+            case .loadedNoficationsFromPersistenceStorage(_):
+                return .doNothing
+
             case .saveNotificationsToPersistenceStorage(_):
                 return .doNothing
             }

@@ -51,12 +51,10 @@ extension Reducer where ActionType == NotificationAction, StateType == Notificat
             UserDefaults.standard.set(notificationsData, forKey: "scheduledLocalNotifications")
             
         case .loadNotificationsFromPersistenceStorage:
-            let decoder = JSONDecoder()
-            let notifications = (UserDefaults.standard.object(forKey: "scheduledLocalNotifications") as? Data).flatMap {
-                try? decoder.decode([ScheduledPassNotification].self, from: $0)
-            }
-            .map(Set.init)
-            state.scheduledPassNotifications = notifications ?? []
+            break
+
+        case let .loadedNoficationsFromPersistenceStorage(scheduledPassNotifications):
+            state.scheduledPassNotifications = scheduledPassNotifications
         }
     }
 }

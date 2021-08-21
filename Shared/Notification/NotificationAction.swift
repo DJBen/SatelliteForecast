@@ -21,12 +21,14 @@ enum NotificationAction {
     case registerNotifications
     case requestNotificationAuthorization(pendingNotification: PassNotification? = nil)
     case fetchPendingNotificationRequests
-    case fetchedPendingNotifications([UNNotificationRequest])
     case fetchDeliveredNotifications
-    case fetchedDeliveredNotifications([UNNotification])
     case scheduleNotification(PassNotification)
     case cancelNotifications(ids: Set<String>)
     
     // MARK: Output
+    case loadedNoficationsFromPersistenceStorage(Set<ScheduledPassNotification>)
+    case fetchedPendingNotifications([UNNotificationRequest])
+    case fetchedDeliveredNotifications([UNNotification])
+
     case addNotification(ScheduledPassNotification)
 }
