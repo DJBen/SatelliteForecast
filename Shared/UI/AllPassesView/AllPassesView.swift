@@ -19,8 +19,11 @@ enum AllPassesViewAction {
     /// Recaculate passes using the latest location.
     case recalculatePasses
     case selectPass(index: Int?)
+    
+    // It will trigger the model change after a delay to accomodate for animation
     case scheduleNotification(PassNotification)
-    case unscheduleNotification(id: String)
+    // It will trigger the model change after a delay to accomodate for animation
+    case unscheduleNotification(pass: Pass)
 }
 
 struct AllPassesViewState: Equatable {
@@ -170,31 +173,26 @@ struct AllPassesView: View {
         unwrapState { state in
             if item.hasScheduledAlert {
                 Button {
-                    // We want to trigger the change after animation has been completed to avoid interruptions
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
-                        viewModel.dispatch(
-                            .unscheduleNotification(id: item.pass.notificationIdentifier)
-                        )
-                    }
+                    viewModel.dispatch(
+                        .unscheduleNotification(pass: item.pass)
+                    )
                 } label: {
                     Label("Cancel alarm", systemImage: "bell.slash.fill")
                 }
                 .tint(.red)
             } else {
                 Button {
-                    // We want to trigger the change after animation has been completed to avoid interruptions
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
-                        viewModel.dispatch(
-                            .scheduleNotification(
-                                PassNotification(
-                                    pass: item.pass,
-                                    satelliteName: state.satelliteName,
-                                    observer: state.observer!,
-                                    timeOffset: 0
-                                )
+                    viewModel.dispatch(
+                        .scheduleNotification(
+                            PassNotification(
+                                pass: item.pass,
+                                satelliteName: state.satelliteName,
+                                observer: state.observer!,
+                                timeOffset: 0
                             )
                         )
-                    }
+                    )
+                    
                 } label: {
                     Label("Alarm", systemImage: "bell.fill")
                 }

@@ -26,7 +26,6 @@ class LocationMiddleware: NSObject, Middleware {
 
     func receiveContext(getState: @escaping GetState<LocationState>, output: AnyActionHandler<AppAction>) {
         locationManager = CLLocationManager()
-        locationManager.allowsBackgroundLocationUpdates = true
         locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
         locationManager.distanceFilter = 2000
         locationManager.startMonitoringSignificantLocationChanges()

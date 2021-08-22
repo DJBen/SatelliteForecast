@@ -13,6 +13,7 @@ import CombineRex
 import SatelliteKit
 import SatelliteForecastCore
 import UserNotifications
+import StarryNight
 
 fileprivate let logger = Logger(subsystem: "io.djben.allPassesView", category: "middleware")
 
@@ -123,10 +124,115 @@ extension EffectMiddleware where
                     return .doNothing
                     
                 case let .scheduleNotification(passNotification):
-                    return .just(.notification(.requestNotificationAuthorization(pendingNotification: passNotification)))
-                    
-                case let .unscheduleNotification(id):
-                    return .just(.notification(.cancelNotifications(ids: [id])))
+                    return Effect { context -> AnyPublisher<DispatchedAction<AppAction>, Never> in
+                        let subject = PassthroughSubject<DispatchedAction<AppAction>, Never>()
+                        let state = getState()
+                        let pass = passNotification.pass
+                        guard let snapshots = state.satelliteTrails[pass.noradIndex]?.snapshots else {
+//                            logger.debug("\(pass.noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate) lacks snapshots: rasterization on hold")
+                            subject.send(DispatchedAction(.notification(.requestNotificationAuthorization(pendingNotification: passNotification))))
+                            subject.send(completion: .finished)
+                            return subject.eraseToAnyPublisher()
+                        }
+                        
+                        DispatchQueue.global(qos: .userInitiated).async {
+                            let snapshotsDuringPass = snapshots.subtree(from: pass.rise.julianDate, through: pass.set.julianDate)
+                            
+                            let rect = CGRect(x: 0, y: 0, width: 500, height: 500)
+                            let imageRect = rect.insetBy(dx: 5, dy: 5)
+                            let renderer = UIGraphicsImageRenderer(size: rect.size)
+                            let image = renderer.image { ctx in
+                                SkyChart.addRasterizedBackgroundSkyPath(
+                                    to: ctx,
+                                    params: BackgroundSkyRenderParams(
+                                        rect: imageRect,
+                                        stars: Star.magitudeLessThan(4),
+                                        constellations: Constellation.all,
+                                        observer: passNotification.observer,
+                                        julianDate: pass.rise.julianDate,
+                                        starColor: UIColor.black,
+                                        constellationLineColor: UIColor.lightGray.withAlphaComponent(0.4),
+                                        drawPlanaryBodies: true,
+                                        border: BackgroundSkyRenderParams.Border(borderColor: UIColor(named: "skyChartStroke")!),
+                                        magToRadius: { CGFloat(3 * exp(-0.425 * $0)) }
+                                    )
+                                )
+                                
+                                SkyChart.addRasterizedSatellitePassPath(
+                                    to: ctx,
+                                    params: SatellitePassPathRenderParams(
+                                        rect: imageRect,
+                                        snapshotsDuringPass: snapshotsDuringPass,
+                                        illuminatedColor: UIColor.black,
+                                        unlitColor: UIColor.lightGray
+                                    )
+                                )
+                            }
+                            do {
+                                let imageURL = pass.attachmentImageURL(extension: "png")
+                                
+                                guard let data = image.pngData() else {
+                                    subject.send(DispatchedAction(.notification(.requestNotificationAuthorization(pendingNotification: passNotification))))
+                                    subject.send(completion: .finished)
+                                    return
+                                }
+                                
+                                try data.write(to: imageURL)
+                                logger.info("Generated alarm attachment \(imageURL)")
+                                
+                                subject.send(DispatchedAction(.notification(.requestNotificationAuthorization(pendingNotification: passNotification))))
+                                subject.send(completion: .finished)
+                                
+                            } catch {
+                                logger.error("Failed to save alarm attachment: \(error.localizedDescription)")
+                                subject.send(DispatchedAction(.notification(.requestNotificationAuthorization(pendingNotification: passNotification))))
+                                subject.send(completion: .finished)
+                            }
+                        }
+                        
+                        // Make sure that the request finishes at least 0.75 seconds after triggering,
+                        // leaving enough time for the animation to complete
+                        let timerFuture = Future<Void, Never> { sink in
+                            DispatchQueue.global().asyncAfter(deadline: .now() + 0.75) {
+                                sink(.success(()))
+                            }
+                        }
+                        
+                        return subject
+                            .zip(timerFuture)
+                            .map(\.0)
+                            .eraseToAnyPublisher()
+                    }
+                                        
+                case let .unscheduleNotification(pass):
+                    return Effect { context -> AnyPublisher<DispatchedAction<AppAction>, Never> in
+                        let subject = PassthroughSubject<DispatchedAction<AppAction>, Never>()
+                        
+                        DispatchQueue.global().async {
+                            do {
+                                let imageURL = pass.attachmentImageURL(extension: "png")
+                                try FileManager.default.removeItem(at: imageURL)
+                                logger.info("Removed alarm attachment: \(imageURL)")
+                            } catch {
+                                logger.warning("Failed to remove alarm attachment: \(error.localizedDescription)")
+                            }
+                            subject.send(DispatchedAction<AppAction>(.notification(.cancelNotifications(ids: [pass.notificationIdentifier]))))
+                            subject.send(completion: .finished)
+                        }
+
+                        // Make sure that the request finishes at least 0.75 seconds after triggering,
+                        // leaving enough time for the animation to complete
+                        let timerFuture = Future<Void, Never> { sink in
+                            DispatchQueue.global().asyncAfter(deadline: .now() + 0.75) {
+                                sink(.success(()))
+                            }
+                        }
+                        
+                        return subject
+                            .zip(timerFuture)
+                            .map(\.0)
+                            .eraseToAnyPublisher()
+                    }
                 }
             }
     }

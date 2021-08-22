@@ -91,21 +91,40 @@ struct AlarmSettingsView: View {
         .padding([.top, .bottom], 4)
     }
     
-    var body: some View {
-        List {
-            ForEach(viewModel.state.notificationItems) { item in
-                itemView(item)
+    @ViewBuilder var alarmList: some View {
+        if viewModel.state.notificationItems.isEmpty {
+            VStack(spacing: 8) {
+                Image(systemName: "bell.circle")
+                    .font(.title)
+                Text(
+                    """
+                    Your alarms will appear here. You may swipe on a pass to schedule an alarm.
+                    """
+                )
+                .foregroundColor(Color(UIColor.secondaryLabel))
+                .multilineTextAlignment(.center)
+                .padding(EdgeInsets(top: 0, leading: 32, bottom: 0, trailing: 32))
             }
-            .onDelete { indexSet in
-                let ids = indexSet.map {
-                    viewModel.state.notificationItems[$0]
+        } else {
+            List {
+                ForEach(viewModel.state.notificationItems) { item in
+                    itemView(item)
                 }
-                .reduce(into: Set<String>(), { $0.insert($1.id) })
-                
-                viewModel.dispatch(.deleteNotifications(ids: ids))
+                .onDelete { indexSet in
+                    let ids = indexSet.map {
+                        viewModel.state.notificationItems[$0]
+                    }
+                    .reduce(into: Set<String>(), { $0.insert($1.id) })
+                    
+                    viewModel.dispatch(.deleteNotifications(ids: ids))
+                }
             }
+            .listStyle(.insetGrouped)
         }
-        .listStyle(.insetGrouped)
+    }
+    
+    var body: some View {
+        alarmList
         .navigationBarTitle("Alarms", displayMode: .inline)
         .toolbar {
             EditButton()

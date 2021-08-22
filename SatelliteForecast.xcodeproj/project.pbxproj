@@ -61,6 +61,7 @@
 		EF7C665326992FF80017A007 /* SatelliteLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7C665226992FF80017A007 /* SatelliteLoader.swift */; };
 		EF7C6656269930B40017A007 /* SingleSatelliteWrappingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7C6655269930B40017A007 /* SingleSatelliteWrappingView.swift */; };
 		EF7C6658269AA0D00017A007 /* SingleSatelliteWrappingViewMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7C6657269AA0D00017A007 /* SingleSatelliteWrappingViewMiddleware.swift */; };
+		EF7D4DD626D1E822005E49D0 /* Pass+Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7D4DD526D1E822005E49D0 /* Pass+Notification.swift */; };
 		EF833AFA26AD6068003EEBB6 /* ShakeMotion+Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF833AF926AD6068003EEBB6 /* ShakeMotion+Notification.swift */; };
 		EF833AFC26ADE9B0003EEBB6 /* SatelliteElevationGraphBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF833AFB26ADE9B0003EEBB6 /* SatelliteElevationGraphBackground.swift */; };
 		EF833AFE26ADF421003EEBB6 /* DateFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF833AFD26ADF421003EEBB6 /* DateFooter.swift */; };
@@ -190,6 +191,7 @@
 		EF7C665226992FF80017A007 /* SatelliteLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteLoader.swift; sourceTree = "<group>"; };
 		EF7C6655269930B40017A007 /* SingleSatelliteWrappingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleSatelliteWrappingView.swift; sourceTree = "<group>"; };
 		EF7C6657269AA0D00017A007 /* SingleSatelliteWrappingViewMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleSatelliteWrappingViewMiddleware.swift; sourceTree = "<group>"; };
+		EF7D4DD526D1E822005E49D0 /* Pass+Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Pass+Notification.swift"; sourceTree = "<group>"; };
 		EF833AF926AD6068003EEBB6 /* ShakeMotion+Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ShakeMotion+Notification.swift"; sourceTree = "<group>"; };
 		EF833AFB26ADE9B0003EEBB6 /* SatelliteElevationGraphBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteElevationGraphBackground.swift; sourceTree = "<group>"; };
 		EF833AFD26ADF421003EEBB6 /* DateFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFooter.swift; sourceTree = "<group>"; };
@@ -457,6 +459,7 @@
 				EF847C0626D0AA230004806F /* NotificationState.swift */,
 				EF847BF326CF23B60004806F /* NotificationMiddleware.swift */,
 				EF847BF726CF2AB40004806F /* NotificationReducer.swift */,
+				EF7D4DD526D1E822005E49D0 /* Pass+Notification.swift */,
 			);
 			path = Notification;
 			sourceTree = "<group>";
@@ -790,6 +793,7 @@
 				EF7A3194266B6B0B00CC33C0 /* AppAction.swift in Sources */,
 				EF3D09A026864FD800B84232 /* SatelliteCell.swift in Sources */,
 				EF8A423E267EA3970014AE17 /* SatelliteElevationGraphReducer.swift in Sources */,
+				EF7D4DD626D1E822005E49D0 /* Pass+Notification.swift in Sources */,
 				EF833AFE26ADF421003EEBB6 /* DateFooter.swift in Sources */,
 				EF7C6656269930B40017A007 /* SingleSatelliteWrappingView.swift in Sources */,
 				EF1CAB36266B87B6006319C8 /* SatelliteListViewReducer.swift in Sources */,

@@ -551,10 +551,12 @@ struct SkyChart_Previews: PreviewProvider {
                         referenceDate: pass.transit.julianDate.advanced(by: 20 * TimeConstants.sec2day),
                         quality: .full,
                         rasterizedSatellitePaths: SkyChart.rasterizedSatellitePassPath(
-                            rect: CGRect(origin: .zero, size: CGSize(width: 388, height: 805)),
-                            snapshotsDuringPass: snapshots,
-                            illuminatedColor: UIColor(named: "satellitePath_illuminated", in: nil, compatibleWith: traitCollection)!,
-                            unlitColor: UIColor(named: "satellitePath_notIlluminated", in: nil, compatibleWith: traitCollection)!
+                            params: SatellitePassPathRenderParams(
+                                rect: CGRect(origin: .zero, size: CGSize(width: 388, height: 805)),
+                                snapshotsDuringPass: snapshots,
+                                illuminatedColor: UIColor(named: "satellitePath_illuminated", in: nil, compatibleWith: traitCollection)!,
+                                unlitColor: UIColor(named: "satellitePath_notIlluminated", in: nil, compatibleWith: traitCollection)!
+                            )
                         )
                     )
                 ),
@@ -593,10 +595,12 @@ struct SkyChart_Previews: PreviewProvider {
                     referenceDate: pass2.rise.julianDate,
                     quality: .full,
                     rasterizedSatellitePaths: SkyChart.rasterizedSatellitePassPath(
-                        rect: CGRect(origin: .zero, size: CGSize(width: 388, height: 805)),
-                        snapshotsDuringPass: snapshots2,
-                        illuminatedColor: UIColor(Color("satellitePath_illuminated")),
-                        unlitColor: UIColor(Color("satellitePath_notIlluminated"))
+                        params: SatellitePassPathRenderParams(
+                            rect: CGRect(origin: .zero, size: CGSize(width: 388, height: 805)),
+                            snapshotsDuringPass: snapshots2,
+                            illuminatedColor: UIColor(Color("satellitePath_illuminated")),
+                            unlitColor: UIColor(Color("satellitePath_notIlluminated"))
+                        )
                     )
                 )
             ),

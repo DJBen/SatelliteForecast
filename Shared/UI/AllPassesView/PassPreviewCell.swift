@@ -71,7 +71,7 @@ struct PassPreviewCell: View, Equatable {
                         .font(.body)
                     if hasScheduledAlert {
                         Spacer(minLength: 8)
-                        Image(systemName: "bell")
+                        Image(systemName: "bell.fill")
                             .font(.title3)
                     }
                 }

@@ -36,9 +36,20 @@ extension EffectMiddleware where
                         timeInterval: timeInterval,
                         repeats: false
                     )
+
                     let content = UNMutableNotificationContent()
                     content.title = LocalizedStrings.Notification.title(passNotification: passNotification)
                     content.body = LocalizedStrings.Notification.description(passNotification: passNotification)
+                    
+                    if let attachment = try? UNNotificationAttachment(
+                        identifier: "\(passNotification.pass.notificationIdentifier)_attachment",
+                        url: passNotification.pass.attachmentImageURL(extension: "png"),
+                        options: [:]
+                    ) {
+                        content.attachments = [attachment]
+                    } else {
+                        logger.error("Failed to attach \(passNotification.pass.attachmentImageURL(extension: "png"))")
+                    }
                     
                     let request = UNNotificationRequest(
                         identifier: passNotification.pass.notificationIdentifier,
@@ -163,6 +174,20 @@ extension EffectMiddleware where
                         
                         subject.send(DispatchedAction<AppAction>(.notification(.loadedNoficationsFromPersistenceStorage(pendingNotifications))))
                         
+                        let invalidNotifications = notifications.filter {
+                            !requests.map(\.identifier).contains($0.id)
+                        }
+                        
+                        for notification in invalidNotifications {
+                            let imageURL = notification.notification.pass.attachmentImageURL(extension: "png")
+                            do {
+                                try FileManager.default.removeItem(at: imageURL)
+                                logger.info("Cleared delivered notification attachment at \(imageURL)")
+                            } catch {
+                                
+                            }
+                        }
+                        
                         subject.send(completion: .finished)
                     }
 
@@ -176,16 +201,5 @@ extension EffectMiddleware where
                 return .doNothing
             }
         }
-    }
-}
-
-extension Pass {
-    var notificationIdentifier: String {
-        // About 86.4s
-        func roundToThird(_ value: Double) -> Double {
-            (value * 1000).rounded() / 1000
-        }
-        
-        return "\(noradIndex)-r@\(roundToThird(rise.julianDate))-t@\(roundToThird(transit.julianDate))-s@\(roundToThird(`set`.julianDate))"
     }
 }
