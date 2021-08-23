@@ -21,9 +21,9 @@ extension Reducer where ActionType == AllPassesViewAction, StateType == Store.St
             state.observer = LatLonAlt(location: newLocation)
         case let .selectPass(index):
             if let index = index {
-                state.navigationState.selectPassIndex(index)
+                state.navigationState.selectPass(index: index)
             } else {
-                state.navigationState.deselectPassIndex()
+                state.navigationState.deselectPass()
             }
         case .scheduleNotification(_):
             break

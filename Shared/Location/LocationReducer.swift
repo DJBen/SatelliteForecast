@@ -8,7 +8,7 @@
 import Foundation
 import SwiftRex
 
-extension Reducer where ActionType == LocationAction, StateType == LocationState {
+extension Reducer where ActionType == LocationAction, StateType == AppState {
     static let locationReducer = Reducer.reduce { action, state in
         switch action {
         case .requestAuthorization:
@@ -18,24 +18,25 @@ extension Reducer where ActionType == LocationAction, StateType == LocationState
         case .requestAutoCompletion(_):
             break
         case let .selectLocation(selection):
-            if selection == .currentLocation && state.currentLocation == nil {
+            if selection == .currentLocation && state.locationState.currentLocation == nil {
                 break
             }
-            state.selection = selection
+            state.locationState.selection = selection
+            state.navigationState.dismissLocationSettings()
         case let .authorizationDidChange(authorizationStatus):
-            state.authorizationStatus = authorizationStatus
+            state.locationState.authorizationStatus = authorizationStatus
         case let .locationChanged(location):
-            state.currentLocation = location
-            state.currentLocationPlacemark = nil
+            state.locationState.currentLocation = location
+            state.locationState.currentLocationPlacemark = nil
         case let .reverseGeocodingFinished(result):
             switch result {
             case let .success(placemarks):
-                state.currentLocationPlacemark = placemarks.first
+                state.locationState.currentLocationPlacemark = placemarks.first
             case .failure(_):
                 break
             }
         case let .autocompletionFinished(result):
-            state.autocompletionResult = result
+            state.locationState.autocompletionResult = result
         case .persistLocation(_):
             break
         }

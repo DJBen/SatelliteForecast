@@ -12,4 +12,14 @@ struct NotificationState: Equatable {
     var scheduledPassNotifications: Set<ScheduledPassNotification> = []
     var pendingNotifications: [UNNotificationRequest] = []
     var deliveredNotifications: [UNNotification] = []
+    
+    /// All the things to deep link to a pass.
+    struct PassDeepLink: Equatable {
+        var satelliteCategory: SatelliteCategory?
+        var noradIndex: Int
+        var passIdentifier: String
+    }
+    
+    /// If non-`nil`, the app will deep link to this pass.
+    var pendingPassDeepLink: PassDeepLink?
 }

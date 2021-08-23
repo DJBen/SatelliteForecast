@@ -25,17 +25,18 @@ extension EffectMiddleware where InputActionType == SatelliteListViewAction, Out
             .onAction { (action, _, getState) -> Effect<Void, AppAction> in
                 switch action {
                 case let .selectSatellite(noradIndex):
-                    if let _ = noradIndex {
+                    if let noradIndex = noradIndex {
                         return .sequence([
                             .freezeObservingParams(
                                 observer: getState().locationState.location.map(LatLonAlt.init),
                                 julianDateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate)
                             ),
-                            .allPassesView(.calculatePasses)
+                            .allPassesView(.calculatePasses(noradIndex: noradIndex)),
                         ])
-                    } else {
-                        return .doNothing
                     }
+                    
+                    return .doNothing
+                    
                 case .satelliteSearchTextChanged(_):
                     return .doNothing
 

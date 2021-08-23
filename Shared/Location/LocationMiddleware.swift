@@ -78,7 +78,6 @@ class LocationMiddleware: NSObject, Middleware {
                     break
                 }
                 self?.output.dispatch(.tlePropagator(.purgePassesAndSnapshots))
-                self?.output.dispatch(.navigation(.dismissLocationSettings))
             case .authorizationDidChange(_):
                 break
             case let .locationChanged(location):

@@ -9,7 +9,7 @@ import Foundation
 import Combine
 import CombineRex
 import SatelliteKit
-
+import SatelliteForecastCore
 
 extension EffectMiddleware where
     InputActionType == SatelliteOverviewViewAction,
@@ -19,16 +19,37 @@ extension EffectMiddleware where
 
     static var satelliteOverview: EffectMiddleware<SatelliteOverviewViewAction, AppAction, AppState, Void> {
         EffectMiddleware<SatelliteOverviewViewAction, AppAction, AppState, Void>
-            .onAction { action, _, state in
+            .onAction { action, _, getState in
                 switch action {
+                case let .performDeepLink(pendingPassDeepLink):
+                    if let category = pendingPassDeepLink.satelliteCategory {
+                        return .just(.satelliteOverview(.selectCategory(category)))
+                    } else {
+                        return .just(
+                            .satelliteOverview(.selectSpecialSatellite(noradIndex: pendingPassDeepLink.noradIndex))
+                        )
+                    }
+                                        
                 case .selectSpecialSatellite(_):
-                    return .just(.singleSatelliteWrappingView(.loadSatelliteList))
+                    return .sequence([
+                        .freezeObservingParams(
+                            observer: getState().locationState.location.map(LatLonAlt.init),
+                            julianDateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate)
+                        ),
+                        .singleSatelliteWrappingView(.loadSingleSatellite)
+                    ])
+                    
                 case let .selectCategory(category):
-                    return .just(.satelliteLoader(.loadSatelliteCategory(category)))
+                    return .sequence([
+                        .satelliteLoader(.loadSatelliteCategory(category))
+                    ])
+                    
                 case .selectObserver:
                     return .doNothing
+                    
                 case .selectAlert:
-                    return .just(.navigation(.showAlertSettings))
+                    return .doNothing
+
                 case .returnToSatelliteOverview:
                     return .doNothing
                 }

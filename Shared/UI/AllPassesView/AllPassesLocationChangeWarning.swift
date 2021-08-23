@@ -18,7 +18,8 @@ struct AllPassesLocationChangeWarningState: Equatable {
 struct AllPassesLocationChangeWarning: View {
     var state: AllPassesLocationChangeWarningState
     var onRecalculatePasses: () -> Void
-    
+    @Environment(\.colorScheme) var colorScheme
+
     var body: some View {
         VStack(spacing: 8) {
             Text(localizedString)
@@ -28,7 +29,7 @@ struct AllPassesLocationChangeWarning: View {
                 .font(.footnote.bold())
         }
         .padding(16)
-        .background(.yellow)
+        .background(colorScheme == .light ? .yellow : Color(UIColor.systemYellow.darken(by: 0.3)))
         .frame(maxWidth: .infinity)
     }
     

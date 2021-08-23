@@ -35,13 +35,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        switch response.actionIdentifier {
-        case UNNotificationDismissActionIdentifier:
-            completionHandler()
-        case UNNotificationDefaultActionIdentifier:
-            completionHandler()
-        default:
-            completionHandler()
-        }
+        Store.shared.dispatch(.notification(.didReceiveResponse(response, completionHandler: completionHandler)))
     }
 }

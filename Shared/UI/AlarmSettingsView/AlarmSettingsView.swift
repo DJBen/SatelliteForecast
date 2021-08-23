@@ -180,6 +180,7 @@ struct AlarmSettingsView_Previews: PreviewProvider {
                 passNotification: PassNotification(
                     pass: pass,
                     satelliteName: "ISS (Zarya)",
+                    category: nil,
                     observer: observer,
                     timeOffset: Double.random(in: -7200...600)
                 )

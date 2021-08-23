@@ -39,7 +39,14 @@ extension EffectMiddleware where
                             .flatMap { action -> AnyPublisher<DispatchedAction<AppAction>, Never> in
                                 if shouldCalculatePasses {
                                     return Just(action)
-                                        .merge(with: Just(DispatchedAction<AppAction>(.allPassesView(.calculatePasses), dispatcher: dispatcher)))
+//                                        .merge(
+//                                            with: Just(
+//                                                DispatchedAction<AppAction>(
+//                                                    .allPassesView(.calculatePasses),
+//                                                    dispatcher: dispatcher
+//                                                )
+//                                            )
+//                                        )
                                         .eraseToAnyPublisher()
                                 } else {
                                     return Just(action).eraseToAnyPublisher()
@@ -61,10 +68,10 @@ extension EffectMiddleware where
 
                         logger.notice("Most recent TLE age \(mostRecentTLEAge) is new: skip update.")
 
-                        if shouldCalculatePasses {
-                            return Just(DispatchedAction<AppAction>(.allPassesView(.calculatePasses), dispatcher: dispatcher))
-                                .eraseToAnyPublisher()
-                        }
+//                        if shouldCalculatePasses {
+//                            return Just(DispatchedAction<AppAction>(.allPassesView(.calculatePasses), dispatcher: dispatcher))
+//                                .eraseToAnyPublisher()
+//                        }
                         return Empty<DispatchedAction<AppAction>, Never>()
                             .eraseToAnyPublisher()
                     }

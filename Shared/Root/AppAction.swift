@@ -12,7 +12,6 @@ enum AppAction {
     case appDelegate(AppDelegateAction)
     case backgroundTask(BackgroundTask)
     case notification(NotificationAction)
-    case navigation(NavigationAction)
     case location(LocationAction)
     case satelliteLoader(SatelliteLoaderAction)
     case satelliteOverview(SatelliteOverviewViewAction)
@@ -66,17 +65,6 @@ extension AppAction {
         set {
             guard case .notification = self, let newValue = newValue else { return }
             self = .notification(newValue)
-        }
-    }
-    
-    public var navigation: NavigationAction? {
-        get {
-            guard case let .navigation(value) = self else { return nil }
-            return value
-        }
-        set {
-            guard case .navigation = self, let newValue = newValue else { return }
-            self = .navigation(newValue)
         }
     }
 

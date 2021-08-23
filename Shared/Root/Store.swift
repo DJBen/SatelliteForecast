@@ -14,8 +14,8 @@ class Store: ReduxStoreBase<AppAction, AppState> {
     static let shared = Store()
 
     static let reducer: Reducer<AppAction, AppState> = [
-        Reducer<LocationAction, LocationState>.locationReducer
-            .lift(action: \.location, state: \.locationState),
+        Reducer<LocationAction, AppState>.locationReducer
+            .lift(action: \.location),
         Reducer<NotificationAction, NotificationState>.notificationReducer
             .lift(action: \.notification, state: \.notificationState),
         Reducer<SatelliteLoaderAction, SatelliteLoaderState>.satelliteLoaderReducer
@@ -39,8 +39,6 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         Reducer<DebugMenuAction, AppState>.debugMenuReducer
             .lift(action: \.debugMenu),
         Reducer<AppAction, AppState>.appStateReducer,
-        Reducer<NavigationAction, NavigationState>.navigationReducer
-            .lift(action: \.navigation, state: \.navigationState)
     ]
     .reduce(Reducer<AppAction, AppState>.identity, <>)
 

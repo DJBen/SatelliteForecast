@@ -35,7 +35,8 @@ extension EffectMiddleware where
                     switch phase {
                     case .active:
                         logger.debug("App becomes active")
-                        return .doNothing
+                        
+                        return .just(.notification(.loadNotificationsFromPersistenceStorage))
                     case .inactive:
                         logger.debug("App becomes inactive")
                         return .doNothing

@@ -11,6 +11,7 @@ import CombineRex
 import CombineRextensions
 
 enum SatelliteOverviewViewAction {
+    case performDeepLink(NotificationState.PassDeepLink)
     case selectSpecialSatellite(noradIndex: Int)
     case selectCategory(SatelliteCategory)
     case selectObserver
@@ -19,10 +20,14 @@ enum SatelliteOverviewViewAction {
 }
 
 struct SatelliteOverviewViewState: Equatable {
-    let navigationState: NavigationState
+    var navigationState: NavigationState
+    var pendingPassDeepLink: NotificationState.PassDeepLink?
 
     static func project(state: AppState) -> SatelliteOverviewViewState {
-        SatelliteOverviewViewState(navigationState: state.navigationState)
+        SatelliteOverviewViewState(
+            navigationState: state.navigationState,
+            pendingPassDeepLink: state.notificationState.pendingPassDeepLink
+        )
     }
 
     static var initial: SatelliteOverviewViewState {
@@ -145,6 +150,16 @@ struct SatelliteOverviewView: View {
             .navigationBarHidden(true)
         }
         .navigationViewStyle(StackNavigationViewStyle())
+        .onAppear {
+            if let deepLink = viewModel.state.pendingPassDeepLink {
+                viewModel.dispatch(.performDeepLink(deepLink))
+            }
+        }
+        .onChange(of: viewModel.state.pendingPassDeepLink) { newValue in
+            if let newValue = newValue {
+                viewModel.dispatch(.performDeepLink(newValue))
+            }
+        }
     }
 }
 

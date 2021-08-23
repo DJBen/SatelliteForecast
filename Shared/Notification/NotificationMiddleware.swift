@@ -40,6 +40,11 @@ extension EffectMiddleware where
                     let content = UNMutableNotificationContent()
                     content.title = LocalizedStrings.Notification.title(passNotification: passNotification)
                     content.body = LocalizedStrings.Notification.description(passNotification: passNotification)
+                    let encoder = JSONEncoder()
+                    content.userInfo = [
+                        "satelliteCategory": try! encoder.encode(passNotification.category),
+                        "noradIndex": passNotification.pass.noradIndex
+                    ]
                     
                     if let attachment = try? UNNotificationAttachment(
                         identifier: "\(passNotification.pass.notificationIdentifier)_attachment",
@@ -92,7 +97,7 @@ extension EffectMiddleware where
                         intentIdentifiers: [],
                         options: []
                     )
-                     
+                    
                     let center = UNUserNotificationCenter.current()
                     center.setNotificationCategories([passCategory])
                 }
@@ -166,13 +171,12 @@ extension EffectMiddleware where
                     .map(Set.init) ?? []
                     
                     UNUserNotificationCenter.current().getPendingNotificationRequests { requests in
-                        
                         // Leave pending notifications and remove the already delivered ones
                         let pendingNotifications = notifications.filter {
                             requests.map(\.identifier).contains($0.id)
                         }
                         
-                        subject.send(DispatchedAction<AppAction>(.notification(.loadedNoficationsFromPersistenceStorage(pendingNotifications))))
+                        subject.send(DispatchedAction<AppAction>(.notification(.loadedNotifications(pendingNotifications))))
                         
                         let invalidNotifications = notifications.filter {
                             !requests.map(\.identifier).contains($0.id)
@@ -194,11 +198,23 @@ extension EffectMiddleware where
                     return subject.eraseToAnyPublisher()
                 }
                 
-            case .loadedNoficationsFromPersistenceStorage(_):
+            case .loadedNotifications(_):
                 return .doNothing
 
             case .saveNotificationsToPersistenceStorage(_):
                 return .doNothing
+                
+            case let .didReceiveResponse(response, completionHandler):
+                return .fireAndForget {
+                    switch response.actionIdentifier {
+                    case UNNotificationDismissActionIdentifier:
+                        completionHandler()
+                    case UNNotificationDefaultActionIdentifier:
+                        completionHandler()
+                    default:
+                        completionHandler()
+                    }
+                }
             }
         }
     }

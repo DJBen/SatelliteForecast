@@ -11,19 +11,17 @@ import CombineRextensions
 import SatelliteForecastCore
 
 enum SingleSatelliteWrappingViewAction {
-    case loadSatelliteList
+    case loadSingleSatellite
+    case calculateSingleSatellitePass(noradIndex: Int)
 }
 
 struct SingleSatelliteWrappingViewState: Equatable {
     var satellite: Result<SatelliteInfo, SatelliteLoaderError>?
+    var noradIndex: Int
 
-    static var empty: SingleSatelliteWrappingViewState {
-        SingleSatelliteWrappingViewState()
-    }
-
-    static func project(state: AppState) -> SingleSatelliteWrappingViewState {
+    static func project(state: AppState) -> SingleSatelliteWrappingViewState? {
         guard let noradIndex = state.navigationState.selectedSatelliteNoradIndex else {
-            return .empty
+            return nil
         }
         let satellite: Result<SatelliteInfo, SatelliteLoaderError>?
         switch state.satelliteLoaderState.info[.brightest100] {
@@ -35,25 +33,44 @@ struct SingleSatelliteWrappingViewState: Equatable {
             satellite = .failure(error)
         }
 
-        return SingleSatelliteWrappingViewState(satellite: satellite)
+        return SingleSatelliteWrappingViewState(
+            satellite: satellite,
+            noradIndex: noradIndex
+        )
     }
 }
 
 struct SingleSatelliteWrappingView: View {
-    @ObservedObject var viewModel: ObservableViewModel<SingleSatelliteWrappingViewAction, SingleSatelliteWrappingViewState>
+    @ObservedObject var viewModel: ObservableViewModel<SingleSatelliteWrappingViewAction, SingleSatelliteWrappingViewState?>
     let allPassesViewProducer: ViewProducer<AllPassesViewContext, AllPassesView>
 
-    func satelliteContent<Content: View, FailedContent: View>(
+    @ViewBuilder func satelliteContent<Content: View, FailedContent: View>(
         @ViewBuilder contentBuilder: (SatelliteInfo) -> Content,
-        @ViewBuilder failedContentBuilder: (SatelliteLoaderError) -> FailedContent
+        @ViewBuilder failedContentBuilder: (Int, SatelliteLoaderError) -> FailedContent
     ) -> some View {
-        switch viewModel.state.satellite {
-        case .none:
-            return AnyView(ProgressView("Loading..."))
-        case let .success(satellite):
-            return AnyView(contentBuilder(satellite))
-        case let .failure(error):
-            return AnyView(failedContentBuilder(error))
+        if let state = viewModel.state {
+            Group {
+                switch state.satellite {
+                case .none:
+                    ProgressView("Loading...")
+                case let .success(satellite):
+                    contentBuilder(satellite)
+                case let .failure(error):
+                    failedContentBuilder(state.noradIndex, error)
+                }
+            }
+            .onAppear {
+                if case .success(_) = state.satellite {
+                    viewModel.dispatch(.calculateSingleSatellitePass(noradIndex: state.noradIndex))
+                }
+            }
+            .onChange(of: state.satellite) { newValue in
+                if newValue == .none {
+                    return
+                }
+                
+                viewModel.dispatch(.calculateSingleSatellitePass(noradIndex: state.noradIndex))
+            }
         }
     }
 
@@ -61,13 +78,13 @@ struct SingleSatelliteWrappingView: View {
         satelliteContent { satellite in
             allPassesViewProducer.view(AllPassesViewContext())
         }
-        failedContentBuilder: { error in
+        failedContentBuilder: { noradIndex, error in
             VStack(spacing: 16) {
                 Text(error.localizedDescription)
 
                 Button(
                     "Retry",
-                    action: { viewModel.dispatch(.loadSatelliteList) }
+                    action: { viewModel.dispatch(.loadSingleSatellite) }
                 )
                 .font(Font.headline)
                 .foregroundColor(Color(UIColor.systemBlue))
@@ -84,7 +101,7 @@ extension ViewProducer where Context == Void, ProducedView == SingleSatelliteWra
                     action: AppAction.singleSatelliteWrappingView,
                     state: SingleSatelliteWrappingViewState.project(state:)
                 )
-                .asObservableViewModel(initialState: .empty, emitsValue: .whenDifferent),
+                .asObservableViewModel(initialState: nil, emitsValue: .whenDifferent),
                 allPassesViewProducer: ViewProducer<AllPassesViewContext, AllPassesView>
                     .allPassesView(viewModel: viewModel)
             )
@@ -96,7 +113,7 @@ extension ViewProducer where Context == Void, ProducedView == SingleSatelliteWra
 struct SingleSatelliteWrappingView_Previews: PreviewProvider {
     static var previews: some View {
         SingleSatelliteWrappingView(
-            viewModel: .mock(state: .empty),
+            viewModel: .mock(state: nil),
             allPassesViewProducer: .crash
         )
     }

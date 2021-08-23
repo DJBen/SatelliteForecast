@@ -26,6 +26,7 @@ extension ScheduledPassNotification: Codable {}
 struct PassNotification {
     let pass: Pass
     let satelliteName: String
+    let category: SatelliteCategory?
     let observer: LatLonAlt
     let timeOffset: TimeInterval
     

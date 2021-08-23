@@ -25,8 +25,11 @@ enum NotificationAction {
     case scheduleNotification(PassNotification)
     case cancelNotifications(ids: Set<String>)
     
+    // UNUserNotificationCenterDelegate
+    case didReceiveResponse(UNNotificationResponse, completionHandler: () -> Void)
+    
     // MARK: Output
-    case loadedNoficationsFromPersistenceStorage(Set<ScheduledPassNotification>)
+    case loadedNotifications(Set<ScheduledPassNotification>)
     case fetchedPendingNotifications([UNNotificationRequest])
     case fetchedDeliveredNotifications([UNNotification])
 

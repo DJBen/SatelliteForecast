@@ -53,8 +53,22 @@ extension Reducer where ActionType == NotificationAction, StateType == Notificat
         case .loadNotificationsFromPersistenceStorage:
             break
 
-        case let .loadedNoficationsFromPersistenceStorage(scheduledPassNotifications):
+        case let .loadedNotifications(scheduledPassNotifications):
             state.scheduledPassNotifications = scheduledPassNotifications
+            
+        case let .didReceiveResponse(response, _):
+            let userInfo = response.notification.request.content.userInfo
+            guard let noradIndex = userInfo["noradIndex"] as? Int else {
+                break
+            }
+            
+            let satelliteCategory = (userInfo["satelliteCategory"] as? Data).flatMap({ try? JSONDecoder().decode(SatelliteCategory?.self, from: $0) })
+            
+            state.pendingPassDeepLink = NotificationState.PassDeepLink(
+                satelliteCategory: satelliteCategory,
+                noradIndex: noradIndex,
+                passIdentifier: response.notification.request.identifier
+            )
         }
     }
 }

@@ -22,14 +22,16 @@ extension EffectMiddleware where
         EffectMiddleware<SingleSatelliteWrappingViewAction, AppAction, AppState, Void>
             .onAction { action, _, getState in
                 switch action {
-                case .loadSatelliteList:
-                    return .sequence([
-                        .freezeObservingParams(
-                            observer: getState().locationState.location.map(LatLonAlt.init),
-                            julianDateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate)
-                        ),
-                        .satelliteLoader(.loadSatelliteCategory(.brightest100, shouldCalculatePasses: true)),
-                    ])
+                case .loadSingleSatellite:
+                    return .just(
+                        .satelliteLoader(
+                            .loadSatelliteCategory(.brightest100)
+                        )
+                    )
+                case let .calculateSingleSatellitePass(noradIndex):
+                    return .just(
+                        .allPassesView(.calculatePasses(noradIndex: noradIndex))
+                    )
                 }
             }
     }

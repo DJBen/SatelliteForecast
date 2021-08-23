@@ -63,6 +63,7 @@ struct BackgroundSkyRenderParams {
     var constellationLineColor: UIColor
     var constellationLineWidth: CGFloat = 1
     var drawPlanaryBodies: Bool = false
+    var backgroundFillColor: UIColor = .clear
     
     struct Border {
         var borderColor: UIColor
@@ -141,6 +142,18 @@ extension SkyChart {
             let color = isIlluminated ? params.illuminatedColor : params.unlitColor
             let snapshotsGroup = snapshotsByIllumination[index]
 
+            ctx.cgContext.setStrokeColor(color.cgColor)
+            ctx.cgContext.setLineWidth(params.lineWidth)
+            for i in snapshotsGroup.indices where i < snapshotsGroup.index(before: snapshotsGroup.endIndex) {
+                if i == snapshotsGroup.startIndex {
+                    let point = point(at: snapshotsGroup[i].1.position, rect: params.rect)
+                    ctx.cgContext.move(to: point)
+                }
+                let nextPoint = point(at: snapshotsGroup[snapshotsGroup.index(after: i)].1.position, rect: params.rect)
+                ctx.cgContext.addLine(to: nextPoint)
+            }
+            ctx.cgContext.drawPath(using: .stroke)
+            
             if snapshotsGroup.count > 3 {
                 ctx.cgContext.saveGState()
                 let e1 = snapshotsGroup[snapshotsGroup.index(ofOffset: snapshotsGroup.count / 2 - 1)].1.position
@@ -153,23 +166,10 @@ extension SkyChart {
                 ctx.cgContext.setFillColor(color.cgColor)
                 let image = UIImage(systemName: "arrowtriangle.right.fill")!
                 let imageRect = CGRect(origin: CGPoint(x: -params.arrowSize / 2, y: -params.arrowSize / 2), size: CGSize(width: params.arrowSize, height: params.arrowSize))
-                image.draw(in: imageRect)
-                ctx.cgContext.setBlendMode(.sourceAtop)
+                ctx.cgContext.clip(to: imageRect, mask: image.cgImage!)
                 ctx.cgContext.fill(imageRect)
                 ctx.cgContext.restoreGState()
             }
-
-            ctx.cgContext.setStrokeColor(color.cgColor)
-            ctx.cgContext.setLineWidth(params.lineWidth)
-            for i in snapshotsGroup.indices where i < snapshotsGroup.index(before: snapshotsGroup.endIndex) {
-                if i == snapshotsGroup.startIndex {
-                    let point = point(at: snapshotsGroup[i].1.position, rect: params.rect)
-                    ctx.cgContext.move(to: point)
-                }
-                let nextPoint = point(at: snapshotsGroup[snapshotsGroup.index(after: i)].1.position, rect: params.rect)
-                ctx.cgContext.addLine(to: nextPoint)
-            }
-            ctx.cgContext.drawPath(using: .stroke)
         }
         ctx.cgContext.restoreGState()
     }
@@ -196,6 +196,14 @@ extension SkyChart {
             ctx.cgContext.drawPath(using: .stroke)
             ctx.cgContext.restoreGState()
         }
+        
+        // -- Background fill
+        
+        ctx.cgContext.saveGState()
+        ctx.cgContext.setFillColor(params.backgroundFillColor.cgColor)
+        ctx.cgContext.addEllipse(in: params.rect)
+        ctx.cgContext.fillPath()
+        ctx.cgContext.restoreGState()
         
         // -- Constellations --
         
@@ -331,6 +339,8 @@ struct ImageRenderer_Previews: PreviewProvider {
         let pass: Pass
         let snapshots: BTree<Double, SatelliteSnapshot>
         let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
+        
+        @Environment(\.colorScheme) var colorScheme
 
         var body: some View {
             GeometryReader { geometry in
@@ -343,33 +353,36 @@ struct ImageRenderer_Previews: PreviewProvider {
                 Image(
                     uiImage: {
                         let renderer = UIGraphicsImageRenderer(size: rect.size)
-
+                        
                         return renderer.image { ctx in
-                            SkyChart.addRasterizedBackgroundSkyPath(
-                                to: ctx,
-                                params: BackgroundSkyRenderParams(
-                                    rect: rect,
-                                    stars: Self.stars,
-                                    constellations: Self.constellations,
-                                    observer: observer,
-                                    julianDate: pass.rise.julianDate,
-                                    starColor: UIColor.black,
-                                    constellationLineColor: UIColor.lightGray.withAlphaComponent(0.4),
-                                    drawPlanaryBodies: true,
-                                    border: BackgroundSkyRenderParams.Border(borderColor: UIColor(named: "skyChartStroke")!),
-                                    magToRadius: { CGFloat(3 * exp(-0.425 * $0)) }
+                            UITraitCollection(userInterfaceStyle: colorScheme == .light ? .light : .dark).performAsCurrent {
+                                SkyChart.addRasterizedBackgroundSkyPath(
+                                    to: ctx,
+                                    params: BackgroundSkyRenderParams(
+                                        rect: rect,
+                                        stars: Self.stars,
+                                        constellations: Self.constellations,
+                                        observer: observer,
+                                        julianDate: pass.rise.julianDate,
+                                        starColor: UIColor(named: "star")!,
+                                        constellationLineColor: UIColor(named: "constellationLine")!,
+                                        drawPlanaryBodies: true,
+                                        backgroundFillColor: UIColor.secondarySystemBackground,
+                                        border: BackgroundSkyRenderParams.Border(borderColor: UIColor(named: "skyChartStroke")!),
+                                        magToRadius: { CGFloat(3 * exp(-0.425 * $0)) }
+                                    )
                                 )
-                            )
-                            
-                            SkyChart.addRasterizedSatellitePassPath(
-                                to: ctx,
-                                params: SatellitePassPathRenderParams(
-                                    rect: rect,
-                                    snapshotsDuringPass: snapshots,
-                                    illuminatedColor: UIColor.black,
-                                    unlitColor: UIColor.lightGray
+                                
+                                SkyChart.addRasterizedSatellitePassPath(
+                                    to: ctx,
+                                    params: SatellitePassPathRenderParams(
+                                        rect: rect,
+                                        snapshotsDuringPass: snapshots,
+                                        illuminatedColor: UIColor(named: "satellitePath_illuminated")!,
+                                        unlitColor: UIColor(named: "satellitePath_notIlluminated")!
+                                    )
                                 )
-                            )
+                            }
                         }
                     }()
                 )
@@ -417,6 +430,7 @@ struct ImageRenderer_Previews: PreviewProvider {
         ForEach(enumerated: passes, id: \.self.rise.julianDate) { index, pass in
             Preview(pass: pass, snapshots: snapshots.subtree(from: pass.rise.julianDate, through: pass.set.julianDate))
                 .previewLayout(.fixed(width: 350, height: 350))
+                .preferredColorScheme(Double.random(in: 0..<1) > 0.5 ? .light : .dark)
         }
     }
 }

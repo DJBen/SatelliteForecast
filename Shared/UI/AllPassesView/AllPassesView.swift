@@ -15,9 +15,9 @@ import SwiftUI
 
 enum AllPassesViewAction {
     /// Calculate the passes.
-    case calculatePasses
+    case calculatePasses(noradIndex: Int)
     /// Recaculate passes using the latest location.
-    case recalculatePasses
+    case recalculatePasses(noradIndex: Int)
     case selectPass(index: Int?)
     
     // It will trigger the model change after a delay to accomodate for animation
@@ -54,13 +54,14 @@ struct AllPassesViewState: Equatable {
         }
     }
 
-    var satelliteName: String
+    var satelliteInfo: SatelliteInfo
     var julianDate: Double
     var julianDateRange: Range<Double>
     var observer: LatLonAlt?
     var visiblePasses: [Item]?
     var invisiblePasses: [Item]?
     var selectedPassIndex: Int?
+    var satelliteCategory: SatelliteCategory?
     var locationChangeWarningState: AllPassesLocationChangeWarningState?
 
     static func project(state: AppState) -> AllPassesViewState? {
@@ -103,7 +104,7 @@ struct AllPassesViewState: Equatable {
                         let newObserver = state.locationState.location?.coordinate else {
                     return nil
                 }
-                if observer != newObserver {
+                if CLLocation(latitude: observer.latitude, longitude: observer.longitude).distance(from: CLLocation(latitude: newObserver.latitude, longitude: newObserver.longitude)) > 1000 {
                     return AllPassesLocationChangeWarningState(
                         observer: newObserver,
                         observerDescription: state.locationState.placemark?.formattedString,
@@ -115,7 +116,7 @@ struct AllPassesViewState: Equatable {
             }()
             
             return AllPassesViewState(
-                satelliteName: info.satellite.commonName,
+                satelliteInfo: info,
                 julianDate: state.julianDate,
                 julianDateRange: julianDateRange,
                 observer: state.observer,
@@ -124,17 +125,19 @@ struct AllPassesViewState: Equatable {
                 invisiblePasses: invisiblePasses
                     .sorted { $0.pass.rise.julianDate < $1.pass.rise.julianDate },
                 selectedPassIndex: state.selectedSatellitePassIndex,
+                satelliteCategory: state.navigationState.selectedCategory,
                 locationChangeWarningState: locationStateChangeWarning
             )
         } else {
             return AllPassesViewState(
-                satelliteName: info.satellite.commonName,
+                satelliteInfo: info,
                 julianDate: state.julianDate,
                 julianDateRange: julianDateRange,
                 observer: state.observer,
                 visiblePasses: nil,
                 invisiblePasses: nil,
-                selectedPassIndex: state.selectedSatellitePassIndex
+                selectedPassIndex: state.selectedSatellitePassIndex,
+                satelliteCategory: state.navigationState.selectedCategory
             )
         }
     }
@@ -186,7 +189,8 @@ struct AllPassesView: View {
                         .scheduleNotification(
                             PassNotification(
                                 pass: item.pass,
-                                satelliteName: state.satelliteName,
+                                satelliteName: state.satelliteInfo.satellite.commonName,
+                                category: state.satelliteCategory,
                                 observer: state.observer!,
                                 timeOffset: 0
                             )
@@ -259,7 +263,7 @@ struct AllPassesView: View {
                     AllPassesLocationChangeWarning(
                         state: locationChangeWarningState,
                         onRecalculatePasses: {
-                            viewModel.dispatch(.recalculatePasses)
+                            viewModel.dispatch(.recalculatePasses(noradIndex: state.satelliteInfo.noradIndex))
                         }
                     )
                 }
@@ -291,12 +295,12 @@ struct AllPassesView: View {
                 }
             }
             .frame(maxWidth: .infinity)
-            .navigationTitle(state.satelliteName)
+            .navigationTitle(state.satelliteInfo.satellite.commonName)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     VStack(alignment: .center, spacing: 4) {
-                        Text(state.satelliteName)
+                        Text(state.satelliteInfo.satellite.commonName)
                             .font(.headline)
                             .frame(alignment: .center)
                             .multilineTextAlignment(.center)
@@ -385,7 +389,10 @@ struct AllPassesView_Previews: PreviewProvider {
             AllPassesView(
                 viewModel: .mock(
                     state: AllPassesViewState(
-                        satelliteName: tianHe.commonName,
+                        satelliteInfo: SatelliteInfo(
+                            noradIndex: 48274,
+                            satellite: tianHe
+                        ),
                         julianDate: Date().julianDate,
                         julianDateRange: Date().julianDate..<Date().julianDate + 1,
                         visiblePasses: visiblePasses,
