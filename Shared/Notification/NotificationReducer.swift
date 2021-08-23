@@ -11,18 +11,18 @@ import SwiftRex
 
 fileprivate let logger = Logger(subsystem: "io.djben.notification", category: "reducer")
 
-extension Reducer where ActionType == NotificationAction, StateType == NotificationState {
+extension Reducer where ActionType == NotificationAction, StateType == AppState {
     static let notificationReducer = Reducer.reduce { action, state in
         switch action {
         case let .addNotification(scheduledPassNotification):
-            state.scheduledPassNotifications.insert(scheduledPassNotification)
+            state.notificationState.scheduledPassNotifications.insert(scheduledPassNotification)
             
             let encoder = JSONEncoder()
-            let notificationsData = try! encoder.encode(Array(state.scheduledPassNotifications))
+            let notificationsData = try! encoder.encode(Array(state.notificationState.scheduledPassNotifications))
             UserDefaults.standard.set(notificationsData, forKey: "scheduledLocalNotifications")
             
         case let .cancelNotifications(ids):
-            state.scheduledPassNotifications = state.scheduledPassNotifications.filter { !ids.contains($0.id) }
+            state.notificationState.scheduledPassNotifications = state.notificationState.scheduledPassNotifications.filter { !ids.contains($0.id) }
             
         case .scheduleNotification(_):
             break
@@ -37,13 +37,13 @@ extension Reducer where ActionType == NotificationAction, StateType == Notificat
             break
             
         case let .fetchedPendingNotifications(requests):
-            state.pendingNotifications = requests
+            state.notificationState.pendingNotifications = requests
             
         case .fetchDeliveredNotifications:
             break
             
         case let .fetchedDeliveredNotifications(notifications):
-            state.deliveredNotifications = notifications
+            state.notificationState.deliveredNotifications = notifications
 
         case let .saveNotificationsToPersistenceStorage(scheduledNotifications):
             let encoder = JSONEncoder()
@@ -54,20 +54,12 @@ extension Reducer where ActionType == NotificationAction, StateType == Notificat
             break
 
         case let .loadedNotifications(scheduledPassNotifications):
-            state.scheduledPassNotifications = scheduledPassNotifications
+            state.notificationState.scheduledPassNotifications = scheduledPassNotifications
             
-        case let .didReceiveResponse(response, _):
-            let userInfo = response.notification.request.content.userInfo
-            guard let noradIndex = userInfo["noradIndex"] as? Int else {
-                break
-            }
-            
-            let satelliteCategory = (userInfo["satelliteCategory"] as? Data).flatMap({ try? JSONDecoder().decode(SatelliteCategory?.self, from: $0) })
-            
-            state.pendingPassDeepLink = NotificationState.PassDeepLink(
-                satelliteCategory: satelliteCategory,
-                noradIndex: noradIndex,
-                passIdentifier: response.notification.request.identifier
+        case let .deepLink(satelliteCategory, noradIndex, observer: _, passIdentifier: _):
+            state.navigationState = .allPasses(
+                category: satelliteCategory,
+                noradIndex: noradIndex
             )
         }
     }

@@ -58,7 +58,6 @@ struct SatelliteListViewState: Equatable {
     var satelliteSearchText: String = ""
     var category: SatelliteCategory
     var selectedNoradIndex: Int?
-    var pendingPassDeepLink: NotificationState.PassDeepLink?
 
     static func project(state: Store.StateType) -> SatelliteListViewState? {
         guard let category = state.navigationState.selectedCategory else {
@@ -83,8 +82,7 @@ struct SatelliteListViewState: Equatable {
             satellites: satellites,
             satelliteSearchText: state.satelliteSearchText,
             category: category,
-            selectedNoradIndex: state.navigationState.selectedSatelliteNoradIndex,
-            pendingPassDeepLink: state.notificationState.pendingPassDeepLink
+            selectedNoradIndex: state.navigationState.selectedSatelliteNoradIndex
         )
     }
 }
@@ -152,20 +150,6 @@ struct SatelliteListView: View {
             )
             .listStyle(.insetGrouped)
             .navigationTitle("Satellites")
-            .onAppear {
-                if let satelliteMap = state.satellites?.successValue,
-                    let pendingPassDeepLink = state.pendingPassDeepLink,
-                   satelliteMap[pendingPassDeepLink.noradIndex] != nil {
-                    viewModel.dispatch(.selectSatellite(noradIndex: pendingPassDeepLink.noradIndex))
-                }
-            }
-            .onChange(of: state.satellites) { satellites in
-                if let satelliteMap = satellites?.successValue,
-                    let pendingPassDeepLink = state.pendingPassDeepLink,
-                   satelliteMap[pendingPassDeepLink.noradIndex] != nil {
-                    viewModel.dispatch(.selectSatellite(noradIndex: pendingPassDeepLink.noradIndex))
-                }
-            }
         }
     }
 

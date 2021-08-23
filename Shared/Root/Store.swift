@@ -16,8 +16,8 @@ class Store: ReduxStoreBase<AppAction, AppState> {
     static let reducer: Reducer<AppAction, AppState> = [
         Reducer<LocationAction, AppState>.locationReducer
             .lift(action: \.location),
-        Reducer<NotificationAction, NotificationState>.notificationReducer
-            .lift(action: \.notification, state: \.notificationState),
+        Reducer<NotificationAction, AppState>.notificationReducer
+            .lift(action: \.notification),
         Reducer<SatelliteLoaderAction, SatelliteLoaderState>.satelliteLoaderReducer
             .lift(action: \.satelliteLoader, state: \.satelliteLoaderState),
         Reducer<SatelliteOverviewViewAction, AppState>.satelliteOverviewReducer

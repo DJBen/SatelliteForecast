@@ -38,12 +38,14 @@ extension EffectMiddleware where
                     )
 
                     let content = UNMutableNotificationContent()
+                    content.categoryIdentifier = "PASS"
                     content.title = LocalizedStrings.Notification.title(passNotification: passNotification)
                     content.body = LocalizedStrings.Notification.description(passNotification: passNotification)
                     let encoder = JSONEncoder()
                     content.userInfo = [
                         "satelliteCategory": try! encoder.encode(passNotification.category),
-                        "noradIndex": passNotification.pass.noradIndex
+                        "noradIndex": passNotification.pass.noradIndex,
+                        "observer": try! encoder.encode(passNotification.observer)
                     ]
                     
                     if let attachment = try? UNNotificationAttachment(
@@ -204,16 +206,32 @@ extension EffectMiddleware where
             case .saveNotificationsToPersistenceStorage(_):
                 return .doNothing
                 
-            case let .didReceiveResponse(response, completionHandler):
-                return .fireAndForget {
-                    switch response.actionIdentifier {
-                    case UNNotificationDismissActionIdentifier:
-                        completionHandler()
-                    case UNNotificationDefaultActionIdentifier:
-                        completionHandler()
-                    default:
-                        completionHandler()
+            case let .deepLink(satelliteCategory, noradIndex, observer, passIdentifier: _):
+                return Effect { context -> AnyPublisher<DispatchedAction<AppAction>, Never> in
+                    let subject = PassthroughSubject<DispatchedAction<AppAction>, Never>()
+
+                    DispatchQueue.global().async {
+                        if let category = satelliteCategory {
+                            subject.send(DispatchedAction(.satelliteLoader(.loadSatelliteCategory(category))))
+                            subject.send(DispatchedAction(.freezeObservingParams(
+                                observer: observer,
+                                julianDateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate)
+                            )))
+                            subject.send(DispatchedAction(.allPassesView(.calculatePasses(noradIndex: noradIndex))))
+                        } else {
+                            subject.send(DispatchedAction(.satelliteLoader(.loadSatelliteCategory(.brightest100))))
+                            subject.send(
+                                DispatchedAction(.freezeObservingParams(
+                                    observer: observer,
+                                    julianDateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate)
+                                ))
+                            )
+                            subject.send(DispatchedAction(.singleSatelliteWrappingView(.loadSingleSatellite)))
+                        }
+                        subject.send(completion: .finished)
                     }
+                                        
+                    return subject.eraseToAnyPublisher()
                 }
             }
         }

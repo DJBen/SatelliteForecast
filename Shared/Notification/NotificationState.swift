@@ -19,7 +19,4 @@ struct NotificationState: Equatable {
         var noradIndex: Int
         var passIdentifier: String
     }
-    
-    /// If non-`nil`, the app will deep link to this pass.
-    var pendingPassDeepLink: PassDeepLink?
 }

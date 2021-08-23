@@ -25,8 +25,8 @@ enum NotificationAction {
     case scheduleNotification(PassNotification)
     case cancelNotifications(ids: Set<String>)
     
-    // UNUserNotificationCenterDelegate
-    case didReceiveResponse(UNNotificationResponse, completionHandler: () -> Void)
+    // Deep link
+    case deepLink(category: SatelliteCategory?, noradIndex: Int, observer: LatLonAlt, passIdentifier: String)
     
     // MARK: Output
     case loadedNotifications(Set<ScheduledPassNotification>)

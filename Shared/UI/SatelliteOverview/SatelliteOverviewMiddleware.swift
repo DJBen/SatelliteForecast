@@ -20,16 +20,7 @@ extension EffectMiddleware where
     static var satelliteOverview: EffectMiddleware<SatelliteOverviewViewAction, AppAction, AppState, Void> {
         EffectMiddleware<SatelliteOverviewViewAction, AppAction, AppState, Void>
             .onAction { action, _, getState in
-                switch action {
-                case let .performDeepLink(pendingPassDeepLink):
-                    if let category = pendingPassDeepLink.satelliteCategory {
-                        return .just(.satelliteOverview(.selectCategory(category)))
-                    } else {
-                        return .just(
-                            .satelliteOverview(.selectSpecialSatellite(noradIndex: pendingPassDeepLink.noradIndex))
-                        )
-                    }
-                                        
+                switch action {          
                 case .selectSpecialSatellite(_):
                     return .sequence([
                         .freezeObservingParams(

@@ -14,8 +14,6 @@ extension Reducer where ActionType == SatelliteListViewAction, StateType == Stor
         case let .selectSatellite(noradIndex):
             if let noradIndex = noradIndex {
                 state.navigationState.selectSatellite(noradIndex: noradIndex)
-                // Clear the pending pass deep link
-                state.notificationState.pendingPassDeepLink = nil
             } else {
                 state.navigationState.deselectSatellite()
             }

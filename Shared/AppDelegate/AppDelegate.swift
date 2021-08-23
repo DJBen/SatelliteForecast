@@ -6,8 +6,12 @@
 //
 
 import Foundation
+import os
 import CombineRex
 import SwiftUI
+import SatelliteKit
+
+fileprivate let logger = Logger(subsystem: "io.djben.appDelegate", category: "class")
 
 enum AppDelegateAction {
     case didRegisterForRemoteNotificationsWithDeviceToken(Data)
@@ -35,6 +39,37 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        Store.shared.dispatch(.notification(.didReceiveResponse(response, completionHandler: completionHandler)))
+        let categoryIdentifier = response.notification.request.content.categoryIdentifier
+        
+        switch categoryIdentifier {
+        case "PASS":
+            switch response.actionIdentifier {
+            case UNNotificationDismissActionIdentifier:
+                completionHandler()
+            case UNNotificationDefaultActionIdentifier:
+                let userInfo = response.notification.request.content.userInfo
+                guard let noradIndex = userInfo["noradIndex"] as? Int,
+                      let observer = (userInfo["observer"] as? Data).flatMap({ try? JSONDecoder().decode(LatLonAlt.self, from: $0) }) else {
+                    break
+                }
+                
+                let satelliteCategory = (userInfo["satelliteCategory"] as? Data).flatMap({ try? JSONDecoder().decode(SatelliteCategory?.self, from: $0) })
+
+                Store.shared.dispatch(
+                    .notification(.deepLink(
+                        category: satelliteCategory,
+                        noradIndex: noradIndex,
+                        observer: observer,
+                        passIdentifier: response.notification.request.identifier
+                    ))
+                )
+
+                completionHandler()
+            default:
+                completionHandler()
+            }
+        default:
+            logger.warning("Unknown push notification category \(categoryIdentifier). Ignored.")
+        }
     }
 }
