@@ -28,25 +28,23 @@ extension EffectMiddleware where
             .onAction { (action, _, getState) -> Effect<Void, AppAction> in
                 switch action {
                 case .recalculatePasses(let noradIndex):
+                    let state = getState()
+                    guard let observer = state.locationState.location.map(LatLonAlt.init) else {
+                        logger.info("Will not generate satellite \(noradIndex) ephemerides: lack of core location coordinate")
+                        return .doNothing
+                    }
+                    
                     return .sequence([
                         .tlePropagator(.purgePassesAndSnapshots),
-                        .allPassesView(.calculatePasses(noradIndex: noradIndex))
+                        .allPassesView(.calculatePasses(noradIndex: noradIndex, observer: observer))
                     ])
-                case .calculatePasses(let noradIndex):
+                case let .calculatePasses(noradIndex, observer):
                     return Effect { context -> AnyPublisher<DispatchedAction<AppAction>, Never> in
                         let state = getState()
 
                         // Precondition: TLE must be ready
                         guard let info = state.satelliteLoaderState[noradIndex] else {
                             logger.fault("TLE not ready for the selected satellite when calculating passes")
-                            return Empty().eraseToAnyPublisher()
-                        }
-
-                        // Precondition: An observer coordinate must exist
-                        // Freeze the coordinate during the pass viewing workflow, so the coordinate
-                        // stays the same.
-                        guard let observer = state.locationState.location.map(LatLonAlt.init) else {
-                           logger.info("Will not generate satellite \(noradIndex) ephemerides: lack of core location coordinate")
                             return Empty().eraseToAnyPublisher()
                         }
 

@@ -20,6 +20,8 @@ enum DebugMenuAction {
     case toggleRapidNotificationDelivery(_ isOn: Bool)
     
     case fetchNotifications
+    
+    case triggerPassDeepLink(category: SatelliteCategory?, noradIndex: Int)
 }
 
 struct DebugMenuConfig: Equatable {
@@ -201,6 +203,17 @@ struct DebugMenu: View {
                             Text("Deliver notifications 10 seconds after scheduled")
                         }
                     }
+                    
+                    Section {
+                        Button("Deep link to ISS (special)") {
+                            viewModel.dispatch(.triggerPassDeepLink(category: nil, noradIndex: 25544))
+                        }
+                        Button("Deep link to Hubble (brightest 100)") {
+                            viewModel.dispatch(.triggerPassDeepLink(category: .brightest100, noradIndex: 20580))
+                        }
+                    } header: {
+                        Text("Test deep link")
+                    }
 
                     Section {
                         pendingNotificationsContent
@@ -237,7 +250,6 @@ extension ViewProducer where Context == Void, ProducedView == DebugMenu {
         }
     }
 }
-
 
 #if DEBUG
 struct DebugMenu_Previews: PreviewProvider {
@@ -288,6 +300,9 @@ struct DebugMenu_Previews: PreviewProvider {
                         state?.config.rapidNotificationDelivery = isOn
                         
                     case .fetchNotifications:
+                        break
+                        
+                    case .triggerPassDeepLink:
                         break
                     }
                 }

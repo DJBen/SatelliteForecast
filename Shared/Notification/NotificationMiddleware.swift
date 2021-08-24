@@ -217,7 +217,12 @@ extension EffectMiddleware where
                                 observer: observer,
                                 julianDateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate)
                             )))
-                            subject.send(DispatchedAction(.allPassesView(.calculatePasses(noradIndex: noradIndex))))
+                            subject.send(DispatchedAction(.allPassesView(
+                                .calculatePasses(
+                                    noradIndex: noradIndex,
+                                    observer: observer
+                                )
+                            )))
                         } else {
                             subject.send(DispatchedAction(.satelliteLoader(.loadSatelliteCategory(.brightest100))))
                             subject.send(

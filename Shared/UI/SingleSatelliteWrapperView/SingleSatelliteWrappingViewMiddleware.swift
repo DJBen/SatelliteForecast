@@ -29,8 +29,12 @@ extension EffectMiddleware where
                         )
                     )
                 case let .calculateSingleSatellitePass(noradIndex):
+                    guard let observer = getState().observer else {
+                        return .doNothing
+                    }
+                    
                     return .just(
-                        .allPassesView(.calculatePasses(noradIndex: noradIndex))
+                        .allPassesView(.calculatePasses(noradIndex: noradIndex, observer: observer))
                     )
                 }
             }

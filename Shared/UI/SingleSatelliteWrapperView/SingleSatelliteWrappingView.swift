@@ -9,6 +9,7 @@ import SwiftUI
 import CombineRex
 import CombineRextensions
 import SatelliteForecastCore
+import SatelliteKit
 
 enum SingleSatelliteWrappingViewAction {
     case loadSingleSatellite

@@ -6,11 +6,13 @@
 //
 
 import Foundation
+import os
 import Combine
 import CombineRex
 import SatelliteForecastCore
 import SatelliteKit
 
+fileprivate let logger = Logger(subsystem: "io.djben.satelliteListView", category: "middleware")
 
 extension EffectMiddleware where InputActionType == SatelliteListViewAction, OutputActionType == AppAction, StateType == AppState, Dependencies == Void {
 
@@ -25,17 +27,21 @@ extension EffectMiddleware where InputActionType == SatelliteListViewAction, Out
             .onAction { (action, _, getState) -> Effect<Void, AppAction> in
                 switch action {
                 case let .selectSatellite(noradIndex):
-                    if let noradIndex = noradIndex {
-                        return .sequence([
-                            .freezeObservingParams(
-                                observer: getState().locationState.location.map(LatLonAlt.init),
-                                julianDateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate)
-                            ),
-                            .allPassesView(.calculatePasses(noradIndex: noradIndex)),
-                        ])
+                    guard let noradIndex = noradIndex else {
+                        return .doNothing
+                    }
+                    guard let observer = getState().observer else {
+                        logger.info("Will not select satellite \(noradIndex): lack of observer")
+                        return .doNothing
                     }
                     
-                    return .doNothing
+                    return .sequence([
+                        .freezeObservingParams(
+                            observer: observer,
+                            julianDateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate)
+                        ),
+                        .allPassesView(.calculatePasses(noradIndex: noradIndex, observer: observer)),
+                    ])
                     
                 case .satelliteSearchTextChanged(_):
                     return .doNothing

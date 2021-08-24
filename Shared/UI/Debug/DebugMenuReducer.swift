@@ -35,6 +35,9 @@ extension Reducer where ActionType == DebugMenuAction, StateType == AppState {
             
         case .fetchNotifications:
             break
+            
+        case .triggerPassDeepLink(category: _, noradIndex: _):
+            state.debugMenu.isDebugMenuVisible = false
         }
     }
 }

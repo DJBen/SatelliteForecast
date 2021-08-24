@@ -35,6 +35,28 @@ extension EffectMiddleware where
                         .notification(.fetchPendingNotificationRequests),
                         .notification(.fetchDeliveredNotifications)
                     ])
+                case let .triggerPassDeepLink(category, noradIndex):
+                    return Effect { context -> AnyPublisher<DispatchedAction<AppAction>, Never> in
+                        let subject = PassthroughSubject<DispatchedAction<AppAction>, Never>()
+                        guard let observer = getState().locationState.location.map(LatLonAlt.init) else {
+                            subject.send(completion: .finished)
+                            return subject.eraseToAnyPublisher()
+                        }
+                                                
+                        DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
+                            subject.send(DispatchedAction(.notification(
+                                .deepLink(
+                                    category: category,
+                                    noradIndex: noradIndex,
+                                    observer: observer,
+                                    passIdentifier: "test_\(UUID().uuidString)"
+                                )
+                            )))
+                            subject.send(completion: .finished)
+                        }
+ 
+                        return subject.eraseToAnyPublisher()
+                    }
                 }
             }
     }

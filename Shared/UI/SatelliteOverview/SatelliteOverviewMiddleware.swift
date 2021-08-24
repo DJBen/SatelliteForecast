@@ -32,6 +32,10 @@ extension EffectMiddleware where
                     
                 case let .selectCategory(category):
                     return .sequence([
+                        .freezeObservingParams(
+                            observer: getState().locationState.location.map(LatLonAlt.init),
+                            julianDateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate)
+                        ),
                         .satelliteLoader(.loadSatelliteCategory(category))
                     ])
                     

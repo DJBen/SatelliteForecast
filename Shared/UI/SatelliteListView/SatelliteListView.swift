@@ -120,21 +120,37 @@ struct SatelliteListView: View {
 
     private func satellitesView(_ satellites: Map<Int, SatelliteInfo>) -> some View {
         unwrapState { state in
-            List {
-                ForEach(Array(satellites.keys), id: \.self) { noradIndex in
-                    NavigationLink(
-                        destination: LazyView(destination),
-                        tag: noradIndex,
-                        selection: Binding<Int?>(
-                            get: { state.selectedNoradIndex },
-                            set: {
-                                viewModel.dispatch(.selectSatellite(noradIndex: $0))
-                            }
-                        )
-                    ) {
-                        SatelliteCell(info: satellites[noradIndex]!)
+            ScrollViewReader { proxy in
+                List {
+                    ForEach(Array(satellites.keys), id: \.self) { noradIndex in
+                        NavigationLink(
+                            destination: LazyView(destination),
+                            tag: noradIndex,
+                            selection: Binding<Int?>(
+                                get: { state.selectedNoradIndex },
+                                set: {
+                                    print("!!! \($0)")
+//                                    if $0 != nil {
+//                                        viewModel.dispatch(.selectSatellite(noradIndex: $0))
+//                                    }
+                                    viewModel.dispatch(.selectSatellite(noradIndex: $0))
+                                }
+                            )
+                        ) {
+                            SatelliteCell(info: satellites[noradIndex]!)
+                        }
+                        .id(noradIndex)
                     }
-                    .id(noradIndex)
+                }
+                .onAppear {
+                    if let noradIndex = state.selectedNoradIndex {
+                        proxy.scrollTo(noradIndex, anchor: nil)
+                    }
+                }
+                .onChange(of: state.selectedNoradIndex) { newValue in
+                    if let noradIndex = newValue {
+                        proxy.scrollTo(noradIndex, anchor: nil)
+                    }
                 }
             }
             .searchable(

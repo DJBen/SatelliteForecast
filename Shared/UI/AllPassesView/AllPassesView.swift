@@ -15,7 +15,7 @@ import SwiftUI
 
 enum AllPassesViewAction {
     /// Calculate the passes.
-    case calculatePasses(noradIndex: Int)
+    case calculatePasses(noradIndex: Int, observer: LatLonAlt)
     /// Recaculate passes using the latest location.
     case recalculatePasses(noradIndex: Int)
     case selectPass(index: Int?)
