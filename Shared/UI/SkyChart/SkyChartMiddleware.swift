@@ -61,7 +61,7 @@ extension EffectMiddleware where
                                 )
                             )
 
-                            logger.debug("Rasterized background sky at observer coodinate \(String(describing: key.observer)) @ JD \(julianDate).")
+//                            logger.debug("Rasterized background sky at observer coodinate \(String(describing: key.observer)) @ JD \(julianDate).")
 
                             sink(
                                 .rasterizedBackgroundSky(image, quality: quality, julianDate: julianDate, key: key)
@@ -97,7 +97,7 @@ extension EffectMiddleware where
                                         arrowSize: quality == .preview ? 8 : 16
                                     )
                                 )
-                                logger.debug("Rasterized \(pass.noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate).")
+//                                logger.debug("Rasterized \(pass.noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate).")
 
                                 sink(
                                     .rasterizedSatellitePath(
