@@ -29,6 +29,15 @@ extension Reducer where ActionType == DebugMenuAction, StateType == AppState {
             if state.debugMenu.frozenAt != nil {
                 state.debugMenu.frozenAt = state.satelliteLoaderState.currentDate + (state.debugMenu.mockedOffsetOn ? state.debugMenu.mockedOffset : 0)
             }
+            
+        case let .toggleRapidNotificationDelivery(isOn):
+            state.debugMenu.rapidNotificationDelivery = isOn
+            
+        case .fetchNotifications:
+            break
+            
+        case .triggerPassDeepLink(category: _, noradIndex: _):
+            state.debugMenu.isDebugMenuVisible = false
         }
     }
 }

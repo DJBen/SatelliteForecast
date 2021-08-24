@@ -16,6 +16,7 @@ import CombineRextensions
 struct SatelliteForecastApp: App {
     @UIApplicationDelegateAdaptor private var appDelegate: AppDelegate
     @StateObject var store = Store.shared.asObservableViewModel(initialState: .empty, emitsValue: .whenDifferent)
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
         WindowGroup {
@@ -40,6 +41,9 @@ struct SatelliteForecastApp: App {
                 .onAppear {
                     store.dispatch(.timer(.start))
                     store.dispatch(.location(.requestAuthorization))
+                }
+                .onChange(of: scenePhase) { phase in
+                    store.dispatch(.appDelegate(.scenePhaseDidChange(phase)))
                 }
                 .onReceive(NotificationCenter.default.publisher(for: .deviceDidShakeNotification)) { _ in
                     #if DEBUG

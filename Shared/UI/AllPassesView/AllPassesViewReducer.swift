@@ -15,16 +15,17 @@ extension Reducer where ActionType == AllPassesViewAction, StateType == Store.St
         case .calculatePasses:
             break
         case .recalculatePasses:
-            guard let newLocation = state.locationState.location else {
-                return
-            }
-            state.observer = LatLonAlt(location: newLocation)
+            break
         case let .selectPass(index):
             if let index = index {
-                state.navigationState.selectPassIndex(index)
+                state.navigationState.selectPass(index: index)
             } else {
-                state.navigationState.deselectPassIndex()
+                state.navigationState.deselectPass()
             }
+        case .scheduleNotification(_):
+            break
+        case .unscheduleNotification(_):
+            break
         }
     }
 }

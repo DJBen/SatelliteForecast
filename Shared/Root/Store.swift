@@ -14,8 +14,10 @@ class Store: ReduxStoreBase<AppAction, AppState> {
     static let shared = Store()
 
     static let reducer: Reducer<AppAction, AppState> = [
-        Reducer<LocationAction, LocationState>.locationReducer
-            .lift(action: \.location, state: \.locationState),
+        Reducer<LocationAction, AppState>.locationReducer
+            .lift(action: \.location),
+        Reducer<NotificationAction, AppState>.notificationReducer
+            .lift(action: \.notification),
         Reducer<SatelliteLoaderAction, SatelliteLoaderState>.satelliteLoaderReducer
             .lift(action: \.satelliteLoader, state: \.satelliteLoaderState),
         Reducer<SatelliteOverviewViewAction, AppState>.satelliteOverviewReducer
@@ -37,8 +39,6 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         Reducer<DebugMenuAction, AppState>.debugMenuReducer
             .lift(action: \.debugMenu),
         Reducer<AppAction, AppState>.appStateReducer,
-        Reducer<NavigationAction, NavigationState>.navigationReducer
-            .lift(action: \.navigation, state: \.navigationState)
     ]
     .reduce(Reducer<AppAction, AppState>.identity, <>)
 
@@ -47,7 +47,21 @@ class Store: ReduxStoreBase<AppAction, AppState> {
     ) -> AnyMiddleware<AppAction, AppAction, AppState> {
 
         let composedMiddleware = LocationMiddleware().lifted
+        
+        <> EffectMiddleware.appDelegate
+            .lift(
+                inputAction: \.appDelegate
+            )
+            .eraseToAnyMiddleware()
 
+        <> EffectMiddleware.backgroundTask.lifted
+        
+        <> EffectMiddleware.notification
+            .lift(
+                inputAction: \.notification
+            )
+            .eraseToAnyMiddleware()
+        
         <> EffectMiddleware.locationLogger.lifted
 
         <> EffectMiddleware.satelliteLoader(satelliteLoader)
@@ -59,47 +73,51 @@ class Store: ReduxStoreBase<AppAction, AppState> {
 
         <> EffectMiddleware.satelliteOverview
             .lift(
-                inputAction: { $0.satelliteOverview }
+                inputAction: \.satelliteOverview
             )
             .eraseToAnyMiddleware()
 
         <> EffectMiddleware.satelliteListView(satelliteLoader: satelliteLoader)
             .lift(
-                inputAction: { $0.satelliteListView }
+                inputAction: \.satelliteListView
             )
             .eraseToAnyMiddleware()
 
         <> EffectMiddleware.singleSatelliteWrappingView
             .lift(
-                inputAction: { $0.singleSatelliteWrappingView }
+                inputAction: \.singleSatelliteWrappingView
             )
             .eraseToAnyMiddleware()
 
         <> EffectMiddleware.allPassesView
             .lift(
-                inputAction: { $0.allPassesView }
+                inputAction: \.allPassesView
             )
             .eraseToAnyMiddleware()
 
         <> EffectMiddleware.skyChart
             .lift(
-                inputAction: { $0.skyChart },
+                inputAction: \.skyChart,
                 outputAction: AppAction.skyChart
             )
             .eraseToAnyMiddleware()
 
         <> EffectMiddleware.satelliteElevationGraph
             .lift(
-                inputAction: { $0.satelliteElevationGraph },
+                inputAction: \.satelliteElevationGraph,
                 outputAction: AppAction.satelliteElevationGraph
             )
             .eraseToAnyMiddleware()
 
         <> EffectMiddleware.timer
             .lift(
-                inputAction: { $0.timer },
+                inputAction: \.timer,
                 outputAction: AppAction.timer
             )
+            .eraseToAnyMiddleware()
+        
+        <> EffectMiddleware.alarmSettingsView
+            .lift(inputAction: \.alarmSettingsView)
             .eraseToAnyMiddleware()
 
         <> EffectMiddleware.debugMenu.lifted

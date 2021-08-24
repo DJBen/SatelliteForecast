@@ -11,6 +11,12 @@ import SatelliteForecastCore
 import BTree
 
 struct AppState: Equatable {
+    var navigationState: NavigationState = .overview {
+        willSet {
+            print("[Nav] state changed from \(self.navigationState) to \(newValue)")
+        }
+    }
+    
     /// The date range from which ephemerides are generated.
     var skyChartState: SkyChartResources = .empty
     var satelliteElevationGraphResources: SatelliteElevationGraphResources = .empty
@@ -21,20 +27,11 @@ struct AppState: Equatable {
     var satelliteLoaderState: SatelliteLoaderState = .empty
     var locationState: LocationState = .empty
 
-    var julianDateRange: Range<Double>?
-
-    /// The observer coordinate. This value will be "frozen" when the user views any satellite passes.
-    var observer: LatLonAlt?
     var debugMenu: DebugMenuConfig = .empty
-
-    var navigationState: NavigationState = .overview {
-        willSet {
-            print("[Nav] state changed from \(self.navigationState) to \(newValue)")
-        }
-    }
+    var notificationState: NotificationState = NotificationState()
 
     static var empty: AppState {
-        AppState()
+        return AppState()
     }
 
     // MARK: - Derived properties

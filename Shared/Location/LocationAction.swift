@@ -15,7 +15,8 @@ enum LocationAction {
     case requestReverseGeocoding(CLLocation)
     case requestAutoCompletion(String)
     case selectLocation(LocationState.Selection)
-
+    case persistLocation(CLLocation)
+    
     // Output
     case authorizationDidChange(CLAuthorizationStatus)
     case locationChanged(CLLocation)

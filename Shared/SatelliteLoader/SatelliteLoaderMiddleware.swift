@@ -30,26 +30,28 @@ extension EffectMiddleware where
         EffectMiddleware<SatelliteLoaderAction, AppAction, SatelliteLoaderState, SatelliteLoaderDependencies>
         .onAction { (inputAction, dispatcher, getState) -> Effect<SatelliteLoaderDependencies, AppAction> in
             switch inputAction {
-            case let .loadSatelliteCategory(category, shouldCalculatePasses):
+            case let .loadSatelliteCategory(category, onCompletion):
                 return Effect(token: category) { context -> AnyPublisher<DispatchedAction<AppAction>, Never> in
-
                     func loadSatellitePublisher() -> AnyPublisher<DispatchedAction<AppAction>, Never> {
                         satelliteLoader.loadSatelliteCategoryPublisher(category: category)
-                            .map { DispatchedAction<AppAction>(.satelliteLoader($0), dispatcher: dispatcher) }
-                            .flatMap { action -> AnyPublisher<DispatchedAction<AppAction>, Never> in
-                                if shouldCalculatePasses {
-                                    return Just(action)
-                                        .merge(with: Just(DispatchedAction<AppAction>(.allPassesView(.calculatePasses), dispatcher: dispatcher)))
+                            .flatMap { map -> AnyPublisher<DispatchedAction<AppAction>, Never> in
+                                if let completionAction = onCompletion(map) {
+                                    return Just(DispatchedAction(.satelliteLoader(.loadedSatelliteInfo(category, map))))
+                                        .merge(with: Just(DispatchedAction(completionAction)))
                                         .eraseToAnyPublisher()
                                 } else {
-                                    return Just(action).eraseToAnyPublisher()
+                                    return Just(DispatchedAction(.satelliteLoader(.loadedSatelliteInfo(category, map))))
+                                        .eraseToAnyPublisher()
                                 }
+                            }
+                            .catch { error in
+                                Just(DispatchedAction(.satelliteLoader(.failedLoadingTLEFile(category, error))))
                             }
                             .eraseToAnyPublisher()
                     }
 
-                    if let result = getState().info[category], let info = result.successValue {
-                        let mostRecentTLEAge = info.map {
+                    if let result = getState().info[category], let infoMap = result.successValue {
+                        let mostRecentTLEAge = infoMap.map {
                             Date(julianDate: getState().currentDate).timeIntervalSince(Date(daysSince1950: $1.satellite.tle.t₀))
                         }
                         .min() ?? 0
@@ -61,15 +63,16 @@ extension EffectMiddleware where
 
                         logger.notice("Most recent TLE age \(mostRecentTLEAge) is new: skip update.")
 
-                        if shouldCalculatePasses {
-                            return Just(DispatchedAction<AppAction>(.allPassesView(.calculatePasses), dispatcher: dispatcher))
+                        if let completionAction = onCompletion(infoMap) {
+                            return Just(DispatchedAction(completionAction))
+                                .eraseToAnyPublisher()
+                        } else {
+                            return Empty<DispatchedAction<AppAction>, Never>(completeImmediately: true)
                                 .eraseToAnyPublisher()
                         }
-                        return Empty<DispatchedAction<AppAction>, Never>()
-                            .eraseToAnyPublisher()
+                    } else {
+                        return loadSatellitePublisher()
                     }
-
-                    return loadSatellitePublisher()
                 }
             case .loadedSatelliteInfo(_, _):
                 return .doNothing

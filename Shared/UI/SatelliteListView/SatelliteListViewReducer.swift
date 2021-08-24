@@ -11,11 +11,11 @@ import SwiftRex
 extension Reducer where ActionType == SatelliteListViewAction, StateType == Store.StateType {
     static let satelliteListViewReducer = Reducer.reduce { action, state in
         switch action {
-        case let .selectSatellite(noradIndex: noradIndex):
-            if let noradIndex = noradIndex {
-                state.navigationState.selectNoradIndex(noradIndex)
+        case let .selectSatellite(params):
+            if let params = params {
+                state.navigationState.selectSatellite(noradIndex: params.noradIndex)
             } else {
-                state.navigationState.deselectNoradIndex()
+                state.navigationState.deselectSatellite()
             }
 
         case let .satelliteSearchTextChanged(searchText):

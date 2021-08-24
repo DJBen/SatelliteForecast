@@ -30,7 +30,7 @@ extension LocationMiddleware {
 extension EffectMiddleware where InputActionType == LocationAction, OutputActionType == Never, StateType == Void, Dependencies == Void {
     var lifted: AnyMiddleware<AppAction, AppAction, AppState> {
         return lift(
-            inputAction: { $0.location },
+            inputAction: \.location,
             outputAction: { _ -> AppAction in },
             state: { _ in }
         )
@@ -41,7 +41,16 @@ extension EffectMiddleware where InputActionType == LocationAction, OutputAction
 extension EffectMiddleware where InputActionType == DebugMenuAction, OutputActionType == AppAction, StateType == AppState, Dependencies == Void {
     var lifted: AnyMiddleware<AppAction, AppAction, AppState> {
         return lift(
-            inputAction: { $0.debugMenu }
+            inputAction: \.debugMenu
+        )
+        .eraseToAnyMiddleware()
+    }
+}
+
+extension EffectMiddleware where InputActionType == BackgroundTask, OutputActionType == AppAction, StateType == AppState, Dependencies == Void {
+    var lifted: AnyMiddleware<AppAction, AppAction, AppState> {
+        return lift(
+            inputAction: \.backgroundTask
         )
         .eraseToAnyMiddleware()
     }

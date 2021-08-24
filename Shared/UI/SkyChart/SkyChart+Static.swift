@@ -44,6 +44,36 @@ extension SkyChartViewState {
     }
 }
 
+struct SatellitePassPathRenderParams: Equatable {
+    var rect: CGRect
+    var snapshotsDuringPass: BTree<Double, SatelliteSnapshot>
+    var lineWidth: CGFloat = 1
+    var illuminatedColor: UIColor
+    var unlitColor: UIColor
+    var arrowSize: CGFloat = 8
+}
+
+struct BackgroundSkyRenderParams {
+    var rect: CGRect
+    var stars: [Star]
+    var constellations: Set<Constellation>
+    var observer: LatLonAlt
+    var julianDate: Double
+    var starColor: UIColor
+    var constellationLineColor: UIColor
+    var constellationLineWidth: CGFloat = 1
+    var drawPlanaryBodies: Bool = false
+    var backgroundFillColor: UIColor = .clear
+    
+    struct Border {
+        var borderColor: UIColor
+        var borderWidth: CGFloat = 1
+    }
+
+    var border: Border? = nil
+    var magToRadius: (Double) -> CGFloat
+}
+
 extension SkyChart {
     static let labelDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -98,121 +128,177 @@ extension SkyChart {
         let textRot = fmod2pi_0(adjustedRot) > .pi / 2 || fmod2pi_0(adjustedRot) < -.pi / 2 ? .pi : 0
         return (adjustedRot, textRot)
     }
-
-    static func rasterizedSatellitePassPath(
-        rect: CGRect,
-        snapshotsDuringPass: BTree<Double, SatelliteSnapshot>,
-        lineWidth: CGFloat = 1,
-        illuminatedColor: UIColor,
-        unlitColor: UIColor,
-        arrowSize: CGFloat = 8
-    ) -> UIImage {
-        let snapshotsByIllumination = snapshotsDuringPass.split(inclusivity: .includesSecondElementsInPreviousGroup) { (e1, e2) -> Bool in
+    
+    static func addRasterizedSatellitePassPath(
+        to ctx: UIGraphicsImageRendererContext,
+        params: SatellitePassPathRenderParams
+    ) {
+        let snapshotsByIllumination = params.snapshotsDuringPass.split(inclusivity: .includesSecondElementsInPreviousGroup) { (e1, e2) -> Bool in
             return e1.1.isIlluminated != e2.1.isIlluminated
         }
-        let renderer = UIGraphicsImageRenderer(size: rect.size)
+        ctx.cgContext.saveGState()
+        for index in snapshotsByIllumination.indices {
+            let isIlluminated = snapshotsByIllumination[index].first!.1.isIlluminated
+            let color = isIlluminated ? params.illuminatedColor : params.unlitColor
+            let snapshotsGroup = snapshotsByIllumination[index]
+
+            ctx.cgContext.setStrokeColor(color.cgColor)
+            ctx.cgContext.setLineWidth(params.lineWidth)
+            for i in snapshotsGroup.indices where i < snapshotsGroup.index(before: snapshotsGroup.endIndex) {
+                if i == snapshotsGroup.startIndex {
+                    let point = point(at: snapshotsGroup[i].1.position, rect: params.rect)
+                    ctx.cgContext.move(to: point)
+                }
+                let nextPoint = point(at: snapshotsGroup[snapshotsGroup.index(after: i)].1.position, rect: params.rect)
+                ctx.cgContext.addLine(to: nextPoint)
+            }
+            ctx.cgContext.drawPath(using: .stroke)
+            
+            if snapshotsGroup.count > 3 {
+                ctx.cgContext.saveGState()
+                let e1 = snapshotsGroup[snapshotsGroup.index(ofOffset: snapshotsGroup.count / 2 - 1)].1.position
+                let e2 = snapshotsGroup[snapshotsGroup.index(ofOffset: snapshotsGroup.count / 2)].1.position
+                let p1 = point(at: e1, rect: params.rect)
+                let p2 = point(at: e2, rect: params.rect)
+                let rot = atan2pi(Double(p2.y - p1.y), Double(p2.x - p1.x))
+                ctx.cgContext.translateBy(x: p1.x, y: p1.y)
+                ctx.cgContext.rotate(by: CGFloat(rot))
+                ctx.cgContext.setFillColor(color.cgColor)
+                let image = UIImage(systemName: "arrowtriangle.right.fill")!
+                let imageRect = CGRect(origin: CGPoint(x: -params.arrowSize / 2, y: -params.arrowSize / 2), size: CGSize(width: params.arrowSize, height: params.arrowSize))
+                ctx.cgContext.clip(to: imageRect, mask: image.cgImage!)
+                ctx.cgContext.fill(imageRect)
+                ctx.cgContext.restoreGState()
+            }
+        }
+        ctx.cgContext.restoreGState()
+    }
+
+    static func rasterizedSatellitePassPath(
+        params: SatellitePassPathRenderParams
+    ) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: params.rect.size)
 
         return renderer.image { ctx in
-            for index in snapshotsByIllumination.indices {
-                let isIlluminated = snapshotsByIllumination[index].first!.1.isIlluminated
-                let color = isIlluminated ? illuminatedColor : unlitColor
-                let snapshotsGroup = snapshotsByIllumination[index]
-
-                if snapshotsGroup.count > 3 {
-                    ctx.cgContext.saveGState()
-                    let e1 = snapshotsGroup[snapshotsGroup.index(ofOffset: snapshotsGroup.count / 2 - 1)].1.position
-                    let e2 = snapshotsGroup[snapshotsGroup.index(ofOffset: snapshotsGroup.count / 2)].1.position
-                    let p1 = point(at: e1, rect: rect)
-                    let p2 = point(at: e2, rect: rect)
-                    let rot = atan2pi(Double(p2.y - p1.y), Double(p2.x - p1.x))
-                    ctx.cgContext.translateBy(x: p1.x, y: p1.y)
-                    ctx.cgContext.rotate(by: CGFloat(rot))
-                    ctx.cgContext.setFillColor(color.cgColor)
-                    let image = UIImage(systemName: "arrowtriangle.right.fill")!
-                    let imageRect = CGRect(origin: CGPoint(x: -arrowSize / 2, y: -arrowSize / 2), size: CGSize(width: arrowSize, height: arrowSize))
-                    image.draw(in: imageRect)
-                    ctx.cgContext.setBlendMode(.sourceAtop)
-                    ctx.cgContext.fill(imageRect)
-                    ctx.cgContext.restoreGState()
-                }
-
-                ctx.cgContext.setStrokeColor(color.cgColor)
-                ctx.cgContext.setLineWidth(lineWidth)
-                for i in snapshotsGroup.indices where i < snapshotsGroup.index(before: snapshotsGroup.endIndex) {
-                    if i == snapshotsGroup.startIndex {
-                        let point = point(at: snapshotsGroup[i].1.position, rect: rect)
-                        ctx.cgContext.move(to: point)
-                    }
-                    let nextPoint = point(at: snapshotsGroup[snapshotsGroup.index(after: i)].1.position, rect: rect)
-                    ctx.cgContext.addLine(to: nextPoint)
-                }
-                ctx.cgContext.drawPath(using: .stroke)
-            }
+            addRasterizedSatellitePassPath(to: ctx, params: params)
         }
     }
 
+    static func addRasterizedBackgroundSkyPath(
+        to ctx: UIGraphicsImageRendererContext,
+        params: BackgroundSkyRenderParams
+    ) {
+        if let border = params.border {
+            ctx.cgContext.saveGState()
+            ctx.cgContext.setStrokeColor(border.borderColor.cgColor)
+            ctx.cgContext.addEllipse(in: params.rect)
+            ctx.cgContext.setLineWidth(border.borderWidth)
+            ctx.cgContext.drawPath(using: .stroke)
+            ctx.cgContext.restoreGState()
+        }
+        
+        // -- Background fill
+        
+        ctx.cgContext.saveGState()
+        ctx.cgContext.setFillColor(params.backgroundFillColor.cgColor)
+        ctx.cgContext.addEllipse(in: params.rect)
+        ctx.cgContext.fillPath()
+        ctx.cgContext.restoreGState()
+        
+        // -- Constellations --
+        
+        ctx.cgContext.saveGState()
+        ctx.cgContext.setStrokeColor(params.constellationLineColor.cgColor)
+        ctx.cgContext.setLineWidth(params.constellationLineWidth)
+
+        for constellation in params.constellations {
+            guard let center = constellation.displayCenter else {
+                continue
+            }
+            let (alt, _) = azel(
+                julianDate: params.julianDate,
+                site: (params.observer.lat, params.observer.lon),
+                cele: cartesianToRaDec(center)
+            )
+            if alt < 0 {
+                continue
+            }
+            for line in constellation.connectionLines {
+                let (alt1, azi1) = azel(julianDate: params.julianDate, site: (params.observer.lat, params.observer.lon), cele: cartesianToRaDec(line.star1.physicalInfo.coordinate))
+                let (alt2, azi2) = azel(julianDate: params.julianDate, site: (params.observer.lat, params.observer.lon), cele: cartesianToRaDec(line.star2.physicalInfo.coordinate))
+                if alt1 < 0 || alt2 < 0 {
+                    continue
+                }
+                let point1 = Self.point(at: AziEleDst(azim: azi1, elev: alt1, dist: 0), rect: params.rect)
+                let point2 = Self.point(at: AziEleDst(azim: azi2, elev: alt2, dist: 0), rect: params.rect)
+
+                ctx.cgContext.move(to: point1)
+                ctx.cgContext.addLine(to: point2)
+            }
+            ctx.cgContext.drawPath(using: .stroke)
+        }
+        ctx.cgContext.restoreGState()
+        
+        // -- Stars --
+        
+        ctx.cgContext.saveGState()
+        ctx.cgContext.setFillColor(params.starColor.cgColor)
+
+        for star in params.stars {
+            let (alt, azi) = azel(
+                julianDate: params.julianDate,
+                site: (params.observer.lat, params.observer.lon),
+                cele: cartesianToRaDec(star.physicalInfo.coordinate))
+            if alt < 0 {
+                continue
+            }
+            let point = Self.point(at: AziEleDst(azim: azi, elev: alt, dist: 0), rect: params.rect)
+
+            ctx.cgContext.move(to: point)
+
+            let radius = params.magToRadius(star.physicalInfo.apparentMagnitude)
+
+            ctx.cgContext.addEllipse(in: CGRect(x: point.x - radius, y: point.y - radius, width: radius * 2, height: radius * 2))
+        }
+        ctx.cgContext.drawPath(using: .fill)
+        ctx.cgContext.restoreGState()
+        
+        guard params.drawPlanaryBodies else {
+            return
+        }
+        
+        // -- Plantary bodies
+        
+        let (sunAlt, sunAzi) = azel(julianDate: params.julianDate, site: (params.observer.lat, params.observer.lon), cele: solarGeo(julianDays: params.julianDate))
+        let sunPoint = Self.point(at: AziEleDst(azim: sunAzi, elev: sunAlt, dist: 0), rect: params.rect)
+        
+        ctx.cgContext.saveGState()
+        ctx.cgContext.addEllipse(in: params.rect)
+        ctx.cgContext.clip()
+        
+        ctx.cgContext.setFillColor(UIColor.systemYellow.cgColor)
+        ctx.cgContext.setShadow(offset: .zero, blur: 16, color: UIColor.systemYellow.cgColor)
+        ctx.cgContext.addEllipse(in: CGRect(x: sunPoint.x - 7, y: sunPoint.y - 7, width: 14, height: 14))
+        ctx.cgContext.drawPath(using: .fill)
+
+        let (moonAlt, moonAzi) = azel(julianDate: params.julianDate, site: (params.observer.lat, params.observer.lon), cele: lunarGeo(julianDays: params.julianDate))
+        let moonPoint = Self.point(at: AziEleDst(azim: moonAzi, elev: moonAlt, dist: 0), rect: params.rect)
+        ctx.cgContext.setFillColor(UIColor.gray.cgColor)
+        ctx.cgContext.setShadow(offset: .zero, blur: 12, color: UIColor.systemYellow.cgColor)
+        ctx.cgContext.addEllipse(in: CGRect(x: moonPoint.x - 5, y: moonPoint.y - 5, width: 10, height: 10))
+
+        ctx.cgContext.fillPath()
+
+        ctx.cgContext.restoreGState()
+    }
+        
     static func rasterizedBackgroundSkyPath(
-        rect: CGRect,
-        stars: [Star],
-        constellations: Set<Constellation>,
-        observer: LatLonAlt,
-        julianDate: Double,
-        starColor: UIColor,
-        constellationLineColor: UIColor,
-        constellationLineWidth: CGFloat = 1,
-        magToRadius: (Double) -> CGFloat
+        params: BackgroundSkyRenderParams
     ) -> UIImage {
-        let renderer = UIGraphicsImageRenderer(size: rect.size)
+        let renderer = UIGraphicsImageRenderer(size: params.rect.size)
 
         return renderer.image { ctx in
-            ctx.cgContext.saveGState()
-            ctx.cgContext.setFillColor(starColor.cgColor)
-
-            for star in stars {
-                let (alt, azi) = azel(
-                    julianDate: julianDate,
-                    site: (observer.lat, observer.lon),
-                    cele: cartesianToRaDec(star.physicalInfo.coordinate))
-                if alt < 0 {
-                    continue
-                }
-                let point = Self.point(at: AziEleDst(azim: azi, elev: alt, dist: 0), rect: rect)
-
-                ctx.cgContext.move(to: point)
-
-                let radius = magToRadius(star.physicalInfo.apparentMagnitude)
-
-                ctx.cgContext.addEllipse(in: CGRect(x: point.x - radius, y: point.y - radius, width: radius * 2, height: radius * 2))
-            }
-            ctx.cgContext.drawPath(using: .fill)
-
-            ctx.cgContext.restoreGState()
-            ctx.cgContext.setStrokeColor(constellationLineColor.cgColor)
-            ctx.cgContext.setLineWidth(constellationLineWidth)
-
-            for constellation in constellations {
-                guard let center = constellation.displayCenter else {
-                    continue
-                }
-                let (alt, _) = azel(
-                    julianDate: julianDate,
-                    site: (observer.lat, observer.lon),
-                    cele: cartesianToRaDec(center)
-                )
-                if alt < 0 {
-                    continue
-                }
-                for line in constellation.connectionLines {
-                    let (alt1, azi1) = azel(julianDate: julianDate, site: (observer.lat, observer.lon), cele: cartesianToRaDec(line.star1.physicalInfo.coordinate))
-                    let (alt2, azi2) = azel(julianDate: julianDate, site: (observer.lat, observer.lon), cele: cartesianToRaDec(line.star2.physicalInfo.coordinate))
-                    let point1 = Self.point(at: AziEleDst(azim: azi1, elev: alt1, dist: 0), rect: rect)
-                    let point2 = Self.point(at: AziEleDst(azim: azi2, elev: alt2, dist: 0), rect: rect)
-
-                    ctx.cgContext.move(to: point1)
-                    ctx.cgContext.addLine(to: point2)
-                }
-                ctx.cgContext.drawPath(using: .stroke)
-            }
+            addRasterizedBackgroundSkyPath(to: ctx, params: params)
         }
     }
 }
@@ -245,70 +331,96 @@ struct ImageRenderer_Previews: PreviewProvider {
             coarseSnapshots: snapshots
         )
     }()
-
+    
     struct Preview: View {
+        static let stars = Star.magitudeLessThan(4)
+        static let constellations = Constellation.all
+        
         let pass: Pass
         let snapshots: BTree<Double, SatelliteSnapshot>
+        let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
+        
+        @Environment(\.colorScheme) var colorScheme
 
         var body: some View {
-            let snapshotsDuringPass = snapshots.subtree(from: pass.rise.julianDate, through: pass.set.julianDate)
-            let rect = CGRect(origin: .zero, size: CGSize(width: 350, height: 350))
-
-            Image(
-                uiImage: SkyChart.rasterizedSatellitePassPath(
-                    rect: rect,
-                    snapshotsDuringPass: snapshotsDuringPass,
-                    illuminatedColor: UIColor.black,
-                    unlitColor: UIColor.lightGray
+            GeometryReader { geometry in
+                let rect: CGRect = {
+                    let rect = geometry.frame(in: .local)
+                    let dimension = min(rect.size.width, rect.size.height)
+                    return CGRect(origin: rect.origin, size: CGSize(width: dimension, height: dimension))
+                }()
+                
+                Image(
+                    uiImage: {
+                        let renderer = UIGraphicsImageRenderer(size: rect.size)
+                        
+                        return renderer.image { ctx in
+                            UITraitCollection(userInterfaceStyle: colorScheme == .light ? .light : .dark).performAsCurrent {
+                                SkyChart.addRasterizedBackgroundSkyPath(
+                                    to: ctx,
+                                    params: BackgroundSkyRenderParams(
+                                        rect: rect,
+                                        stars: Self.stars,
+                                        constellations: Self.constellations,
+                                        observer: observer,
+                                        julianDate: pass.rise.julianDate,
+                                        starColor: UIColor(named: "star")!,
+                                        constellationLineColor: UIColor(named: "constellationLine")!,
+                                        drawPlanaryBodies: true,
+                                        backgroundFillColor: UIColor.secondarySystemBackground,
+                                        border: BackgroundSkyRenderParams.Border(borderColor: UIColor(named: "skyChartStroke")!),
+                                        magToRadius: { CGFloat(3 * exp(-0.425 * $0)) }
+                                    )
+                                )
+                                
+                                SkyChart.addRasterizedSatellitePassPath(
+                                    to: ctx,
+                                    params: SatellitePassPathRenderParams(
+                                        rect: rect,
+                                        snapshotsDuringPass: snapshots,
+                                        illuminatedColor: UIColor(named: "satellitePath_illuminated")!,
+                                        unlitColor: UIColor(named: "satellitePath_notIlluminated")!
+                                    )
+                                )
+                            }
+                        }
+                    }()
                 )
-            )
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .overlay(
-                SkyChart.PassLabel(
-                    text: "Rise",
-                    snapshotPair: SkyChartViewState.snapshotsAroundPass(snapshotsDuringPass, julianDate: pass.rise.julianDate, selector: .first)!,
-                    rect: rect,
-                    modifierFactory: PassLabelModifier.init(rotationAngle:)
-                )
-            )
-            .overlay(
-                SkyChart.PassLabel(
-                    text: "Transit",
-                    snapshotPair: SkyChartViewState.snapshotsAroundPass(snapshotsDuringPass, julianDate: pass.transit.julianDate, selector: .first)!,
-                    rect: rect,
-                    modifierFactory: PassLabelModifier.init(rotationAngle:)
-                )
-            )
-            .overlay(
-                SkyChart.PassLabel(
-                    text: "Set",
-                    snapshotPair: SkyChartViewState.snapshotsAroundPass(snapshotsDuringPass, julianDate: pass.set.julianDate, selector: .last)!,
-                    rect: rect,
-                    modifierFactory: PassLabelModifier.init(rotationAngle:)
-                )
-            )
-            .overlay(
-                SkyChart.PassLabel(
-                    text: "Special",
-                    snapshotPair: SkyChartViewState.snapshotsAroundPass(snapshotsDuringPass, julianDate: pass.rise.julianDate + 180 * TimeConstants.sec2day, selector: .last)!,
-                    rect: rect,
-                    modifierFactory: HighlightedPassLabelModifier.curry(shouldHighlight: true)
-                )
-            )
-            .background(
-                Path { path in
-                    path.addArc(
-                        center: CGPoint(x: rect.midX, y: rect.midY),
-                        radius: SkyChart.radius(fromRect: rect),
-                        startAngle: Angle(degrees: 0),
-                        endAngle: Angle(degrees: 360),
-                        clockwise: false
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .overlay(
+                    SkyChart.PassLabel(
+                        text: "Rise",
+                        snapshotPair: SkyChartViewState.snapshotsAroundPass(snapshots, julianDate: pass.rise.julianDate, selector: .first)!,
+                        rect: rect,
+                        modifierFactory: PassLabelModifier.init(rotationAngle:)
                     )
-                    path.closeSubpath()
-                }
-                .stroke(Color("skyChartStroke"), lineWidth: 1)
-            )
+                )
+                .overlay(
+                    SkyChart.PassLabel(
+                        text: "Transit",
+                        snapshotPair: SkyChartViewState.snapshotsAroundPass(snapshots, julianDate: pass.transit.julianDate, selector: .first)!,
+                        rect: rect,
+                        modifierFactory: PassLabelModifier.init(rotationAngle:)
+                    )
+                )
+                .overlay(
+                    SkyChart.PassLabel(
+                        text: "Set",
+                        snapshotPair: SkyChartViewState.snapshotsAroundPass(snapshots, julianDate: pass.set.julianDate, selector: .last)!,
+                        rect: rect,
+                        modifierFactory: PassLabelModifier.init(rotationAngle:)
+                    )
+                )
+                .overlay(
+                    SkyChart.PassLabel(
+                        text: "Special",
+                        snapshotPair: SkyChartViewState.snapshotsAroundPass(snapshots, julianDate: pass.rise.julianDate + 180 * TimeConstants.sec2day, selector: .last)!,
+                        rect: rect,
+                        modifierFactory: HighlightedPassLabelModifier.curry(shouldHighlight: true)
+                    )
+                )
+            }
         }
     }
 
@@ -316,8 +428,9 @@ struct ImageRenderer_Previews: PreviewProvider {
         let (passes, snapshots) = tianHePasses
 
         ForEach(enumerated: passes, id: \.self.rise.julianDate) { index, pass in
-            Preview(pass: pass, snapshots: snapshots)
+            Preview(pass: pass, snapshots: snapshots.subtree(from: pass.rise.julianDate, through: pass.set.julianDate))
                 .previewLayout(.fixed(width: 350, height: 350))
+                .preferredColorScheme(Double.random(in: 0..<1) > 0.5 ? .light : .dark)
         }
     }
 }

@@ -170,7 +170,7 @@ extension Satellite {
     /// - Parameters:
     ///   - observer: The observer corodinate.
     ///   - coarseSnapshots: Coarse snapshots to find satellite passes.
-    ///   - DatePosition: The min elevation required for the pass to be considered valid.
+    ///   - minElevation: The min elevation required for the pass to be considered valid.
     ///   - fineInterval: The fine interval in which the ephemerides and detailed pass info are generated.
     /// - Returns: A tuple containing the following:
     ///   - passes: A list of satellite passes.

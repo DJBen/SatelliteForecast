@@ -11,6 +11,222 @@ import SatelliteForecastCore
 import SatelliteKit
 
 enum LocalizedStrings {
+    enum Directions {
+        static let north = NSLocalizedString(
+            "Directions.north",
+            tableName: nil,
+            bundle: .main,
+            value: "north",
+            comment: ""
+        )
+        
+        static let northEast = NSLocalizedString(
+            "Directions.northeast",
+            tableName: nil,
+            bundle: .main,
+            value: "northeast",
+            comment: ""
+        )
+        
+        static let east = NSLocalizedString(
+            "Directions.east",
+            tableName: nil,
+            bundle: .main,
+            value: "east",
+            comment: ""
+        )
+        
+        static let southeast = NSLocalizedString(
+            "Directions.southeast",
+            tableName: nil,
+            bundle: .main,
+            value: "southeast",
+            comment: ""
+        )
+        
+        static let south = NSLocalizedString(
+            "Directions.south",
+            tableName: nil,
+            bundle: .main,
+            value: "south",
+            comment: ""
+        )
+        
+        static let southwest = NSLocalizedString(
+            "Directions.southwest",
+            tableName: nil,
+            bundle: .main,
+            value: "southwest",
+            comment: ""
+        )
+        
+        static let west = NSLocalizedString(
+            "Directions.west",
+            tableName: nil,
+            bundle: .main,
+            value: "west",
+            comment: ""
+        )
+        
+        static let northwest = NSLocalizedString(
+            "Directions.northwest",
+            tableName: nil,
+            bundle: .main,
+            value: "northwest",
+            comment: ""
+        )
+        
+        static let angles = [north, northEast, east, southeast, south, southwest, west, northwest, north]
+    }
+    
+    enum Notification {
+        static func title(passNotification: PassNotification) -> String {
+            let nowFormat = NSLocalizedString(
+                "Notification.upcomingPass.title.now",
+                tableName: nil,
+                bundle: .main,
+                value: "%1$@ is rising now",
+                comment: "The title for the satellite pass notification."
+            )
+            
+            let futureFormat = NSLocalizedString(
+                "Notification.upcomingPass.title.future",
+                tableName: nil,
+                bundle: .main,
+                value: "%1$@ will rise in %2$@",
+                comment: "The title for the satellite pass notification."
+            )
+            
+            if passNotification.timeOffset == 0 {
+                return String(
+                    format: nowFormat,
+                    passNotification.satelliteName.trimmingCharacters(in: .whitespacesAndNewlines)
+                )
+            } else {
+                let formatter = DateComponentsFormatter()
+                formatter.allowedUnits = [.hour, .minute]
+                formatter.unitsStyle = .full
+                return String(
+                    format: futureFormat,
+                    passNotification.satelliteName.trimmingCharacters(in: .whitespacesAndNewlines),
+                    formatter.string(from: passNotification.timeOffset)!
+                )
+            }
+        }
+        
+        static func description(passNotification: PassNotification) -> String {
+            let pass = passNotification.pass
+            let riseDirection = Directions.angles[Int(floor(limit360(pass.rise.azim) / 45))]
+            let setDirection = Directions.angles[Int(floor(limit360(pass.set.azim) / 45))]
+            
+            let nowFormat = NSLocalizedString(
+                "Notification.upcomingPass.description.now",
+                tableName: nil,
+                bundle: .main,
+                value: "Rising now from %1$@ and sets into %2$@.",
+                comment: "The description for the satellite pass notification."
+            )
+            
+            let futureFormat = NSLocalizedString(
+                "Notification.upcomingPass.description.future",
+                tableName: nil,
+                bundle: .main,
+                value: "Will rise in %1$@ from %2$@ and sets into %3$@.",
+                comment: "The description for the satellite pass notification."
+            )
+            
+            let riseSetString: String
+            
+            if passNotification.timeOffset == 0 {
+                riseSetString = String(
+                    format: nowFormat,
+                    riseDirection,
+                    setDirection
+                )
+            } else {
+                let formatter = DateComponentsFormatter()
+                formatter.allowedUnits = [.hour, .minute]
+                formatter.unitsStyle = .full
+                
+                riseSetString = String(
+                    format: futureFormat,
+                    formatter.string(from: passNotification.timeOffset)!,
+                    riseDirection,
+                    setDirection
+                )
+            }
+            
+            let entirelyVisibleFormat = NSLocalizedString(
+                "Notification.upcomingPass.description.passVisibilityDescription.entirelyVisible",
+                tableName: nil,
+                bundle: .main,
+                value: "The entirety of the pass is illuminated up to %.1f degrees of elevation.",
+                comment: "The pass description in the notification."
+            )
+
+            let partiallyVisibleFormat = NSLocalizedString(
+                "Notification.upcomingPass.description.passVisibilityDescription.partiallyVisible",
+                tableName: nil,
+                bundle: .main,
+                value: "The pass is partially visible up to %.1f degrees of elevation.",
+                comment: "The pass description in the notification."
+            )
+            
+            let daytimeFormat = NSLocalizedString(
+                "Notification.upcomingPass.description.passVisibilityDescription.daytime",
+                tableName: nil,
+                bundle: .main,
+                value: "The pass has up to %.1f degrees of elevation. It may be too bright for the satellite to be visible, though.",
+                comment: "The pass description in the notification."
+            )
+            
+            let unlitFormat = NSLocalizedString(
+                "Notification.upcomingPass.description.passVisibilityDescription.unlit",
+                tableName: nil,
+                bundle: .main,
+                value: "The pass has up to %.1f degrees of elevation. Under earth's shadow, it will be too dim to be visible.",
+                comment: "The pass description in the notification."
+            )
+            
+            let format = NSLocalizedString(
+                "Notification.upcomingPass.description.format",
+                tableName: nil,
+                bundle: .main,
+                value: "%@ %@",
+                comment: "The concatenation format of pass description in the notification."
+            )
+            
+            let visibilityString: String
+            
+            switch pass.visibility {
+            case .visible:
+                if pass.illumination.changes.isEmpty {
+                    visibilityString = String(
+                        format: entirelyVisibleFormat,
+                        pass.highestIlluminatedElevation
+                    )
+                } else {
+                    visibilityString = String(
+                        format: partiallyVisibleFormat,
+                        pass.highestIlluminatedElevation
+                    )
+                }
+            case .daylight:
+                visibilityString = String(
+                    format: daytimeFormat,
+                    pass.transit.elev
+                )
+            case .unlit:
+                visibilityString = String(
+                    format: unlitFormat,
+                    pass.transit.elev
+                )
+            }
+            
+            return String(format: format, riseSetString, visibilityString)
+        }
+    }
+
     enum SatelliteOverviewView {
         static func sectionTitle(_ section: SatelliteOverviewSection) -> String {
             switch section {
@@ -30,13 +246,13 @@ enum LocalizedStrings {
                     value: "Satellites by categories",
                     comment: "The section title for satellites grouped by categories"
                 )
-            case .observerSettings:
+            case .settings:
                 return NSLocalizedString(
-                    "SatelliteListView.sectionOverviewView.section.locationSettings",
+                    "SatelliteListView.sectionOverviewView.section.settings",
                     tableName: nil,
                     bundle: .main,
-                    value: "Location settings",
-                    comment: "The section title for location settings"
+                    value: "Settings",
+                    comment: "The section title for settings"
                 )
             }
         }
@@ -67,7 +283,7 @@ enum LocalizedStrings {
             switch satellite {
             case .iss:
                 return NSLocalizedString(
-                    "SatelliteListView.sectionOverviewCell.title.satellite.iss",
+                    "SatelliteOverview.sectionOverviewCell.title.satellite.iss",
                     tableName: nil,
                     bundle: .main,
                     value: "International Space Station",
@@ -75,7 +291,7 @@ enum LocalizedStrings {
                 )
             case .tianhe:
                 return NSLocalizedString(
-                    "SatelliteListView.sectionOverviewCell.title.satellite.tianhe",
+                    "SatelliteOverview.sectionOverviewCell.title.satellite.tianhe",
                     tableName: nil,
                     bundle: .main,
                     value: "Tianhe (CSS Core Module)",
@@ -87,7 +303,7 @@ enum LocalizedStrings {
             switch satellite {
             case .iss:
                 return NSLocalizedString(
-                    "SatelliteListView.sectionOverviewCell.description.satellite.iss",
+                    "SatelliteOverview.sectionOverviewCell.description.satellite.iss",
                     tableName: nil,
                     bundle: .main,
                     value: """
@@ -97,7 +313,7 @@ enum LocalizedStrings {
                 )
             case .tianhe:
                 return NSLocalizedString(
-                    "SatelliteListView.sectionOverviewCell.description.satellite.tianhe",
+                    "SatelliteOverview.sectionOverviewCell.description.satellite.tianhe",
                     tableName: nil,
                     bundle: .main,
                     value: "The first module to launch of the Tiangong space station.",
@@ -109,7 +325,7 @@ enum LocalizedStrings {
             switch category {
             case .brightest100:
                 return NSLocalizedString(
-                    "SatelliteListView.sectionOverviewCell.category.brightest100",
+                    "SatelliteOverview.sectionOverviewCell.category.brightest100",
                     tableName: nil,
                     bundle: .main,
                     value: "Brightest 100 satellites",
@@ -117,7 +333,7 @@ enum LocalizedStrings {
                 )
             case .last30DayLaunches:
                 return NSLocalizedString(
-                    "SatelliteListView.sectionOverviewCell.category.last30DayLaunches",
+                    "SatelliteOverview.sectionOverviewCell.category.last30DayLaunches",
                     tableName: nil,
                     bundle: .main,
                     value: "Launches in the past 30 days",
@@ -125,11 +341,134 @@ enum LocalizedStrings {
                 )
             case .active:
                 return NSLocalizedString(
-                    "SatelliteListView.sectionOverviewCell.category.active",
+                    "SatelliteOverview.sectionOverviewCell.category.active",
                     tableName: nil,
                     bundle: .main,
                     value: "All active satellites",
                     comment: "The section header for all active satellites"
+                )
+            }
+        }
+    }
+    
+    enum AlarmSettingsCell {
+        static var title: String {
+            NSLocalizedString(
+                "SatelliteOverview.alarmSettingsCell.title",
+                tableName: nil,
+                bundle: .main,
+                value: "Manage alarms",
+                comment: "The title for alarm settings cell"
+            )
+        }
+        
+        static func description(numberOfAlerts: Int) -> String {
+            if numberOfAlerts == 0 {
+                return NSLocalizedString(
+                    "SatelliteOverview.alarmSettingsCell.description.zero",
+                    tableName: nil,
+                    bundle: .main,
+                    value: "You currently haven't set up any alarms.",
+                    comment: "The description for alarm settings cell when the seller hasn't set up any alarms"
+                )
+            } else {
+                let format = NSLocalizedString(
+                    "SatelliteOverview.alarmSettingsCell.description.nonZero",
+                    tableName: nil,
+                    bundle: .main,
+                    value: "You have %d pending alarm(s)",
+                    comment: "The description for alarm settings cell when the seller has set up some alarms"
+                )
+                
+                return String(format: format, numberOfAlerts)
+            }
+        }
+    }
+    
+    enum AlarmSettingsView {
+        static func alarmOffsetDescription(timeInterval: TimeInterval) -> String {
+            let beforeFormat = NSLocalizedString(
+                "AlarmSettingsView.alarmOffsetDescription.before",
+                tableName: nil,
+                bundle: .main,
+                value: "%@ before rise",
+                comment: "The time interval description for each alarm in the alarm settings view"
+            )
+            
+            let afterFormat = NSLocalizedString(
+                "AlarmSettingsView.alarmOffsetDescription.after",
+                tableName: nil,
+                bundle: .main,
+                value: "%@ after rise",
+                comment: "The time interval description for each alarm in the alarm settings view"
+            )
+            
+            let formatter = DateComponentsFormatter()
+            formatter.allowedUnits = [.hour, .minute]
+            formatter.unitsStyle = .short
+
+            return String(
+                format: timeInterval > 0 ? afterFormat : beforeFormat,
+                formatter.string(from: abs(timeInterval))!
+            )
+        }
+        
+        static func passDescription(pass: Pass) -> String {
+            let format = NSLocalizedString(
+                "AlarmSettingsView.passDescription",
+                tableName: nil,
+                bundle: .main,
+                value: "Rises at %@ and sets at %@.",
+                comment: "The pass description for each alarm in the alarm settings view"
+            )
+            
+            return String(
+                format: format,
+                Date(julianDate: pass.rise.julianDate).formatted(date: .omitted, time: .standard),
+                Date(julianDate: pass.set.julianDate).formatted(date: .omitted, time: .standard)
+            )
+        }
+        
+        static func passVisibilityDescription(pass: Pass) -> String {
+            let visibleFormat = NSLocalizedString(
+                "AlarmSettingsView.passVisibilityDescription.visible",
+                tableName: nil,
+                bundle: .main,
+                value: "Max visible elevation %.1f degrees.",
+                comment: "The pass description for each alarm in the alarm settings view"
+            )
+            
+            let daytimeFormat = NSLocalizedString(
+                "AlarmSettingsView.passVisibilityDescription.daytime",
+                tableName: nil,
+                bundle: .main,
+                value: "The pass occurs during daylight with a max elevation of %.1f degrees.",
+                comment: "The pass description for each alarm in the alarm settings view"
+            )
+            
+            let unlitFormat = NSLocalizedString(
+                "AlarmSettingsView.passVisibilityDescription.unlit",
+                tableName: nil,
+                bundle: .main,
+                value: "The pass is not illuminated with a max elevation of %.1f degrees.",
+                comment: "The pass description for each alarm in the alarm settings view"
+            )
+                        
+            switch pass.visibility {
+            case .visible:
+                return String(
+                    format: visibleFormat,
+                    pass.highestIlluminatedElevation
+                )
+            case .daylight:
+                return String(
+                    format: daytimeFormat,
+                    pass.transit.elev
+                )
+            case .unlit:
+                return String(
+                    format: unlitFormat,
+                    pass.transit.elev
                 )
             }
         }
@@ -353,65 +692,8 @@ enum LocalizedStrings {
 
     enum PassView {
         static func descriptionToolbarText(for pass: Pass) -> String {
-            let north = NSLocalizedString(
-                "PassView.direction.north",
-                tableName: nil,
-                bundle: .main,
-                value: "north",
-                comment: ""
-            )
-            let northEast = NSLocalizedString(
-                "PassView.direction.northeast",
-                tableName: nil,
-                bundle: .main,
-                value: "northeast",
-                comment: ""
-            )
-            let east = NSLocalizedString(
-                "PassView.direction.east",
-                tableName: nil,
-                bundle: .main,
-                value: "east",
-                comment: ""
-            )
-            let southeast = NSLocalizedString(
-                "PassView.direction.southeast",
-                tableName: nil,
-                bundle: .main,
-                value: "southeast",
-                comment: ""
-            )
-            let south = NSLocalizedString(
-                "PassView.direction.south",
-                tableName: nil,
-                bundle: .main,
-                value: "south",
-                comment: ""
-            )
-            let southwest = NSLocalizedString(
-                "PassView.direction.southwest",
-                tableName: nil,
-                bundle: .main,
-                value: "southwest",
-                comment: ""
-            )
-            let west = NSLocalizedString(
-                "PassView.direction.west",
-                tableName: nil,
-                bundle: .main,
-                value: "west",
-                comment: ""
-            )
-            let northwest = NSLocalizedString(
-                "PassView.direction.northwest",
-                tableName: nil,
-                bundle: .main,
-                value: "northwest",
-                comment: ""
-            )
-            let angles: [String] = [north, northEast, east, southeast, south, southwest, west, northwest, north]
-            let riseDirection = angles[Int(floor(limit360(pass.rise.azim) / 45))]
-            let setDirection = angles[Int(floor(limit360(pass.set.azim) / 45))]
+            let riseDirection = Directions.angles[Int(floor(limit360(pass.rise.azim) / 45))]
+            let setDirection = Directions.angles[Int(floor(limit360(pass.set.azim) / 45))]
             let format = NSLocalizedString(
                 "PassView.descriptionToolbar.text",
                 tableName: nil,

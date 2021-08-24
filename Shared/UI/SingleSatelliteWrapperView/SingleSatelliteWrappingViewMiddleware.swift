@@ -5,6 +5,7 @@
 //  Created by Ben Lu on 7/10/21.
 //
 
+import BTree
 import Foundation
 import Combine
 import CombineRex
@@ -22,15 +23,35 @@ extension EffectMiddleware where
         EffectMiddleware<SingleSatelliteWrappingViewAction, AppAction, AppState, Void>
             .onAction { action, _, getState in
                 switch action {
-                case .loadSatelliteList:
-                    return .sequence([
-                        .freezeObservingParams(
-                            observer: getState().locationState.location.map(LatLonAlt.init),
-                            julianDateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate)
-                        ),
-                        .satelliteLoader(.loadSatelliteCategory(.brightest100, shouldCalculatePasses: true)),
-                    ])
-                }
+                case let .loadSingleSatellite(params):
+                    func calculatePass(infoMap: Map<Int, SatelliteInfo>) -> AppAction? {
+                        guard let satelliteInfo = infoMap[params.selectedNoradIndex] else {
+                            return nil
+                        }
+                        guard let observer = params.observer else {
+                            return nil
+                        }
+                        return .allPassesView(
+                            .calculatePasses(
+                                .init(
+                                    selectedNoradIndex: params.selectedNoradIndex,
+                                    satelliteInfo: satelliteInfo,
+                                    julianDateRange: params.julianDateRange,
+                                    observer: observer
+                                )
+                            )
+                        )
+                    }
+                    
+                    return .just(
+                        .satelliteLoader(
+                            .loadSatelliteCategory(
+                                .brightest100,
+                                onCompletion: calculatePass(infoMap:)
+                            )
+                        )
+                    )
             }
+        }
     }
 }

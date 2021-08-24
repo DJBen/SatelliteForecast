@@ -33,6 +33,7 @@
 		EF465653267BE7680040B762 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF465652267BE7680040B762 /* AppDelegate.swift */; };
 		EF4AF76C266434CC00D28F47 /* SkyChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4AF76B266434CC00D28F47 /* SkyChart.swift */; };
 		EF4F99B2269E850C00A92BD3 /* Middleware+Root.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4F99B1269E850C00A92BD3 /* Middleware+Root.swift */; };
+		EF5712F126D38ED200E7B886 /* NavigationState+Modifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5712F026D38ED200E7B886 /* NavigationState+Modifications.swift */; };
 		EF58EC1426A6325B0026ADB9 /* PassLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF58EC1326A6325B0026ADB9 /* PassLabel.swift */; };
 		EF5A9080269FA50900EADA2D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EF9D827C2661BBF000616C97 /* Assets.xcassets */; };
 		EF5A9081269FA50900EADA2D /* Satellites.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EF3D09A12686920800B84232 /* Satellites.xcassets */; };
@@ -42,6 +43,7 @@
 		EF5CB01D266E2933000019DA /* TLEPropagatorReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5CB01B266E2933000019DA /* TLEPropagatorReducer.swift */; };
 		EF5CB01E266E2933000019DA /* TLEPropagatorAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5CB01C266E2933000019DA /* TLEPropagatorAction.swift */; };
 		EF5CB022266EAF6F000019DA /* AllPassesViewMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5CB021266EAF6F000019DA /* AllPassesViewMiddleware.swift */; };
+		EF62BA4426CE316A00813357 /* PassNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF62BA4326CE316A00813357 /* PassNotification.swift */; };
 		EF7A311E266AFBF800CC33C0 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A311D266AFBF800CC33C0 /* Store.swift */; };
 		EF7A3122266B03B400CC33C0 /* LocationMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A3121266B03B400CC33C0 /* LocationMiddleware.swift */; };
 		EF7A3125266B1A2500CC33C0 /* LocationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A3124266B1A2500CC33C0 /* LocationState.swift */; };
@@ -60,11 +62,23 @@
 		EF7C665326992FF80017A007 /* SatelliteLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7C665226992FF80017A007 /* SatelliteLoader.swift */; };
 		EF7C6656269930B40017A007 /* SingleSatelliteWrappingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7C6655269930B40017A007 /* SingleSatelliteWrappingView.swift */; };
 		EF7C6658269AA0D00017A007 /* SingleSatelliteWrappingViewMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7C6657269AA0D00017A007 /* SingleSatelliteWrappingViewMiddleware.swift */; };
+		EF7D4DD626D1E822005E49D0 /* Pass+Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7D4DD526D1E822005E49D0 /* Pass+Notification.swift */; };
+		EF7D4DD826D25A2C005E49D0 /* SatelliteCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7D4DD726D25A2C005E49D0 /* SatelliteCategory.swift */; };
 		EF833AFA26AD6068003EEBB6 /* ShakeMotion+Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF833AF926AD6068003EEBB6 /* ShakeMotion+Notification.swift */; };
 		EF833AFC26ADE9B0003EEBB6 /* SatelliteElevationGraphBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF833AFB26ADE9B0003EEBB6 /* SatelliteElevationGraphBackground.swift */; };
 		EF833AFE26ADF421003EEBB6 /* DateFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF833AFD26ADF421003EEBB6 /* DateFooter.swift */; };
 		EF833B0026AE2515003EEBB6 /* SkyChartSatelliteIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF833AFF26AE2515003EEBB6 /* SkyChartSatelliteIndicator.swift */; };
 		EF833B0626B12FB0003EEBB6 /* SkyChartBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF833B0526B12FB0003EEBB6 /* SkyChartBackground.swift */; };
+		EF847BF026CE33650004806F /* AppDelegateMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF847BEF26CE33650004806F /* AppDelegateMiddleware.swift */; };
+		EF847BF226CE49FA0004806F /* BackgroundTaskMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF847BF126CE49FA0004806F /* BackgroundTaskMiddleware.swift */; };
+		EF847BF426CF23B60004806F /* NotificationMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF847BF326CF23B60004806F /* NotificationMiddleware.swift */; };
+		EF847BF826CF2AB40004806F /* NotificationReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF847BF726CF2AB40004806F /* NotificationReducer.swift */; };
+		EF847BFA26CF624B0004806F /* NotificationAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF847BF926CF624B0004806F /* NotificationAction.swift */; };
+		EF847BFC26CF96B20004806F /* AlarmSettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF847BFB26CF96B20004806F /* AlarmSettingsCell.swift */; };
+		EF847BFE26CF985C0004806F /* UIColor+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF847BFD26CF985C0004806F /* UIColor+Convenience.swift */; };
+		EF847C0126CF9DFA0004806F /* AlarmSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF847C0026CF9DFA0004806F /* AlarmSettingsView.swift */; };
+		EF847C0526D099FF0004806F /* AlarmSettingsViewMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF847C0426D099FF0004806F /* AlarmSettingsViewMiddleware.swift */; };
+		EF847C0726D0AA230004806F /* NotificationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF847C0626D0AA230004806F /* NotificationState.swift */; };
 		EF8A4235267C53630014AE17 /* PassViewReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8A4234267C53630014AE17 /* PassViewReducer.swift */; };
 		EF8A423A267E87740014AE17 /* SatelliteElevationGraph+Static.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8A4239267E87740014AE17 /* SatelliteElevationGraph+Static.swift */; };
 		EF8A423C267EA38C0014AE17 /* SatelliteElevationGraphMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8A423B267EA38C0014AE17 /* SatelliteElevationGraphMiddleware.swift */; };
@@ -75,8 +89,6 @@
 		EF8BD1A026B5544500DE9F33 /* SatelliteOverviewSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8BD19F26B5544500DE9F33 /* SatelliteOverviewSection.swift */; };
 		EF98F86026ABDA7B0086B2FA /* SatelliteElevationGraphCurrentIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF98F85F26ABDA7B0086B2FA /* SatelliteElevationGraphCurrentIndicator.swift */; };
 		EF9D82A32661BBF100616C97 /* SatelliteForecastApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9D827A2661BBF000616C97 /* SatelliteForecastApp.swift */; };
-		EF9F0F5A26C1016B00F009AF /* NavigationAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9F0F5926C1016B00F009AF /* NavigationAction.swift */; };
-		EF9F0F5D26C1025100F009AF /* NavigationReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9F0F5C26C1025100F009AF /* NavigationReducer.swift */; };
 		EFAE1F0C2668B10F00A18A42 /* SatelliteElevationGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F0B2668B10F00A18A42 /* SatelliteElevationGraph.swift */; };
 		EFAE1F132669E7A800A18A42 /* SunlightIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F122669E7A800A18A42 /* SunlightIndicator.swift */; };
 		EFCF20F026AD020E00D87E8B /* DebugMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFCF20EF26AD020E00D87E8B /* DebugMenu.swift */; };
@@ -153,6 +165,7 @@
 		EF465652267BE7680040B762 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EF4AF76B266434CC00D28F47 /* SkyChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyChart.swift; sourceTree = "<group>"; };
 		EF4F99B1269E850C00A92BD3 /* Middleware+Root.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Middleware+Root.swift"; sourceTree = "<group>"; };
+		EF5712F026D38ED200E7B886 /* NavigationState+Modifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NavigationState+Modifications.swift"; sourceTree = "<group>"; };
 		EF58EC1326A6325B0026ADB9 /* PassLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassLabel.swift; sourceTree = "<group>"; };
 		EF5A908326A0D68400EADA2D /* LazyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyView.swift; sourceTree = "<group>"; };
 		EF5CB016266E28EE000019DA /* TimerReducer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimerReducer.swift; sourceTree = "<group>"; };
@@ -160,6 +173,7 @@
 		EF5CB01B266E2933000019DA /* TLEPropagatorReducer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TLEPropagatorReducer.swift; sourceTree = "<group>"; };
 		EF5CB01C266E2933000019DA /* TLEPropagatorAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TLEPropagatorAction.swift; sourceTree = "<group>"; };
 		EF5CB021266EAF6F000019DA /* AllPassesViewMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllPassesViewMiddleware.swift; sourceTree = "<group>"; };
+		EF62BA4326CE316A00813357 /* PassNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassNotification.swift; sourceTree = "<group>"; };
 		EF7A311D266AFBF800CC33C0 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		EF7A3121266B03B400CC33C0 /* LocationMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationMiddleware.swift; sourceTree = "<group>"; };
 		EF7A3124266B1A2500CC33C0 /* LocationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationState.swift; sourceTree = "<group>"; };
@@ -178,11 +192,23 @@
 		EF7C665226992FF80017A007 /* SatelliteLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteLoader.swift; sourceTree = "<group>"; };
 		EF7C6655269930B40017A007 /* SingleSatelliteWrappingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleSatelliteWrappingView.swift; sourceTree = "<group>"; };
 		EF7C6657269AA0D00017A007 /* SingleSatelliteWrappingViewMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleSatelliteWrappingViewMiddleware.swift; sourceTree = "<group>"; };
+		EF7D4DD526D1E822005E49D0 /* Pass+Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Pass+Notification.swift"; sourceTree = "<group>"; };
+		EF7D4DD726D25A2C005E49D0 /* SatelliteCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteCategory.swift; sourceTree = "<group>"; };
 		EF833AF926AD6068003EEBB6 /* ShakeMotion+Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ShakeMotion+Notification.swift"; sourceTree = "<group>"; };
 		EF833AFB26ADE9B0003EEBB6 /* SatelliteElevationGraphBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteElevationGraphBackground.swift; sourceTree = "<group>"; };
 		EF833AFD26ADF421003EEBB6 /* DateFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFooter.swift; sourceTree = "<group>"; };
 		EF833AFF26AE2515003EEBB6 /* SkyChartSatelliteIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyChartSatelliteIndicator.swift; sourceTree = "<group>"; };
 		EF833B0526B12FB0003EEBB6 /* SkyChartBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyChartBackground.swift; sourceTree = "<group>"; };
+		EF847BEF26CE33650004806F /* AppDelegateMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegateMiddleware.swift; sourceTree = "<group>"; };
+		EF847BF126CE49FA0004806F /* BackgroundTaskMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundTaskMiddleware.swift; sourceTree = "<group>"; };
+		EF847BF326CF23B60004806F /* NotificationMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationMiddleware.swift; sourceTree = "<group>"; };
+		EF847BF726CF2AB40004806F /* NotificationReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationReducer.swift; sourceTree = "<group>"; };
+		EF847BF926CF624B0004806F /* NotificationAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationAction.swift; sourceTree = "<group>"; };
+		EF847BFB26CF96B20004806F /* AlarmSettingsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmSettingsCell.swift; sourceTree = "<group>"; };
+		EF847BFD26CF985C0004806F /* UIColor+Convenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Convenience.swift"; sourceTree = "<group>"; };
+		EF847C0026CF9DFA0004806F /* AlarmSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmSettingsView.swift; sourceTree = "<group>"; };
+		EF847C0426D099FF0004806F /* AlarmSettingsViewMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmSettingsViewMiddleware.swift; sourceTree = "<group>"; };
+		EF847C0626D0AA230004806F /* NotificationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationState.swift; sourceTree = "<group>"; };
 		EF864272266DFFE9004F0AFA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EF8A4234267C53630014AE17 /* PassViewReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassViewReducer.swift; sourceTree = "<group>"; };
 		EF8A4239267E87740014AE17 /* SatelliteElevationGraph+Static.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SatelliteElevationGraph+Static.swift"; sourceTree = "<group>"; };
@@ -198,8 +224,6 @@
 		EF9D82812661BBF000616C97 /* SatelliteForecast.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SatelliteForecast.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EF9D82912661BBF100616C97 /* Tests iOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tests iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EF9D82972661BBF100616C97 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		EF9F0F5926C1016B00F009AF /* NavigationAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationAction.swift; sourceTree = "<group>"; };
-		EF9F0F5C26C1025100F009AF /* NavigationReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationReducer.swift; sourceTree = "<group>"; };
 		EFAE1F0B2668B10F00A18A42 /* SatelliteElevationGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteElevationGraph.swift; sourceTree = "<group>"; };
 		EFAE1F122669E7A800A18A42 /* SunlightIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunlightIndicator.swift; sourceTree = "<group>"; };
 		EFCF20EF26AD020E00D87E8B /* DebugMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugMenu.swift; sourceTree = "<group>"; };
@@ -312,6 +336,7 @@
 				EF1EDA2B268D21BF0088DD65 /* SatelliteOverviewMiddleware.swift */,
 				EF3D09A62689CA3D00B84232 /* SatelliteOverviewReducer.swift */,
 				EF8BD19D26B5448F00DE9F33 /* ObserverCell.swift */,
+				EF847BFB26CF96B20004806F /* AlarmSettingsCell.swift */,
 			);
 			path = SatelliteOverview;
 			sourceTree = "<group>";
@@ -323,6 +348,7 @@
 				EF5A908226A0D66B00EADA2D /* Utilities */,
 				EF3D099A2685A10F00B84232 /* SatelliteOverview */,
 				EFFD227626B6B6D40010E1F6 /* LocationSettingsView */,
+				EF847BFF26CF9DEC0004806F /* AlarmSettingsView */,
 				EF7C6654269930970017A007 /* SingleSatelliteWrapperView */,
 				EF1CAB34266B8747006319C8 /* SatelliteListView */,
 				EF0FC06A2677D73000560AF0 /* AllPassesView */,
@@ -338,6 +364,7 @@
 			isa = PBXGroup;
 			children = (
 				EF5A908326A0D68400EADA2D /* LazyView.swift */,
+				EF847BFD26CF985C0004806F /* UIColor+Convenience.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -376,10 +403,11 @@
 		EF7A3130266B489A00CC33C0 /* SatelliteLoader */ = {
 			isa = PBXGroup;
 			children = (
-				EF7A3131266B493300CC33C0 /* SatelliteLoaderMiddleware.swift */,
-				EF7A313D266B538900CC33C0 /* SatelliteLoaderReducer.swift */,
+				EF7D4DD726D25A2C005E49D0 /* SatelliteCategory.swift */,
 				EF7A3137266B4A5300CC33C0 /* SatelliteLoaderAction.swift */,
 				EF7A3134266B493E00CC33C0 /* SatelliteLoaderState.swift */,
+				EF7A3131266B493300CC33C0 /* SatelliteLoaderMiddleware.swift */,
+				EF7A313D266B538900CC33C0 /* SatelliteLoaderReducer.swift */,
 				EF7C6650269918060017A007 /* SatelliteLoaderError.swift */,
 				EF7C665226992FF80017A007 /* SatelliteLoader.swift */,
 			);
@@ -394,6 +422,7 @@
 				EF7A318E266B6AD800CC33C0 /* AppAction.swift */,
 				EF8A423F26804A800014AE17 /* AppStateReducer.swift */,
 				EF4F99B1269E850C00A92BD3 /* Middleware+Root.swift */,
+				EF62BA4326CE316A00813357 /* PassNotification.swift */,
 			);
 			path = Root;
 			sourceTree = "<group>";
@@ -413,6 +442,44 @@
 				EF833AF926AD6068003EEBB6 /* ShakeMotion+Notification.swift */,
 			);
 			path = Motion;
+			sourceTree = "<group>";
+		};
+		EF847BEE26CE334D0004806F /* AppDelegate */ = {
+			isa = PBXGroup;
+			children = (
+				EF465652267BE7680040B762 /* AppDelegate.swift */,
+				EF847BEF26CE33650004806F /* AppDelegateMiddleware.swift */,
+			);
+			path = AppDelegate;
+			sourceTree = "<group>";
+		};
+		EF847BF526CF29E50004806F /* Notification */ = {
+			isa = PBXGroup;
+			children = (
+				EF847BF926CF624B0004806F /* NotificationAction.swift */,
+				EF847C0626D0AA230004806F /* NotificationState.swift */,
+				EF847BF326CF23B60004806F /* NotificationMiddleware.swift */,
+				EF847BF726CF2AB40004806F /* NotificationReducer.swift */,
+				EF7D4DD526D1E822005E49D0 /* Pass+Notification.swift */,
+			);
+			path = Notification;
+			sourceTree = "<group>";
+		};
+		EF847BF626CF29F20004806F /* BackgroundTask */ = {
+			isa = PBXGroup;
+			children = (
+				EF847BF126CE49FA0004806F /* BackgroundTaskMiddleware.swift */,
+			);
+			path = BackgroundTask;
+			sourceTree = "<group>";
+		};
+		EF847BFF26CF9DEC0004806F /* AlarmSettingsView */ = {
+			isa = PBXGroup;
+			children = (
+				EF847C0026CF9DFA0004806F /* AlarmSettingsView.swift */,
+				EF847C0426D099FF0004806F /* AlarmSettingsViewMiddleware.swift */,
+			);
+			path = AlarmSettingsView;
 			sourceTree = "<group>";
 		};
 		EF8A4238267E86700014AE17 /* SatelliteElevationGraph */ = {
@@ -446,12 +513,14 @@
 			isa = PBXGroup;
 			children = (
 				EF9D827A2661BBF000616C97 /* SatelliteForecastApp.swift */,
-				EF465652267BE7680040B762 /* AppDelegate.swift */,
 				EF7A319A266B733C00CC33C0 /* LocalizedStrings.swift */,
 				EF7A312D266B1D7B00CC33C0 /* LoggerMiddleware.swift */,
 				EF864272266DFFE9004F0AFA /* Info.plist */,
 				EF9D827C2661BBF000616C97 /* Assets.xcassets */,
 				EF3D09A12686920800B84232 /* Satellites.xcassets */,
+				EF847BEE26CE334D0004806F /* AppDelegate */,
+				EF847BF626CF29F20004806F /* BackgroundTask */,
+				EF847BF526CF29E50004806F /* Notification */,
 				EF833AF826AD6054003EEBB6 /* Motion */,
 				EF5CB015266E28EE000019DA /* Timer */,
 				EF7A318D266B6ABC00CC33C0 /* Root */,
@@ -486,8 +555,7 @@
 			isa = PBXGroup;
 			children = (
 				EF3D09A4268875B100B84232 /* NavigationState.swift */,
-				EF9F0F5926C1016B00F009AF /* NavigationAction.swift */,
-				EF9F0F5C26C1025100F009AF /* NavigationReducer.swift */,
+				EF5712F026D38ED200E7B886 /* NavigationState+Modifications.swift */,
 			);
 			path = Navigation;
 			sourceTree = "<group>";
@@ -709,22 +777,28 @@
 				EFE7215C26BE57BD0009C29B /* LocationSettingsCurrentLocationCell.swift in Sources */,
 				EF19FA09266EC38200D0B2CD /* SkyChartMiddleware.swift in Sources */,
 				EF7A312B266B1A3800CC33C0 /* LocationReducer.swift in Sources */,
+				EF847C0726D0AA230004806F /* NotificationState.swift in Sources */,
 				EFFD227926B788D30010E1F6 /* LocationSettingsView.swift in Sources */,
 				EF833B0626B12FB0003EEBB6 /* SkyChartBackground.swift in Sources */,
 				EF5CB022266EAF6F000019DA /* AllPassesViewMiddleware.swift in Sources */,
+				EF5712F126D38ED200E7B886 /* NavigationState+Modifications.swift in Sources */,
+				EF847BF426CF23B60004806F /* NotificationMiddleware.swift in Sources */,
 				EF8BD1A026B5544500DE9F33 /* SatelliteOverviewSection.swift in Sources */,
+				EF847BFC26CF96B20004806F /* AlarmSettingsCell.swift in Sources */,
 				EFAE1F132669E7A800A18A42 /* SunlightIndicator.swift in Sources */,
-				EF9F0F5D26C1025100F009AF /* NavigationReducer.swift in Sources */,
+				EF847C0526D099FF0004806F /* AlarmSettingsViewMiddleware.swift in Sources */,
 				EFAE1F0C2668B10F00A18A42 /* SatelliteElevationGraph.swift in Sources */,
 				EF1EDA2E269200B60088DD65 /* SatelliteElevationGraphResources.swift in Sources */,
 				EFE7216226BF59500009C29B /* CLLocationCoordinate2D+Formatting.swift in Sources */,
 				EF7A3194266B6B0B00CC33C0 /* AppAction.swift in Sources */,
 				EF3D09A026864FD800B84232 /* SatelliteCell.swift in Sources */,
 				EF8A423E267EA3970014AE17 /* SatelliteElevationGraphReducer.swift in Sources */,
+				EF7D4DD626D1E822005E49D0 /* Pass+Notification.swift in Sources */,
 				EF833AFE26ADF421003EEBB6 /* DateFooter.swift in Sources */,
 				EF7C6656269930B40017A007 /* SingleSatelliteWrappingView.swift in Sources */,
 				EF1CAB36266B87B6006319C8 /* SatelliteListViewReducer.swift in Sources */,
 				EF5A908426A0D68400EADA2D /* LazyView.swift in Sources */,
+				EF847BFE26CF985C0004806F /* UIColor+Convenience.swift in Sources */,
 				EF8A4235267C53630014AE17 /* PassViewReducer.swift in Sources */,
 				EF7A3125266B1A2500CC33C0 /* LocationState.swift in Sources */,
 				EF7C6658269AA0D00017A007 /* SingleSatelliteWrappingViewMiddleware.swift in Sources */,
@@ -733,20 +807,22 @@
 				EF1CAB39266B8934006319C8 /* SatelliteListViewMiddleware.swift in Sources */,
 				EF1CAB32266B7ABF006319C8 /* PassView.swift in Sources */,
 				EF7A3128266B1A2D00CC33C0 /* LocationAction.swift in Sources */,
+				EF847BF826CF2AB40004806F /* NotificationReducer.swift in Sources */,
 				EF833AFC26ADE9B0003EEBB6 /* SatelliteElevationGraphBackground.swift in Sources */,
 				EF8A423C267EA38C0014AE17 /* SatelliteElevationGraphMiddleware.swift in Sources */,
 				EF7A3198266B6E4900CC33C0 /* SatelliteListView.swift in Sources */,
+				EF847C0126CF9DFA0004806F /* AlarmSettingsView.swift in Sources */,
 				EF1EDA30269204420088DD65 /* SkyChartResources.swift in Sources */,
 				EF465653267BE7680040B762 /* AppDelegate.swift in Sources */,
 				EFE7216026BF58E20009C29B /* CLPlacemark+Formatting.swift in Sources */,
 				EF8A423A267E87740014AE17 /* SatelliteElevationGraph+Static.swift in Sources */,
 				EF5CB019266E28FC000019DA /* TimerMiddleware.swift in Sources */,
+				EF62BA4426CE316A00813357 /* PassNotification.swift in Sources */,
 				EF7A3192266B6AFC00CC33C0 /* AppState.swift in Sources */,
 				EF4AF76C266434CC00D28F47 /* SkyChart.swift in Sources */,
 				EF0FC06C2677D7A200560AF0 /* AllPassesView.swift in Sources */,
 				EF7C6651269918060017A007 /* SatelliteLoaderError.swift in Sources */,
 				EF19FA0B266EC7CE00D0B2CD /* SkyChartReducer.swift in Sources */,
-				EF9F0F5A26C1016B00F009AF /* NavigationAction.swift in Sources */,
 				EF8A424026804A800014AE17 /* AppStateReducer.swift in Sources */,
 				EF46564B2679C81F0040B762 /* PassPreviewCell.swift in Sources */,
 				EF7A3138266B4A5300CC33C0 /* SatelliteLoaderAction.swift in Sources */,
@@ -754,16 +830,20 @@
 				EF7C665326992FF80017A007 /* SatelliteLoader.swift in Sources */,
 				EF7A3135266B493E00CC33C0 /* SatelliteLoaderState.swift in Sources */,
 				EFCF20F226AD4E7E00D87E8B /* DebugMenuReducer.swift in Sources */,
+				EF847BF026CE33650004806F /* AppDelegateMiddleware.swift in Sources */,
 				EF1EDA2C268D21BF0088DD65 /* SatelliteOverviewMiddleware.swift in Sources */,
+				EF847BF226CE49FA0004806F /* BackgroundTaskMiddleware.swift in Sources */,
 				EF833B0026AE2515003EEBB6 /* SkyChartSatelliteIndicator.swift in Sources */,
 				EFF750C8266F4DFF005222F8 /* SizeModifier.swift in Sources */,
 				EF5CB01D266E2933000019DA /* TLEPropagatorReducer.swift in Sources */,
 				EF5CB01E266E2933000019DA /* TLEPropagatorAction.swift in Sources */,
 				EF833AFA26AD6068003EEBB6 /* ShakeMotion+Notification.swift in Sources */,
+				EF847BFA26CF624B0004806F /* NotificationAction.swift in Sources */,
 				EF7A319B266B733C00CC33C0 /* LocalizedStrings.swift in Sources */,
 				EF9D82A32661BBF100616C97 /* SatelliteForecastApp.swift in Sources */,
 				EFCF20F026AD020E00D87E8B /* DebugMenu.swift in Sources */,
 				EF58EC1426A6325B0026ADB9 /* PassLabel.swift in Sources */,
+				EF7D4DD826D25A2C005E49D0 /* SatelliteCategory.swift in Sources */,
 				EF8BD19E26B5448F00DE9F33 /* ObserverCell.swift in Sources */,
 				EF7A312E266B1D7B00CC33C0 /* LoggerMiddleware.swift in Sources */,
 				EF4F99B2269E850C00A92BD3 /* Middleware+Root.swift in Sources */,

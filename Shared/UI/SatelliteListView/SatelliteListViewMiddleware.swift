@@ -6,11 +6,13 @@
 //
 
 import Foundation
+import os
 import Combine
 import CombineRex
 import SatelliteForecastCore
 import SatelliteKit
 
+fileprivate let logger = Logger(subsystem: "io.djben.satelliteListView", category: "middleware")
 
 extension EffectMiddleware where InputActionType == SatelliteListViewAction, OutputActionType == AppAction, StateType == AppState, Dependencies == Void {
 
@@ -24,18 +26,28 @@ extension EffectMiddleware where InputActionType == SatelliteListViewAction, Out
         EffectMiddleware<SatelliteListViewAction, AppAction, AppState, Void>
             .onAction { (action, _, getState) -> Effect<Void, AppAction> in
                 switch action {
-                case let .selectSatellite(noradIndex):
-                    if let _ = noradIndex {
-                        return .sequence([
-                            .freezeObservingParams(
-                                observer: getState().locationState.location.map(LatLonAlt.init),
-                                julianDateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate)
-                            ),
-                            .allPassesView(.calculatePasses)
-                        ])
-                    } else {
+                case let .selectSatellite(params):
+                    guard let params = params else {
                         return .doNothing
                     }
+                    
+                    guard let observer = params.observer else {
+                        return .doNothing
+                    }
+
+                    return .sequence([
+                        .allPassesView(
+                            .calculatePasses(
+                                .init(
+                                    selectedNoradIndex: params.noradIndex,
+                                    satelliteInfo: params.satelliteInfo,
+                                    julianDateRange: params.julianDateRange,
+                                    observer: observer
+                                )
+                            )
+                        ),
+                    ])
+                    
                 case .satelliteSearchTextChanged(_):
                     return .doNothing
 
@@ -45,7 +57,10 @@ extension EffectMiddleware where InputActionType == SatelliteListViewAction, Out
                     }
 
                     return satelliteLoader.loadSatelliteCategoryPublisher(category: category)
-                        .map(AppAction.satelliteLoader)
+                        .map { AppAction.satelliteLoader(.loadedSatelliteInfo(category, $0)) }
+                        .catch { error in
+                            Just(AppAction.satelliteLoader(.failedLoadingTLEFile(category, error)))
+                        }
                         .asEffect(info: nil)
                 }
             }

@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftRex
 import CombineRex
 import CombineRextensions
+import SatelliteForecastCore
 
 enum DebugMenuAction {
     case toggleDebugMenu(_ isVisible: Bool)
@@ -16,12 +17,18 @@ enum DebugMenuAction {
     case toggleFreezeTime(_ isOn: Bool)
     case toggleMockedOffset(_ isOn: Bool)
     case setMockedDateOffset(_ offset: Double)
+    case toggleRapidNotificationDelivery(_ isOn: Bool)
+    
+    case fetchNotifications
+    
+    case triggerPassDeepLink(category: SatelliteCategory?, noradIndex: Int)
 }
 
 struct DebugMenuConfig: Equatable {
     var isDebugMenuVisible: Bool = false
     var frozenAt: Double?
     var mockedOffsetOn: Bool = false
+    var rapidNotificationDelivery: Bool = false
 
     /// Offset in days between the real julian date and the mocked julian date. Positive value means mocked date is in the future,
     /// while negative value means mocked date is in the past.
@@ -40,11 +47,15 @@ struct DebugMenuConfig: Equatable {
 struct DebugMenuState: Equatable {
     var trueJulianDate: Double
     var config: DebugMenuConfig
+    var pendingNotifications: [UNNotificationRequest]
+    var deliveredNotifications: [UNNotification]
 
     static func project(state: AppState) -> DebugMenuState {
         DebugMenuState(
             trueJulianDate: state.satelliteLoaderState.currentDate,
-            config: state.debugMenu
+            config: state.debugMenu,
+            pendingNotifications: state.notificationState.pendingNotifications,
+            deliveredNotifications: state.notificationState.deliveredNotifications
         )
     }
 }
@@ -59,7 +70,7 @@ struct DebugMenu: View {
         }
     }
 
-    @ViewBuilder private var timeSection: some View {
+    @ViewBuilder private var timeSectionContent: some View {
         unwrapState { state in
             Toggle(
                 isOn: Binding<Bool>(
@@ -102,15 +113,72 @@ struct DebugMenu: View {
             }
         }
     }
+    
+    @ViewBuilder private func notificationView(
+        request: UNNotificationRequest,
+        deliveredDate: Date? = nil
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text(request.content.title)
+                    .font(.headline)
+                    .foregroundColor(Color(UIColor.label))
+                Spacer()
+            }
+            
+            Text(request.content.body)
+                .font(.caption)
+                .foregroundColor(Color(UIColor.label))
+            
+            if let deliveredDate = deliveredDate {
+                Text("Delivered at \(deliveredDate.formatted())")
+                    .font(.caption)
+                    .multilineTextAlignment(.leading)
+                    .foregroundColor(.secondary)
+            }
+            
+            if let calendarTrigger = request.trigger as? UNCalendarNotificationTrigger {
+                Text(calendarTrigger.dateComponents.description)
+                    .font(.caption)
+                    .multilineTextAlignment(.leading)
+                    .foregroundColor(.secondary)
+            } else if let timeIntervalTrigger = request.trigger as? UNTimeIntervalNotificationTrigger {
+                Text("Time interval \(timeIntervalTrigger.timeInterval.formatted())")
+                    .font(.caption)
+                    .multilineTextAlignment(.leading)
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
+    
+    @ViewBuilder private var pendingNotificationsContent: some View {
+        unwrapState { state in
+            List {
+                ForEach(state.pendingNotifications, id: \.identifier) { request in
+                    notificationView(request: request)
+                }
+            }
+        }
+    }
+    
+    @ViewBuilder private var deliveredNotificationsContent: some View {
+        unwrapState { state in
+            List {
+                ForEach(state.deliveredNotifications, id: \.request.identifier) { notification in
+                    notificationView(request: notification.request, deliveredDate: notification.date)
+                }
+            }
+        }
+    }
 
     var body: some View {
         unwrapState { state in
             NavigationView {
                 Form {
                     Section {
-                        timeSection
+                        timeSectionContent
                     } header: {
-                        EmptyView()
+                        Text("Time control")
                     } footer: {
                         if let frozenAt = state.config.frozenAt {
                             Text("Time frozen at \(Date(julianDate: frozenAt).formatted(date: .long, time: .standard))")
@@ -120,12 +188,50 @@ struct DebugMenu: View {
                             Text("Real time \(Date(julianDate: state.trueJulianDate).formatted(date: .long, time: .standard))")
                         }
                     }
+                    
+                    Section {
+                        Toggle(
+                            isOn: Binding<Bool>(
+                                get: {
+                                    state.config.rapidNotificationDelivery
+                                },
+                                set: { newValue in
+                                    viewModel.dispatch(.toggleRapidNotificationDelivery(newValue))
+                                }
+                            )
+                        ) {
+                            Text("Deliver notifications 10 seconds after scheduled")
+                        }
+                    }
+                    
+                    Section {
+                        Button("Deep link to ISS (special)") {
+                            viewModel.dispatch(.triggerPassDeepLink(category: nil, noradIndex: 25544))
+                        }
+                        Button("Deep link to Hubble (brightest 100)") {
+                            viewModel.dispatch(.triggerPassDeepLink(category: .brightest100, noradIndex: 20580))
+                        }
+                    } header: {
+                        Text("Test deep link")
+                    }
 
+                    Section {
+                        pendingNotificationsContent
+                    } header: {
+                        Text("Pending notifications")
+                    }
+                    
+                    Section {
+                        deliveredNotificationsContent
+                    } header: {
+                        Text("Delivered notifications")
+                    }
                 }
                 .navigationTitle("Debug Menu")
             }
             .onAppear {
                 dateWithinPicker = Date(julianDate: state.trueJulianDate + (state.config.mockedOffsetOn ? state.config.mockedOffset : 0))
+                viewModel.dispatch(.fetchNotifications)
             }
         }
     }
@@ -145,7 +251,6 @@ extension ViewProducer where Context == Void, ProducedView == DebugMenu {
     }
 }
 
-
 #if DEBUG
 struct DebugMenu_Previews: PreviewProvider {
     static var previews: some View {
@@ -153,7 +258,25 @@ struct DebugMenu_Previews: PreviewProvider {
             viewModel: .mock(
                 state: DebugMenuState(
                     trueJulianDate: 2459420.60909,
-                    config: .empty
+                    config: .empty,
+                    pendingNotifications: [
+                        UNNotificationRequest(
+                            identifier: "id1",
+                            content: {
+                                let content = UNMutableNotificationContent()
+                                content.title = "ISS (ZARYA)"
+                                content.body = "Body text"
+                                return content
+                            }(),
+                            trigger: {
+                                UNTimeIntervalNotificationTrigger(
+                                    timeInterval: 10000,
+                                    repeats: false
+                                )
+                            }()
+                        )
+                    ],
+                    deliveredNotifications: []
                 ),
                 action: { action, source, state in
                     switch action {
@@ -172,6 +295,15 @@ struct DebugMenu_Previews: PreviewProvider {
 
                     case let .setMockedDateOffset(offset):
                         state?.config.mockedOffset = offset
+                        
+                    case let .toggleRapidNotificationDelivery(isOn):
+                        state?.config.rapidNotificationDelivery = isOn
+                        
+                    case .fetchNotifications:
+                        break
+                        
+                    case .triggerPassDeepLink:
+                        break
                     }
                 }
             )

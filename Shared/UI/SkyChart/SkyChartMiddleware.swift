@@ -42,24 +42,26 @@ extension EffectMiddleware where
                             }
 
                             let image = SkyChart.rasterizedBackgroundSkyPath(
-                                rect: CGRect(origin: .zero, size: size),
-                                stars: {
-                                    switch key.configs.stars {
-                                    case .none:
-                                        return []
-                                    case let .limitedMagnitude(mag):
-                                        return Star.magitudeLessThan(mag)
-                                    }
-                                }(),
-                                constellations: key.configs.showConstellationLines ? Constellation.all : [],
-                                observer: key.observer,
-                                julianDate: julianDate,
-                                starColor: UIColor(named: "star", in: nil, compatibleWith: traitCollection)!,
-                                constellationLineColor: UIColor(named: "constellationLine", in: nil, compatibleWith: traitCollection)!,
-                                magToRadius: key.configs.starMagToDisplayRadiusMappingFunction.apply
+                                params: BackgroundSkyRenderParams(
+                                    rect: CGRect(origin: .zero, size: size),
+                                    stars: {
+                                        switch key.configs.stars {
+                                        case .none:
+                                            return []
+                                        case let .limitedMagnitude(mag):
+                                            return Star.magitudeLessThan(mag)
+                                        }
+                                    }(),
+                                    constellations: key.configs.showConstellationLines ? Constellation.all : [],
+                                    observer: key.observer,
+                                    julianDate: julianDate,
+                                    starColor: UIColor(named: "star", in: nil, compatibleWith: traitCollection)!,
+                                    constellationLineColor: UIColor(named: "constellationLine", in: nil, compatibleWith: traitCollection)!,
+                                    magToRadius: key.configs.starMagToDisplayRadiusMappingFunction.apply
+                                )
                             )
 
-                            logger.debug("Rasterized background sky at observer coodinate \(String(describing: key.observer)) @ JD \(julianDate).")
+//                            logger.debug("Rasterized background sky at observer coodinate \(String(describing: key.observer)) @ JD \(julianDate).")
 
                             sink(
                                 .rasterizedBackgroundSky(image, quality: quality, julianDate: julianDate, key: key)
@@ -87,13 +89,15 @@ extension EffectMiddleware where
                             traitCollection.performAsCurrent {
                                 // Rasterize satellite paths in sky charts
                                 let image = SkyChart.rasterizedSatellitePassPath(
-                                    rect: CGRect(origin: .zero, size: size),
-                                    snapshotsDuringPass: snapshotsDuringPass,
-                                    illuminatedColor: UIColor(named: "satellitePath_illuminated")!,
-                                    unlitColor: UIColor(named: "satellitePath_notIlluminated")!,
-                                    arrowSize: quality == .preview ? 8 : 16
+                                    params: SatellitePassPathRenderParams(
+                                        rect: CGRect(origin: .zero, size: size),
+                                        snapshotsDuringPass: snapshotsDuringPass,
+                                        illuminatedColor: UIColor(named: "satellitePath_illuminated")!,
+                                        unlitColor: UIColor(named: "satellitePath_notIlluminated")!,
+                                        arrowSize: quality == .preview ? 8 : 16
+                                    )
                                 )
-                                logger.debug("Rasterized \(pass.noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate).")
+//                                logger.debug("Rasterized \(pass.noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate).")
 
                                 sink(
                                     .rasterizedSatellitePath(

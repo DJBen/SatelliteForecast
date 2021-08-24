@@ -181,51 +181,46 @@ struct ObserverCell: View {
     }
 
     var body: some View {
-        HStack(alignment: .center) {
-            VStack(alignment: .leading) {
-                Spacer()
-                    .frame(height: 120)
+        VStack(alignment: .leading) {
+            Spacer()
+                .frame(height: 120)
 
-                ZStack {
-                    Color.clear
-                        .blurEffect()
+            ZStack {
+                Color.clear
+                    .blurEffect()
 
-                    VStack(alignment: .leading, spacing: 4) {
-                        HStack {
-                            Text(titleText)
-                                .font(.headline)
-                                .foregroundColor(Color(UIColor.label))
-                            Spacer()
-                        }
-
-                        if let secondaryLabelText = secondaryLabelText {
-                            Text(secondaryLabelText)
-                                .modifier(SecondaryLabelModifier())
-                                .vibrancyEffect()
-                        }
-
-                        if let coordinate = viewModel.state.locationState.location?.coordinate {
-                            Text(coordinate.formattedString)
-                                .modifier(SecondaryLabelModifier())
-                                .vibrancyEffect()
-                        }
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        Text(titleText)
+                            .font(.headline)
+                            .foregroundColor(Color(UIColor.label))
+                        Spacer()
                     }
-                    .padding()
-                }
-                .blurEffectStyle(colorScheme == .light ? .systemChromeMaterialLight : .systemChromeMaterialDark)
-                .vibrancyEffectStyle(.fill)
-            }
-            .background(background)
-            .clipShape(
-                RoundedRectangle(
-                    cornerRadius: 8,
-                    style: .continuous
-                )
-            )
 
-            Image(systemName: "chevron.right")
-                .foregroundColor(Color(UIColor.secondaryLabel))
+                    if let secondaryLabelText = secondaryLabelText {
+                        Text(secondaryLabelText)
+                            .modifier(SecondaryLabelModifier())
+                            .vibrancyEffect()
+                    }
+
+                    if let coordinate = viewModel.state.locationState.location?.coordinate {
+                        Text(coordinate.formattedString)
+                            .modifier(SecondaryLabelModifier())
+                            .vibrancyEffect()
+                    }
+                }
+                .padding()
+            }
+            .blurEffectStyle(colorScheme == .light ? .systemChromeMaterialLight : .systemChromeMaterialDark)
+            .vibrancyEffectStyle(.fill)
         }
+        .background(background)
+        .clipShape(
+            RoundedRectangle(
+                cornerRadius: 8,
+                style: .continuous
+            )
+        )
     }
 }
 

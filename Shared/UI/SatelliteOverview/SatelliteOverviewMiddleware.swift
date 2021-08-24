@@ -9,7 +9,7 @@ import Foundation
 import Combine
 import CombineRex
 import SatelliteKit
-
+import SatelliteForecastCore
 
 extension EffectMiddleware where
     InputActionType == SatelliteOverviewViewAction,
@@ -19,14 +19,32 @@ extension EffectMiddleware where
 
     static var satelliteOverview: EffectMiddleware<SatelliteOverviewViewAction, AppAction, AppState, Void> {
         EffectMiddleware<SatelliteOverviewViewAction, AppAction, AppState, Void>
-            .onAction { action, _, state in
-                switch action {
-                case .selectSpecialSatellite(_):
-                    return .just(.singleSatelliteWrappingView(.loadSatelliteList))
+            .onAction { action, _, getState in
+                switch action {          
+                case let .selectSpecialSatellite(params):
+                    return .sequence([
+                        .singleSatelliteWrappingView(
+                            .loadSingleSatellite(
+                                .init(
+                                    selectedNoradIndex: params.noradIndex,
+                                    julianDateRange: params.julianDateRange,
+                                    observer: params.observer
+                                )
+                            )
+                        )
+                    ])
+                    
                 case let .selectCategory(category):
-                    return .just(.satelliteLoader(.loadSatelliteCategory(category)))
+                    return .sequence([
+                        .satelliteLoader(.loadSatelliteCategory(category))
+                    ])
+                    
                 case .selectObserver:
                     return .doNothing
+                    
+                case .selectAlert:
+                    return .doNothing
+
                 case .returnToSatelliteOverview:
                     return .doNothing
                 }
