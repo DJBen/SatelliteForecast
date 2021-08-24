@@ -12,17 +12,12 @@ import SatelliteKit
 import CombineRex
 import CombineRextensions
 
-struct PassPreviewCell: View, Equatable {
-    static func == (lhs: PassPreviewCell, rhs: PassPreviewCell) -> Bool {
-        return lhs.pass == rhs.pass &&
-        lhs.referenceDate == rhs.referenceDate &&
-        lhs.indexOfPass == rhs.indexOfPass &&
-        lhs.hasScheduledAlert == rhs.hasScheduledAlert
-    }
-
+struct PassPreviewCell: View {
+    var satelliteInfo: SatelliteInfo
+    var snapshots: BTree<Double, SatelliteSnapshot>
+    var observer: LatLonAlt
     var pass: Pass
     var referenceDate: Double
-    var indexOfPass: Int
     var hasScheduledAlert: Bool
     
     var skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
@@ -122,7 +117,12 @@ struct PassPreviewCell: View, Equatable {
 
             skyChartProducer.view(
                 SkyChartContext(
-                    usage: .preview(index: indexOfPass)
+                    satelliteInfo: satelliteInfo,
+                    snapshots: snapshots,
+                    observer: observer,
+                    pass: pass,
+                    configs: .preview,
+                    quality: .preview
                 )
             )
             .padding(5)
@@ -142,35 +142,34 @@ struct PassPreviewCell_Previews: PreviewProvider {
         )
         let sat = Satellite(withTLE: tle)
         // 2000 Broadway, Redwood City, CA 94063
-        let observerCoordinate = LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0)
+        let observer = LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0)
         // Date range
         let startDate = Date(timeIntervalSinceReferenceDate: 20 * 365 * 86400)
         let julianDateRange = startDate.advanced(by: -60 * 60 * 2).julianDate..<startDate.advanced(by: 60 * 60 * 30).julianDate
         let coarseSnapshots = sat.snapshots(
-            observer: observerCoordinate,
+            observer: observer,
             julianDateRange: julianDateRange,
             interval: 60
         )
         let (passes, snapshots) = sat.findPasses(
             noradIndex: tle.noradIndex,
-            observer: observerCoordinate,
+            observer: observer,
             coarseSnapshots: coarseSnapshots
         )
 
         func viewAtPassIndex(_ index: Int) -> some View {
             let pass = passes[index]
             return PassPreviewCell(
+                satelliteInfo: SatelliteInfo(noradIndex: 25544, satellite: sat),
+                snapshots: snapshots,
+                observer: observer,
                 pass: pass,
                 referenceDate: startDate.julianDate,
-                indexOfPass: index,
                 hasScheduledAlert: false,
                 skyChartProducer: .pure(
                     SkyChart(
                         viewModel: .mock(
                             state: SkyChartViewState(
-                                satellite: sat,
-                                pass: pass,
-                                observer: observerCoordinate,
                                 snapshots: SkyChartViewState.NotableSnapshots(
                                     rise: SkyChartViewState.snapshotsAroundPass(
                                         snapshots,
@@ -189,22 +188,28 @@ struct PassPreviewCell_Previews: PreviewProvider {
                                     )!,
                                     illuminationChanges: BTree()
                                 ),
-                                referenceDate: pass.rise.julianDate,
-                                quality: .preview
+                                referenceDate: pass.rise.julianDate
                             )
                         ),
-                        configs: SkyChartConfigs(
-                            backgroundSky: SkyChartConfigs.BackgroundSky(
-                                stars: .limitedMagnitude(2),
-                                showConstellationLines: false,
-                                visibleBodies: [.sun, .moon],
-                                bodySymbol: .symbol
+                        context: SkyChartContext(
+                            satelliteInfo: SatelliteInfo(noradIndex: 25544, satellite: sat),
+                            snapshots: snapshots,
+                            observer: observer,
+                            pass: pass,
+                            configs: SkyChartConfigs(
+                                backgroundSky: SkyChartConfigs.BackgroundSky(
+                                    stars: .limitedMagnitude(2),
+                                    showConstellationLines: false,
+                                    visibleBodies: [.sun, .moon],
+                                    bodySymbol: .symbol
+                                ),
+                                showAzimuthTexts: false,
+                                azimuthMarkInterval: 90,
+                                azimuthMarkLength: 2,
+                                showDirections: false,
+                                showPassInfoLabels: false
                             ),
-                            showAzimuthTexts: false,
-                            azimuthMarkInterval: 90,
-                            azimuthMarkLength: 2,
-                            showDirections: false,
-                            showPassInfoLabels: false
+                            quality: .preview
                         )
                     )
                 )

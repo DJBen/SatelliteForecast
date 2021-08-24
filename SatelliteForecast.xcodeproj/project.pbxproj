@@ -404,10 +404,10 @@
 			isa = PBXGroup;
 			children = (
 				EF7D4DD726D25A2C005E49D0 /* SatelliteCategory.swift */,
+				EF7A3137266B4A5300CC33C0 /* SatelliteLoaderAction.swift */,
 				EF7A3134266B493E00CC33C0 /* SatelliteLoaderState.swift */,
 				EF7A3131266B493300CC33C0 /* SatelliteLoaderMiddleware.swift */,
 				EF7A313D266B538900CC33C0 /* SatelliteLoaderReducer.swift */,
-				EF7A3137266B4A5300CC33C0 /* SatelliteLoaderAction.swift */,
 				EF7C6650269918060017A007 /* SatelliteLoaderError.swift */,
 				EF7C665226992FF80017A007 /* SatelliteLoader.swift */,
 			);

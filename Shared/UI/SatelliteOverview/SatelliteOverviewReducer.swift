@@ -11,8 +11,8 @@ import SwiftRex
 extension Reducer where ActionType == SatelliteOverviewViewAction, StateType == Store.StateType {
     static let satelliteOverviewReducer = Reducer.reduce { action, state in
         switch action {
-        case let .selectSpecialSatellite(noradIndex):
-            state.navigationState.selectSatellite(noradIndex: noradIndex)
+        case let .selectSpecialSatellite(params):
+            state.navigationState.selectSatellite(noradIndex: params.noradIndex)
         case let .selectCategory(category):
             state.navigationState.selectSatelliteCategory(category: category)
         case .selectObserver:

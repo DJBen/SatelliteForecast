@@ -6,13 +6,20 @@
 //
 
 import SatelliteForecastCore
+import SatelliteKit
 import SwiftUI
 import SwiftRex
 import CombineRex
 import CombineRextensions
+import CoreLocation
 
 enum SatelliteOverviewViewAction {
-    case selectSpecialSatellite(noradIndex: Int)
+    struct SelectSpecialSatelliteParams {
+        let noradIndex: Int
+        let julianDateRange: Range<Double>
+        let observer: LatLonAlt?
+    }
+    case selectSpecialSatellite(SelectSpecialSatelliteParams)
     case selectCategory(SatelliteCategory)
     case selectObserver
     case selectAlert
@@ -22,18 +29,21 @@ enum SatelliteOverviewViewAction {
 struct SatelliteOverviewViewState: Equatable {
     var navigationState: NavigationState
     var julianDate: Double
+    var location: CLLocation?
 
     static func project(state: AppState) -> SatelliteOverviewViewState {
         SatelliteOverviewViewState(
             navigationState: state.navigationState,
-            julianDate: state.julianDate
+            julianDate: state.julianDate,
+            location: state.locationState.location
         )
     }
 
     static var initial: SatelliteOverviewViewState {
         SatelliteOverviewViewState(
             navigationState: .overview,
-            julianDate: 0
+            julianDate: 0,
+            location: nil
         )
     }
 }
@@ -69,14 +79,16 @@ struct SatelliteOverviewView: View {
             singleSatelliteWrappingViewProducer.view(
                 SingleSatelliteWrappingViewContext(
                     selectedNoradIndex: satellite.rawValue,
-                    julianDateRange: JulianDateUtil.createJulianDateRange(now: viewModel.state.julianDate)
+                    julianDateRange: JulianDateUtil.createJulianDateRange(now: viewModel.state.julianDate),
+                    observer: viewModel.state.location.map(LatLonAlt.init)
                 )
             )
         case let .category(category):
             listViewProducer.view(
                 SatelliteListViewContext(
                     category: category,
-                    julianDateRange: JulianDateUtil.createJulianDateRange(now: viewModel.state.julianDate)
+                    julianDateRange: JulianDateUtil.createJulianDateRange(now: viewModel.state.julianDate),
+                    observer: viewModel.state.location.map(LatLonAlt.init)
                 )
             )
         case let .settings(settings):
@@ -92,7 +104,15 @@ struct SatelliteOverviewView: View {
     private func setNavigationItem(_ item: SatelliteOverviewItem?) {
         switch item {
         case let .specialSatellites(satellite):
-            viewModel.dispatch(.selectSpecialSatellite(noradIndex: satellite.rawValue))
+            viewModel.dispatch(
+                .selectSpecialSatellite(
+                    .init(
+                        noradIndex: satellite.rawValue,
+                        julianDateRange: JulianDateUtil.createJulianDateRange(now: viewModel.state.julianDate),
+                        observer: viewModel.state.location.map(LatLonAlt.init)
+                    )
+                )
+            )
         case let .category(category):
             viewModel.dispatch(.selectCategory(category))
         case let .settings(settings):

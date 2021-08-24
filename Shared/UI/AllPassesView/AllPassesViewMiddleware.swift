@@ -27,29 +27,23 @@ extension EffectMiddleware where
         EffectMiddleware<AllPassesViewAction, AppAction, AppState, Void>
             .onAction { (action, _, getState) -> Effect<Void, AppAction> in
                 switch action {
-                case .recalculatePasses(let noradIndex):
-                    let state = getState()
-                    guard let observer = state.locationState.location.map(LatLonAlt.init) else {
-                        logger.info("Will not generate satellite \(noradIndex) ephemerides: lack of core location coordinate")
-                        return .doNothing
-                    }
-                    
+                case let .recalculatePasses(params):
                     return .sequence([
                         .tlePropagator(.purgePassesAndSnapshots),
-                        .allPassesView(.calculatePasses(noradIndex: noradIndex, observer: observer))
+                        .allPassesView(.calculatePasses(params))
                     ])
-                case let .calculatePasses(noradIndex, observer):
+                case let .calculatePasses(params):
                     return Effect { context -> AnyPublisher<DispatchedAction<AppAction>, Never> in
                         let state = getState()
+                        let (noradIndex, observer, julianDateRange) = (
+                            params.selectedNoradIndex,
+                            params.observer,
+                            params.julianDateRange
+                        )
 
                         // Precondition: TLE must be ready
                         guard let info = state.satelliteLoaderState[noradIndex] else {
                             logger.fault("TLE not ready for the selected satellite when calculating passes")
-                            return Empty().eraseToAnyPublisher()
-                        }
-
-                        guard let julianDateRange = state.julianDateRange else {
-                            logger.warning("Will not generate satellite \(noradIndex) ephemerides: missing julian date range")
                             return Empty().eraseToAnyPublisher()
                         }
 

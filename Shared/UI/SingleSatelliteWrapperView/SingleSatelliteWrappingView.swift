@@ -12,8 +12,12 @@ import SatelliteForecastCore
 import SatelliteKit
 
 enum SingleSatelliteWrappingViewAction {
-    case loadSingleSatellite
-    case calculateSingleSatellitePass(noradIndex: Int)
+    struct LoadSingleSatelliteParams {
+        let selectedNoradIndex: Int
+        let julianDateRange: Range<Double>
+        let observer: LatLonAlt?
+    }
+    case loadSingleSatellite(LoadSingleSatelliteParams)
 }
 
 struct SingleSatelliteWrappingViewState: Equatable {
@@ -61,18 +65,6 @@ struct SingleSatelliteWrappingView: View {
                 failedContentBuilder(context.selectedNoradIndex, error)
             }
         }
-        .onAppear {
-            if case .success(_) = satellite {
-                viewModel.dispatch(.calculateSingleSatellitePass(noradIndex: context.selectedNoradIndex))
-            }
-        }
-        .onChange(of: satellite) { newValue in
-            if newValue == .none {
-                return
-            }
-            
-            viewModel.dispatch(.calculateSingleSatellitePass(noradIndex: context.selectedNoradIndex))
-        }
     }
 
     var body: some View {
@@ -81,7 +73,8 @@ struct SingleSatelliteWrappingView: View {
                 AllPassesViewContext(
                     selectedNoradIndex: satelliteInfo.noradIndex,
                     satelliteInfo: satelliteInfo,
-                    julianDateRange: context.julianDateRange
+                    julianDateRange: context.julianDateRange,
+                    observer: context.observer
                 )
             )
         }
@@ -89,20 +82,33 @@ struct SingleSatelliteWrappingView: View {
             VStack(spacing: 16) {
                 Text(error.localizedDescription)
 
-                Button(
-                    "Retry",
-                    action: { viewModel.dispatch(.loadSingleSatellite) }
-                )
-                .font(Font.headline)
-                .foregroundColor(Color(UIColor.systemBlue))
+                if let observer = context.observer {
+                    Button(
+                        "Retry",
+                        action: {
+                            viewModel.dispatch(
+                                .loadSingleSatellite(
+                                    .init(
+                                        selectedNoradIndex: noradIndex,
+                                        julianDateRange: context.julianDateRange,
+                                        observer: observer
+                                    )
+                                )
+                            )
+                        }
+                    )
+                    .font(Font.headline)
+                    .foregroundColor(Color(UIColor.systemBlue))
+                }
             }
         }
     }
 }
 
 struct SingleSatelliteWrappingViewContext {
-    var selectedNoradIndex: Int
-    var julianDateRange: Range<Double>
+    let selectedNoradIndex: Int
+    let julianDateRange: Range<Double>
+    let observer: LatLonAlt?
 }
 
 extension ViewProducer where Context == SingleSatelliteWrappingViewContext, ProducedView == SingleSatelliteWrappingView {
@@ -134,7 +140,8 @@ struct SingleSatelliteWrappingView_Previews: PreviewProvider {
             viewModel: .mock(state: .empty),
             context: SingleSatelliteWrappingViewContext(
                 selectedNoradIndex: 0,
-                julianDateRange: Date(daysSince1950: 1000).julianDate..<Date(daysSince1950: 1002).julianDate
+                julianDateRange: Date(daysSince1950: 1000).julianDate..<Date(daysSince1950: 1002).julianDate,
+                observer: nil
             ),
             allPassesViewProducer: .crash
         )

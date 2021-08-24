@@ -37,35 +37,43 @@ enum SatelliteElevationGraphAction {
     case rasterizedElevationGraph(UIImage, size: CGSize, noradIndex: Int, julianDateRange: Range<Double>)
 }
 
+struct SatelliteElevationGraphContext {
+    let satelliteInfo: SatelliteInfo
+    let julianDateRange: Range<Double>
+    let observer: LatLonAlt
+    let configs: SatelliteElevationGraphConfigs
+}
+
 struct SatelliteElevationGraphState: Equatable {
-    let noradIndex: Int
     let currentJulianDate: Double
     let currentSnapshot: SatelliteSnapshot
-    /// Date range for display.
-    let julianDateRange: Range<Double>
     let highlightedDateRange: Range<Double>?
     let julianDateSunElevs: BTree<Double, Double>
     let rasterizedElevationGraph: UIImage?
-    let configs: SatelliteElevationGraphConfigs
+    
+    static var empty: SatelliteElevationGraphState {
+        SatelliteElevationGraphState(
+            currentJulianDate: 0,
+            currentSnapshot: SatelliteSnapshot(
+                julianDate: 0,
+                position: AziEleDst(azim: 0, elev: 0, dist: 0),
+                isIlluminated: false,
+                sunElevation: 0
+            ),
+            highlightedDateRange: nil,
+            julianDateSunElevs: BTree(),
+            rasterizedElevationGraph: nil
+        )
+    }
 
-    static func project(state: Store.StateType) -> SatelliteElevationGraphState? {
-        let satelliteElevationGraphConfigs: SatelliteElevationGraphConfigs = .preset
-
-        guard let julianDateRange = state.julianDateRange else {
-            return nil
-        }
-
-        guard let observer = state.observer else {
-            return nil
-        }
-
-        guard let noradIndex = state.navigationState.selectedSatelliteNoradIndex,
-              let satellite = state.satelliteLoaderState[noradIndex] else {
-            return nil
-        }
+    static func project(
+        state: Store.StateType,
+        context: SatelliteElevationGraphContext
+    ) -> SatelliteElevationGraphState {
+        let (satellite, julianDateRange, observer) = (context.satelliteInfo, context.julianDateRange, context.observer)
 
         let rasterizedElevationGraph: UIImage? = {
-            guard let rangeImage = state.satelliteElevationGraphResources.rasterizedElevationGraphs[noradIndex] else {
+            guard let rangeImage = state.satelliteElevationGraphResources.rasterizedElevationGraphs[context.satelliteInfo.noradIndex] else {
                 return nil
             }
             let (imageJulianDateRange, image) = (rangeImage.julianDateRange, rangeImage.image)
@@ -78,25 +86,24 @@ struct SatelliteElevationGraphState: Equatable {
         }()
 
         return SatelliteElevationGraphState(
-            noradIndex: noradIndex,
             currentJulianDate: state.julianDate,
             currentSnapshot: satellite.satellite.snapshot(
                 julianDate: state.julianDate,
                 observer: observer
             ),
-            julianDateRange: julianDateRange,
             highlightedDateRange: state.selectedSatellitePass.map { pass -> Range<Double> in
                 return pass.rise.julianDate..<pass.set.julianDate
             },
             julianDateSunElevs: SunlightIndicator.snapshotsToSunElevs(state.currentSatelliteSnapshots),
-            rasterizedElevationGraph: rasterizedElevationGraph,
-            configs: satelliteElevationGraphConfigs
+            rasterizedElevationGraph: rasterizedElevationGraph
         )
     }
 }
 
 struct SatelliteElevationGraph: View {
-    @ObservedObject var viewModel: ObservableViewModel<SatelliteElevationGraphAction, SatelliteElevationGraphState?>
+    @ObservedObject var viewModel: ObservableViewModel<SatelliteElevationGraphAction, SatelliteElevationGraphState>
+    let context: SatelliteElevationGraphContext
+    
     @State private var graphingRegionSize: CGSize = .zero
     @Environment(\.colorScheme) var colorScheme
 
@@ -104,161 +111,144 @@ struct SatelliteElevationGraph: View {
         let percent: Double
         let julianDate: Double
     }
-    
-    @ViewBuilder private func unwrapState<Content: View>(@ViewBuilder content: (SatelliteElevationGraphState) -> Content) -> some View {
-        if let state = viewModel.state {
-            content(state)
-        }
-    }
 
     private var elevationText: some View {
-        unwrapState { state in
-            ZStack {
-                if graphingRegionSize.width == 0 || graphingRegionSize.height == 0 {
-                    EmptyView()
-                } else {
-                    let elevIterator = stride(from: -90.0, to: 90.0, by: state.configs.elevationGridLineInterval)
+        ZStack {
+            if graphingRegionSize.width == 0 || graphingRegionSize.height == 0 {
+                EmptyView()
+            } else {
+                let elevIterator = stride(from: -90.0, to: 90.0, by: context.configs.elevationGridLineInterval)
 
-                    ForEach(Array(elevIterator), id: \.self) { elev in
-                        let y = CGFloat(elev + 90) / 180 * self.graphingRegionSize.height
+                ForEach(Array(elevIterator), id: \.self) { elev in
+                    let y = CGFloat(elev + 90) / 180 * self.graphingRegionSize.height
 
-                        Text("\(Int(-elev))°")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                            .frame(height: 30, alignment: .bottomTrailing)
-                            .position(x: 15, y: y)
-                    }
+                    Text("\(Int(-elev))°")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                        .frame(height: 30, alignment: .bottomTrailing)
+                        .position(x: 15, y: y)
                 }
             }
         }
     }
 
     private var satelliteElevationPlot: some View {
-        unwrapState { state in
-            GeometryReader { geometry in
-                let rect = geometry.frame(in: .local)
-                if let image = state.rasterizedElevationGraph {
-                    Image(uiImage: image)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: rect.width, height: rect.height, alignment: .center)
-                }
+        GeometryReader { geometry in
+            let rect = geometry.frame(in: .local)
+            if let image = viewModel.state.rasterizedElevationGraph {
+                Image(uiImage: image)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: rect.width, height: rect.height, alignment: .center)
             }
         }
     }
 
     private var dateBoundaryLabels: some View {
-        unwrapState { state in
-            GeometryReader { geometry in
-                let rect = geometry.frame(in: .local)
-                let julianDateRange = state.julianDateRange
-                let calendar = Calendar(identifier: .gregorian)
-                let components = calendar.dateComponents([.year, .month, .day], from: Date(julianDate: julianDateRange.lowerBound))
+        GeometryReader { geometry in
+            let rect = geometry.frame(in: .local)
+            let julianDateRange = context.julianDateRange
+            let calendar = Calendar(identifier: .gregorian)
+            let components = calendar.dateComponents([.year, .month, .day], from: Date(julianDate: julianDateRange.lowerBound))
 
-                let dates: [Date] = {
-                    var date = calendar.date(from: components)!
-                    var dates = [Date]()
-                    while true {
-                        defer {
-                            date = date.advanced(by: 60 * 60 * 24)
-                        }
-                        if date < Date(julianDate: julianDateRange.lowerBound) {
-                            continue
-                        }
-                        if date >= Date(julianDate: julianDateRange.upperBound) {
-                            break
-                        }
-                        dates.append(date)
+            let dates: [Date] = {
+                var date = calendar.date(from: components)!
+                var dates = [Date]()
+                while true {
+                    defer {
+                        date = date.advanced(by: 60 * 60 * 24)
                     }
-                    return dates
-                }()
-
-
-                ForEach(dates, id: \.self) { date in
-                    HStack {
-                        Text(dateFormatter.string(from: date.advanced(by: -60 * 60 * 24)))
-                            .multilineTextAlignment(.trailing)
-                            .foregroundColor(.gray)
-                            .font(.caption2)
-                        Text(dateFormatter.string(from: date))
-                            .foregroundColor(.gray)
-                            .font(.caption2)
+                    if date < Date(julianDate: julianDateRange.lowerBound) {
+                        continue
                     }
-                    .frame(height: rect.height, alignment: .top)
-                    .position(x: rect.width * CGFloat((date.julianDate - julianDateRange.lowerBound) / (julianDateRange.upperBound - julianDateRange.lowerBound)), y: rect.midY)
-                    .fixedSize()
+                    if date >= Date(julianDate: julianDateRange.upperBound) {
+                        break
+                    }
+                    dates.append(date)
                 }
+                return dates
+            }()
+
+
+            ForEach(dates, id: \.self) { date in
+                HStack {
+                    Text(dateFormatter.string(from: date.advanced(by: -60 * 60 * 24)))
+                        .multilineTextAlignment(.trailing)
+                        .foregroundColor(.gray)
+                        .font(.caption2)
+                    Text(dateFormatter.string(from: date))
+                        .foregroundColor(.gray)
+                        .font(.caption2)
+                }
+                .frame(height: rect.height, alignment: .top)
+                .position(x: rect.width * CGFloat((date.julianDate - julianDateRange.lowerBound) / (julianDateRange.upperBound - julianDateRange.lowerBound)), y: rect.midY)
+                .fixedSize()
             }
         }
     }
 
     private var highlightedPassRegion: some View {
-        unwrapState { state in
-            GeometryReader { geometry in
-                let rect = geometry.frame(in: .local)
-                let julianDateRange = state.julianDateRange
-                if let highlightedDateRange = state.highlightedDateRange {
-                    let fromX = CGFloat((highlightedDateRange.lowerBound - julianDateRange.lowerBound) / (julianDateRange.upperBound - julianDateRange.lowerBound)) * rect.width
-                    let toX = CGFloat((highlightedDateRange.upperBound - julianDateRange.lowerBound) / (julianDateRange.upperBound - julianDateRange.lowerBound)) * rect.width
-                    HStack(spacing: 0) {
-                        Spacer(minLength: fromX)
-                        Rectangle()
-                            .fill(
-                                LinearGradient(
-                                    gradient: Gradient(
-                                        stops: [
-                                            Gradient.Stop(color: Color.yellow.opacity(0), location: 0),
-                                            Gradient.Stop(color: Color.yellow.opacity(0.2), location: 0.1),
-                                            Gradient.Stop(color: Color.yellow.opacity(0.3), location: 1)
-                                        ]
-                                    ),
-                                    startPoint: .bottom,
-                                    endPoint: .top
-                                )
+        GeometryReader { geometry in
+            let rect = geometry.frame(in: .local)
+            let julianDateRange = context.julianDateRange
+            if let highlightedDateRange = viewModel.state.highlightedDateRange {
+                let fromX = CGFloat((highlightedDateRange.lowerBound - julianDateRange.lowerBound) / (julianDateRange.upperBound - julianDateRange.lowerBound)) * rect.width
+                let toX = CGFloat((highlightedDateRange.upperBound - julianDateRange.lowerBound) / (julianDateRange.upperBound - julianDateRange.lowerBound)) * rect.width
+                HStack(spacing: 0) {
+                    Spacer(minLength: fromX)
+                    Rectangle()
+                        .fill(
+                            LinearGradient(
+                                gradient: Gradient(
+                                    stops: [
+                                        Gradient.Stop(color: Color.yellow.opacity(0), location: 0),
+                                        Gradient.Stop(color: Color.yellow.opacity(0.2), location: 0.1),
+                                        Gradient.Stop(color: Color.yellow.opacity(0.3), location: 1)
+                                    ]
+                                ),
+                                startPoint: .bottom,
+                                endPoint: .top
                             )
-                            .id("centerAtDate")
-                        Spacer(minLength: rect.width - toX)
-                    }
+                        )
+                        .id("centerAtDate")
+                    Spacer(minLength: rect.width - toX)
                 }
             }
         }
     }
 
-    private var currentIndicator: some View {
-        unwrapState { state in
-            let x = (state.currentJulianDate - state.julianDateRange.lowerBound) / (state.julianDateRange.upperBound - state.julianDateRange.lowerBound)
-            let y = 1 - (state.currentSnapshot.position.elev + 90) / 180
+    @ViewBuilder private var currentIndicator: some View {
+        let state = viewModel.state
+        let x = (state.currentJulianDate - context.julianDateRange.lowerBound) / (context.julianDateRange.upperBound - context.julianDateRange.lowerBound)
+        let y = 1 - (state.currentSnapshot.position.elev + 90) / 180
 
-            SatelliteElevationGraphCurrentIndicator(
-                percentageCoordinate: CGPoint(x: x, y: y),
-                currentJulianDate: state.currentJulianDate
-            )
-        }
+        SatelliteElevationGraphCurrentIndicator(
+            percentageCoordinate: CGPoint(x: x, y: y),
+            currentJulianDate: state.currentJulianDate
+        )
     }
 
     @ViewBuilder private var background: some View {
-        unwrapState { state in
-            SatelliteElevationGraphBackground(
-                state: SatelliteElevationGraphBackgroundState(julianDateRange: state.julianDateRange, configs: state.configs),
-                graphingRegionSize: $graphingRegionSize
-            )
-            .equatable()
-            .onChange(of: graphingRegionSize) { size in
-                if size.width == 0 || size.height == 0 {
-                    return
-                }
-
-                let traitCollection = UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
-
-                viewModel.dispatch(
-                    .requestRasterizeElevationGraph(
-                        size: size,
-                        noradIndex: state.noradIndex,
-                        julianDateRange: state.julianDateRange,
-                        traitCollection: traitCollection
-                    )
-                )
+        SatelliteElevationGraphBackground(
+            state: SatelliteElevationGraphBackgroundState(julianDateRange: context.julianDateRange, configs: context.configs),
+            graphingRegionSize: $graphingRegionSize
+        )
+        .equatable()
+        .onChange(of: graphingRegionSize) { size in
+            if size.width == 0 || size.height == 0 {
+                return
             }
+
+            let traitCollection = UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
+
+            viewModel.dispatch(
+                .requestRasterizeElevationGraph(
+                    size: size,
+                    noradIndex: context.satelliteInfo.noradIndex,
+                    julianDateRange: context.julianDateRange,
+                    traitCollection: traitCollection
+                )
+            )
         }
     }
 
@@ -269,80 +259,76 @@ struct SatelliteElevationGraph: View {
     }()
 
     func innerViews(rect: CGRect) -> some View {
-        unwrapState { state in
-            VStack(
-                alignment: .leading,
-                spacing: 4
-            ) {
-                background
-                    .overlay(satelliteElevationPlot)
-                    .overlay(highlightedPassRegion)
-                    .overlay(dateBoundaryLabels)
-                    .overlay(currentIndicator)
+        VStack(
+            alignment: .leading,
+            spacing: 4
+        ) {
+            background
+                .overlay(satelliteElevationPlot)
+                .overlay(highlightedPassRegion)
+                .overlay(dateBoundaryLabels)
+                .overlay(currentIndicator)
 
-                SunlightIndicator(
-                    viewModel: SunlightIndicatorViewModel(
-                        julianDateElevations: state.julianDateSunElevs
-                    )
+            SunlightIndicator(
+                viewModel: SunlightIndicatorViewModel(
+                    julianDateElevations: viewModel.state.julianDateSunElevs
                 )
-                .equatable()
-                .frame(height: 24)
-                .drawingGroup()
-
-                DateFooter(
-                    state: DateFooterState(
-                        julianDateRange: state.julianDateRange,
-                        configs: state.configs
-                    ),
-                    width: rect.width
-                )
-                .equatable()
-            }
-            .frame(
-                width: max(0, rect.width),
-                height: max(0, rect.height),
-                alignment: .leading
             )
+            .equatable()
+            .frame(height: 24)
+            .drawingGroup()
+
+            DateFooter(
+                state: DateFooterState(
+                    julianDateRange: context.julianDateRange,
+                    configs: context.configs
+                ),
+                width: rect.width
+            )
+            .equatable()
         }
+        .frame(
+            width: max(0, rect.width),
+            height: max(0, rect.height),
+            alignment: .leading
+        )
     }
 
     var body: some View {
-        unwrapState { state in
-            GeometryReader { geometry in
-                let initialRect = geometry.frame(in: .local)
-                let widthPerSecond = initialRect.width / CGFloat((state.julianDateRange.upperBound - state.julianDateRange.lowerBound) * TimeConstants.day2sec)
-                let rect = CGRect(origin: initialRect.origin, size: CGSize(width: initialRect.width / widthPerSecond * max(widthPerSecond, state.configs.minimumHorizonalResolution), height: initialRect.height))
+        GeometryReader { geometry in
+            let initialRect = geometry.frame(in: .local)
+            let widthPerSecond = initialRect.width / CGFloat((context.julianDateRange.upperBound - context.julianDateRange.lowerBound) * TimeConstants.day2sec)
+            let rect = CGRect(origin: initialRect.origin, size: CGSize(width: initialRect.width / widthPerSecond * max(widthPerSecond, context.configs.minimumHorizonalResolution), height: initialRect.height))
 
-                ZStack {
-                    ScrollView(
-                        .horizontal,
-                        showsIndicators: false,
-                        content: {
-                            ScrollViewReader { scrollViewProxy in
-                                if rect.isEmpty {
-                                    EmptyView()
-                                } else {
-                                    innerViews(
-                                        rect: rect
-                                    )
-                                    .onAppear {
-                                        if let _ = state.highlightedDateRange {
-                                            scrollViewProxy.scrollTo("centerAtDate", anchor: .center)
-                                        }
+            ZStack {
+                ScrollView(
+                    .horizontal,
+                    showsIndicators: false,
+                    content: {
+                        ScrollViewReader { scrollViewProxy in
+                            if rect.isEmpty {
+                                EmptyView()
+                            } else {
+                                innerViews(
+                                    rect: rect
+                                )
+                                .onAppear {
+                                    if let _ = viewModel.state.highlightedDateRange {
+                                        scrollViewProxy.scrollTo("centerAtDate", anchor: .center)
                                     }
-                                    .onChange(
-                                        of: state.highlightedDateRange,
-                                        perform: { _ in
-                                            scrollViewProxy.scrollTo("centerAtDate", anchor: .center)
-                                        }
-                                    )
                                 }
+                                .onChange(
+                                    of: viewModel.state.highlightedDateRange,
+                                    perform: { _ in
+                                        scrollViewProxy.scrollTo("centerAtDate", anchor: .center)
+                                    }
+                                )
                             }
                         }
-                    )
+                    }
+                )
 
-                    elevationText
-                }
+                elevationText
             }
         }
     }
@@ -350,16 +336,21 @@ struct SatelliteElevationGraph: View {
 
 import CombineRextensions
 
-extension ViewProducer where Context == Void, ProducedView == SatelliteElevationGraph {
+extension ViewProducer where Context == SatelliteElevationGraphContext, ProducedView == SatelliteElevationGraph {
     static func satelliteElevationGraph<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
-        ViewProducer<Context, ProducedView> {
+        ViewProducer<Context, ProducedView> { context in
             SatelliteElevationGraph(
-                viewModel: viewModel
-                    .projection(
-                        action: { AppAction.satelliteElevationGraph($0) },
-                        state: SatelliteElevationGraphState.project(state:)
-                    )
-                    .asObservableViewModel(initialState: nil, emitsValue: .whenDifferent)
+                viewModel: viewModel.projection(
+                    action: { AppAction.satelliteElevationGraph($0) },
+                    state: { appState in
+                        SatelliteElevationGraphState.project(
+                            state: appState,
+                            context: context
+                        )
+                    }
+                )
+                .asObservableViewModel(initialState: .empty, emitsValue: .whenDifferent),
+                context: context
             )
         }
     }
@@ -380,14 +371,21 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         let julianDateRange = Date().advanced(by: -60 * 60 * 2).julianDate..<Date().advanced(by: 60 * 60 * 4).julianDate
         // 2000 Broadway, Redwood City, CA 94063
         let location = CLLocation(latitude: 37.486743000691185, longitude: -122.22655970246515)
+        let observer = LatLonAlt(location: location)
+        let context = SatelliteElevationGraphContext(
+            satelliteInfo: SatelliteInfo(noradIndex: 25544, satellite: sat),
+            julianDateRange: julianDateRange,
+            observer: observer,
+            configs: .preset
+        )
         let viewModel = SatelliteElevationGraphState.project(
             state: AppState(
                 navigationState: .allPasses(category: nil, noradIndex: Int(sat.noradIdent)!),
                 satelliteTrails: [
                     Int(sat.noradIdent)!: SatelliteTrails(
-                        observer: LatLonAlt(location: location),
+                        observer: observer,
                         snapshots: sat.snapshots(
-                            observer: LatLonAlt(location: location),
+                            observer: observer,
                             julianDateRange: julianDateRange,
                             interval: 20
                         ),
@@ -400,13 +398,17 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                 locationState: LocationState(
                     authorizationStatus: .authorizedWhenInUse,
                     currentLocation: location
-                ),
-                julianDateRange: julianDateRange
-            )
+                )
+            ),
+            context: context
         )
-        SatelliteElevationGraph(viewModel: .mock(state: viewModel))
-            .previewLayout(.fixed(width: 720, height: 240))
-            .previewDisplayName("ISS")
+        
+        SatelliteElevationGraph(
+            viewModel: .mock(state: viewModel),
+            context: context
+        )
+        .previewLayout(.fixed(width: 720, height: 240))
+        .previewDisplayName("ISS")
 
         let tle2 = try! TLE(
             raw: """
@@ -416,14 +418,20 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
             """
         )
         let sat2 = Satellite(withTLE: tle2)
+        let context2 = SatelliteElevationGraphContext(
+            satelliteInfo: SatelliteInfo(noradIndex: 04382, satellite: sat2),
+            julianDateRange: julianDateRange,
+            observer: observer,
+            configs: .preset
+        )
         let viewModel2 = SatelliteElevationGraphState.project(
             state: AppState(
                 navigationState: .allPasses(category: nil, noradIndex: Int(sat2.noradIdent)!),
                 satelliteTrails: [
                     Int(sat2.noradIdent)!: SatelliteTrails(
-                        observer: LatLonAlt(location: location),
+                        observer: observer,
                         snapshots: sat2.snapshots(
-                            observer: LatLonAlt(location: location),
+                            observer: observer,
                             julianDateRange: julianDateRange,
                             interval: 20
                         ),
@@ -436,11 +444,11 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                 locationState: LocationState(
                     authorizationStatus: .authorizedWhenInUse,
                     currentLocation: location
-                ),
-                julianDateRange: julianDateRange
-            )
+                )
+            ),
+            context: context2
         )
-        SatelliteElevationGraph(viewModel: .mock(state: viewModel2))
+        SatelliteElevationGraph(viewModel: .mock(state: viewModel2), context: context2)
             .previewLayout(.fixed(width: 720, height: 240))
             .previewDisplayName("DFH-1")
 
@@ -452,14 +460,20 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
             """
         )
         let sat3 = Satellite(withTLE: tle3)
+        let context3 = SatelliteElevationGraphContext(
+            satelliteInfo: SatelliteInfo(noradIndex: 07276, satellite: sat3),
+            julianDateRange: julianDateRange,
+            observer: observer,
+            configs: .preset
+        )
         let viewModel3 = SatelliteElevationGraphState.project(
             state: AppState(
                 navigationState: .allPasses(category: nil, noradIndex: Int(sat3.noradIdent)!),
                 satelliteTrails: [
                     Int(sat3.noradIdent)!: SatelliteTrails(
-                        observer: LatLonAlt(location: location),
+                        observer: observer,
                         snapshots: sat3.snapshots(
-                            observer: LatLonAlt(location: location),
+                            observer: observer,
                             julianDateRange: julianDateRange,
                             interval: 20
                         ),
@@ -472,11 +486,11 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                 locationState: LocationState(
                     authorizationStatus: .authorizedWhenInUse,
                     currentLocation: location
-                ),
-                julianDateRange: julianDateRange
-            )
+                )
+            ),
+            context: context3
         )
-        SatelliteElevationGraph(viewModel: .mock(state: viewModel3))
+        SatelliteElevationGraph(viewModel: .mock(state: viewModel3), context: context3)
             .previewLayout(.fixed(width: 720, height: 240))
             .previewDisplayName("Molniya 2-9")
 

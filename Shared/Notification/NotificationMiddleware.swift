@@ -5,6 +5,7 @@
 //  Created by Ben Lu on 8/19/21.
 //
 
+import BTree
 import Combine
 import CombineRex
 import Foundation
@@ -211,27 +212,39 @@ extension EffectMiddleware where
                     let subject = PassthroughSubject<DispatchedAction<AppAction>, Never>()
 
                     DispatchQueue.global().async {
-                        if let category = satelliteCategory {
-                            subject.send(DispatchedAction(.satelliteLoader(.loadSatelliteCategory(category))))
-                            subject.send(DispatchedAction(.freezeObservingParams(
-                                observer: observer,
-                                julianDateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate)
-                            )))
-                            subject.send(DispatchedAction(.allPassesView(
+                        func calculatePass(infoMap: Map<Int, SatelliteInfo>) -> AppAction? {
+                            guard let satelliteInfo = infoMap[noradIndex] else {
+                                return nil
+                            }
+                            return .allPassesView(
                                 .calculatePasses(
-                                    noradIndex: noradIndex,
-                                    observer: observer
+                                    .init(
+                                        selectedNoradIndex: noradIndex,
+                                        satelliteInfo: satelliteInfo,
+                                        julianDateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate),
+                                        observer: observer
+                                    )
                                 )
-                            )))
-                        } else {
-                            subject.send(DispatchedAction(.satelliteLoader(.loadSatelliteCategory(.brightest100))))
+                            )
+                        }
+                        if let category = satelliteCategory {
                             subject.send(
-                                DispatchedAction(.freezeObservingParams(
-                                    observer: observer,
-                                    julianDateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate)
+                                DispatchedAction(.satelliteLoader(
+                                    .loadSatelliteCategory(
+                                        category,
+                                        onCompletion: calculatePass(infoMap:)
+                                    )
                                 ))
                             )
-                            subject.send(DispatchedAction(.singleSatelliteWrappingView(.loadSingleSatellite)))
+                        } else {
+                            subject.send(
+                                DispatchedAction(.satelliteLoader(
+                                    .loadSatelliteCategory(
+                                        .brightest100,
+                                        onCompletion: calculatePass(infoMap:)
+                                    )
+                                ))
+                            )
                         }
                         subject.send(completion: .finished)
                     }

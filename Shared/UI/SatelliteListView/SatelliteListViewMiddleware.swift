@@ -26,21 +26,26 @@ extension EffectMiddleware where InputActionType == SatelliteListViewAction, Out
         EffectMiddleware<SatelliteListViewAction, AppAction, AppState, Void>
             .onAction { (action, _, getState) -> Effect<Void, AppAction> in
                 switch action {
-                case let .selectSatellite(noradIndex):
-                    guard let noradIndex = noradIndex else {
-                        return .doNothing
-                    }
-                    guard let observer = getState().observer else {
-                        logger.info("Will not select satellite \(noradIndex): lack of observer")
+                case let .selectSatellite(params):
+                    guard let params = params else {
                         return .doNothing
                     }
                     
+                    guard let observer = params.observer else {
+                        return .doNothing
+                    }
+
                     return .sequence([
-                        .freezeObservingParams(
-                            observer: observer,
-                            julianDateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate)
+                        .allPassesView(
+                            .calculatePasses(
+                                .init(
+                                    selectedNoradIndex: params.noradIndex,
+                                    satelliteInfo: params.satelliteInfo,
+                                    julianDateRange: params.julianDateRange,
+                                    observer: observer
+                                )
+                            )
                         ),
-                        .allPassesView(.calculatePasses(noradIndex: noradIndex, observer: observer)),
                     ])
                     
                 case .satelliteSearchTextChanged(_):
@@ -52,7 +57,10 @@ extension EffectMiddleware where InputActionType == SatelliteListViewAction, Out
                     }
 
                     return satelliteLoader.loadSatelliteCategoryPublisher(category: category)
-                        .map(AppAction.satelliteLoader)
+                        .map { AppAction.satelliteLoader(.loadedSatelliteInfo(category, $0)) }
+                        .catch { error in
+                            Just(AppAction.satelliteLoader(.failedLoadingTLEFile(category, error)))
+                        }
                         .asEffect(info: nil)
                 }
             }

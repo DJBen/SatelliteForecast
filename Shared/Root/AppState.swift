@@ -27,10 +27,6 @@ struct AppState: Equatable {
     var satelliteLoaderState: SatelliteLoaderState = .empty
     var locationState: LocationState = .empty
 
-    var julianDateRange: Range<Double>?
-
-    /// The observer coordinate. This value will be "frozen" when the user views any satellite passes.
-    var observer: LatLonAlt?
     var debugMenu: DebugMenuConfig = .empty
     var notificationState: NotificationState = NotificationState()
 

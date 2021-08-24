@@ -21,21 +21,21 @@ extension EffectMiddleware where
         EffectMiddleware<SatelliteOverviewViewAction, AppAction, AppState, Void>
             .onAction { action, _, getState in
                 switch action {          
-                case .selectSpecialSatellite(_):
+                case let .selectSpecialSatellite(params):
                     return .sequence([
-                        .freezeObservingParams(
-                            observer: getState().locationState.location.map(LatLonAlt.init),
-                            julianDateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate)
-                        ),
-                        .singleSatelliteWrappingView(.loadSingleSatellite)
+                        .singleSatelliteWrappingView(
+                            .loadSingleSatellite(
+                                .init(
+                                    selectedNoradIndex: params.noradIndex,
+                                    julianDateRange: params.julianDateRange,
+                                    observer: params.observer
+                                )
+                            )
+                        )
                     ])
                     
                 case let .selectCategory(category):
                     return .sequence([
-                        .freezeObservingParams(
-                            observer: getState().locationState.location.map(LatLonAlt.init),
-                            julianDateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate)
-                        ),
                         .satelliteLoader(.loadSatelliteCategory(category))
                     ])
                     

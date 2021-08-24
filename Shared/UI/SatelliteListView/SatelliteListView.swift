@@ -15,7 +15,13 @@ import SatelliteForecastCore
 import SatelliteCatalog
 
 enum SatelliteListViewAction {
-    case selectSatellite(noradIndex: Int?)
+    struct SelectSatelliteParams {
+        let noradIndex: Int
+        let satelliteInfo: SatelliteInfo
+        let julianDateRange: Range<Double>
+        let observer: LatLonAlt?
+    }
+    case selectSatellite(SelectSatelliteParams?)
     case satelliteSearchTextChanged(String)
     case retryLoadingSatelliteList
 }
@@ -117,15 +123,27 @@ struct SatelliteListView: View {
                                 AllPassesViewContext(
                                     selectedNoradIndex: noradIndex,
                                     satelliteInfo: satellites[noradIndex]!,
-                                    julianDateRange: context.julianDateRange
+                                    julianDateRange: context.julianDateRange,
+                                    observer: context.observer
                                 )
                             )
                         ),
                         tag: noradIndex,
                         selection: Binding<Int?>(
                             get: { viewModel.state.selectedNoradIndex },
-                            set: {
-                                viewModel.dispatch(.selectSatellite(noradIndex: $0))
+                            set: { noradIndex in
+                                viewModel.dispatch(
+                                    .selectSatellite(
+                                        noradIndex.map {
+                                            SatelliteListViewAction.SelectSatelliteParams(
+                                                noradIndex: $0,
+                                                satelliteInfo: satellites[$0]!,
+                                                julianDateRange: context.julianDateRange,
+                                                observer: context.observer
+                                            )
+                                        }
+                                    )
+                                )
                             }
                         )
                     ) {
@@ -187,8 +205,9 @@ struct SatelliteListView: View {
 }
 
 struct SatelliteListViewContext {
-    var category: SatelliteCategory
-    var julianDateRange: Range<Double>
+    let category: SatelliteCategory
+    let julianDateRange: Range<Double>
+    let observer: LatLonAlt?
 }
 
 extension ViewProducer where Context == SatelliteListViewContext, ProducedView == SatelliteListView {
@@ -252,7 +271,8 @@ struct SatelliteListView_Previews: PreviewProvider {
             ),
             context: SatelliteListViewContext(
                 category: .brightest100,
-                julianDateRange: Date(daysSince1950: 1000).julianDate..<Date(daysSince1950: 1002).julianDate
+                julianDateRange: Date(daysSince1950: 1000).julianDate..<Date(daysSince1950: 1002).julianDate,
+                observer: nil
             ),
             allPassesViewProducer: .crash
         )

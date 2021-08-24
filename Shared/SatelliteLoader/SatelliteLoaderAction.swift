@@ -11,7 +11,7 @@ import SatelliteForecastCore
 
 enum SatelliteLoaderAction {
     // Input
-    case loadSatelliteCategory(SatelliteCategory, shouldCalculatePasses: Bool = false)
+    case loadSatelliteCategory(SatelliteCategory, onCompletion: (Map<Int, SatelliteInfo>) -> AppAction? = { _ in nil })
 
     // Output
     case loadedSatelliteInfo(SatelliteCategory, Map<Int, SatelliteInfo>)
