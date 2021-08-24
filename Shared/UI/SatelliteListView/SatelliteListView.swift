@@ -56,15 +56,17 @@ fileprivate extension SatelliteInfo {
 struct SatelliteListViewState: Equatable {
     var satellites: Result<Map<Int, SatelliteInfo>, SatelliteLoaderError>?
     var satelliteSearchText: String = ""
-    var category: SatelliteCategory
     var selectedNoradIndex: Int?
 
-    static func project(state: Store.StateType) -> SatelliteListViewState? {
-        guard let category = state.navigationState.selectedCategory else {
-            return nil
-        }
-
-        let satellites: Result<Map<Int, SatelliteInfo>, SatelliteLoaderError>? = state.satelliteLoaderState.info[category]?.map { info in
+    static var empty: SatelliteListViewState {
+        SatelliteListViewState()
+    }
+    
+    static func project(
+        state: Store.StateType,
+        context: SatelliteListViewContext
+    ) -> SatelliteListViewState {
+        let satellites: Result<Map<Int, SatelliteInfo>, SatelliteLoaderError>? = state.satelliteLoaderState.info[context.category]?.map { info in
             if state.satelliteSearchText.isEmpty {
                 return info
             } else {
@@ -81,34 +83,21 @@ struct SatelliteListViewState: Equatable {
         return SatelliteListViewState(
             satellites: satellites,
             satelliteSearchText: state.satelliteSearchText,
-            category: category,
             selectedNoradIndex: state.navigationState.selectedSatelliteNoradIndex
         )
     }
 }
 
 struct SatelliteListView: View {
-    @ObservedObject var viewModel: ObservableViewModel<SatelliteListViewAction, SatelliteListViewState?>
-
+    @ObservedObject var viewModel: ObservableViewModel<SatelliteListViewAction, SatelliteListViewState>
+    let context: SatelliteListViewContext
     var allPassesViewProducer: ViewProducer<AllPassesViewContext, AllPassesView>
-
-    @ViewBuilder private func unwrapState<Content: View>(@ViewBuilder content: (SatelliteListViewState) -> Content) -> some View {
-        if let state = viewModel.state {
-            content(state)
-        }
-    }
-
-    var destination: some View {
-        allPassesViewProducer.view(
-            AllPassesViewContext()
-        )
-    }
 
     @ViewBuilder func satelliteContent<Content: View, FailedContent: View>(
         @ViewBuilder contentBuilder: (Map<Int, SatelliteInfo>) -> Content,
         @ViewBuilder failedContentBuilder: (SatelliteLoaderError) -> FailedContent
     ) -> some View {
-        switch viewModel.state?.satellites {
+        switch viewModel.state.satellites {
         case .none:
             ProgressView("Loading...")
         case let .success(satellites):
@@ -119,54 +108,57 @@ struct SatelliteListView: View {
     }
 
     private func satellitesView(_ satellites: Map<Int, SatelliteInfo>) -> some View {
-        unwrapState { state in
-            ScrollViewReader { proxy in
-                List {
-                    ForEach(Array(satellites.keys), id: \.self) { noradIndex in
-                        NavigationLink(
-                            destination: LazyView(destination),
-                            tag: noradIndex,
-                            selection: Binding<Int?>(
-                                get: { state.selectedNoradIndex },
-                                set: {
-                                    print("!!! \($0)")
-//                                    if $0 != nil {
-//                                        viewModel.dispatch(.selectSatellite(noradIndex: $0))
-//                                    }
-                                    viewModel.dispatch(.selectSatellite(noradIndex: $0))
-                                }
+        ScrollViewReader { proxy in
+            List {
+                ForEach(Array(satellites.keys), id: \.self) { noradIndex in
+                    NavigationLink(
+                        destination: LazyView(
+                            allPassesViewProducer.view(
+                                AllPassesViewContext(
+                                    selectedNoradIndex: noradIndex,
+                                    satelliteInfo: satellites[noradIndex]!,
+                                    julianDateRange: context.julianDateRange
+                                )
                             )
-                        ) {
-                            SatelliteCell(info: satellites[noradIndex]!)
-                        }
-                        .id(noradIndex)
+                        ),
+                        tag: noradIndex,
+                        selection: Binding<Int?>(
+                            get: { viewModel.state.selectedNoradIndex },
+                            set: {
+                                viewModel.dispatch(.selectSatellite(noradIndex: $0))
+                            }
+                        )
+                    ) {
+                        SatelliteCell(info: satellites[noradIndex]!)
                     }
-                }
-                .onAppear {
-                    if let noradIndex = state.selectedNoradIndex {
-                        proxy.scrollTo(noradIndex, anchor: nil)
-                    }
-                }
-                .onChange(of: state.selectedNoradIndex) { newValue in
-                    if let noradIndex = newValue {
-                        proxy.scrollTo(noradIndex, anchor: nil)
-                    }
+                    .id(noradIndex)
                 }
             }
-            .searchable(
-                text: Binding<String>(
-                    get: {
-                        state.satelliteSearchText
-                    }, set: {
-                        viewModel.dispatch(.satelliteSearchTextChanged($0))
-                    }
-                ),
-                placement: .navigationBarDrawer(displayMode: .always),
-                prompt: "Filter by name, ID, country, year..."
-            )
-            .listStyle(.insetGrouped)
-            .navigationTitle("Satellites")
+            .onAppear {
+                if let noradIndex = viewModel.state.selectedNoradIndex {
+                    proxy.scrollTo(noradIndex, anchor: nil)
+                }
+            }
+            .onChange(of: viewModel.state.selectedNoradIndex) { newValue in
+                if let noradIndex = newValue {
+                    proxy.scrollTo(noradIndex, anchor: nil)
+                }
+            }
         }
+        .searchable(
+            text: Binding<String>(
+                get: {
+                    viewModel.state.satelliteSearchText
+                }, set: {
+                    viewModel.dispatch(.satelliteSearchTextChanged($0))
+                }
+            ),
+            placement: .navigationBarDrawer(displayMode: .always),
+            prompt: "Filter by name, ID, country, year..."
+        )
+        .listStyle(.insetGrouped)
+        .navigationTitle("Satellites")
+        
     }
 
     private func failureView(_ error: Error) -> some View {
@@ -194,16 +186,27 @@ struct SatelliteListView: View {
     }
 }
 
-extension ViewProducer where Context == Void, ProducedView == SatelliteListView {
+struct SatelliteListViewContext {
+    var category: SatelliteCategory
+    var julianDateRange: Range<Double>
+}
+
+extension ViewProducer where Context == SatelliteListViewContext, ProducedView == SatelliteListView {
     static func satelliteListView<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
         ViewProducer<Context, ProducedView> { context in
             SatelliteListView(
                 viewModel: viewModel
                     .projection(
                         action: AppAction.satelliteListView,
-                        state: SatelliteListViewState.project(state:)
+                        state: { appState in 
+                            SatelliteListViewState.project(
+                                state: appState,
+                                context: context
+                            )
+                        }
                     )
-                    .asObservableViewModel(initialState: nil, emitsValue: .whenDifferent),
+                    .asObservableViewModel(initialState: .empty, emitsValue: .whenDifferent),
+                context: context,
                 allPassesViewProducer: ViewProducer<AllPassesViewContext, AllPassesView>
                     .allPassesView(viewModel: viewModel)
             )
@@ -244,20 +247,14 @@ struct SatelliteListView_Previews: PreviewProvider {
             viewModel: .mock(
                 state: SatelliteListViewState(
                     satellites: .success(brightest100),
-                    category: .brightest100,
                     selectedNoradIndex: nil
                 )
             ),
-            allPassesViewProducer: .pure(
-                AllPassesView(
-                    viewModel: .mock(
-                        state: nil
-                    ),
-                    context: AllPassesViewContext(),
-                    skyChartProducer: .crash,
-                    passViewProducer: .crash
-                )
-            )
+            context: SatelliteListViewContext(
+                category: .brightest100,
+                julianDateRange: Date(daysSince1950: 1000).julianDate..<Date(daysSince1950: 1002).julianDate
+            ),
+            allPassesViewProducer: .crash
         )
     }
 }

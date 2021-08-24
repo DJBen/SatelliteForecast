@@ -5,6 +5,7 @@
 //  Created by Ben Lu on 6/24/21.
 //
 
+import SatelliteForecastCore
 import SwiftUI
 import SwiftRex
 import CombineRex
@@ -20,22 +21,27 @@ enum SatelliteOverviewViewAction {
 
 struct SatelliteOverviewViewState: Equatable {
     var navigationState: NavigationState
+    var julianDate: Double
 
     static func project(state: AppState) -> SatelliteOverviewViewState {
         SatelliteOverviewViewState(
-            navigationState: state.navigationState
+            navigationState: state.navigationState,
+            julianDate: state.julianDate
         )
     }
 
     static var initial: SatelliteOverviewViewState {
-        SatelliteOverviewViewState(navigationState: .overview)
+        SatelliteOverviewViewState(
+            navigationState: .overview,
+            julianDate: 0
+        )
     }
 }
 
 struct SatelliteOverviewView: View {
     @ObservedObject var viewModel: ObservableViewModel<SatelliteOverviewViewAction, SatelliteOverviewViewState>
-    let listViewProducer: ViewProducer<Void, SatelliteListView>
-    let singleSatelliteWrappingViewProducer: ViewProducer<Void, SingleSatelliteWrappingView>
+    let listViewProducer: ViewProducer<SatelliteListViewContext, SatelliteListView>
+    let singleSatelliteWrappingViewProducer: ViewProducer<SingleSatelliteWrappingViewContext, SingleSatelliteWrappingView>
     let observerCellViewProducer: ViewProducer<Void, ObserverCell>
     let locationSettingsViewProducer: ViewProducer<Void, LocationSettingsView>
     let alarmSettingsCellProducer: ViewProducer<Void, AlarmSettingsCell>
@@ -59,10 +65,20 @@ struct SatelliteOverviewView: View {
 
     @ViewBuilder private func destination(for item: SatelliteOverviewItem) -> some View {
         switch item {
-        case .specialSatellites(_):
-            singleSatelliteWrappingViewProducer.view()
-        case .category(_):
-            listViewProducer.view()
+        case let .specialSatellites(satellite):
+            singleSatelliteWrappingViewProducer.view(
+                SingleSatelliteWrappingViewContext(
+                    selectedNoradIndex: satellite.rawValue,
+                    julianDateRange: JulianDateUtil.createJulianDateRange(now: viewModel.state.julianDate)
+                )
+            )
+        case let .category(category):
+            listViewProducer.view(
+                SatelliteListViewContext(
+                    category: category,
+                    julianDateRange: JulianDateUtil.createJulianDateRange(now: viewModel.state.julianDate)
+                )
+            )
         case let .settings(settings):
             switch settings {
             case .observer:
@@ -159,9 +175,9 @@ extension ViewProducer where Context == Void, ProducedView == SatelliteOverviewV
                     state: SatelliteOverviewViewState.project(state:)
                 )
                 .asObservableViewModel(initialState: .initial, emitsValue: .whenDifferent),
-                listViewProducer: ViewProducer<Void, SatelliteListView>
+                listViewProducer: ViewProducer<SatelliteListViewContext, SatelliteListView>
                     .satelliteListView(viewModel: viewModel),
-                singleSatelliteWrappingViewProducer: ViewProducer<Void, SingleSatelliteWrappingView>.singleSatelliteWrappingView(viewModel: viewModel),
+                singleSatelliteWrappingViewProducer: ViewProducer<SingleSatelliteWrappingViewContext, SingleSatelliteWrappingView>.singleSatelliteWrappingView(viewModel: viewModel),
                 observerCellViewProducer: ViewProducer<Void, ObserverCell>.observerCell(viewModel: viewModel),
                 locationSettingsViewProducer: ViewProducer<Void, LocationSettingsView>.locationSettings(viewModel: viewModel),
                 alarmSettingsCellProducer: ViewProducer<Void, AlarmSettingsCell>.alarmSettingsCell(viewModel: viewModel),
@@ -176,7 +192,10 @@ struct SatelliteOverviewView_Previews: PreviewProvider {
     static var previews: some View {
         SatelliteOverviewView(
             viewModel: .mock(
-                state: SatelliteOverviewViewState(navigationState: .overview)
+                state: SatelliteOverviewViewState(
+                    navigationState: .overview,
+                    julianDate: 0
+                )
             ),
             listViewProducer: .crash,
             singleSatelliteWrappingViewProducer: .crash,

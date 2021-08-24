@@ -18,12 +18,13 @@ enum SingleSatelliteWrappingViewAction {
 
 struct SingleSatelliteWrappingViewState: Equatable {
     var satellite: Result<SatelliteInfo, SatelliteLoaderError>?
-    var noradIndex: Int
 
-    static func project(state: AppState) -> SingleSatelliteWrappingViewState? {
-        guard let noradIndex = state.navigationState.selectedSatelliteNoradIndex else {
-            return nil
-        }
+    static var empty: SingleSatelliteWrappingViewState {
+        SingleSatelliteWrappingViewState()
+    }
+
+    static func project(state: AppState, context: SingleSatelliteWrappingViewContext) -> SingleSatelliteWrappingViewState {
+        let noradIndex = context.selectedNoradIndex
         let satellite: Result<SatelliteInfo, SatelliteLoaderError>?
         switch state.satelliteLoaderState.info[.brightest100] {
         case .none:
@@ -35,49 +36,54 @@ struct SingleSatelliteWrappingViewState: Equatable {
         }
 
         return SingleSatelliteWrappingViewState(
-            satellite: satellite,
-            noradIndex: noradIndex
+            satellite: satellite
         )
     }
 }
 
 struct SingleSatelliteWrappingView: View {
-    @ObservedObject var viewModel: ObservableViewModel<SingleSatelliteWrappingViewAction, SingleSatelliteWrappingViewState?>
+    @ObservedObject var viewModel: ObservableViewModel<SingleSatelliteWrappingViewAction, SingleSatelliteWrappingViewState>
+    let context: SingleSatelliteWrappingViewContext
     let allPassesViewProducer: ViewProducer<AllPassesViewContext, AllPassesView>
 
     @ViewBuilder func satelliteContent<Content: View, FailedContent: View>(
         @ViewBuilder contentBuilder: (SatelliteInfo) -> Content,
         @ViewBuilder failedContentBuilder: (Int, SatelliteLoaderError) -> FailedContent
     ) -> some View {
-        if let state = viewModel.state {
-            Group {
-                switch state.satellite {
-                case .none:
-                    ProgressView("Loading...")
-                case let .success(satellite):
-                    contentBuilder(satellite)
-                case let .failure(error):
-                    failedContentBuilder(state.noradIndex, error)
-                }
+        let satellite = viewModel.state.satellite
+        Group {
+            switch satellite {
+            case .none:
+                ProgressView("Loading...")
+            case let .success(satellite):
+                contentBuilder(satellite)
+            case let .failure(error):
+                failedContentBuilder(context.selectedNoradIndex, error)
             }
-            .onAppear {
-                if case .success(_) = state.satellite {
-                    viewModel.dispatch(.calculateSingleSatellitePass(noradIndex: state.noradIndex))
-                }
+        }
+        .onAppear {
+            if case .success(_) = satellite {
+                viewModel.dispatch(.calculateSingleSatellitePass(noradIndex: context.selectedNoradIndex))
             }
-            .onChange(of: state.satellite) { newValue in
-                if newValue == .none {
-                    return
-                }
-                
-                viewModel.dispatch(.calculateSingleSatellitePass(noradIndex: state.noradIndex))
+        }
+        .onChange(of: satellite) { newValue in
+            if newValue == .none {
+                return
             }
+            
+            viewModel.dispatch(.calculateSingleSatellitePass(noradIndex: context.selectedNoradIndex))
         }
     }
 
     var body: some View {
-        satelliteContent { satellite in
-            allPassesViewProducer.view(AllPassesViewContext())
+        satelliteContent { satelliteInfo in
+            allPassesViewProducer.view(
+                AllPassesViewContext(
+                    selectedNoradIndex: satelliteInfo.noradIndex,
+                    satelliteInfo: satelliteInfo,
+                    julianDateRange: context.julianDateRange
+                )
+            )
         }
         failedContentBuilder: { noradIndex, error in
             VStack(spacing: 16) {
@@ -94,15 +100,26 @@ struct SingleSatelliteWrappingView: View {
     }
 }
 
-extension ViewProducer where Context == Void, ProducedView == SingleSatelliteWrappingView {
+struct SingleSatelliteWrappingViewContext {
+    var selectedNoradIndex: Int
+    var julianDateRange: Range<Double>
+}
+
+extension ViewProducer where Context == SingleSatelliteWrappingViewContext, ProducedView == SingleSatelliteWrappingView {
     static func singleSatelliteWrappingView<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
         ViewProducer<Context, ProducedView> { context in
             SingleSatelliteWrappingView(
                 viewModel: viewModel.projection(
                     action: AppAction.singleSatelliteWrappingView,
-                    state: SingleSatelliteWrappingViewState.project(state:)
+                    state: { appAction in 
+                        SingleSatelliteWrappingViewState.project(
+                            state: appAction,
+                            context: context
+                        )
+                    }
                 )
-                .asObservableViewModel(initialState: nil, emitsValue: .whenDifferent),
+                .asObservableViewModel(initialState: .empty, emitsValue: .whenDifferent),
+                context: context,
                 allPassesViewProducer: ViewProducer<AllPassesViewContext, AllPassesView>
                     .allPassesView(viewModel: viewModel)
             )
@@ -114,7 +131,11 @@ extension ViewProducer where Context == Void, ProducedView == SingleSatelliteWra
 struct SingleSatelliteWrappingView_Previews: PreviewProvider {
     static var previews: some View {
         SingleSatelliteWrappingView(
-            viewModel: .mock(state: nil),
+            viewModel: .mock(state: .empty),
+            context: SingleSatelliteWrappingViewContext(
+                selectedNoradIndex: 0,
+                julianDateRange: Date(daysSince1950: 1000).julianDate..<Date(daysSince1950: 1002).julianDate
+            ),
             allPassesViewProducer: .crash
         )
     }
