@@ -46,7 +46,7 @@ struct PassView: View {
                         configs: .preset
                     )
                 )
-                .frame(height: 250, alignment: .leading)
+                .frame(minHeight: 180, idealHeight: 240, maxHeight: 275, alignment: .leading)
                 
                 skyChartProducer.view(
                     SkyChartContext(

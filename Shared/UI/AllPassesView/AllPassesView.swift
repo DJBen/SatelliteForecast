@@ -231,7 +231,7 @@ struct AllPassesView: View {
                             skyChartProducer: skyChartProducer
                         )
                     }
-                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 25))
+                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10))
                     .frame(height: 135)
                     .swipeActions(
                         edge: .leading
