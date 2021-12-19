@@ -61,19 +61,22 @@ struct PassPreviewCell: View {
                     .foregroundColor(visiblityColor)
                     .frame(width: 12, alignment: .leading)
 
-                HStack(alignment: .top) {
-                    VStack(alignment: .leading) {
-                        Text(LocalizedStrings.PassPreviewCell.titleForPassVisibility(pass.visibility))
-                            .font(.headline)
-                        Text("∠\(Self.numberFormatter.string(from: NSNumber(value: pass.transit.elev))!)°")
-                            .font(.body)
-                        if hasScheduledAlert {
-                            Spacer(minLength: 8)
-                            Image(systemName: "bell.fill")
-                                .font(.title3)
+                HStack(alignment: .top, spacing: 0) {
+                    // Column 1: Day light and elevation
+                    if geometry.size.width >= 350 {
+                        VStack(alignment: .leading) {
+                            Text(LocalizedStrings.PassPreviewCell.titleForPassVisibility(pass.visibility))
+                                .font(.headline)
+                            Text("∠\(Self.numberFormatter.string(from: NSNumber(value: pass.transit.elev))!)°")
+                                .font(.body)
+                            if hasScheduledAlert {
+                                Spacer(minLength: 8)
+                                Image(systemName: "bell.fill")
+                                    .font(.title3)
+                            }
                         }
+                        .frame(width: 72)
                     }
-                    .frame(width: 72)
 
                     VStack(alignment: .leading) {
                         Text(Self.dateFormatter.string(from: Date(julianDate: pass.rise.julianDate)))
@@ -219,14 +222,24 @@ struct PassPreviewCell_Previews: PreviewProvider {
                     )
                 )
             )
-            .previewLayout(.fixed(width: 375, height: 125))
         }
 
         return Group {
-            viewAtPassIndex(0)
-            viewAtPassIndex(2)
-            viewAtPassIndex(3)
-            viewAtPassIndex(4)
+            Group {
+                viewAtPassIndex(0)
+                viewAtPassIndex(2)
+                viewAtPassIndex(3)
+                viewAtPassIndex(4)
+            }
+            .previewLayout(.fixed(width: 375, height: 125))
+            
+            Group {
+                viewAtPassIndex(0)
+                viewAtPassIndex(2)
+                viewAtPassIndex(3)
+                viewAtPassIndex(4)
+            }
+            .previewLayout(.fixed(width: 325, height: 125))
         }
     }
 }

@@ -182,7 +182,7 @@ struct SatelliteOverviewView: View {
             .navigationBarTitle("Overview", displayMode: .inline)
             .navigationBarHidden(true)
         }
-        .navigationViewStyle(StackNavigationViewStyle())
+        .navigationViewStyle(.stack)
     }
 }
 
