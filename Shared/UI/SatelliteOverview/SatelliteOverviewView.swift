@@ -147,15 +147,31 @@ struct SatelliteOverviewView: View {
                     observerCellViewProducer: observerCellViewProducer,
                     alarmSettingsCellProducer: alarmSettingsCellProducer
                 )
-                .fixedSize(horizontal: false, vertical: true)
             }
         )
     }
 
-    private func sectionView(_ section: SatelliteOverviewSection) -> some View {
-        ForEach(section.items, id: \.self) { item in
-            navigationLink(for: item)
-                .id(item)
+    @ViewBuilder private func sectionView(_ section: SatelliteOverviewSection) -> some View {
+        switch section {
+        case .categories(_):
+            LazyVGrid(
+                columns: [
+                    GridItem(.flexible()),
+                    GridItem(.flexible())
+                ],
+                alignment: .leading,
+                spacing: 10
+            ) {
+                ForEach(section.items, id: \.self) { item in
+                    navigationLink(for: item)
+                        .id(item)
+                }
+            }
+        case .satellitesOfSpecialInterest(_), .settings(_):
+            ForEach(section.items, id: \.self) { item in
+                navigationLink(for: item)
+                    .id(item)
+            }
         }
     }
 

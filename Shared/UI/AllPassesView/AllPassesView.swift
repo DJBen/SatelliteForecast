@@ -269,6 +269,15 @@ struct AllPassesView: View {
         .textCase(nil)
     }
     
+    @ViewBuilder private func observerHeader(observer: LatLonAlt) -> some View {
+        Text(
+            LocalizedStrings.AllPassesView.Section.ObserverInfo.body(observer: observer)
+        )
+        .font(.headline.lowercaseSmallCaps())
+        .foregroundColor(Color(UIColor.secondaryLabel))
+        .textCase(nil)
+    }
+    
     var body: some View {
         VStack(spacing: 0) {
             if let locationChangeWarningState = viewModel.state.locationChangeWarningState {
@@ -291,6 +300,10 @@ struct AllPassesView: View {
             
             if let observer = context.observer {
                 List {
+                    Section(header: observerHeader(observer: observer)) {
+                        EmptyView()
+                    }
+                    
                     Section(header: visiblePassHeader) {
                         passesList(viewModel.state.visiblePasses, observer: observer)
                     }
@@ -324,6 +337,7 @@ struct AllPassesView: View {
                         .font(.headline)
                         .frame(alignment: .center)
                         .multilineTextAlignment(.center)
+                    
                     Text(
                         LocalizedStrings.AllPassesView.searchPassRangeToolbarText(
                             range: context.julianDateRange,
@@ -334,7 +348,6 @@ struct AllPassesView: View {
                     .font(.caption)
                     .frame(alignment: .center)
                     .multilineTextAlignment(.center)
-                    Color.clear
                 }
             }
         }

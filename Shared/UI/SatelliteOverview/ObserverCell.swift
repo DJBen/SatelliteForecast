@@ -31,6 +31,7 @@ struct ObserverCellState: Equatable {
 
 struct ObserverCell: View {
     @ObservedObject var viewModel: ObservableViewModel<ObserverCellAction, ObserverCellState>
+    @State private var textRegionSize: CGSize = .zero
 
     @Environment(\.colorScheme) private var colorScheme
 
@@ -183,7 +184,7 @@ struct ObserverCell: View {
     var body: some View {
         VStack(alignment: .leading) {
             Spacer()
-                .frame(height: 120)
+                .frame(height: 135)
 
             ZStack {
                 Color.clear
@@ -253,7 +254,7 @@ struct ObserverCell_Previews: PreviewProvider {
                 )
             )
         )
-        .fixedSize(horizontal: false, vertical: true)
+        .previewLayout(.fixed(width: 200, height: 200))
 
         ObserverCell(
             viewModel: .mock(
@@ -264,7 +265,8 @@ struct ObserverCell_Previews: PreviewProvider {
                 )
             )
         )
-        .fixedSize(horizontal: false, vertical: true)
+        .previewLayout(.fixed(width: 200, height: 200))
+
     }
 }
 #endif

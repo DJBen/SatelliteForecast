@@ -31,10 +31,12 @@ struct AlarmSettingsCell: View {
     @Environment(\.colorScheme) private var colorScheme
 
     private var background: some View {
-        var colors = [UIColor.systemPink, UIColor.systemPurple]
+        var colors = [UIColor.systemYellow, UIColor.systemOrange]
         
         if colorScheme == .dark {
             colors = colors.map { $0.darken(by: 0.3) }
+        } else {
+            colors = colors.map { $0.darken(by: -0.3) }
         }
         
         return LinearGradient(
@@ -45,26 +47,23 @@ struct AlarmSettingsCell: View {
     }
     
     var body: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                HStack {
-                    Image(systemName: viewModel.state.scheduledPassNotifications.isEmpty ? "bell" : "bell.fill")
-                        .font(.headline)
-                        .foregroundColor(Color(UIColor.label))
-                    
-                    Text(LocalizedStrings.AlarmSettingsCell.title)
-                        .font(.headline)
-                        .foregroundColor(Color(UIColor.label))
-
-                    Spacer()
-                }
-
-                Text(LocalizedStrings.AlarmSettingsCell.description(numberOfAlerts: viewModel.state.scheduledPassNotifications.count))
-                    .font(.caption)
-                    .multilineTextAlignment(.leading)
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Image(systemName: viewModel.state.scheduledPassNotifications.isEmpty ? "bell" : "bell.fill")
+                    .font(.headline)
                     .foregroundColor(Color(UIColor.label))
+                
+                Text(LocalizedStrings.AlarmSettingsCell.title)
+                    .font(.headline)
+                    .foregroundColor(Color(UIColor.label))
+
+                Spacer()
             }
-        
+
+            Text(LocalizedStrings.AlarmSettingsCell.description(numberOfAlerts: viewModel.state.scheduledPassNotifications.count))
+                .font(.caption)
+                .multilineTextAlignment(.leading)
+                .foregroundColor(Color(UIColor.label))
         }
         .padding()
         .background(background)

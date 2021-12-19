@@ -9,6 +9,7 @@ import Foundation
 import SatelliteCatalog
 import SatelliteForecastCore
 import SatelliteKit
+import CoreLocation
 
 enum LocalizedStrings {
     enum Directions {
@@ -644,6 +645,22 @@ enum LocalizedStrings {
         }
 
         enum Section {
+            enum ObserverInfo {
+                static func body(observer: LatLonAlt) -> String {
+                    let format = NSLocalizedString(
+                        "AllPassesView.section.observer.body",
+                        tableName: nil,
+                        bundle: .main,
+                        value: "You are observing from %@.",
+                        comment: "The body of observer info"
+                    )
+                    return String(format: format,             CLLocationCoordinate2D(
+                        latitude: observer.lat,
+                        longitude: observer.lon
+                    ).formattedString)
+                }
+            }
+            
             enum VisiblePasses {
                 static var header: String {
                     NSLocalizedString(

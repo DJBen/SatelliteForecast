@@ -42,18 +42,17 @@ struct SatelliteOverviewSpecialSatelliteCell: View {
 
     @Environment(\.colorScheme) private var colorScheme
 
-    private func background(satellite: SatelliteOverviewItem.SatellitesOfSpecialInterest) -> some View {
+    @ViewBuilder private func background(satellite: SatelliteOverviewItem.SatellitesOfSpecialInterest) -> some View {
         switch satellite {
         case .iss:
-            return AnyView(Image("25544")
+            Image("25544")
                 .resizable()
                 .aspectRatio(contentMode: .fill)
-            )
+            
         case .tianhe:
-            return AnyView(Image("48274")
+            Image("48274")
                 .resizable()
                 .aspectRatio(contentMode: .fill)
-            )
         }
     }
 
@@ -104,33 +103,37 @@ struct SatelliteOverviewCategoryCell: View {
         var colors: [UIColor]
         switch category {
         case .brightest100:
-            colors = [UIColor.systemTeal, UIColor.systemPurple]
+            colors = [UIColor.systemGreen, UIColor.systemTeal]
         case .active:
-            colors = [UIColor.systemTeal, UIColor.systemGreen]
+            colors = [UIColor.systemTeal, UIColor.systemPurple]
         case .last30DayLaunches:
-            colors = [UIColor.systemYellow, UIColor.systemOrange]
+            colors = [UIColor.systemGreen, UIColor.systemTeal]
         }
 
         if colorScheme == .dark {
             colors = colors.map { $0.darken(by: 0.3) }
+        } else {
+            colors = colors.map { $0.darken(by: -0.3) }
         }
 
-        return AnyView(LinearGradient(
-            gradient: Gradient(colors: colors.map(Color.init)),
-            startPoint: UnitPoint(x: 0, y: 0),
-            endPoint: UnitPoint(x: 1, y: 1)
-        ))
+        return AnyView(
+            LinearGradient(
+                gradient: Gradient(colors: colors.map(Color.init)),
+                startPoint: UnitPoint(x: 0, y: 0),
+                endPoint: UnitPoint(x: 1, y: 1)
+            )
+        )
     }
 
     var body: some View {
-        HStack {
-            Text(LocalizedStrings.SatelliteOverviewCell.categoryLocalizedString(category))
-                .font(.headline)
-                .foregroundColor(Color(UIColor.label))
-
-            Spacer()
-        }
+        Text(
+            LocalizedStrings.SatelliteOverviewCell.categoryLocalizedString(category)
+        )
+        .font(.headline)
+        .foregroundColor(Color(UIColor.label))
+        .multilineTextAlignment(.leading)
         .padding()
+        .frame(maxWidth: .infinity, idealHeight: 80, alignment: .leading)
         .background(background(category: category))
         .clipShape(
             RoundedRectangle(
@@ -138,59 +141,65 @@ struct SatelliteOverviewCategoryCell: View {
                 style: .continuous
             )
         )
+        .fixedSize(horizontal: false, vertical: true)
     }
 }
 
 #if DEBUG
 struct SatelliteOverviewCell_Previews: PreviewProvider {
     static var previews: some View {
-        ForEach(ColorScheme.allCases, id: \.self) { colorScheme in
-            LazyVGrid(
-                columns: [
-                    GridItem(.flexible())
-                ],
-                alignment: .leading,
-                spacing: 10,
-                content: {
-                    SatelliteOverviewCell(
-                        model: SatelliteOverviewCellModel(
-                            item: .specialSatellites(.iss)
-                        ),
-                        observerCellViewProducer: .crash,
-                        alarmSettingsCellProducer: .crash
-                    )
-                    SatelliteOverviewCell(
-                        model: SatelliteOverviewCellModel(
-                            item: .specialSatellites(.tianhe)
-                        ),
-                        observerCellViewProducer: .crash,
-                        alarmSettingsCellProducer: .crash
-                    )
-                    SatelliteOverviewCell(
-                        model: SatelliteOverviewCellModel(
-                            item: .category(.brightest100)
-                        ),
-                        observerCellViewProducer: .crash,
-                        alarmSettingsCellProducer: .crash
-                    )
-                    SatelliteOverviewCell(
-                        model: SatelliteOverviewCellModel(
-                            item: .category(.active)
-                        ),
-                        observerCellViewProducer: .crash,
-                        alarmSettingsCellProducer: .crash
-                    )
-                    SatelliteOverviewCell(
-                        model: SatelliteOverviewCellModel(
-                            item: .category(.last30DayLaunches)
-                        ),
-                        observerCellViewProducer: .crash,
-                        alarmSettingsCellProducer: .crash
+        ForEach(["iPhone SE (2nd generation)", "iPhone 13 Pro Max"], id: \.self) { previewDevice in
+            ForEach(ColorScheme.allCases, id: \.self) { colorScheme in
+                VStack {
+                    LazyVGrid(
+                        columns: [
+                            GridItem(.flexible())
+                        ],
+                        alignment: .leading,
+                        spacing: 10,
+                        content: {
+                            SatelliteOverviewCell(
+                                model: SatelliteOverviewCellModel(
+                                    item: .specialSatellites(.iss)
+                                ),
+                                observerCellViewProducer: .crash,
+                                alarmSettingsCellProducer: .crash
+                            )
+                            SatelliteOverviewCell(
+                                model: SatelliteOverviewCellModel(
+                                    item: .specialSatellites(.tianhe)
+                                ),
+                                observerCellViewProducer: .crash,
+                                alarmSettingsCellProducer: .crash
+                            )
+                            SatelliteOverviewCell(
+                                model: SatelliteOverviewCellModel(
+                                    item: .category(.brightest100)
+                                ),
+                                observerCellViewProducer: .crash,
+                                alarmSettingsCellProducer: .crash
+                            )
+                            SatelliteOverviewCell(
+                                model: SatelliteOverviewCellModel(
+                                    item: .category(.active)
+                                ),
+                                observerCellViewProducer: .crash,
+                                alarmSettingsCellProducer: .crash
+                            )
+                            SatelliteOverviewCell(
+                                model: SatelliteOverviewCellModel(
+                                    item: .category(.last30DayLaunches)
+                                ),
+                                observerCellViewProducer: .crash,
+                                alarmSettingsCellProducer: .crash
+                            )
+                        }
                     )
                 }
-            )
-            .padding()
-            .preferredColorScheme(colorScheme)
+                .padding()
+                .preferredColorScheme(colorScheme)
+            }
+            .previewDevice(PreviewDevice(rawValue:  previewDevice))
         }
     }
 }

@@ -19,7 +19,7 @@ extension UIColor {
         return UIColor(
             hue: h,
             saturation: s,
-            brightness: max(b - val, 0.0),
+            brightness: min(max(b - val, 0.0), 1.0),
             alpha: a
         )
     }
