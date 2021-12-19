@@ -249,8 +249,10 @@ struct AllPassesView: View {
         VStack(alignment: .leading, spacing: 4) {
             Text(LocalizedStrings.AllPassesView.Section.VisiblePasses.header)
                 .font(.headline.lowercaseSmallCaps())
+                .foregroundColor(Color(UIColor.label))
             Text(LocalizedStrings.AllPassesView.Section.VisiblePasses.headerCaption)
                 .font(.caption)
+                .foregroundColor(Color(UIColor.secondaryLabel))
         }
         .textCase(nil)
     }
@@ -259,8 +261,10 @@ struct AllPassesView: View {
         VStack(alignment: .leading, spacing: 4) {
             Text(LocalizedStrings.AllPassesView.Section.InvisiblePasses.header)
                 .font(.headline.lowercaseSmallCaps())
+                .foregroundColor(Color(UIColor.label))
             Text(LocalizedStrings.AllPassesView.Section.InvisiblePasses.headerCaption)
                 .font(.caption)
+                .foregroundColor(Color(UIColor.secondaryLabel))
         }
         .textCase(nil)
     }
@@ -295,7 +299,6 @@ struct AllPassesView: View {
                         passesList(viewModel.state.invisiblePasses, observer: observer)
                     }
                 }
-                .listStyle(.grouped)
             } else {
                 VStack(spacing: 8) {
                     Image(systemName: "questionmark.circle")
@@ -411,66 +414,69 @@ struct AllPassesView_Previews: PreviewProvider {
             julianDateRange: Date().julianDate..<Date().julianDate + 1,
             observer: observer
         )
-        NavigationView {
-            AllPassesView(
-                viewModel: .mock(
-                    state: AllPassesViewState(
-                        julianDate: Date().julianDate,
-                        visiblePasses: visiblePasses,
-                        invisiblePasses: invisiblePasses
-                    )
-                ),
-                context: context,
-                skyChartProducer: ViewProducer<SkyChartContext, SkyChart> { context in
-                    let pass = passes[0]
-                    return SkyChart(
-                        viewModel: .mock(
-                            state: SkyChartViewState(
-                                snapshots: SkyChartViewState.NotableSnapshots(
-                                    rise: SkyChartViewState.snapshotsAroundPass(
-                                        snapshots,
-                                        julianDate: pass.rise.julianDate,
-                                        selector: .first
-                                    )!,
-                                    transit: SkyChartViewState.snapshotsAroundPass(
-                                        snapshots,
-                                        julianDate: pass.transit.julianDate,
-                                        selector: .first
-                                    )!,
-                                    set: SkyChartViewState.snapshotsAroundPass(
-                                        snapshots,
-                                        julianDate: pass.set.julianDate,
-                                        selector: .last
-                                    )!,
-                                    illuminationChanges: BTree()
-                                ),
-                                referenceDate: pass.rise.julianDate
-                            )
-                        ),
-                        context: SkyChartContext(
-                            satelliteInfo: SatelliteInfo(noradIndex: 48274, satellite: tianHe),
-                            snapshots: snapshots,
-                            observer: observer,
-                            pass: pass,
-                            configs: SkyChartConfigs(
-                                backgroundSky: SkyChartConfigs.BackgroundSky(
-                                    stars: .limitedMagnitude(2),
-                                    showConstellationLines: false,
-                                    visibleBodies: [.sun, .moon],
-                                    bodySymbol: .symbol
-                                ),
-                                showAzimuthTexts: false,
-                                azimuthMarkInterval: 90,
-                                azimuthMarkLength: 2,
-                                showDirections: false,
-                                showPassInfoLabels: false
-                            ),
-                            quality: .preview
+        ForEach(["iPhone SE (2nd generation)", "iPhone 13 Pro Max"], id: \.self) { previewDevice in
+            NavigationView {
+                AllPassesView(
+                    viewModel: .mock(
+                        state: AllPassesViewState(
+                            julianDate: Date().julianDate,
+                            visiblePasses: visiblePasses,
+                            invisiblePasses: invisiblePasses
                         )
-                    )
-                },
-                passViewProducer: .crash
-            )
+                    ),
+                    context: context,
+                    skyChartProducer: ViewProducer<SkyChartContext, SkyChart> { context in
+                        let pass = passes[0]
+                        return SkyChart(
+                            viewModel: .mock(
+                                state: SkyChartViewState(
+                                    snapshots: SkyChartViewState.NotableSnapshots(
+                                        rise: SkyChartViewState.snapshotsAroundPass(
+                                            snapshots,
+                                            julianDate: pass.rise.julianDate,
+                                            selector: .first
+                                        )!,
+                                        transit: SkyChartViewState.snapshotsAroundPass(
+                                            snapshots,
+                                            julianDate: pass.transit.julianDate,
+                                            selector: .first
+                                        )!,
+                                        set: SkyChartViewState.snapshotsAroundPass(
+                                            snapshots,
+                                            julianDate: pass.set.julianDate,
+                                            selector: .last
+                                        )!,
+                                        illuminationChanges: BTree()
+                                    ),
+                                    referenceDate: pass.rise.julianDate
+                                )
+                            ),
+                            context: SkyChartContext(
+                                satelliteInfo: SatelliteInfo(noradIndex: 48274, satellite: tianHe),
+                                snapshots: snapshots,
+                                observer: observer,
+                                pass: pass,
+                                configs: SkyChartConfigs(
+                                    backgroundSky: SkyChartConfigs.BackgroundSky(
+                                        stars: .limitedMagnitude(2),
+                                        showConstellationLines: false,
+                                        visibleBodies: [.sun, .moon],
+                                        bodySymbol: .symbol
+                                    ),
+                                    showAzimuthTexts: false,
+                                    azimuthMarkInterval: 90,
+                                    azimuthMarkLength: 2,
+                                    showDirections: false,
+                                    showPassInfoLabels: false
+                                ),
+                                quality: .preview
+                            )
+                        )
+                    },
+                    passViewProducer: .crash
+                )
+            }
+            .previewDevice(PreviewDevice(rawValue:  previewDevice))
         }
     }
 }
