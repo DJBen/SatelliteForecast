@@ -12,7 +12,7 @@ import CoreLocation
 import MapKit
 import SatelliteKit
 
-class LocationMiddleware: NSObject, Middleware {
+class LocationMiddleware: NSObject, MiddlewareProtocol {
     typealias InputActionType = LocationAction
     typealias OutputActionType = AppAction
     typealias StateType = LocationState
@@ -43,17 +43,17 @@ class LocationMiddleware: NSObject, Middleware {
         output.dispatch(.location(.authorizationDidChange(locationManager.authorizationStatus)))
     }
 
-    func handle(action: LocationAction, from dispatcher: ActionSource, afterReducer: inout AfterReducer) {
-        afterReducer = .do { [weak self] in
+    func handle(action: InputActionType, from dispatcher: ActionSource, state: @escaping GetState<StateType>) -> IO<OutputActionType> {
+        return .init { [weak self] output in
             switch action {
             case .requestAuthorization:
                 self?.locationManager.requestWhenInUseAuthorization()
             case let .requestReverseGeocoding(location):
                 self?.geocoder.reverseGeocodeLocation(location) { placemarks, error in
                     if let placemarks = placemarks {
-                        self?.output.dispatch(.location(.reverseGeocodingFinished(.success(placemarks))))
+                        output.dispatch(.location(.reverseGeocodingFinished(.success(placemarks))))
                     } else if let error = error {
-                        self?.output.dispatch(.location(.reverseGeocodingFinished(.failure(error))))
+                        output.dispatch(.location(.reverseGeocodingFinished(.failure(error))))
                     }
                 }
             case let .requestAutoCompletion(searchTerm):
@@ -62,7 +62,7 @@ class LocationMiddleware: NSObject, Middleware {
                 switch selection {
                 case .currentLocation:
                     if let currentLocation = self?.getState().currentLocation {
-                        self?.output.dispatch(.location(.persistLocation(currentLocation)))
+                        output.dispatch(.location(.persistLocation(currentLocation)))
                     } else {
                         UIApplication.shared.open(
                             URL(string: UIApplication.openSettingsURLString)!,
@@ -73,18 +73,18 @@ class LocationMiddleware: NSObject, Middleware {
                     }
                 case let .custom(_, placemark):
                     if let location = placemark.location {
-                        self?.output.dispatch(.location(.persistLocation(location)))
+                        output.dispatch(.location(.persistLocation(location)))
                     }
                     break
                 }
-                self?.output.dispatch(.tlePropagator(.purgePassesAndSnapshots))
+                output.dispatch(.tlePropagator(.purgePassesAndSnapshots))
             case .authorizationDidChange(_):
                 break
             case let .locationChanged(location):
-                self?.output.dispatch(.location(.requestReverseGeocoding(location)))
+                output.dispatch(.location(.requestReverseGeocoding(location)))
                 
                 if self?.getState().selection == .currentLocation {
-                    self?.output.dispatch(.location(.persistLocation(location)))
+                    output.dispatch(.location(.persistLocation(location)))
                 }
             case .reverseGeocodingFinished(_):
                 break
