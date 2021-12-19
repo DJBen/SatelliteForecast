@@ -122,8 +122,6 @@ class Store: ReduxStoreBase<AppAction, AppState> {
 
         <> EffectMiddleware.debugMenu.lifted
 
-        // <> LoggerMiddleware()
-
         return composedMiddleware.eraseToAnyMiddleware()
     }
 

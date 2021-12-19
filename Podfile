@@ -15,7 +15,7 @@ target 'SatelliteForecast' do
   pod "SatelliteForecastCore", :path => './SatelliteForecastCore'
   pod "SwiftUIVisualEffects", :path => './SwiftUIVisualEffects'
 
-  target 'Tests iOS' do
+  target 'SatelliteForecastTests' do
     pod "TestingExtensions"
   end
 end
