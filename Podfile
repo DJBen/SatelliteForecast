@@ -1,4 +1,5 @@
 platform :ios, '15.0'
+inhibit_all_warnings!
 
 target 'SatelliteForecast' do
   use_frameworks!
@@ -19,3 +20,12 @@ target 'SatelliteForecast' do
     pod "TestingExtensions"
   end
 end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings.delete 'IPHONEOS_DEPLOYMENT_TARGET'
+    end
+  end
+end
+
