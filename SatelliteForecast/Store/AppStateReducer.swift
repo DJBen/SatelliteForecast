@@ -11,7 +11,7 @@ import SwiftRex
 
 fileprivate let logger = Logger(subsystem: "io.djben.appState", category: "reducer")
 
-extension Reducer where ActionType == AppAction, StateType == Store.StateType {
+extension Reducer where ActionType == AppAction, StateType == AppState {
     static let appStateReducer = Reducer.reduce { action, state in
         switch action {
         default:

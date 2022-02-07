@@ -67,7 +67,7 @@ struct SatelliteElevationGraphState: Equatable {
     }
 
     static func project(
-        state: Store.StateType,
+        state: AppState,
         context: SatelliteElevationGraphContext
     ) -> SatelliteElevationGraphState {
         let (satellite, julianDateRange, observer) = (context.satelliteInfo, context.julianDateRange, context.observer)

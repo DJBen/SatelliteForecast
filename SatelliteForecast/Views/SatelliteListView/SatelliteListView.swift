@@ -69,7 +69,7 @@ struct SatelliteListViewState: Equatable {
     }
     
     static func project(
-        state: Store.StateType,
+        state: AppState,
         context: SatelliteListViewContext
     ) -> SatelliteListViewState {
         let satellites: Result<Map<Int, SatelliteInfo>, SatelliteLoaderError>? = state.satelliteLoaderState.info[context.category]?.map { info in

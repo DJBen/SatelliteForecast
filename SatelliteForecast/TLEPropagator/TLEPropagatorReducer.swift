@@ -14,7 +14,7 @@ import BTree
 
 fileprivate let logger = Logger(subsystem: "io.djben.TLEPropagator", category: "reducer")
 
-extension Reducer where ActionType == TLEPropagatorAction, StateType == Store.StateType {
+extension Reducer where ActionType == TLEPropagatorAction, StateType == AppState {
     static let tlePropagatorReducer = Reducer.reduce { action, state in
         switch action {
         case let .foundPasses(passes, snapshots, noradIndex, observer):

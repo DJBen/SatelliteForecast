@@ -8,7 +8,7 @@
 import Foundation
 import SwiftRex
 
-extension Reducer where ActionType == SatelliteListViewAction, StateType == Store.StateType {
+extension Reducer where ActionType == SatelliteListViewAction, StateType == AppState {
     static let satelliteListViewReducer = Reducer.reduce { action, state in
         switch action {
         case let .selectSatellite(params):

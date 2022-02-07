@@ -9,7 +9,7 @@ import Foundation
 import SwiftRex
 import SatelliteKit
 
-extension Reducer where ActionType == AllPassesViewAction, StateType == Store.StateType {
+extension Reducer where ActionType == AllPassesViewAction, StateType == AppState {
     static let allPassesViewReducer = Reducer.reduce { action, state in
         switch action {
         case .calculatePasses:

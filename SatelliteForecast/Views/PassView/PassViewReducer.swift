@@ -8,7 +8,7 @@
 import Foundation
 import SwiftRex
 
-extension Reducer where ActionType == PassViewAction, StateType == Store.StateType {
+extension Reducer where ActionType == PassViewAction, StateType == AppState {
     static let passViewReducer = Reducer.reduce { action, state in
         switch action {
         case .onAppear:

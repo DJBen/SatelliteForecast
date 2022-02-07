@@ -20,6 +20,7 @@
 		EF1EDA2E269200B60088DD65 /* SatelliteElevationGraphResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1EDA2D269200B60088DD65 /* SatelliteElevationGraphResources.swift */; };
 		EF1EDA30269204420088DD65 /* SkyChartResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1EDA2F269204420088DD65 /* SkyChartResources.swift */; };
 		EF283B0526B23122008223C1 /* SkyChartDynamicIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF283B0426B23122008223C1 /* SkyChartDynamicIndicator.swift */; };
+		EF2EF4D827B11C0A000D5EC8 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = EF2EF4D727B11C0A000D5EC8 /* README.md */; };
 		EF2FBB2326CA74D60046EF28 /* AllPassesLocationChangeWarning.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF2FBB2226CA74D60046EF28 /* AllPassesLocationChangeWarning.swift */; };
 		EF3D099C2685A12200B84232 /* SatelliteOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3D099B2685A12200B84232 /* SatelliteOverviewView.swift */; };
 		EF3D099E26864DDF00B84232 /* SatelliteOverviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3D099D26864DDF00B84232 /* SatelliteOverviewCell.swift */; };
@@ -150,6 +151,7 @@
 		EF1EDA2D269200B60088DD65 /* SatelliteElevationGraphResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteElevationGraphResources.swift; sourceTree = "<group>"; };
 		EF1EDA2F269204420088DD65 /* SkyChartResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyChartResources.swift; sourceTree = "<group>"; };
 		EF283B0426B23122008223C1 /* SkyChartDynamicIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyChartDynamicIndicator.swift; sourceTree = "<group>"; };
+		EF2EF4D727B11C0A000D5EC8 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		EF2FBB2226CA74D60046EF28 /* AllPassesLocationChangeWarning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllPassesLocationChangeWarning.swift; sourceTree = "<group>"; };
 		EF3D099B2685A12200B84232 /* SatelliteOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteOverviewView.swift; sourceTree = "<group>"; };
 		EF3D099D26864DDF00B84232 /* SatelliteOverviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteOverviewCell.swift; sourceTree = "<group>"; };
@@ -499,6 +501,7 @@
 		EF9D82742661BBEF00616C97 = {
 			isa = PBXGroup;
 			children = (
+				EF2EF4D727B11C0A000D5EC8 /* README.md */,
 				EF9D82792661BBEF00616C97 /* SatelliteForecast */,
 				EF9D82942661BBF100616C97 /* SatelliteForecastTests */,
 				EF9D82822661BBF000616C97 /* Products */,
@@ -662,6 +665,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EF2EF4D827B11C0A000D5EC8 /* README.md in Resources */,
 				EF5A9080269FA50900EADA2D /* Assets.xcassets in Resources */,
 				EF5A9081269FA50900EADA2D /* Satellites.xcassets in Resources */,
 			);
