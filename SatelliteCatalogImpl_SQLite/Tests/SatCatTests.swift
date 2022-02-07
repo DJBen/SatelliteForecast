@@ -10,7 +10,6 @@ import XCTest
 import SQLite
 
 class SatCatTests: XCTestCase {
-
     func testReadingSatCat() throws {
         let DB = try! Connection(Bundle.SatelliteCatalogResourcesBundle.path(forResource: "satellites", ofType: "sqlite")!)
 

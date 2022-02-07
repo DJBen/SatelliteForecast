@@ -8,6 +8,7 @@
 import BTree
 import Combine
 import SatelliteCatalog
+import SatelliteCatalogImpl_SQLite
 import SatelliteForecastCore
 import SatelliteKit
 

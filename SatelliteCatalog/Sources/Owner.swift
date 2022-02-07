@@ -8,6 +8,10 @@
 import Foundation
 
 public struct Owner {
+    public init(code: String) {
+        self.code = code
+    }
+
     public let code: String
 
     public var fullName: String? {

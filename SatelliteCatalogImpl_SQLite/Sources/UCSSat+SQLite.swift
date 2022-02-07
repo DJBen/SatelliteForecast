@@ -5,7 +5,7 @@
 //  Created by Ben Lu on 6/24/21.
 //
 
-import Foundation
+import SatelliteCatalog
 import SQLite
 import SatelliteKit
 

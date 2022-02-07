@@ -13,6 +13,7 @@ target 'SatelliteForecast' do
   pod "SatelliteKit", :path => './SatelliteKit'
   pod "StarryNight", :path => './StarryNight'
   pod "SatelliteCatalog", :path => './SatelliteCatalog'
+  pod "SatelliteCatalogImpl_SQLite", :path => './SatelliteCatalogImpl_SQLite'
   pod "SatelliteForecastCore", :path => './SatelliteForecastCore'
   pod "SwiftUIVisualEffects", :path => './SwiftUIVisualEffects'
 

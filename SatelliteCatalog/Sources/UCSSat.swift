@@ -79,6 +79,70 @@ public struct UCSSat {
     public let sourceUsedForOrbitalData: String?
 
     public let sources: [String]
+
+    public init(
+        name: String,
+        officialName: String,
+        countryOrOrgOfUNRegistry: String,
+        countryOfOperatorOrOwner: String,
+        operatorOrOwner: String,
+        users: String,
+        purpose: String,
+        detailedPurpose: String?,
+        classOfOrbit: UCSSat.ClassOfOrbit,
+        typeOfOrbit: String,
+        longitudeOfGEO: Double?,
+        perigee: Double?,
+        apogee: Double?,
+        eccentricity: Double?,
+        inclination: Double?,
+        period: Double?,
+        launchMass: Double?,
+        dryMass: Double?,
+        power: Double?,
+        dateOfLaunch: Date,
+        expectedLifetime: Double?,
+        contractor: String?,
+        countryOfContractor: String?,
+        launchSite: String,
+        launchVehicle: String,
+        cosparID: String,
+        noradID: Int,
+        comments: [String],
+        sourceUsedForOrbitalData: String?,
+        sources: [String]
+    ) {
+        self.name = name
+        self.officialName = officialName
+        self.countryOrOrgOfUNRegistry = countryOrOrgOfUNRegistry
+        self.countryOfOperatorOrOwner = countryOfOperatorOrOwner
+        self.operatorOrOwner = operatorOrOwner
+        self.users = users
+        self.purpose = purpose
+        self.detailedPurpose = detailedPurpose
+        self.classOfOrbit = classOfOrbit
+        self.typeOfOrbit = typeOfOrbit
+        self.longitudeOfGEO = longitudeOfGEO
+        self.perigee = perigee
+        self.apogee = apogee
+        self.eccentricity = eccentricity
+        self.inclination = inclination
+        self.period = period
+        self.launchMass = launchMass
+        self.dryMass = dryMass
+        self.power = power
+        self.dateOfLaunch = dateOfLaunch
+        self.expectedLifetime = expectedLifetime
+        self.contractor = contractor
+        self.countryOfContractor = countryOfContractor
+        self.launchSite = launchSite
+        self.launchVehicle = launchVehicle
+        self.cosparID = cosparID
+        self.noradID = noradID
+        self.comments = comments
+        self.sourceUsedForOrbitalData = sourceUsedForOrbitalData
+        self.sources = sources
+    }
 }
 
 extension UCSSat: Equatable {}
