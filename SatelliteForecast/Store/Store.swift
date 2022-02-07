@@ -37,8 +37,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         Reducer<TimerAction, AppState>.timerReducer
             .lift(action: \.timer),
         Reducer<DebugMenuAction, AppState>.debugMenuReducer
-            .lift(action: \.debugMenu),
-        Reducer<AppAction, AppState>.appStateReducer,
+            .lift(action: \.debugMenu)
     ]
     .reduce(Reducer<AppAction, AppState>.identity, <>)
 
@@ -46,7 +45,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         satelliteLoader: SatelliteLoader
     ) -> AnyMiddleware<AppAction, AppAction, AppState> {
 
-        let composedMiddleware = LocationMiddleware().lifted
+        let composedMiddleware = LocationMiddleware().lift()
         
         <> EffectMiddleware.appDelegate
             .lift(
@@ -54,7 +53,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             )
             .eraseToAnyMiddleware()
 
-        <> EffectMiddleware.backgroundTask.lifted
+        <> EffectMiddleware.backgroundTask.lift()
         
         <> EffectMiddleware.notification
             .lift(
@@ -62,10 +61,10 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             )
             .eraseToAnyMiddleware()
         
-        <> EffectMiddleware.locationLogger.lifted
+        <> EffectMiddleware.locationLogger.lift()
 
         <> EffectMiddleware.satelliteLoader(satelliteLoader)
-            .lifted
+            .lift()
             .inject(
                 SatelliteLoaderDependencies()
             )
@@ -117,10 +116,12 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             .eraseToAnyMiddleware()
         
         <> EffectMiddleware.alarmSettingsView
-            .lift(inputAction: \.alarmSettingsView)
+            .lift(
+                inputAction: \.alarmSettingsView
+            )
             .eraseToAnyMiddleware()
 
-        <> EffectMiddleware.debugMenu.lifted
+        <> EffectMiddleware.debugMenu.lift()
 
         return composedMiddleware.eraseToAnyMiddleware()
     }

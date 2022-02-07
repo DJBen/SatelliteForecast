@@ -97,6 +97,14 @@ class LocationMiddleware: NSObject, MiddlewareProtocol {
             }
         }
     }
+
+    func lift() -> AnyMiddleware<AppAction, AppAction, AppState> {
+        return lift(
+            inputAction: \AppAction.location,
+            state: \AppState.locationState
+        )
+        .eraseToAnyMiddleware()
+    }
 }
 
 extension LocationMiddleware: CLLocationManagerDelegate {
@@ -160,5 +168,14 @@ extension EffectMiddleware where InputActionType == LocationAction, OutputAction
                 }
             return .doNothing
         }
+    }
+
+    func lift() -> AnyMiddleware<AppAction, AppAction, AppState> {
+        return lift(
+            inputAction: \.location,
+            outputAction: { _ -> AppAction in },
+            state: { _ in }
+        )
+        .eraseToAnyMiddleware()
     }
 }

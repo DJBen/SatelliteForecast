@@ -58,4 +58,11 @@ extension EffectMiddleware where
             }
         }
     }
+
+    func lift() -> AnyMiddleware<AppAction, AppAction, AppState> {
+        return lift(
+            inputAction: \.backgroundTask
+        )
+        .eraseToAnyMiddleware()
+    }
 }

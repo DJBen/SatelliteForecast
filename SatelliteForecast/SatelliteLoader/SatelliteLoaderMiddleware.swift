@@ -82,3 +82,12 @@ extension EffectMiddleware where
         }
     }
 }
+
+extension MiddlewareReader where MiddlewareType == EffectMiddleware<SatelliteLoaderAction, AppAction, SatelliteLoaderState, SatelliteLoaderDependencies>, Dependencies == SatelliteLoaderDependencies {
+    func lift() -> MiddlewareReader<SatelliteLoaderDependencies, LiftMiddleware<AppAction, AppAction, AppState, EffectMiddleware<SatelliteLoaderAction, AppAction, SatelliteLoaderState, SatelliteLoaderDependencies>>> {
+        return lift(
+            inputAction: \AppAction.satelliteLoader,
+            state: \AppState.satelliteLoaderState
+        )
+    }
+}

@@ -83,42 +83,6 @@ extension SatelliteLoaderImpl: SatelliteLoader {
             }
             .eraseToAnyPublisher()
     }
-    
-//    func loadSatelliteCategoryPublisher(category: SatelliteCategory) -> AnyPublisher<SatelliteLoaderAction, Never> {
-//        session
-//            .dataTaskPublisher(for: URLRequest(url: category.url))
-//            .map { $0.data }
-//            .tryCatch { error in
-//                // Try to load local file if exists when network failed.
-//                loadLocalSatelliteDataPublisher(category: category, upstreamError: error)
-//            }
-//            .mapError { SatelliteLoaderError.other($0) }
-//            .tryMap { data -> SatelliteLoaderAction in
-//                precondition(!Thread.isMainThread)
-//                let tles = try TLE.load(chunk: String(data: data, encoding: .utf8)!)
-//                let info = tles
-//                    .map(SatelliteInfo.init(tle:))
-//                    // Sort the satellite list in reverse chronological order of the freshness of TLE.
-//                    .sorted(by: { $0.satellite.t₀Days1950 > $1.satellite.t₀Days1950 })
-//                    .reduce(into: Map<Int, SatelliteInfo>(), { $0[$1.noradIndex] = $1 })
-//
-//                saveLocalSatelliteData(category: category, data: data)
-//
-//                return .loadedSatelliteInfo(category, info)
-//
-//            }
-//            .mapError { error in
-//                if let satKitError = error as? SatKitError {
-//                    return .tle(satKitError)
-//                } else {
-//                    return .other(error)
-//                }
-//            }
-//            .catch { error in
-//                Just(.failedLoadingTLEFile(category, error))
-//            }
-//            .eraseToAnyPublisher()
-//    }
 }
 
 fileprivate extension SatelliteInfo {
