@@ -223,23 +223,23 @@ extension ViewProducer where Context == Void, ProducedView == SatelliteOverviewV
     }
 }
 
-#if DEBUG
-struct SatelliteOverviewView_Previews: PreviewProvider {
-    static var previews: some View {
-        SatelliteOverviewView(
-            viewModel: .mock(
-                state: SatelliteOverviewViewState(
-                    navigationState: .overview,
-                    julianDate: 0
-                )
-            ),
-            listViewProducer: .crash,
-            singleSatelliteWrappingViewProducer: .crash,
-            observerCellViewProducer: .crash,
-            locationSettingsViewProducer: .crash,
-            alarmSettingsCellProducer: .crash,
-            alarmSettingsViewProducer: .crash
-        )
-    }
-}
-#endif
+//#if DEBUG
+//struct SatelliteOverviewView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        SatelliteOverviewView(
+//            viewModel: .mock(
+//                state: SatelliteOverviewViewState(
+//                    navigationState: .overview,
+//                    julianDate: 0
+//                )
+//            ),
+//            listViewProducer: .crash,
+//            singleSatelliteWrappingViewProducer: .crash,
+//            observerCellViewProducer: .crash,
+//            locationSettingsViewProducer: .crash,
+//            alarmSettingsCellProducer: .crash,
+//            alarmSettingsViewProducer: .crash
+//        )
+//    }
+//}
+//#endif

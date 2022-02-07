@@ -89,7 +89,7 @@
 		EF1CAB44266CC8F2006319C8 /* TLEPropagatorAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TLEPropagatorAction.swift; sourceTree = "<group>"; };
 		EF1CAB4B266DBD38006319C8 /* SatelliteListViewMiddlewareTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteListViewMiddlewareTests.swift; sourceTree = "<group>"; };
 		EF35EAD0266E1A37004FE7FD /* TLEPropagatorReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TLEPropagatorReducer.swift; sourceTree = "<group>"; };
-		EF35EAD2266E1EC6004FE7FD /* TimerMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TimerMiddleware.swift; path = Shared/TimerMiddleware.swift; sourceTree = SOURCE_ROOT; };
+		EF35EAD2266E1EC6004FE7FD /* TimerMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TimerMiddleware.swift; path = SatelliteForecast/TimerMiddleware.swift; sourceTree = SOURCE_ROOT; };
 		EF35EAD6266E2220004FE7FD /* TimerReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerReducer.swift; sourceTree = "<group>"; };
 		EF4AF76B266434CC00D28F47 /* SkyChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyChart.swift; sourceTree = "<group>"; };
 		EF7A311D266AFBF800CC33C0 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
@@ -639,7 +639,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 52RD2GH5DP;
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = Shared/Info.plist;
+				INFOPLIST_FILE = SatelliteForecast/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -662,7 +662,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 52RD2GH5DP;
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = Shared/Info.plist;
+				INFOPLIST_FILE = SatelliteForecast/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
