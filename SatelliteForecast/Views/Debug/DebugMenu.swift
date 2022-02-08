@@ -38,10 +38,6 @@ struct DebugMenuConfig: Equatable {
     var effectiveOffset: Double {
         mockedOffsetOn ? mockedOffset : 0
     }
-
-    static var empty: DebugMenuConfig {
-        return DebugMenuConfig()
-    }
 }
 
 struct DebugMenuState: Equatable {
@@ -52,11 +48,17 @@ struct DebugMenuState: Equatable {
 
     static func project(state: AppState) -> DebugMenuState {
         DebugMenuState(
-            trueJulianDate: state.satelliteLoaderState.currentDate,
+            trueJulianDate: state.currentDate,
             config: state.debugMenu,
             pendingNotifications: state.notificationState.pendingNotifications,
             deliveredNotifications: state.notificationState.deliveredNotifications
         )
+    }
+
+    static func apply(appState: inout AppState, state: DebugMenuState) {
+        appState.debugMenu = state.config
+        appState.notificationState.pendingNotifications = state.pendingNotifications
+        appState.notificationState.deliveredNotifications = state.deliveredNotifications
     }
 }
 
@@ -258,7 +260,7 @@ struct DebugMenu_Previews: PreviewProvider {
             viewModel: .mock(
                 state: DebugMenuState(
                     trueJulianDate: 2459420.60909,
-                    config: .empty,
+                    config: .init(),
                     pendingNotifications: [
                         UNNotificationRequest(
                             identifier: "id1",

@@ -12,15 +12,15 @@ extension Reducer where ActionType == SatelliteOverviewViewAction, StateType == 
     static let satelliteOverviewReducer = Reducer.reduce { action, state in
         switch action {
         case let .selectSpecialSatellite(params):
-            state.navigationState.selectSatellite(noradIndex: params.noradIndex)
+            state.navigationState.specialSatelliteNavigation.noradIndex = params.noradIndex
         case let .selectCategory(category):
-            state.navigationState.selectSatelliteCategory(category: category)
+            state.navigationState.listNavigation.category = category
         case .selectObserver:
-            state.navigationState.selectLocationSettings()
+            state.navigationState.observerNavigation.enabled = true
         case .selectAlert:
-            state.navigationState.showAlertSettings()
+            state.navigationState.alarmNavigation.enabled = true
         case .returnToSatelliteOverview:
-            state.navigationState.returnToSatelliteOverview()
+            state.navigationState = .init()
         }
     }
 }

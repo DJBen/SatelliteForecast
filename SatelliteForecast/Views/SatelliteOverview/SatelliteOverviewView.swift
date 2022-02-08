@@ -41,7 +41,7 @@ struct SatelliteOverviewViewState: Equatable {
 
     static var initial: SatelliteOverviewViewState {
         SatelliteOverviewViewState(
-            navigationState: .overview,
+            navigationState: .init(),
             julianDate: 0,
             location: nil
         )

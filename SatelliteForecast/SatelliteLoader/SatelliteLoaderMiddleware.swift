@@ -26,7 +26,9 @@ extension EffectMiddleware where
     StateType == SatelliteLoaderState,
     Dependencies == SatelliteLoaderDependencies {
 
-    static func satelliteLoader(_ satelliteLoader: SatelliteLoader) -> MiddlewareReader<SatelliteLoaderDependencies, EffectMiddleware<SatelliteLoaderAction, AppAction, SatelliteLoaderState, SatelliteLoaderDependencies>> {
+    static func satelliteLoader(
+        _ satelliteLoader: SatelliteLoader
+    ) -> MiddlewareReader<SatelliteLoaderDependencies, EffectMiddleware<SatelliteLoaderAction, AppAction, SatelliteLoaderState, SatelliteLoaderDependencies>> {
         EffectMiddleware<SatelliteLoaderAction, AppAction, SatelliteLoaderState, SatelliteLoaderDependencies>
         .onAction { (inputAction, dispatcher, getState) -> Effect<SatelliteLoaderDependencies, AppAction> in
             switch inputAction {
@@ -36,21 +38,21 @@ extension EffectMiddleware where
                         satelliteLoader.loadSatelliteCategoryPublisher(category: category)
                             .flatMap { map -> AnyPublisher<DispatchedAction<AppAction>, Never> in
                                 if let completionAction = onCompletion(map) {
-                                    return Just(DispatchedAction(.satelliteLoader(.loadedSatelliteInfo(category, map))))
+                                    return Just(DispatchedAction(.satelliteLoaderOutput(.loadedSatelliteInfo(category, map))))
                                         .merge(with: Just(DispatchedAction(completionAction)))
                                         .eraseToAnyPublisher()
                                 } else {
-                                    return Just(DispatchedAction(.satelliteLoader(.loadedSatelliteInfo(category, map))))
+                                    return Just(DispatchedAction(.satelliteLoaderOutput(.loadedSatelliteInfo(category, map))))
                                         .eraseToAnyPublisher()
                                 }
                             }
                             .catch { error in
-                                Just(DispatchedAction(.satelliteLoader(.failedLoadingTLEFile(category, error))))
+                                Just(DispatchedAction(.satelliteLoaderOutput(.failedLoadingTLEFile(category, error))))
                             }
                             .eraseToAnyPublisher()
                     }
 
-                    if let result = getState().info[category], let infoMap = result.successValue {
+                    if let result = getState().resources.info[category], let infoMap = result.successValue {
                         let mostRecentTLEAge = infoMap.map {
                             Date(julianDate: getState().currentDate).timeIntervalSince(Date(daysSince1950: $1.satellite.tle.t₀))
                         }
@@ -74,10 +76,6 @@ extension EffectMiddleware where
                         return loadSatellitePublisher()
                     }
                 }
-            case .loadedSatelliteInfo(_, _):
-                return .doNothing
-            case .failedLoadingTLEFile(_, _):
-                return .doNothing
             }
         }
     }
@@ -87,7 +85,7 @@ extension MiddlewareReader where MiddlewareType == EffectMiddleware<SatelliteLoa
     func lift() -> MiddlewareReader<SatelliteLoaderDependencies, LiftMiddleware<AppAction, AppAction, AppState, EffectMiddleware<SatelliteLoaderAction, AppAction, SatelliteLoaderState, SatelliteLoaderDependencies>>> {
         return lift(
             inputAction: \AppAction.satelliteLoader,
-            state: \AppState.satelliteLoaderState
+            state: SatelliteLoaderState.project(appState:)
         )
     }
 }

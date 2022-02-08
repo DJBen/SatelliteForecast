@@ -96,6 +96,7 @@ struct AlarmSettingsView: View {
             VStack(spacing: 8) {
                 Image(systemName: "bell.circle")
                     .font(.title)
+                    .foregroundColor(Color(UIColor.secondaryLabel))
                 Text(
                     """
                     Your alarms will appear here. You may swipe on a pass to schedule an alarm.

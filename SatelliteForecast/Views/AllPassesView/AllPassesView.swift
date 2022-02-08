@@ -130,8 +130,8 @@ struct AllPassesViewState: Equatable {
                 invisiblePasses: invisiblePasses
                     .sorted { $0.pass.rise.julianDate < $1.pass.rise.julianDate },
                 snapshots: satelliteTrails.snapshots,
-                selectedPassIndex: state.selectedSatellitePassIndex,
-                satelliteCategory: state.navigationState.selectedCategory,
+                selectedPassIndex: state.navigationState.listNavigation.selectedPassIndex,
+                satelliteCategory: state.navigationState.listNavigation.category,
                 locationChangeWarningState: locationStateChangeWarning
             )
         } else {
@@ -139,8 +139,8 @@ struct AllPassesViewState: Equatable {
                 julianDate: state.julianDate,
                 visiblePasses: nil,
                 invisiblePasses: nil,
-                selectedPassIndex: state.selectedSatellitePassIndex,
-                satelliteCategory: state.navigationState.selectedCategory
+                selectedPassIndex: state.navigationState.listNavigation.selectedPassIndex,
+                satelliteCategory: state.navigationState.listNavigation.category
             )
         }
     }

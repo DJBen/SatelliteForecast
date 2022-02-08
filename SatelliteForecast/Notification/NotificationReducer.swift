@@ -57,10 +57,16 @@ extension Reducer where ActionType == NotificationAction, StateType == AppState 
             state.notificationState.scheduledPassNotifications = scheduledPassNotifications
             
         case let .deepLink(satelliteCategory, noradIndex, observer: _, passIdentifier: _):
-            state.navigationState = .allPasses(
-                category: satelliteCategory,
-                noradIndex: noradIndex
-            )
+            if let satelliteCategory = satelliteCategory {
+                state.navigationState.listNavigation = ListNavigation(
+                    category: satelliteCategory,
+                    noradIndex: noradIndex
+                )
+                state.navigationState.specialSatelliteNavigation = .init()
+            } else {
+                state.navigationState.listNavigation = .init()
+                state.navigationState.specialSatelliteNavigation.noradIndex = noradIndex
+            }
         }
     }
 }

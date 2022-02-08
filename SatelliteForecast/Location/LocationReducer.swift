@@ -22,7 +22,9 @@ extension Reducer where ActionType == LocationAction, StateType == AppState {
                 break
             }
             state.locationState.selection = selection
-            state.navigationState.dismissLocationSettings()
+            if state.navigationState.observerNavigation.enabled {
+                state.navigationState.observerNavigation.enabled = false
+            }
         case let .authorizationDidChange(authorizationStatus):
             state.locationState.authorizationStatus = authorizationStatus
         case let .locationChanged(location):

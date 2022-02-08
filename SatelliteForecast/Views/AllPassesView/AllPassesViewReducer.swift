@@ -17,11 +17,7 @@ extension Reducer where ActionType == AllPassesViewAction, StateType == AppState
         case .recalculatePasses:
             break
         case let .selectPass(index):
-            if let index = index {
-                state.navigationState.selectPass(index: index)
-            } else {
-                state.navigationState.deselectPass()
-            }
+            state.navigationState.listNavigation.selectedPassIndex = index
         case .scheduleNotification(_):
             break
         case .unscheduleNotification(_):

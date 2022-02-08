@@ -150,7 +150,13 @@ struct PassView_Previews: PreviewProvider {
         )
         let brightest100: Map<Int, SatelliteInfo> = [tle.noradIndex: SatelliteInfo(noradIndex: tle.noradIndex, satellite: sat)]
         let appState = AppState(
-            navigationState: .pass(category: .brightest100, noradIndex: tle.noradIndex, selectedPassIndex: 0),
+            navigationState: NavigationState(
+                listNavigation: ListNavigation(
+                    category: .brightest100,
+                    noradIndex: tle.noradIndex,
+                    selectedPassIndex: 0
+                )
+            ),
             skyChartState: SkyChartResources(
                 rasterizedSatellitePaths: [:],
                 previewSatellitePaths: [:],
@@ -164,7 +170,7 @@ struct PassView_Previews: PreviewProvider {
                     passes: passes
                 )
             ],
-            satelliteLoaderState: SatelliteLoaderState(
+            satelliteLoader: SatelliteLoaderResources(
                 info: [
                     .brightest100: .success(brightest100)
                 ]

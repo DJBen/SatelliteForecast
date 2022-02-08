@@ -8,36 +8,44 @@
 import Foundation
 import SwiftRex
 
-extension Reducer where ActionType == DebugMenuAction, StateType == AppState {
+extension Reducer where ActionType == DebugMenuAction, StateType == DebugMenuState {
     static let debugMenuReducer = Reducer.reduce { action, state in
         switch action {
         case let .toggleDebugMenu(isVisible):
-            state.debugMenu.isDebugMenuVisible = isVisible
+            state.config.isDebugMenuVisible = isVisible
         case let .toggleFreezeTime(isOn):
             if isOn {
-                state.debugMenu.frozenAt = state.satelliteLoaderState.currentDate + (state.debugMenu.mockedOffsetOn ? state.debugMenu.mockedOffset : 0)
+                state.config.frozenAt = state.trueJulianDate + (state.config.mockedOffsetOn ? state.config.mockedOffset : 0)
             } else {
-                state.debugMenu.frozenAt = nil
+                state.config.frozenAt = nil
             }
         case let .toggleMockedOffset(isOn):
-            state.debugMenu.mockedOffsetOn = isOn
-            if isOn && state.debugMenu.frozenAt != nil {
-                state.debugMenu.frozenAt = state.satelliteLoaderState.currentDate + (state.debugMenu.mockedOffsetOn ? state.debugMenu.mockedOffset : 0)
+            state.config.mockedOffsetOn = isOn
+            if isOn && state.config.frozenAt != nil {
+                state.config.frozenAt = state.trueJulianDate + (state.config.mockedOffsetOn ? state.config.mockedOffset : 0)
             }
         case let .setMockedDateOffset(offset):
-            state.debugMenu.mockedOffset = offset
-            if state.debugMenu.frozenAt != nil {
-                state.debugMenu.frozenAt = state.satelliteLoaderState.currentDate + (state.debugMenu.mockedOffsetOn ? state.debugMenu.mockedOffset : 0)
+            state.config.mockedOffset = offset
+            if state.config.frozenAt != nil {
+                state.config.frozenAt = state.trueJulianDate + (state.config.mockedOffsetOn ? state.config.mockedOffset : 0)
             }
             
         case let .toggleRapidNotificationDelivery(isOn):
-            state.debugMenu.rapidNotificationDelivery = isOn
+            state.config.rapidNotificationDelivery = isOn
             
         case .fetchNotifications:
             break
             
         case .triggerPassDeepLink(category: _, noradIndex: _):
-            state.debugMenu.isDebugMenuVisible = false
+            state.config.isDebugMenuVisible = false
         }
+    }
+
+    func lift() -> Reducer<AppAction, AppState> {
+        lift(
+            actionGetter: \.debugMenu,
+            stateGetter: DebugMenuState.project(state:),
+            stateSetter: DebugMenuState.apply(appState:state:)
+        )
     }
 }

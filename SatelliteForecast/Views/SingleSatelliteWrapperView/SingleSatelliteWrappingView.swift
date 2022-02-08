@@ -30,7 +30,7 @@ struct SingleSatelliteWrappingViewState: Equatable {
     static func project(state: AppState, context: SingleSatelliteWrappingViewContext) -> SingleSatelliteWrappingViewState {
         let noradIndex = context.selectedNoradIndex
         let satellite: Result<SatelliteInfo, SatelliteLoaderError>?
-        switch state.satelliteLoaderState.info[.brightest100] {
+        switch state.satelliteLoader.info[.brightest100] {
         case .none:
             satellite = nil
         case let .success(satellites):

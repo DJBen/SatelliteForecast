@@ -12,15 +12,9 @@ extension Reducer where ActionType == SatelliteListViewAction, StateType == AppS
     static let satelliteListViewReducer = Reducer.reduce { action, state in
         switch action {
         case let .selectSatellite(params):
-            if let params = params {
-                state.navigationState.selectSatellite(noradIndex: params.noradIndex)
-            } else {
-                state.navigationState.deselectSatellite()
-            }
-
+            state.navigationState.listNavigation.noradIndex = params?.noradIndex
         case let .satelliteSearchTextChanged(searchText):
-            state.satelliteSearchText = searchText
-
+            state.navigationState.listNavigation.satelliteSearchText = searchText
         case .retryLoadingSatelliteList:
             break
         }

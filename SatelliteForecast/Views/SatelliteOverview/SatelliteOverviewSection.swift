@@ -39,21 +39,16 @@ enum SatelliteOverviewItem: Equatable, Hashable {
 
 extension NavigationState {
     var selectedSatelliteOverviewItem: SatelliteOverviewItem? {
-        switch self {
-        case .overview:
-            return nil
-        case let .list(category):
-            return .category(category)
-        case let .allPasses(category, noradIndex), let .pass(category, noradIndex, _):
-            if let category = category {
-                return .category(category)
-            } else {
-                return .specialSatellites(SatelliteOverviewItem.SatellitesOfSpecialInterest(rawValue: noradIndex)!)
-            }
-        case .observer:
+        if observerNavigation.enabled {
             return .settings(.observer)
-        case .alarm:
+        } else if alarmNavigation.enabled {
             return .settings(.alert)
+        } else if let specialNoradIndex = specialSatelliteNavigation.noradIndex {
+            return .specialSatellites(SatelliteOverviewItem.SatellitesOfSpecialInterest(rawValue: specialNoradIndex)!)
+        } else if let category = listNavigation.category {
+            return .category(category)
+        } else {
+            return nil
         }
     }
 }

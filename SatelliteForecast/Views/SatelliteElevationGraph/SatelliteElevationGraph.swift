@@ -380,7 +380,11 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         )
         let viewModel = SatelliteElevationGraphState.project(
             state: AppState(
-                navigationState: .allPasses(category: nil, noradIndex: Int(sat.noradIdent)!),
+                navigationState: NavigationState(
+                    listNavigation: ListNavigation(
+                        noradIndex: Int(sat.noradIdent)!
+                    )
+                ),
                 satelliteTrails: [
                     Int(sat.noradIdent)!: SatelliteTrails(
                         observer: observer,
@@ -392,8 +396,10 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                         passes: nil
                     )
                 ],
-                satelliteLoaderState: SatelliteLoaderState(
-                    standaloneInfo: [tle.noradIndex: SatelliteInfo(noradIndex: tle.noradIndex, satellite: sat)]
+                satelliteLoader: SatelliteLoaderResources(
+                    info: [.brightest100: .success(
+                        [tle.noradIndex: SatelliteInfo(noradIndex: tle.noradIndex, satellite: sat)]
+                    )]
                 ),
                 locationState: LocationState(
                     authorizationStatus: .authorizedWhenInUse,
@@ -426,7 +432,11 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         )
         let viewModel2 = SatelliteElevationGraphState.project(
             state: AppState(
-                navigationState: .allPasses(category: nil, noradIndex: Int(sat2.noradIdent)!),
+                navigationState: NavigationState(
+                    listNavigation: ListNavigation(
+                        noradIndex: Int(sat2.noradIdent)!
+                    )
+                ),
                 satelliteTrails: [
                     Int(sat2.noradIdent)!: SatelliteTrails(
                         observer: observer,
@@ -438,8 +448,10 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                         passes: nil
                     )
                 ],
-                satelliteLoaderState: SatelliteLoaderState(
-                    standaloneInfo: [tle2.noradIndex: SatelliteInfo(noradIndex: tle2.noradIndex, satellite: sat2)]
+                satelliteLoader: SatelliteLoaderResources(
+                    info: [.brightest100: .success(
+                        [tle2.noradIndex: SatelliteInfo(noradIndex: tle2.noradIndex, satellite: sat2)]
+                    )]
                 ),
                 locationState: LocationState(
                     authorizationStatus: .authorizedWhenInUse,
@@ -468,7 +480,11 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         )
         let viewModel3 = SatelliteElevationGraphState.project(
             state: AppState(
-                navigationState: .allPasses(category: nil, noradIndex: Int(sat3.noradIdent)!),
+                navigationState: NavigationState(
+                    listNavigation: ListNavigation(
+                        noradIndex: Int(sat3.noradIdent)!
+                    )
+                ),
                 satelliteTrails: [
                     Int(sat3.noradIdent)!: SatelliteTrails(
                         observer: observer,
@@ -480,8 +496,10 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                         passes: nil
                     )
                 ],
-                satelliteLoaderState: SatelliteLoaderState(
-                    standaloneInfo: [tle3.noradIndex: SatelliteInfo(noradIndex: tle3.noradIndex, satellite: sat3)]
+                satelliteLoader: SatelliteLoaderResources(
+                    info: [.brightest100: .success(
+                        [tle3.noradIndex: SatelliteInfo(noradIndex: tle3.noradIndex, satellite: sat3)]
+                    )]
                 ),
                 locationState: LocationState(
                     authorizationStatus: .authorizedWhenInUse,

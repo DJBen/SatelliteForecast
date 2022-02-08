@@ -9,39 +9,58 @@ import Foundation
 import SatelliteKit
 import SatelliteForecastCore
 
-enum NavigationState: Equatable {
-    /// The satellite overview screen; also the homepage.
-    case overview
-    /// The observer configuration screen.
-    case observer
-    /// The alarm configuration screen.
-    case alarm
+struct NavigationState {
+    var specialSatelliteNavigation: SpecialSatelliteNavigation = .init()
+    var listNavigation: ListNavigation = .init()
+    var observerNavigation: ObserverNavigationState = .init()
+    var alarmNavigation: AlarmNavigationState = .init()
 
-    case list(category: SatelliteCategory)
-    // When navigating directly from overview, the category is `nil`.
-    case allPasses(category: SatelliteCategory?, noradIndex: Int)
-    // When navigating directly from overview, the category is `nil`.
-    case pass(category: SatelliteCategory?, noradIndex: Int, selectedPassIndex: Int)
-
-    var selectedCategory: SatelliteCategory? {
-        switch self {
-        case .overview, .observer, .alarm:
-            return nil
-        case let .list(category):
-            return category
-        case let .allPasses(category, noradIndex: _):
-            return category
-        case let .pass(category, noradIndex: _, selectedPassIndex: _):
-            return category
-        }
-    }
-
-    var selectedSatelliteNoradIndex: Int? {
-        switch self {
-        case let .allPasses(_, noradIndex), let .pass(_, noradIndex, _):
-            return noradIndex
-        case .list, .overview, .observer, .alarm:
-            return nil
-        }
+    var selectedNoradIndex: Int? {
+        return specialSatelliteNavigation.noradIndex ?? listNavigation.noradIndex
     }
 }
+
+extension NavigationState: Equatable {}
+
+struct SpecialSatelliteNavigation {
+    var noradIndex: Int?
+
+    init(
+        noradIndex: Int? = nil
+    ) {
+        self.noradIndex = noradIndex
+    }
+}
+
+extension SpecialSatelliteNavigation: Equatable {}
+
+struct ListNavigation {
+    var satelliteSearchText: String = ""
+    var category: SatelliteCategory?
+    var noradIndex: Int?
+    var selectedPassIndex: Int?
+
+    init(
+        category: SatelliteCategory? = nil,
+        noradIndex: Int? = nil,
+        selectedPassIndex: Int? = nil
+    ) {
+        self.category = category
+        self.noradIndex = noradIndex
+        self.selectedPassIndex = selectedPassIndex
+    }
+}
+
+extension ListNavigation: Equatable {}
+
+struct ObserverNavigationState {
+    var enabled: Bool = false
+}
+
+extension ObserverNavigationState: Equatable {}
+
+struct AlarmNavigationState {
+    var enabled: Bool = false
+}
+
+extension AlarmNavigationState: Equatable {}

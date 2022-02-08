@@ -18,8 +18,8 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             .lift(action: \.location),
         Reducer<NotificationAction, AppState>.notificationReducer
             .lift(action: \.notification),
-        Reducer<SatelliteLoaderAction, SatelliteLoaderState>.satelliteLoaderReducer
-            .lift(action: \.satelliteLoader, state: \.satelliteLoaderState),
+        Reducer<SatelliteLoaderAction, SatelliteLoaderState>.satelliteLoaderReducer.lift(),
+        Reducer<SatelliteLoaderOutput, SatelliteLoaderState>.satelliteLoaderOutputReducer.lift(),
         Reducer<SatelliteOverviewViewAction, AppState>.satelliteOverviewReducer
             .lift(action: \.satelliteOverview),
         Reducer<SatelliteListViewAction, AppState>.satelliteListViewReducer
@@ -29,15 +29,20 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         Reducer<PassViewAction, AppState>.passViewReducer
             .lift(action: \.passView),
         Reducer<SatelliteElevationGraphAction, SatelliteElevationGraphResources>.satelliteElevationGraphReducer
-            .lift(action: \.satelliteElevationGraph, state: \.satelliteElevationGraphResources),
+            .lift(
+                action: \.satelliteElevationGraph,
+                state: \.satelliteElevationGraphResources
+            ),
         Reducer<SkyChartAction, SkyChartResources>.skyChartReducer
-            .lift(action: \.skyChart, state: \.skyChartState),
+            .lift(
+                action: \.skyChart,
+                state: \.skyChartState
+            ),
         Reducer<TLEPropagatorAction, AppState>.tlePropagatorReducer
             .lift(action: \.tlePropagator),
         Reducer<TimerAction, AppState>.timerReducer
             .lift(action: \.timer),
-        Reducer<DebugMenuAction, AppState>.debugMenuReducer
-            .lift(action: \.debugMenu)
+        Reducer<DebugMenuAction, DebugMenuState>.debugMenuReducer.lift()
     ]
     .reduce(Reducer<AppAction, AppState>.identity, <>)
 

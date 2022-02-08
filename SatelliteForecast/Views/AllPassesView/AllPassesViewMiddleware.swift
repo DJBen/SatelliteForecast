@@ -42,7 +42,7 @@ extension EffectMiddleware where
                         )
 
                         // Precondition: TLE must be ready
-                        guard let info = state.satelliteLoaderState[noradIndex] else {
+                        guard let info = state.satelliteLoader[noradIndex] else {
                             logger.fault("TLE not ready for the selected satellite when calculating passes")
                             return Empty().eraseToAnyPublisher()
                         }

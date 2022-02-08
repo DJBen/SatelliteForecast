@@ -14,8 +14,4 @@ struct SatelliteElevationGraphResources: Equatable {
         let image: UIImage
     }
     var rasterizedElevationGraphs: [Int: RangeImage] = [:]
-
-    static var empty: SatelliteElevationGraphResources {
-        SatelliteElevationGraphResources()
-    }
 }

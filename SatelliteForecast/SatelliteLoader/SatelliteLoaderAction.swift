@@ -10,14 +10,10 @@ import Foundation
 import SatelliteForecastCore
 
 enum SatelliteLoaderAction {
-    // Input
     case loadSatelliteCategory(SatelliteCategory, onCompletion: (Map<Int, SatelliteInfo>) -> AppAction? = { _ in nil })
-
-    // Output
-    case loadedSatelliteInfo(SatelliteCategory, Map<Int, SatelliteInfo>)
-    case failedLoadingTLEFile(SatelliteCategory, SatelliteLoaderError)
 }
 
-extension SatelliteLoaderAction {
-
+enum SatelliteLoaderOutput {
+    case loadedSatelliteInfo(SatelliteCategory, Map<Int, SatelliteInfo>)
+    case failedLoadingTLEFile(SatelliteCategory, SatelliteLoaderError)
 }

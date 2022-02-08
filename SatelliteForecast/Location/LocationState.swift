@@ -18,7 +18,7 @@ struct LocationState: Equatable {
         lhs.selection == rhs.selection
     }
 
-    var authorizationStatus: CLAuthorizationStatus
+    var authorizationStatus: CLAuthorizationStatus = .notDetermined
     /// The current user's location. Note that it may not be the actual location in use.
     var currentLocation: CLLocation?
     /// A reverse-geocoded placemark for the current location.
@@ -57,10 +57,6 @@ struct LocationState: Equatable {
         case .custom(_, let placemark):
             return placemark
         }
-    }
-
-    static var empty: LocationState {
-        LocationState(authorizationStatus: .notDetermined)
     }
 }
 

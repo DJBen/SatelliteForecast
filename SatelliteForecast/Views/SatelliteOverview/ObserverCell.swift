@@ -18,14 +18,10 @@ enum ObserverCellAction {
 }
 
 struct ObserverCellState: Equatable {
-    var locationState: LocationState
+    var locationState: LocationState = .init()
 
     static func project(state: AppState) -> ObserverCellState {
         ObserverCellState(locationState: state.locationState)
-    }
-
-    static var empty: ObserverCellState {
-        ObserverCellState(locationState: .empty)
     }
 }
 
@@ -233,7 +229,7 @@ extension ViewProducer where Context == Void, ProducedView == ObserverCell {
                     action: AppAction.observerCell,
                     state: ObserverCellState.project(state:)
                 )
-                .asObservableViewModel(initialState: .empty, emitsValue: .whenDifferent)
+                .asObservableViewModel(initialState: .init(), emitsValue: .whenDifferent)
             )
         }
     }

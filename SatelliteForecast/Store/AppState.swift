@@ -11,23 +11,23 @@ import SatelliteForecastCore
 import BTree
 
 struct AppState: Equatable {
-    var navigationState: NavigationState = .overview {
+    var navigationState: NavigationState = .init() {
         willSet {
-            print("[Nav] state changed from \(self.navigationState) to \(newValue)")
+            print("[Navigation] \(navigationState)")
         }
     }
-    
+    /// A date that mostly approximates the current date.
+    var currentDate: Double = Date().julianDate
     /// The date range from which ephemerides are generated.
     var skyChartState: SkyChartResources = .empty
-    var satelliteElevationGraphResources: SatelliteElevationGraphResources = .empty
+    var satelliteElevationGraphResources: SatelliteElevationGraphResources = .init()
     /// A mapping from NORAD ID to the satellite state.
     var satelliteTrails: [Int: SatelliteTrails] = [:]
-    var satelliteSearchText: String = ""
     /// Location agnostic satellite information, including its orbit and metadata.
-    var satelliteLoaderState: SatelliteLoaderState = .empty
-    var locationState: LocationState = .empty
+    var satelliteLoader: SatelliteLoaderResources = .init()
+    var locationState: LocationState = .init()
 
-    var debugMenu: DebugMenuConfig = .empty
+    var debugMenu: DebugMenuConfig = .init()
     var notificationState: NotificationState = NotificationState()
 
     static var empty: AppState {
@@ -40,47 +40,38 @@ struct AppState: Equatable {
     /// This julian date will take into account of artificial offsets in debug mode, and is not always a true representation
     /// of the current date.
     var julianDate: Double {
-        satelliteLoaderState.currentDate + debugMenu.effectiveOffset
+        currentDate + debugMenu.effectiveOffset
     }
 
     var selectedSatelliteTrails: SatelliteTrails? {
-        navigationState.selectedSatelliteNoradIndex.flatMap { satelliteTrails[$0] }
+        navigationState.selectedNoradIndex.flatMap { satelliteTrails[$0] }
     }
 
     var selectedSatelliteInfo: SatelliteInfo? {
-        navigationState.selectedSatelliteNoradIndex.flatMap { satelliteLoaderState[$0] }
+        navigationState.selectedNoradIndex.flatMap { satelliteLoader[$0] }
     }
 
     var currentSatelliteSnapshots: BTree<Double, SatelliteSnapshot> {
         get {
-            guard let selectedSatelliteNoradIndex = navigationState.selectedSatelliteNoradIndex else {
+            guard let selectedSatelliteNoradIndex = navigationState.selectedNoradIndex else {
                 return BTree()
             }
             return satelliteTrails[selectedSatelliteNoradIndex]?.snapshots ?? BTree()
         }
         set {
-            guard let selectedSatelliteNoradIndex = navigationState.selectedSatelliteNoradIndex else {
+            guard let selectedSatelliteNoradIndex = navigationState.selectedNoradIndex else {
                 return
             }
             satelliteTrails[selectedSatelliteNoradIndex]?.snapshots = newValue
         }
     }
 
-    var selectedSatellitePassIndex: Int? {
-        switch navigationState {
-        case let .pass(_, _, selectedPassIndex):
-            return selectedPassIndex
-        default:
-            return nil
-        }
-    }
-
     var selectedSatellitePass: Pass? {
-        switch navigationState {
-        case let .pass(_, noradIndex, selectedPassIndex):
-            return satelliteTrails[noradIndex]?.passes?[selectedPassIndex]
-        default:
+        guard let noradIndex = navigationState.selectedNoradIndex,
+              let selectedPassIndex = navigationState.listNavigation.selectedPassIndex else {
             return nil
         }
+
+        return satelliteTrails[noradIndex]?.passes?[selectedPassIndex]
     }
 }

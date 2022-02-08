@@ -15,41 +15,45 @@ import CombineRextensions
 @main
 struct SatelliteForecastApp: App {
     @UIApplicationDelegateAdaptor private var appDelegate: AppDelegate
-    @StateObject var store = Store.shared.asObservableViewModel(initialState: .empty, emitsValue: .whenDifferent)
+    @StateObject var store = Store.shared.asObservableViewModel(
+        initialState: .empty,
+        emitsValue: .whenDifferent
+    )
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
         WindowGroup {
-            ViewProducer
-                .satelliteOverview(viewModel: store)
-                .view()
-                .sheet(
-                    isPresented: Binding<Bool>(
-                        get: {
-                            store.state.debugMenu.isDebugMenuVisible
-                        },
-                        set: { newValue in
-                            store.dispatch(.debugMenu(.toggleDebugMenu(newValue)))
-                        }
-                    ),
-                    onDismiss: nil,
-                    content: {
-                        ViewProducer<Void, DebugMenu>.debugMenu(viewModel: store)
-                            .view()
+            ViewProducer.satelliteOverview(
+                viewModel: store
+            )
+            .view()
+            .sheet(
+                isPresented: Binding<Bool>(
+                    get: {
+                        store.state.debugMenu.isDebugMenuVisible
+                    },
+                    set: { newValue in
+                        store.dispatch(.debugMenu(.toggleDebugMenu(newValue)))
                     }
-                )
-                .onAppear {
-                    store.dispatch(.timer(.start))
-                    store.dispatch(.location(.requestAuthorization))
+                ),
+                onDismiss: nil,
+                content: {
+                    ViewProducer<Void, DebugMenu>.debugMenu(viewModel: store)
+                        .view()
                 }
-                .onChange(of: scenePhase) { phase in
-                    store.dispatch(.appDelegate(.scenePhaseDidChange(phase)))
-                }
-                .onReceive(NotificationCenter.default.publisher(for: .deviceDidShakeNotification)) { _ in
-                    #if DEBUG
-                    store.dispatch(.debugMenu(.toggleDebugMenu(true)))
-                    #endif
-                }
+            )
+            .onAppear {
+                store.dispatch(.timer(.start))
+                store.dispatch(.location(.requestAuthorization))
+            }
+            .onChange(of: scenePhase) { phase in
+                store.dispatch(.appDelegate(.scenePhaseDidChange(phase)))
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .deviceDidShakeNotification)) { _ in
+                #if DEBUG
+                store.dispatch(.debugMenu(.toggleDebugMenu(true)))
+                #endif
+            }
         }
     }
 }

@@ -1,7 +1,7 @@
 PODS:
   - BTree (4.1.0)
-  - CombineRex (0.8.11):
-    - SwiftRex (~> 0.8.11)
+  - CombineRex (0.8.9):
+    - SwiftRex (~> 0.8.9)
   - CombineRextensions (0.1.7):
     - CombineRex (~> 0.8.6)
   - FlagKit (2.2)
@@ -26,7 +26,7 @@ PODS:
     - STRegex (~> 2.1)
   - STRegex (2.1.1)
   - SwiftDate (5.1.0)
-  - SwiftRex (0.8.11)
+  - SwiftRex (0.8.9)
   - SwiftUIVisualEffects (1.0.0.LOCAL)
   - TestingExtensions (0.2.11):
     - CombineRex (~> 0.8.9)
@@ -35,7 +35,7 @@ PODS:
 
 DEPENDENCIES:
   - BTree (~> 4.1.0)
-  - CombineRex (~> 0.8.6)
+  - CombineRex (= 0.8.9)
   - CombineRextensions
   - FlagKit
   - SatelliteCatalog (from `./SatelliteCatalog`)
@@ -44,7 +44,7 @@ DEPENDENCIES:
   - SatelliteKit (from `./SatelliteKit`)
   - StarryNight (from `./StarryNight`)
   - SwiftDate (~> 5.0)
-  - SwiftRex (~> 0.8.6)
+  - SwiftRex (= 0.8.9)
   - SwiftUIVisualEffects (from `./SwiftUIVisualEffects`)
   - TestingExtensions
 
@@ -77,7 +77,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   BTree: 99b99930790b88dc5e8bafbf666a5dfb8d7808b4
-  CombineRex: 91d05baa3438c45f8234aa44613a95d1cb2326ef
+  CombineRex: 204e28417c27fef95dd917ee1ca37ed91549a2a2
   CombineRextensions: f334525cda6b04493782e80491b1aa45c4429f13
   FlagKit: eca7dc89064b0c986302ba9acefad1bf80a435b1
   SatelliteCatalog: ac7d440c6fdb9beb4c1940c7983a2978f766fafb
@@ -89,10 +89,10 @@ SPEC CHECKSUMS:
   StarryNight: 57aec7f59091bbbebab2471e391c19ba77b695d9
   STRegex: d49e88d0fe58538d3175fdd989bc1243b9be2a07
   SwiftDate: 6329e58969a2de31cea7f1ee1143b247693196e7
-  SwiftRex: 97fcc27a7eeb3bd906ad848a9a5584739cd9669d
+  SwiftRex: 77cb0bd1953a81e3b4ce92fb563a91ba9c297078
   SwiftUIVisualEffects: 4e6f1fe8159a07e59eaf3918e5f8cd1fe52cadce
   TestingExtensions: 75654c5acd46d63c09317cfa0c84f402882a29b0
 
-PODFILE CHECKSUM: 5634ed9011f8e3550757efbdb89759ebe00b3f3b
+PODFILE CHECKSUM: ca4eb87733a9a049205e02838797dd2ba1cfd9ed
 
 COCOAPODS: 1.11.2

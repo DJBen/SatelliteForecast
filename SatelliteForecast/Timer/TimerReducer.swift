@@ -18,7 +18,7 @@ extension Reducer where ActionType == TimerAction, StateType == AppState {
         case .start:
             break
         case let .tick(currentDate):
-            state.satelliteLoaderState.currentDate = currentDate
+            state.currentDate = currentDate
         }
     }
 }

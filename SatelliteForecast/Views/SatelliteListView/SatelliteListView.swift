@@ -72,13 +72,14 @@ struct SatelliteListViewState: Equatable {
         state: AppState,
         context: SatelliteListViewContext
     ) -> SatelliteListViewState {
-        let satellites: Result<Map<Int, SatelliteInfo>, SatelliteLoaderError>? = state.satelliteLoaderState.info[context.category]?.map { info in
-            if state.satelliteSearchText.isEmpty {
+        let satellites: Result<Map<Int, SatelliteInfo>, SatelliteLoaderError>? = state.satelliteLoader.info[context.category]?.map { info in
+            let searchText = state.navigationState.listNavigation.satelliteSearchText
+            if searchText.isEmpty {
                 return info
             } else {
                 var map = Map<Int, SatelliteInfo>()
                 info.forEach { (noradIndex, value) in
-                    if value.fitsSearchText(state.satelliteSearchText) {
+                    if value.fitsSearchText(searchText) {
                         map[noradIndex] = value
                     }
                 }
@@ -88,8 +89,8 @@ struct SatelliteListViewState: Equatable {
 
         return SatelliteListViewState(
             satellites: satellites,
-            satelliteSearchText: state.satelliteSearchText,
-            selectedNoradIndex: state.navigationState.selectedSatelliteNoradIndex
+            satelliteSearchText: state.navigationState.listNavigation.satelliteSearchText,
+            selectedNoradIndex: state.navigationState.listNavigation.noradIndex
         )
     }
 }
