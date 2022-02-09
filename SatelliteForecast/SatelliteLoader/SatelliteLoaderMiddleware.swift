@@ -32,24 +32,33 @@ extension EffectMiddleware where
         EffectMiddleware<SatelliteLoaderAction, AppAction, SatelliteLoaderState, SatelliteLoaderDependencies>
         .onAction { (inputAction, dispatcher, getState) -> Effect<SatelliteLoaderDependencies, AppAction> in
             switch inputAction {
-            case let .loadSatelliteCategory(category, onCompletion):
+            case let .loadSatelliteCategory(category, calculatePass):
                 return Effect(token: category) { context -> AnyPublisher<DispatchedAction<AppAction>, Never> in
                     func loadSatellitePublisher() -> AnyPublisher<DispatchedAction<AppAction>, Never> {
-                        satelliteLoader.loadSatelliteCategoryPublisher(category: category)
-                            .flatMap { map -> AnyPublisher<DispatchedAction<AppAction>, Never> in
-                                if let completionAction = onCompletion(map) {
-                                    return Just(DispatchedAction(.satelliteLoaderOutput(.loadedSatelliteInfo(category, map))))
-                                        .merge(with: Just(DispatchedAction(completionAction)))
-                                        .eraseToAnyPublisher()
-                                } else {
-                                    return Just(DispatchedAction(.satelliteLoaderOutput(.loadedSatelliteInfo(category, map))))
-                                        .eraseToAnyPublisher()
-                                }
-                            }
-                            .catch { error in
-                                Just(DispatchedAction(.satelliteLoaderOutput(.failedLoadingTLEFile(category, error))))
-                            }
-                            .eraseToAnyPublisher()
+                        satelliteLoader.loadSatelliteCategoryPublisher(
+                            category: category
+                        )
+                        .map { map -> DispatchedAction<AppAction> in
+                            DispatchedAction(
+                                .satelliteLoaderOutput(
+                                    .loadedSatelliteInfo(
+                                        category,
+                                        map,
+                                        calculatePass: calculatePass
+                                    )
+                                )
+                            )
+                        }
+                        .catch { error in
+                            Just(
+                                DispatchedAction(
+                                    .satelliteLoaderOutput(
+                                        .failedLoadingTLEFile(category, error)
+                                    )
+                                )
+                            )
+                        }
+                        .eraseToAnyPublisher()
                     }
 
                     if let result = getState().resources.info[category], let infoMap = result.successValue {
@@ -65,13 +74,8 @@ extension EffectMiddleware where
 
                         logger.notice("Most recent TLE age \(mostRecentTLEAge) is new: skip update.")
 
-                        if let completionAction = onCompletion(infoMap) {
-                            return Just(DispatchedAction(completionAction))
+                        return Empty<DispatchedAction<AppAction>, Never>(completeImmediately: true)
                                 .eraseToAnyPublisher()
-                        } else {
-                            return Empty<DispatchedAction<AppAction>, Never>(completeImmediately: true)
-                                .eraseToAnyPublisher()
-                        }
                     } else {
                         return loadSatellitePublisher()
                     }
@@ -87,5 +91,43 @@ extension MiddlewareReader where MiddlewareType == EffectMiddleware<SatelliteLoa
             inputAction: \AppAction.satelliteLoader,
             state: SatelliteLoaderState.project(appState:)
         )
+    }
+}
+
+extension EffectMiddleware where InputActionType == SatelliteLoaderOutput, OutputActionType == AllPassesViewAction, StateType == SatelliteLoaderState, Dependencies == Void {
+    /// This middleware triggers `calculatePass` event after satellite has been loaded
+    static var calculatePassAfterSatelliteLoader: EffectMiddleware<SatelliteLoaderOutput, AllPassesViewAction, SatelliteLoaderState, Void> {
+        EffectMiddleware.onAction { action, dispatcher, getState in
+            switch action {
+            case .loadedSatelliteInfo(_, let satelliteInfoMap, let calculatePass):
+                guard let calculatePass = calculatePass, let satelliteInfo = satelliteInfoMap[calculatePass.noradID] else {
+                    return .doNothing
+                }
+
+                return .just(
+                    .calculatePasses(
+                        AllPassesViewAction.CalculatePassesParams(
+                            selectedNoradIndex: calculatePass.noradID,
+                            satelliteInfo: satelliteInfo,
+                            julianDateRange: calculatePass.dateRange,
+                            observer: calculatePass.observer
+                        )
+                    ),
+                    from: dispatcher
+                )
+
+            case .failedLoadingTLEFile(_, _):
+                return .doNothing
+            }
+        }
+    }
+
+    func lift() -> AnyMiddleware<AppAction, AppAction, AppState> {
+        return lift(
+            inputAction: \.satelliteLoaderOutput,
+            outputAction: AppAction.allPassesView,
+            state: SatelliteLoaderState.project(appState:)
+        )
+        .eraseToAnyMiddleware()
     }
 }

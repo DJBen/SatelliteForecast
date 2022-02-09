@@ -75,6 +75,8 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             )
             .eraseToAnyMiddleware()
 
+        <> EffectMiddleware.calculatePassAfterSatelliteLoader.lift()
+
         <> EffectMiddleware.satelliteOverview
             .lift(
                 inputAction: \.satelliteOverview

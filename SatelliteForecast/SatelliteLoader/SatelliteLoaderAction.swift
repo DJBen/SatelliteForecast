@@ -8,12 +8,29 @@
 import BTree
 import Foundation
 import SatelliteForecastCore
+import SatelliteKit
+
+struct SatelliteLoaderCalculatePassParam {
+    let noradID: Int
+    let dateRange: Range<Double>
+    let observer: LatLonAlt
+}
 
 enum SatelliteLoaderAction {
-    case loadSatelliteCategory(SatelliteCategory, onCompletion: (Map<Int, SatelliteInfo>) -> AppAction? = { _ in nil })
+    case loadSatelliteCategory(
+        SatelliteCategory,
+        calculatePass: SatelliteLoaderCalculatePassParam? = nil
+    )
 }
 
 enum SatelliteLoaderOutput {
-    case loadedSatelliteInfo(SatelliteCategory, Map<Int, SatelliteInfo>)
-    case failedLoadingTLEFile(SatelliteCategory, SatelliteLoaderError)
+    case loadedSatelliteInfo(
+        SatelliteCategory,
+        Map<Int, SatelliteInfo>,
+        calculatePass: SatelliteLoaderCalculatePassParam? = nil
+    )
+    case failedLoadingTLEFile(
+        SatelliteCategory,
+        SatelliteLoaderError
+    )
 }

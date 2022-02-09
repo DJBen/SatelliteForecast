@@ -53,7 +53,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                     break
                 }
                 
-                let satelliteCategory = (userInfo["satelliteCategory"] as? Data).flatMap({ try? JSONDecoder().decode(SatelliteCategory?.self, from: $0) })
+                let satelliteCategory = (userInfo["satelliteCategory"] as? Data).flatMap {
+                    try? JSONDecoder().decode(SatelliteCategory?.self, from: $0)
+                }
 
                 Store.shared.dispatch(
                     .notification(.deepLink(

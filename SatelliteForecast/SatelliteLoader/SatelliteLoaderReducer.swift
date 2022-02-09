@@ -31,7 +31,7 @@ extension Reducer where ActionType == SatelliteLoaderAction, StateType == Satell
 extension Reducer where ActionType == SatelliteLoaderOutput, StateType == SatelliteLoaderState {
     static let satelliteLoaderOutputReducer = Reducer.reduce { action, state in
         switch action {
-        case let .loadedSatelliteInfo(category, info):
+        case let .loadedSatelliteInfo(category, info, _):
             state.resources.info[category] = .success(info)
             logger.notice("Loaded \(info.count) TLE entries")
         case let .failedLoadingTLEFile(category, error):

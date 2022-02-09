@@ -232,7 +232,11 @@ extension EffectMiddleware where
                                 DispatchedAction(.satelliteLoader(
                                     .loadSatelliteCategory(
                                         category,
-                                        onCompletion: calculatePass(infoMap:)
+                                        calculatePass: SatelliteLoaderCalculatePassParam(
+                                            noradID: noradIndex,
+                                            dateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate),
+                                            observer: observer
+                                        )
                                     )
                                 ))
                             )
@@ -241,7 +245,11 @@ extension EffectMiddleware where
                                 DispatchedAction(.satelliteLoader(
                                     .loadSatelliteCategory(
                                         .brightest100,
-                                        onCompletion: calculatePass(infoMap:)
+                                        calculatePass: SatelliteLoaderCalculatePassParam(
+                                            noradID: noradIndex,
+                                            dateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate),
+                                            observer: observer
+                                        )
                                     )
                                 ))
                             )
