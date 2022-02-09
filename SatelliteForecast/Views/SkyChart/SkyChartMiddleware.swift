@@ -25,8 +25,6 @@ extension EffectMiddleware where
         SimpleEffectMiddleware<SkyChartAction, AppState>
             .onAction { action, _, getState in
                 switch action {
-                case .onAppear:
-                    return .doNothing
                 case .rasterizedBackgroundSky(_, quality: _, julianDate: _, key: _):
                     return .doNothing
                 case .rasterizedSatellitePath(_, quality: _, pass: _):

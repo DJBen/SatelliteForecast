@@ -94,18 +94,8 @@ extension Satellite {
             interval: fineInterval
         )
 
-        // Use a cheaper quadratic interpolation to find RST times.
-        let azimInterp = quadraticInterpolate(fineSnapshots.map { ($0.0, $0.1.position.azim) }, steps: 3000)
-        let elevInterp = quadraticInterpolate(fineSnapshots.map { ($0.0, $0.1.position.elev) }, steps: 3000)
-        precondition(azimInterp.count == elevInterp.count)
-
-        let datePoses: [Pass.DatePosition] = zip(azimInterp, elevInterp).map { (azimPair, elevPair) in
-            let (azimDate, azim) = azimPair
-            let (elevDate, elev) = elevPair
-            if azimDate != elevDate {
-                fatalError()
-            }
-            return Pass.DatePosition(julianDate: azimDate, azim: azim, elev: elev)
+        let datePoses: [Pass.DatePosition] = fineSnapshots.map { fineSnapshot in
+            return Pass.DatePosition(julianDate: fineSnapshot.0, azim: fineSnapshot.1.position.azim, elev: fineSnapshot.1.position.elev)
         }
         let maxElevDatePos = datePoses.max(by: { $0.elev < $1.elev })!
         let riseDatePos: Pass.DatePosition = {

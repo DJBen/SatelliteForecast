@@ -12,8 +12,6 @@ import SwiftRex
 extension Reducer where ActionType == SkyChartAction, StateType == SkyChartResources {
     static let skyChartReducer = Reducer.reduce { action, state in
         switch action {
-        case .onAppear:
-            break
         case let .rasterizedBackgroundSky(image, quality, julianDate, key):
             switch quality {
             case .full:

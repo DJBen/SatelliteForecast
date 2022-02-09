@@ -13,7 +13,6 @@ import SatelliteKit
 import SwiftUI
 
 enum PassViewAction {
-    case onAppear
 }
 
 struct PassViewState: Equatable {
@@ -80,9 +79,6 @@ struct PassView: View {
                     }
                 }
             }
-        }
-        .onAppear {
-            viewModel.dispatch(.onAppear)
         }
     }
 }

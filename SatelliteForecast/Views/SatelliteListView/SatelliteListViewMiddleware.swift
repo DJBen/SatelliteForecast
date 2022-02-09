@@ -60,7 +60,7 @@ extension EffectMiddleware where InputActionType == SatelliteListViewAction, Out
                 return satelliteLoader.loadSatelliteCategoryPublisher(
                     category: category
                 )
-                .map { AppAction.satelliteLoaderOutput(.loadedSatelliteInfo(category, $0)) }
+                .map { AppAction.satelliteLoaderOutput(.loadedSatelliteInfo(category, satelliteInfo: $0)) }
                 .catch { error in
                     Just(AppAction.satelliteLoaderOutput(.failedLoadingTLEFile(category, error)))
                 }

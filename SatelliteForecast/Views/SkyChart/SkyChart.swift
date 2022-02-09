@@ -22,8 +22,6 @@ struct SkyChartBackgroundSkyKey: Equatable, Hashable {
 }
 
 enum SkyChartAction {
-    case onAppear
-
     /// Request a rasterized version of the background sky.
     /// The caller should group the call and reduce frequency by rounding the date to a nearest minute, for example.
     case requestRasterizedBackgroundSky(size: CGSize, quality: SkyChartResources.Quality, julianDate: Double, key: SkyChartBackgroundSkyKey, traitCollection: UITraitCollection)
@@ -332,9 +330,6 @@ struct SkyChart: View {
                     .overlay(satellitePath)
                     .clipShape(Circle())
             )
-            .onAppear {
-                viewModel.dispatch(.onAppear)
-            }
         }
     }
 }

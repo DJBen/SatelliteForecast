@@ -77,6 +77,10 @@ class Store: ReduxStoreBase<AppAction, AppState> {
 
         <> EffectMiddleware.calculatePassAfterSatelliteLoader.lift()
 
+        <> EffectMiddleware.selectSatelliteAfterSatelliteLoader.lift()
+
+        <> EffectMiddleware.selectSpecialSatelliteAfterSatelliteLoader.lift()
+
         <> EffectMiddleware.satelliteOverview
             .lift(
                 inputAction: \.satelliteOverview
@@ -130,6 +134,8 @@ class Store: ReduxStoreBase<AppAction, AppState> {
 
         <> EffectMiddleware.debugMenu.lift()
 
+        <> EffectMiddleware.loggerMiddleware.eraseToAnyMiddleware()
+
         return composedMiddleware.eraseToAnyMiddleware()
     }
 
@@ -139,7 +145,8 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         super.init(
             subject: .combine(initialValue: .empty),
             reducer: Store.reducer,
-            middleware: Store.middlewareBuilder(satelliteLoader: satelliteLoader)
+            middleware: Store.middlewareBuilder(satelliteLoader: satelliteLoader),
+            emitsValue: .whenDifferent
         )
     }
 }

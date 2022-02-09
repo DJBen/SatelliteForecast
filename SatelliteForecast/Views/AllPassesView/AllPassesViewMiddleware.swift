@@ -65,12 +65,11 @@ extension EffectMiddleware where
                                 let satellite = info.satellite
                                 logger.debug("Calculating pass within date range \(julianDateRange) for \(String(describing: observer)) at interval of 30s")
 
-                                let snapshots = satellite
-                                    .snapshots(
-                                        observer: observer,
-                                        julianDateRange: julianDateRange,
-                                        interval: 30
-                                    )
+                                let snapshots = satellite.snapshots(
+                                    observer: observer,
+                                    julianDateRange: julianDateRange,
+                                    interval: 30
+                                )
 
                                 subject.send(
                                     DispatchedAction<AppAction>(
@@ -84,12 +83,11 @@ extension EffectMiddleware where
                                     )
                                 )
 
-                                (passes, fineSnapshots) = satellite
-                                    .findPasses(
-                                        noradIndex: Int(satellite.noradIdent)!,
-                                        observer: observer,
-                                        coarseSnapshots: snapshots
-                                    )
+                                (passes, fineSnapshots) = satellite.findPasses(
+                                    noradIndex: Int(satellite.noradIdent)!,
+                                    observer: observer,
+                                    coarseSnapshots: snapshots
+                                )
 
                                 subject.send(
                                     DispatchedAction<AppAction>(

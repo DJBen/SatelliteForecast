@@ -14,11 +14,15 @@ import SatelliteKit
 import SwiftUI
 
 enum AllPassesViewAction {
-    struct CalculatePassesParams {
+    struct CalculatePassesParams: CustomDebugStringConvertible {
         let selectedNoradIndex: Int
         let satelliteInfo: SatelliteInfo
         let julianDateRange: Range<Double>
         let observer: LatLonAlt
+
+        var debugDescription: String {
+            return "selectedNoradIndex: \(selectedNoradIndex), julianDateRange: \(julianDateRange), observer: \(observer)"
+        }
     }
     
     /// Calculate the passes.

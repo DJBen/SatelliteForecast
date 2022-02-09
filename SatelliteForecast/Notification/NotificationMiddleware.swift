@@ -212,26 +212,16 @@ extension EffectMiddleware where
                     let subject = PassthroughSubject<DispatchedAction<AppAction>, Never>()
 
                     DispatchQueue.global().async {
-                        func calculatePass(infoMap: Map<Int, SatelliteInfo>) -> AppAction? {
-                            guard let satelliteInfo = infoMap[noradIndex] else {
-                                return nil
-                            }
-                            return .allPassesView(
-                                .calculatePasses(
-                                    .init(
-                                        selectedNoradIndex: noradIndex,
-                                        satelliteInfo: satelliteInfo,
-                                        julianDateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate),
-                                        observer: observer
-                                    )
-                                )
-                            )
-                        }
                         if let category = satelliteCategory {
                             subject.send(
                                 DispatchedAction(.satelliteLoader(
                                     .loadSatelliteCategory(
                                         category,
+                                        selectNoradIndex: SelectNoradIndexParam(
+                                            noradIndex: noradIndex,
+                                            dateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate),
+                                            observer: observer
+                                        ),
                                         calculatePass: SatelliteLoaderCalculatePassParam(
                                             noradID: noradIndex,
                                             dateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate),
@@ -245,6 +235,11 @@ extension EffectMiddleware where
                                 DispatchedAction(.satelliteLoader(
                                     .loadSatelliteCategory(
                                         .brightest100,
+                                        selectSpecialNoradIndex: SelectNoradIndexParam(
+                                            noradIndex: noradIndex,
+                                            dateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate),
+                                            observer: observer
+                                        ),
                                         calculatePass: SatelliteLoaderCalculatePassParam(
                                             noradID: noradIndex,
                                             dateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate),

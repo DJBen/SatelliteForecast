@@ -10,6 +10,12 @@ import Foundation
 import SatelliteForecastCore
 import SatelliteKit
 
+struct SelectNoradIndexParam {
+    let noradIndex: Int
+    let dateRange: Range<Double>
+    let observer: LatLonAlt
+}
+
 struct SatelliteLoaderCalculatePassParam {
     let noradID: Int
     let dateRange: Range<Double>
@@ -19,6 +25,8 @@ struct SatelliteLoaderCalculatePassParam {
 enum SatelliteLoaderAction {
     case loadSatelliteCategory(
         SatelliteCategory,
+        selectSpecialNoradIndex: SelectNoradIndexParam? = nil,
+        selectNoradIndex: SelectNoradIndexParam? = nil,
         calculatePass: SatelliteLoaderCalculatePassParam? = nil
     )
 }
@@ -26,7 +34,9 @@ enum SatelliteLoaderAction {
 enum SatelliteLoaderOutput {
     case loadedSatelliteInfo(
         SatelliteCategory,
-        Map<Int, SatelliteInfo>,
+        satelliteInfo: Map<Int, SatelliteInfo>,
+        selectSpecialNoradIndex: SelectNoradIndexParam? = nil,
+        selectNoradIndex: SelectNoradIndexParam? = nil,
         calculatePass: SatelliteLoaderCalculatePassParam? = nil
     )
     case failedLoadingTLEFile(

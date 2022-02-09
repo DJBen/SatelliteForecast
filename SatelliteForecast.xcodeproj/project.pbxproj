@@ -22,6 +22,7 @@
 		EF283B0526B23122008223C1 /* SkyChartDynamicIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF283B0426B23122008223C1 /* SkyChartDynamicIndicator.swift */; };
 		EF2EF4D827B11C0A000D5EC8 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = EF2EF4D727B11C0A000D5EC8 /* README.md */; };
 		EF2EF4DA27B252EA000D5EC8 /* AppStateMappable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF2EF4D927B252EA000D5EC8 /* AppStateMappable.swift */; };
+		EF2EF4DD27B42661000D5EC8 /* LoggerMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF2EF4DC27B42661000D5EC8 /* LoggerMiddleware.swift */; };
 		EF2FBB2326CA74D60046EF28 /* AllPassesLocationChangeWarning.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF2FBB2226CA74D60046EF28 /* AllPassesLocationChangeWarning.swift */; };
 		EF3D099C2685A12200B84232 /* SatelliteOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3D099B2685A12200B84232 /* SatelliteOverviewView.swift */; };
 		EF3D099E26864DDF00B84232 /* SatelliteOverviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3D099D26864DDF00B84232 /* SatelliteOverviewCell.swift */; };
@@ -152,6 +153,7 @@
 		EF283B0426B23122008223C1 /* SkyChartDynamicIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyChartDynamicIndicator.swift; sourceTree = "<group>"; };
 		EF2EF4D727B11C0A000D5EC8 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		EF2EF4D927B252EA000D5EC8 /* AppStateMappable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateMappable.swift; sourceTree = "<group>"; };
+		EF2EF4DC27B42661000D5EC8 /* LoggerMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggerMiddleware.swift; sourceTree = "<group>"; };
 		EF2FBB2226CA74D60046EF28 /* AllPassesLocationChangeWarning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllPassesLocationChangeWarning.swift; sourceTree = "<group>"; };
 		EF3D099B2685A12200B84232 /* SatelliteOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteOverviewView.swift; sourceTree = "<group>"; };
 		EF3D099D26864DDF00B84232 /* SatelliteOverviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteOverviewCell.swift; sourceTree = "<group>"; };
@@ -321,6 +323,14 @@
 				EF8A4234267C53630014AE17 /* PassViewReducer.swift */,
 			);
 			path = PassView;
+			sourceTree = "<group>";
+		};
+		EF2EF4DB27B42646000D5EC8 /* Logger */ = {
+			isa = PBXGroup;
+			children = (
+				EF2EF4DC27B42661000D5EC8 /* LoggerMiddleware.swift */,
+			);
+			path = Logger;
 			sourceTree = "<group>";
 		};
 		EF3D099A2685A10F00B84232 /* SatelliteOverview */ = {
@@ -515,6 +525,7 @@
 				EF3D09A12686920800B84232 /* Satellites.xcassets */,
 				EF7A318D266B6ABC00CC33C0 /* Store */,
 				EF847BEE26CE334D0004806F /* AppDelegate */,
+				EF2EF4DB27B42646000D5EC8 /* Logger */,
 				EF847BF626CF29F20004806F /* BackgroundTask */,
 				EF847BF526CF29E50004806F /* Notification */,
 				EF833AF826AD6054003EEBB6 /* Motion */,
@@ -826,6 +837,7 @@
 				EF847BF026CE33650004806F /* AppDelegateMiddleware.swift in Sources */,
 				EF1EDA2C268D21BF0088DD65 /* SatelliteOverviewMiddleware.swift in Sources */,
 				EF847BF226CE49FA0004806F /* BackgroundTaskMiddleware.swift in Sources */,
+				EF2EF4DD27B42661000D5EC8 /* LoggerMiddleware.swift in Sources */,
 				EF833B0026AE2515003EEBB6 /* SkyChartSatelliteIndicator.swift in Sources */,
 				EFF750C8266F4DFF005222F8 /* SizeModifier.swift in Sources */,
 				EF5CB01D266E2933000019DA /* TLEPropagatorReducer.swift in Sources */,

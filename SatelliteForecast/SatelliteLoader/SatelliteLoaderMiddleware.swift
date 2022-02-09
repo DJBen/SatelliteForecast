@@ -32,7 +32,7 @@ extension EffectMiddleware where
         EffectMiddleware<SatelliteLoaderAction, AppAction, SatelliteLoaderState, SatelliteLoaderDependencies>
         .onAction { (inputAction, dispatcher, getState) -> Effect<SatelliteLoaderDependencies, AppAction> in
             switch inputAction {
-            case let .loadSatelliteCategory(category, calculatePass):
+            case let .loadSatelliteCategory(category, selectSpecialNoradIndex, selectNoradIndex, calculatePass):
                 return Effect(token: category) { context -> AnyPublisher<DispatchedAction<AppAction>, Never> in
                     func loadSatellitePublisher() -> AnyPublisher<DispatchedAction<AppAction>, Never> {
                         satelliteLoader.loadSatelliteCategoryPublisher(
@@ -43,7 +43,9 @@ extension EffectMiddleware where
                                 .satelliteLoaderOutput(
                                     .loadedSatelliteInfo(
                                         category,
-                                        map,
+                                        satelliteInfo: map,
+                                        selectSpecialNoradIndex: selectSpecialNoradIndex,
+                                        selectNoradIndex: selectNoradIndex,
                                         calculatePass: calculatePass
                                     )
                                 )
@@ -74,8 +76,18 @@ extension EffectMiddleware where
 
                         logger.notice("Most recent TLE age \(mostRecentTLEAge) is new: skip update.")
 
-                        return Empty<DispatchedAction<AppAction>, Never>(completeImmediately: true)
-                                .eraseToAnyPublisher()
+                        return Just<DispatchedAction<AppAction>>(
+                            DispatchedAction(
+                                .satelliteLoaderOutput(
+                                    .loadedSatelliteInfo(
+                                        category,
+                                        satelliteInfo: infoMap,
+                                        calculatePass: calculatePass
+                                    )
+                                )
+                            )
+                        )
+                        .eraseToAnyPublisher()
                     } else {
                         return loadSatellitePublisher()
                     }
@@ -94,12 +106,87 @@ extension MiddlewareReader where MiddlewareType == EffectMiddleware<SatelliteLoa
     }
 }
 
+extension EffectMiddleware where InputActionType == SatelliteLoaderOutput, OutputActionType == SatelliteOverviewViewAction, StateType == SatelliteLoaderState, Dependencies == Void {
+    /// This middleware triggers `calculatePass` event after satellite has been loaded
+    static var selectSpecialSatelliteAfterSatelliteLoader: EffectMiddleware<SatelliteLoaderOutput, SatelliteOverviewViewAction, SatelliteLoaderState, Void> {
+        EffectMiddleware.onAction { action, dispatcher, getState in
+            switch action {
+            case .loadedSatelliteInfo(_, _, let selectSpecialNoradIndex, _, _):
+                guard let selectSpecialNoradIndex = selectSpecialNoradIndex else {
+                    return .doNothing
+                }
+
+                return .just(
+                    .selectSpecialSatellite(
+                        SatelliteOverviewViewAction.SelectSpecialSatelliteParams(
+                            noradIndex: selectSpecialNoradIndex.noradIndex,
+                            julianDateRange: selectSpecialNoradIndex.dateRange,
+                            observer: selectSpecialNoradIndex.observer
+                        )
+                    ),
+                    from: dispatcher
+                )
+
+            case .failedLoadingTLEFile(_, _):
+                return .doNothing
+            }
+        }
+    }
+
+    func lift() -> AnyMiddleware<AppAction, AppAction, AppState> {
+        return lift(
+            inputAction: \.satelliteLoaderOutput,
+            outputAction: AppAction.satelliteOverview,
+            state: SatelliteLoaderState.project(appState:)
+        )
+        .eraseToAnyMiddleware()
+    }
+}
+
+extension EffectMiddleware where InputActionType == SatelliteLoaderOutput, OutputActionType == SatelliteListViewAction, StateType == SatelliteLoaderState, Dependencies == Void {
+    /// This middleware triggers `calculatePass` event after satellite has been loaded
+    static var selectSatelliteAfterSatelliteLoader: EffectMiddleware<SatelliteLoaderOutput, SatelliteListViewAction, SatelliteLoaderState, Void> {
+        EffectMiddleware.onAction { action, dispatcher, getState in
+            switch action {
+            case .loadedSatelliteInfo(_, let satelliteInfoMap, _, let selectNoradIndex, _):
+                guard let selectNoradIndex = selectNoradIndex, let satelliteInfo = satelliteInfoMap[selectNoradIndex.noradIndex] else {
+                    return .doNothing
+                }
+
+                return .just(
+                    .selectSatellite(
+                        SatelliteListViewAction.SelectSatelliteParams(
+                            noradIndex: selectNoradIndex.noradIndex,
+                            satelliteInfo: satelliteInfo,
+                            julianDateRange: selectNoradIndex.dateRange,
+                            observer: selectNoradIndex.observer
+                        )
+                    ),
+                    from: dispatcher
+                )
+
+            case .failedLoadingTLEFile(_, _):
+                return .doNothing
+            }
+        }
+    }
+
+    func lift() -> AnyMiddleware<AppAction, AppAction, AppState> {
+        return lift(
+            inputAction: \.satelliteLoaderOutput,
+            outputAction: AppAction.satelliteListView,
+            state: SatelliteLoaderState.project(appState:)
+        )
+        .eraseToAnyMiddleware()
+    }
+}
+
 extension EffectMiddleware where InputActionType == SatelliteLoaderOutput, OutputActionType == AllPassesViewAction, StateType == SatelliteLoaderState, Dependencies == Void {
     /// This middleware triggers `calculatePass` event after satellite has been loaded
     static var calculatePassAfterSatelliteLoader: EffectMiddleware<SatelliteLoaderOutput, AllPassesViewAction, SatelliteLoaderState, Void> {
         EffectMiddleware.onAction { action, dispatcher, getState in
             switch action {
-            case .loadedSatelliteInfo(_, let satelliteInfoMap, let calculatePass):
+            case .loadedSatelliteInfo(_, let satelliteInfoMap, _, _, let calculatePass):
                 guard let calculatePass = calculatePass, let satelliteInfo = satelliteInfoMap[calculatePass.noradID] else {
                     return .doNothing
                 }

@@ -14,7 +14,7 @@ fileprivate let logger = Logger(subsystem: "io.djben.satelliteLoader", category:
 extension Reducer where ActionType == SatelliteLoaderAction, StateType == SatelliteLoaderState {
     static let satelliteLoaderReducer = Reducer.reduce { action, state in
         switch action {
-        case .loadSatelliteCategory(_, _):
+        case .loadSatelliteCategory(_, _, _, _):
             break
         }
     }
@@ -31,7 +31,7 @@ extension Reducer where ActionType == SatelliteLoaderAction, StateType == Satell
 extension Reducer where ActionType == SatelliteLoaderOutput, StateType == SatelliteLoaderState {
     static let satelliteLoaderOutputReducer = Reducer.reduce { action, state in
         switch action {
-        case let .loadedSatelliteInfo(category, info, _):
+        case let .loadedSatelliteInfo(category, info, _, _, _):
             state.resources.info[category] = .success(info)
             logger.notice("Loaded \(info.count) TLE entries")
         case let .failedLoadingTLEFile(category, error):
