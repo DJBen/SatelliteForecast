@@ -77,19 +77,17 @@ extension EffectMiddleware where
                                 return
                             }
 
-                            guard let snapshots = state.satelliteTrails[pass.noradIndex]?.snapshots else {
+                            guard let passSnapshots = state.satelliteTrails[pass.noradIndex]?.passSnapshots?.first(where: { $0.pass == pass }) else {
     //                            logger.debug("\(pass.noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate) lacks snapshots: rasterization on hold")
                                 return
                             }
-
-                            let snapshotsDuringPass = snapshots.subtree(from: pass.rise.julianDate, through: pass.set.julianDate)
 
                             traitCollection.performAsCurrent {
                                 // Rasterize satellite paths in sky charts
                                 let image = SkyChart.rasterizedSatellitePassPath(
                                     params: SatellitePassPathRenderParams(
                                         rect: CGRect(origin: .zero, size: size),
-                                        snapshotsDuringPass: snapshotsDuringPass,
+                                        snapshotsDuringPass: passSnapshots.snapshots,
                                         illuminatedColor: UIColor(named: "satellitePath_illuminated")!,
                                         unlitColor: UIColor(named: "satellitePath_notIlluminated")!,
                                         arrowSize: quality == .preview ? 8 : 16

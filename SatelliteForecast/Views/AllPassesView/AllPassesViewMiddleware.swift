@@ -112,7 +112,7 @@ extension EffectMiddleware where
                         let subject = PassthroughSubject<DispatchedAction<AppAction>, Never>()
                         let state = getState()
                         let pass = passNotification.pass
-                        guard let snapshots = state.satelliteTrails[pass.noradIndex]?.snapshots else {
+                        guard let passSnapshots = state.satelliteTrails[pass.noradIndex]?.passSnapshots?.first(where: { $0.pass == pass }) else {
 //                            logger.debug("\(pass.noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate) lacks snapshots: rasterization on hold")
                             subject.send(DispatchedAction(.notification(.requestNotificationAuthorization(pendingNotification: passNotification))))
                             subject.send(completion: .finished)
@@ -120,7 +120,6 @@ extension EffectMiddleware where
                         }
                         
                         DispatchQueue.global(qos: .userInitiated).async {
-                            let snapshotsDuringPass = snapshots.subtree(from: pass.rise.julianDate, through: pass.set.julianDate)
                             // Force dark theme
                             let traitCollection = UITraitCollection(userInterfaceStyle: .dark)
                             traitCollection.performAsCurrent {
@@ -149,7 +148,7 @@ extension EffectMiddleware where
                                         to: ctx,
                                         params: SatellitePassPathRenderParams(
                                             rect: imageRect,
-                                            snapshotsDuringPass: snapshotsDuringPass,
+                                            snapshotsDuringPass: passSnapshots.snapshots,
                                             illuminatedColor: UIColor(named: "satellitePath_illuminated")!,
                                             unlitColor: UIColor(named: "satellitePath_notIlluminated")!
                                         )
