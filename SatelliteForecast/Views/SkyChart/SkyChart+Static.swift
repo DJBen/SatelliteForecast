@@ -10,40 +10,6 @@ import SatelliteForecastCore
 import SatelliteKit
 import StarryNight
 
-extension SkyChartViewState {
-    static func snapshotsAroundPass(_ tree: BTree<Double, SatelliteSnapshot>, julianDate: Double, selector: BTreeKeySelector) -> SnapshotsAroundPass? {
-        var index = tree.index(forInserting: julianDate, at: selector)
-        if index == tree.endIndex {
-            index = tree.index(before: tree.endIndex)
-        }
-        if tree.count < 2 {
-            return nil
-        }
-
-        if selector == .first {
-            if index == tree.index(before: tree.endIndex) {
-                // Use before index
-                let beforeIndex = tree.index(before: index)
-                return SnapshotsAroundPass(tree[index].1, tree[beforeIndex].1)
-            } else {
-                // Use after index
-                let afterIndex = tree.index(after: index)
-                return SnapshotsAroundPass(tree[index].1, tree[afterIndex].1)
-            }
-        } else {
-            if index == tree.startIndex {
-                // Use after index
-                let afterIndex = tree.index(after: index)
-                return SnapshotsAroundPass(tree[index].1, tree[afterIndex].1)
-            } else {
-                // Use before index
-                let beforeIndex = tree.index(before: index)
-                return SnapshotsAroundPass(tree[index].1, tree[beforeIndex].1)
-            }
-        }
-    }
-}
-
 struct SatellitePassPathRenderParams: Equatable {
     var rect: CGRect
     var snapshotsDuringPass: BTree<Double, SatelliteSnapshot>
@@ -115,7 +81,7 @@ extension SkyChart {
     ///   - snapshotPair: A pair of satellite snapshots.
     ///   - rect: The rectangle of the view.
     /// - Returns: The rotation angle in radians, and the rotation angle for the text to be the most easily legible.
-    static func rotationAndTextRotation(snapshotPair: SkyChartViewState.SnapshotsAroundPass, rect: CGRect) -> (Double, Double) {
+    static func rotationAndTextRotation(snapshotPair: SnapshotsAroundPass, rect: CGRect) -> (Double, Double) {
         let position = Self.point(at: snapshotPair.first.position, rect: rect)
         let afterPosition = Self.point(at: snapshotPair.second.position, rect: rect)
         let satellitePositionVector = Vector(Double(afterPosition.x - position.x), Double(afterPosition.y - position.y), 0)
@@ -306,7 +272,7 @@ extension SkyChart {
 import SwiftUI
 
 struct ImageRenderer_Previews: PreviewProvider {
-    static let tianHePasses: (passes: [Pass], snapshots: BTree<Double, SatelliteSnapshot>) = {
+    static let tianHePasses: [PassSnapshots] = {
         let tle = try! TLE(
             raw: """
             TIANHE
@@ -338,6 +304,7 @@ struct ImageRenderer_Previews: PreviewProvider {
         
         let pass: Pass
         let snapshots: BTree<Double, SatelliteSnapshot>
+        let notableSnapshots: NotableSnapshots
         let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
         
         @Environment(\.colorScheme) var colorScheme
@@ -391,7 +358,7 @@ struct ImageRenderer_Previews: PreviewProvider {
                 .overlay(
                     SkyChart.PassLabel(
                         text: "Rise",
-                        snapshotPair: SkyChartViewState.snapshotsAroundPass(snapshots, julianDate: pass.rise.julianDate, selector: .first)!,
+                        snapshotPair: notableSnapshots.rise,
                         rect: rect,
                         modifierFactory: PassLabelModifier.init(rotationAngle:)
                     )
@@ -399,7 +366,7 @@ struct ImageRenderer_Previews: PreviewProvider {
                 .overlay(
                     SkyChart.PassLabel(
                         text: "Transit",
-                        snapshotPair: SkyChartViewState.snapshotsAroundPass(snapshots, julianDate: pass.transit.julianDate, selector: .first)!,
+                        snapshotPair: notableSnapshots.transit,
                         rect: rect,
                         modifierFactory: PassLabelModifier.init(rotationAngle:)
                     )
@@ -407,7 +374,7 @@ struct ImageRenderer_Previews: PreviewProvider {
                 .overlay(
                     SkyChart.PassLabel(
                         text: "Set",
-                        snapshotPair: SkyChartViewState.snapshotsAroundPass(snapshots, julianDate: pass.set.julianDate, selector: .last)!,
+                        snapshotPair: notableSnapshots.set,
                         rect: rect,
                         modifierFactory: PassLabelModifier.init(rotationAngle:)
                     )
@@ -415,7 +382,10 @@ struct ImageRenderer_Previews: PreviewProvider {
                 .overlay(
                     SkyChart.PassLabel(
                         text: "Special",
-                        snapshotPair: SkyChartViewState.snapshotsAroundPass(snapshots, julianDate: pass.rise.julianDate + 180 * TimeConstants.sec2day, selector: .last)!,
+                        snapshotPair: SnapshotsAroundPass(
+                            first: snapshots[snapshots.index(snapshots.startIndex, offsetBy: snapshots.count / 3)].1,
+                            second: snapshots[snapshots.index(snapshots.startIndex, offsetBy: snapshots.count / 3 + 1)].1
+                        ),
                         rect: rect,
                         modifierFactory: HighlightedPassLabelModifier.curry(shouldHighlight: true)
                     )
@@ -425,12 +395,14 @@ struct ImageRenderer_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        let (passes, snapshots) = tianHePasses
-
-        ForEach(enumerated: passes, id: \.self.rise.julianDate) { index, pass in
-            Preview(pass: pass, snapshots: snapshots.subtree(from: pass.rise.julianDate, through: pass.set.julianDate))
-                .previewLayout(.fixed(width: 350, height: 350))
-                .preferredColorScheme(Double.random(in: 0..<1) > 0.5 ? .light : .dark)
+        ForEach(enumerated: tianHePasses, id: \.notableSnapshots.rise.first.julianDate) { index, passSnapshots in
+            Preview(
+                pass: passSnapshots.pass,
+                snapshots: passSnapshots.snapshots,
+                notableSnapshots: passSnapshots.notableSnapshots
+            )
+            .previewLayout(.fixed(width: 350, height: 350))
+            .preferredColorScheme(Double.random(in: 0..<1) > 0.5 ? .light : .dark)
         }
     }
 }

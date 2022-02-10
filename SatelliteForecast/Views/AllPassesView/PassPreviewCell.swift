@@ -15,6 +15,7 @@ import CombineRextensions
 struct PassPreviewCell: View {
     var satelliteInfo: SatelliteInfo
     var snapshots: BTree<Double, SatelliteSnapshot>
+    var notableSnapshots: NotableSnapshots
     var observer: LatLonAlt
     var pass: Pass
     var referenceDate: Double
@@ -127,6 +128,7 @@ struct PassPreviewCell: View {
                         snapshots: snapshots,
                         observer: observer,
                         pass: pass,
+                        notableSnapshots: notableSnapshots,
                         configs: .preview,
                         quality: .preview
                     )
@@ -159,51 +161,35 @@ struct PassPreviewCell_Previews: PreviewProvider {
             julianDateRange: julianDateRange,
             interval: 60
         )
-        let (passes, snapshots) = sat.findPasses(
+        let passSnapshots = sat.findPasses(
             noradIndex: tle.noradIndex,
             observer: observer,
             coarseSnapshots: coarseSnapshots
         )
 
         func viewAtPassIndex(_ index: Int) -> some View {
-            let pass = passes[index]
+            let passSnapshot = passSnapshots[index]
             return PassPreviewCell(
                 satelliteInfo: SatelliteInfo(noradIndex: 25544, satellite: sat),
-                snapshots: snapshots,
+                snapshots: passSnapshot.snapshots,
+                notableSnapshots: passSnapshot.notableSnapshots,
                 observer: observer,
-                pass: pass,
+                pass: passSnapshot.pass,
                 referenceDate: startDate.julianDate,
                 hasScheduledAlert: false,
                 skyChartProducer: .pure(
                     SkyChart(
                         viewModel: .mock(
                             state: SkyChartViewState(
-                                snapshots: SkyChartViewState.NotableSnapshots(
-                                    rise: SkyChartViewState.snapshotsAroundPass(
-                                        snapshots,
-                                        julianDate: pass.rise.julianDate,
-                                        selector: .first
-                                    )!,
-                                    transit: SkyChartViewState.snapshotsAroundPass(
-                                        snapshots,
-                                        julianDate: pass.transit.julianDate,
-                                        selector: .first
-                                    )!,
-                                    set: SkyChartViewState.snapshotsAroundPass(
-                                        snapshots,
-                                        julianDate: pass.set.julianDate,
-                                        selector: .last
-                                    )!,
-                                    illuminationChanges: BTree()
-                                ),
-                                referenceDate: pass.rise.julianDate
+                                referenceDate: passSnapshot.pass.rise.julianDate
                             )
                         ),
                         context: SkyChartContext(
                             satelliteInfo: SatelliteInfo(noradIndex: 25544, satellite: sat),
-                            snapshots: snapshots,
+                            snapshots: passSnapshot.snapshots,
                             observer: observer,
-                            pass: pass,
+                            pass: passSnapshot.pass,
+                            notableSnapshots: passSnapshot.notableSnapshots,
                             configs: SkyChartConfigs(
                                 backgroundSky: SkyChartConfigs.BackgroundSky(
                                     stars: .limitedMagnitude(2),

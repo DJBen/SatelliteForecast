@@ -20,7 +20,7 @@ struct SkyChartDynamicIndicatorState: Equatable {
 struct SkyChartDynamicIndicator: View {
     var state: SkyChartDynamicIndicatorState
 
-    @State var snapshotPairAtReferenceDate: SkyChartViewState.SnapshotsAroundPass?
+    @State var snapshotPairAtReferenceDate: SnapshotsAroundPass?
 
     let refreshTimer = Timer.publish(
         every: 0.2,
@@ -80,12 +80,12 @@ struct SkyChartDynamicIndicator: View {
             .onReceive(refreshTimer) { realJulianDate in
                 let julianDate = realJulianDate + state.julianDateOffset
                 if (state.pass.rise.julianDate..<state.pass.set.julianDate).contains(julianDate) {
-                    snapshotPairAtReferenceDate = SkyChartViewState.SnapshotsAroundPass(
-                        state.satellite.snapshot(
+                    snapshotPairAtReferenceDate = SnapshotsAroundPass(
+                        first: state.satellite.snapshot(
                             julianDate: julianDate,
                             observer: state.observer
                         ),
-                        state.satellite.snapshot(
+                        second: state.satellite.snapshot(
                             julianDate: julianDate + TimeConstants.sec2day * 1,
                             observer: state.observer
                         )

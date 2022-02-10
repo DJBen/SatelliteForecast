@@ -47,35 +47,34 @@ struct AllPassesViewContext {
 struct AllPassesViewState: Equatable {
     struct Item: Equatable, Identifiable {
         let index: Int
-        let pass: Pass
+        let passSnapshots: PassSnapshots
         let hasScheduledAlert: Bool
-        
+
         private let rasterizedSatellitePath: UIImage?
         private let rasterizedBackgroundSky: UIImage?
 
         init(
             index: Int,
-            pass: Pass,
+            passSnapshots: PassSnapshots,
             hasScheduledAlert: Bool,
             rasterizedSatellitePath: UIImage? = nil,
             rasterizedBackgroundSky: UIImage? = nil
         ) {
             self.index = index
-            self.pass = pass
+            self.passSnapshots = passSnapshots
             self.hasScheduledAlert = hasScheduledAlert
             self.rasterizedSatellitePath = rasterizedSatellitePath
             self.rasterizedBackgroundSky = rasterizedBackgroundSky
         }
         
         var id: String {
-            return "\(pass.notificationIdentifier)-scheduled:\(hasScheduledAlert)"
+            return "\(passSnapshots.pass.notificationIdentifier)-scheduled:\(hasScheduledAlert)"
         }
     }
 
     var julianDate: Double
     var visiblePasses: [Item]?
     var invisiblePasses: [Item]?
-    var snapshots = BTree<Double, SatelliteSnapshot>()
     var selectedPassIndex: Int?
     var satelliteCategory: SatelliteCategory?
     var locationChangeWarningState: AllPassesLocationChangeWarningState?
@@ -86,9 +85,9 @@ struct AllPassesViewState: Equatable {
 
     static func project(state: AppState, context: AllPassesViewContext) -> AllPassesViewState {
         if let satelliteTrails = state.satelliteTrails[context.selectedNoradIndex],
-           let passes = satelliteTrails.passes {
-            let items = passes.enumerated().map { index, pass -> Item in
-                let rasterizedSatellitePath = state.skyChartState.previewSatellitePaths[pass]
+           let passSnapshotsList = satelliteTrails.passSnapshots {
+            let items = passSnapshotsList.enumerated().map { index, passSnapshots -> Item in
+                let rasterizedSatellitePath = state.skyChartState.previewSatellitePaths[passSnapshots.pass]
                 let rasterizedBackgroundSky: UIImage?
                 if let observer = context.observer {
                     rasterizedBackgroundSky = state.skyChartState.previewBackgroundSkies[
@@ -96,19 +95,21 @@ struct AllPassesViewState: Equatable {
                             observer: observer,
                             configs: .preset
                         )
-                    ]?.value(closestTo: pass.rise.julianDate)
+                    ]?.value(closestTo: passSnapshots.pass.rise.julianDate)
                 } else {
                     rasterizedBackgroundSky = nil
                 }
                 return Item(
                     index: index,
-                    pass: pass,
-                    hasScheduledAlert: state.notificationState.scheduledPassNotifications.contains(where: { $0.id == pass.notificationIdentifier }),
+                    passSnapshots: passSnapshots,
+                    hasScheduledAlert: state.notificationState.scheduledPassNotifications.contains(
+                        where: { $0.id == passSnapshots.pass.notificationIdentifier }
+                    ),
                     rasterizedSatellitePath: rasterizedSatellitePath,
                     rasterizedBackgroundSky: rasterizedBackgroundSky
                 )
             }
-            let itemsByVisibility = Dictionary(grouping: items, by: \.pass.visibility)
+            let itemsByVisibility = Dictionary(grouping: items, by: \.passSnapshots.pass.visibility)
             let visiblePasses = itemsByVisibility[.visible] ?? []
             let invisiblePasses = (itemsByVisibility[.daylight] ?? []) + (itemsByVisibility[.unlit] ?? [])
             let locationStateChangeWarning: AllPassesLocationChangeWarningState? = {
@@ -130,10 +131,9 @@ struct AllPassesViewState: Equatable {
             return AllPassesViewState(
                 julianDate: state.julianDate,
                 visiblePasses: visiblePasses
-                    .sorted { $0.pass.rise.julianDate < $1.pass.rise.julianDate },
+                    .sorted { $0.passSnapshots.pass.rise.julianDate < $1.passSnapshots.pass.rise.julianDate },
                 invisiblePasses: invisiblePasses
-                    .sorted { $0.pass.rise.julianDate < $1.pass.rise.julianDate },
-                snapshots: satelliteTrails.snapshots,
+                    .sorted { $0.passSnapshots.pass.rise.julianDate < $1.passSnapshots.pass.rise.julianDate },
                 selectedPassIndex: state.navigationState.listNavigation.selectedPassIndex,
                 satelliteCategory: state.navigationState.listNavigation.category,
                 locationChangeWarningState: locationStateChangeWarning
@@ -169,8 +169,9 @@ struct AllPassesView: View {
                         satelliteInfo: context.satelliteInfo,
                         julianDateRange: context.julianDateRange,
                         observer: observer,
-                        snapshots: viewModel.state.snapshots.subtree(from: item.pass.rise.julianDate, to: item.pass.set.julianDate),
-                        pass: item.pass
+                        snapshots: item.passSnapshots.snapshots,
+                        pass: item.passSnapshots.pass,
+                        notableSnapshots: item.passSnapshots.notableSnapshots
                     )
                 )
             ),
@@ -191,7 +192,7 @@ struct AllPassesView: View {
         if item.hasScheduledAlert {
             Button {
                 viewModel.dispatch(
-                    .unscheduleNotification(pass: item.pass)
+                    .unscheduleNotification(pass: item.passSnapshots.pass)
                 )
             } label: {
                 Label("Cancel alarm", systemImage: "bell.slash.fill")
@@ -202,7 +203,7 @@ struct AllPassesView: View {
                 viewModel.dispatch(
                     .scheduleNotification(
                         PassNotification(
-                            pass: item.pass,
+                            pass: item.passSnapshots.pass,
                             satelliteName: context.satelliteInfo.satellite.commonName,
                             category: viewModel.state.satelliteCategory,
                             observer: context.observer!,
@@ -227,9 +228,10 @@ struct AllPassesView: View {
                     navigationLink(item: item, observer: observer) {
                         PassPreviewCell(
                             satelliteInfo: context.satelliteInfo,
-                            snapshots: viewModel.state.snapshots.subtree(from: item.pass.rise.julianDate, to: item.pass.set.julianDate),
+                            snapshots: item.passSnapshots.snapshots,
+                            notableSnapshots: item.passSnapshots.notableSnapshots,
                             observer: observer,
-                            pass: item.pass,
+                            pass: item.passSnapshots.pass,
                             referenceDate: viewModel.state.julianDate,
                             hasScheduledAlert: item.hasScheduledAlert,
                             skyChartProducer: skyChartProducer
@@ -396,7 +398,7 @@ struct AllPassesView_Previews: PreviewProvider {
         return Satellite(withTLE: tle)
     }()
 
-    static let tianHePasses: (passes: [Pass], snapshots: BTree<Double, SatelliteSnapshot>) = {
+    static let tianHePasses: [PassSnapshots] = {
         let sat = tianHe
 
         let formatter = ISO8601DateFormatter()
@@ -416,9 +418,10 @@ struct AllPassesView_Previews: PreviewProvider {
     }()
 
     static var previews: some View {
-        let (passes, snapshots) = tianHePasses
-        let items = passes.enumerated().map { AllPassesViewState.Item(index: $0, pass: $1, hasScheduledAlert: false) }
-        let itemsByVisibility = Dictionary(grouping: items, by: \.pass.visibility)
+        let items = tianHePasses.enumerated().map { index, passSnapshots in
+            AllPassesViewState.Item(index: index, passSnapshots: passSnapshots, hasScheduledAlert: false)
+        }
+        let itemsByVisibility = Dictionary(grouping: items, by: \.passSnapshots.pass.visibility)
         let visiblePasses = itemsByVisibility[.visible] ?? []
         let invisiblePasses = (itemsByVisibility[.daylight] ?? []) + (itemsByVisibility[.unlit] ?? [])
         let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
@@ -443,36 +446,24 @@ struct AllPassesView_Previews: PreviewProvider {
                     ),
                     context: context,
                     skyChartProducer: ViewProducer<SkyChartContext, SkyChart> { context in
-                        let pass = passes[0]
+                        let passSnapshots = tianHePasses[0]
                         return SkyChart(
                             viewModel: .mock(
                                 state: SkyChartViewState(
-                                    snapshots: SkyChartViewState.NotableSnapshots(
-                                        rise: SkyChartViewState.snapshotsAroundPass(
-                                            snapshots,
-                                            julianDate: pass.rise.julianDate,
-                                            selector: .first
-                                        )!,
-                                        transit: SkyChartViewState.snapshotsAroundPass(
-                                            snapshots,
-                                            julianDate: pass.transit.julianDate,
-                                            selector: .first
-                                        )!,
-                                        set: SkyChartViewState.snapshotsAroundPass(
-                                            snapshots,
-                                            julianDate: pass.set.julianDate,
-                                            selector: .last
-                                        )!,
-                                        illuminationChanges: BTree()
-                                    ),
-                                    referenceDate: pass.rise.julianDate
+                                    referenceDate: passSnapshots.pass.rise.julianDate
                                 )
                             ),
                             context: SkyChartContext(
                                 satelliteInfo: SatelliteInfo(noradIndex: 48274, satellite: tianHe),
-                                snapshots: snapshots,
+                                snapshots: passSnapshots.snapshots,
                                 observer: observer,
-                                pass: pass,
+                                pass: passSnapshots.pass,
+                                notableSnapshots: NotableSnapshots(
+                                    rise: passSnapshots.notableSnapshots.rise,
+                                    transit: passSnapshots.notableSnapshots.transit,
+                                    set: passSnapshots.notableSnapshots.set,
+                                    illuminationChanges: passSnapshots.notableSnapshots.illuminationChanges
+                                ),
                                 configs: SkyChartConfigs(
                                     backgroundSky: SkyChartConfigs.BackgroundSky(
                                         stars: .limitedMagnitude(2),
@@ -493,7 +484,7 @@ struct AllPassesView_Previews: PreviewProvider {
                     passViewProducer: .crash
                 )
             }
-            .previewDevice(PreviewDevice(rawValue:  previewDevice))
+            .previewDevice(PreviewDevice(rawValue: previewDevice))
         }
     }
 }

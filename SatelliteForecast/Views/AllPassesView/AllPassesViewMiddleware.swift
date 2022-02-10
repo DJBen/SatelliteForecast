@@ -51,15 +51,10 @@ extension EffectMiddleware where
                         let subject = PassthroughSubject<DispatchedAction<AppAction>, Never>()
 
                         DispatchQueue.global(qos: .userInitiated).async {
-                            let passes: [Pass]
-                            let fineSnapshots: BTree<Double, SatelliteSnapshot>
-
                             // Use cached satellite ephemerides if calculated within the last hour.
                             if let satelliteState = state.selectedSatelliteTrails,
                                julianDateRange.lowerBound - satelliteState.snapshots.first!.1.julianDate < TimeConstants.hrs2day,
-                               let existingPasses = satelliteState.passes {
-                                passes = existingPasses
-                                fineSnapshots = satelliteState.snapshots
+                               let _ = satelliteState.passSnapshots {
                                 logger.debug("Ephemeride of \(noradIndex) are already generated. Skipping.")
                             } else {
                                 let satellite = info.satellite
@@ -83,7 +78,7 @@ extension EffectMiddleware where
                                     )
                                 )
 
-                                (passes, fineSnapshots) = satellite.findPasses(
+                                let passSnapshots = satellite.findPasses(
                                     noradIndex: Int(satellite.noradIdent)!,
                                     observer: observer,
                                     coarseSnapshots: snapshots
@@ -92,9 +87,8 @@ extension EffectMiddleware where
                                 subject.send(
                                     DispatchedAction<AppAction>(
                                         .tlePropagator(
-                                            .foundPasses(
-                                                passes,
-                                                fineSnapshots: fineSnapshots,
+                                            .foundPassesAndSnapshots(
+                                                passSnapshots,
                                                 noradIndex: noradIndex,
                                                 observer: observer
                                             )

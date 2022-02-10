@@ -17,16 +17,14 @@ fileprivate let logger = Logger(subsystem: "io.djben.TLEPropagator", category: "
 extension Reducer where ActionType == TLEPropagatorAction, StateType == AppState {
     static let tlePropagatorReducer = Reducer.reduce { action, state in
         switch action {
-        case let .foundPasses(passes, snapshots, noradIndex, observer):
-            logger.info("Found \(passes.count) passes for \(noradIndex). Detailed snapshots count: \(snapshots.count)")
+        case let .foundPassesAndSnapshots(passSnapshots, noradIndex, observer):
+            logger.info("Found \(passSnapshots.count) passes for \(noradIndex). Detailed snapshots count: \(passSnapshots.count)")
             if let _ = state.satelliteTrails[noradIndex] {
-                state.satelliteTrails[noradIndex]!.snapshots = snapshots
-                state.satelliteTrails[noradIndex]!.passes = passes
+                state.satelliteTrails[noradIndex]!.passSnapshots = passSnapshots
             } else {
                 state.satelliteTrails[noradIndex] = SatelliteTrails(
                     observer: observer,
-                    snapshots: snapshots,
-                    passes: passes
+                    passSnapshots: passSnapshots
                 )
             }
 

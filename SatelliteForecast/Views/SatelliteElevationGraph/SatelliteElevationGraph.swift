@@ -392,8 +392,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                             observer: observer,
                             julianDateRange: julianDateRange,
                             interval: 20
-                        ),
-                        passes: nil
+                        )
                     )
                 ],
                 satelliteLoader: SatelliteLoaderResources(
@@ -444,8 +443,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                             observer: observer,
                             julianDateRange: julianDateRange,
                             interval: 20
-                        ),
-                        passes: nil
+                        )
                     )
                 ],
                 satelliteLoader: SatelliteLoaderResources(
@@ -492,8 +490,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                             observer: observer,
                             julianDateRange: julianDateRange,
                             interval: 20
-                        ),
-                        passes: nil
+                        )
                     )
                 ],
                 satelliteLoader: SatelliteLoaderResources(

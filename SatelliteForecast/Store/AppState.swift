@@ -72,6 +72,6 @@ struct AppState: Equatable {
             return nil
         }
 
-        return satelliteTrails[noradIndex]?.passes?[selectedPassIndex]
+        return satelliteTrails[noradIndex]?.passSnapshots?[selectedPassIndex].pass
     }
 }

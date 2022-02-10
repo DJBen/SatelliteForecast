@@ -10,22 +10,23 @@ import BTree
 import SatelliteKit
 
 /// Everything needed to calculate a satellite's ephemeris and display passes, including the following
-/// - An ordered map (B-tree) of existing calculated ephemerides of the satellite. It will grow as more calculations are performed.
-/// It may unevenly contain ephemerides that are only a few seconds apart for the passes over observer's location, and contain coarse
-/// ones that are approximately minutes apart for the rest of their orbits.
-/// - Passes The pass information describing the exact time of rise and set, and sun illumination changes during the pass.
+/// - An sorted map (B-tree) of existing calculated ephemerides of the satellite. It is coarse and should not be used to render specific
+/// passes.
+/// - passSnapshots The pass information describing the exact time of rise and set, and sun illumination changes during the pass, and
+/// snapshots accompanying each pass.
 public struct SatelliteTrails: Equatable {
     public var observer: LatLonAlt
+    /// Coarse snapshots
     public var snapshots: BTree<Double, SatelliteSnapshot>
-    public var passes: [Pass]?
+    public var passSnapshots: [PassSnapshots]?
 
     public init(
         observer: LatLonAlt,
         snapshots: BTree<Double, SatelliteSnapshot> = BTree(),
-        passes: [Pass]? = nil
+        passSnapshots: [PassSnapshots]? = nil
     ) {
         self.observer = observer
         self.snapshots = snapshots
-        self.passes = passes
+        self.passSnapshots = passSnapshots
     }
 }

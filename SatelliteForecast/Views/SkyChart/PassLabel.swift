@@ -13,7 +13,7 @@ import SatelliteForecastCore
 extension SkyChart {
     struct PassLabel<BackgroundModifier: ViewModifier>: View {
         let text: String
-        let snapshotPair: SkyChartViewState.SnapshotsAroundPass
+        let snapshotPair: SnapshotsAroundPass
         let rect: CGRect
         let modifierFactory: (Angle) -> BackgroundModifier
         

@@ -169,17 +169,17 @@ struct AlarmSettingsView_Previews: PreviewProvider {
             julianDateRange: julianDateRange,
             interval: 60
         )
-        let (passes, _) = sat.findPasses(
+        let passSnapshotsList = sat.findPasses(
             noradIndex: tle.noradIndex,
             observer: observer,
             coarseSnapshots: coarseSnapshots
         )
         
-        let items = passes.enumerated().map { index, pass in
+        let items = passSnapshotsList.enumerated().map { index, passSnapshots in
             AlarmSettingsViewState.Item(
                 id: "id_\(index)",
                 passNotification: PassNotification(
-                    pass: pass,
+                    pass: passSnapshots.pass,
                     satelliteName: "ISS (Zarya)",
                     category: nil,
                     observer: observer,

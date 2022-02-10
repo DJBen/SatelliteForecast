@@ -18,6 +18,65 @@ extension Satellite: Equatable {
     }
 }
 
+public struct SnapshotsAroundPass: Equatable {
+    public let first: SatelliteSnapshot
+    public let second: SatelliteSnapshot
+
+    public init(
+        first: SatelliteSnapshot,
+        second: SatelliteSnapshot
+    ) {
+        self.first = first
+        self.second = second
+    }
+}
+
+public struct NotableSnapshots: Equatable {
+    public let rise: SnapshotsAroundPass
+    public let transit: SnapshotsAroundPass
+    public let set: SnapshotsAroundPass
+
+    public struct IlluminationChangeAndSnapshots: Equatable {
+        public let change: Pass.Illumination.Change
+        public let snapshots: SnapshotsAroundPass
+
+        public init(change: Pass.Illumination.Change, snapshots: SnapshotsAroundPass) {
+            self.change = change
+            self.snapshots = snapshots
+        }
+    }
+
+    public let illuminationChanges: BTree<Double, IlluminationChangeAndSnapshots>
+
+    public init(
+        rise: SnapshotsAroundPass,
+        transit: SnapshotsAroundPass,
+        set: SnapshotsAroundPass,
+        illuminationChanges: BTree<Double, NotableSnapshots.IlluminationChangeAndSnapshots>
+    ) {
+        self.rise = rise
+        self.transit = transit
+        self.set = set
+        self.illuminationChanges = illuminationChanges
+    }
+}
+
+public struct PassSnapshots: Equatable {
+    public let pass: Pass
+    public let snapshots: BTree<Double, SatelliteSnapshot>
+    public let notableSnapshots: NotableSnapshots
+
+    public init(
+        pass: Pass,
+        snapshots: BTree<Double, SatelliteSnapshot>,
+        notableSnapshots: NotableSnapshots
+    ) {
+        self.pass = pass
+        self.snapshots = snapshots
+        self.notableSnapshots = notableSnapshots
+    }
+}
+
 extension Satellite {
     /// Construct a snapshot of the satellite given a date and observer coordinate.
     /// - Parameters:
@@ -87,48 +146,93 @@ extension Satellite {
         observer: LatLonAlt,
         julianDateRange: Range<Double>,
         fineInterval: TimeInterval = 3
-    ) -> (pass: Pass, snapshots: BTree<Double, SatelliteSnapshot>) {
+    ) -> PassSnapshots {
         let fineSnapshots = snapshots(
             observer: observer,
             julianDateRange: julianDateRange,
             interval: fineInterval
         )
 
-        let datePoses: [Pass.DatePosition] = fineSnapshots.map { fineSnapshot in
-            return Pass.DatePosition(julianDate: fineSnapshot.0, azim: fineSnapshot.1.position.azim, elev: fineSnapshot.1.position.elev)
-        }
-        let maxElevDatePos = datePoses.max(by: { $0.elev < $1.elev })!
-        let riseDatePos: Pass.DatePosition = {
-            for index in datePoses.indices where index < datePoses.index(before: datePoses.endIndex) {
-                if datePoses[index].elev <= 0 && datePoses[datePoses.index(after: index)].elev > 0 {
-                    return datePoses[datePoses.index(after: index)]
-                }
-            }
-            fatalError()
-        }()
-        let setDatePos: Pass.DatePosition = {
-            for index in datePoses.indices where index < datePoses.index(before: datePoses.endIndex) {
-                if datePoses[index].elev > 0 && datePoses[datePoses.index(after: index)].elev <= 0 {
-                    return datePoses[datePoses.index(after: index)]
-                }
-            }
-            fatalError()
-        }()
-
+        var riseDatePos: Pass.DatePosition!
+        var riseSnapshots: SnapshotsAroundPass!
+        var setDatePos: Pass.DatePosition!
+        var setSnapshots: SnapshotsAroundPass!
+        var maxElevDatePos: Pass.DatePosition!
+        var transitSnapshots: SnapshotsAroundPass!
         var illuminationChanges = [Pass.Illumination.Change]()
+        var illuminationChangesAndSnapshots = BTree<Double, NotableSnapshots.IlluminationChangeAndSnapshots>()
 
         for index in fineSnapshots.indices where index < fineSnapshots.index(before: fineSnapshots.endIndex) {
             let snapshot1 = fineSnapshots[index].1
             let snapshot2 = fineSnapshots[fineSnapshots.index(after: index)].1
 
-            guard snapshot1.position.elev > 0 && snapshot2.position.elev > 0 else {
+            guard snapshot1.position.elev > 0 || snapshot2.position.elev > 0 else {
                 continue
             }
 
+            if snapshot1.position.elev <= 0 && snapshot2.position.elev > 0 {
+                riseDatePos = Pass.DatePosition(
+                    julianDate: snapshot1.julianDate,
+                    azim: snapshot1.position.azim,
+                    elev: snapshot1.position.elev
+                )
+                riseSnapshots = SnapshotsAroundPass(
+                    first: snapshot1,
+                    second: snapshot2
+                )
+            }
+            if snapshot1.position.elev > 0 && snapshot2.position.elev <= 0 {
+                setDatePos = Pass.DatePosition(
+                    julianDate: snapshot2.julianDate,
+                    azim: snapshot2.position.azim,
+                    elev: snapshot2.position.elev
+                )
+                setSnapshots = SnapshotsAroundPass(
+                    first: snapshot1,
+                    second: snapshot2
+                )
+            }
+            if maxElevDatePos == nil || maxElevDatePos.elev < snapshot1.position.elev {
+                maxElevDatePos = Pass.DatePosition(
+                    julianDate: snapshot1.julianDate,
+                    azim: snapshot1.position.azim,
+                    elev: snapshot1.position.elev
+                )
+                transitSnapshots = SnapshotsAroundPass(
+                    first: snapshot1,
+                    second: snapshot2
+                )
+            }
             if snapshot1.isIlluminated && !snapshot2.isIlluminated {
-                illuminationChanges.append(.entersShadow(Pass.DatePosition(julianDate: snapshot1.julianDate, azim: snapshot1.position.azim, elev: snapshot1.position.elev)))
+                let change = Pass.Illumination.Change.entersShadow(Pass.DatePosition(julianDate: snapshot1.julianDate, azim: snapshot1.position.azim, elev: snapshot1.position.elev))
+                illuminationChanges.append(change)
+                illuminationChangesAndSnapshots.insert(
+                    (
+                        snapshot1.julianDate,
+                        NotableSnapshots.IlluminationChangeAndSnapshots(
+                            change: change,
+                            snapshots: SnapshotsAroundPass(
+                                first: snapshot1,
+                                second: snapshot2
+                            )
+                        )
+                    )
+                )
             } else if !snapshot1.isIlluminated && snapshot2.isIlluminated {
-                illuminationChanges.append(.exitsShadow(Pass.DatePosition(julianDate: snapshot2.julianDate, azim: snapshot2.position.azim, elev: snapshot2.position.elev)))
+                let change = Pass.Illumination.Change.exitsShadow(Pass.DatePosition(julianDate: snapshot2.julianDate, azim: snapshot2.position.azim, elev: snapshot2.position.elev))
+                illuminationChanges.append(change)
+                illuminationChangesAndSnapshots.insert(
+                    (
+                        snapshot2.julianDate,
+                        NotableSnapshots.IlluminationChangeAndSnapshots(
+                            change: change,
+                            snapshots: SnapshotsAroundPass(
+                                first: snapshot1,
+                                second: snapshot2
+                            )
+                        )
+                    )
+                )
             }
         }
 
@@ -150,7 +254,16 @@ extension Satellite {
             sunElevationAtTransit: sunElev
         )
 
-        return (pass: pass, snapshots: fineSnapshots)
+        return PassSnapshots(
+            pass: pass,
+            snapshots: fineSnapshots,
+            notableSnapshots: NotableSnapshots(
+                rise: riseSnapshots,
+                transit: transitSnapshots,
+                set: setSnapshots,
+                illuminationChanges: illuminationChangesAndSnapshots
+            )
+        )
     }
 
     /// Find satellite passes over a large time span.
@@ -171,11 +284,10 @@ extension Satellite {
         coarseSnapshots: BTree<Double, SatelliteSnapshot>,
         minElevation: Double = 10,
         fineInterval: TimeInterval = 3
-    ) -> (passes: [Pass], snapshots: BTree<Double, SatelliteSnapshot>) {
+    ) -> [PassSnapshots] {
         var snapshotBeforeRising: SatelliteSnapshot?
         var snapshotAfterSetting: SatelliteSnapshot?
-        var passes = [Pass]()
-        var resultSnapshots = coarseSnapshots
+        var passSnapshotsList = [PassSnapshots]()
 
         for index in coarseSnapshots.indices where index < coarseSnapshots.index(before: coarseSnapshots.endIndex) {
             let snapshot1 = coarseSnapshots[index].1
@@ -190,22 +302,21 @@ extension Satellite {
             }
 
             if let fromDate = snapshotBeforeRising?.julianDate, let toDate = snapshotAfterSetting?.julianDate, fromDate < toDate {
-                let (pass, snapshots) = generatePassInfo(
+                let passSnapshots = generatePassInfo(
                     noradIndex: noradIndex,
                     observer: observer,
                     julianDateRange: fromDate..<toDate,
                     fineInterval: fineInterval
                 )
 
-                if pass.transit.elev >= minElevation {
-                    passes.append(pass)
-                    resultSnapshots = resultSnapshots.union(snapshots, by: .groupingMatches)
+                if passSnapshots.pass.transit.elev >= minElevation {
+                    passSnapshotsList.append(passSnapshots)
                 }
 
                 snapshotBeforeRising = nil
                 snapshotAfterSetting = nil
             }
         }
-        return (passes, resultSnapshots)
+        return passSnapshotsList
     }
 }

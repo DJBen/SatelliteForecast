@@ -53,6 +53,7 @@ struct PassView: View {
                         snapshots: context.snapshots,
                         observer: context.observer,
                         pass: context.pass,
+                        notableSnapshots: context.notableSnapshots,
                         configs: .preset,
                         quality: .full
                     )
@@ -89,6 +90,7 @@ struct PassViewContext {
     var observer: LatLonAlt
     var snapshots: BTree<Double, SatelliteSnapshot>
     var pass: Pass
+    var notableSnapshots: NotableSnapshots
 }
 
 extension ViewProducer where Context == PassViewContext, ProducedView == PassView {
@@ -131,20 +133,23 @@ struct PassView_Previews: PreviewProvider {
             observer: observer,
             julianDateRange: julianDateRange
         )
-        let (passes, fineSnapshots) = sat.findPasses(
+        let passSnapshots = sat.findPasses(
             noradIndex: tle.noradIndex,
             observer: observer,
             coarseSnapshots: snapshots
         )
         let skyChartContext = SkyChartContext(
             satelliteInfo: SatelliteInfo(noradIndex: tle.noradIndex, satellite: sat),
-            snapshots: fineSnapshots.subtree(from: passes[0].rise.julianDate, to: passes[0].set.julianDate),
+            snapshots: snapshots,
             observer: observer,
-            pass: passes[0],
+            pass: passSnapshots.first!.pass,
+            notableSnapshots: passSnapshots.first!.notableSnapshots,
             configs: .preview,
             quality: .preview
         )
-        let brightest100: Map<Int, SatelliteInfo> = [tle.noradIndex: SatelliteInfo(noradIndex: tle.noradIndex, satellite: sat)]
+        let brightest100: Map<Int, SatelliteInfo> = [
+            tle.noradIndex: SatelliteInfo(noradIndex: tle.noradIndex, satellite: sat)
+        ]
         let appState = AppState(
             navigationState: NavigationState(
                 listNavigation: ListNavigation(
@@ -162,8 +167,8 @@ struct PassView_Previews: PreviewProvider {
             satelliteTrails: [
                 tle.noradIndex: SatelliteTrails(
                     observer: observer,
-                    snapshots: snapshots.union(fineSnapshots, by: .groupingMatches),
-                    passes: passes
+                    snapshots: snapshots,
+                    passSnapshots: passSnapshots
                 )
             ],
             satelliteLoader: SatelliteLoaderResources(
@@ -180,8 +185,9 @@ struct PassView_Previews: PreviewProvider {
             satelliteInfo: SatelliteInfo(noradIndex: tle.noradIndex, satellite: sat),
             julianDateRange: julianDateRange,
             observer: observer,
-            snapshots: fineSnapshots.subtree(from: passes[0].rise.julianDate, to: passes[0].set.julianDate),
-            pass: passes[0]
+            snapshots: passSnapshots[0].snapshots,
+            pass: passSnapshots[0].pass,
+            notableSnapshots: passSnapshots[0].notableSnapshots
         )
         let elevationGraphContext = SatelliteElevationGraphContext(
             satelliteInfo: SatelliteInfo(noradIndex: tle.noradIndex, satellite: sat),
@@ -209,8 +215,7 @@ struct PassView_Previews: PreviewProvider {
                 SkyChart(
                     viewModel: .mock(
                         state: SkyChartViewState.project(
-                            state: appState,
-                            context: skyChartContext
+                            appState: appState
                         )
                     ),
                     context: skyChartContext
