@@ -208,22 +208,22 @@ struct SkyChart: View {
     }
 
     @ViewBuilder var backgroundSky: some View {
-         if !(context.pass.sunElevationAtTransit > -6 &&
-              context.configs.backgroundSky.hidesStarsDuringDay) {
-             GeometryReader { geometry in
-                 let rect = geometry.frame(in: .local)
-                 if let image = rasterizedBackgroundSky {
-                     Image(uiImage: image)
-                         .resizable()
-                         .aspectRatio(contentMode: .fit)
-                         .frame(width: rect.width, height: rect.height, alignment: .center)
-                 }
-             }
-         } else {
-             // Needs to have a non-empty view so that views on top of it will have a non-zero size
-             Color.clear
-         }
-     }
+        if !(context.pass.sunElevationAtTransit > -6 &&
+             context.configs.backgroundSky.hidesStarsDuringDay) {
+            GeometryReader { geometry in
+                let rect = geometry.frame(in: .local)
+                if let image = rasterizedBackgroundSky {
+                    Image(uiImage: image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: rect.width, height: rect.height, alignment: .center)
+                }
+            }
+        } else {
+            // Needs to have a non-empty view so that views on top of it will have a non-zero size
+            Color.clear
+        }
+    }
 
     var planetaryBodiesView: some View {
         ZStack {

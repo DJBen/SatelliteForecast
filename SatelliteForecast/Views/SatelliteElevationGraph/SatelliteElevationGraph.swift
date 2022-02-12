@@ -122,11 +122,13 @@ struct SatelliteElevationGraph: View {
                 ForEach(Array(elevIterator), id: \.self) { elev in
                     let y = CGFloat(elev + 90) / 180 * self.graphingRegionSize.height
 
-                    Text("\(Int(-elev))°")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                        .frame(height: 30, alignment: .bottomTrailing)
-                        .position(x: 15, y: y)
+                    Text(
+                        "\(Int(-elev))°"
+                    )
+                    .font(.caption)
+                    .foregroundColor(.gray)
+                    .frame(height: 30, alignment: .bottomTrailing)
+                    .position(x: 15, y: y)
                 }
             }
         }
@@ -136,10 +138,12 @@ struct SatelliteElevationGraph: View {
         GeometryReader { geometry in
             let rect = geometry.frame(in: .local)
             if let image = viewModel.state.rasterizedElevationGraph {
-                Image(uiImage: image)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: rect.width, height: rect.height, alignment: .center)
+                Image(
+                    uiImage: image
+                )
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: rect.width, height: rect.height, alignment: .center)
             }
         }
     }

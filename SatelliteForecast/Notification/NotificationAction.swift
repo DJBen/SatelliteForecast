@@ -26,7 +26,12 @@ enum NotificationAction {
     case cancelNotifications(ids: Set<String>)
     
     // Deep link
-    case deepLink(category: SatelliteCategory?, noradIndex: Int, observer: LatLonAlt, passIdentifier: String)
+    case deepLink(
+        category: SatelliteCategory?,
+        noradIndex: Int,
+        observer: LatLonAlt,
+        passIdentifier: String
+    )
     
     // MARK: Output
     case loadedNotifications(Set<ScheduledPassNotification>)
