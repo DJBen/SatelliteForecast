@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct SatelliteElevationGraphBackgroundState: Equatable {
-    let julianDateRange: Range<Double>
+    let julianDateRange: ClosedRange<Double>
     let configs: SatelliteElevationGraphConfigs
     // Derived data
     let xPercentDatePair: [SatelliteElevationGraph.PercentDate]
 
-    init(julianDateRange: Range<Double>, configs: SatelliteElevationGraphConfigs) {
+    init(julianDateRange: ClosedRange<Double>, configs: SatelliteElevationGraphConfigs) {
         self.julianDateRange = julianDateRange
         self.configs = configs
         self.xPercentDatePair = SatelliteElevationGraph.xPercentDatePair(julianDateRange: julianDateRange, configs: configs)
@@ -88,7 +88,7 @@ struct SatelliteElevationGraphBackground_Previews: PreviewProvider {
     static var previews: some View {
         SatelliteElevationGraphBackground(
             state: SatelliteElevationGraphBackgroundState(
-                julianDateRange: Date().julianDate..<Date().julianDate + 1  ,
+                julianDateRange: Date().julianDate...Date().julianDate + 1  ,
                 configs: .preset
             ),
             graphingRegionSize: .constant(CGSize(width: 1000, height: 250))

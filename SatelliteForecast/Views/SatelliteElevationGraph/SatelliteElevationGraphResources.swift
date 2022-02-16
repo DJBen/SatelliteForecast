@@ -10,7 +10,7 @@ import UIKit
 
 struct SatelliteElevationGraphResources: Equatable {
     struct RangeImage: Equatable {
-        let julianDateRange: Range<Double>
+        let julianDateRange: ClosedRange<Double>
         let image: UIImage
     }
     var rasterizedElevationGraphs: [Int: RangeImage] = [:]

@@ -66,7 +66,7 @@ extension SatelliteLoaderImpl: SatelliteLoader {
                 let info = tles
                     .map(SatelliteInfo.init(tle:))
                     // Sort the satellite list in reverse chronological order of the freshness of TLE.
-                    .sorted(by: { $0.satellite.t₀Days1950 > $1.satellite.t₀Days1950 })
+                    .sorted(by: { $0.tle.t₀ > $1.tle.t₀ })
                     .reduce(into: Map<Int, SatelliteInfo>(), { $0[$1.noradIndex] = $1 })
 
                 saveLocalSatelliteData(category: category, data: data)
@@ -91,7 +91,7 @@ fileprivate extension SatelliteInfo {
         let ucsSat = UCSSat.with(noradCatID: tle.noradIndex)
         self.init(
             noradIndex: tle.noradIndex,
-            satellite: Satellite(withTLE: tle),
+            tle: tle,
             satCat: satCat,
             ucsSat: ucsSat
         )

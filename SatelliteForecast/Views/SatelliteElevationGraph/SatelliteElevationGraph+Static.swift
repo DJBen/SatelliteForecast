@@ -18,7 +18,7 @@ extension SatelliteElevationGraph {
         return CGPoint(x: x, y: y)
     }
 
-    static func xPercentDatePair(julianDateRange: Range<Double>, configs: SatelliteElevationGraphConfigs) -> [PercentDate] {
+    static func xPercentDatePair(julianDateRange: ClosedRange<Double>, configs: SatelliteElevationGraphConfigs) -> [PercentDate] {
         let calendar = Calendar(identifier: .gregorian)
         let components = calendar.dateComponents([.year, .month, .day, .hour], from: Date(julianDate: julianDateRange.lowerBound))
         var julianDate: Double = calendar.date(from: components)!.julianDate
@@ -42,7 +42,7 @@ extension SatelliteElevationGraph {
     static func rasterizedSatelliteElevationPath(
         rect: CGRect,
         snapshotsSplitByIllumination: [(illuminated: Bool, snapshots: [SatelliteSnapshot])],
-        julianDateRange: Range<Double>,
+        julianDateRange: ClosedRange<Double>,
         traitCollection: UITraitCollection
     ) -> UIImage {
 

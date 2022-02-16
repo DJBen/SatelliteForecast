@@ -281,18 +281,17 @@ struct ImageRenderer_Previews: PreviewProvider {
             2 48274  41.4713  16.3199 0005053  25.9394 109.3813 15.65195495  5304
             """
         )
-        let sat = Satellite(withTLE: tle)
 
         let formatter = ISO8601DateFormatter()
         let date = formatter.date(from: "2021-06-02T06:29:00-0600")!
 
         let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
-        let snapshots = sat.snapshots(
+        let snapshots = tle.snapshots(
             observer: observer,
-            julianDateRange: date.julianDate..<date.julianDate + 2
+            julianDateRange: date.julianDate...date.julianDate + 2
         )
 
-        return sat.findPasses(
+        return tle.findPasses(
             noradIndex: tle.noradIndex,
             observer: observer,
             coarseSnapshots: snapshots

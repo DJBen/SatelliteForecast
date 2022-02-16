@@ -20,10 +20,11 @@ extension Satellite: Equatable {
 
 extension SatelliteSnapshot {
     public init(
-        satellite: Satellite,
+        tle: TLE,
         julianDate: Double,
         observer: LatLonAlt
     ) {
+        let satellite = Satellite(withTLE: tle)
         let eciPosition = satellite.position(julianDays: julianDate)
         let obsCel = geo2eci(julianDays: julianDate, geodetic: observer)
 
@@ -36,7 +37,9 @@ extension SatelliteSnapshot {
                 dist: z
             )
         }
-        let position = topVector2AziEleDst(cel2top(julianDays: julianDate, satCel: eciPosition, obsCel: obsCel))
+        let position = topVector2AziEleDst(
+            cel2top(julianDays: julianDate, satCel: eciPosition, obsCel: obsCel)
+        )
         let solarCel = solarCel(julianDays: julianDate)
         let isIlluminated = AstroAlgorithms.hasLineOfSight(
             object1Geo: eciPosition,
@@ -56,7 +59,7 @@ extension SatelliteSnapshot {
     }
 }
 
-extension Satellite {
+extension TLE {
     /// Construct a snapshot of the satellite given a date and observer coordinate.
     /// - Parameters:
     ///   - julianDate: The julian date.
@@ -66,7 +69,7 @@ extension Satellite {
         observer: LatLonAlt
     ) -> SatelliteSnapshot {
         return SatelliteSnapshot(
-            satellite: self,
+            tle: self,
             julianDate: julianDate,
             observer: observer
         )
@@ -80,7 +83,7 @@ extension Satellite {
     /// - Returns: A list of satellite snapshots over a date range with a given interval at an observer location in chronological order.
     public func snapshots(
         observer: LatLonAlt,
-        julianDateRange: Range<Double>,
+        julianDateRange: ClosedRange<Double>,
         interval: TimeInterval = 30
     ) -> [SatelliteSnapshot] {
         return stride(
@@ -97,7 +100,7 @@ extension Satellite {
     private func generatePassInfo(
         noradIndex: Int,
         observer: LatLonAlt,
-        julianDateRange: Range<Double>,
+        julianDateRange: ClosedRange<Double>,
         fineInterval: TimeInterval = 3
     ) -> PassSnapshots {
         let fineSnapshots = snapshots(
@@ -262,7 +265,7 @@ extension Satellite {
                 let passSnapshots = generatePassInfo(
                     noradIndex: noradIndex,
                     observer: observer,
-                    julianDateRange: fromDate..<toDate,
+                    julianDateRange: fromDate...toDate,
                     fineInterval: fineInterval
                 )
 

@@ -629,7 +629,7 @@ enum LocalizedStrings {
             return formatter
         }()
 
-        static func searchPassRangeToolbarText(range: Range<Double>, now: Double) -> String {
+        static func searchPassRangeToolbarText(range: ClosedRange<Double>, now: Double) -> String {
             let format = NSLocalizedString(
                 "AllPassesView.searchPassRangeToolbar.text",
                 tableName: nil,

@@ -12,13 +12,13 @@ import SatelliteKit
 
 struct SelectNoradIndexParam {
     let noradIndex: Int
-    let dateRange: Range<Double>
+    let dateRange: ClosedRange<Double>
     let observer: LatLonAlt
 }
 
 struct SatelliteLoaderCalculatePassParam {
     let noradID: Int
-    let dateRange: Range<Double>
+    let dateRange: ClosedRange<Double>
     let observer: LatLonAlt
 }
 
