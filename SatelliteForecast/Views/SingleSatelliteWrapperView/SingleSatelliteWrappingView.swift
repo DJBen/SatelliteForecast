@@ -14,7 +14,7 @@ import SatelliteKit
 enum SingleSatelliteWrappingViewAction {
     struct LoadSingleSatelliteParams {
         let selectedNoradIndex: Int
-        let julianDateRange: Range<Double>
+        let julianDateRange: ClosedRange<Double>
         let observer: LatLonAlt?
     }
     case loadSingleSatellite(LoadSingleSatelliteParams)
@@ -107,7 +107,7 @@ struct SingleSatelliteWrappingView: View {
 
 struct SingleSatelliteWrappingViewContext {
     let selectedNoradIndex: Int
-    let julianDateRange: Range<Double>
+    let julianDateRange: ClosedRange<Double>
     let observer: LatLonAlt?
 }
 
@@ -140,7 +140,7 @@ struct SingleSatelliteWrappingView_Previews: PreviewProvider {
             viewModel: .mock(state: .empty),
             context: SingleSatelliteWrappingViewContext(
                 selectedNoradIndex: 0,
-                julianDateRange: Date(daysSince1950: 1000).julianDate..<Date(daysSince1950: 1002).julianDate,
+                julianDateRange: Date(daysSince1950: 1000).julianDate...Date(daysSince1950: 1002).julianDate,
                 observer: nil
             ),
             allPassesViewProducer: .crash

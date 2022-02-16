@@ -17,7 +17,7 @@ enum AllPassesViewAction {
     struct CalculatePassesParams: CustomDebugStringConvertible {
         let selectedNoradIndex: Int
         let satelliteInfo: SatelliteInfo
-        let julianDateRange: Range<Double>
+        let julianDateRange: ClosedRange<Double>
         let observer: LatLonAlt
 
         var debugDescription: String {
@@ -40,7 +40,7 @@ enum AllPassesViewAction {
 struct AllPassesViewContext {
     let selectedNoradIndex: Int
     let satelliteInfo: SatelliteInfo
-    let julianDateRange: Range<Double>
+    let julianDateRange: ClosedRange<Double>
     let observer: LatLonAlt?
 }
 
@@ -204,7 +204,7 @@ struct AllPassesView: View {
                     .scheduleNotification(
                         PassNotification(
                             pass: item.passSnapshots.pass,
-                            satelliteName: context.satelliteInfo.satellite.commonName,
+                            satelliteName: context.satelliteInfo.tle.commonName,
                             category: viewModel.state.satelliteCategory,
                             observer: context.observer!,
                             timeOffset: 0
@@ -334,12 +334,12 @@ struct AllPassesView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .navigationTitle(context.satelliteInfo.satellite.commonName)
+        .navigationTitle(context.satelliteInfo.tle.commonName)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
                 VStack(alignment: .center, spacing: 4) {
-                    Text(context.satelliteInfo.satellite.commonName)
+                    Text(context.satelliteInfo.tle.commonName)
                         .font(.headline)
                         .frame(alignment: .center)
                         .multilineTextAlignment(.center)
@@ -387,31 +387,28 @@ extension ViewProducer where Context == AllPassesViewContext, ProducedView == Al
 
 #if DEBUG
 struct AllPassesView_Previews: PreviewProvider {
-    static let tianHe: Satellite = {
-        let tle = try! TLE(
-            raw: """
+    static let tianHe: TLE = try! TLE(
+        raw: """
             TIANHE
             1 48274U 21035A   21152.91865056  .00003057  00000-0  33542-4 0  9993
             2 48274  41.4713  16.3199 0005053  25.9394 109.3813 15.65195495  5304
             """
-        )
-        return Satellite(withTLE: tle)
-    }()
+    )
 
     static let tianHePasses: [PassSnapshots] = {
-        let sat = tianHe
+        let tle = tianHe
 
         let formatter = ISO8601DateFormatter()
         let date = formatter.date(from: "2021-06-02T06:29:00-0600")!
 
         let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
-        let snapshots = sat.snapshots(
+        let snapshots = tle.snapshots(
             observer: observer,
-            julianDateRange: date.julianDate..<date.julianDate + 2
+            julianDateRange: date.julianDate...date.julianDate + 2
         )
 
-        return sat.findPasses(
-            noradIndex: sat.tle.noradIndex,
+        return tle.findPasses(
+            noradIndex: tle.noradIndex,
             observer: observer,
             coarseSnapshots: snapshots
         )
@@ -429,9 +426,9 @@ struct AllPassesView_Previews: PreviewProvider {
             selectedNoradIndex: 48274,
             satelliteInfo: SatelliteInfo(
                 noradIndex: 48274,
-                satellite: tianHe
+                tle: tianHe
             ),
-            julianDateRange: Date().julianDate..<Date().julianDate + 1,
+            julianDateRange: Date().julianDate...Date().julianDate + 1,
             observer: observer
         )
         ForEach(["iPhone SE (2nd generation)", "iPhone 13 Pro Max"], id: \.self) { previewDevice in
@@ -454,7 +451,7 @@ struct AllPassesView_Previews: PreviewProvider {
                                 )
                             ),
                             context: SkyChartContext(
-                                satelliteInfo: SatelliteInfo(noradIndex: 48274, satellite: tianHe),
+                                satelliteInfo: SatelliteInfo(noradIndex: 48274, tle: tianHe),
                                 snapshots: passSnapshots.snapshots,
                                 observer: observer,
                                 pass: passSnapshots.pass,

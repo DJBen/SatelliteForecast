@@ -231,7 +231,7 @@ struct SkyChart: View {
                 PlanetaryBodyView(
                     planetaryBody: body,
                     label: context.configs.backgroundSky.bodySymbol,
-                    referenceDate: viewModel.state.referenceDate,
+                    referenceDate: backgroundSkyJulianDateKey,
                     observer: context.observer,
                     sunElevation: context.pass.sunElevationAtTransit
                 )
@@ -255,7 +255,7 @@ struct SkyChart: View {
         .overlay(
             SkyChartDynamicIndicator(
                 state: SkyChartDynamicIndicatorState(
-                    satellite: context.satelliteInfo.satellite,
+                    tle: context.satelliteInfo.tle,
                     pass: context.pass,
                     observer: context.observer,
                     julianDateOffset: viewModel.state.julianDateOffset
@@ -307,7 +307,7 @@ fileprivate extension Double {
 
 #if DEBUG
 struct SkyChart_Previews: PreviewProvider {
-    static let issPass: (Satellite, PassSnapshots) = {
+    static let issPass: (TLE, PassSnapshots) = {
         let tle = try! TLE(
             raw: """
             ISS (ZARYA)
@@ -315,27 +315,26 @@ struct SkyChart_Previews: PreviewProvider {
             2 25544  51.6453  62.2423 0003364  52.3737  88.5313 15.48937685286109
             """
         )
-        let sat = Satellite(withTLE: tle)
 
         let formatter = ISO8601DateFormatter()
         let date = formatter.date(from: "2021-06-02T20:35:30+0800")!
 
         let observer = LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0)
-        let snapshots = sat.snapshots(
+        let snapshots = tle.snapshots(
             observer: observer,
-            julianDateRange: date.julianDate..<date.addingTimeInterval(800).julianDate
+            julianDateRange: date.julianDate...date.addingTimeInterval(800).julianDate
         )
 
-        let passSnapshots = sat.findPasses(
+        let passSnapshots = tle.findPasses(
             noradIndex: tle.noradIndex,
             observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
             coarseSnapshots: snapshots
         )
         let firstPassSnapshots = passSnapshots.first!
-        return (sat, firstPassSnapshots)
+        return (tle, firstPassSnapshots)
     }()
 
-    static let tianHePass: (Satellite, PassSnapshots) = {
+    static let tianHePass: (TLE, PassSnapshots) = {
         let tle = try! TLE(
             raw: """
             TIANHE
@@ -343,28 +342,27 @@ struct SkyChart_Previews: PreviewProvider {
             2 48274  41.4713  16.3199 0005053  25.9394 109.3813 15.65195495  5304
             """
         )
-        let sat = Satellite(withTLE: tle)
 
         let formatter = ISO8601DateFormatter()
         let date = formatter.date(from: "2021-06-02T06:29:00-0600")!
 
         let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
-        let snapshots = sat.snapshots(
+        let snapshots = tle.snapshots(
             observer: observer,
-            julianDateRange: date.julianDate..<date.addingTimeInterval(800).julianDate
+            julianDateRange: date.julianDate...date.addingTimeInterval(800).julianDate
         )
 
-        let passSnapshots = sat.findPasses(
+        let passSnapshots = tle.findPasses(
             noradIndex: tle.noradIndex,
             observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
             coarseSnapshots: snapshots
         )
         let firstPassSnapshots = passSnapshots.first!
-        return (sat, firstPassSnapshots)
+        return (tle, firstPassSnapshots)
     }()
 
     static var previews: some View {
-        let (satellite, passSnapshots) = issPass
+        let (tle, passSnapshots) = issPass
 
         ForEach(ColorScheme.allCases, id: \.self) { colorScheme in
             let traitCollection = UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
@@ -390,7 +388,7 @@ struct SkyChart_Previews: PreviewProvider {
                     )
                 ),
                 context: SkyChartContext(
-                    satelliteInfo: SatelliteInfo(noradIndex: 48274, satellite: satellite),
+                    satelliteInfo: SatelliteInfo(noradIndex: 48274, tle: tle),
                     snapshots: passSnapshots.snapshots,
                     observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
                     pass: passSnapshots.pass,
@@ -403,7 +401,7 @@ struct SkyChart_Previews: PreviewProvider {
             .preferredColorScheme(colorScheme)
         }
 
-        let (satellite2, passSnapshots2) = tianHePass
+        let (tle2, passSnapshots2) = tianHePass
 
         SkyChart(
             viewModel: .mock(
@@ -427,7 +425,7 @@ struct SkyChart_Previews: PreviewProvider {
                 )
             ),
             context: SkyChartContext(
-                satelliteInfo: SatelliteInfo(noradIndex: 48274, satellite: satellite2),
+                satelliteInfo: SatelliteInfo(noradIndex: 48274, tle: tle2),
                 snapshots: passSnapshots2.snapshots,
                 observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
                 pass: passSnapshots2.pass,
@@ -441,7 +439,7 @@ struct SkyChart_Previews: PreviewProvider {
         SkyChart(
             viewModel: .mock(state: .init()),
             context: SkyChartContext(
-                satelliteInfo: SatelliteInfo(noradIndex: 48274, satellite: satellite2),
+                satelliteInfo: SatelliteInfo(noradIndex: 48274, tle: tle2),
                 snapshots: passSnapshots2.snapshots,
                 observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
                 pass: passSnapshots2.pass,

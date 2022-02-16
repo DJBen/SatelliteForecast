@@ -45,16 +45,15 @@ public struct Pass {
             }
         } else {
             var highest: Double = 0
-            var lastIlluminationStartJulianDate: Double?
-            if illumination.initiallyIlluminated {
-                lastIlluminationStartJulianDate = rise.julianDate
-            }
+            var lastPointIlluminated = illumination.initiallyIlluminated
+            var lastIlluminationStartJulianDate: Double? = illumination.initiallyIlluminated ? rise.julianDate : nil
 
             for change in illumination.changes {
                 switch change {
                 case let .exitsShadow(datePosition):
                     highest = max(highest, datePosition.elev)
                     lastIlluminationStartJulianDate = datePosition.julianDate
+                    lastPointIlluminated = true
                 case let .entersShadow(datePosition):
                     if let lastIlluminationStartJulianDate = lastIlluminationStartJulianDate,
                        lastIlluminationStartJulianDate < transit.julianDate && datePosition.julianDate >= transit.julianDate {
@@ -62,8 +61,14 @@ public struct Pass {
                     } else {
                         highest = max(highest, datePosition.elev)
                     }
+                    lastPointIlluminated = false
                 }
             }
+
+            if lastPointIlluminated, let lastIlluminationStartJulianDate = lastIlluminationStartJulianDate, lastIlluminationStartJulianDate < transit.julianDate {
+                highest = transit.elev
+            }
+
             return highest
         }
     }

@@ -18,7 +18,7 @@ enum SatelliteListViewAction {
     struct SelectSatelliteParams {
         let noradIndex: Int
         let satelliteInfo: SatelliteInfo
-        let julianDateRange: Range<Double>
+        let julianDateRange: ClosedRange<Double>
         let observer: LatLonAlt?
     }
     case selectSatellite(SelectSatelliteParams?)
@@ -42,7 +42,7 @@ fileprivate extension SatelliteInfo {
 
         if String(noradIndex).contains(searchText) {
             return true
-        } else if satellite.commonName.lowercased().contains(searchText) {
+        } else if tle.commonName.lowercased().contains(searchText) {
             return true
         } else if satCat?.cosparID.lowercased().contains(searchText) ?? false {
             return true
@@ -223,7 +223,7 @@ struct SatelliteListView: View {
 
 struct SatelliteListViewContext {
     let category: SatelliteCategory
-    let julianDateRange: Range<Double>
+    let julianDateRange: ClosedRange<Double>
     let observer: LatLonAlt?
 }
 
@@ -271,7 +271,7 @@ struct SatelliteListView_Previews: PreviewProvider {
         .map {
             SatelliteInfo(
                 noradIndex: $0.noradIndex,
-                satellite: Satellite(withTLE: $0),
+                tle: $0,
                 satCat: SatCat.with(noradCatID: $0.noradIndex),
                 ucsSat: UCSSat.with(noradCatID: $0.noradIndex)
             )
@@ -287,7 +287,7 @@ struct SatelliteListView_Previews: PreviewProvider {
             ),
             context: SatelliteListViewContext(
                 category: .brightest100,
-                julianDateRange: Date(daysSince1950: 1000).julianDate..<Date(daysSince1950: 1002).julianDate,
+                julianDateRange: Date(daysSince1950: 1000).julianDate...Date(daysSince1950: 1002).julianDate,
                 observer: nil
             ),
             allPassesViewProducer: .crash

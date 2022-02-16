@@ -20,7 +20,7 @@ struct SatelliteCell: View {
         } else if let satCat = info.satCat {
             return AnyView(CatSatCell(cat: satCat))
         } else {
-            return AnyView(Text(info.satellite.commonName))
+            return AnyView(Text(info.tle.commonName))
         }
     }
 
@@ -221,7 +221,7 @@ struct SatelliteCell_Previews: PreviewProvider {
         SatelliteCell(
             info: SatelliteInfo(
                 noradIndex: 42758,
-                satellite: Satellite(withTLE: tle),
+                tle: tle,
                 satCat: SatCat.with(noradCatID: 42758),
                 ucsSat: UCSSat.with(noradCatID: 42758)
             )
@@ -238,7 +238,7 @@ struct SatelliteCell_Previews: PreviewProvider {
         SatelliteCell(
             info: SatelliteInfo(
                 noradIndex: 45190,
-                satellite: Satellite(withTLE: tle2),
+                tle: tle2,
                 satCat: SatCat.with(noradCatID: 45190),
                 ucsSat: UCSSat.with(noradCatID: 45190)
             )
@@ -255,7 +255,7 @@ struct SatelliteCell_Previews: PreviewProvider {
         SatelliteCell(
             info: SatelliteInfo(
                 noradIndex: 25544,
-                satellite: Satellite(withTLE: tle3),
+                tle: tle3,
                 satCat: SatCat.with(noradCatID: 25544),
                 ucsSat: UCSSat.with(noradCatID: 25544)
             )
@@ -272,7 +272,7 @@ struct SatelliteCell_Previews: PreviewProvider {
         SatelliteCell(
             info: SatelliteInfo(
                 noradIndex: 48274,
-                satellite: Satellite(withTLE: tle4),
+                tle: tle4,
                 satCat: SatCat.with(noradCatID: 48274),
                 ucsSat: UCSSat.with(noradCatID: 48274)
             )
@@ -289,7 +289,7 @@ struct SatelliteCell_Previews: PreviewProvider {
         SatelliteCell(
             info: SatelliteInfo(
                 noradIndex: 46265,
-                satellite: Satellite(withTLE: tle5),
+                tle: tle5,
                 satCat: SatCat.with(noradCatID: 46265),
                 ucsSat: UCSSat.with(noradCatID: 46265)
             )

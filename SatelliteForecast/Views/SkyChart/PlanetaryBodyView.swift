@@ -17,7 +17,7 @@ extension SkyChart {
         let observer: LatLonAlt
         let sunElevation: Double
 
-        func planetView<Content: View>(
+        @ViewBuilder func planetView<Content: View>(
             celestialCoordinateProvider: (Double) -> (ra: Double, dec: Double),
             @ViewBuilder planetViewGenerator: @escaping (AziEleDst) -> Content
         ) -> some View {
@@ -28,13 +28,11 @@ extension SkyChart {
             )
             let planetCoordinate = AziEleDst(azim: azi, elev: alt, dist: 0)
 
-            if planetCoordinate.elev < 0 {
-                return AnyView(EmptyView())
+            if planetCoordinate.elev >= 0 {
+                GeometryReader { geometry in
+                    planetViewGenerator(planetCoordinate)
+                }
             }
-
-            return AnyView(GeometryReader { geometry in
-                planetViewGenerator(planetCoordinate)
-            })
         }
 
         var body: some View {

@@ -9,12 +9,12 @@ import SwiftUI
 
 extension SatelliteElevationGraph {
     struct DateFooterState: Equatable {
-        let julianDateRange: Range<Double>
+        let julianDateRange: ClosedRange<Double>
         let configs: SatelliteElevationGraphConfigs
         // Derived data
         let xPercentDatePair: [PercentDate]
 
-        init(julianDateRange: Range<Double>, configs: SatelliteElevationGraphConfigs) {
+        init(julianDateRange: ClosedRange<Double>, configs: SatelliteElevationGraphConfigs) {
             self.julianDateRange = julianDateRange
             self.configs = configs
             self.xPercentDatePair = SatelliteElevationGraph.xPercentDatePair(julianDateRange: julianDateRange, configs: configs)
@@ -54,7 +54,7 @@ struct SatelliteElevationGraph_DateFooter_Previews: PreviewProvider {
     static var previews: some View {
         SatelliteElevationGraph.DateFooter(
             state: SatelliteElevationGraph.DateFooterState(
-                julianDateRange: Date().julianDate..<Date().julianDate + 2,
+                julianDateRange: Date().julianDate...Date().julianDate + 2,
                 configs: .preset
             ),
             width: 1000

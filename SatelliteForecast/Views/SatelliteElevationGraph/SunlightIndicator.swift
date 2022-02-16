@@ -204,13 +204,12 @@ struct SunlightIndicator_Previews: PreviewProvider {
             2 25544  51.6446  47.5538 0003512  61.1482  91.5411 15.48950578286563
             """
         )
-        let sat = Satellite(withTLE: tle)
         // 2000 Broadway, Redwood City, CA 94063
         let observerCoordinate = LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0)
         // Date range
-        let julianDateRange = Date().advanced(by: -60 * 60 * 2).julianDate..<Date().advanced(by: 60 * 60 * 30).julianDate
+        let julianDateRange = Date().advanced(by: -60 * 60 * 2).julianDate...Date().advanced(by: 60 * 60 * 30).julianDate
 
-        let jdElevs = sat.snapshots(
+        let jdElevs = tle.snapshots(
             observer: observerCoordinate,
             julianDateRange: julianDateRange,
             interval: 60

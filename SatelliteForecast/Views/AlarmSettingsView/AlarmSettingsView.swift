@@ -158,18 +158,17 @@ struct AlarmSettingsView_Previews: PreviewProvider {
             2 25544  51.6446  47.5538 0003512  61.1482  91.5411 15.48950578286563
             """
         )
-        let sat = Satellite(withTLE: tle)
         // 2000 Broadway, Redwood City, CA 94063
         let observer = LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0)
         // Date range
         let startDate = Date(timeIntervalSinceReferenceDate: 20 * 365 * 86400)
-        let julianDateRange = startDate.advanced(by: -60 * 60 * 2).julianDate..<startDate.advanced(by: 60 * 60 * 30).julianDate
-        let coarseSnapshots = sat.snapshots(
+        let julianDateRange = startDate.advanced(by: -60 * 60 * 2).julianDate...startDate.advanced(by: 60 * 60 * 30).julianDate
+        let coarseSnapshots = tle.snapshots(
             observer: observer,
             julianDateRange: julianDateRange,
             interval: 60
         )
-        let passSnapshotsList = sat.findPasses(
+        let passSnapshotsList = tle.findPasses(
             noradIndex: tle.noradIndex,
             observer: observer,
             coarseSnapshots: coarseSnapshots
