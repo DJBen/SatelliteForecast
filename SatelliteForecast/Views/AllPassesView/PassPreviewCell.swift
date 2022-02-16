@@ -14,7 +14,7 @@ import CombineRextensions
 
 struct PassPreviewCell: View {
     var satelliteInfo: SatelliteInfo
-    var snapshots: BTree<Double, SatelliteSnapshot>
+    var snapshots: [SatelliteSnapshot]
     var notableSnapshots: NotableSnapshots
     var observer: LatLonAlt
     var pass: Pass

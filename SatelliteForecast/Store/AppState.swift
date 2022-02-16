@@ -51,12 +51,12 @@ struct AppState: Equatable {
         navigationState.selectedNoradIndex.flatMap { satelliteLoader[$0] }
     }
 
-    var currentSatelliteSnapshots: BTree<Double, SatelliteSnapshot> {
+    var currentSatelliteSnapshots: [SatelliteSnapshot] {
         get {
             guard let selectedSatelliteNoradIndex = navigationState.selectedNoradIndex else {
-                return BTree()
+                return []
             }
-            return satelliteTrails[selectedSatelliteNoradIndex]?.snapshots ?? BTree()
+            return satelliteTrails[selectedSatelliteNoradIndex]?.snapshots ?? []
         }
         set {
             guard let selectedSatelliteNoradIndex = navigationState.selectedNoradIndex else {

@@ -41,7 +41,7 @@ extension SatelliteElevationGraph {
 
     static func rasterizedSatelliteElevationPath(
         rect: CGRect,
-        snapshotsSplitByIllumination: [(illuminated: Bool, snapshots: BTree<Double, SatelliteSnapshot>)],
+        snapshotsSplitByIllumination: [(illuminated: Bool, snapshots: [SatelliteSnapshot])],
         julianDateRange: Range<Double>,
         traitCollection: UITraitCollection
     ) -> UIImage {
@@ -58,8 +58,8 @@ extension SatelliteElevationGraph {
                         return
                     }
                     for index in snapshotGroup.indices {
-                        let (julianDate, snapshot) = snapshotGroup[index]
-                        let xPercent = CGFloat((julianDate - julianDateRange.lowerBound) / (julianDateRange.upperBound - julianDateRange.lowerBound))
+                        let snapshot = snapshotGroup[index]
+                        let xPercent = CGFloat((snapshot.julianDate - julianDateRange.lowerBound) / (julianDateRange.upperBound - julianDateRange.lowerBound))
                         if index == snapshotGroup.startIndex {
                             ctx.cgContext.move(to: snapshotPoint(snapshot, xPercent: xPercent, rect: rect))
                         } else {
@@ -93,8 +93,8 @@ extension SatelliteElevationGraph {
                         return
                     }
                     for index in snapshotGroup.indices {
-                        let (julianDate, snapshot) = snapshotGroup[index]
-                        let xPercent = CGFloat((julianDate - julianDateRange.lowerBound) / (julianDateRange.upperBound - julianDateRange.lowerBound))
+                        let snapshot = snapshotGroup[index]
+                        let xPercent = CGFloat((snapshot.julianDate - julianDateRange.lowerBound) / (julianDateRange.upperBound - julianDateRange.lowerBound))
                         if index == snapshotGroup.startIndex {
                             ctx.cgContext.move(to: snapshotPoint(snapshot, xPercent: xPercent, rect: rect))
                         } else {

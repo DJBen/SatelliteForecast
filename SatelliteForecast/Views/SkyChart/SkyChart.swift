@@ -273,7 +273,7 @@ struct SkyChart: View {
 
 struct SkyChartContext {
     let satelliteInfo: SatelliteInfo
-    let snapshots: BTree<Double, SatelliteSnapshot>
+    let snapshots: [SatelliteSnapshot]
     let observer: LatLonAlt
     let pass: Pass
     let notableSnapshots: NotableSnapshots

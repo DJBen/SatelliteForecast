@@ -88,7 +88,7 @@ struct PassViewContext {
     var satelliteInfo: SatelliteInfo
     var julianDateRange: Range<Double>
     var observer: LatLonAlt
-    var snapshots: BTree<Double, SatelliteSnapshot>
+    var snapshots: [SatelliteSnapshot]
     var pass: Pass
     var notableSnapshots: NotableSnapshots
 }

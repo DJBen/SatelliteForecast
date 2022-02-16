@@ -45,10 +45,10 @@ extension EffectMiddleware where
                                 .split(
                                     inclusivity: .includesSecondElementsInPreviousGroup,
                                     shouldSplit: { (s1, s2) -> Bool in
-                                        return s1.1.isIlluminated != s2.1.isIlluminated
+                                        return s1.isIlluminated != s2.isIlluminated
                                     }
                                 )
-                                .map { ($0.first!.1.isIlluminated, $0) },
+                                .map { ($0.first!.isIlluminated, $0) },
                             julianDateRange: julianDateRange,
                             traitCollection: traitCollection
                         )

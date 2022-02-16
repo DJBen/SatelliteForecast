@@ -18,75 +18,13 @@ extension Satellite: Equatable {
     }
 }
 
-public struct SnapshotsAroundPass: Equatable {
-    public let first: SatelliteSnapshot
-    public let second: SatelliteSnapshot
-
+extension SatelliteSnapshot {
     public init(
-        first: SatelliteSnapshot,
-        second: SatelliteSnapshot
-    ) {
-        self.first = first
-        self.second = second
-    }
-}
-
-public struct NotableSnapshots: Equatable {
-    public let rise: SnapshotsAroundPass
-    public let transit: SnapshotsAroundPass
-    public let set: SnapshotsAroundPass
-
-    public struct IlluminationChangeAndSnapshots: Equatable {
-        public let change: Pass.Illumination.Change
-        public let snapshots: SnapshotsAroundPass
-
-        public init(change: Pass.Illumination.Change, snapshots: SnapshotsAroundPass) {
-            self.change = change
-            self.snapshots = snapshots
-        }
-    }
-
-    public let illuminationChanges: BTree<Double, IlluminationChangeAndSnapshots>
-
-    public init(
-        rise: SnapshotsAroundPass,
-        transit: SnapshotsAroundPass,
-        set: SnapshotsAroundPass,
-        illuminationChanges: BTree<Double, NotableSnapshots.IlluminationChangeAndSnapshots>
-    ) {
-        self.rise = rise
-        self.transit = transit
-        self.set = set
-        self.illuminationChanges = illuminationChanges
-    }
-}
-
-public struct PassSnapshots: Equatable {
-    public let pass: Pass
-    public let snapshots: BTree<Double, SatelliteSnapshot>
-    public let notableSnapshots: NotableSnapshots
-
-    public init(
-        pass: Pass,
-        snapshots: BTree<Double, SatelliteSnapshot>,
-        notableSnapshots: NotableSnapshots
-    ) {
-        self.pass = pass
-        self.snapshots = snapshots
-        self.notableSnapshots = notableSnapshots
-    }
-}
-
-extension Satellite {
-    /// Construct a snapshot of the satellite given a date and observer coordinate.
-    /// - Parameters:
-    ///   - julianDate: The julian date.
-    ///   - observer: The observer coordinate in latitude, longitude and altitude.
-    public func snapshot(
+        satellite: Satellite,
         julianDate: Double,
         observer: LatLonAlt
-    ) -> SatelliteSnapshot {
-        let eciPosition = position(julianDays: julianDate)
+    ) {
+        let eciPosition = satellite.position(julianDays: julianDate)
         let obsCel = geo2eci(julianDays: julianDate, geodetic: observer)
 
         func topVector2AziEleDst(_ top: Vector) -> AziEleDst {
@@ -109,11 +47,28 @@ extension Satellite {
             site: (observer.lat, observer.lon),
             cele: cartesianToRaDec(solarCel)
         )
-        return SatelliteSnapshot(
+        self.init(
             julianDate: julianDate,
             position: position,
             isIlluminated: isIlluminated,
             sunElevation: sunElev
+        )
+    }
+}
+
+extension Satellite {
+    /// Construct a snapshot of the satellite given a date and observer coordinate.
+    /// - Parameters:
+    ///   - julianDate: The julian date.
+    ///   - observer: The observer coordinate in latitude, longitude and altitude.
+    public func snapshot(
+        julianDate: Double,
+        observer: LatLonAlt
+    ) -> SatelliteSnapshot {
+        return SatelliteSnapshot(
+            satellite: self,
+            julianDate: julianDate,
+            observer: observer
         )
     }
 
@@ -127,18 +82,16 @@ extension Satellite {
         observer: LatLonAlt,
         julianDateRange: Range<Double>,
         interval: TimeInterval = 30
-    ) -> BTree<Double, SatelliteSnapshot> {
-        var snapshots = BTree<Double, SatelliteSnapshot>()
-        stride(
+    ) -> [SatelliteSnapshot] {
+        return stride(
             from: julianDateRange.lowerBound,
             // Append interval to overshoot the upperBound and make sure it is included.
             through: julianDateRange.upperBound + interval * TimeConstants.sec2day,
             by: interval * TimeConstants.sec2day
         )
-        .forEach { (julianDate) in
-            snapshots.insertOrReplace((julianDate, snapshot(julianDate: julianDate, observer: observer)))
+        .map { (julianDate) in
+            snapshot(julianDate: julianDate, observer: observer)
         }
-        return snapshots
     }
 
     private func generatePassInfo(
@@ -163,8 +116,8 @@ extension Satellite {
         var illuminationChangesAndSnapshots = BTree<Double, NotableSnapshots.IlluminationChangeAndSnapshots>()
 
         for index in fineSnapshots.indices where index < fineSnapshots.index(before: fineSnapshots.endIndex) {
-            let snapshot1 = fineSnapshots[index].1
-            let snapshot2 = fineSnapshots[fineSnapshots.index(after: index)].1
+            let snapshot1 = fineSnapshots[index]
+            let snapshot2 = fineSnapshots[fineSnapshots.index(after: index)]
 
             guard snapshot1.position.elev > 0 || snapshot2.position.elev > 0 else {
                 continue
@@ -248,7 +201,7 @@ extension Satellite {
             set: setDatePos,
             transit: maxElevDatePos,
             illumination: Pass.Illumination(
-                initiallyIlluminated: fineSnapshots.first!.1.isIlluminated,
+                initiallyIlluminated: fineSnapshots.first!.isIlluminated,
                 changes: illuminationChanges
             ),
             sunElevationAtTransit: sunElev
@@ -281,7 +234,7 @@ extension Satellite {
     public func findPasses(
         noradIndex: Int,
         observer: LatLonAlt,
-        coarseSnapshots: BTree<Double, SatelliteSnapshot>,
+        coarseSnapshots: [SatelliteSnapshot],
         minElevation: Double = 10,
         fineInterval: TimeInterval = 3
     ) -> [PassSnapshots] {
@@ -290,15 +243,19 @@ extension Satellite {
         var passSnapshotsList = [PassSnapshots]()
 
         for index in coarseSnapshots.indices where index < coarseSnapshots.index(before: coarseSnapshots.endIndex) {
-            let snapshot1 = coarseSnapshots[index].1
-            let snapshot2 = coarseSnapshots[coarseSnapshots.index(after: index)].1
+            let snapshot1 = coarseSnapshots[index]
+            let snapshot2 = coarseSnapshots[coarseSnapshots.index(after: index)]
+            
+            precondition(snapshot2.julianDate > snapshot1.julianDate)
 
             if snapshot1.position.elev <= 0 && snapshot2.position.elev > 0 {
                 snapshotBeforeRising = snapshot1
+                print("snapshotBeforeRising \(snapshotBeforeRising)")
             }
 
             if snapshot1.position.elev > 0 && snapshot2.position.elev <= 0 {
                 snapshotAfterSetting = snapshot2
+                print("snapshotAfterSetting \(snapshotAfterSetting)")
             }
 
             if let fromDate = snapshotBeforeRising?.julianDate, let toDate = snapshotAfterSetting?.julianDate, fromDate < toDate {

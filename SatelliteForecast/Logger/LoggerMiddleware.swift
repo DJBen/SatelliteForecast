@@ -46,7 +46,14 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                     // Do nothing
                     break
                 case .tlePropagator(let tlePropagatorAction):
-                    print(tlePropagatorAction)
+                    switch tlePropagatorAction {
+                    case .foundPassesAndSnapshots(let passSnapshotList, let noradIndex, let observer):
+                        print("foundPassesAndSnapshots(passes: \(passSnapshotList.count), noradIndex: \(noradIndex), observer: \(observer))")
+                    case .propagatedSnapshots(let snapshots, let noradIndex, let observer):
+                        print("propagatedSnapshots(snapshots: \(snapshots.count), noradIndex: \(noradIndex), observer: \(observer))")
+                    case .purgePassesAndSnapshots:
+                        print(tlePropagatorAction)
+                    }
                 case .timer(let timerAction):
                     print(timerAction)
                 case .debugMenu(let debugMenuAction):

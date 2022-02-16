@@ -15,6 +15,6 @@ enum TLEPropagatorAction {
     /// during the pass.
     case foundPassesAndSnapshots([PassSnapshots], noradIndex: Int, observer: LatLonAlt)
     /// Generated coarse snapshots of ephemerides of a satellite, relative to an observer.
-    case propagatedSnapshots(BTree<Double, SatelliteSnapshot>, noradIndex: Int, observer: LatLonAlt)
+    case propagatedSnapshots([SatelliteSnapshot], noradIndex: Int, observer: LatLonAlt)
     case purgePassesAndSnapshots
 }

@@ -17,12 +17,12 @@ import SatelliteKit
 public struct SatelliteTrails: Equatable {
     public var observer: LatLonAlt
     /// Coarse snapshots
-    public var snapshots: BTree<Double, SatelliteSnapshot>
+    public var snapshots: [SatelliteSnapshot]
     public var passSnapshots: [PassSnapshots]?
 
     public init(
         observer: LatLonAlt,
-        snapshots: BTree<Double, SatelliteSnapshot> = BTree(),
+        snapshots: [SatelliteSnapshot] = [],
         passSnapshots: [PassSnapshots]? = nil
     ) {
         self.observer = observer

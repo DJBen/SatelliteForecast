@@ -154,17 +154,16 @@ struct SunlightIndicator: View, Equatable {
     /// An efficient function to map dense satellite snapshots over a date range to a sparser JD -> sun elevation tree.
     /// - Parameter snapshots: The snapshots.
     /// - Returns: A tree mapping from JD -> sun elevations.
-    static func snapshotsToSunElevs(_ snapshots: BTree<Double, SatelliteSnapshot>) -> BTree<Double, Double> {
-        guard let (startDate, _) = snapshots.first, let (endDate, _) = snapshots.last else {
+    static func snapshotsToSunElevs(_ snapshots: [SatelliteSnapshot]) -> BTree<Double, Double> {
+        guard let startDate = snapshots.first?.julianDate else {
             return BTree()
         }
         var julianDateElevations = BTree<Double, Double>()
         // Stride in a 10 minute interval across the julian date to improve performance
-        stride(from: startDate, through: endDate, by: 10 * TimeConstants.min2day).forEach { julianDate in
-            guard let closestValue = snapshots.value(closestTo: julianDate) else {
-                return
-            }
-            julianDateElevations.insert((julianDate, closestValue.sunElevation))
+        var previousDate = startDate
+        for snapshot in snapshots where snapshot.julianDate - previousDate >= 10 * TimeConstants.min2day {
+            julianDateElevations.insert((snapshot.julianDate, snapshot.sunElevation))
+            previousDate = snapshot.julianDate
         }
         return julianDateElevations
     }
@@ -216,8 +215,12 @@ struct SunlightIndicator_Previews: PreviewProvider {
             julianDateRange: julianDateRange,
             interval: 60
         )
-        .map { ($0, $1.sunElevation) }
-        .reduce(into: BTree<Double, Double>(), { $0.insertOrReplace($1) })
+        .reduce(
+            into: BTree<Double, Double>(),
+            {
+                $0.insertOrReplace(($1.julianDate, $1.sunElevation))
+            }
+        )
         let viewModel = SunlightIndicatorViewModel(
             julianDateElevations: jdElevs
         )

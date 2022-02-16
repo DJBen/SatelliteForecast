@@ -12,7 +12,7 @@ import StarryNight
 
 struct SatellitePassPathRenderParams: Equatable {
     var rect: CGRect
-    var snapshotsDuringPass: BTree<Double, SatelliteSnapshot>
+    var snapshotsDuringPass: [SatelliteSnapshot]
     var lineWidth: CGFloat = 1
     var illuminatedColor: UIColor
     var unlitColor: UIColor
@@ -100,11 +100,11 @@ extension SkyChart {
         params: SatellitePassPathRenderParams
     ) {
         let snapshotsByIllumination = params.snapshotsDuringPass.split(inclusivity: .includesSecondElementsInPreviousGroup) { (e1, e2) -> Bool in
-            return e1.1.isIlluminated != e2.1.isIlluminated
+            return e1.isIlluminated != e2.isIlluminated
         }
         ctx.cgContext.saveGState()
         for index in snapshotsByIllumination.indices {
-            let isIlluminated = snapshotsByIllumination[index].first!.1.isIlluminated
+            let isIlluminated = snapshotsByIllumination[index].first!.isIlluminated
             let color = isIlluminated ? params.illuminatedColor : params.unlitColor
             let snapshotsGroup = snapshotsByIllumination[index]
 
@@ -112,18 +112,19 @@ extension SkyChart {
             ctx.cgContext.setLineWidth(params.lineWidth)
             for i in snapshotsGroup.indices where i < snapshotsGroup.index(before: snapshotsGroup.endIndex) {
                 if i == snapshotsGroup.startIndex {
-                    let point = point(at: snapshotsGroup[i].1.position, rect: params.rect)
+                    let point = point(at: snapshotsGroup[i].position, rect: params.rect)
                     ctx.cgContext.move(to: point)
                 }
-                let nextPoint = point(at: snapshotsGroup[snapshotsGroup.index(after: i)].1.position, rect: params.rect)
+                let nextPoint = point(at: snapshotsGroup[snapshotsGroup.index(after: i)].position, rect: params.rect)
                 ctx.cgContext.addLine(to: nextPoint)
             }
             ctx.cgContext.drawPath(using: .stroke)
             
             if snapshotsGroup.count > 3 {
                 ctx.cgContext.saveGState()
-                let e1 = snapshotsGroup[snapshotsGroup.index(ofOffset: snapshotsGroup.count / 2 - 1)].1.position
-                let e2 = snapshotsGroup[snapshotsGroup.index(ofOffset: snapshotsGroup.count / 2)].1.position
+
+                let e1 = snapshotsGroup[snapshotsGroup.count / 2 - 1].position
+                let e2 = snapshotsGroup[snapshotsGroup.count / 2].position
                 let p1 = point(at: e1, rect: params.rect)
                 let p2 = point(at: e2, rect: params.rect)
                 let rot = atan2pi(Double(p2.y - p1.y), Double(p2.x - p1.x))
@@ -303,7 +304,7 @@ struct ImageRenderer_Previews: PreviewProvider {
         static let constellations = Constellation.all
         
         let pass: Pass
-        let snapshots: BTree<Double, SatelliteSnapshot>
+        let snapshots: [SatelliteSnapshot]
         let notableSnapshots: NotableSnapshots
         let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
         
@@ -383,8 +384,8 @@ struct ImageRenderer_Previews: PreviewProvider {
                     SkyChart.PassLabel(
                         text: "Special",
                         snapshotPair: SnapshotsAroundPass(
-                            first: snapshots[snapshots.index(snapshots.startIndex, offsetBy: snapshots.count / 3)].1,
-                            second: snapshots[snapshots.index(snapshots.startIndex, offsetBy: snapshots.count / 3 + 1)].1
+                            first: snapshots[snapshots.index(snapshots.startIndex, offsetBy: snapshots.count / 3)],
+                            second: snapshots[snapshots.index(snapshots.startIndex, offsetBy: snapshots.count / 3 + 1)]
                         ),
                         rect: rect,
                         modifierFactory: HighlightedPassLabelModifier.curry(shouldHighlight: true)
