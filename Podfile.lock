@@ -46,7 +46,7 @@ DEPENDENCIES:
   - SwiftDate (~> 5.0)
   - SwiftRex (= 0.8.9)
   - SwiftUIVisualEffects (from `./SwiftUIVisualEffects`)
-  - TestingExtensions
+  - TestingExtensions (~> 0.2.9)
 
 SPEC REPOS:
   trunk:
@@ -93,6 +93,6 @@ SPEC CHECKSUMS:
   SwiftUIVisualEffects: 4e6f1fe8159a07e59eaf3918e5f8cd1fe52cadce
   TestingExtensions: 75654c5acd46d63c09317cfa0c84f402882a29b0
 
-PODFILE CHECKSUM: ca4eb87733a9a049205e02838797dd2ba1cfd9ed
+PODFILE CHECKSUM: 73575e03295bfcb844ed8941207dfb900566035a
 
 COCOAPODS: 1.11.2
