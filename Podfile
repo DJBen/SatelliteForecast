@@ -1,7 +1,6 @@
-platform :ios, '15.0'
-inhibit_all_warnings!
-
 target 'SatelliteForecast' do
+  platform :ios, '15.0'
+  inhibit_all_warnings!
   use_frameworks!
   
   pod "BTree", "~> 4.1.0"
@@ -18,7 +17,9 @@ target 'SatelliteForecast' do
   pod "SwiftUIVisualEffects", :path => './SwiftUIVisualEffects'
 
   target 'SatelliteForecastTests' do
-    pod "TestingExtensions"
+    inherit! :complete
+
+    pod "TestingExtensions", "~> 0.2.9"
   end
 end
 
