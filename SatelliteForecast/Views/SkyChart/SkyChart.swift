@@ -231,7 +231,7 @@ struct SkyChart: View {
                 PlanetaryBodyView(
                     planetaryBody: body,
                     label: context.configs.backgroundSky.bodySymbol,
-                    referenceDate: viewModel.state.referenceDate,
+                    referenceDate: backgroundSkyJulianDateKey,
                     observer: context.observer,
                     sunElevation: context.pass.sunElevationAtTransit
                 )
