@@ -6,70 +6,7 @@
 //
 
 import Foundation
-import SQLite
 
-enum SatelliteCatalog {
-    static let DB = try! Connection(Bundle.SatelliteCatalogResourcesBundle.path(forResource: "satellites", ofType: "sqlite")!)
-
-    enum SatCatTable {
-        static let tableName = Table("SatCat")
-        static let name = Expression<String>("OBJECT_NAME")
-        static let objectID = Expression<String>("OBJECT_ID")
-        static let noradCatID = Expression<Int>("NORAD_CAT_ID")
-        static let objectType = Expression<String>("OBJECT_TYPE")
-        static let operationalStatusCode = Expression<String?>("OPS_STATUS_CODE")
-        static let owner = Expression<String>("OWNER")
-        static let launchDate = Expression<String>("LAUNCH_DATE")
-        static let launchSite = Expression<String>("LAUNCH_SITE")
-        static let decayDate = Expression<String?>("DECAY_DATE")
-        static let period = Expression<Double?>("PERIOD")
-        static let inclination = Expression<Double?>("PERIOD")
-        static let apogee = Expression<Double?>("APOGEE")
-        static let perigee = Expression<Double?>("PERIGEE")
-        static let rcs = Expression<Double?>("RCS")
-        static let dataStatusCode = Expression<String?>("DATA_STATUS_CODE")
-        static let orbitCenter = Expression<String>("ORBIT_CENTER")
-        static let orbitType = Expression<String>("ORBIT_TYPE")
-    }
-
-    enum UCSSatTable {
-        static let tableName = Table("UCSSatDB")
-        static let name = Expression<String>("Name of Satellite, Alternate Names")
-        static let officialName = Expression<String>("Current Official Name of Satellite")
-        static let countryOrOrgOfUNRegistry = Expression<String>("Country/Org of UN Registry")
-        static let countryOfOperatorOrOwner = Expression<String>("Country of Operator/Owner")
-        static let operatorOrOwner = Expression<String>("Operator/Owner")
-        static let users = Expression<String>("Users")
-        static let purpose = Expression<String>("Purpose")
-        static let detailedPurpose = Expression<String?>("Detailed Purpose")
-        static let classOfOrbit = Expression<String>("Class of Orbit")
-        static let typeOfOrbit = Expression<String>("Type of Orbit")
-        static let longitudeOfGEO = Expression<Double?>("Longitude of GEO (degrees)")
-        static let perigee = Expression<Double?>("Perigee (km)")
-        static let apogee = Expression<Double?>("Apogee (km)")
-        static let eccentricity = Expression<Double?>("Eccentricity")
-        static let inclination = Expression<Double?>("Inclination (degrees)")
-        static let period = Expression<Double?>("Period (minutes)")
-        static let launchMass = Expression<Double?>("Launch Mass (kg.)")
-        static let dryMass = Expression<Double?>("Dry Mass (kg.)")
-        static let power = Expression<Double?>("Power (watts)")
-        static let dateOfLaunch = Expression<Double>("Date of Launch")
-        static let expectedLifetime = Expression<Double?>("Expected Lifetime (yrs.)")
-        static let contractor = Expression<String?>("Contractor")
-        static let countryOfContractor = Expression<String?>("Country of Contractor")
-        static let launchSite = Expression<String>("Launch Site")
-        static let launchVehicle = Expression<String>("Launch Vehicle")
-        static let cosparID = Expression<String>("COSPAR Number")
-        static let noradID = Expression<Int>("NORAD Number")
-        static let comments = Expression<String?>("Comments")
-        static let comments2 = Expression<String?>("Comments")
-        static let sourceUsedForOrbitalData = Expression<String?>("Source Used for Orbital Data")
-        static let source1 = Expression<String?>("Source1")
-        static let source2 = Expression<String?>("Source2")
-        static let source3 = Expression<String?>("Source3")
-        static let source4 = Expression<String?>("Source4")
-        static let source5 = Expression<String?>("Source5")
-        static let source6 = Expression<String?>("Source6")
-        static let source7 = Expression<String?>("Source7")
-    }
+public enum SatelliteCatalog {
+    
 }

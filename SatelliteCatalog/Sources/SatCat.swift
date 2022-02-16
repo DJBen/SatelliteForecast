@@ -154,6 +154,42 @@ public struct SatCat {
     }
 
     public let orbitType: OrbitType
+
+    public init(
+        name: String,
+        cosparID: String,
+        noradID: Int,
+        objectType: SatCat.ObjectType,
+        operationalStatus: SatCat.OperationalStatus?,
+        owner: Owner,
+        launchDate: Date,
+        launchSite: LaunchSite,
+        decayDate: Date?,
+        period: Double?,
+        inclination: Double?,
+        apogee: Double?,
+        perigee: Double?,
+        rcs: Double?,
+        orbitCenter: SatCat.OrbitCenter,
+        orbitType: SatCat.OrbitType
+    ) {
+        self.name = name
+        self.cosparID = cosparID
+        self.noradID = noradID
+        self.objectType = objectType
+        self.operationalStatus = operationalStatus
+        self.owner = owner
+        self.launchDate = launchDate
+        self.launchSite = launchSite
+        self.decayDate = decayDate
+        self.period = period
+        self.inclination = inclination
+        self.apogee = apogee
+        self.perigee = perigee
+        self.rcs = rcs
+        self.orbitCenter = orbitCenter
+        self.orbitType = orbitType
+    }
 }
 
 extension SatCat: Equatable {}

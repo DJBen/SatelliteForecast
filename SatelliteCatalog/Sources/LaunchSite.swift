@@ -8,7 +8,12 @@
 import Foundation
 
 public struct LaunchSite {
+    public init(code: String) {
+        self.code = code
+    }
+
     public let code: String
+    
     public var fullName: String? {
         switch code {
         case "AFETR": return "Air Force Eastern Test Range, Florida, USA"
