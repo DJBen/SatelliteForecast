@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1A7FD7ED30FB8A0C0C1CF272 /* Pods_SatelliteForecast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0079510961C8938BA626B26F /* Pods_SatelliteForecast.framework */; };
-		A16C94BB7051A77E5AB54D9A /* Pods_SatelliteForecast_SatelliteForecastTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9237BC682CDB4423D34F34A /* Pods_SatelliteForecast_SatelliteForecastTests.framework */; };
+		1DAA0710B7B6C3376CEA16CB /* Pods_SatelliteForecast_SatelliteForecastTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CF84B428B2EC72B9D2FF372 /* Pods_SatelliteForecast_SatelliteForecastTests.framework */; };
+		76462F2B1341A54B93996539 /* Pods_SatelliteForecast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F309E703E1576B91309154B8 /* Pods_SatelliteForecast.framework */; };
 		EF0FC06C2677D7A200560AF0 /* AllPassesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0FC06B2677D7A200560AF0 /* AllPassesView.swift */; };
 		EF19FA09266EC38200D0B2CD /* SkyChartMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF19FA08266EC38200D0B2CD /* SkyChartMiddleware.swift */; };
 		EF19FA0B266EC7CE00D0B2CD /* SkyChartReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF19FA0A266EC7CE00D0B2CD /* SkyChartReducer.swift */; };
@@ -19,7 +19,6 @@
 		EF1EDA2E269200B60088DD65 /* SatelliteElevationGraphResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1EDA2D269200B60088DD65 /* SatelliteElevationGraphResources.swift */; };
 		EF1EDA30269204420088DD65 /* SkyChartResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1EDA2F269204420088DD65 /* SkyChartResources.swift */; };
 		EF283B0526B23122008223C1 /* SkyChartDynamicIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF283B0426B23122008223C1 /* SkyChartDynamicIndicator.swift */; };
-		EF2EF4D827B11C0A000D5EC8 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = EF2EF4D727B11C0A000D5EC8 /* README.md */; };
 		EF2EF4DA27B252EA000D5EC8 /* AppStateMappable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF2EF4D927B252EA000D5EC8 /* AppStateMappable.swift */; };
 		EF2EF4DD27B42661000D5EC8 /* LoggerMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF2EF4DC27B42661000D5EC8 /* LoggerMiddleware.swift */; };
 		EF2FBB2326CA74D60046EF28 /* AllPassesLocationChangeWarning.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF2FBB2226CA74D60046EF28 /* AllPassesLocationChangeWarning.swift */; };
@@ -35,8 +34,6 @@
 		EF465653267BE7680040B762 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF465652267BE7680040B762 /* AppDelegate.swift */; };
 		EF4AF76C266434CC00D28F47 /* SkyChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4AF76B266434CC00D28F47 /* SkyChart.swift */; };
 		EF58EC1426A6325B0026ADB9 /* PassLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF58EC1326A6325B0026ADB9 /* PassLabel.swift */; };
-		EF5A9080269FA50900EADA2D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EF9D827C2661BBF000616C97 /* Assets.xcassets */; };
-		EF5A9081269FA50900EADA2D /* Satellites.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EF3D09A12686920800B84232 /* Satellites.xcassets */; };
 		EF5A908426A0D68400EADA2D /* LazyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5A908326A0D68400EADA2D /* LazyView.swift */; };
 		EF5CB017266E28EE000019DA /* TimerReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5CB016266E28EE000019DA /* TimerReducer.swift */; };
 		EF5CB019266E28FC000019DA /* TimerMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5CB018266E28FC000019DA /* TimerMiddleware.swift */; };
@@ -44,7 +41,7 @@
 		EF5CB01E266E2933000019DA /* TLEPropagatorAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5CB01C266E2933000019DA /* TLEPropagatorAction.swift */; };
 		EF5CB022266EAF6F000019DA /* AllPassesViewMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5CB021266EAF6F000019DA /* AllPassesViewMiddleware.swift */; };
 		EF62BA4426CE316A00813357 /* PassNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF62BA4326CE316A00813357 /* PassNotification.swift */; };
-		EF67A7BA27BCE9F8007305DA /* CancellableFuture.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF67A7B927BCE9F8007305DA /* CancellableFuture.swift */; };
+		EF67A7BE27BCF024007305DA /* MiddlewareTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF67A7BD27BCF024007305DA /* MiddlewareTests.swift */; };
 		EF7A311E266AFBF800CC33C0 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A311D266AFBF800CC33C0 /* Store.swift */; };
 		EF7A3122266B03B400CC33C0 /* LocationMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A3121266B03B400CC33C0 /* LocationMiddleware.swift */; };
 		EF7A3125266B1A2500CC33C0 /* LocationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A3124266B1A2500CC33C0 /* LocationState.swift */; };
@@ -90,7 +87,6 @@
 		EF9D82A32661BBF100616C97 /* SatelliteForecastApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9D827A2661BBF000616C97 /* SatelliteForecastApp.swift */; };
 		EFAE1F0C2668B10F00A18A42 /* SatelliteElevationGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F0B2668B10F00A18A42 /* SatelliteElevationGraph.swift */; };
 		EFAE1F132669E7A800A18A42 /* SunlightIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F122669E7A800A18A42 /* SunlightIndicator.swift */; };
-		EFB1B4DA27BCDFF10025974C /* CancellableFutureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB1B4D927BCDFF10025974C /* CancellableFutureTests.swift */; };
 		EFCF20F026AD020E00D87E8B /* DebugMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFCF20EF26AD020E00D87E8B /* DebugMenu.swift */; };
 		EFCF20F226AD4E7E00D87E8B /* DebugMenuReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFCF20F126AD4E7E00D87E8B /* DebugMenuReducer.swift */; };
 		EFCF20F426AD545400D87E8B /* DebugMenuMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFCF20F326AD545400D87E8B /* DebugMenuMiddleware.swift */; };
@@ -125,13 +121,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0079510961C8938BA626B26F /* Pods_SatelliteForecast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SatelliteForecast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		81A8C24374A483A543DB0FD8 /* Pods-SatelliteForecast-SatelliteForecastTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecast-SatelliteForecastTests.debug.xcconfig"; path = "Target Support Files/Pods-SatelliteForecast-SatelliteForecastTests/Pods-SatelliteForecast-SatelliteForecastTests.debug.xcconfig"; sourceTree = "<group>"; };
-		846099A97199D9E948039A9C /* Pods-SatelliteForecast-SatelliteForecastTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecast-SatelliteForecastTests.release.xcconfig"; path = "Target Support Files/Pods-SatelliteForecast-SatelliteForecastTests/Pods-SatelliteForecast-SatelliteForecastTests.release.xcconfig"; sourceTree = "<group>"; };
-		AB3BF329E68748DC4C94323D /* Pods-SatelliteForecast.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecast.debug.xcconfig"; path = "Target Support Files/Pods-SatelliteForecast/Pods-SatelliteForecast.debug.xcconfig"; sourceTree = "<group>"; };
-		AE4BA686296A7F0D68DE2870 /* Pods-SatelliteForecast.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecast.release.xcconfig"; path = "Target Support Files/Pods-SatelliteForecast/Pods-SatelliteForecast.release.xcconfig"; sourceTree = "<group>"; };
-		D9237BC682CDB4423D34F34A /* Pods_SatelliteForecast_SatelliteForecastTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SatelliteForecast_SatelliteForecastTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		00EB358EC730ED8A76D9DC14 /* Pods-SatelliteForecast.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecast.debug.xcconfig"; path = "Target Support Files/Pods-SatelliteForecast/Pods-SatelliteForecast.debug.xcconfig"; sourceTree = "<group>"; };
+		267C71EE8DACC4F6A4291153 /* Pods-SatelliteForecast-SatelliteForecastTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecast-SatelliteForecastTests.release.xcconfig"; path = "Target Support Files/Pods-SatelliteForecast-SatelliteForecastTests/Pods-SatelliteForecast-SatelliteForecastTests.release.xcconfig"; sourceTree = "<group>"; };
+		5CF84B428B2EC72B9D2FF372 /* Pods_SatelliteForecast_SatelliteForecastTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SatelliteForecast_SatelliteForecastTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A282581E620B8E3ECA2F71AC /* Pods-SatelliteForecast.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecast.release.xcconfig"; path = "Target Support Files/Pods-SatelliteForecast/Pods-SatelliteForecast.release.xcconfig"; sourceTree = "<group>"; };
+		DD9ABC9E05C7D15D34D6BE1B /* Pods-SatelliteForecast-SatelliteForecastTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecast-SatelliteForecastTests.debug.xcconfig"; path = "Target Support Files/Pods-SatelliteForecast-SatelliteForecastTests/Pods-SatelliteForecast-SatelliteForecastTests.debug.xcconfig"; sourceTree = "<group>"; };
 		EF0FC06B2677D7A200560AF0 /* AllPassesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllPassesView.swift; sourceTree = "<group>"; };
+		EF16811A27CF0248001BA9C3 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		EF19FA08266EC38200D0B2CD /* SkyChartMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyChartMiddleware.swift; sourceTree = "<group>"; };
 		EF19FA0A266EC7CE00D0B2CD /* SkyChartReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyChartReducer.swift; sourceTree = "<group>"; };
 		EF1CAB31266B7ABF006319C8 /* PassView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassView.swift; sourceTree = "<group>"; };
@@ -165,7 +161,7 @@
 		EF5CB01C266E2933000019DA /* TLEPropagatorAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TLEPropagatorAction.swift; sourceTree = "<group>"; };
 		EF5CB021266EAF6F000019DA /* AllPassesViewMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllPassesViewMiddleware.swift; sourceTree = "<group>"; };
 		EF62BA4326CE316A00813357 /* PassNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassNotification.swift; sourceTree = "<group>"; };
-		EF67A7B927BCE9F8007305DA /* CancellableFuture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CancellableFuture.swift; sourceTree = "<group>"; };
+		EF67A7BD27BCF024007305DA /* MiddlewareTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiddlewareTests.swift; sourceTree = "<group>"; };
 		EF7A311D266AFBF800CC33C0 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		EF7A3121266B03B400CC33C0 /* LocationMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationMiddleware.swift; sourceTree = "<group>"; };
 		EF7A3124266B1A2500CC33C0 /* LocationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationState.swift; sourceTree = "<group>"; };
@@ -215,7 +211,6 @@
 		EFAE1F0B2668B10F00A18A42 /* SatelliteElevationGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteElevationGraph.swift; sourceTree = "<group>"; };
 		EFAE1F122669E7A800A18A42 /* SunlightIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunlightIndicator.swift; sourceTree = "<group>"; };
 		EFB1B4D027BCDFC40025974C /* SatelliteForecastTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SatelliteForecastTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		EFB1B4D927BCDFF10025974C /* CancellableFutureTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CancellableFutureTests.swift; path = SatelliteForecastTests/CancellableFutureTests.swift; sourceTree = SOURCE_ROOT; };
 		EFCF20EF26AD020E00D87E8B /* DebugMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugMenu.swift; sourceTree = "<group>"; };
 		EFCF20F126AD4E7E00D87E8B /* DebugMenuReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugMenuReducer.swift; sourceTree = "<group>"; };
 		EFCF20F326AD545400D87E8B /* DebugMenuMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugMenuMiddleware.swift; sourceTree = "<group>"; };
@@ -224,6 +219,7 @@
 		EFE7216126BF59500009C29B /* CLLocationCoordinate2D+Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CLLocationCoordinate2D+Formatting.swift"; sourceTree = "<group>"; };
 		EFF750C7266F4DFF005222F8 /* SizeModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeModifier.swift; sourceTree = "<group>"; };
 		EFFD227826B788D30010E1F6 /* LocationSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSettingsView.swift; sourceTree = "<group>"; };
+		F309E703E1576B91309154B8 /* Pods_SatelliteForecast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SatelliteForecast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -231,7 +227,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A7FD7ED30FB8A0C0C1CF272 /* Pods_SatelliteForecast.framework in Frameworks */,
+				76462F2B1341A54B93996539 /* Pods_SatelliteForecast.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -239,7 +235,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A16C94BB7051A77E5AB54D9A /* Pods_SatelliteForecast_SatelliteForecastTests.framework in Frameworks */,
+				1DAA0710B7B6C3376CEA16CB /* Pods_SatelliteForecast_SatelliteForecastTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -249,21 +245,12 @@
 		38032A026A794DBA01ED4368 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				AB3BF329E68748DC4C94323D /* Pods-SatelliteForecast.debug.xcconfig */,
-				AE4BA686296A7F0D68DE2870 /* Pods-SatelliteForecast.release.xcconfig */,
-				81A8C24374A483A543DB0FD8 /* Pods-SatelliteForecast-SatelliteForecastTests.debug.xcconfig */,
-				846099A97199D9E948039A9C /* Pods-SatelliteForecast-SatelliteForecastTests.release.xcconfig */,
+				00EB358EC730ED8A76D9DC14 /* Pods-SatelliteForecast.debug.xcconfig */,
+				A282581E620B8E3ECA2F71AC /* Pods-SatelliteForecast.release.xcconfig */,
+				DD9ABC9E05C7D15D34D6BE1B /* Pods-SatelliteForecast-SatelliteForecastTests.debug.xcconfig */,
+				267C71EE8DACC4F6A4291153 /* Pods-SatelliteForecast-SatelliteForecastTests.release.xcconfig */,
 			);
 			path = Pods;
-			sourceTree = "<group>";
-		};
-		541FBE588AE223345763F913 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				0079510961C8938BA626B26F /* Pods_SatelliteForecast.framework */,
-				D9237BC682CDB4423D34F34A /* Pods_SatelliteForecast_SatelliteForecastTests.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		EF0FC06A2677D73000560AF0 /* AllPassesView */ = {
@@ -502,7 +489,7 @@
 				EFB1B4D127BCDFC40025974C /* SatelliteForecastTests */,
 				EF9D82822661BBF000616C97 /* Products */,
 				38032A026A794DBA01ED4368 /* Pods */,
-				541FBE588AE223345763F913 /* Frameworks */,
+				F1B85217DF19E2F00F017103 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -526,7 +513,6 @@
 				EF7A3130266B489A00CC33C0 /* SatelliteLoader */,
 				EF5CB01A266E2933000019DA /* TLEPropagator */,
 				EF7A3120266B03A100CC33C0 /* Location */,
-				EF67A7B927BCE9F8007305DA /* CancellableFuture.swift */,
 			);
 			path = SatelliteForecast;
 			sourceTree = "<group>";
@@ -551,7 +537,7 @@
 		EFB1B4D127BCDFC40025974C /* SatelliteForecastTests */ = {
 			isa = PBXGroup;
 			children = (
-				EFB1B4D927BCDFF10025974C /* CancellableFutureTests.swift */,
+				EF67A7BD27BCF024007305DA /* MiddlewareTests.swift */,
 			);
 			path = SatelliteForecastTests;
 			sourceTree = "<group>";
@@ -575,6 +561,16 @@
 			path = LocationSettingsView;
 			sourceTree = "<group>";
 		};
+		F1B85217DF19E2F00F017103 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				EF16811A27CF0248001BA9C3 /* XCTest.framework */,
+				F309E703E1576B91309154B8 /* Pods_SatelliteForecast.framework */,
+				5CF84B428B2EC72B9D2FF372 /* Pods_SatelliteForecast_SatelliteForecastTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -582,12 +578,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = EF9D82AB2661BBF100616C97 /* Build configuration list for PBXNativeTarget "SatelliteForecast" */;
 			buildPhases = (
-				06C060F5DD1FB7F3AFD29677 /* [CP] Check Pods Manifest.lock */,
+				E4A24AD93095F96102337786 /* [CP] Check Pods Manifest.lock */,
 				EF9D827D2661BBF000616C97 /* Sources */,
 				EF9D827E2661BBF000616C97 /* Frameworks */,
 				EFAE1EF5266862B500A18A42 /* Embed Frameworks */,
 				EF5A907F269FA50400EADA2D /* Resources */,
-				86C5C5ECB956339FAA4FDC5F /* [CP] Embed Pods Frameworks */,
+				07ABDB8DA843A2B67F2BBFFA /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -602,11 +598,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = EFB1B4D627BCDFC40025974C /* Build configuration list for PBXNativeTarget "SatelliteForecastTests" */;
 			buildPhases = (
-				55E988B87D53A56959BE49A9 /* [CP] Check Pods Manifest.lock */,
+				5BAC9DAC720FCE14C3459FF3 /* [CP] Check Pods Manifest.lock */,
 				EFB1B4CC27BCDFC40025974C /* Sources */,
 				EFB1B4CD27BCDFC40025974C /* Frameworks */,
 				EFB1B4CE27BCDFC40025974C /* Resources */,
-				9378C36B68465DFE3E2B555C /* [CP] Embed Pods Frameworks */,
+				7644E9D7A7620A09B77C2469 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -632,6 +628,7 @@
 					};
 					EFB1B4CF27BCDFC40025974C = {
 						CreatedOnToolsVersion = 13.2.1;
+						TestTargetID = EF9D82802661BBF000616C97;
 					};
 				};
 			};
@@ -659,9 +656,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EF2EF4D827B11C0A000D5EC8 /* README.md in Resources */,
-				EF5A9080269FA50900EADA2D /* Assets.xcassets in Resources */,
-				EF5A9081269FA50900EADA2D /* Satellites.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -675,29 +669,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		06C060F5DD1FB7F3AFD29677 /* [CP] Check Pods Manifest.lock */ = {
+		07ABDB8DA843A2B67F2BBFFA /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SatelliteForecast/Pods-SatelliteForecast-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
+			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SatelliteForecast-checkManifestLockResult.txt",
+				"${PODS_ROOT}/Target Support Files/Pods-SatelliteForecast/Pods-SatelliteForecast-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SatelliteForecast/Pods-SatelliteForecast-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		55E988B87D53A56959BE49A9 /* [CP] Check Pods Manifest.lock */ = {
+		5BAC9DAC720FCE14C3459FF3 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -719,24 +708,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		86C5C5ECB956339FAA4FDC5F /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SatelliteForecast/Pods-SatelliteForecast-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SatelliteForecast/Pods-SatelliteForecast-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SatelliteForecast/Pods-SatelliteForecast-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		9378C36B68465DFE3E2B555C /* [CP] Embed Pods Frameworks */ = {
+		7644E9D7A7620A09B77C2469 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -751,6 +723,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SatelliteForecast-SatelliteForecastTests/Pods-SatelliteForecast-SatelliteForecastTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E4A24AD93095F96102337786 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-SatelliteForecast-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -809,7 +803,6 @@
 				EF1EDA30269204420088DD65 /* SkyChartResources.swift in Sources */,
 				EF465653267BE7680040B762 /* AppDelegate.swift in Sources */,
 				EFE7216026BF58E20009C29B /* CLPlacemark+Formatting.swift in Sources */,
-				EF67A7BA27BCE9F8007305DA /* CancellableFuture.swift in Sources */,
 				EF8A423A267E87740014AE17 /* SatelliteElevationGraph+Static.swift in Sources */,
 				EF5CB019266E28FC000019DA /* TimerMiddleware.swift in Sources */,
 				EF62BA4426CE316A00813357 /* PassNotification.swift in Sources */,
@@ -853,7 +846,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EFB1B4DA27BCDFF10025974C /* CancellableFutureTests.swift in Sources */,
+				EF67A7BE27BCF024007305DA /* MiddlewareTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -919,11 +912,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -974,10 +969,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 			};
@@ -985,7 +982,7 @@
 		};
 		EF9D82AC2661BBF100616C97 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AB3BF329E68748DC4C94323D /* Pods-SatelliteForecast.debug.xcconfig */;
+			baseConfigurationReference = 00EB358EC730ED8A76D9DC14 /* Pods-SatelliteForecast.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -995,7 +992,7 @@
 				DEVELOPMENT_TEAM = 52RD2GH5DP;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = SatelliteForecast/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1011,7 +1008,7 @@
 		};
 		EF9D82AD2661BBF100616C97 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AE4BA686296A7F0D68DE2870 /* Pods-SatelliteForecast.release.xcconfig */;
+			baseConfigurationReference = A282581E620B8E3ECA2F71AC /* Pods-SatelliteForecast.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -1021,7 +1018,7 @@
 				DEVELOPMENT_TEAM = 52RD2GH5DP;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = SatelliteForecast/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1038,14 +1035,15 @@
 		};
 		EFB1B4D727BCDFC40025974C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 81A8C24374A483A543DB0FD8 /* Pods-SatelliteForecast-SatelliteForecastTests.debug.xcconfig */;
+			baseConfigurationReference = DD9ABC9E05C7D15D34D6BE1B /* Pods-SatelliteForecast-SatelliteForecastTests.debug.xcconfig */;
 			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 52RD2GH5DP;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.djben.SatelliteForecastTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1053,19 +1051,21 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SatelliteForecast.app/SatelliteForecast";
 			};
 			name = Debug;
 		};
 		EFB1B4D827BCDFC40025974C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 846099A97199D9E948039A9C /* Pods-SatelliteForecast-SatelliteForecastTests.release.xcconfig */;
+			baseConfigurationReference = 267C71EE8DACC4F6A4291153 /* Pods-SatelliteForecast-SatelliteForecastTests.release.xcconfig */;
 			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 52RD2GH5DP;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.djben.SatelliteForecastTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1073,6 +1073,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SatelliteForecast.app/SatelliteForecast";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;

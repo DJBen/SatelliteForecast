@@ -14,8 +14,8 @@ import SatelliteKit
 import SatelliteForecastCore
 import SatelliteCatalog
 
-enum SatelliteListViewAction {
-    struct SelectSatelliteParams {
+public enum SatelliteListViewAction {
+    public struct SelectSatelliteParams {
         let noradIndex: Int
         let satelliteInfo: SatelliteInfo
         let julianDateRange: ClosedRange<Double>

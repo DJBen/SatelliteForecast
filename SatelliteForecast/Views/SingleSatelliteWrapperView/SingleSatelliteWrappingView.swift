@@ -12,7 +12,7 @@ import SatelliteForecastCore
 import SatelliteKit
 
 enum SingleSatelliteWrappingViewAction {
-    struct LoadSingleSatelliteParams {
+    struct LoadSingleSatelliteParams: Equatable {
         let selectedNoradIndex: Int
         let julianDateRange: ClosedRange<Double>
         let observer: LatLonAlt?

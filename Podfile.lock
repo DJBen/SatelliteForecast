@@ -4,6 +4,7 @@ PODS:
     - SwiftRex (~> 0.8.9)
   - CombineRextensions (0.1.7):
     - CombineRex (~> 0.8.6)
+  - CombineUtils (1.0.0.LOCAL)
   - FlagKit (2.2)
   - SatelliteCatalog (1.0.0.LOCAL):
     - SatelliteKit (= 1.0.0.LOCAL)
@@ -37,6 +38,7 @@ DEPENDENCIES:
   - BTree (~> 4.1.0)
   - CombineRex (= 0.8.9)
   - CombineRextensions
+  - CombineUtils (from `./CombineUtils`)
   - FlagKit
   - SatelliteCatalog (from `./SatelliteCatalog`)
   - SatelliteCatalogImpl_SQLite (from `./SatelliteCatalogImpl_SQLite`)
@@ -46,7 +48,7 @@ DEPENDENCIES:
   - SwiftDate (~> 5.0)
   - SwiftRex (= 0.8.9)
   - SwiftUIVisualEffects (from `./SwiftUIVisualEffects`)
-  - TestingExtensions (~> 0.2.9)
+  - TestingExtensions (~> 0.2.11)
 
 SPEC REPOS:
   trunk:
@@ -62,6 +64,8 @@ SPEC REPOS:
     - TestingExtensions
 
 EXTERNAL SOURCES:
+  CombineUtils:
+    :path: "./CombineUtils"
   SatelliteCatalog:
     :path: "./SatelliteCatalog"
   SatelliteCatalogImpl_SQLite:
@@ -79,6 +83,7 @@ SPEC CHECKSUMS:
   BTree: 99b99930790b88dc5e8bafbf666a5dfb8d7808b4
   CombineRex: 204e28417c27fef95dd917ee1ca37ed91549a2a2
   CombineRextensions: f334525cda6b04493782e80491b1aa45c4429f13
+  CombineUtils: fb573397c701a5a677590f5bccc91d6886a38cff
   FlagKit: eca7dc89064b0c986302ba9acefad1bf80a435b1
   SatelliteCatalog: ac7d440c6fdb9beb4c1940c7983a2978f766fafb
   SatelliteCatalogImpl_SQLite: efbf753232b7405b18fa0c80f1e7c7c63a339ca4
@@ -93,6 +98,6 @@ SPEC CHECKSUMS:
   SwiftUIVisualEffects: 4e6f1fe8159a07e59eaf3918e5f8cd1fe52cadce
   TestingExtensions: 75654c5acd46d63c09317cfa0c84f402882a29b0
 
-PODFILE CHECKSUM: 73575e03295bfcb844ed8941207dfb900566035a
+PODFILE CHECKSUM: 70db97e74d316cbb02bd46bc56b36b17ebd33fa2
 
 COCOAPODS: 1.11.2

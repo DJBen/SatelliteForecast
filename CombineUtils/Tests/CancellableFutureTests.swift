@@ -7,7 +7,7 @@
 
 import XCTest
 import Combine
-@testable import SatelliteForecast
+@testable import CombineUtils
 
 class CancellableFutureTests: XCTestCase {
 
