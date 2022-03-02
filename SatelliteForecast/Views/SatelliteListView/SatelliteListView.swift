@@ -108,61 +108,41 @@ struct SatelliteListView: View {
         }
     }
 
-    @ViewBuilder private func navigationLink(_ satellites: Map<Int, SatelliteInfo>) -> some View {
-        NavigationLink(
-            "",
-            isActive: Binding<Bool>(
-                get: {
-                    guard let noradIndex = viewModel.state.selectedNoradIndex else {
-                        return false
-                    }
-                    return satellites[noradIndex] != nil
-                },
-                set: { isActive in
-                    if !isActive {
-                        viewModel.dispatch(.selectSatellite(nil))
-                    }
-                }
-            ),
-            destination: {
-                if let noradIndex = viewModel.state.selectedNoradIndex, let satelliteInfo = satellites[noradIndex] {
-                    LazyView(
-                        allPassesViewProducer.view(
-                            AllPassesViewContext(
-                                selectedNoradIndex: noradIndex,
-                                satelliteInfo: satelliteInfo,
-                                julianDateRange: context.julianDateRange,
-                                observer: context.observer
-                            )
-                        )
-                    )
-                } else {
-                    Color.clear
-                }
-            }
-        )
-    }
-
     private func satellitesView(_ satellites: Map<Int, SatelliteInfo>) -> some View {
         ScrollViewReader { proxy in
             List {
                 ForEach(Array(satellites.keys), id: \.self) { noradIndex in
-                    Button {
-                        viewModel.dispatch(
-                            .selectSatellite(
-                                SatelliteListViewAction.SelectSatelliteParams(
-                                    noradIndex: noradIndex,
-                                    satelliteInfo: satellites[noradIndex]!,
+                    let satelliteInfo = satellites[noradIndex]!
+                    NavigationLink(
+                        destination: LazyView(
+                            allPassesViewProducer.view(
+                                AllPassesViewContext(
+                                    selectedNoradIndex: noradIndex,
+                                    satelliteInfo: satelliteInfo,
                                     julianDateRange: context.julianDateRange,
                                     observer: context.observer
                                 )
                             )
-                        )
-                    } label: {
-                        SatelliteCell(info: satellites[noradIndex]!)
-                    }
+                        ),
+                        rowTag: noradIndex,
+                        viewModel: viewModel,
+                        pathToSelectedRowTag: \.selectedNoradIndex,
+                        onOpen: { noradIndex in
+                            .selectSatellite(
+                                SatelliteListViewAction.SelectSatelliteParams(
+                                    noradIndex: noradIndex,
+                                    satelliteInfo: satelliteInfo,
+                                    julianDateRange: context.julianDateRange,
+                                    observer: context.observer
+                                )
+                            )
+                        },
+                        onClose: .selectSatellite(nil),
+                        label: {
+                            SatelliteCell(info: satelliteInfo)
+                        }
+                    )
                     .id(noradIndex)
-                    .buttonStyle(.plain)
                 }
             }
             .onAppear {
@@ -189,9 +169,6 @@ struct SatelliteListView: View {
         )
         .listStyle(.insetGrouped)
         .navigationTitle("Satellites")
-        .background(
-            navigationLink(satellites)
-        )
     }
 
     private func failureView(_ error: Error) -> some View {
