@@ -73,11 +73,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
 
         <> EffectMiddleware.selectSpecialSatelliteAfterSatelliteLoader.lift()
 
-        <> EffectMiddleware.satelliteOverview
-        .lift(
-            inputAction: \.satelliteOverview
-        )
-        .eraseToAnyMiddleware()
+        <> EffectMiddleware.satelliteOverview.lift()
 
         <> EffectMiddleware.satelliteListView(satelliteLoader: satelliteLoader)
         .lift(

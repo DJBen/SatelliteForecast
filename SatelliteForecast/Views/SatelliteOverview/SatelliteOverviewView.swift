@@ -14,7 +14,7 @@ import CombineRextensions
 import CoreLocation
 
 enum SatelliteOverviewViewAction {
-    struct SelectSpecialSatelliteParams {
+    struct SelectSpecialSatelliteParams: Equatable {
         let noradIndex: Int
         let julianDateRange: ClosedRange<Double>
         let observer: LatLonAlt?

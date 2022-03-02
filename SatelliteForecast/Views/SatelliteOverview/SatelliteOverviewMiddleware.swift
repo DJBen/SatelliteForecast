@@ -18,36 +18,42 @@ extension EffectMiddleware where
     Dependencies == Void {
 
     static var satelliteOverview: EffectMiddleware<SatelliteOverviewViewAction, AppAction, AppState, Void> {
-        EffectMiddleware<SatelliteOverviewViewAction, AppAction, AppState, Void>
-            .onAction { action, _, getState in
-                switch action {          
-                case let .selectSpecialSatellite(params):
-                    return .sequence([
-                        .singleSatelliteWrappingView(
-                            .loadSingleSatellite(
-                                .init(
-                                    selectedNoradIndex: params.noradIndex,
-                                    julianDateRange: params.julianDateRange,
-                                    observer: params.observer
-                                )
+        EffectMiddleware<SatelliteOverviewViewAction, AppAction, AppState, Void>.onAction { action, _, getState in
+            switch action {
+            case let .selectSpecialSatellite(params):
+                return .sequence([
+                    .singleSatelliteWrappingView(
+                        .loadSingleSatellite(
+                            .init(
+                                selectedNoradIndex: params.noradIndex,
+                                julianDateRange: params.julianDateRange,
+                                observer: params.observer
                             )
                         )
-                    ])
-                    
-                case let .selectCategory(category):
-                    return .sequence([
-                        .satelliteLoader(.loadSatelliteCategory(category))
-                    ])
-                    
-                case .selectObserver:
-                    return .doNothing
-                    
-                case .selectAlert:
-                    return .doNothing
+                    )
+                ])
 
-                case .returnToSatelliteOverview:
-                    return .doNothing
-                }
+            case let .selectCategory(category):
+                return .sequence([
+                    .satelliteLoader(.loadSatelliteCategory(category))
+                ])
+
+            case .selectObserver:
+                return .doNothing
+
+            case .selectAlert:
+                return .doNothing
+
+            case .returnToSatelliteOverview:
+                return .doNothing
             }
+        }
+    }
+
+    func lift() -> AnyMiddleware<AppAction, AppAction, AppState> {
+        return lift(
+            inputAction: \.satelliteOverview
+        )
+        .eraseToAnyMiddleware()
     }
 }

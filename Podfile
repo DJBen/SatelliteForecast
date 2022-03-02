@@ -1,14 +1,16 @@
-target 'SatelliteForecast' do
-  platform :ios, '15.0'
-  inhibit_all_warnings!
+platform :ios, '15.2'
+inhibit_all_warnings!
+
+target 'SatelliteForecast' do  
   use_frameworks!
-  
+
   pod "BTree", "~> 4.1.0"
   pod "CombineRex", "0.8.9"
   pod "CombineRextensions"
   pod "FlagKit"
   pod 'SwiftDate', '~> 5.0'
   pod "SwiftRex", "0.8.9"
+  pod "CombineUtils", :path => './CombineUtils'
   pod "SatelliteKit", :path => './SatelliteKit'
   pod "StarryNight", :path => './StarryNight'
   pod "SatelliteCatalog", :path => './SatelliteCatalog'
@@ -19,7 +21,7 @@ target 'SatelliteForecast' do
   target 'SatelliteForecastTests' do
     inherit! :complete
 
-    pod "TestingExtensions", "~> 0.2.9"
+    pod "TestingExtensions", '~> 0.2.11'
   end
 end
 
