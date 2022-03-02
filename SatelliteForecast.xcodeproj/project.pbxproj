@@ -10,6 +10,8 @@
 		1DAA0710B7B6C3376CEA16CB /* Pods_SatelliteForecast_SatelliteForecastTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CF84B428B2EC72B9D2FF372 /* Pods_SatelliteForecast_SatelliteForecastTests.framework */; };
 		76462F2B1341A54B93996539 /* Pods_SatelliteForecast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F309E703E1576B91309154B8 /* Pods_SatelliteForecast.framework */; };
 		EF0FC06C2677D7A200560AF0 /* AllPassesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0FC06B2677D7A200560AF0 /* AllPassesView.swift */; };
+		EF16811E27D00E28001BA9C3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EF9D827C2661BBF000616C97 /* Assets.xcassets */; };
+		EF16811F27D00E28001BA9C3 /* Satellites.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EF3D09A12686920800B84232 /* Satellites.xcassets */; };
 		EF19FA09266EC38200D0B2CD /* SkyChartMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF19FA08266EC38200D0B2CD /* SkyChartMiddleware.swift */; };
 		EF19FA0B266EC7CE00D0B2CD /* SkyChartReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF19FA0A266EC7CE00D0B2CD /* SkyChartReducer.swift */; };
 		EF1CAB32266B7ABF006319C8 /* PassView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CAB31266B7ABF006319C8 /* PassView.swift */; };
@@ -656,6 +658,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EF16811E27D00E28001BA9C3 /* Assets.xcassets in Resources */,
+				EF16811F27D00E28001BA9C3 /* Satellites.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
