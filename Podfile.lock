@@ -83,19 +83,19 @@ SPEC CHECKSUMS:
   BTree: 99b99930790b88dc5e8bafbf666a5dfb8d7808b4
   CombineRex: 204e28417c27fef95dd917ee1ca37ed91549a2a2
   CombineRextensions: f334525cda6b04493782e80491b1aa45c4429f13
-  CombineUtils: fb573397c701a5a677590f5bccc91d6886a38cff
+  CombineUtils: b14c805fa3c145c7ed4b09a8eee0d541510d590e
   FlagKit: eca7dc89064b0c986302ba9acefad1bf80a435b1
-  SatelliteCatalog: ac7d440c6fdb9beb4c1940c7983a2978f766fafb
-  SatelliteCatalogImpl_SQLite: efbf753232b7405b18fa0c80f1e7c7c63a339ca4
-  SatelliteForecastCore: 7b6dfe0ac9bd94531da395702ce321a80e9fcd26
-  SatelliteKit: 56c2f87ceb711c89f976509af9040059058e8a51
+  SatelliteCatalog: 132031627b4f096d1f2a16d169286faae121c0cc
+  SatelliteCatalogImpl_SQLite: 33b833c3dc7482f1acdcb167e7cb203137c940d3
+  SatelliteForecastCore: 1342ac3a854493e589eab5a34199c494c3ff1f19
+  SatelliteKit: 53e267558b0bd35f1be23f4dfa022b4503aa0226
   SnapshotTesting: 38947050d13960d57a4a9c166fcf51bca7d56970
   SQLite.swift: d2b4642190917051ce6bd1d49aab565fe794eea3
-  StarryNight: 57aec7f59091bbbebab2471e391c19ba77b695d9
+  StarryNight: 4cecdd344ee93f3a82aff6e0a52ff5c045bb4207
   STRegex: d49e88d0fe58538d3175fdd989bc1243b9be2a07
   SwiftDate: 6329e58969a2de31cea7f1ee1143b247693196e7
   SwiftRex: 77cb0bd1953a81e3b4ce92fb563a91ba9c297078
-  SwiftUIVisualEffects: 4e6f1fe8159a07e59eaf3918e5f8cd1fe52cadce
+  SwiftUIVisualEffects: 4b341110ba61926c0287feef7b09b49fc0e7fac3
   TestingExtensions: 75654c5acd46d63c09317cfa0c84f402882a29b0
 
 PODFILE CHECKSUM: 70db97e74d316cbb02bd46bc56b36b17ebd33fa2
