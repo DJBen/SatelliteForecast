@@ -14,7 +14,7 @@ struct SkyChartBackgroundState: Equatable {
 
 struct SkyChartBackground: View, Equatable {
     var state: SkyChartBackgroundState
-    var configs: SkyChartConfigs
+    var configs: BasicChartConfigs
 
     @ViewBuilder var backgroundPath: some View {
         GeometryReader { geometry in

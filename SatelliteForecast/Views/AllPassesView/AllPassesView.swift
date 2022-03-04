@@ -87,11 +87,11 @@ struct AllPassesViewState: Equatable {
         if let satelliteTrails = state.satelliteTrails[context.selectedNoradIndex],
            let passSnapshotsList = satelliteTrails.passSnapshots {
             let items = passSnapshotsList.enumerated().map { index, passSnapshots -> Item in
-                let rasterizedSatellitePath = state.skyChartState.previewSatellitePaths[passSnapshots.pass]
+                let rasterizedSatellitePath = state.skyChartResources.previewSatellitePaths[passSnapshots.pass]
                 let rasterizedBackgroundSky: UIImage?
                 if let observer = context.observer {
-                    rasterizedBackgroundSky = state.skyChartState.previewBackgroundSkies[
-                        SkyChartBackgroundSkyKey(
+                    rasterizedBackgroundSky = state.backgroundSkyResources.previewBackgroundSkies[
+                        BackgroundSkyKey(
                             observer: observer,
                             configs: .preset
                         )
@@ -153,9 +153,9 @@ struct AllPassesViewState: Equatable {
 struct AllPassesView: View {
     @ObservedObject var viewModel: ObservableViewModel<AllPassesViewAction, AllPassesViewState>
 
-    var context: AllPassesViewContext
-    var skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
-    var passViewProducer: ViewProducer<PassViewContext, PassView>
+    let context: AllPassesViewContext
+    let skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
+    let passViewProducer: ViewProducer<PassViewContext, PassView>
 
     private func navigationLink<Label: View>(
         item: AllPassesViewState.Item,
@@ -462,19 +462,35 @@ struct AllPassesView_Previews: PreviewProvider {
                                     illuminationChanges: passSnapshots.notableSnapshots.illuminationChanges
                                 ),
                                 configs: SkyChartConfigs(
-                                    backgroundSky: SkyChartConfigs.BackgroundSky(
+                                    backgroundSkyConfigs: BackgroundSkyConfigs(
                                         stars: .limitedMagnitude(2),
                                         showConstellationLines: false,
                                         visibleBodies: [.sun, .moon],
                                         bodySymbol: .symbol
                                     ),
-                                    showAzimuthTexts: false,
-                                    azimuthMarkInterval: 90,
-                                    azimuthMarkLength: 2,
-                                    showDirections: false,
+                                    basicChartConfigs: BasicChartConfigs(
+                                        showAzimuthTexts: false,
+                                        azimuthMarkInterval: 90,
+                                        azimuthMarkLength: 2,
+                                        showDirections: false
+                                    ),
                                     showPassInfoLabels: false
                                 ),
                                 quality: .preview
+                            ),
+                            backgroundSkyViewProducer: .pure(
+                                BackgroundSkyView(
+                                    viewModel: .mock(
+                                        state: BackgroundSkyViewState()
+                                    ),
+                                    context: BackgroundSkyViewContext(
+                                        observer: observer,
+                                        basicChartConfigs: .init(),
+                                        configs: .preset,
+                                        quality: .full,
+                                        backgroundSkyJulianDateKey: passSnapshots.pass.rise.julianDate.julianDateRoundedToNearestMinute()
+                                    )
+                                )
                             )
                         )
                     },

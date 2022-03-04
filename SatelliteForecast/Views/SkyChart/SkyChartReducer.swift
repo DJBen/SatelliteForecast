@@ -1,5 +1,5 @@
 //
-//  SkyChartReducer.swift
+//  skyChartOutputReducer.swift
 //  SatelliteForecast
 //
 //  Created by Ben Lu on 6/7/21.
@@ -9,24 +9,9 @@ import Foundation
 import BTree
 import SwiftRex
 
-extension Reducer where ActionType == SkyChartAction, StateType == SkyChartResources {
-    static let skyChartReducer = Reducer.reduce { action, state in
+extension Reducer where ActionType == SkyChartOutput, StateType == SkyChartResources {
+    static let skyChartOutputReducer = Reducer.reduce { action, state in
         switch action {
-        case let .rasterizedBackgroundSky(image, quality, julianDate, key):
-            switch quality {
-            case .full:
-                if state.rasterizedBackgroundSky[key] == nil {
-                    state.rasterizedBackgroundSky[key] = BTree()
-                }
-
-                state.rasterizedBackgroundSky[key]!.insert((julianDate, image))
-            case .preview:
-                if state.previewBackgroundSkies[key] == nil {
-                    state.previewBackgroundSkies[key] = BTree()
-                }
-
-                state.previewBackgroundSkies[key]!.insert((julianDate, image))
-            }
         case let .rasterizedSatellitePath(image, quality, pass):
             switch quality {
             case .full:
@@ -34,10 +19,16 @@ extension Reducer where ActionType == SkyChartAction, StateType == SkyChartResou
             case .preview:
                 state.previewSatellitePaths[pass] = image
             }
-        case .requestRasterizedBackgroundSky(size: _, quality: _, julianDate: _, key: _, traitCollection: _):
-            break
-        case .requestRasterizedSatellitePath(size: _, quality: _, pass: _, traitCollection: _):
-            break
         }
+    }
+
+    func lift() -> Reducer<AppAction, AppState> {
+        lift(
+            actionGetter: \.skyChartOutput,
+            stateGetter: \AppState.skyChartResources,
+            stateSetter: { appState, state in
+                appState.skyChartResources = state
+            }
+        )
     }
 }

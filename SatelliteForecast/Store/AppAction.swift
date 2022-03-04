@@ -21,7 +21,10 @@ enum AppAction {
     case allPassesView(AllPassesViewAction)
     case passView(PassViewAction)
     case satelliteElevationGraph(SatelliteElevationGraphAction)
+    case backgroundSky(BackgroundSkyViewAction)
+    case backgroundSkyOutput(BackgroundSkyViewOutput)
     case skyChart(SkyChartAction)
+    case skyChartOutput(SkyChartOutput)
     case tlePropagator(TLEPropagatorAction)
     case timer(TimerAction)
     case debugMenu(DebugMenuAction)
@@ -163,6 +166,28 @@ extension AppAction {
         }
     }
 
+    public var backgroundSky: BackgroundSkyViewAction? {
+        get {
+            guard case let .backgroundSky(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .backgroundSky = self, let newValue = newValue else { return }
+            self = .backgroundSky(newValue)
+        }
+    }
+
+    public var backgroundSkyOutput: BackgroundSkyViewOutput? {
+        get {
+            guard case let .backgroundSkyOutput(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .backgroundSkyOutput = self, let newValue = newValue else { return }
+            self = .backgroundSkyOutput(newValue)
+        }
+    }
+
     public var skyChart: SkyChartAction? {
         get {
             guard case let .skyChart(value) = self else { return nil }
@@ -171,6 +196,17 @@ extension AppAction {
         set {
             guard case .skyChart = self, let newValue = newValue else { return }
             self = .skyChart(newValue)
+        }
+    }
+
+    public var skyChartOutput: SkyChartOutput? {
+        get {
+            guard case let .skyChartOutput(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .skyChartOutput = self, let newValue = newValue else { return }
+            self = .skyChartOutput(newValue)
         }
     }
 

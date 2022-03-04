@@ -190,19 +190,35 @@ struct PassPreviewCell_Previews: PreviewProvider {
                             pass: passSnapshot.pass,
                             notableSnapshots: passSnapshot.notableSnapshots,
                             configs: SkyChartConfigs(
-                                backgroundSky: SkyChartConfigs.BackgroundSky(
+                                backgroundSkyConfigs: BackgroundSkyConfigs(
                                     stars: .limitedMagnitude(2),
                                     showConstellationLines: false,
                                     visibleBodies: [.sun, .moon],
                                     bodySymbol: .symbol
                                 ),
-                                showAzimuthTexts: false,
-                                azimuthMarkInterval: 90,
-                                azimuthMarkLength: 2,
-                                showDirections: false,
+                                basicChartConfigs: BasicChartConfigs(
+                                    showAzimuthTexts: false,
+                                    azimuthMarkInterval: 90,
+                                    azimuthMarkLength: 2,
+                                    showDirections: false
+                                ),
                                 showPassInfoLabels: false
                             ),
                             quality: .preview
+                        ),
+                        backgroundSkyViewProducer: .pure(
+                            BackgroundSkyView(
+                                viewModel: .mock(
+                                    state: BackgroundSkyViewState()
+                                ),
+                                context: BackgroundSkyViewContext(
+                                    observer: observer,
+                                    basicChartConfigs: .init(),
+                                    configs: .preset,
+                                    quality: .full,
+                                    backgroundSkyJulianDateKey: passSnapshot.pass.rise.julianDate.julianDateRoundedToNearestMinute()
+                                )
+                            )
                         )
                     )
                 )

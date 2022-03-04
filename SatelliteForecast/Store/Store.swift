@@ -27,104 +27,84 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             action: \.satelliteElevationGraph,
             state: \.satelliteElevationGraphResources
         ),
-        Reducer<SkyChartAction, SkyChartResources>.skyChartReducer
-        .lift(
-            action: \.skyChart,
-            state: \.skyChartState
-        ),
+        Reducer<SkyChartOutput, SkyChartResources>.skyChartOutputReducer.lift(),
         Reducer<TLEPropagatorAction, AppState>.tlePropagatorReducer.lift(action: \.tlePropagator),
         Reducer<TimerAction, AppState>.timerReducer.lift(action: \.timer),
-        Reducer<DebugMenuAction, DebugMenuState>.debugMenuReducer.lift()
+        Reducer<DebugMenuAction, DebugMenuState>.debugMenuReducer.lift(),
+        Reducer.backgroundSkyReducer.lift()
     ]
     .reduce(Reducer<AppAction, AppState>.identity, <>)
 
     static func middlewareBuilder(
         satelliteLoader: SatelliteLoader
     ) -> AnyMiddleware<AppAction, AppAction, AppState> {
+        let middlewares: [AnyMiddleware<AppAction, AppAction, AppState>] = [
+            LocationMiddleware().lift(),
+            EffectMiddleware.appDelegate
+                .lift(
+                    inputAction: \.appDelegate
+                )
+                .eraseToAnyMiddleware(),
+            EffectMiddleware.backgroundTask.lift(),
+            EffectMiddleware.notification
+                .lift(
+                    inputAction: \.notification
+                )
+                .eraseToAnyMiddleware(),
+            EffectMiddleware.locationLogger.lift(),
+            EffectMiddleware.satelliteLoader(satelliteLoader)
+                .lift()
+                .inject(
+                    SatelliteLoaderDependencies()
+                )
+                .eraseToAnyMiddleware(),
+            EffectMiddleware.calculatePassAfterSatelliteLoader.lift(),
+            EffectMiddleware.selectSatelliteAfterSatelliteLoader.lift(),
+            EffectMiddleware.selectSpecialSatelliteAfterSatelliteLoader.lift(),
+            EffectMiddleware.satelliteOverview.lift(),
+            EffectMiddleware.satelliteListView(satelliteLoader: satelliteLoader)
+                .lift(
+                    inputAction: \.satelliteListView
+                )
+                .eraseToAnyMiddleware(),
+            EffectMiddleware.singleSatelliteWrappingView
+                .lift(
+                    inputAction: \.singleSatelliteWrappingView
+                )
+                .eraseToAnyMiddleware(),
+            EffectMiddleware.allPassesView
+                .lift(
+                    inputAction: \.allPassesView
+                )
+                .eraseToAnyMiddleware(),
+            EffectMiddleware.skyChart.lift(),
+            EffectMiddleware.satelliteElevationGraph
+                .lift(
+                    inputAction: \.satelliteElevationGraph,
+                    outputAction: AppAction.satelliteElevationGraph
+                )
+                .eraseToAnyMiddleware(),
+            EffectMiddleware.timer
+                .lift(
+                    inputAction: \.timer,
+                    outputAction: AppAction.timer
+                )
+                .eraseToAnyMiddleware(),
+            EffectMiddleware.alarmSettingsView
+                .lift(
+                    inputAction: \.alarmSettingsView
+                )
+                .eraseToAnyMiddleware(),
+            EffectMiddleware.debugMenu.lift(),
+            EffectMiddleware.loggerMiddleware.eraseToAnyMiddleware(),
+            EffectMiddleware.backgroundSky.lift()
+        ]
 
-        let composedMiddleware = LocationMiddleware().lift()
-        
-        <> EffectMiddleware.appDelegate
-        .lift(
-            inputAction: \.appDelegate
+        return middlewares.reduce(
+            ComposedMiddleware<AppAction, AppAction, AppState>.identity,
+            <>
         )
         .eraseToAnyMiddleware()
-
-        <> EffectMiddleware.backgroundTask.lift()
-        
-        <> EffectMiddleware.notification
-        .lift(
-            inputAction: \.notification
-        )
-        .eraseToAnyMiddleware()
-        
-        <> EffectMiddleware.locationLogger.lift()
-
-        <> EffectMiddleware.satelliteLoader(satelliteLoader)
-        .lift()
-        .inject(
-            SatelliteLoaderDependencies()
-        )
-        .eraseToAnyMiddleware()
-
-        <> EffectMiddleware.calculatePassAfterSatelliteLoader.lift()
-
-        <> EffectMiddleware.selectSatelliteAfterSatelliteLoader.lift()
-
-        <> EffectMiddleware.selectSpecialSatelliteAfterSatelliteLoader.lift()
-
-        <> EffectMiddleware.satelliteOverview.lift()
-
-        <> EffectMiddleware.satelliteListView(satelliteLoader: satelliteLoader)
-        .lift(
-            inputAction: \.satelliteListView
-        )
-        .eraseToAnyMiddleware()
-
-        <> EffectMiddleware.singleSatelliteWrappingView
-        .lift(
-            inputAction: \.singleSatelliteWrappingView
-        )
-        .eraseToAnyMiddleware()
-
-        <> EffectMiddleware.allPassesView
-        .lift(
-            inputAction: \.allPassesView
-        )
-        .eraseToAnyMiddleware()
-
-        <> EffectMiddleware.skyChart
-        .lift(
-            inputAction: \.skyChart,
-            outputAction: AppAction.skyChart
-        )
-        .eraseToAnyMiddleware()
-
-        <> EffectMiddleware.satelliteElevationGraph
-        .lift(
-            inputAction: \.satelliteElevationGraph,
-            outputAction: AppAction.satelliteElevationGraph
-        )
-        .eraseToAnyMiddleware()
-
-        <> EffectMiddleware.timer
-        .lift(
-            inputAction: \.timer,
-            outputAction: AppAction.timer
-        )
-        .eraseToAnyMiddleware()
-        
-        <> EffectMiddleware.alarmSettingsView
-        .lift(
-            inputAction: \.alarmSettingsView
-        )
-        .eraseToAnyMiddleware()
-
-        <> EffectMiddleware.debugMenu.lift()
-
-        <> EffectMiddleware.loggerMiddleware.eraseToAnyMiddleware()
-
-        return composedMiddleware.eraseToAnyMiddleware()
     }
 
     private init() {

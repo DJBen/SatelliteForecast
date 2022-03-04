@@ -102,9 +102,6 @@ public struct Star: Hashable, Equatable {
         }
     }
 
-    // Mapping from id to Star object
-    private static var cachedStars: [Int: Star] = [:]
-
     public func hash(into hasher: inout Hasher) {
         hasher.combine(identity)
     }
@@ -166,12 +163,7 @@ public struct Star: Hashable, Equatable {
     private static func queryStar(_ query: Table) -> Star? {
         if let row = try! StarryNight.db.pluck(query) {
             let id = try! row.get(StarryNight.Stars.dbInternalId)
-            if let cachedStar = cachedStars[id] {
-                return cachedStar
-            }
-            let star = Star(row: row)
-            cachedStars[id] = star
-            return star
+            return Star(row: row)
         } else {
             return nil
         }
@@ -213,14 +205,9 @@ public struct Star: Hashable, Equatable {
     }
 
     public static func id(_ id: Int) -> Star? {
-        if let cachedStar = cachedStars[id] {
-            return cachedStar
-        }
         let query = StarryNight.Stars.table.filter(StarryNight.Stars.dbInternalId == id)
         if let row = try! StarryNight.db.pluck(query) {
-            let star = Star(row: row)
-            cachedStars[id] = star
-            return star
+            return Star(row: row)
         }
         return nil
     }

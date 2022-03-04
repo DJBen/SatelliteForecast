@@ -157,11 +157,9 @@ struct PassView_Previews: PreviewProvider {
                     selectedPassIndex: 0
                 )
             ),
-            skyChartState: SkyChartResources(
+            skyChartResources: SkyChartResources(
                 rasterizedSatellitePaths: [:],
-                previewSatellitePaths: [:],
-                rasterizedBackgroundSky: [:],
-                previewBackgroundSkies: [:]
+                previewSatellitePaths: [:]
             ),
             satelliteTrails: [
                 tle.noradIndex: SatelliteTrails(
@@ -217,7 +215,21 @@ struct PassView_Previews: PreviewProvider {
                             appState: appState
                         )
                     ),
-                    context: skyChartContext
+                    context: skyChartContext,
+                    backgroundSkyViewProducer: .pure(
+                        BackgroundSkyView(
+                            viewModel: .mock(
+                                state: BackgroundSkyViewState()
+                            ),
+                            context: BackgroundSkyViewContext(
+                                observer: observer,
+                                basicChartConfigs: .init(),
+                                configs: .preset,
+                                quality: .full,
+                                backgroundSkyJulianDateKey: passSnapshots[0].pass.rise.julianDate.julianDateRoundedToNearestMinute()
+                            )
+                        )
+                    )
                 )
             )
         )

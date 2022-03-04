@@ -18,16 +18,25 @@ struct AppState: Equatable {
     }
     /// A date that mostly approximates the current date.
     var currentDate: Double = Date().julianDate
+
+    /// The rendered background sky images, cached for performance.
+    var backgroundSkyResources: BackgroundSkyResources = .init()
+
     /// The date range from which ephemerides are generated.
-    var skyChartState: SkyChartResources = .empty
+    var skyChartResources: SkyChartResources = .init()
+
     var satelliteElevationGraphResources: SatelliteElevationGraphResources = .init()
+
     /// A mapping from NORAD ID to the satellite state.
     var satelliteTrails: [Int: SatelliteTrails] = [:]
+
     /// Location agnostic satellite information, including its orbit and metadata.
     var satelliteLoader: SatelliteLoaderResources = .init()
+
     var locationState: LocationState = .init()
 
     var debugMenu: DebugMenuConfig = .init()
+
     var notificationState: NotificationState = NotificationState()
 
     static var empty: AppState {

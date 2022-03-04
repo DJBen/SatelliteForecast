@@ -6,6 +6,7 @@
 //
 
 import CombineRex
+import CombineRextensions
 import SwiftDate
 import SwiftUI
 import SwiftUIVisualEffects
@@ -15,20 +16,15 @@ import StarryNight
 import CombineRextensions
 import BTree
 
-/// A key uniquely determining the rendering of a sky chart's background. Same key is guaranteed to render the same background.
-struct SkyChartBackgroundSkyKey: Equatable, Hashable {
-    let observer: LatLonAlt
-    let configs: SkyChartConfigs.BackgroundSky
+enum SkyChartAction {
+    case requestRasterizedSatellitePath(size: CGSize, quality: ChartQuality, pass: Pass, traitCollection: UITraitCollection)
 }
 
-enum SkyChartAction {
-    /// Request a rasterized version of the background sky.
-    /// The caller should group the call and reduce frequency by rounding the date to a nearest minute, for example.
-    case requestRasterizedBackgroundSky(size: CGSize, quality: SkyChartResources.Quality, julianDate: Double, key: SkyChartBackgroundSkyKey, traitCollection: UITraitCollection)
-    case requestRasterizedSatellitePath(size: CGSize, quality: SkyChartResources.Quality, pass: Pass, traitCollection: UITraitCollection)
-    case rasterizedBackgroundSky(UIImage, quality: SkyChartResources.Quality, julianDate: Double, key: SkyChartBackgroundSkyKey)
+extension SkyChartAction: Equatable {}
+
+enum SkyChartOutput {
     /// A satellite path is rasterized, or the rasterized image is read from the cache.
-    case rasterizedSatellitePath(UIImage, quality: SkyChartResources.Quality, pass: Pass)
+    case rasterizedSatellitePath(UIImage, quality: ChartQuality, pass: Pass)
 }
 
 /// A state used in a single sky chart view
@@ -38,14 +34,16 @@ struct SkyChartViewState: Equatable {
     /// This property is being used by the dynamic label
     var julianDateOffset: Double = 0
     var resources: SkyChartResources = .init()
+    var backgroundSky: BackgroundSkyResources = .init()
     
     static func project(
         appState: AppState
     ) -> SkyChartViewState {
         return SkyChartViewState(
-            referenceDate: appState.currentDate,
+            referenceDate: appState.julianDate,
             julianDateOffset: appState.debugMenu.effectiveOffset,
-            resources: appState.skyChartState
+            resources: appState.skyChartResources,
+            backgroundSky: appState.backgroundSkyResources
         )
     }
 }
@@ -53,6 +51,7 @@ struct SkyChartViewState: Equatable {
 struct SkyChart: View {
     @ObservedObject var viewModel: ObservableViewModel<SkyChartAction, SkyChartViewState>
     let context: SkyChartContext
+    let backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext, BackgroundSkyView>
 
     @State private var contentSize: CGSize = .zero
 
@@ -114,23 +113,6 @@ struct SkyChart: View {
         }
     }
 
-    private var rasterizedBackgroundSky: UIImage? {
-        let imageCache: [SkyChartBackgroundSkyKey: BTree<Double, UIImage>] = (
-            context.quality == .full ?
-            viewModel.state.resources.rasterizedBackgroundSky
-            : viewModel.state.resources.previewBackgroundSkies
-        )
-
-        return imageCache[
-            SkyChartBackgroundSkyKey(
-                observer: context.observer,
-                configs: context.configs.backgroundSky
-            )
-        ]?.value(
-            closestTo: backgroundSkyJulianDateKey
-        )
-    }
-
     private var backgroundSkyJulianDateKey: Double {
         if (context.pass.rise.julianDate..<context.pass.set.julianDate).contains(viewModel.state.referenceDate) {
             return viewModel.state.referenceDate.julianDateRoundedToNearestMinute()
@@ -138,24 +120,28 @@ struct SkyChart: View {
         return context.pass.rise.julianDate.julianDateRoundedToNearestMinute()
     }
 
-    private var satellitePath: some View {
+    @ViewBuilder private var satellitePath: some View {
         GeometryReader { geometry in
             let rect = geometry.frame(in: .local)
-            let view: AnyView = {
+            Group {
                 if rect.size.width == 0 || rect.size.height == 0 {
-                    return AnyView(Color.clear)
+                    Color.clear
                 } else if let image = rasterizedSatellitePath {
-                    return AnyView(Image(uiImage: image)
+                    Image(uiImage: image)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: rect.width, height: rect.height, alignment: .center))
+                        .frame(width: rect.width, height: rect.height, alignment: .center)
                 } else {
-                    return AnyView(Color.clear)
+                    Color.clear
                 }
-            }()
-
-            view.modifier(SizeModifier())
+            }
+            .modifier(SizeModifier())
             .onPreferenceChange(SizePreferenceKey.self) { contentSize in
+
+                guard !contentSize.width.isZero && !contentSize.height.isZero else {
+                    return
+                }
+
                 self.contentSize = contentSize
 
                 viewModel.dispatch(
@@ -163,19 +149,6 @@ struct SkyChart: View {
                         size: contentSize,
                         quality: context.quality,
                         pass: context.pass,
-                        traitCollection: UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
-                    )
-                )
-
-                viewModel.dispatch(
-                    .requestRasterizedBackgroundSky(
-                        size: contentSize,
-                        quality: context.quality,
-                        julianDate: backgroundSkyJulianDateKey,
-                        key: SkyChartBackgroundSkyKey(
-                            observer: context.observer,
-                            configs: context.configs.backgroundSky
-                        ),
                         traitCollection: UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
                     )
                 )
@@ -189,68 +162,26 @@ struct SkyChart: View {
                 guard (context.pass.rise.julianDate..<context.pass.set.julianDate).contains(viewModel.state.referenceDate) else {
                     return
                 }
-
-                viewModel.dispatch(
-                    .requestRasterizedBackgroundSky(
-                        size: contentSize,
-                        quality: context.quality,
-                        // Round date to nearest minute
-                        julianDate: newReferenceDate.julianDateRoundedToNearestMinute(),
-                        key: SkyChartBackgroundSkyKey(
-                            observer: context.observer,
-                            configs: context.configs.backgroundSky
-                        ),
-                        traitCollection: UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
-                    )
-                )
-            }
-        }
-    }
-
-    @ViewBuilder var backgroundSky: some View {
-        if !(context.pass.sunElevationAtTransit > -6 &&
-             context.configs.backgroundSky.hidesStarsDuringDay) {
-            GeometryReader { geometry in
-                let rect = geometry.frame(in: .local)
-                if let image = rasterizedBackgroundSky {
-                    Image(uiImage: image)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: rect.width, height: rect.height, alignment: .center)
-                }
-            }
-        } else {
-            // Needs to have a non-empty view so that views on top of it will have a non-zero size
-            Color.clear
-        }
-    }
-
-    var planetaryBodiesView: some View {
-        ZStack {
-            ForEach(context.configs.backgroundSky.visibleBodies, id: \.self) { body in
-                PlanetaryBodyView(
-                    planetaryBody: body,
-                    label: context.configs.backgroundSky.bodySymbol,
-                    referenceDate: backgroundSkyJulianDateKey,
-                    observer: context.observer,
-                    sunElevation: context.pass.sunElevationAtTransit
-                )
             }
         }
     }
 
     @ViewBuilder var loadingIndicator: some View {
-        if rasterizedBackgroundSky == nil || rasterizedSatellitePath == nil {
+        if rasterizedSatellitePath == nil {
             ProgressView()
         }
     }
 
     var body: some View {
-        SkyChartBackground(
-            state: SkyChartBackgroundState(observer: context.observer),
-            configs: context.configs
+        backgroundSkyViewProducer.view(
+            BackgroundSkyViewContext(
+                observer: context.observer,
+                basicChartConfigs: context.configs.basicChartConfigs,
+                configs: context.configs.backgroundSkyConfigs,
+                quality: context.quality,
+                backgroundSkyJulianDateKey: backgroundSkyJulianDateKey
+            )
         )
-        .equatable()
         .overlay(passInfoLabels)
         .overlay(
             SkyChartDynamicIndicator(
@@ -263,9 +194,7 @@ struct SkyChart: View {
             ).clipShape(Circle())
         )
         .background(
-            backgroundSky.overlay(loadingIndicator)
-            .overlay(planetaryBodiesView)
-            .overlay(satellitePath)
+            satellitePath.overlay(loadingIndicator)
             .clipShape(Circle())
         )
     }
@@ -278,7 +207,7 @@ struct SkyChartContext {
     let pass: Pass
     let notableSnapshots: NotableSnapshots
     let configs: SkyChartConfigs
-    let quality: SkyChartResources.Quality
+    let quality: ChartQuality
 }
 
 extension ViewProducer where Context == SkyChartContext, ProducedView == SkyChart {
@@ -293,13 +222,14 @@ extension ViewProducer where Context == SkyChartContext, ProducedView == SkyChar
                     .asObservableViewModel(
                         initialState: SkyChartViewState()
                     ),
-                context: context
+                context: context,
+                backgroundSkyViewProducer: .backgroundSky(viewModel: viewModel)
             )
         }
     }
 }
 
-fileprivate extension Double {
+extension Double {
     func julianDateRoundedToNearestMinute() -> Double {
         Date(julianDate: self).dateRoundedAt(at: .toMins(1)).julianDate
     }
@@ -366,10 +296,11 @@ struct SkyChart_Previews: PreviewProvider {
 
         ForEach(ColorScheme.allCases, id: \.self) { colorScheme in
             let traitCollection = UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
+            let referenceDate = passSnapshots.pass.transit.julianDate.advanced(by: 20 * TimeConstants.sec2day)
             SkyChart(
                 viewModel: .mock(
                     state: SkyChartViewState(
-                        referenceDate: passSnapshots.pass.transit.julianDate.advanced(by: 20 * TimeConstants.sec2day),
+                        referenceDate: referenceDate,
                         resources: SkyChartResources(
                             rasterizedSatellitePaths: [
                                 passSnapshots.pass: SkyChart.rasterizedSatellitePassPath(
@@ -381,9 +312,7 @@ struct SkyChart_Previews: PreviewProvider {
                                     )
                                 )
                             ],
-                            previewSatellitePaths: [:],
-                            rasterizedBackgroundSky: [:],
-                            previewBackgroundSkies: [:]
+                            previewSatellitePaths: [:]
                         )
                     )
                 ),
@@ -395,6 +324,20 @@ struct SkyChart_Previews: PreviewProvider {
                     notableSnapshots: passSnapshots.notableSnapshots,
                     configs: .preset,
                     quality: .full
+                ),
+                backgroundSkyViewProducer: .pure(
+                    BackgroundSkyView(
+                        viewModel: .mock(
+                            state: BackgroundSkyViewState()
+                        ),
+                        context: BackgroundSkyViewContext(
+                            observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
+                            basicChartConfigs: .init(),
+                            configs: .init(),
+                            quality: .full,
+                            backgroundSkyJulianDateKey: referenceDate.julianDateRoundedToNearestMinute()
+                        )
+                    )
                 )
             )
             .padding(20)
@@ -418,9 +361,7 @@ struct SkyChart_Previews: PreviewProvider {
                                 )
                             )
                         ],
-                        previewSatellitePaths: [:],
-                        rasterizedBackgroundSky: [:],
-                        previewBackgroundSkies: [:]
+                        previewSatellitePaths: [:]
                     )
                 )
             ),
@@ -432,6 +373,20 @@ struct SkyChart_Previews: PreviewProvider {
                 notableSnapshots: passSnapshots2.notableSnapshots,
                 configs: .preset,
                 quality: .full
+            ),
+            backgroundSkyViewProducer: .pure(
+                BackgroundSkyView(
+                    viewModel: .mock(
+                        state: BackgroundSkyViewState()
+                    ),
+                    context: BackgroundSkyViewContext(
+                        observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
+                        basicChartConfigs: .init(),
+                        configs: .preset,
+                        quality: .full,
+                        backgroundSkyJulianDateKey: passSnapshots2.pass.rise.julianDate.julianDateRoundedToNearestMinute()
+                    )
+                )
             )
         )
         .padding(20)
@@ -446,6 +401,20 @@ struct SkyChart_Previews: PreviewProvider {
                 notableSnapshots: passSnapshots2.notableSnapshots,
                 configs: .preset,
                 quality: .full
+            ),
+            backgroundSkyViewProducer: .pure(
+                BackgroundSkyView(
+                    viewModel: .mock(
+                        state: BackgroundSkyViewState()
+                    ),
+                    context: BackgroundSkyViewContext(
+                        observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
+                        basicChartConfigs: .init(),
+                        configs: .preset,
+                        quality: .full,
+                        backgroundSkyJulianDateKey: passSnapshots2.pass.rise.julianDate.julianDateRoundedToNearestMinute()
+                    )
+                )
             )
         )
         .padding(20)
