@@ -5,7 +5,7 @@ Pod::Spec.new do |s|
 
   s.homepage         = 'https://github.com/DJBen'
   s.license          = { :type => 'Proprietary', :text => '© 2021 DJBen' }
-  s.author           = { 'Ben Lu' => 'sihao@squareup.com' }
+  s.author           = { 'Sihao Lu' => 'lsh32768@gmail.com' }
   s.source           = { :git => 'Not Published', :tag => s.version.to_s }
 
   s.ios.deployment_target = '15.0'
