@@ -34,13 +34,4 @@ extension Reducer where ActionType == BackgroundSkyViewOutput, StateType == Back
             }
         }
     }
-
-    func lift() -> Reducer<AppAction, AppState> {
-        lift(
-            actionGetter: \.backgroundSkyOutput,
-            stateGetter: \AppState.backgroundSkyResources,
-            stateSetter: { appState, state in appState.backgroundSkyResources = state
-            }
-        )
-    }
 }

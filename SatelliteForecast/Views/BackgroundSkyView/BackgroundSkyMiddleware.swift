@@ -27,7 +27,7 @@ extension EffectMiddleware where InputActionType == BackgroundSkyViewAction, Out
                         let state = getState()
                         let dataSource = quality == .full ? state.rasterizedBackgroundSky : state.previewBackgroundSkies
                         // Skip if image already generated within the last minute.
-                        if let _ = dataSource[key]?.value(closestTo: julianDate, within: TimeConstants.sec2day) {
+                        if let _ = dataSource[key]?.value(closestTo: julianDate, within: TimeConstants.min2day) {
                             return
                         }
 
@@ -68,14 +68,5 @@ extension EffectMiddleware where InputActionType == BackgroundSkyViewAction, Out
                 }
             }
         }
-    }
-
-    func lift() -> AnyMiddleware<AppAction, AppAction, AppState> {
-        lift(
-            inputAction: \.backgroundSky,
-            outputAction: AppAction.backgroundSkyOutput,
-            state: { appState in appState.backgroundSkyResources }
-        )
-        .eraseToAnyMiddleware()
     }
 }

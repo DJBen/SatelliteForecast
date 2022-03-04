@@ -21,6 +21,9 @@
 		EF16814927D18B1F001BA9C3 /* BackgroundSkyResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF16814827D18B1F001BA9C3 /* BackgroundSkyResources.swift */; };
 		EF16814B27D19AE2001BA9C3 /* BackgroundSkyMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF16814A27D19AE2001BA9C3 /* BackgroundSkyMiddleware.swift */; };
 		EF16814D27D201A7001BA9C3 /* ChartQuality.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF16814C27D201A7001BA9C3 /* ChartQuality.swift */; };
+		EF16815027D2B4A1001BA9C3 /* BackgroundSkyView+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF16814F27D2B4A1001BA9C3 /* BackgroundSkyView+Wiring.swift */; };
+		EF16815227D2B557001BA9C3 /* BackgroundSkyViewMiddleware+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF16815127D2B557001BA9C3 /* BackgroundSkyViewMiddleware+Wiring.swift */; };
+		EF16815427D2B59D001BA9C3 /* BackgroundSkyViewReducer+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF16815327D2B59D001BA9C3 /* BackgroundSkyViewReducer+Wiring.swift */; };
 		EF19FA09266EC38200D0B2CD /* SkyChartMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF19FA08266EC38200D0B2CD /* SkyChartMiddleware.swift */; };
 		EF19FA0B266EC7CE00D0B2CD /* SkyChartReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF19FA0A266EC7CE00D0B2CD /* SkyChartReducer.swift */; };
 		EF1CAB32266B7ABF006319C8 /* PassView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CAB31266B7ABF006319C8 /* PassView.swift */; };
@@ -148,6 +151,9 @@
 		EF16814827D18B1F001BA9C3 /* BackgroundSkyResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundSkyResources.swift; sourceTree = "<group>"; };
 		EF16814A27D19AE2001BA9C3 /* BackgroundSkyMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundSkyMiddleware.swift; sourceTree = "<group>"; };
 		EF16814C27D201A7001BA9C3 /* ChartQuality.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartQuality.swift; sourceTree = "<group>"; };
+		EF16814F27D2B4A1001BA9C3 /* BackgroundSkyView+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BackgroundSkyView+Wiring.swift"; sourceTree = "<group>"; };
+		EF16815127D2B557001BA9C3 /* BackgroundSkyViewMiddleware+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BackgroundSkyViewMiddleware+Wiring.swift"; sourceTree = "<group>"; };
+		EF16815327D2B59D001BA9C3 /* BackgroundSkyViewReducer+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BackgroundSkyViewReducer+Wiring.swift"; sourceTree = "<group>"; };
 		EF19FA08266EC38200D0B2CD /* SkyChartMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyChartMiddleware.swift; sourceTree = "<group>"; };
 		EF19FA0A266EC7CE00D0B2CD /* SkyChartReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyChartReducer.swift; sourceTree = "<group>"; };
 		EF1CAB31266B7ABF006319C8 /* PassView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassView.swift; sourceTree = "<group>"; };
@@ -299,14 +305,25 @@
 		EF16814327D17E82001BA9C3 /* BackgroundSkyView */ = {
 			isa = PBXGroup;
 			children = (
-				EF8A424126812A940014AE17 /* PlanetaryBodyView.swift */,
+				EF16814E27D2B48D001BA9C3 /* Wiring */,
 				EF16814427D17E98001BA9C3 /* BackgroundSkyView.swift */,
 				EF16814627D181D7001BA9C3 /* BackgroundSkyReducer.swift */,
 				EF16814A27D19AE2001BA9C3 /* BackgroundSkyMiddleware.swift */,
 				EF16814827D18B1F001BA9C3 /* BackgroundSkyResources.swift */,
+				EF8A424126812A940014AE17 /* PlanetaryBodyView.swift */,
 				EF16814C27D201A7001BA9C3 /* ChartQuality.swift */,
 			);
 			path = BackgroundSkyView;
+			sourceTree = "<group>";
+		};
+		EF16814E27D2B48D001BA9C3 /* Wiring */ = {
+			isa = PBXGroup;
+			children = (
+				EF16814F27D2B4A1001BA9C3 /* BackgroundSkyView+Wiring.swift */,
+				EF16815127D2B557001BA9C3 /* BackgroundSkyViewMiddleware+Wiring.swift */,
+				EF16815327D2B59D001BA9C3 /* BackgroundSkyViewReducer+Wiring.swift */,
+			);
+			path = Wiring;
 			sourceTree = "<group>";
 		};
 		EF19FA07266EC34600D0B2CD /* SkyChart */ = {
@@ -810,6 +827,7 @@
 				EF5CB017266E28EE000019DA /* TimerReducer.swift in Sources */,
 				EF3D099E26864DDF00B84232 /* SatelliteOverviewCell.swift in Sources */,
 				EF7A3132266B493300CC33C0 /* SatelliteLoaderMiddleware.swift in Sources */,
+				EF16815027D2B4A1001BA9C3 /* BackgroundSkyView+Wiring.swift in Sources */,
 				EFE7215C26BE57BD0009C29B /* LocationSettingsCurrentLocationCell.swift in Sources */,
 				EF19FA09266EC38200D0B2CD /* SkyChartMiddleware.swift in Sources */,
 				EF16813F27D1793A001BA9C3 /* RealtimeSkyViewMiddleware.swift in Sources */,
@@ -844,6 +862,7 @@
 				EF3D09A5268875B100B84232 /* NavigationState.swift in Sources */,
 				EF1CAB39266B8934006319C8 /* SatelliteListViewMiddleware.swift in Sources */,
 				EF1CAB32266B7ABF006319C8 /* PassView.swift in Sources */,
+				EF16815427D2B59D001BA9C3 /* BackgroundSkyViewReducer+Wiring.swift in Sources */,
 				EF7A3128266B1A2D00CC33C0 /* LocationAction.swift in Sources */,
 				EF847BF826CF2AB40004806F /* NotificationReducer.swift in Sources */,
 				EF833AFC26ADE9B0003EEBB6 /* SatelliteElevationGraphBackground.swift in Sources */,
@@ -878,6 +897,7 @@
 				EF2EF4DD27B42661000D5EC8 /* LoggerMiddleware.swift in Sources */,
 				EF833B0026AE2515003EEBB6 /* SkyChartSatelliteIndicator.swift in Sources */,
 				EFF750C8266F4DFF005222F8 /* SizeModifier.swift in Sources */,
+				EF16815227D2B557001BA9C3 /* BackgroundSkyViewMiddleware+Wiring.swift in Sources */,
 				EF5CB01D266E2933000019DA /* TLEPropagatorReducer.swift in Sources */,
 				EF5CB01E266E2933000019DA /* TLEPropagatorAction.swift in Sources */,
 				EF16814927D18B1F001BA9C3 /* BackgroundSkyResources.swift in Sources */,

@@ -7,7 +7,6 @@
 
 import BTree
 import CombineRex
-import CombineRextensions
 import SatelliteForecastCore
 import SatelliteKit
 import SwiftRex
@@ -44,12 +43,6 @@ enum BackgroundSkyViewOutput {
 
 struct BackgroundSkyViewState {
     var resources: BackgroundSkyResources = .init()
-
-    static func project(appState: AppState) -> BackgroundSkyViewState {
-        BackgroundSkyViewState(
-            resources: appState.backgroundSkyResources
-        )
-    }
 }
 
 extension BackgroundSkyViewState: Equatable {}
@@ -83,7 +76,8 @@ struct BackgroundSkyView: View {
                 configs: context.configs
             )
         ]?.value(
-            closestTo: context.backgroundSkyJulianDateKey
+            closestTo: context.backgroundSkyJulianDateKey,
+            within: TimeConstants.min2day
         )
     }
 
@@ -202,25 +196,6 @@ fileprivate struct BSSizeModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content.background(sizeView)
-    }
-}
-
-extension ViewProducer where Context == BackgroundSkyViewContext, ProducedView == BackgroundSkyView {
-    static func backgroundSky<S: StoreType>(
-        viewModel: S
-    ) -> ViewProducer where
-    S.ActionType == AppAction,
-    S.StateType == AppState {
-        ViewProducer<Context, ProducedView> { context in
-            BackgroundSkyView(
-                viewModel: viewModel.projection(
-                    action: AppAction.backgroundSky,
-                    state: BackgroundSkyViewState.project(appState:)
-                )
-                .asObservableViewModel(initialState: .init(), emitsValue: .whenDifferent),
-                context: context
-            )
-        }
     }
 }
 

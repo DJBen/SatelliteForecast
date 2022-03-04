@@ -23,7 +23,7 @@ extension EffectMiddleware where
         EffectMiddleware<AppDelegateAction, AppAction, AppState, Void>
             .onAction { action, _, getState in
                 switch action {
-                case let .didFinishLaunchingWithOptions(launchOptions):
+                case .didFinishLaunchingWithOptions(_):
                     return .sequence([
                         .backgroundTask(.registerHandleCalculatingUpcomingPasses),
                         .notification(.loadNotificationsFromPersistenceStorage),
