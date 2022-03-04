@@ -9,61 +9,60 @@ import Foundation
 import SwiftUI
 import SatelliteKit
 
-extension SkyChart {
-    struct PlanetaryBodyView: View {
-        let planetaryBody: SkyChartConfigs.BackgroundSky.PlantaryBody
-        let label: SkyChartConfigs.BackgroundSky.PlantaryBodyLabel
-        let referenceDate: Double
-        let observer: LatLonAlt
-        let sunElevation: Double
+struct PlanetaryBodyView: View {
+    let planetaryBody: BackgroundSkyConfigs.PlantaryBody
+    let label: BackgroundSkyConfigs.PlantaryBodyLabel
+    let referenceDate: Double
+    let observer: LatLonAlt
+    let sunElevation: Double
 
-        @ViewBuilder func planetView<Content: View>(
-            celestialCoordinateProvider: (Double) -> (ra: Double, dec: Double),
-            @ViewBuilder planetViewGenerator: @escaping (AziEleDst) -> Content
-        ) -> some View {
-            let (alt, azi) = azel(
-                julianDate: referenceDate,
-                site: (observer.lat, observer.lon),
-                cele: celestialCoordinateProvider(referenceDate)
-            )
-            let planetCoordinate = AziEleDst(azim: azi, elev: alt, dist: 0)
+    @ViewBuilder func planetView<Content: View>(
+        celestialCoordinateProvider: (Double) -> (ra: Double, dec: Double),
+        @ViewBuilder planetViewGenerator: @escaping (AziEleDst) -> Content
+    ) -> some View {
+        let (alt, azi) = azel(
+            julianDate: referenceDate,
+            site: (observer.lat, observer.lon),
+            cele: celestialCoordinateProvider(referenceDate)
+        )
+        let planetCoordinate = AziEleDst(azim: azi, elev: alt, dist: 0)
 
-            if planetCoordinate.elev >= 0 {
-                GeometryReader { geometry in
-                    planetViewGenerator(planetCoordinate)
-                }
+        if planetCoordinate.elev >= 0 {
+            GeometryReader { geometry in
+                planetViewGenerator(planetCoordinate)
             }
         }
+    }
 
-        var body: some View {
-            GeometryReader { geometry in
-                let rect = geometry.frame(in: .local)
+    var body: some View {
+        GeometryReader { geometry in
+            let rect = geometry.frame(in: .local)
 
-                if let celestialCoordinateProvider = planetaryBody.celestialCoordinateProvider, planetaryBody.visible(sunElevation: sunElevation) {
-                    planetView(
-                        celestialCoordinateProvider: celestialCoordinateProvider
-                    ) { observer in
-                        planetaryBody.view(
-                            label: label,
-                            rect: rect
-                        )
+            if let celestialCoordinateProvider = planetaryBody.celestialCoordinateProvider, planetaryBody.visible(sunElevation: sunElevation) {
+                planetView(
+                    celestialCoordinateProvider: celestialCoordinateProvider
+                ) { observer in
+                    planetaryBody.view(
+                        label: label,
+                        rect: rect
+                    )
                         .position(
                             SkyChart.point(
                                 at: observer,
                                 rect: rect
                             )
                         )
-                    }
                 }
             }
         }
     }
 }
 
-extension SkyChartConfigs.BackgroundSky.PlantaryBody {
+
+extension BackgroundSkyConfigs.PlantaryBody {
     private func view<ShapeModifier: ViewModifier, TextLabel: View, Symbol: View> (
         rect: CGRect,
-        label: SkyChartConfigs.BackgroundSky.PlantaryBodyLabel,
+        label: BackgroundSkyConfigs.PlantaryBodyLabel,
         radius: CGFloat,
         shapeModifier: ShapeModifier,
         @ViewBuilder textLabel: () -> TextLabel,
@@ -148,7 +147,7 @@ extension SkyChartConfigs.BackgroundSky.PlantaryBody {
     }
 
     fileprivate func view(
-        label: SkyChartConfigs.BackgroundSky.PlantaryBodyLabel,
+        label: BackgroundSkyConfigs.PlantaryBodyLabel,
         rect: CGRect
     ) -> some View {
         switch self {

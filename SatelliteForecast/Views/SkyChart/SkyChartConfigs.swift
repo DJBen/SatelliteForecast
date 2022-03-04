@@ -8,59 +8,56 @@
 import Foundation
 import CoreGraphics
 
-struct SkyChartConfigs: Equatable, Hashable {
-    struct BackgroundSky: Equatable, Hashable {
-        enum Stars: Equatable, Hashable {
-            case none
-            case limitedMagnitude(Double)
-        }
-        var stars: Stars = .limitedMagnitude(4.5)
+struct BackgroundSkyConfigs: Equatable, Hashable {
+    enum Stars: Equatable, Hashable {
+        case none
+        case limitedMagnitude(Double)
+    }
+    var stars: Stars = .limitedMagnitude(4.5)
 
-        /// A mapping function between the star's magitude to the display radius
-        struct StarMagToDisplayRadiusMappingFunction: Equatable, Hashable {
-            let multiplier: Double
-            let exponent: Double
+    /// A mapping function between the star's magitude to the display radius
+    struct StarMagToDisplayRadiusMappingFunction: Equatable, Hashable {
+        let multiplier: Double
+        let exponent: Double
 
-            init(multipler: Double = 3, exponent: Double = -0.425) {
-                self.multiplier = multipler
-                self.exponent = exponent
-            }
-
-            func apply(_ value: Double) -> CGFloat {
-                CGFloat(multiplier * exp(exponent * value))
-            }
+        init(multipler: Double = 3, exponent: Double = -0.425) {
+            self.multiplier = multipler
+            self.exponent = exponent
         }
 
-        var starMagToDisplayRadiusMappingFunction = StarMagToDisplayRadiusMappingFunction()
-        var hidesStarsDuringDay: Bool = true
-        var showConstellationLines: Bool = true
-
-        enum PlantaryBody: Equatable, CaseIterable, Hashable {
-            case sun
-            case moon
-            case mercury
-            case venus
-            case jupiter
-            case saturn
-        }
-
-        var visibleBodies: [PlantaryBody] = PlantaryBody.allCases
-
-        enum PlantaryBodyLabel: Equatable, Hashable {
-            case text
-            case symbol
-        }
-
-        var bodySymbol: PlantaryBodyLabel = .text
-
-        static var preset: BackgroundSky {
-            BackgroundSky()
+        func apply(_ value: Double) -> CGFloat {
+            CGFloat(multiplier * exp(exponent * value))
         }
     }
 
-    /// The background sky configuration
-    var backgroundSky: BackgroundSky = .preset
+    var starMagToDisplayRadiusMappingFunction = StarMagToDisplayRadiusMappingFunction()
+    var hidesStarsDuringDay: Bool = true
+    var showConstellationLines: Bool = true
 
+    enum PlantaryBody: Equatable, CaseIterable, Hashable {
+        case sun
+        case moon
+        case mercury
+        case venus
+        case jupiter
+        case saturn
+    }
+
+    var visibleBodies: [PlantaryBody] = PlantaryBody.allCases
+
+    enum PlantaryBodyLabel: Equatable, Hashable {
+        case text
+        case symbol
+    }
+
+    var bodySymbol: PlantaryBodyLabel = .text
+
+    static var preset: BackgroundSkyConfigs {
+        BackgroundSkyConfigs()
+    }
+}
+
+struct BasicChartConfigs: Equatable, Hashable {
     var showAzimuthTexts: Bool = true
 
     /// The degree interval between each pair of azimuth marks
@@ -72,6 +69,13 @@ struct SkyChartConfigs: Equatable, Hashable {
     var showDirections: Bool = true
 
     var directionTextOutset: CGFloat = 30
+}
+
+struct SkyChartConfigs: Equatable, Hashable {
+    /// The background sky configuration
+    var backgroundSkyConfigs: BackgroundSkyConfigs = .preset
+
+    var basicChartConfigs: BasicChartConfigs = .init()
 
     var showPassInfoLabels: Bool = true
 
@@ -81,17 +85,20 @@ struct SkyChartConfigs: Equatable, Hashable {
 
     static var preview: SkyChartConfigs {
         SkyChartConfigs(
-            backgroundSky: SkyChartConfigs.BackgroundSky(
+            backgroundSkyConfigs: BackgroundSkyConfigs(
                 stars: .limitedMagnitude(2.25),
-                starMagToDisplayRadiusMappingFunction: BackgroundSky.StarMagToDisplayRadiusMappingFunction(multipler: 1.5, exponent: -0.5),
+                starMagToDisplayRadiusMappingFunction: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction(multipler: 1.5, exponent: -0.5),
                 showConstellationLines: false,
                 visibleBodies: [.sun, .moon],
                 bodySymbol: .symbol
             ),
-            showAzimuthTexts: false,
-            azimuthMarkInterval: 90,
-            azimuthMarkLength: 2,
-            showDirections: false,
+            basicChartConfigs: BasicChartConfigs(
+                showAzimuthTexts: false,
+                azimuthMarkInterval: 90,
+                azimuthMarkLength: 2,
+                showDirections: false,
+                directionTextOutset: 30
+            ),
             showPassInfoLabels: false
         )
     }

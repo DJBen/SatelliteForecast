@@ -45,6 +45,11 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                 case .skyChart(_):
                     // Do nothing
                     break
+                case .backgroundSky(_):
+                    // Do nothing
+                    break
+                case .backgroundSkyOutput(let backgroundSkyOutput):
+                    print(backgroundSkyOutput)
                 case .tlePropagator(let tlePropagatorAction):
                     switch tlePropagatorAction {
                     case .foundPassesAndSnapshots(let passSnapshotList, let noradIndex, let observer):

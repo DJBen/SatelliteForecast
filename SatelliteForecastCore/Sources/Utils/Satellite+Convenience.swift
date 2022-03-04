@@ -253,12 +253,10 @@ extension TLE {
 
             if snapshot1.position.elev <= 0 && snapshot2.position.elev > 0 {
                 snapshotBeforeRising = snapshot1
-                print("snapshotBeforeRising \(snapshotBeforeRising)")
             }
 
             if snapshot1.position.elev > 0 && snapshot2.position.elev <= 0 {
                 snapshotAfterSetting = snapshot2
-                print("snapshotAfterSetting \(snapshotAfterSetting)")
             }
 
             if let fromDate = snapshotBeforeRising?.julianDate, let toDate = snapshotAfterSetting?.julianDate, fromDate < toDate {

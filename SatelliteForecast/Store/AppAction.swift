@@ -21,6 +21,8 @@ enum AppAction {
     case allPassesView(AllPassesViewAction)
     case passView(PassViewAction)
     case satelliteElevationGraph(SatelliteElevationGraphAction)
+    case backgroundSky(BackgroundSkyViewAction)
+    case backgroundSkyOutput(BackgroundSkyViewOutput)
     case skyChart(SkyChartAction)
     case tlePropagator(TLEPropagatorAction)
     case timer(TimerAction)
@@ -160,6 +162,28 @@ extension AppAction {
         set {
             guard case .satelliteElevationGraph = self, let newValue = newValue else { return }
             self = .satelliteElevationGraph(newValue)
+        }
+    }
+
+    public var backgroundSky: BackgroundSkyViewAction? {
+        get {
+            guard case let .backgroundSky(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .backgroundSky = self, let newValue = newValue else { return }
+            self = .backgroundSky(newValue)
+        }
+    }
+
+    public var backgroundSkyOutput: BackgroundSkyViewOutput? {
+        get {
+            guard case let .backgroundSkyOutput(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .backgroundSkyOutput = self, let newValue = newValue else { return }
+            self = .backgroundSkyOutput(newValue)
         }
     }
 
