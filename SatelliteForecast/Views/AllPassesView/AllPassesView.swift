@@ -87,7 +87,7 @@ struct AllPassesViewState: Equatable {
         if let satelliteTrails = state.satelliteTrails[context.selectedNoradIndex],
            let passSnapshotsList = satelliteTrails.passSnapshots {
             let items = passSnapshotsList.enumerated().map { index, passSnapshots -> Item in
-                let rasterizedSatellitePath = state.skyChartState.previewSatellitePaths[passSnapshots.pass]
+                let rasterizedSatellitePath = state.skyChartResources.previewSatellitePaths[passSnapshots.pass]
                 let rasterizedBackgroundSky: UIImage?
                 if let observer = context.observer {
                     rasterizedBackgroundSky = state.backgroundSkyResources.previewBackgroundSkies[

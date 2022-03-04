@@ -18,6 +18,11 @@ import BTree
 
 enum SkyChartAction {
     case requestRasterizedSatellitePath(size: CGSize, quality: ChartQuality, pass: Pass, traitCollection: UITraitCollection)
+}
+
+extension SkyChartAction: Equatable {}
+
+enum SkyChartOutput {
     /// A satellite path is rasterized, or the rasterized image is read from the cache.
     case rasterizedSatellitePath(UIImage, quality: ChartQuality, pass: Pass)
 }
@@ -37,7 +42,7 @@ struct SkyChartViewState: Equatable {
         return SkyChartViewState(
             referenceDate: appState.julianDate,
             julianDateOffset: appState.debugMenu.effectiveOffset,
-            resources: appState.skyChartState,
+            resources: appState.skyChartResources,
             backgroundSky: appState.backgroundSkyResources
         )
     }

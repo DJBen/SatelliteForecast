@@ -45,6 +45,9 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                 case .skyChart(_):
                     // Do nothing
                     break
+                case .skyChartOutput(_):
+                    // Do nothing
+                    break
                 case .backgroundSky(_):
                     // Do nothing
                     break

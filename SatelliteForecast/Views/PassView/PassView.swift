@@ -157,7 +157,7 @@ struct PassView_Previews: PreviewProvider {
                     selectedPassIndex: 0
                 )
             ),
-            skyChartState: SkyChartResources(
+            skyChartResources: SkyChartResources(
                 rasterizedSatellitePaths: [:],
                 previewSatellitePaths: [:]
             ),

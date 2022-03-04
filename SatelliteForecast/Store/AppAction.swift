@@ -24,6 +24,7 @@ enum AppAction {
     case backgroundSky(BackgroundSkyViewAction)
     case backgroundSkyOutput(BackgroundSkyViewOutput)
     case skyChart(SkyChartAction)
+    case skyChartOutput(SkyChartOutput)
     case tlePropagator(TLEPropagatorAction)
     case timer(TimerAction)
     case debugMenu(DebugMenuAction)
@@ -195,6 +196,17 @@ extension AppAction {
         set {
             guard case .skyChart = self, let newValue = newValue else { return }
             self = .skyChart(newValue)
+        }
+    }
+
+    public var skyChartOutput: SkyChartOutput? {
+        get {
+            guard case let .skyChartOutput(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .skyChartOutput = self, let newValue = newValue else { return }
+            self = .skyChartOutput(newValue)
         }
     }
 

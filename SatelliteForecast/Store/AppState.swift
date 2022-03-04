@@ -23,7 +23,7 @@ struct AppState: Equatable {
     var backgroundSkyResources: BackgroundSkyResources = .init()
 
     /// The date range from which ephemerides are generated.
-    var skyChartState: SkyChartResources = .init()
+    var skyChartResources: SkyChartResources = .init()
 
     var satelliteElevationGraphResources: SatelliteElevationGraphResources = .init()
 
@@ -36,7 +36,7 @@ struct AppState: Equatable {
     var locationState: LocationState = .init()
 
     var debugMenu: DebugMenuConfig = .init()
-    
+
     var notificationState: NotificationState = NotificationState()
 
     static var empty: AppState {

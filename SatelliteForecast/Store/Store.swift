@@ -27,11 +27,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             action: \.satelliteElevationGraph,
             state: \.satelliteElevationGraphResources
         ),
-        Reducer<SkyChartAction, SkyChartResources>.skyChartReducer
-        .lift(
-            action: \.skyChart,
-            state: \.skyChartState
-        ),
+        Reducer<SkyChartOutput, SkyChartResources>.skyChartOutputReducer.lift(),
         Reducer<TLEPropagatorAction, AppState>.tlePropagatorReducer.lift(action: \.tlePropagator),
         Reducer<TimerAction, AppState>.timerReducer.lift(action: \.timer),
         Reducer<DebugMenuAction, DebugMenuState>.debugMenuReducer.lift(),
@@ -81,12 +77,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
                     inputAction: \.allPassesView
                 )
                 .eraseToAnyMiddleware(),
-            EffectMiddleware.skyChart
-                .lift(
-                    inputAction: \.skyChart,
-                    outputAction: AppAction.skyChart
-                )
-                .eraseToAnyMiddleware(),
+            EffectMiddleware.skyChart.lift(),
             EffectMiddleware.satelliteElevationGraph
                 .lift(
                     inputAction: \.satelliteElevationGraph,

@@ -17,20 +17,18 @@ fileprivate let logger = Logger(subsystem: "io.djben.skyChart", category: "middl
 
 extension EffectMiddleware where
     InputActionType == SkyChartAction,
-    OutputActionType == SkyChartAction,
+    OutputActionType == SkyChartOutput,
     StateType == AppState,
     Dependencies == Void {
 
-    static var skyChart: SimpleEffectMiddleware<SkyChartAction, AppState> {
-        SimpleEffectMiddleware<SkyChartAction, AppState>.onAction { action, _, getState in
+    static var skyChart: EffectMiddleware<SkyChartAction, SkyChartOutput, AppState, Void> {
+        EffectMiddleware<SkyChartAction, SkyChartOutput, AppState, Void>.onAction { action, _, getState in
             switch action {
-            case .rasterizedSatellitePath(_, quality: _, pass: _):
-                return .doNothing
             case let .requestRasterizedSatellitePath(size, quality, pass, traitCollection):
                 return .promise(token: "") { context, sink in
                     DispatchQueue.global(qos: .userInitiated).async {
                         let state = getState()
-                        let dataSource = quality == .full ? state.skyChartState.rasterizedSatellitePaths : state.skyChartState.previewSatellitePaths
+                        let dataSource = quality == .full ? state.skyChartResources.rasterizedSatellitePaths : state.skyChartResources.previewSatellitePaths
                         // Skip if image already generated.
                         if let _ = dataSource[pass] {
 //                            logger.debug("\(pass.noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate) already rasterized, skipping.")
@@ -69,5 +67,13 @@ extension EffectMiddleware where
                 }
             }
         }
+    }
+
+    func lift() -> AnyMiddleware<AppAction, AppAction, AppState> {
+        lift(
+            inputAction: \.skyChart,
+            outputAction: AppAction.skyChartOutput
+        )
+        .eraseToAnyMiddleware()
     }
 }
