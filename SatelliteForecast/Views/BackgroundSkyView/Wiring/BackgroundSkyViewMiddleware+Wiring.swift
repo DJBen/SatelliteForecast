@@ -13,7 +13,7 @@ extension EffectMiddleware where InputActionType == BackgroundSkyViewAction, Out
         lift(
             inputAction: \.backgroundSky,
             outputAction: AppAction.backgroundSkyOutput,
-            state: { appState in appState.backgroundSkyResources }
+            state: BackgroundSkyResources.project(appState:)
         )
         .eraseToAnyMiddleware()
     }

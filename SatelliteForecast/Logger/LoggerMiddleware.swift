@@ -30,6 +30,8 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                     case .failedLoadingTLEFile(_, _):
                         print(satelliteLoaderOutput)
                     }
+                case .rootView(let rootViewAction):
+                    print(rootViewAction)
                 case .satelliteOverview(let satelliteOverviewViewAction):
                     print(satelliteOverviewViewAction)
                 case .satelliteListView(let satelliteListViewAction):
@@ -72,6 +74,10 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                     print(alarmSettingsCellAction)
                 case .alarmSettingsView(let alarmSettingsViewAction):
                     print(alarmSettingsViewAction)
+                case .realtimeSky(let realtimeSkyViewAction):
+                    print(realtimeSkyViewAction)
+                case .realtimeSkyOutput(let realtimeSkyViewOutput):
+                    print(realtimeSkyViewOutput)
                 }
             }
         }

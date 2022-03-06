@@ -20,6 +20,16 @@ extension BackgroundSkyViewState: AppStateMappable {
     }
 }
 
+extension BackgroundSkyResources: AppStateMappable {
+    static func project(appState: AppState) -> BackgroundSkyResources {
+        appState.backgroundSkyResources
+    }
+
+    static func apply(appState: inout AppState, state: BackgroundSkyResources) {
+        appState.backgroundSkyResources = state
+    }
+}
+
 extension ViewProducer where Context == BackgroundSkyViewContext, ProducedView == BackgroundSkyView {
     static func backgroundSky<S: StoreType>(
         viewModel: S

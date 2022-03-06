@@ -48,7 +48,9 @@ struct SatelliteOverviewViewState: Equatable {
     }
 }
 
-struct SatelliteOverviewView: View {
+protocol SatelliteOverviewView: View {}
+
+struct SatelliteOverviewViewImpl: SatelliteOverviewView {
     @ObservedObject var viewModel: ObservableViewModel<SatelliteOverviewViewAction, SatelliteOverviewViewState>
     let listViewProducer: ViewProducer<SatelliteListViewContext, SatelliteListView>
     let singleSatelliteWrappingViewProducer: ViewProducer<SingleSatelliteWrappingViewContext, SingleSatelliteWrappingView>
@@ -202,10 +204,10 @@ struct SatelliteOverviewView: View {
     }
 }
 
-extension ViewProducer where Context == Void, ProducedView == SatelliteOverviewView {
+extension ViewProducer where Context == Void, ProducedView == SatelliteOverviewViewImpl {
     static func satelliteOverview<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
         ViewProducer<Context, ProducedView> { context in
-            SatelliteOverviewView(
+            SatelliteOverviewViewImpl(
                 viewModel: viewModel.projection(
                     action: AppAction.satelliteOverview,
                     state: SatelliteOverviewViewState.project(state:)
@@ -223,23 +225,23 @@ extension ViewProducer where Context == Void, ProducedView == SatelliteOverviewV
     }
 }
 
-//#if DEBUG
-//struct SatelliteOverviewView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        SatelliteOverviewView(
-//            viewModel: .mock(
-//                state: SatelliteOverviewViewState(
-//                    navigationState: .overview,
-//                    julianDate: 0
-//                )
-//            ),
-//            listViewProducer: .crash,
-//            singleSatelliteWrappingViewProducer: .crash,
-//            observerCellViewProducer: .crash,
-//            locationSettingsViewProducer: .crash,
-//            alarmSettingsCellProducer: .crash,
-//            alarmSettingsViewProducer: .crash
-//        )
-//    }
-//}
-//#endif
+#if DEBUG
+struct SatelliteOverviewView_Previews: PreviewProvider {
+    static var previews: some View {
+        SatelliteOverviewViewImpl(
+            viewModel: .mock(
+                state: SatelliteOverviewViewState(
+                    navigationState: .init(),
+                    julianDate: 0
+                )
+            ),
+            listViewProducer: .crash,
+            singleSatelliteWrappingViewProducer: .crash,
+            observerCellViewProducer: .crash,
+            locationSettingsViewProducer: .crash,
+            alarmSettingsCellProducer: .crash,
+            alarmSettingsViewProducer: .crash
+        )
+    }
+}
+#endif

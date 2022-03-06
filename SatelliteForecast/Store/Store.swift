@@ -31,7 +31,9 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         Reducer<TLEPropagatorAction, AppState>.tlePropagatorReducer.lift(action: \.tlePropagator),
         Reducer<TimerAction, AppState>.timerReducer.lift(action: \.timer),
         Reducer<DebugMenuAction, DebugMenuState>.debugMenuReducer.lift(),
-        Reducer.backgroundSkyReducer.lift()
+        Reducer.backgroundSkyReducer.lift(),
+        Reducer.realtimeSkyReducer.lift(),
+        Reducer.realtimeSkyOutputReducer.lift()
     ]
     .reduce(Reducer<AppAction, AppState>.identity, <>)
 
@@ -97,7 +99,8 @@ class Store: ReduxStoreBase<AppAction, AppState> {
                 .eraseToAnyMiddleware(),
             EffectMiddleware.debugMenu.lift(),
             EffectMiddleware.loggerMiddleware.eraseToAnyMiddleware(),
-            EffectMiddleware.backgroundSky.lift()
+            EffectMiddleware.backgroundSky.lift(),
+            EffectMiddleware.realtimeSky.lift()
         ]
 
         return middlewares.reduce(

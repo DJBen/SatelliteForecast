@@ -64,7 +64,7 @@ struct PassPreviewCell: View {
 
                 HStack(alignment: .top, spacing: 0) {
                     // Column 1: Day light and elevation
-                    if geometry.size.width >= 350 {
+                    if geometry.size.width >= 305 {
                         VStack(alignment: .leading) {
                             Text(LocalizedStrings.PassPreviewCell.titleForPassVisibility(pass.visibility))
                                 .font(.headline)

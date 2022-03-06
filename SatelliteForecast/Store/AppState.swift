@@ -25,6 +25,8 @@ struct AppState: Equatable {
     /// The date range from which ephemerides are generated.
     var skyChartResources: SkyChartResources = .init()
 
+    var realtimeSkyResources: RealtimeSkyViewResources = .init()
+
     var satelliteElevationGraphResources: SatelliteElevationGraphResources = .init()
 
     /// A mapping from NORAD ID to the satellite state.

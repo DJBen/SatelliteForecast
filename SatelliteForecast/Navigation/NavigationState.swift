@@ -10,6 +10,7 @@ import SatelliteKit
 import SatelliteForecastCore
 
 struct NavigationState {
+    var tab: Tab = .realtimeSky
     var specialSatelliteNavigation: SpecialSatelliteNavigation = .init()
     var listNavigation: ListNavigation = .init()
     var observerNavigation: ObserverNavigationState = .init()
@@ -21,6 +22,14 @@ struct NavigationState {
 }
 
 extension NavigationState: Equatable {}
+
+enum Tab {
+    case realtimeSky
+    case forecast
+    case settings
+}
+
+extension Tab: Equatable, Hashable {}
 
 struct SpecialSatelliteNavigation {
     var noradIndex: Int?

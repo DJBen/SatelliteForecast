@@ -29,8 +29,10 @@ enum RealtimeSkyViewOutput {
 }
 
 struct RealtimeSkyViewResources {
+    /// The propagation results containing the satellite snapshot, and an "expiration date" of the snapshot.
     var results: [Int: RealtimePropagationResult] = [:]
-    var nextCheckDates: [Int: Double] = [:]
+    var isRealtimeSkyViewActive: Bool = false
+    var isPropagatingEphemerides: Bool = false
 }
 
 extension RealtimeSkyViewResources: Equatable {}
@@ -38,16 +40,24 @@ extension RealtimeSkyViewResources: Equatable {}
 struct RealtimeSkyViewState {
     var resources: RealtimeSkyViewResources = .init()
     var tles: [TLE] = []
-    var observer: LatLonAlt = .init(lat: 0, lon: 0, alt: 0)
+    var observer: LatLonAlt?
     var julianDateOffset: Double = 0
-    var isRealtimeSkyViewActive: Bool = false
-    var isPropagatingEphemerides: Bool = false
 }
 
 extension RealtimeSkyViewState: Equatable {}
 
-struct RealtimeSkyView: View {
+struct RealtimeSkyViewContext {
+    let basicChartConfigs: BasicChartConfigs
+    let backgroundSkyConfigs: BackgroundSkyConfigs
+}
+
+protocol RealtimeSkyView: View {}
+
+struct RealtimeSkyViewImpl: RealtimeSkyView {
     @ObservedObject var viewModel: ObservableViewModel<RealtimeSkyViewAction, RealtimeSkyViewState>
+    let context: RealtimeSkyViewContext
+
+    let backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext, BackgroundSkyView>
 
     let refreshTimer = Timer.publish(
         every: 1,
@@ -57,25 +67,61 @@ struct RealtimeSkyView: View {
     .autoconnect()
     .map(\.julianDate)
 
+    @State var julianDate: Double = 0
+
+    @ViewBuilder private func locationView<Content: View, NoLocationContent: View>(
+        @ViewBuilder contentBuilder: (LatLonAlt) -> Content,
+        @ViewBuilder noLocationContentBuilder: () -> NoLocationContent
+    ) -> some View {
+        if let observer = viewModel.state.observer {
+            contentBuilder(observer)
+        } else {
+            noLocationContentBuilder()
+        }
+    }
+
+    @ViewBuilder private func satellitePlot() -> some View {
+        ForEach(
+            Array(viewModel.state.resources.results.values),
+            id: \.noradIndex
+        ) { element in
+            Color.clear
+        }
+    }
+
     var body: some View {
-        Text(
-            "Hello, World!"
-        )
-        .onReceive(refreshTimer) { timerJulianDate in
-            guard viewModel.state.isRealtimeSkyViewActive else {
-                return
-            }
-            if viewModel.state.isPropagatingEphemerides {
-                return
-            }
-            let julianDate = timerJulianDate + viewModel.state.julianDateOffset
-            viewModel.dispatch(
-                .propagateCurrentEphemerides(
-                    viewModel.state.tles,
-                    observer: viewModel.state.observer,
-                    julianDate: julianDate
+        Group {
+            locationView { observer in
+                backgroundSkyViewProducer.view(
+                    BackgroundSkyViewContext(
+                        observer: observer,
+                        basicChartConfigs: context.basicChartConfigs,
+                        configs: context.backgroundSkyConfigs,
+                        quality: .full,
+                        backgroundSkyJulianDateKey: julianDate
+                    )
                 )
-            )
+                .onReceive(refreshTimer) { timerJulianDate in
+                    self.julianDate = timerJulianDate + viewModel.state.julianDateOffset
+
+                    guard viewModel.state.resources.isRealtimeSkyViewActive else {
+                        return
+                    }
+                    if viewModel.state.resources.isPropagatingEphemerides {
+                        return
+                    }
+
+                    viewModel.dispatch(
+                        .propagateCurrentEphemerides(
+                            viewModel.state.tles,
+                            observer: observer,
+                            julianDate: julianDate
+                        )
+                    )
+                }
+            } noLocationContentBuilder: {
+                Text(verbatim: "Location not available")
+            }
         }
         .onAppear {
             viewModel.dispatch(.setRealtimeSkyViewActive(true))
@@ -90,8 +136,28 @@ struct RealtimeSkyView: View {
 
 struct RealtimeSkyView_Previews: PreviewProvider {
     static var previews: some View {
-        RealtimeSkyView(
-            viewModel: .mock(state: .init())
+        RealtimeSkyViewImpl(
+            viewModel: .mock(
+                state: .init()
+            ),
+            context: RealtimeSkyViewContext(
+                basicChartConfigs: .init(),
+                backgroundSkyConfigs: .init()
+            ),
+            backgroundSkyViewProducer: .pure(
+                BackgroundSkyView(
+                    viewModel: .mock(
+                        state: BackgroundSkyViewState()
+                    ),
+                    context: BackgroundSkyViewContext(
+                        observer: LatLonAlt(lat: 0, lon: 0, alt: 0),
+                        basicChartConfigs: .init(),
+                        configs: .init(),
+                        quality: .full,
+                        backgroundSkyJulianDateKey: 0
+                    )
+                )
+            )
         )
     }
 }

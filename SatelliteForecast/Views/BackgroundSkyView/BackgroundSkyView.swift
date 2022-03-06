@@ -107,8 +107,8 @@ struct BackgroundSkyView: View {
                     Color.clear
                 }
             }
-            .modifier(BSSizeModifier())
-            .onPreferenceChange(BSSizePreferenceKey.self) { contentSize in
+            .modifier(SizeModifier())
+            .onPreferenceChange(SizePreferenceKey.self) { contentSize in
                 guard !contentSize.width.isZero && !contentSize.height.isZero else {
                     return
                 }
@@ -176,26 +176,6 @@ struct BackgroundSkyView: View {
             )
             .clipShape(Circle())
         )
-    }
-}
-
-fileprivate struct BSSizePreferenceKey: PreferenceKey {
-    static var defaultValue: CGSize = .zero
-
-    static func reduce(value: inout CGSize, nextValue: () -> CGSize) {
-        value = nextValue()
-    }
-}
-
-fileprivate struct BSSizeModifier: ViewModifier {
-    private var sizeView: some View {
-        GeometryReader { geometry in
-            Color.clear.preference(key: BSSizePreferenceKey.self, value: geometry.size)
-        }
-    }
-
-    func body(content: Content) -> some View {
-        content.background(sizeView)
     }
 }
 

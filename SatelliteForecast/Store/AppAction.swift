@@ -15,6 +15,10 @@ enum AppAction {
     case location(LocationAction)
     case satelliteLoader(SatelliteLoaderAction)
     case satelliteLoaderOutput(SatelliteLoaderOutput)
+    case timer(TimerAction)
+    case tlePropagator(TLEPropagatorAction)
+
+    case rootView(RootViewAction)
     case satelliteOverview(SatelliteOverviewViewAction)
     case satelliteListView(SatelliteListViewAction)
     case singleSatelliteWrappingView(SingleSatelliteWrappingViewAction)
@@ -25,12 +29,12 @@ enum AppAction {
     case backgroundSkyOutput(BackgroundSkyViewOutput)
     case skyChart(SkyChartAction)
     case skyChartOutput(SkyChartOutput)
-    case tlePropagator(TLEPropagatorAction)
-    case timer(TimerAction)
     case debugMenu(DebugMenuAction)
     case observerCell(ObserverCellAction)
     case alarmSettingsCell(AlarmSettingsCellAction)
     case alarmSettingsView(AlarmSettingsViewAction)
+    case realtimeSky(RealtimeSkyViewAction)
+    case realtimeSkyOutput(RealtimeSkyViewOutput)
 }
 
 extension AppAction {
@@ -97,6 +101,17 @@ extension AppAction {
         set {
             guard case .satelliteLoaderOutput = self, let newValue = newValue else { return }
             self = .satelliteLoaderOutput(newValue)
+        }
+    }
+
+    public var rootView: RootViewAction? {
+        get {
+            guard case let .rootView(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .rootView = self, let newValue = newValue else { return }
+            self = .rootView(newValue)
         }
     }
 
@@ -273,6 +288,28 @@ extension AppAction {
         set {
             guard case .alarmSettingsView = self, let newValue = newValue else { return }
             self = .alarmSettingsView(newValue)
+        }
+    }
+
+    public var realtimeSky: RealtimeSkyViewAction? {
+        get {
+            guard case let .realtimeSky(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .realtimeSky = self, let newValue = newValue else { return }
+            self = .realtimeSky(newValue)
+        }
+    }
+
+    public var realtimeSkyOutput: RealtimeSkyViewOutput? {
+        get {
+            guard case let .realtimeSkyOutput(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .realtimeSkyOutput = self, let newValue = newValue else { return }
+            self = .realtimeSkyOutput(newValue)
         }
     }
 }
