@@ -14,17 +14,9 @@ fileprivate let logger = Logger(subsystem: "io.djben.satelliteLoader", category:
 extension Reducer where ActionType == SatelliteLoaderAction, StateType == SatelliteLoaderState {
     static let satelliteLoaderReducer = Reducer.reduce { action, state in
         switch action {
-        case .loadSatelliteCategory(_, _, _, _):
-            break
+        case .loadSatelliteCategory(let category, _, _, _):
+            state.resources.info[category] = .loading
         }
-    }
-
-    func lift() -> Reducer<AppAction, AppState> {
-        lift(
-            actionGetter: \.satelliteLoader,
-            stateGetter: SatelliteLoaderState.project(appState:),
-            stateSetter: SatelliteLoaderState.apply(appState:state:)
-        )
     }
 }
 
@@ -32,20 +24,12 @@ extension Reducer where ActionType == SatelliteLoaderOutput, StateType == Satell
     static let satelliteLoaderOutputReducer = Reducer.reduce { action, state in
         switch action {
         case let .loadedSatelliteInfo(category, info, _, _, _):
-            state.resources.info[category] = .success(info)
+            state.resources.info[category] = .loaded(info)
             logger.notice("Loaded \(info.count) TLE entries")
         case let .failedLoadingTLEFile(category, error):
-            state.resources.info[category] = .failure(error)
+            state.resources.info[category] = .failed(error)
             logger.error("Failed loading TLE for category \(String(describing: category)): \(String(describing: error))")
             break
         }
-    }
-
-    func lift() -> Reducer<AppAction, AppState> {
-        lift(
-            actionGetter: \.satelliteLoaderOutput,
-            stateGetter: SatelliteLoaderState.project(appState:),
-            stateSetter: SatelliteLoaderState.apply(appState:state:)
-        )
     }
 }

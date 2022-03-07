@@ -52,7 +52,17 @@ struct BackgroundSkyViewContext {
     let basicChartConfigs: BasicChartConfigs
     let configs: BackgroundSkyConfigs
     let quality: ChartQuality
-    let backgroundSkyJulianDateKey: Double
+}
+
+struct BackgroundSkyJulianDateKeyEnvironmentKey: EnvironmentKey {
+    static let defaultValue: Double = 0
+}
+
+extension EnvironmentValues {
+    var backgroundSkyJulianDateKey: Double {
+        get { self[BackgroundSkyJulianDateKeyEnvironmentKey.self] }
+        set { self[BackgroundSkyJulianDateKeyEnvironmentKey.self] = newValue }
+    }
 }
 
 struct BackgroundSkyView: View {
@@ -61,6 +71,7 @@ struct BackgroundSkyView: View {
 
     @State private var contentSize: CGSize = .zero
 
+    @Environment(\.backgroundSkyJulianDateKey) var backgroundSkyJulianDateKey
     @Environment(\.colorScheme) var colorScheme
 
     private var rasterizedBackgroundSky: UIImage? {
@@ -76,17 +87,17 @@ struct BackgroundSkyView: View {
                 configs: context.configs
             )
         ]?.value(
-            closestTo: context.backgroundSkyJulianDateKey,
+            closestTo: backgroundSkyJulianDateKey,
             within: TimeConstants.min2day
         )
     }
 
     private var sunElevation: Double {
         azel(
-            julianDate: context.backgroundSkyJulianDateKey,
+            julianDate: backgroundSkyJulianDateKey,
             site: (context.observer.lat, context.observer.lon),
             cele: solarGeo(
-                julianDays: context.backgroundSkyJulianDateKey
+                julianDays: backgroundSkyJulianDateKey
             )
         ).alt
     }
@@ -119,7 +130,7 @@ struct BackgroundSkyView: View {
                     .requestRasterizedBackgroundSky(
                         size: contentSize,
                         quality: context.quality,
-                        julianDate: context.backgroundSkyJulianDateKey,
+                        julianDate: backgroundSkyJulianDateKey,
                         key: BackgroundSkyKey(
                             observer: context.observer,
                             configs: context.configs
@@ -128,7 +139,7 @@ struct BackgroundSkyView: View {
                     )
                 )
             }
-            .onChange(of: context.backgroundSkyJulianDateKey) { backgroundSkyJulianDateKey in
+            .onChange(of: backgroundSkyJulianDateKey) { backgroundSkyJulianDateKey in
 
                 guard !contentSize.width.isZero && !contentSize.height.isZero else {
                     return
@@ -157,7 +168,7 @@ struct BackgroundSkyView: View {
                 PlanetaryBodyView(
                     planetaryBody: body,
                     label: context.configs.bodySymbol,
-                    referenceDate: context.backgroundSkyJulianDateKey,
+                    referenceDate: backgroundSkyJulianDateKey,
                     observer: context.observer,
                     sunElevation: sunElevation
                 )
@@ -191,10 +202,10 @@ struct BackgroundSkyView_Previews: PreviewProvider {
                 observer: LatLonAlt(lat: 0, lon: 0, alt: 0),
                 basicChartConfigs: .init(),
                 configs: .preset,
-                quality: .full,
-                backgroundSkyJulianDateKey: 0
+                quality: .full
             )
         )
+        .environment(\.backgroundSkyJulianDateKey, 0)
     }
 }
 

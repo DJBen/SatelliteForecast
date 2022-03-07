@@ -25,3 +25,9 @@ extension ClosedRange where Bound == Double {
         Date(julianDate: lowerBound).dateRoundedAt(at: roundDateMode).julianDate...Date(julianDate: upperBound).dateRoundedAt(at: roundDateMode).julianDate
     }
 }
+
+extension Double {
+    public func julianDateRoundedToNearestMinute() -> Double {
+        Date(julianDate: self).dateRoundedAt(at: .toMins(1)).julianDate
+    }
+}

@@ -13,7 +13,7 @@ extension RealtimeSkyViewState: AppStateMappable {
     static func project(appState: AppState) -> RealtimeSkyViewState {
         RealtimeSkyViewState(
             resources: RealtimeSkyViewResources.project(appState: appState),
-            tles: appState.satelliteLoader.info[.active]?.successValue?.values.map(\.tle) ?? [],
+            tles: appState.satelliteLoader.info[.active]?.content?.values.map(\.tle) ?? [],
             observer: appState.locationState.location.map(LatLonAlt.init(location:)),
             julianDateOffset: appState.debugMenu.effectiveOffset
         )

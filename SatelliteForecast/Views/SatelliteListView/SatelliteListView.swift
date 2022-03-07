@@ -60,7 +60,7 @@ fileprivate extension SatelliteInfo {
 }
 
 struct SatelliteListViewState: Equatable {
-    var satelliteInfo: [SatelliteCategory: Result<Map<Int, SatelliteInfo>, SatelliteLoaderError>] = [:]
+    var satelliteInfo: [SatelliteCategory: Loadable<Map<Int, SatelliteInfo>, SatelliteLoaderError>] = [:]
     var satelliteSearchText: String = ""
     var selectedNoradIndex: Int?
 
@@ -82,7 +82,7 @@ struct SatelliteListView: View {
         @ViewBuilder contentBuilder: (Map<Int, SatelliteInfo>) -> Content,
         @ViewBuilder failedContentBuilder: (SatelliteLoaderError) -> FailedContent
     ) -> some View {
-        let satellites: Result<Map<Int, SatelliteInfo>, SatelliteLoaderError>? = viewModel.state.satelliteInfo[context.category]?.map { info in
+        let satellites: Loadable<Map<Int, SatelliteInfo>, SatelliteLoaderError> = viewModel.state.satelliteInfo[context.category]?.map { info in
             let searchText = viewModel.state.satelliteSearchText
             if searchText.isEmpty {
                 return info
@@ -95,14 +95,16 @@ struct SatelliteListView: View {
                 }
                 return map
             }
-        }
+        } ?? .notLoaded
         Group {
             switch satellites {
-            case .none:
+            case .notLoaded:
+                Text(verbatim: "The satellites are not loaded.")
+            case .loading:
                 ProgressView("Loading...")
-            case let .success(satellites):
+            case let .loaded(satellites):
                 contentBuilder(satellites)
-            case let .failure(error):
+            case let .failed(error):
                 failedContentBuilder(error)
             }
         }
@@ -258,7 +260,7 @@ struct SatelliteListView_Previews: PreviewProvider {
         SatelliteListView(
             viewModel: .mock(
                 state: SatelliteListViewState(
-                    satelliteInfo: [.brightest100: .success(brightest100)],
+                    satelliteInfo: [.brightest100: .loaded(brightest100)],
                     selectedNoradIndex: nil
                 )
             ),

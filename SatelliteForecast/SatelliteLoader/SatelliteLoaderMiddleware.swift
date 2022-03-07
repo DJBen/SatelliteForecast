@@ -22,48 +22,44 @@ struct SatelliteLoaderDependencies {
 
 extension EffectMiddleware where
     InputActionType == SatelliteLoaderAction,
-    OutputActionType == AppAction,
+    OutputActionType == SatelliteLoaderOutput,
     StateType == SatelliteLoaderState,
     Dependencies == SatelliteLoaderDependencies {
 
     static func satelliteLoader(
         _ satelliteLoader: SatelliteLoader
-    ) -> MiddlewareReader<SatelliteLoaderDependencies, EffectMiddleware<SatelliteLoaderAction, AppAction, SatelliteLoaderState, SatelliteLoaderDependencies>> {
-        EffectMiddleware<SatelliteLoaderAction, AppAction, SatelliteLoaderState, SatelliteLoaderDependencies>
-        .onAction { (inputAction, dispatcher, getState) -> Effect<SatelliteLoaderDependencies, AppAction> in
+    ) -> MiddlewareReader<SatelliteLoaderDependencies, EffectMiddleware<SatelliteLoaderAction, SatelliteLoaderOutput, SatelliteLoaderState, SatelliteLoaderDependencies>> {
+        EffectMiddleware<SatelliteLoaderAction, SatelliteLoaderOutput, SatelliteLoaderState, SatelliteLoaderDependencies>
+        .onAction { (inputAction, dispatcher, getState) -> Effect<SatelliteLoaderDependencies, SatelliteLoaderOutput> in
             switch inputAction {
             case let .loadSatelliteCategory(category, selectSpecialNoradIndex, selectNoradIndex, calculatePass):
-                return Effect(token: category) { context -> AnyPublisher<DispatchedAction<AppAction>, Never> in
-                    func loadSatellitePublisher() -> AnyPublisher<DispatchedAction<AppAction>, Never> {
+                return Effect(token: category) { context -> AnyPublisher<DispatchedAction<SatelliteLoaderOutput>, Never> in
+                    func loadSatellitePublisher() -> AnyPublisher<DispatchedAction<SatelliteLoaderOutput>, Never> {
                         satelliteLoader.loadSatelliteCategoryPublisher(
                             category: category
                         )
-                        .map { map -> DispatchedAction<AppAction> in
+                        .map { map -> DispatchedAction<SatelliteLoaderOutput> in
                             DispatchedAction(
-                                .satelliteLoaderOutput(
-                                    .loadedSatelliteInfo(
-                                        category,
-                                        satelliteInfo: map,
-                                        selectSpecialNoradIndex: selectSpecialNoradIndex,
-                                        selectNoradIndex: selectNoradIndex,
-                                        calculatePass: calculatePass
-                                    )
+                                .loadedSatelliteInfo(
+                                    category,
+                                    satelliteInfo: map,
+                                    selectSpecialNoradIndex: selectSpecialNoradIndex,
+                                    selectNoradIndex: selectNoradIndex,
+                                    calculatePass: calculatePass
                                 )
                             )
                         }
                         .catch { error in
                             Just(
                                 DispatchedAction(
-                                    .satelliteLoaderOutput(
-                                        .failedLoadingTLEFile(category, error)
-                                    )
+                                    .failedLoadingTLEFile(category, error)
                                 )
                             )
                         }
                         .eraseToAnyPublisher()
                     }
 
-                    if let result = getState().resources.info[category], let infoMap = result.successValue {
+                    if let result = getState().resources.info[category], let infoMap = result.content {
                         let mostRecentTLEAge = infoMap.map {
                             Date(julianDate: getState().currentDate).timeIntervalSince(Date(daysSince1950: $1.tle.t₀))
                         }
@@ -76,14 +72,12 @@ extension EffectMiddleware where
 
                         logger.notice("Most recent TLE age \(mostRecentTLEAge) is new: skip update.")
 
-                        return Just<DispatchedAction<AppAction>>(
+                        return Just<DispatchedAction<SatelliteLoaderOutput>>(
                             DispatchedAction(
-                                .satelliteLoaderOutput(
-                                    .loadedSatelliteInfo(
-                                        category,
-                                        satelliteInfo: infoMap,
-                                        calculatePass: calculatePass
-                                    )
+                                .loadedSatelliteInfo(
+                                    category,
+                                    satelliteInfo: infoMap,
+                                    calculatePass: calculatePass
                                 )
                             )
                         )
@@ -94,15 +88,6 @@ extension EffectMiddleware where
                 }
             }
         }
-    }
-}
-
-extension MiddlewareReader where MiddlewareType == EffectMiddleware<SatelliteLoaderAction, AppAction, SatelliteLoaderState, SatelliteLoaderDependencies>, Dependencies == SatelliteLoaderDependencies {
-    func lift() -> MiddlewareReader<SatelliteLoaderDependencies, LiftMiddleware<AppAction, AppAction, AppState, EffectMiddleware<SatelliteLoaderAction, AppAction, SatelliteLoaderState, SatelliteLoaderDependencies>>> {
-        return lift(
-            inputAction: \AppAction.satelliteLoader,
-            state: SatelliteLoaderState.project(appState:)
-        )
     }
 }
 
@@ -131,15 +116,6 @@ extension EffectMiddleware where InputActionType == SatelliteLoaderOutput, Outpu
                 return .doNothing
             }
         }
-    }
-
-    func lift() -> AnyMiddleware<AppAction, AppAction, AppState> {
-        return lift(
-            inputAction: \.satelliteLoaderOutput,
-            outputAction: AppAction.satelliteOverview,
-            state: SatelliteLoaderState.project(appState:)
-        )
-        .eraseToAnyMiddleware()
     }
 }
 
@@ -170,15 +146,6 @@ extension EffectMiddleware where InputActionType == SatelliteLoaderOutput, Outpu
             }
         }
     }
-
-    func lift() -> AnyMiddleware<AppAction, AppAction, AppState> {
-        return lift(
-            inputAction: \.satelliteLoaderOutput,
-            outputAction: AppAction.satelliteListView,
-            state: SatelliteLoaderState.project(appState:)
-        )
-        .eraseToAnyMiddleware()
-    }
 }
 
 extension EffectMiddleware where InputActionType == SatelliteLoaderOutput, OutputActionType == AllPassesViewAction, StateType == SatelliteLoaderState, Dependencies == Void {
@@ -207,14 +174,5 @@ extension EffectMiddleware where InputActionType == SatelliteLoaderOutput, Outpu
                 return .doNothing
             }
         }
-    }
-
-    func lift() -> AnyMiddleware<AppAction, AppAction, AppState> {
-        return lift(
-            inputAction: \.satelliteLoaderOutput,
-            outputAction: AppAction.allPassesView,
-            state: SatelliteLoaderState.project(appState:)
-        )
-        .eraseToAnyMiddleware()
     }
 }

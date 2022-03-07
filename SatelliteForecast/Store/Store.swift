@@ -18,7 +18,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         Reducer<NotificationAction, AppState>.notificationReducer.lift(action: \.notification),
         Reducer<SatelliteLoaderAction, SatelliteLoaderState>.satelliteLoaderReducer.lift(),
         Reducer<SatelliteLoaderOutput, SatelliteLoaderState>.satelliteLoaderOutputReducer.lift(),
-        Reducer<SatelliteOverviewViewAction, AppState>.satelliteOverviewReducer.lift(action: \.satelliteOverview),
+        Reducer.satelliteOverviewReducer.lift(),
         Reducer<SatelliteListViewAction, AppState>.satelliteListViewReducer.lift(action: \.satelliteListView),
         Reducer<AllPassesViewAction, AppState>.allPassesViewReducer.lift(action: \.allPassesView),
         Reducer<PassViewAction, AppState>.passViewReducer.lift(action: \.passView),
@@ -33,7 +33,8 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         Reducer<DebugMenuAction, DebugMenuState>.debugMenuReducer.lift(),
         Reducer.backgroundSkyReducer.lift(),
         Reducer.realtimeSkyReducer.lift(),
-        Reducer.realtimeSkyOutputReducer.lift()
+        Reducer.realtimeSkyOutputReducer.lift(),
+        Reducer.rootViewReducer.lift()
     ]
     .reduce(Reducer<AppAction, AppState>.identity, <>)
 

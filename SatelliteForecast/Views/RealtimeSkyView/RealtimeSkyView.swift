@@ -97,10 +97,10 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
                         observer: observer,
                         basicChartConfigs: context.basicChartConfigs,
                         configs: context.backgroundSkyConfigs,
-                        quality: .full,
-                        backgroundSkyJulianDateKey: julianDate
+                        quality: .full
                     )
                 )
+                .environment(\.backgroundSkyJulianDateKey, julianDate.julianDateRoundedToNearestMinute())
                 .onReceive(refreshTimer) { timerJulianDate in
                     self.julianDate = timerJulianDate + viewModel.state.julianDateOffset
 
@@ -153,12 +153,12 @@ struct RealtimeSkyView_Previews: PreviewProvider {
                         observer: LatLonAlt(lat: 0, lon: 0, alt: 0),
                         basicChartConfigs: .init(),
                         configs: .init(),
-                        quality: .full,
-                        backgroundSkyJulianDateKey: 0
+                        quality: .full
                     )
                 )
             )
         )
+        .environment(\.backgroundSkyJulianDateKey, 0)
     }
 }
 

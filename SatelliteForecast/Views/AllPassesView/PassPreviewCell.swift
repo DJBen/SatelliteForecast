@@ -215,14 +215,14 @@ struct PassPreviewCell_Previews: PreviewProvider {
                                     observer: observer,
                                     basicChartConfigs: .init(),
                                     configs: .preset,
-                                    quality: .full,
-                                    backgroundSkyJulianDateKey: passSnapshot.pass.rise.julianDate.julianDateRoundedToNearestMinute()
+                                    quality: .full
                                 )
                             )
                         )
                     )
                 )
             )
+            .environment(\.backgroundSkyJulianDateKey, passSnapshot.pass.rise.julianDate.julianDateRoundedToNearestMinute())
         }
 
         return Group {

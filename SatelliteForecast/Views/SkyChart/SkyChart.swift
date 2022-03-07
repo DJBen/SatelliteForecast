@@ -178,10 +178,10 @@ struct SkyChart: View {
                 observer: context.observer,
                 basicChartConfigs: context.configs.basicChartConfigs,
                 configs: context.configs.backgroundSkyConfigs,
-                quality: context.quality,
-                backgroundSkyJulianDateKey: backgroundSkyJulianDateKey
+                quality: context.quality
             )
         )
+        .environment(\.backgroundSkyJulianDateKey, backgroundSkyJulianDateKey)
         .overlay(passInfoLabels)
         .overlay(
             SkyChartDynamicIndicator(
@@ -226,12 +226,6 @@ extension ViewProducer where Context == SkyChartContext, ProducedView == SkyChar
                 backgroundSkyViewProducer: .backgroundSky(viewModel: viewModel)
             )
         }
-    }
-}
-
-extension Double {
-    func julianDateRoundedToNearestMinute() -> Double {
-        Date(julianDate: self).dateRoundedAt(at: .toMins(1)).julianDate
     }
 }
 
@@ -334,14 +328,14 @@ struct SkyChart_Previews: PreviewProvider {
                             observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
                             basicChartConfigs: .init(),
                             configs: .init(),
-                            quality: .full,
-                            backgroundSkyJulianDateKey: referenceDate.julianDateRoundedToNearestMinute()
+                            quality: .full
                         )
                     )
                 )
             )
             .padding(20)
             .preferredColorScheme(colorScheme)
+            .environment(\.backgroundSkyJulianDateKey, referenceDate.julianDateRoundedToNearestMinute())
         }
 
         let (tle2, passSnapshots2) = tianHePass
@@ -383,13 +377,13 @@ struct SkyChart_Previews: PreviewProvider {
                         observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
                         basicChartConfigs: .init(),
                         configs: .preset,
-                        quality: .full,
-                        backgroundSkyJulianDateKey: passSnapshots2.pass.rise.julianDate.julianDateRoundedToNearestMinute()
+                        quality: .full
                     )
                 )
             )
         )
         .padding(20)
+        .environment(\.backgroundSkyJulianDateKey, passSnapshots2.pass.rise.julianDate.julianDateRoundedToNearestMinute())
 
         SkyChart(
             viewModel: .mock(state: .init()),
@@ -411,14 +405,14 @@ struct SkyChart_Previews: PreviewProvider {
                         observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
                         basicChartConfigs: .init(),
                         configs: .preset,
-                        quality: .full,
-                        backgroundSkyJulianDateKey: passSnapshots2.pass.rise.julianDate.julianDateRoundedToNearestMinute()
+                        quality: .full
                     )
                 )
             )
         )
         .padding(20)
         .previewDisplayName("Placeholder")
+        .environment(\.backgroundSkyJulianDateKey, passSnapshots2.pass.rise.julianDate.julianDateRoundedToNearestMinute())
     }
 }
 #endif

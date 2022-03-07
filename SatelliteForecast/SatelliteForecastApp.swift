@@ -23,7 +23,7 @@ struct SatelliteForecastApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ViewProducer.satelliteOverview(
+            ViewProducer.root(
                 viewModel: store
             )
             .view()

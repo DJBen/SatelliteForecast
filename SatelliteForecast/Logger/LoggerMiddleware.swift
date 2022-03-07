@@ -54,7 +54,10 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                     // Do nothing
                     break
                 case .backgroundSkyOutput(let backgroundSkyOutput):
-                    print(backgroundSkyOutput)
+                    switch backgroundSkyOutput {
+                    case .rasterizedBackgroundSky(_, let quality, let julianDate, key: _):
+                        print("rasterizedBackgroundSky(quality: \(quality), julianDate: \(julianDate))")
+                    }
                 case .tlePropagator(let tlePropagatorAction):
                     switch tlePropagatorAction {
                     case .foundPassesAndSnapshots(let passSnapshotList, let noradIndex, let observer):
@@ -75,7 +78,12 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                 case .alarmSettingsView(let alarmSettingsViewAction):
                     print(alarmSettingsViewAction)
                 case .realtimeSky(let realtimeSkyViewAction):
-                    print(realtimeSkyViewAction)
+                    switch realtimeSkyViewAction {
+                    case .propagateCurrentEphemerides(let tles, let observer, let julianDate):
+                        print("propagateCurrentEphemerides(tles.count: \(tles.count), observer: \(observer), julianDate: \(julianDate))")
+                    case .setRealtimeSkyViewActive(_):
+                        print(realtimeSkyViewAction)
+                    }
                 case .realtimeSkyOutput(let realtimeSkyViewOutput):
                     print(realtimeSkyViewOutput)
                 }

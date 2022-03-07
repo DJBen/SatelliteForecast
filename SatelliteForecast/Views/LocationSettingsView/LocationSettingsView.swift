@@ -5,10 +5,11 @@
 //  Created by Ben Lu on 8/1/21.
 //
 
-import SwiftUI
 import Combine
 import CombineRex
 import MapKit
+import SatelliteForecastCore
+import SwiftUI
 
 struct LocationSettingsViewState: Equatable {
     static func == (lhs: LocationSettingsViewState, rhs: LocationSettingsViewState) -> Bool {

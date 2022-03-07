@@ -170,7 +170,7 @@ struct PassView_Previews: PreviewProvider {
             ],
             satelliteLoader: SatelliteLoaderResources(
                 info: [
-                    .brightest100: .success(brightest100)
+                    .brightest100: .loaded(brightest100)
                 ]
             ),
             locationState: LocationState(
@@ -225,14 +225,14 @@ struct PassView_Previews: PreviewProvider {
                                 observer: observer,
                                 basicChartConfigs: .init(),
                                 configs: .preset,
-                                quality: .full,
-                                backgroundSkyJulianDateKey: passSnapshots[0].pass.rise.julianDate.julianDateRoundedToNearestMinute()
+                                quality: .full
                             )
                         )
                     )
                 )
             )
         )
+        .environment(\.backgroundSkyJulianDateKey, passSnapshots[0].pass.rise.julianDate.julianDateRoundedToNearestMinute())
     }
 }
 #endif

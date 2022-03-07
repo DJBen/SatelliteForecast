@@ -27,25 +27,9 @@ enum SatelliteOverviewViewAction {
 }
 
 struct SatelliteOverviewViewState: Equatable {
-    var navigationState: NavigationState
-    var julianDate: Double
+    var navigationState: NavigationState = .init()
+    var julianDate: Double = 0
     var location: CLLocation?
-
-    static func project(state: AppState) -> SatelliteOverviewViewState {
-        SatelliteOverviewViewState(
-            navigationState: state.navigationState,
-            julianDate: state.julianDate,
-            location: state.locationState.location
-        )
-    }
-
-    static var initial: SatelliteOverviewViewState {
-        SatelliteOverviewViewState(
-            navigationState: .init(),
-            julianDate: 0,
-            location: nil
-        )
-    }
 }
 
 protocol SatelliteOverviewView: View {}
@@ -210,9 +194,9 @@ extension ViewProducer where Context == Void, ProducedView == SatelliteOverviewV
             SatelliteOverviewViewImpl(
                 viewModel: viewModel.projection(
                     action: AppAction.satelliteOverview,
-                    state: SatelliteOverviewViewState.project(state:)
+                    state: SatelliteOverviewViewState.project(appState:)
                 )
-                .asObservableViewModel(initialState: .initial, emitsValue: .whenDifferent),
+                .asObservableViewModel(initialState: .init(), emitsValue: .whenDifferent),
                 listViewProducer: ViewProducer<SatelliteListViewContext, SatelliteListView>
                     .satelliteListView(viewModel: viewModel),
                 singleSatelliteWrappingViewProducer: ViewProducer<SingleSatelliteWrappingViewContext, SingleSatelliteWrappingView>.singleSatelliteWrappingView(viewModel: viewModel),

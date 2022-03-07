@@ -431,6 +431,8 @@ struct AllPassesView_Previews: PreviewProvider {
             julianDateRange: Date().julianDate...Date().julianDate + 1,
             observer: observer
         )
+        let passSnapshots = tianHePasses[0]
+
         ForEach(["iPhone SE (2nd generation)", "iPhone 13 Pro Max"], id: \.self) { previewDevice in
             NavigationView {
                 AllPassesView(
@@ -443,7 +445,6 @@ struct AllPassesView_Previews: PreviewProvider {
                     ),
                     context: context,
                     skyChartProducer: ViewProducer<SkyChartContext, SkyChart> { context in
-                        let passSnapshots = tianHePasses[0]
                         return SkyChart(
                             viewModel: .mock(
                                 state: SkyChartViewState(
@@ -487,8 +488,7 @@ struct AllPassesView_Previews: PreviewProvider {
                                         observer: observer,
                                         basicChartConfigs: .init(),
                                         configs: .preset,
-                                        quality: .full,
-                                        backgroundSkyJulianDateKey: passSnapshots.pass.rise.julianDate.julianDateRoundedToNearestMinute()
+                                        quality: .full
                                     )
                                 )
                             )
@@ -498,6 +498,7 @@ struct AllPassesView_Previews: PreviewProvider {
                 )
             }
             .previewDevice(PreviewDevice(rawValue: previewDevice))
+            .environment(\.backgroundSkyJulianDateKey, passSnapshots.pass.rise.julianDate.julianDateRoundedToNearestMinute())
         }
     }
 }
