@@ -16,8 +16,8 @@ class Store: ReduxStoreBase<AppAction, AppState> {
     static let reducer: Reducer<AppAction, AppState> = [
         Reducer<LocationAction, AppState>.locationReducer.lift(action: \.location),
         Reducer<NotificationAction, AppState>.notificationReducer.lift(action: \.notification),
-        Reducer<SatelliteLoaderAction, SatelliteLoaderState>.satelliteLoaderReducer.lift(),
-        Reducer<SatelliteLoaderOutput, SatelliteLoaderState>.satelliteLoaderOutputReducer.lift(),
+        Reducer<TLELoaderAction, TLELoaderState>.tleLoaderReducer.lift(),
+        Reducer<TLELoaderOutput, TLELoaderState>.tleLoaderOutputReducer.lift(),
         Reducer.satelliteOverviewReducer.lift(),
         Reducer<SatelliteListViewAction, AppState>.satelliteListViewReducer.lift(action: \.satelliteListView),
         Reducer<AllPassesViewAction, AppState>.allPassesViewReducer.lift(action: \.allPassesView),
@@ -39,7 +39,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
     .reduce(Reducer<AppAction, AppState>.identity, <>)
 
     static func middlewareBuilder(
-        satelliteLoader: SatelliteLoader
+        tleLoader: TLELoader
     ) -> AnyMiddleware<AppAction, AppAction, AppState> {
         let middlewares: [AnyMiddleware<AppAction, AppAction, AppState>] = [
             LocationMiddleware().lift(),
@@ -55,17 +55,17 @@ class Store: ReduxStoreBase<AppAction, AppState> {
                 )
                 .eraseToAnyMiddleware(),
             EffectMiddleware.locationLogger.lift(),
-            EffectMiddleware.satelliteLoader(satelliteLoader)
+            EffectMiddleware.tleLoader(tleLoader)
                 .lift()
                 .inject(
-                    SatelliteLoaderDependencies()
+                    TLELoaderDependencies()
                 )
                 .eraseToAnyMiddleware(),
-            EffectMiddleware.calculatePassAfterSatelliteLoader.lift(),
-            EffectMiddleware.selectSatelliteAfterSatelliteLoader.lift(),
-            EffectMiddleware.selectSpecialSatelliteAfterSatelliteLoader.lift(),
+            EffectMiddleware.calculatePassAfterTLELoader.lift(),
+            EffectMiddleware.selectSatelliteAfterTLELoader.lift(),
+            EffectMiddleware.selectSpecialSatelliteAfterTLELoader.lift(),
             EffectMiddleware.satelliteOverview.lift(),
-            EffectMiddleware.satelliteListView(satelliteLoader: satelliteLoader)
+            EffectMiddleware.satelliteListView(tleLoader: tleLoader)
                 .lift(
                     inputAction: \.satelliteListView
                 )
@@ -112,12 +112,12 @@ class Store: ReduxStoreBase<AppAction, AppState> {
     }
 
     private init() {
-        let satelliteLoader: SatelliteLoader = SatelliteLoaderImpl(session: URLSession.shared)
+        let tleLoader: TLELoader = TLELoaderImpl(session: URLSession.shared)
 
         super.init(
             subject: .combine(initialValue: .empty),
             reducer: Store.reducer,
-            middleware: Store.middlewareBuilder(satelliteLoader: satelliteLoader),
+            middleware: Store.middlewareBuilder(tleLoader: tleLoader),
             emitsValue: .whenDifferent
         )
     }

@@ -13,8 +13,8 @@ enum AppAction {
     case backgroundTask(BackgroundTask)
     case notification(NotificationAction)
     case location(LocationAction)
-    case satelliteLoader(SatelliteLoaderAction)
-    case satelliteLoaderOutput(SatelliteLoaderOutput)
+    case tleLoader(TLELoaderAction)
+    case tleLoaderOutput(TLELoaderOutput)
     case timer(TimerAction)
     case tlePropagator(TLEPropagatorAction)
 
@@ -82,25 +82,25 @@ extension AppAction {
         }
     }
 
-    public var satelliteLoader: SatelliteLoaderAction? {
+    public var tleLoader: TLELoaderAction? {
         get {
-            guard case let .satelliteLoader(value) = self else { return nil }
+            guard case let .tleLoader(value) = self else { return nil }
             return value
         }
         set {
-            guard case .satelliteLoader = self, let newValue = newValue else { return }
-            self = .satelliteLoader(newValue)
+            guard case .tleLoader = self, let newValue = newValue else { return }
+            self = .tleLoader(newValue)
         }
     }
 
-    public var satelliteLoaderOutput: SatelliteLoaderOutput? {
+    public var tleLoaderOutput: TLELoaderOutput? {
         get {
-            guard case let .satelliteLoaderOutput(value) = self else { return nil }
+            guard case let .tleLoaderOutput(value) = self else { return nil }
             return value
         }
         set {
-            guard case .satelliteLoaderOutput = self, let newValue = newValue else { return }
-            self = .satelliteLoaderOutput(newValue)
+            guard case .tleLoaderOutput = self, let newValue = newValue else { return }
+            self = .tleLoaderOutput(newValue)
         }
     }
 

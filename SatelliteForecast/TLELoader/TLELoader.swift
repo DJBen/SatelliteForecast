@@ -1,5 +1,5 @@
 //
-//  SatelliteLoader.swift
+//  TLELoader.swift
 //  SatelliteForecast
 //
 //  Created by Ben Lu on 7/9/21.
@@ -13,15 +13,15 @@ import SatelliteForecastCore
 import SatelliteKit
 
 /// Abstracts common logic of satellite loader into publishers.
-protocol SatelliteLoader {
-    func loadSatelliteCategoryPublisher(category: SatelliteCategory) -> AnyPublisher<Map<Int, SatelliteInfo>, SatelliteLoaderError>
+protocol TLELoader {
+    func loadSatelliteTLEsPublisher(category: SatelliteCategory) -> AnyPublisher<Map<Int, SatelliteInfo>, TLELoaderError>
 }
 
-struct SatelliteLoaderImpl {
+struct TLELoaderImpl {
     let session: URLSession
 }
 
-extension SatelliteLoaderImpl: SatelliteLoader {
+extension TLELoaderImpl: TLELoader {
     /// Load satellite data of a selected category from local file. If not exist, it will throw the upstream error provided in the argument.
     /// - Parameters:
     ///   - category: The selected category of satellite data to load.
@@ -51,7 +51,7 @@ extension SatelliteLoaderImpl: SatelliteLoader {
         }
     }
 
-    func loadSatelliteCategoryPublisher(category: SatelliteCategory) -> AnyPublisher<Map<Int, SatelliteInfo>, SatelliteLoaderError> {
+    func loadSatelliteTLEsPublisher(category: SatelliteCategory) -> AnyPublisher<Map<Int, SatelliteInfo>, TLELoaderError> {
         session
             .dataTaskPublisher(for: URLRequest(url: category.url))
             .map { $0.data }
@@ -59,7 +59,7 @@ extension SatelliteLoaderImpl: SatelliteLoader {
                 // Try to load local file if exists when network failed.
                 loadLocalSatelliteDataPublisher(category: category, upstreamError: error)
             }
-            .mapError { SatelliteLoaderError.other($0) }
+            .mapError { TLELoaderError.other($0) }
             .tryMap { data -> Map<Int, SatelliteInfo> in
                 precondition(!Thread.isMainThread)
                 let tles = try TLE.load(chunk: String(data: data, encoding: .utf8)!)

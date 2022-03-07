@@ -21,14 +21,14 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                     print(notificationAction)
                 case .location(let locationAction):
                     print(locationAction)
-                case .satelliteLoader(let satelliteLoaderAction):
-                    print(satelliteLoaderAction)
-                case .satelliteLoaderOutput(let satelliteLoaderOutput):
-                    switch satelliteLoaderOutput {
-                    case .loadedSatelliteInfo(let satelliteCategory, _, let selectSpecialNoradIndex, let selectNoradIndex, let calculatePass):
-                        print("loadedSatelliteInfo(\(satelliteCategory), selectSpecialNoradIndex: \(String(describing: selectSpecialNoradIndex)), selectNoradIndex: \(String(describing: selectNoradIndex)), calculatePass: \(calculatePass != nil))")
+                case .tleLoader(let tleLoaderAction):
+                    print(tleLoaderAction)
+                case .tleLoaderOutput(let tleLoaderOutput):
+                    switch tleLoaderOutput {
+                    case .loadedSatelliteTLEs(let satelliteCategory, _, let selectSpecialNoradIndex, let selectNoradIndex, let calculatePass):
+                        print("loadedSatelliteTLEs(\(satelliteCategory), selectSpecialNoradIndex: \(String(describing: selectSpecialNoradIndex)), selectNoradIndex: \(String(describing: selectNoradIndex)), calculatePass: \(calculatePass != nil))")
                     case .failedLoadingTLEFile(_, _):
-                        print(satelliteLoaderOutput)
+                        print(tleLoaderOutput)
                     }
                 case .rootView(let rootViewAction):
                     print(rootViewAction)

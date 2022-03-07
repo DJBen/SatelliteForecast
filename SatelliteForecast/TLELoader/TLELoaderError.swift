@@ -1,5 +1,5 @@
 //
-//  SatelliteLoaderError.swift
+//  TLELoaderError.swift
 //  SatelliteForecast
 //
 //  Created by Ben Lu on 7/9/21.
@@ -8,7 +8,7 @@
 import Foundation
 import SatelliteKit
 
-enum SatelliteLoaderError: Error, LocalizedError {
+enum TLELoaderError: Error, LocalizedError {
     case tle(SatKitError)
     case other(Error)
 
@@ -23,8 +23,8 @@ enum SatelliteLoaderError: Error, LocalizedError {
     }
 }
 
-extension SatelliteLoaderError: Equatable {
-    static func == (lhs: SatelliteLoaderError, rhs: SatelliteLoaderError) -> Bool {
+extension TLELoaderError: Equatable {
+    static func == (lhs: TLELoaderError, rhs: TLELoaderError) -> Bool {
         switch (lhs, rhs) {
         case let (.tle(e1), .tle(e2)):
             return e1 == e2

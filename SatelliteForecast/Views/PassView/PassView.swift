@@ -168,7 +168,7 @@ struct PassView_Previews: PreviewProvider {
                     passSnapshots: passSnapshots
                 )
             ],
-            satelliteLoader: SatelliteLoaderResources(
+            tleLoader: TLELoaderResources(
                 info: [
                     .brightest100: .loaded(brightest100)
                 ]

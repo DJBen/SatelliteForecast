@@ -35,7 +35,7 @@ extension EffectMiddleware where
 
             case let .selectCategory(category):
                 return .sequence([
-                    .satelliteLoader(.loadSatelliteCategory(category))
+                    .tleLoader(.loadSatelliteTLEs(category: category))
                 ])
 
             case .selectObserver:

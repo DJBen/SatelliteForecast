@@ -21,13 +21,13 @@ enum SingleSatelliteWrappingViewAction {
 }
 
 struct SingleSatelliteWrappingViewState: Equatable {
-    var satellite: Loadable<SatelliteInfo, SatelliteLoaderError> = .notLoaded
+    var satellite: Loadable<SatelliteInfo, TLELoaderError> = .notLoaded
 
     static func project(state: AppState, context: SingleSatelliteWrappingViewContext) -> SingleSatelliteWrappingViewState {
         let noradIndex = context.selectedNoradIndex
 
         return SingleSatelliteWrappingViewState(
-            satellite: state.satelliteLoader.info[.brightest100]?.flatMap { satellites in
+            satellite: state.tleLoader.info[.brightest100]?.flatMap { satellites in
                 satellites[noradIndex]
             } ?? .notLoaded
         )
@@ -41,7 +41,7 @@ struct SingleSatelliteWrappingView: View {
 
     @ViewBuilder func satelliteContent<Content: View, FailedContent: View>(
         @ViewBuilder contentBuilder: (SatelliteInfo) -> Content,
-        @ViewBuilder failedContentBuilder: (Int, SatelliteLoaderError) -> FailedContent
+        @ViewBuilder failedContentBuilder: (Int, TLELoaderError) -> FailedContent
     ) -> some View {
         let satellite = viewModel.state.satellite
         Group {

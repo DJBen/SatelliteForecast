@@ -398,7 +398,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                         )
                     )
                 ],
-                satelliteLoader: SatelliteLoaderResources(
+                tleLoader: TLELoaderResources(
                     info: [.brightest100: .loaded(
                         [tle.noradIndex: SatelliteInfo(noradIndex: tle.noradIndex, tle: tle)]
                     )]
@@ -448,7 +448,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                         )
                     )
                 ],
-                satelliteLoader: SatelliteLoaderResources(
+                tleLoader: TLELoaderResources(
                     info: [.brightest100: .loaded(
                         [tle2.noradIndex: SatelliteInfo(noradIndex: tle2.noradIndex, tle: tle2)]
                     )]
@@ -494,7 +494,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                         )
                     )
                 ],
-                satelliteLoader: SatelliteLoaderResources(
+                tleLoader: TLELoaderResources(
                     info: [.brightest100: .loaded(
                         [tle3.noradIndex: SatelliteInfo(noradIndex: tle3.noradIndex, tle: tle3)]
                     )]

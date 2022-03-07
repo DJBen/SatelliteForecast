@@ -33,7 +33,7 @@ struct AppState: Equatable {
     var satelliteTrails: [Int: SatelliteTrails] = [:]
 
     /// Location agnostic satellite information, including its orbit and metadata.
-    var satelliteLoader: SatelliteLoaderResources = .init()
+    var tleLoader: TLELoaderResources = .init()
 
     var locationState: LocationState = .init()
 
@@ -59,7 +59,7 @@ struct AppState: Equatable {
     }
 
     var selectedSatelliteInfo: SatelliteInfo? {
-        navigationState.selectedNoradIndex.flatMap { satelliteLoader[$0] }
+        navigationState.selectedNoradIndex.flatMap { tleLoader[$0] }
     }
 
     var currentSatelliteSnapshots: [SatelliteSnapshot] {

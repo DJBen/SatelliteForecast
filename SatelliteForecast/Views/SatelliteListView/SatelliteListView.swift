@@ -60,13 +60,13 @@ fileprivate extension SatelliteInfo {
 }
 
 struct SatelliteListViewState: Equatable {
-    var satelliteInfo: [SatelliteCategory: Loadable<Map<Int, SatelliteInfo>, SatelliteLoaderError>] = [:]
+    var satelliteInfo: [SatelliteCategory: Loadable<Map<Int, SatelliteInfo>, TLELoaderError>] = [:]
     var satelliteSearchText: String = ""
     var selectedNoradIndex: Int?
 
     static func project(state: AppState) -> SatelliteListViewState {
         return SatelliteListViewState(
-            satelliteInfo: state.satelliteLoader.info,
+            satelliteInfo: state.tleLoader.info,
             satelliteSearchText: state.navigationState.listNavigation.satelliteSearchText,
             selectedNoradIndex: state.navigationState.listNavigation.noradIndex
         )
@@ -80,9 +80,9 @@ struct SatelliteListView: View {
 
     @ViewBuilder func satelliteContent<Content: View, FailedContent: View>(
         @ViewBuilder contentBuilder: (Map<Int, SatelliteInfo>) -> Content,
-        @ViewBuilder failedContentBuilder: (SatelliteLoaderError) -> FailedContent
+        @ViewBuilder failedContentBuilder: (TLELoaderError) -> FailedContent
     ) -> some View {
-        let satellites: Loadable<Map<Int, SatelliteInfo>, SatelliteLoaderError> = viewModel.state.satelliteInfo[context.category]?.map { info in
+        let satellites: Loadable<Map<Int, SatelliteInfo>, TLELoaderError> = viewModel.state.satelliteInfo[context.category]?.map { info in
             let searchText = viewModel.state.satelliteSearchText
             if searchText.isEmpty {
                 return info
