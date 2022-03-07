@@ -12,7 +12,7 @@ import SwiftRex
 fileprivate let logger = Logger(subsystem: "io.djben.tleLoader", category: "reducer")
 
 extension Reducer where ActionType == TLELoaderAction, StateType == TLELoaderState {
-    static let tleLoaderReducer = Reducer.reduce { action, state in
+    public static let tleLoaderReducer = Reducer.reduce { action, state in
         switch action {
         case .loadSatelliteTLEs(let category, _, _, _):
             state.resources.info[category] = .loading
@@ -21,7 +21,7 @@ extension Reducer where ActionType == TLELoaderAction, StateType == TLELoaderSta
 }
 
 extension Reducer where ActionType == TLELoaderOutput, StateType == TLELoaderState {
-    static let tleLoaderOutputReducer = Reducer.reduce { action, state in
+    public static let tleLoaderOutputReducer = Reducer.reduce { action, state in
         switch action {
         case let .loadedSatelliteTLEs(category, info, _, _, _):
             state.resources.info[category] = .loaded(info)

@@ -13,11 +13,11 @@ import SatelliteForecastCore
 import SatelliteKit
 
 /// Abstracts common logic of satellite loader into publishers.
-protocol TLELoader {
+public protocol TLELoader {
     func loadSatelliteTLEsPublisher(category: SatelliteCategory) -> AnyPublisher<Map<Int, SatelliteInfo>, TLELoaderError>
 }
 
-struct TLELoaderImpl {
+public struct TLELoaderImpl {
     let session: URLSession
 }
 
@@ -51,7 +51,7 @@ extension TLELoaderImpl: TLELoader {
         }
     }
 
-    func loadSatelliteTLEsPublisher(category: SatelliteCategory) -> AnyPublisher<Map<Int, SatelliteInfo>, TLELoaderError> {
+    public func loadSatelliteTLEsPublisher(category: SatelliteCategory) -> AnyPublisher<Map<Int, SatelliteInfo>, TLELoaderError> {
         session
             .dataTaskPublisher(for: URLRequest(url: category.url))
             .map { $0.data }
@@ -85,7 +85,7 @@ extension TLELoaderImpl: TLELoader {
     }
 }
 
-fileprivate extension SatelliteInfo {
+extension SatelliteInfo {
     init(tle: TLE) {
         let satCat = SatCat.with(noradCatID: tle.noradIndex)
         let ucsSat = UCSSat.with(noradCatID: tle.noradIndex)

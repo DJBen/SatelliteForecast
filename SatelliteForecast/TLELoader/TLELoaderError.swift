@@ -8,11 +8,11 @@
 import Foundation
 import SatelliteKit
 
-enum TLELoaderError: Error, LocalizedError {
+public enum TLELoaderError: Error, LocalizedError {
     case tle(SatKitError)
     case other(Error)
 
-    var errorDescription: String? {
+    public var errorDescription: String? {
         switch self {
         case let .tle(error):
             return error.localizedDescription
@@ -24,7 +24,7 @@ enum TLELoaderError: Error, LocalizedError {
 }
 
 extension TLELoaderError: Equatable {
-    static func == (lhs: TLELoaderError, rhs: TLELoaderError) -> Bool {
+    public static func == (lhs: TLELoaderError, rhs: TLELoaderError) -> Bool {
         switch (lhs, rhs) {
         case let (.tle(e1), .tle(e2)):
             return e1 == e2

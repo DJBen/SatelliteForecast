@@ -112,7 +112,17 @@ class Store: ReduxStoreBase<AppAction, AppState> {
     }
 
     private init() {
-        let tleLoader: TLELoader = TLELoaderImpl(session: URLSession.shared)
+        let tleLoader: TLELoader
+        if ProcessInfo.processInfo.environment["USE_LOCAL_TLES"] == "YES" {
+            print("[TLE Loader] Using local TLE loader")
+            #if DEBUG
+            tleLoader = LocalTLELoader()
+            #else
+            tleLoader = TLELoaderImpl(session: URLSession.shared)
+            #endif
+        } else {
+            tleLoader = TLELoaderImpl(session: URLSession.shared)
+        }
 
         super.init(
             subject: .combine(initialValue: .empty),

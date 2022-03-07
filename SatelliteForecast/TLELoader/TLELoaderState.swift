@@ -10,10 +10,16 @@ import Foundation
 import SatelliteForecastCore
 import SatelliteKit
 
-struct TLELoaderResources {
-    var info: [SatelliteCategory: Loadable<Map<Int, SatelliteInfo>, TLELoaderError>] = [:]
+public struct TLELoaderResources {
+    public var info: [SatelliteCategory: Loadable<Map<Int, SatelliteInfo>, TLELoaderError>]
 
-    subscript(noradIndex: Int) -> SatelliteInfo? {
+    public init(
+        info: [SatelliteCategory: Loadable<Map<Int, SatelliteInfo>, TLELoaderError>] = [:]
+    ) {
+        self.info = info
+    }
+
+    public subscript(noradIndex: Int) -> SatelliteInfo? {
         return info.values
             .first { $0.content?[noradIndex] != nil }
             .flatMap { $0.content?[noradIndex] }
@@ -22,9 +28,17 @@ struct TLELoaderResources {
 
 extension TLELoaderResources: Equatable {}
 
-struct TLELoaderState {
-    var resources: TLELoaderResources = .init()
-    var currentDate: Double = 0
+public struct TLELoaderState {
+    public var resources: TLELoaderResources
+    public var currentDate: Double
+
+    public init(
+        resources: TLELoaderResources = .init(),
+        currentDate: Double = 0
+    ) {
+        self.resources = resources
+        self.currentDate = currentDate
+    }
 }
 
 extension TLELoaderState: Equatable {}

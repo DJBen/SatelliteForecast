@@ -16,6 +16,7 @@ struct AppState: Equatable {
             print("[Navigation] \(navigationState)")
         }
     }
+
     /// A date that mostly approximates the current date.
     var currentDate: Double = Date().julianDate
 

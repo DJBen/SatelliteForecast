@@ -10,19 +10,19 @@ import Foundation
 import SatelliteForecastCore
 import SatelliteKit
 
-struct SelectNoradIndexParam {
+public struct SelectNoradIndexParam {
     let noradIndex: Int
     let dateRange: ClosedRange<Double>
     let observer: LatLonAlt
 }
 
-struct TLELoaderCalculatePassParam {
+public struct TLELoaderCalculatePassParam {
     let noradID: Int
     let dateRange: ClosedRange<Double>
     let observer: LatLonAlt
 }
 
-enum TLELoaderAction {
+public enum TLELoaderAction {
     /// Load a category of satellite TLEs
     case loadSatelliteTLEs(
         category: SatelliteCategory,
@@ -32,7 +32,7 @@ enum TLELoaderAction {
     )
 }
 
-enum TLELoaderOutput {
+public enum TLELoaderOutput {
     /// Successfully loaded a cateogy of satellite TLEs
     case loadedSatelliteTLEs(
         category: SatelliteCategory,
