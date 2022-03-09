@@ -128,11 +128,11 @@ struct PassView_Previews: PreviewProvider {
         let julianDateRange = Date().advanced(by: -60 * 60 * 2).julianDate...Date().advanced(by: 60 * 60 * 22).julianDate
         // 2000 Broadway, Redwood City, CA 94063
         let observer = LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0)
-        let snapshots = tle.snapshots(
+        let snapshots = try! tle.snapshots(
             observer: observer,
             julianDateRange: julianDateRange
         )
-        let passSnapshots = tle.findPasses(
+        let passSnapshots = try! tle.findPasses(
             noradIndex: tle.noradIndex,
             observer: observer,
             coarseSnapshots: snapshots

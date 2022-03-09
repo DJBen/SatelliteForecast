@@ -244,12 +244,12 @@ struct SkyChart_Previews: PreviewProvider {
         let date = formatter.date(from: "2021-06-02T20:35:30+0800")!
 
         let observer = LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0)
-        let snapshots = tle.snapshots(
+        let snapshots = try! tle.snapshots(
             observer: observer,
             julianDateRange: date.julianDate...date.addingTimeInterval(800).julianDate
         )
 
-        let passSnapshots = tle.findPasses(
+        let passSnapshots = try! tle.findPasses(
             noradIndex: tle.noradIndex,
             observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
             coarseSnapshots: snapshots
@@ -271,12 +271,12 @@ struct SkyChart_Previews: PreviewProvider {
         let date = formatter.date(from: "2021-06-02T06:29:00-0600")!
 
         let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
-        let snapshots = tle.snapshots(
+        let snapshots = try! tle.snapshots(
             observer: observer,
             julianDateRange: date.julianDate...date.addingTimeInterval(800).julianDate
         )
 
-        let passSnapshots = tle.findPasses(
+        let passSnapshots = try! tle.findPasses(
             noradIndex: tle.noradIndex,
             observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
             coarseSnapshots: snapshots

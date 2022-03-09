@@ -155,12 +155,12 @@ struct PassPreviewCell_Previews: PreviewProvider {
         // Date range
         let startDate = Date(timeIntervalSinceReferenceDate: 20 * 365 * 86400)
         let julianDateRange = startDate.advanced(by: -60 * 60 * 2).julianDate...startDate.advanced(by: 60 * 60 * 30).julianDate
-        let coarseSnapshots = tle.snapshots(
+        let coarseSnapshots = try! tle.snapshots(
             observer: observer,
             julianDateRange: julianDateRange,
             interval: 60
         )
-        let passSnapshots = tle.findPasses(
+        let passSnapshots = try! tle.findPasses(
             noradIndex: tle.noradIndex,
             observer: observer,
             coarseSnapshots: coarseSnapshots

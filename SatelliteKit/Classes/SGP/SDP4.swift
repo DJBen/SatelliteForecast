@@ -49,7 +49,7 @@ class SDP4: Propagator {
 
         deepSecularEffects(minutesFromEphoch: minsAfterEpoch)
 
-        if n_new < 0 { throw SatKitError.SGP("ERROR 2: mean motion less than zero") }
+        if n_new < 0 { throw SatKitError.SGP(tle.noradIndex, "ERROR 2: mean motion less than zero") }
 
         let tempa = 1.0 - super.c₁ * minsAfterEpoch
         a = pow(EarthConstants.kₑ / n_new, ⅔) * tempa * tempa

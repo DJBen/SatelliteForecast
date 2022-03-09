@@ -16,9 +16,9 @@ extension SatelliteSnapshot {
         julianDate: Double,
         observer: LatLonAlt,
         qsMag: QSMag? = nil
-    ) {
+    ) throws {
         let satellite = Satellite(withTLE: tle)
-        let eciPosition = satellite.position(julianDays: julianDate)
+        let eciPosition = try satellite.position(julianDays: julianDate)
         let obsCel = geo2eci(julianDays: julianDate, geodetic: observer)
 
         func topVector2AziEleDst(_ top: Vector) -> AziEleDst {
@@ -75,8 +75,8 @@ extension TLE {
         julianDate: Double,
         observer: LatLonAlt,
         qsMag: QSMag? = nil
-    ) -> SatelliteSnapshot {
-        return SatelliteSnapshot(
+    ) throws -> SatelliteSnapshot {
+        return try SatelliteSnapshot(
             tle: self,
             julianDate: julianDate,
             observer: observer,
@@ -95,15 +95,15 @@ extension TLE {
         julianDateRange: ClosedRange<Double>,
         qsMag: QSMag? = nil,
         interval: TimeInterval = 30
-    ) -> [SatelliteSnapshot] {
-        return stride(
+    ) throws -> [SatelliteSnapshot] {
+        return try stride(
             from: julianDateRange.lowerBound,
             // Append interval to overshoot the upperBound and make sure it is included.
             through: julianDateRange.upperBound + interval * TimeConstants.sec2day,
             by: interval * TimeConstants.sec2day
         )
         .map { (julianDate) in
-            snapshot(
+            try snapshot(
                 julianDate: julianDate,
                 observer: observer,
                 qsMag: qsMag
@@ -117,8 +117,8 @@ extension TLE {
         julianDateRange: ClosedRange<Double>,
         qsMag: QSMag? = nil,
         fineInterval: TimeInterval = 3
-    ) -> PassSnapshots {
-        let fineSnapshots = snapshots(
+    ) throws -> PassSnapshots {
+        let fineSnapshots = try snapshots(
             observer: observer,
             julianDateRange: julianDateRange,
             qsMag: qsMag,
@@ -257,7 +257,7 @@ extension TLE {
         qsMag: QSMag? = nil,
         minElevation: Double = 10,
         fineInterval: TimeInterval = 3
-    ) -> [PassSnapshots] {
+    ) throws -> [PassSnapshots] {
         var snapshotBeforeRising: SatelliteSnapshot?
         var snapshotAfterSetting: SatelliteSnapshot?
         var passSnapshotsList = [PassSnapshots]()
@@ -277,7 +277,7 @@ extension TLE {
             }
 
             if let fromDate = snapshotBeforeRising?.julianDate, let toDate = snapshotAfterSetting?.julianDate, fromDate < toDate {
-                let passSnapshots = generatePassInfo(
+                let passSnapshots = try generatePassInfo(
                     noradIndex: noradIndex,
                     observer: observer,
                     julianDateRange: fromDate...toDate,

@@ -89,7 +89,7 @@ struct SatelliteElevationGraphState: Equatable {
 
         return SatelliteElevationGraphState(
             currentJulianDate: state.julianDate,
-            currentSnapshot: satellite.tle.snapshot(
+            currentSnapshot: try! satellite.tle.snapshot(
                 julianDate: state.julianDate,
                 observer: observer
             ),
@@ -393,7 +393,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                 satelliteTrails: [
                     tle.noradIndex: SatelliteTrails(
                         observer: observer,
-                        snapshots: tle.snapshots(
+                        snapshots: try! tle.snapshots(
                             observer: observer,
                             julianDateRange: julianDateRange,
                             interval: 20
@@ -443,7 +443,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                 satelliteTrails: [
                     tle2.noradIndex: SatelliteTrails(
                         observer: observer,
-                        snapshots: tle2.snapshots(
+                        snapshots: try! tle2.snapshots(
                             observer: observer,
                             julianDateRange: julianDateRange,
                             interval: 20
@@ -489,7 +489,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                 satelliteTrails: [
                     tle3.noradIndex: SatelliteTrails(
                         observer: observer,
-                        snapshots: tle3.snapshots(
+                        snapshots: try! tle3.snapshots(
                             observer: observer,
                             julianDateRange: julianDateRange,
                             interval: 20

@@ -55,44 +55,48 @@ extension EffectMiddleware where
                                 let tle = info.tle
                                 logger.debug("Calculating pass within date range \(julianDateRange) for \(String(describing: observer)) at interval of 30s")
 
-                                let snapshots = tle.snapshots(
-                                    observer: observer,
-                                    julianDateRange: julianDateRange,
-                                    qsMag: info.qsMag,
-                                    interval: 30
-                                )
+                                do {
+                                    let snapshots = try tle.snapshots(
+                                        observer: observer,
+                                        julianDateRange: julianDateRange,
+                                        qsMag: info.qsMag,
+                                        interval: 30
+                                    )
 
-                                subject.send(
-                                    DispatchedAction<AppAction>(
-                                        .tlePropagator(
-                                            .propagatedSnapshots(
-                                                snapshots,
-                                                noradIndex: noradIndex,
-                                                observer: observer
+                                    subject.send(
+                                        DispatchedAction<AppAction>(
+                                            .tlePropagator(
+                                                .propagatedSnapshots(
+                                                    snapshots,
+                                                    noradIndex: noradIndex,
+                                                    observer: observer
+                                                )
                                             )
                                         )
                                     )
-                                )
 
-                                let passSnapshots = tle.findPasses(
-                                    noradIndex: tle.noradIndex,
-                                    observer: observer,
-                                    coarseSnapshots: snapshots,
-                                    qsMag: info.qsMag
-                                )
+                                    let passSnapshots = try tle.findPasses(
+                                        noradIndex: tle.noradIndex,
+                                        observer: observer,
+                                        coarseSnapshots: snapshots,
+                                        qsMag: info.qsMag
+                                    )
 
-                                subject.send(
-                                    DispatchedAction<AppAction>(
-                                        .tlePropagator(
-                                            .foundPassesAndSnapshots(
-                                                passSnapshots,
-                                                noradIndex: noradIndex,
-                                                observer: observer
+                                    subject.send(
+                                        DispatchedAction<AppAction>(
+                                            .tlePropagator(
+                                                .foundPassesAndSnapshots(
+                                                    passSnapshots,
+                                                    noradIndex: noradIndex,
+                                                    observer: observer
+                                                )
                                             )
                                         )
                                     )
-                                )
-                                logger.debug("Generated emphemerides and passes of \(noradIndex).")
+                                    logger.debug("Generated emphemerides and passes of \(noradIndex).")
+                                } catch {
+                                    print("Failed to propagate \(noradIndex): \(error)")
+                                }
                             }
 
                             subject.send(completion: .finished)

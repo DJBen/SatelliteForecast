@@ -209,7 +209,7 @@ struct SunlightIndicator_Previews: PreviewProvider {
         // Date range
         let julianDateRange = Date().advanced(by: -60 * 60 * 2).julianDate...Date().advanced(by: 60 * 60 * 30).julianDate
 
-        let jdElevs = tle.snapshots(
+        let jdElevs = try! tle.snapshots(
             observer: observerCoordinate,
             julianDateRange: julianDateRange,
             interval: 60

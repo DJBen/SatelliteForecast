@@ -14,8 +14,8 @@ import Foundation
 public typealias TLE = Elements
 
 public enum SatKitError: Error, Equatable {
-    case TLE(String)
-    case SGP(String)
+    case TLE(UInt, String)
+    case SGP(UInt, String)
 }
 
 /*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -102,7 +102,7 @@ public extension Elements {
         }
         return result
     }
-    
+
     public init(raw: String) throws {
         let lines = raw.components(separatedBy: .newlines)
         try self.init(lines[0], lines[1], lines[2])
@@ -203,7 +203,7 @@ public extension Elements {
 
         stringlet = String(bytes: lineTwoBytes[2...6], encoding: .utf8)!
         guard self.noradIndex == alpha5ID(stringlet.trimmingCharacters(in: .whitespaces)) else {
-            throw SatKitError.TLE("Line1 and Line2 NORAD IDs don't match ..")
+            throw SatKitError.TLE(noradIndex, "Line1 and Line2 NORAD IDs don't match ..")
         }
 
         stringlet = String(bytes: lineTwoBytes[8...15], encoding: .utf8)!
@@ -230,7 +230,7 @@ public extension Elements {
         unKozai(self.n₀ʹ * (π/720.0))
 
         guard (self.ephemType == 0 || self.ephemType == 2 || self.ephemType == 3) else {
-            throw SatKitError.TLE("Line1 ephemerisType ≠ 0, 2 or 3 .. [\(self.ephemType)]")
+            throw SatKitError.TLE(noradIndex, "Line1 ephemerisType ≠ 0, 2 or 3 .. [\(self.ephemType)]")
         }
     }
 }

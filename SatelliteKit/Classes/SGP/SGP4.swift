@@ -101,7 +101,7 @@ class SGP4: Propagator {
         super.e = tle.e₀ - tempe
 
         if super.e >= 1.0 || super.e < -0.001 {
-            throw SatKitError.SGP("ERROR 1: eccentricity out of range 0...1")
+            throw SatKitError.SGP(tle.noradIndex, "ERROR 1: eccentricity out of range 0...1")
         }
 
 /*╭╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╮

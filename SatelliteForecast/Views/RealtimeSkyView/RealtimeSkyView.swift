@@ -23,6 +23,13 @@ enum RealtimeSkyViewOutput {
     case propagatedCurrentEphemerides(
         results: [UInt: RealtimePropagationResult],
         tles: [TLE],
+        partialErrors: [Error],
+        observer: LatLonAlt,
+        julianDate: Double
+    )
+
+    case failedToPropagateCurrentEphemerides(
+        error: Error,
         observer: LatLonAlt,
         julianDate: Double
     )

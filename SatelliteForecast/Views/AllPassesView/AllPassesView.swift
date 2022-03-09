@@ -402,12 +402,12 @@ struct AllPassesView_Previews: PreviewProvider {
         let date = formatter.date(from: "2021-06-02T06:29:00-0600")!
 
         let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
-        let snapshots = tle.snapshots(
+        let snapshots = try! tle.snapshots(
             observer: observer,
             julianDateRange: date.julianDate...date.julianDate + 2
         )
 
-        return tle.findPasses(
+        return try! tle.findPasses(
             noradIndex: tle.noradIndex,
             observer: observer,
             coarseSnapshots: snapshots
