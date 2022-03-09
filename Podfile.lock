@@ -4,8 +4,11 @@ PODS:
     - SwiftRex (~> 0.8.9)
   - CombineRextensions (0.1.7):
     - CombineRex (~> 0.8.6)
+  - CombineRexUtils (1.0.0.LOCAL):
+    - CombineRex (= 0.8.9)
   - CombineUtils (1.0.0.LOCAL)
   - FlagKit (2.2)
+  - QSMag (1.0.0.LOCAL)
   - SatelliteCatalog (1.0.0.LOCAL):
     - SatelliteKit (= 1.0.0.LOCAL)
   - SatelliteCatalogImpl_SQLite (1.0.0.LOCAL):
@@ -13,6 +16,7 @@ PODS:
     - SQLite.swift (~> 0.12.2)
   - SatelliteForecastCore (1.0.0.LOCAL):
     - BTree (~> 4.1.0)
+    - QSMag (= 1.0.0.LOCAL)
     - SatelliteCatalog (= 1.0.0.LOCAL)
     - SatelliteKit (= 1.0.0.LOCAL)
     - SwiftDate (~> 5.0)
@@ -38,8 +42,10 @@ DEPENDENCIES:
   - BTree (~> 4.1.0)
   - CombineRex (= 0.8.9)
   - CombineRextensions
+  - CombineRexUtils (from `./CombineRexUtils`)
   - CombineUtils (from `./CombineUtils`)
   - FlagKit
+  - QSMag (from `./QSMag`)
   - SatelliteCatalog (from `./SatelliteCatalog`)
   - SatelliteCatalogImpl_SQLite (from `./SatelliteCatalogImpl_SQLite`)
   - SatelliteForecastCore (from `./SatelliteForecastCore`)
@@ -64,8 +70,12 @@ SPEC REPOS:
     - TestingExtensions
 
 EXTERNAL SOURCES:
+  CombineRexUtils:
+    :path: "./CombineRexUtils"
   CombineUtils:
     :path: "./CombineUtils"
+  QSMag:
+    :path: "./QSMag"
   SatelliteCatalog:
     :path: "./SatelliteCatalog"
   SatelliteCatalogImpl_SQLite:
@@ -83,11 +93,13 @@ SPEC CHECKSUMS:
   BTree: 99b99930790b88dc5e8bafbf666a5dfb8d7808b4
   CombineRex: 204e28417c27fef95dd917ee1ca37ed91549a2a2
   CombineRextensions: f334525cda6b04493782e80491b1aa45c4429f13
-  CombineUtils: b14c805fa3c145c7ed4b09a8eee0d541510d590e
+  CombineRexUtils: ef9338d04b4047baa695436c8e1cefe9c3e358cd
+  CombineUtils: c9607fcf2487e18c19d4e023f86a018d4f8b7807
   FlagKit: eca7dc89064b0c986302ba9acefad1bf80a435b1
+  QSMag: 5a944b9b2392dac7ba1626a70a94be337db49732
   SatelliteCatalog: 132031627b4f096d1f2a16d169286faae121c0cc
   SatelliteCatalogImpl_SQLite: 33b833c3dc7482f1acdcb167e7cb203137c940d3
-  SatelliteForecastCore: 1342ac3a854493e589eab5a34199c494c3ff1f19
+  SatelliteForecastCore: 82e78dbf34b2e8e408e1fbb33e595c2fea803c33
   SatelliteKit: 53e267558b0bd35f1be23f4dfa022b4503aa0226
   SnapshotTesting: 38947050d13960d57a4a9c166fcf51bca7d56970
   SQLite.swift: d2b4642190917051ce6bd1d49aab565fe794eea3
@@ -98,6 +110,6 @@ SPEC CHECKSUMS:
   SwiftUIVisualEffects: 4b341110ba61926c0287feef7b09b49fc0e7fac3
   TestingExtensions: 75654c5acd46d63c09317cfa0c84f402882a29b0
 
-PODFILE CHECKSUM: 70db97e74d316cbb02bd46bc56b36b17ebd33fa2
+PODFILE CHECKSUM: 883f90e51f8415747c139ae94dff87cf948470c3
 
 COCOAPODS: 1.11.2

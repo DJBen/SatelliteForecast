@@ -24,14 +24,12 @@ class SatelliteTests: XCTestCase {
             2 25544  51.6453  62.2423 0003364  52.3737  88.5313 15.48937685286109
             """
         )
-        let sat = Satellite(withTLE: tle)
 
         let formatter = ISO8601DateFormatter()
         let date = formatter.date(from: "2021-06-02T20:35:30+0800")!
         let observer = LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0)
-        let coarseSnapshots = sat.snapshots(observer: observer, julianDateRange: date.julianDate..<date.addingTimeInterval(800).julianDate)
-
-        let (passes, snapshotsDuringPass) = sat.findPasses(
+        let coarseSnapshots = tle.snapshots(observer: observer, julianDateRange: date.julianDate...date.addingTimeInterval(800).julianDate)
+        let passSnapshots = tle.findPasses(
             noradIndex: 25544,
             observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
             coarseSnapshots: coarseSnapshots

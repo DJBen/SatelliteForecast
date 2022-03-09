@@ -126,6 +126,9 @@
 		EFED97B527D61CB5003FC289 /* visual.txt in Resources */ = {isa = PBXBuildFile; fileRef = EFED97B427D61CB5003FC289 /* visual.txt */; };
 		EFED97B727D62053003FC289 /* LocalTLELoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFED97B627D62053003FC289 /* LocalTLELoader.swift */; };
 		EFED97B927D620CD003FC289 /* tle-new.txt in Resources */ = {isa = PBXBuildFile; fileRef = EFED97B827D620CD003FC289 /* tle-new.txt */; };
+		EFED97BB27D6D689003FC289 /* RootViewMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFED97BA27D6D689003FC289 /* RootViewMiddleware.swift */; };
+		EFED97BD27D6D6C3003FC289 /* RootViewMiddleware+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFED97BC27D6D6C3003FC289 /* RootViewMiddleware+Wiring.swift */; };
+		EFED97BF27D6DB06003FC289 /* ViewDidLoadModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFED97BE27D6DB06003FC289 /* ViewDidLoadModifier.swift */; };
 		EFF750C8266F4DFF005222F8 /* SizeModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFF750C7266F4DFF005222F8 /* SizeModifier.swift */; };
 		EFFD227926B788D30010E1F6 /* LocationSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFFD227826B788D30010E1F6 /* LocationSettingsView.swift */; };
 /* End PBXBuildFile section */
@@ -281,6 +284,9 @@
 		EFED97B427D61CB5003FC289 /* visual.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = visual.txt; sourceTree = "<group>"; };
 		EFED97B627D62053003FC289 /* LocalTLELoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalTLELoader.swift; sourceTree = "<group>"; };
 		EFED97B827D620CD003FC289 /* tle-new.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "tle-new.txt"; sourceTree = "<group>"; };
+		EFED97BA27D6D689003FC289 /* RootViewMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewMiddleware.swift; sourceTree = "<group>"; };
+		EFED97BC27D6D6C3003FC289 /* RootViewMiddleware+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RootViewMiddleware+Wiring.swift"; sourceTree = "<group>"; };
+		EFED97BE27D6DB06003FC289 /* ViewDidLoadModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDidLoadModifier.swift; sourceTree = "<group>"; };
 		EFF750C7266F4DFF005222F8 /* SizeModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeModifier.swift; sourceTree = "<group>"; };
 		EFFD227826B788D30010E1F6 /* LocationSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSettingsView.swift; sourceTree = "<group>"; };
 		F309E703E1576B91309154B8 /* Pods_SatelliteForecast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SatelliteForecast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -380,6 +386,7 @@
 			children = (
 				EF16815F27D42261001BA9C3 /* Wiring */,
 				EF16815D27D420F8001BA9C3 /* RootView.swift */,
+				EFED97BA27D6D689003FC289 /* RootViewMiddleware.swift */,
 				EF16816627D5788E001BA9C3 /* RootViewReducer.swift */,
 				EF16816227D42F2C001BA9C3 /* TabBarItemModifier.swift */,
 				EF16816427D42F6B001BA9C3 /* DynamicTabBarItemView.swift */,
@@ -391,6 +398,7 @@
 			isa = PBXGroup;
 			children = (
 				EF16816027D4226C001BA9C3 /* RootView+Wiring.swift */,
+				EFED97BC27D6D6C3003FC289 /* RootViewMiddleware+Wiring.swift */,
 				EF16816827D578B6001BA9C3 /* RootViewReducer+Wiring.swift */,
 			);
 			path = Wiring;
@@ -504,6 +512,7 @@
 			children = (
 				EF5A908326A0D68400EADA2D /* LazyView.swift */,
 				EF847BFD26CF985C0004806F /* UIColor+Convenience.swift */,
+				EFED97BE27D6DB06003FC289 /* ViewDidLoadModifier.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -983,6 +992,7 @@
 				EF8A423C267EA38C0014AE17 /* SatelliteElevationGraphMiddleware.swift in Sources */,
 				EF7A3198266B6E4900CC33C0 /* SatelliteListView.swift in Sources */,
 				EF16815B27D2D8E2001BA9C3 /* RealtimeSkyViewMiddleware+Wiring.swift in Sources */,
+				EFED97BD27D6D6C3003FC289 /* RootViewMiddleware+Wiring.swift in Sources */,
 				EF847C0126CF9DFA0004806F /* AlarmSettingsView.swift in Sources */,
 				EF16814527D17E98001BA9C3 /* BackgroundSkyView.swift in Sources */,
 				EF1EDA30269204420088DD65 /* SkyChartResources.swift in Sources */,
@@ -1032,12 +1042,14 @@
 				EFED97AD27D6170C003FC289 /* TLELoaderState+Wiring.swift in Sources */,
 				EF58EC1426A6325B0026ADB9 /* PassLabel.swift in Sources */,
 				EF7D4DD826D25A2C005E49D0 /* SatelliteCategory.swift in Sources */,
+				EFED97BF27D6DB06003FC289 /* ViewDidLoadModifier.swift in Sources */,
 				EF8BD19E26B5448F00DE9F33 /* ObserverCell.swift in Sources */,
 				EF3D099C2685A12200B84232 /* SatelliteOverviewView.swift in Sources */,
 				EF16815E27D420F8001BA9C3 /* RootView.swift in Sources */,
 				EF465651267B38780040B762 /* AllPassesViewReducer.swift in Sources */,
 				EF7A313E266B538900CC33C0 /* TLELoaderReducer.swift in Sources */,
 				EF3D09A72689CA3D00B84232 /* SatelliteOverviewReducer.swift in Sources */,
+				EFED97BB27D6D689003FC289 /* RootViewMiddleware.swift in Sources */,
 				EF2FBB2326CA74D60046EF28 /* AllPassesLocationChangeWarning.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

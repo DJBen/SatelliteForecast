@@ -17,4 +17,11 @@ class AstroAlgorithmsTests: XCTestCase {
         let sun = Vector(122_233_179, -76_150_708, -33_016_374)
         XCTAssertTrue(AstroAlgorithms.hasLineOfSight(object1Geo: r1, object2Geo: sun))
     }
+
+    func testAirMass() {
+        XCTAssertEqual(AstroAlgorithms.airMass(zenithAngle: 0), 1, accuracy: 0.01)
+        XCTAssertEqual(AstroAlgorithms.airMass(zenithAngle: .pi / 2), 31, accuracy: 1)
+        XCTAssertEqual(AstroAlgorithms.airMass(zenithAngle: .pi / 6), 1.1547, accuracy: 0.01)
+        XCTAssertEqual(AstroAlgorithms.airMass(zenithAngle: .pi / 4), 1.4142, accuracy: 0.01)
+    }
 }

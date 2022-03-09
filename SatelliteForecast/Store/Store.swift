@@ -64,6 +64,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             EffectMiddleware.calculatePassAfterTLELoader.lift(),
             EffectMiddleware.selectSatelliteAfterTLELoader.lift(),
             EffectMiddleware.selectSpecialSatelliteAfterTLELoader.lift(),
+            EffectMiddleware.rootViewTLELoader.lift(),
             EffectMiddleware.satelliteOverview.lift(),
             EffectMiddleware.satelliteListView(tleLoader: tleLoader)
                 .lift(

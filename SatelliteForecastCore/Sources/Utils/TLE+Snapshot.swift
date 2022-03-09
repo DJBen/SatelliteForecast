@@ -1,5 +1,5 @@
 //
-//  Satellite+Convenience.swift
+//  TLE+Snapshot.swift
 //  SatelliteForecastCore
 //
 //  Created by Ben Lu on 6/4/21.
@@ -7,22 +7,15 @@
 
 import BTree
 import Foundation
+import QSMag
 import SatelliteKit
-
-extension Satellite: Equatable {
-    public static func == (lhs: Satellite, rhs: Satellite) -> Bool {
-        return lhs.tle == rhs.tle &&
-            lhs.commonName == rhs.commonName &&
-            lhs.noradIdent == rhs.noradIdent &&
-            lhs.t₀Days1950 == rhs.t₀Days1950
-    }
-}
 
 extension SatelliteSnapshot {
     public init(
         tle: TLE,
         julianDate: Double,
-        observer: LatLonAlt
+        observer: LatLonAlt,
+        qsMag: QSMag? = nil
     ) {
         let satellite = Satellite(withTLE: tle)
         let eciPosition = satellite.position(julianDays: julianDate)
@@ -45,6 +38,11 @@ extension SatelliteSnapshot {
             object1Geo: eciPosition,
             object2Geo: solarCel * au2Km
         )
+        let phaseAngle = AstroAlgorithms.phaseAngle(
+            targetPosition: eciPosition,
+            sunPosition: solarCel,
+            observerPosition: obsCel
+        )
         let (sunElev, _) = azel(
             julianDate: julianDate,
             site: (observer.lat, observer.lon),
@@ -54,7 +52,16 @@ extension SatelliteSnapshot {
             julianDate: julianDate,
             position: position,
             isIlluminated: isIlluminated,
-            sunElevation: sunElev
+            sunElevation: sunElev,
+            phaseAngle: phaseAngle,
+            visualMagnitude: qsMag?.magnitude.map { mag in
+                AstroAlgorithms.satelliteMagnitude(
+                    instrinsicMagnitude: mag,
+                    distToObserver: position.dist,
+                    phaseAngle: phaseAngle,
+                    zenithAngle: (90 - position.elev) * .pi / 180
+                )
+            }
         )
     }
 }
@@ -66,12 +73,14 @@ extension TLE {
     ///   - observer: The observer coordinate in latitude, longitude and altitude.
     public func snapshot(
         julianDate: Double,
-        observer: LatLonAlt
+        observer: LatLonAlt,
+        qsMag: QSMag? = nil
     ) -> SatelliteSnapshot {
         return SatelliteSnapshot(
             tle: self,
             julianDate: julianDate,
-            observer: observer
+            observer: observer,
+            qsMag: qsMag
         )
     }
 
@@ -84,6 +93,7 @@ extension TLE {
     public func snapshots(
         observer: LatLonAlt,
         julianDateRange: ClosedRange<Double>,
+        qsMag: QSMag? = nil,
         interval: TimeInterval = 30
     ) -> [SatelliteSnapshot] {
         return stride(
@@ -93,7 +103,11 @@ extension TLE {
             by: interval * TimeConstants.sec2day
         )
         .map { (julianDate) in
-            snapshot(julianDate: julianDate, observer: observer)
+            snapshot(
+                julianDate: julianDate,
+                observer: observer,
+                qsMag: qsMag
+            )
         }
     }
 
@@ -101,11 +115,13 @@ extension TLE {
         noradIndex: Int,
         observer: LatLonAlt,
         julianDateRange: ClosedRange<Double>,
+        qsMag: QSMag? = nil,
         fineInterval: TimeInterval = 3
     ) -> PassSnapshots {
         let fineSnapshots = snapshots(
             observer: observer,
             julianDateRange: julianDateRange,
+            qsMag: qsMag,
             interval: fineInterval
         )
 
@@ -238,6 +254,7 @@ extension TLE {
         noradIndex: Int,
         observer: LatLonAlt,
         coarseSnapshots: [SatelliteSnapshot],
+        qsMag: QSMag? = nil,
         minElevation: Double = 10,
         fineInterval: TimeInterval = 3
     ) -> [PassSnapshots] {
@@ -264,6 +281,7 @@ extension TLE {
                     noradIndex: noradIndex,
                     observer: observer,
                     julianDateRange: fromDate...toDate,
+                    qsMag: qsMag,
                     fineInterval: fineInterval
                 )
 

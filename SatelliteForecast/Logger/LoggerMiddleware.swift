@@ -85,7 +85,10 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                         print(realtimeSkyViewAction)
                     }
                 case .realtimeSkyOutput(let realtimeSkyViewOutput):
-                    print(realtimeSkyViewOutput)
+                    switch realtimeSkyViewOutput {
+                    case .propagatedCurrentEphemerides(let results, tles: _, let observer, let julianDate):
+                        print("propagatedCurrentEphemerides(results.count: \(results.count), observer: \(observer), julianDate: \(julianDate))")
+                    }
                 }
             }
         }

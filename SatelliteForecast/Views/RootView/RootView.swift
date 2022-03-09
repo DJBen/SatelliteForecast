@@ -12,6 +12,7 @@ import SwiftUI
 
 enum RootViewAction {
     case selectTab(Tab)
+    case loadTLEsForRealtimeSky
 }
 
 extension RootViewAction: Equatable {}
@@ -78,6 +79,10 @@ struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewViewType:
                 )
             )
         }
+        .onLoad {
+            viewModel.dispatch(.loadTLEsForRealtimeSky)
+
+        }
     }
 }
 
@@ -104,6 +109,8 @@ struct RootView_Previews: PreviewProvider {
                     switch action {
                     case .selectTab(let tab):
                         state.selectedTab = tab
+                    case .loadTLEsForRealtimeSky:
+                        break
                     }
                 }
             ),

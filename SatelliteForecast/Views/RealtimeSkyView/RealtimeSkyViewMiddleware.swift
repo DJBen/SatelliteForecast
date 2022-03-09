@@ -39,6 +39,7 @@ extension EffectMiddleware where InputActionType == RealtimeSkyViewAction, Outpu
                                     julianDate: julianDate,
                                     observer: observer
                                 ),
+                                tle: tle,
                                 nextCheckJulianDate: {
                                     let delay: Double = {
                                         if snapshot.position.elev < -30 {

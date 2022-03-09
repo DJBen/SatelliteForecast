@@ -7,6 +7,7 @@
 
 import BTree
 import Combine
+import QSMag
 import SatelliteCatalog
 import SatelliteCatalogImpl_SQLite
 import SatelliteForecastCore
@@ -89,11 +90,13 @@ extension SatelliteInfo {
     init(tle: TLE) {
         let satCat = SatCat.with(noradCatID: tle.noradIndex)
         let ucsSat = UCSSat.with(noradCatID: tle.noradIndex)
+        let qsMag = QSMag.with(noradIndex: tle.noradIndex)
         self.init(
             noradIndex: tle.noradIndex,
             tle: tle,
             satCat: satCat,
-            ucsSat: ucsSat
+            ucsSat: ucsSat,
+            qsMag: qsMag
         )
     }
 }

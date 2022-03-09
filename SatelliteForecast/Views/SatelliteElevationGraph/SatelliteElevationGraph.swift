@@ -58,7 +58,9 @@ struct SatelliteElevationGraphState: Equatable {
                 julianDate: 0,
                 position: AziEleDst(azim: 0, elev: 0, dist: 0),
                 isIlluminated: false,
-                sunElevation: 0
+                sunElevation: 0,
+                phaseAngle: .pi,
+                visualMagnitude: nil
             ),
             highlightedDateRange: nil,
             julianDateSunElevs: BTree(),

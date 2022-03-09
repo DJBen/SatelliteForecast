@@ -1,5 +1,5 @@
 #
-# Be sure to run `pod lib lint SatelliteForecastCore.podspec' to ensure this is a
+# Be sure to run `pod lib lint CombineRexUtils.podspec' to ensure this is a
 # valid spec before submitting.
 #
 # Any lines starting with a # are optional, but their use is encouraged
@@ -7,9 +7,9 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = 'SatelliteForecastCore'
+  s.name             = 'CombineRexUtils'
   s.version          = '1.0.0.LOCAL'
-  s.summary          = 'The core features in satellite forecast, including TLE propagation and pass finding.'
+  s.summary          = 'A library that contains utils to the CombineRex library'
 
   s.homepage         = 'https://github.com/DJBen'
   s.license          = { :type => 'Proprietary', :text => '© 2021 DJBen' }
@@ -21,11 +21,7 @@ Pod::Spec.new do |s|
   s.swift_version = ['5.4']
   s.source_files = 'Sources/**/*.swift'
 
-  s.dependency 'QSMag', '1.0.0.LOCAL'
-  s.dependency 'SatelliteCatalog', '1.0.0.LOCAL'
-  s.dependency 'SatelliteKit', '1.0.0.LOCAL'
-  s.dependency 'BTree', '~> 4.1.0'
-  s.dependency 'SwiftDate', '~> 5.0'
+  s.dependency 'CombineRex', '0.8.9'
 
   s.test_spec 'Tests' do |test_spec|
     test_spec.source_files = 'Tests/**/*.swift'
