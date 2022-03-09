@@ -15,7 +15,7 @@ import SatelliteKit
 
 /// Abstracts common logic of satellite loader into publishers.
 public protocol TLELoader {
-    func loadSatelliteTLEsPublisher(category: SatelliteCategory) -> AnyPublisher<Map<Int, SatelliteInfo>, TLELoaderError>
+    func loadSatelliteTLEsPublisher(category: SatelliteCategory) -> AnyPublisher<Map<UInt, SatelliteInfo>, TLELoaderError>
 }
 
 public struct TLELoaderImpl {
@@ -52,7 +52,7 @@ extension TLELoaderImpl: TLELoader {
         }
     }
 
-    public func loadSatelliteTLEsPublisher(category: SatelliteCategory) -> AnyPublisher<Map<Int, SatelliteInfo>, TLELoaderError> {
+    public func loadSatelliteTLEsPublisher(category: SatelliteCategory) -> AnyPublisher<Map<UInt, SatelliteInfo>, TLELoaderError> {
         session
             .dataTaskPublisher(for: URLRequest(url: category.url))
             .map { $0.data }
@@ -61,14 +61,14 @@ extension TLELoaderImpl: TLELoader {
                 loadLocalSatelliteDataPublisher(category: category, upstreamError: error)
             }
             .mapError { TLELoaderError.other($0) }
-            .tryMap { data -> Map<Int, SatelliteInfo> in
+            .tryMap { data -> Map<UInt, SatelliteInfo> in
                 precondition(!Thread.isMainThread)
                 let tles = try TLE.load(chunk: String(data: data, encoding: .utf8)!)
                 let info = tles
                     .map(SatelliteInfo.init(tle:))
                     // Sort the satellite list in reverse chronological order of the freshness of TLE.
                     .sorted(by: { $0.tle.t₀ > $1.tle.t₀ })
-                    .reduce(into: Map<Int, SatelliteInfo>(), { $0[$1.noradIndex] = $1 })
+                    .reduce(into: Map<UInt, SatelliteInfo>(), { $0[$1.noradIndex] = $1 })
 
                 saveLocalSatelliteData(category: category, data: data)
                 
@@ -88,8 +88,8 @@ extension TLELoaderImpl: TLELoader {
 
 extension SatelliteInfo {
     init(tle: TLE) {
-        let satCat = SatCat.with(noradCatID: tle.noradIndex)
-        let ucsSat = UCSSat.with(noradCatID: tle.noradIndex)
+        let satCat = SatCat.with(noradCatID: Int(tle.noradIndex))
+        let ucsSat = UCSSat.with(noradCatID: Int(tle.noradIndex))
         let qsMag = QSMag.with(noradIndex: tle.noradIndex)
         self.init(
             noradIndex: tle.noradIndex,

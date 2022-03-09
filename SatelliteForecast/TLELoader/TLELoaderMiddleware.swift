@@ -154,14 +154,14 @@ extension EffectMiddleware where InputActionType == TLELoaderOutput, OutputActio
         EffectMiddleware.onAction { action, dispatcher, getState in
             switch action {
             case .loadedSatelliteTLEs(_, let satelliteInfoMap, _, _, let calculatePass):
-                guard let calculatePass = calculatePass, let satelliteInfo = satelliteInfoMap[calculatePass.noradID] else {
+                guard let calculatePass = calculatePass, let satelliteInfo = satelliteInfoMap[calculatePass.noradIndex] else {
                     return .doNothing
                 }
 
                 return .just(
                     .calculatePasses(
                         AllPassesViewAction.CalculatePassesParams(
-                            selectedNoradIndex: calculatePass.noradID,
+                            selectedNoradIndex: calculatePass.noradIndex,
                             satelliteInfo: satelliteInfo,
                             julianDateRange: calculatePass.dateRange,
                             observer: calculatePass.observer

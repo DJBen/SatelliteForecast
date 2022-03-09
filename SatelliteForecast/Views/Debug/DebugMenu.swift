@@ -21,7 +21,7 @@ enum DebugMenuAction {
     
     case fetchNotifications
     
-    case triggerPassDeepLink(category: SatelliteCategory?, noradIndex: Int)
+    case triggerPassDeepLink(category: SatelliteCategory?, noradIndex: UInt)
 }
 
 struct DebugMenuConfig: Equatable {

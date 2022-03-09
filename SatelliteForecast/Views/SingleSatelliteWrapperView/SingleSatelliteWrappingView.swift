@@ -13,7 +13,7 @@ import SatelliteKit
 
 enum SingleSatelliteWrappingViewAction {
     struct LoadSingleSatelliteParams: Equatable {
-        let selectedNoradIndex: Int
+        let selectedNoradIndex: UInt
         let julianDateRange: ClosedRange<Double>
         let observer: LatLonAlt?
     }
@@ -41,7 +41,7 @@ struct SingleSatelliteWrappingView: View {
 
     @ViewBuilder func satelliteContent<Content: View, FailedContent: View>(
         @ViewBuilder contentBuilder: (SatelliteInfo) -> Content,
-        @ViewBuilder failedContentBuilder: (Int, TLELoaderError) -> FailedContent
+        @ViewBuilder failedContentBuilder: (UInt, TLELoaderError) -> FailedContent
     ) -> some View {
         let satellite = viewModel.state.satellite
         Group {
@@ -97,7 +97,7 @@ struct SingleSatelliteWrappingView: View {
 }
 
 struct SingleSatelliteWrappingViewContext {
-    let selectedNoradIndex: Int
+    let selectedNoradIndex: UInt
     let julianDateRange: ClosedRange<Double>
     let observer: LatLonAlt?
 }

@@ -146,7 +146,7 @@ struct PassView_Previews: PreviewProvider {
             configs: .preview,
             quality: .preview
         )
-        let brightest100: Map<Int, SatelliteInfo> = [
+        let brightest100: Map<UInt, SatelliteInfo> = [
             tle.noradIndex: SatelliteInfo(noradIndex: tle.noradIndex, tle: tle)
         ]
         let appState = AppState(

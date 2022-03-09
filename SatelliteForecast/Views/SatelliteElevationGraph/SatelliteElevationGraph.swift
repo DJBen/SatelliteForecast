@@ -30,11 +30,11 @@ struct SatelliteElevationGraphConfigs: Equatable {
 enum SatelliteElevationGraphAction {
     case requestRasterizeElevationGraph(
         size: CGSize,
-        noradIndex: Int,
+        noradIndex: UInt,
         julianDateRange: ClosedRange<Double>,
         traitCollection: UITraitCollection
     )
-    case rasterizedElevationGraph(UIImage, size: CGSize, noradIndex: Int, julianDateRange: ClosedRange<Double>)
+    case rasterizedElevationGraph(UIImage, size: CGSize, noradIndex: UInt, julianDateRange: ClosedRange<Double>)
 }
 
 struct SatelliteElevationGraphContext {

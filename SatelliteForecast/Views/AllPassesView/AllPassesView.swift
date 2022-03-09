@@ -15,7 +15,7 @@ import SwiftUI
 
 enum AllPassesViewAction {
     struct CalculatePassesParams: CustomDebugStringConvertible {
-        let selectedNoradIndex: Int
+        let selectedNoradIndex: UInt
         let satelliteInfo: SatelliteInfo
         let julianDateRange: ClosedRange<Double>
         let observer: LatLonAlt
@@ -38,7 +38,7 @@ enum AllPassesViewAction {
 }
 
 struct AllPassesViewContext {
-    let selectedNoradIndex: Int
+    let selectedNoradIndex: UInt
     let satelliteInfo: SatelliteInfo
     let julianDateRange: ClosedRange<Double>
     let observer: LatLonAlt?

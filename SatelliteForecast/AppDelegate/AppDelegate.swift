@@ -48,7 +48,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 completionHandler()
             case UNNotificationDefaultActionIdentifier:
                 let userInfo = response.notification.request.content.userInfo
-                guard let noradIndex = userInfo["noradIndex"] as? Int,
+                guard let noradIndex = userInfo["noradIndex"] as? UInt,
                       let observer = (userInfo["observer"] as? Data).flatMap({ try? JSONDecoder().decode(LatLonAlt.self, from: $0) }) else {
                     break
                 }

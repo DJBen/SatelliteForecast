@@ -9,7 +9,7 @@ import SatelliteForecastCore
 import SatelliteKit
 
 public struct RealtimePropagationResult {
-    public let noradIndex: Int
+    public let noradIndex: UInt
     public let snapshot: SatelliteSnapshot
     public let tle: TLE
     /// The earliest julian date that we should repropagate a satellite ephemeris again.
@@ -18,7 +18,7 @@ public struct RealtimePropagationResult {
     public let nextCheckJulianDate: Double
 
     public init(
-        noradIndex: Int,
+        noradIndex: UInt,
         snapshot: SatelliteSnapshot,
         tle: TLE,
         nextCheckJulianDate: Double

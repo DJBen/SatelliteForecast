@@ -11,14 +11,14 @@ import SatelliteKit
 import SatelliteCatalog
 
 public struct SatelliteInfo {
-    public let noradIndex: Int
+    public let noradIndex: UInt
     public let tle: TLE
     public let satCat: SatCat?
     public let ucsSat: UCSSat?
     public let qsMag: QSMag?
 
     public init(
-        noradIndex: Int,
+        noradIndex: UInt,
         tle: TLE,
         satCat: SatCat? = nil,
         ucsSat: UCSSat? = nil,

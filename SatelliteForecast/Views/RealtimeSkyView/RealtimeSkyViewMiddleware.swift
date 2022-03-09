@@ -66,7 +66,7 @@ extension EffectMiddleware where InputActionType == RealtimeSkyViewAction, Outpu
                                 }()
                             )
                         }
-                        .reduce(into: [Int: RealtimePropagationResult](), { $0[$1.noradIndex] = $1 })
+                        .reduce(into: [UInt: RealtimePropagationResult](), { $0[$1.noradIndex] = $1 })
 
                         completion(
                             .success(

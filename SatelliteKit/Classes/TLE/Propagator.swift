@@ -1,5 +1,5 @@
 /*╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
-  ║ TLEPropagator.swift                                                                       SatKit ║
+  ║ Propagator.swift                                                                          SatKit ║
   ║ Created by Gavin Eadie on May24/17         Copyright © 2017-20 Gavin Eadie. All rights reserved. ║
   ║──────────────────────────────────────────────────────────────────────────────────────────────────║
   ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝*/
@@ -59,12 +59,12 @@ public struct EarthConstants {
 
 }
 
-public class TLEPropagator {
+public class Propagator {
 
 /*┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
   │ c o n s t a n t s   set in init(..)                                                              │
   └──────────────────────────────────────────────────────────────────────────────────────────────────┘*/
-    let tle: TLE
+    let tle: Elements
 
     let perigee: Double                     // perigee (in Kms)
     let θ²: Double                          //
@@ -105,7 +105,7 @@ public class TLEPropagator {
     var s: Double                           // s* new value for the contant s.
     var xl: Double                          //   L from SPTRCK #3.
 
-    public init(_ initialTLE: TLE) {
+    public init(_ initialTLE: Elements) {
 
         self.tle = initialTLE
         self.perigee = (self.tle.a₀ * (1.0 - self.tle.e₀) - 1.0) * EarthConstants.Rₑ
@@ -363,11 +363,11 @@ public class TLEPropagator {
     }
 
     func sxpInitialize() throws {
-        preconditionFailure("'TLEPropagator.sxpInitialize' must be overridden")
+        preconditionFailure("'Propagator.sxpInitialize' must be overridden")
     }
 
     func sxpPropagate(minsAfterEpoch: Double) throws {
-        preconditionFailure(" 'TLEPropagator.sxpPropagate' must be overridden")
+        preconditionFailure(" 'Propagator.sxpPropagate' must be overridden")
     }
 
 }
@@ -375,11 +375,22 @@ public class TLEPropagator {
 /*┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
   │ Period >= 225 minutes is deep space                                                              │
   └──────────────────────────────────────────────────────────────────────────────────────────────────┘*/
-public func selectPropagator(tle: TLE) -> TLEPropagator {
+public func selectPropagator(tle: Elements) -> Propagator {
 
     if tle.ephemType == 2 { return SGP4(tle) }
     else if tle.ephemType == 3 { return DeepSDP4(tle) }
-    else { return (π*2) / (tle.n₀ * TimeConstants.day2min) < (1.0 / 6.4) ? SGP4(tle) :
-                                                                           DeepSDP4(tle) }
+    else { return (π*2) / (tle.n₀ * TimeConstants.day2min) < (1.0 / 6.4) ? SGP4(tle) : DeepSDP4(tle) }
+
+}
+
+/*┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Period >= 225 minutes is deep space                                                              │
+  └──────────────────────────────────────────────────────────────────────────────────────────────────┘*/
+public func selectPropagator(_ elements: Elements) -> Propagator {
+
+    if elements.ephemType == 2 { return SGP4(elements) }
+    else if elements.ephemType == 3 { return DeepSDP4(elements) }
+    else { return (π*2) / (elements.n₀ * TimeConstants.day2min) < (1.0 / 6.4) ?
+                                                            SGP4(elements) : DeepSDP4(elements) }
 
 }

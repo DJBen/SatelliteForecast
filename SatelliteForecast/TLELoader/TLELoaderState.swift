@@ -11,15 +11,15 @@ import SatelliteForecastCore
 import SatelliteKit
 
 public struct TLELoaderResources {
-    public var info: [SatelliteCategory: Loadable<Map<Int, SatelliteInfo>, TLELoaderError>]
+    public var info: [SatelliteCategory: Loadable<Map<UInt, SatelliteInfo>, TLELoaderError>]
 
     public init(
-        info: [SatelliteCategory: Loadable<Map<Int, SatelliteInfo>, TLELoaderError>] = [:]
+        info: [SatelliteCategory: Loadable<Map<UInt, SatelliteInfo>, TLELoaderError>] = [:]
     ) {
         self.info = info
     }
 
-    public subscript(noradIndex: Int) -> SatelliteInfo? {
+    public subscript(noradIndex: UInt) -> SatelliteInfo? {
         return info.values
             .first { $0.content?[noradIndex] != nil }
             .flatMap { $0.content?[noradIndex] }

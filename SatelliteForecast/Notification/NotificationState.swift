@@ -16,7 +16,7 @@ struct NotificationState: Equatable {
     /// All the things to deep link to a pass.
     struct PassDeepLink: Equatable {
         var satelliteCategory: SatelliteCategory?
-        var noradIndex: Int
+        var noradIndex: UInt
         var passIdentifier: String
     }
 }

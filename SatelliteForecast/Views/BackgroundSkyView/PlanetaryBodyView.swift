@@ -17,7 +17,7 @@ struct PlanetaryBodyView: View {
     let sunElevation: Double
 
     @ViewBuilder func planetView<Content: View>(
-        celestialCoordinateProvider: (Double) -> (ra: Double, dec: Double),
+        celestialCoordinateProvider: (Double) -> RADec,
         @ViewBuilder planetViewGenerator: @escaping (AziEleDst) -> Content
     ) -> some View {
         let (alt, azi) = azel(
@@ -124,7 +124,7 @@ extension BackgroundSkyConfigs.PlantaryBody {
         }
     }
 
-    fileprivate var celestialCoordinateProvider: ((Double) -> (ra: Double, dec: Double))? {
+    fileprivate var celestialCoordinateProvider: ((Double) -> RADec)? {
         switch self {
         case .sun:
             return solarGeo(julianDays:)

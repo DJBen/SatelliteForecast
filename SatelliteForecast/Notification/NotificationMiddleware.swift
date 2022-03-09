@@ -223,7 +223,7 @@ extension EffectMiddleware where
                                             observer: observer
                                         ),
                                         calculatePass: TLELoaderCalculatePassParam(
-                                            noradID: noradIndex,
+                                            noradIndex: noradIndex,
                                             dateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate),
                                             observer: observer
                                         )
@@ -241,7 +241,7 @@ extension EffectMiddleware where
                                             observer: observer
                                         ),
                                         calculatePass: TLELoaderCalculatePassParam(
-                                            noradID: noradIndex,
+                                            noradIndex: noradIndex,
                                             dateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate),
                                             observer: observer
                                         )

@@ -29,7 +29,7 @@ extension EffectMiddleware where
                             category: .brightest100,
                             calculatePass: params.observer.map { observer in
                                 TLELoaderCalculatePassParam(
-                                    noradID: params.selectedNoradIndex,
+                                    noradIndex: params.selectedNoradIndex,
                                     dateRange: params.julianDateRange,
                                     observer: observer
                                 )

@@ -9,15 +9,15 @@ import Foundation
 
 /// https://www.prismnet.com/~mmccants/
 public struct QSMag {
-    public let noradIndex: Int
+    public let noradIndex: UInt
     public let designation: String
     public let name: String
     public let magnitude: Double?
     public let rcs: Double?
 
-    public static var localData: [Int: QSMag] = loadLocalData()
+    public static var localData: [UInt: QSMag] = loadLocalData()
 
-    public static func loadLocalData() -> [Int: QSMag] {
+    public static func loadLocalData() -> [UInt: QSMag] {
         guard let filePath = Bundle.qsMagResourcesBundle.path(forResource: "qs", ofType: "mag") else {
             fatalError("qs.mag file not found")
         }
@@ -28,7 +28,7 @@ public struct QSMag {
         let nameRange = 18..<32
         let magRange = 33..<38
         let rcsRange = 51..<54
-        var results: [Int: QSMag] = [:]
+        var results: [UInt: QSMag] = [:]
 
         for (index, line) in lines.enumerated() {
             var trimmedLine = line.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -36,7 +36,7 @@ public struct QSMag {
                 continue
             }
 
-            let noradIndex = Int(trimmedLine.substring(range: noradRange)!)!
+            let noradIndex = UInt(trimmedLine.substring(range: noradRange)!)!
             if noradIndex == 1 || noradIndex == 99999 {
                 continue
             }
@@ -53,7 +53,7 @@ public struct QSMag {
         return results
     }
 
-    public static func with(noradIndex: Int) -> QSMag? {
+    public static func with(noradIndex: UInt) -> QSMag? {
         localData[noradIndex]
     }
 }

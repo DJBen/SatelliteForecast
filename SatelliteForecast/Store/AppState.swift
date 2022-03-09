@@ -31,7 +31,7 @@ struct AppState: Equatable {
     var satelliteElevationGraphResources: SatelliteElevationGraphResources = .init()
 
     /// A mapping from NORAD ID to the satellite state.
-    var satelliteTrails: [Int: SatelliteTrails] = [:]
+    var satelliteTrails: [UInt: SatelliteTrails] = [:]
 
     /// Location agnostic satellite information, including its orbit and metadata.
     var tleLoader: TLELoaderResources = .init()

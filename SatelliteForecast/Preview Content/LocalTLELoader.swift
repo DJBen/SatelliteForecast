@@ -13,8 +13,8 @@ import SatelliteCatalog
 
 /// A testing implementation that loads fixed TLEs from local files.
 class LocalTLELoader: TLELoader {
-    func loadSatelliteTLEsPublisher(category: SatelliteCategory) -> AnyPublisher<Map<Int, SatelliteInfo>, TLELoaderError> {
-        Future<Map<Int, SatelliteInfo>, TLELoaderError> { promise in
+    func loadSatelliteTLEsPublisher(category: SatelliteCategory) -> AnyPublisher<Map<UInt, SatelliteInfo>, TLELoaderError> {
+        Future<Map<UInt, SatelliteInfo>, TLELoaderError> { promise in
             DispatchQueue.global(qos: .userInitiated).async {
                 guard let filepath = Bundle.main.path(forResource: category.localFilename, ofType: "txt") else {
                     fatalError("No local file available")
@@ -24,7 +24,7 @@ class LocalTLELoader: TLELoader {
                     let tles = try TLE.load(chunk: contents)
                     let info = tles
                         .map(SatelliteInfo.init(tle:))
-                        .reduce(into: Map<Int, SatelliteInfo>(), { $0[$1.noradIndex] = $1 })
+                        .reduce(into: Map<UInt, SatelliteInfo>(), { $0[$1.noradIndex] = $1 })
                     promise(.success(info))
                 } catch {
                     fatalError("Local file could not be loaded")

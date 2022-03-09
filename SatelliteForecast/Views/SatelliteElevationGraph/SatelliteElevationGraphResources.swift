@@ -13,5 +13,5 @@ struct SatelliteElevationGraphResources: Equatable {
         let julianDateRange: ClosedRange<Double>
         let image: UIImage
     }
-    var rasterizedElevationGraphs: [Int: RangeImage] = [:]
+    var rasterizedElevationGraphs: [UInt: RangeImage] = [:]
 }

@@ -112,7 +112,7 @@ extension TLE {
     }
 
     private func generatePassInfo(
-        noradIndex: Int,
+        noradIndex: UInt,
         observer: LatLonAlt,
         julianDateRange: ClosedRange<Double>,
         qsMag: QSMag? = nil,
@@ -251,7 +251,7 @@ extension TLE {
     ///   - passes: A list of satellite passes.
     ///   - snapshots: Resulting snapshots by merging the coarse snapshots and the generated fine snapshots.
     public func findPasses(
-        noradIndex: Int,
+        noradIndex: UInt,
         observer: LatLonAlt,
         coarseSnapshots: [SatelliteSnapshot],
         qsMag: QSMag? = nil,

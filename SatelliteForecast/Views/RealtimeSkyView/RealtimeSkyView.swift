@@ -21,7 +21,7 @@ extension RealtimeSkyViewAction: Equatable {}
 
 enum RealtimeSkyViewOutput {
     case propagatedCurrentEphemerides(
-        results: [Int: RealtimePropagationResult],
+        results: [UInt: RealtimePropagationResult],
         tles: [TLE],
         observer: LatLonAlt,
         julianDate: Double
@@ -30,7 +30,7 @@ enum RealtimeSkyViewOutput {
 
 struct RealtimeSkyViewResources {
     /// The propagation results containing the satellite snapshot, and an "expiration date" of the snapshot.
-    var results: [Int: RealtimePropagationResult] = [:]
+    var results: [UInt: RealtimePropagationResult] = [:]
     var isRealtimeSkyViewActive: Bool = false
     var isPropagatingEphemerides: Bool = false
 }
