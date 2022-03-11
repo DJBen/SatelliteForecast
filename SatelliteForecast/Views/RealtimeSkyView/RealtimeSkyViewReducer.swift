@@ -21,7 +21,13 @@ extension Reducer where ActionType == RealtimeSkyViewAction, StateType == Realti
 extension Reducer where ActionType == RealtimeSkyViewOutput, StateType == RealtimeSkyViewResources {
     static let realtimeSkyOutputReducer = Reducer.reduce { action, state in
         switch action {
-        case .propagatedCurrentEphemerides(let results, tles: _, partialErrors: _, observer: _, julianDate: _):
+        case .propagatedCurrentEphemerides(
+            let results,
+            satellites: _,
+            partialErrors: _,
+            observer: _,
+            julianDate: _
+        ):
             state.results.merge(results, uniquingKeysWith: { $1 })
             state.isPropagatingEphemerides = false
         case .failedToPropagateCurrentEphemerides(error: _, observer: _, julianDate: _):

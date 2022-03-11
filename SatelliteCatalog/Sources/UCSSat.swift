@@ -38,7 +38,7 @@ public struct UCSSat {
 
     public let classOfOrbit: ClassOfOrbit
 
-    public let typeOfOrbit: String
+    public let typeOfOrbit: String?
 
     public let longitudeOfGEO: Double?
 
@@ -66,7 +66,7 @@ public struct UCSSat {
 
     public let countryOfContractor: String?
 
-    public let launchSite: String
+    public let launchSite: String?
 
     public let launchVehicle: String
 
@@ -90,7 +90,7 @@ public struct UCSSat {
         purpose: String,
         detailedPurpose: String?,
         classOfOrbit: UCSSat.ClassOfOrbit,
-        typeOfOrbit: String,
+        typeOfOrbit: String?,
         longitudeOfGEO: Double?,
         perigee: Double?,
         apogee: Double?,
@@ -104,7 +104,7 @@ public struct UCSSat {
         expectedLifetime: Double?,
         contractor: String?,
         countryOfContractor: String?,
-        launchSite: String,
+        launchSite: String?,
         launchVehicle: String,
         cosparID: String,
         noradID: Int,

@@ -161,8 +161,10 @@ struct UCSSatCell: View {
                         Image(systemName: "mappin.and.ellipse")
                             .secondaryStyle()
 
-                        Text(sat.launchSite)
+                        if let launchSite = sat.launchSite {
+                            Text(launchSite)
                             .secondaryStyle()
+                        }
                     }
 
                     if let dryMass = sat.dryMass {

@@ -55,11 +55,11 @@ struct BackgroundSkyViewContext {
 }
 
 struct BackgroundSkyJulianDateKeyEnvironmentKey: EnvironmentKey {
-    static let defaultValue: Double = 0
+    static let defaultValue: Double? = nil
 }
 
 extension EnvironmentValues {
-    var backgroundSkyJulianDateKey: Double {
+    var backgroundSkyJulianDateKey: Double? {
         get { self[BackgroundSkyJulianDateKeyEnvironmentKey.self] }
         set { self[BackgroundSkyJulianDateKeyEnvironmentKey.self] = newValue }
     }
@@ -75,6 +75,10 @@ struct BackgroundSkyView: View {
     @Environment(\.colorScheme) var colorScheme
 
     private var rasterizedBackgroundSky: UIImage? {
+        guard let backgroundSkyJulianDateKey = backgroundSkyJulianDateKey else {
+            return nil
+        }
+
         let imageCache: [BackgroundSkyKey: BTree<Double, UIImage>] = (
             context.quality == .full ?
             viewModel.state.resources.rasterizedBackgroundSky
@@ -92,21 +96,21 @@ struct BackgroundSkyView: View {
         )
     }
 
-    private var sunElevation: Double {
+    private func sunElevation(julianDate: Double) -> Double {
         azel(
-            julianDate: backgroundSkyJulianDateKey,
+            julianDate: julianDate,
             site: (context.observer.lat, context.observer.lon),
             cele: solarGeo(
-                julianDays: backgroundSkyJulianDateKey
+                julianDays: julianDate
             )
         ).alt
     }
 
-    @ViewBuilder var backgroundSky: some View {
+    @ViewBuilder func backgroundSky(julianDate: Double) -> some View {
         GeometryReader { geometry in
             Group {
                 let rect = geometry.frame(in: .local)
-                if !(sunElevation > -6 &&
+                if !(sunElevation(julianDate: julianDate) > -6 &&
                      context.configs.hidesStarsDuringDay),
                    let image = rasterizedBackgroundSky {
                     Image(uiImage: image)
@@ -130,7 +134,7 @@ struct BackgroundSkyView: View {
                     .requestRasterizedBackgroundSky(
                         size: contentSize,
                         quality: context.quality,
-                        julianDate: backgroundSkyJulianDateKey,
+                        julianDate: julianDate,
                         key: BackgroundSkyKey(
                             observer: context.observer,
                             configs: context.configs
@@ -150,7 +154,7 @@ struct BackgroundSkyView: View {
                         size: contentSize,
                         quality: context.quality,
                         // Round date to nearest minute
-                        julianDate: backgroundSkyJulianDateKey,
+                        julianDate: julianDate,
                         key: BackgroundSkyKey(
                             observer: context.observer,
                             configs: context.configs
@@ -162,31 +166,41 @@ struct BackgroundSkyView: View {
         }
     }
 
-    @ViewBuilder var planetaryBodiesView: some View {
+    @ViewBuilder func planetaryBodiesView(julianDate: Double) -> some View {
         ZStack {
             ForEach(context.configs.visibleBodies, id: \.self) { body in
                 PlanetaryBodyView(
                     planetaryBody: body,
                     label: context.configs.bodySymbol,
-                    referenceDate: backgroundSkyJulianDateKey,
+                    referenceDate: julianDate,
                     observer: context.observer,
-                    sunElevation: sunElevation
+                    sunElevation: sunElevation(julianDate: julianDate)
                 )
             }
         }
     }
 
     var body: some View {
-        SkyChartBackground(
-            state: SkyChartBackgroundState(observer: context.observer),
-            configs: context.basicChartConfigs
-        )
-        .background(
-            backgroundSky.overlay(
-                planetaryBodiesView
+        if let backgroundSkyJulianDateKey = backgroundSkyJulianDateKey {
+            SkyChartBackground(
+                state: SkyChartBackgroundState(observer: context.observer),
+                configs: context.basicChartConfigs
             )
-            .clipShape(Circle())
-        )
+            .background(
+                backgroundSky(
+                    julianDate: backgroundSkyJulianDateKey
+                )
+                .overlay(
+                    planetaryBodiesView(julianDate: backgroundSkyJulianDateKey)
+                )
+                .clipShape(Circle())
+            )
+        } else {
+            SkyChartBackground(
+                state: SkyChartBackgroundState(observer: context.observer),
+                configs: context.basicChartConfigs
+            )
+        }
     }
 }
 

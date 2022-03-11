@@ -13,7 +13,7 @@ import SwiftRex
 import SwiftUI
 
 enum RealtimeSkyViewAction {
-    case propagateCurrentEphemerides([TLE], observer: LatLonAlt, julianDate: Double)
+    case propagateCurrentEphemerides([SatelliteInfo], observer: LatLonAlt, julianDate: Double)
     case setRealtimeSkyViewActive(Bool)
 }
 
@@ -22,7 +22,7 @@ extension RealtimeSkyViewAction: Equatable {}
 enum RealtimeSkyViewOutput {
     case propagatedCurrentEphemerides(
         results: [UInt: RealtimePropagationResult],
-        tles: [TLE],
+        satellites: [SatelliteInfo],
         partialErrors: [Error],
         observer: LatLonAlt,
         julianDate: Double
@@ -46,7 +46,7 @@ extension RealtimeSkyViewResources: Equatable {}
 
 struct RealtimeSkyViewState {
     var resources: RealtimeSkyViewResources = .init()
-    var tles: [TLE] = []
+    var satellites: [SatelliteInfo]?
     var observer: LatLonAlt?
     var julianDateOffset: Double = 0
 }
@@ -63,18 +63,17 @@ protocol RealtimeSkyView: View {}
 struct RealtimeSkyViewImpl: RealtimeSkyView {
     @ObservedObject var viewModel: ObservableViewModel<RealtimeSkyViewAction, RealtimeSkyViewState>
     let context: RealtimeSkyViewContext
-
     let backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext, BackgroundSkyView>
 
     let refreshTimer = Timer.publish(
-        every: 1,
+        every: 0.5,
         on: .main,
         in: .common
     )
     .autoconnect()
     .map(\.julianDate)
 
-    @State var julianDate: Double = 0
+    @State var julianDate: Double?
 
     @ViewBuilder private func locationView<Content: View, NoLocationContent: View>(
         @ViewBuilder contentBuilder: (LatLonAlt) -> Content,
@@ -90,7 +89,17 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
     private var visiblePropagationResults: [RealtimePropagationResult] {
         Array(viewModel.state.resources.results.values.filter {
             $0.snapshot.position.elev > 0
-        })
+        }.sorted(by: { result1, result2 in
+            if let mag1 = result1.satelliteInfo.qsMag?.magnitude, let mag2 = result1.satelliteInfo.qsMag?.magnitude {
+                return mag1 < mag2
+            } else if let _ = result1.satelliteInfo.qsMag?.magnitude {
+                return true
+            } else if let _ = result2.satelliteInfo.qsMag?.magnitude {
+                return false
+            } else {
+                return result1.snapshot.position.dist < result2.snapshot.position.dist
+            }
+        }))
     }
 
     @ViewBuilder private func satellitePoint(result: RealtimePropagationResult, rect: CGRect) -> some View {
@@ -107,7 +116,7 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
             }
             .fill()
             .foregroundColor({
-                switch result.tle.orbitTypeByAltitude {
+                switch result.satelliteInfo.tle.orbitTypeByAltitude {
                 case .leo:
                     return .blue
                 case .geo:
@@ -127,7 +136,7 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
         }
     }
 
-    @ViewBuilder private func satellitePlot() -> some View {
+    @ViewBuilder private var satellitePlot: some View {
         ForEach(
             visiblePropagationResults,
             id: \.noradIndex
@@ -148,38 +157,74 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
         }
     }
 
+    @ViewBuilder private func backgroundSkyView(observer: LatLonAlt) -> some View {
+        backgroundSkyViewProducer.view(
+            BackgroundSkyViewContext(
+                observer: observer,
+                basicChartConfigs: context.basicChartConfigs,
+                configs: context.backgroundSkyConfigs,
+                quality: .full
+            )
+        )
+        .environment(
+            \.backgroundSkyJulianDateKey,
+             julianDate.map { $0.julianDateRoundedToNearestMinute() }
+        )
+        .overlay {
+            satellitePlot
+        }
+        .onReceive(refreshTimer) { timerJulianDate in
+            self.julianDate = timerJulianDate + viewModel.state.julianDateOffset
+
+            guard viewModel.state.resources.isRealtimeSkyViewActive else {
+                return
+            }
+            if viewModel.state.resources.isPropagatingEphemerides {
+                return
+            }
+
+            guard let satellites = viewModel.state.satellites else {
+                return
+            }
+
+            viewModel.dispatch(
+                .propagateCurrentEphemerides(
+                    satellites,
+                    observer: observer,
+                    julianDate: julianDate!
+                )
+            )
+        }
+    }
+
+    @ViewBuilder private var satelliteList: some View {
+        List {
+            ForEach(visiblePropagationResults.prefix(10), id: \.self) { result in
+                RealtimeSkySatelliteCell(
+                    satelliteName: result.satelliteInfo.tle.commonName,
+                    snapshot: result.snapshot
+                )
+            }
+        }
+        .listStyle(.inset)
+    }
+
     var body: some View {
         NavigationView {
             locationView { observer in
-                backgroundSkyViewProducer.view(
-                    BackgroundSkyViewContext(
-                        observer: observer,
-                        basicChartConfigs: context.basicChartConfigs,
-                        configs: context.backgroundSkyConfigs,
-                        quality: .full
-                    )
-                )
-                .environment(\.backgroundSkyJulianDateKey, julianDate.julianDateRoundedToNearestMinute())
-                .overlay {
-                    satellitePlot()
-                }
-                .onReceive(refreshTimer) { timerJulianDate in
-                    self.julianDate = timerJulianDate + viewModel.state.julianDateOffset
-
-                    guard viewModel.state.resources.isRealtimeSkyViewActive else {
-                        return
-                    }
-                    if viewModel.state.resources.isPropagatingEphemerides {
-                        return
-                    }
-
-                    viewModel.dispatch(
-                        .propagateCurrentEphemerides(
-                            viewModel.state.tles,
-                            observer: observer,
-                            julianDate: julianDate
+                GeometryReader { geometry in
+                    let rect = geometry.frame(in: .local)
+                    VStack(spacing: 24) {
+                        backgroundSkyView(
+                            observer: observer
                         )
-                    )
+                        .frame(
+                            width: min(rect.width, rect.height),
+                            height: min(rect.width, rect.height)
+                        )
+                        satelliteList
+                    }
+                    .padding(.top, 16)
                 }
             } noLocationContentBuilder: {
                 Text(verbatim: "Location not available")

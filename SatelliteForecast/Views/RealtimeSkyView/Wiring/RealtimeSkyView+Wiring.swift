@@ -5,15 +5,22 @@
 //  Created by Ben Lu on 3/4/22.
 //
 
+import BTree
 import CombineRex
 import CombineRextensions
+import SatelliteForecastCore
 import SatelliteKit
 
 extension RealtimeSkyViewState: AppStateMappable {
     static func project(appState: AppState) -> RealtimeSkyViewState {
         RealtimeSkyViewState(
             resources: RealtimeSkyViewResources.project(appState: appState),
-            tles: appState.tleLoader.info[.active]?.content?.values.map(\.tle) ?? [],
+            satellites: {
+                guard let values = appState.tleLoader.info[.active]?.content?.values else {
+                    return nil
+                }
+                return Array(values)
+            }(),
             observer: appState.locationState.location.map(LatLonAlt.init(location:)),
             julianDateOffset: appState.debugMenu.effectiveOffset
         )

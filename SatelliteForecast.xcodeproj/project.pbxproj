@@ -59,6 +59,7 @@
 		EF465651267B38780040B762 /* AllPassesViewReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF465650267B38780040B762 /* AllPassesViewReducer.swift */; };
 		EF465653267BE7680040B762 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF465652267BE7680040B762 /* AppDelegate.swift */; };
 		EF4AF76C266434CC00D28F47 /* SkyChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4AF76B266434CC00D28F47 /* SkyChart.swift */; };
+		EF51D98927D98BB60087AA9E /* RealtimeSkySatelliteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF51D98827D98BB60087AA9E /* RealtimeSkySatelliteCell.swift */; };
 		EF58EC1426A6325B0026ADB9 /* PassLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF58EC1326A6325B0026ADB9 /* PassLabel.swift */; };
 		EF5A908426A0D68400EADA2D /* LazyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5A908326A0D68400EADA2D /* LazyView.swift */; };
 		EF5CB017266E28EE000019DA /* TimerReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5CB016266E28EE000019DA /* TimerReducer.swift */; };
@@ -213,6 +214,7 @@
 		EF465650267B38780040B762 /* AllPassesViewReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllPassesViewReducer.swift; sourceTree = "<group>"; };
 		EF465652267BE7680040B762 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EF4AF76B266434CC00D28F47 /* SkyChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyChart.swift; sourceTree = "<group>"; };
+		EF51D98827D98BB60087AA9E /* RealtimeSkySatelliteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealtimeSkySatelliteCell.swift; sourceTree = "<group>"; };
 		EF58EC1326A6325B0026ADB9 /* PassLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassLabel.swift; sourceTree = "<group>"; };
 		EF5A908326A0D68400EADA2D /* LazyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyView.swift; sourceTree = "<group>"; };
 		EF5CB016266E28EE000019DA /* TimerReducer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimerReducer.swift; sourceTree = "<group>"; };
@@ -342,6 +344,7 @@
 				EF16813D27D1793A001BA9C3 /* RealtimeSkyView.swift */,
 				EF16813B27D1793A001BA9C3 /* RealtimeSkyViewMiddleware.swift */,
 				EF16813E27D1793A001BA9C3 /* RealtimeSkyViewReducer.swift */,
+				EF51D98827D98BB60087AA9E /* RealtimeSkySatelliteCell.swift */,
 				EF16813C27D1793A001BA9C3 /* RealtimePropagationResult.swift */,
 			);
 			path = RealtimeSkyView;
@@ -942,6 +945,7 @@
 				EF98F86026ABDA7B0086B2FA /* SatelliteElevationGraphCurrentIndicator.swift in Sources */,
 				EF46564D267AF7070040B762 /* SkyChartConfigs.swift in Sources */,
 				EF5CB017266E28EE000019DA /* TimerReducer.swift in Sources */,
+				EF51D98927D98BB60087AA9E /* RealtimeSkySatelliteCell.swift in Sources */,
 				EF16816927D578B6001BA9C3 /* RootViewReducer+Wiring.swift in Sources */,
 				EF3D099E26864DDF00B84232 /* SatelliteOverviewCell.swift in Sources */,
 				EF7A3132266B493300CC33C0 /* TLELoaderMiddleware.swift in Sources */,

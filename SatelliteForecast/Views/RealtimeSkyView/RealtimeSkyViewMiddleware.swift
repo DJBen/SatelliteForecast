@@ -14,30 +14,30 @@ extension EffectMiddleware where InputActionType == RealtimeSkyViewAction, Outpu
     static var realtimeSky: EffectMiddleware<RealtimeSkyViewAction, RealtimeSkyViewOutput, RealtimeSkyViewResources, Void> {
         EffectMiddleware.onAction { action, dispatcher, getState in
             switch action {
-            case .propagateCurrentEphemerides(let tles, let observer, let julianDate):
+            case .propagateCurrentEphemerides(let satellites, let observer, let julianDate):
                 return Effect<Void, RealtimeSkyViewOutput> { context in
                     Future<DispatchedAction<RealtimeSkyViewOutput>, Never> { completion in
                         var partialFailures: [Error] = []
-                        let results = tles.filter { tle in
+                        let results = satellites.filter { satelliteInfo in
                             // If next check date exceeds the current date, do not check
-                            if let nextCheck = getState().results[tle.noradIndex]?.nextCheckJulianDate,
+                            if let nextCheck = getState().results[satelliteInfo.tle.noradIndex]?.nextCheckJulianDate,
                                nextCheck > julianDate {
                                 return false
                             }
                             return true
                         }
-                        .flatMap { tle -> RealtimePropagationResult? in
+                        .compactMap { satelliteInfo -> RealtimePropagationResult? in
                             do {
                                 let snapshot = try SatelliteSnapshot(
-                                    tle: tle,
+                                    tle: satelliteInfo.tle,
                                     julianDate: julianDate,
                                     observer: observer
                                 )
 
                                 return RealtimePropagationResult(
-                                    noradIndex: tle.noradIndex,
+                                    noradIndex: satelliteInfo.tle.noradIndex,
                                     snapshot: snapshot,
-                                    tle: tle,
+                                    satelliteInfo: satelliteInfo,
                                     nextCheckJulianDate: {
                                         let delay: Double = {
                                             if snapshot.position.elev < -30 {
@@ -75,7 +75,7 @@ extension EffectMiddleware where InputActionType == RealtimeSkyViewAction, Outpu
                                 DispatchedAction<RealtimeSkyViewOutput>(
                                     .propagatedCurrentEphemerides(
                                         results: results,
-                                        tles: tles,
+                                        satellites: satellites,
                                         partialErrors: partialFailures,
                                         observer: observer,
                                         julianDate: julianDate

@@ -12,6 +12,13 @@ import SatelliteKit
 extension UCSSat {
     typealias Table = SatelliteCatalog.UCSSatTable
 
+    private static func parseLaunchDate(_ string: String) -> Date {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "M/d/yy"
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        return formatter.date(from: string)!
+    }
+
     init(row: Row) {
         self.init(
             name: try! row.get(Table.name),
@@ -33,7 +40,7 @@ extension UCSSat {
             launchMass: try! row.get(Table.launchMass),
             dryMass: try! row.get(Table.dryMass),
             power: try! row.get(Table.power),
-            dateOfLaunch: Date(julianDate: try! row.get(Table.dateOfLaunch) + 2415020),
+            dateOfLaunch: Self.parseLaunchDate(try! row.get(Table.dateOfLaunch)),
             expectedLifetime: try! row.get(Table.expectedLifetime),
             contractor: try! row.get(Table.contractor),
             countryOfContractor: try! row.get(Table.countryOfContractor),
