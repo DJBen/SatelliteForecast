@@ -89,7 +89,7 @@ struct SatelliteElevationGraphState: Equatable {
 
         return SatelliteElevationGraphState(
             currentJulianDate: state.julianDate,
-            currentSnapshot: try! satellite.tle.snapshot(
+            currentSnapshot: try! satellite.generateSnapshot(
                 julianDate: state.julianDate,
                 observer: observer
             ),
@@ -377,8 +377,9 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         // 2000 Broadway, Redwood City, CA 94063
         let location = CLLocation(latitude: 37.486743000691185, longitude: -122.22655970246515)
         let observer = LatLonAlt(location: location)
+        let satelliteInfo = SatelliteInfo(tle: tle)
         let context = SatelliteElevationGraphContext(
-            satelliteInfo: SatelliteInfo(noradIndex: 25544, tle: tle),
+            satelliteInfo: satelliteInfo,
             julianDateRange: julianDateRange,
             observer: observer,
             configs: .preset
@@ -393,7 +394,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                 satelliteTrails: [
                     tle.noradIndex: SatelliteTrails(
                         observer: observer,
-                        snapshots: try! tle.snapshots(
+                        snapshots: try! satelliteInfo.generateSnapshots(
                             observer: observer,
                             julianDateRange: julianDateRange,
                             interval: 20
@@ -402,7 +403,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                 ],
                 tleLoader: TLELoaderResources(
                     info: [.brightest100: .loaded(
-                        [tle.noradIndex: SatelliteInfo(noradIndex: tle.noradIndex, tle: tle)]
+                        [tle.noradIndex: satelliteInfo]
                     )]
                 ),
                 locationState: LocationState(
@@ -427,8 +428,9 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
             2 04382  68.4187 192.6131 1052892 188.4862 169.7083 13.08082975404634
             """
         )
+        let satelliteInfo2 = SatelliteInfo(tle: tle2)
         let context2 = SatelliteElevationGraphContext(
-            satelliteInfo: SatelliteInfo(noradIndex: 04382, tle: tle2),
+            satelliteInfo: satelliteInfo2,
             julianDateRange: julianDateRange,
             observer: observer,
             configs: .preset
@@ -443,7 +445,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                 satelliteTrails: [
                     tle2.noradIndex: SatelliteTrails(
                         observer: observer,
-                        snapshots: try! tle2.snapshots(
+                        snapshots: try! satelliteInfo2.generateSnapshots(
                             observer: observer,
                             julianDateRange: julianDateRange,
                             interval: 20
@@ -452,7 +454,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                 ],
                 tleLoader: TLELoaderResources(
                     info: [.brightest100: .loaded(
-                        [tle2.noradIndex: SatelliteInfo(noradIndex: tle2.noradIndex, tle: tle2)]
+                        [tle2.noradIndex: satelliteInfo2]
                     )]
                 ),
                 locationState: LocationState(
@@ -473,8 +475,9 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
             2 07276  64.2122 283.1177 6670908 285.3565  14.2908  2.45094844240000
             """
         )
+        let satelliteInfo3 = SatelliteInfo(tle: tle3)
         let context3 = SatelliteElevationGraphContext(
-            satelliteInfo: SatelliteInfo(noradIndex: 07276, tle: tle3),
+            satelliteInfo: satelliteInfo3,
             julianDateRange: julianDateRange,
             observer: observer,
             configs: .preset
@@ -489,7 +492,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                 satelliteTrails: [
                     tle3.noradIndex: SatelliteTrails(
                         observer: observer,
-                        snapshots: try! tle3.snapshots(
+                        snapshots: try! satelliteInfo3.generateSnapshots(
                             observer: observer,
                             julianDateRange: julianDateRange,
                             interval: 20
@@ -498,7 +501,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                 ],
                 tleLoader: TLELoaderResources(
                     info: [.brightest100: .loaded(
-                        [tle3.noradIndex: SatelliteInfo(noradIndex: tle3.noradIndex, tle: tle3)]
+                        [tle3.noradIndex: satelliteInfo3]
                     )]
                 ),
                 locationState: LocationState(

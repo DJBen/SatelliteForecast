@@ -249,7 +249,6 @@ struct SatelliteListView_Previews: PreviewProvider {
         ]
         .map {
             SatelliteInfo(
-                noradIndex: $0.noradIndex,
                 tle: $0,
                 satCat: SatCat.with(noradCatID: Int($0.noradIndex)),
                 ucsSat: UCSSat.with(noradCatID: Int($0.noradIndex))

@@ -6,6 +6,7 @@
 //
 
 import SatelliteKit
+import Darwin
 
 public enum AstroAlgorithms {
     /// Whether two objects have line of sight (and not blocked by earth).
@@ -62,18 +63,64 @@ public enum AstroAlgorithms {
     /// - SeeAlso: https://astronomy.stackexchange.com/a/28765/15972
     /// - Parameters:
     ///   - instrinsicMagnitude: The intrinsic magnitude of a satellite. Data source may include QSMag.
-    ///   - distToObserver: The distance from the satellite to the observer, in kilometers.
-    ///   - phaseAngle: The phase angle between the sun, the target and observer.
+    ///   - range: The distance from the satellite to the observer, in kilometers.
+    ///   - phaseAngle: The phase angle between the sun, the target and observer, in radians.
     ///   - zenithAngle: The angle of the satellite and zenith, in radians.
     /// - Returns: The visual magnitude of a satellite.
     public static func satelliteMagnitude(
         instrinsicMagnitude: Double,
-        distToObserver: Double,
+        range: Double,
         phaseAngle: Double,
         zenithAngle: Double
     ) -> Double {
         let phaseAngleTerm = sin(phaseAngle) + (.pi - phaseAngle) * cos(phaseAngle)
         let atmoTerm = 0.12 * airMass(zenithAngle: zenithAngle)
-        return instrinsicMagnitude + 5 * log10(distToObserver / 1000) - 2.5 * log10(phaseAngleTerm) + atmoTerm
+        return instrinsicMagnitude + 5 * log10(range / 1000) - 2.5 * log10(phaseAngleTerm) + atmoTerm
+    }
+
+    /// Caculate the object's brightness by assuming the shape as a Lambertian (diffusely-reflecting) sphere.
+    ///
+    /// We can use the radar cross section area as the cross section area in the calculation.
+    ///
+    /// - SeeAlso: https://amostech.com/TechnicalPapers/2013/POSTER/COGNION.pdf
+    /// - Parameters:
+    ///   - crossSectionArea: The cross section area of the object.
+    ///   - phaseAngle: The phase angle between the sun, the target and observer, in radians.
+    ///   - albedo: The percentage of light reflected from the surface, a number between 0 and 1.
+    ///   - range: The distance between the object and the observer, in meters.
+    /// - Returns: The brightness in visual magitude.
+    public static func lambertianSphereMagnitude(
+        crossSectionArea: Double,
+        range: Double,
+        phaseAngle: Double,
+        albedo: Double
+    ) -> Double {
+        let satelliteRadius = sqrt(crossSectionArea / .pi)
+        let phaseTerm = sin(phaseAngle) + (.pi - phaseAngle) * cos(phaseAngle)
+        let phaseFunction = 2 / 3 * albedo * satelliteRadius * satelliteRadius / (.pi * range * range) * phaseTerm
+        return -26.74 - 2.5 * log10(phaseFunction)
+    }
+
+    /// <#Description#>
+    ///
+    /// - SeeAlso: https://arxiv.org/pdf/2003.07805.pdf
+    /// - Parameters:
+    ///   - baseMagnitude: <#baseMagnitude description#>
+    ///   - cosGeoSatObserverAngle: <#projectedProfile description#>
+    ///   - range: <#range description#>
+    ///   - sunCoordinate: <#sunCoordinate description#>
+    ///   - satelliteCoordinate: <#satelliteCoordinate description#>
+    /// - Returns: <#description#>
+    public static func starLinkMagnitude(
+        baseMagnitude: Double = 4.1,
+        cosGeoSatObserverAngle: Double,
+        range: Double,
+        sunCoordinate: RADec,
+        satelliteCoordinate: RADec
+    ) -> Double {
+        //  The satellite's flat side is proportional to the cosine of the angle between the direction to the Sun and the perpendicular to the plane of that side
+        let solarAspect = sin(sunCoordinate.dec) * sin(satelliteCoordinate.dec) + cos(sunCoordinate.dec) * cos(satelliteCoordinate.dec) * cos(sunCoordinate.ra - satelliteCoordinate.ra)
+        let term = cosGeoSatObserverAngle / range / range
+        return baseMagnitude - 2.5 * log10(-term * solarAspect)
     }
 }

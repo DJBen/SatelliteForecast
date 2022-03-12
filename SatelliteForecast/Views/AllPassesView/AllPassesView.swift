@@ -386,6 +386,7 @@ extension ViewProducer where Context == AllPassesViewContext, ProducedView == Al
 }
 
 #if DEBUG
+
 struct AllPassesView_Previews: PreviewProvider {
     static let tianHe: TLE = try! TLE(
         raw: """
@@ -402,13 +403,12 @@ struct AllPassesView_Previews: PreviewProvider {
         let date = formatter.date(from: "2021-06-02T06:29:00-0600")!
 
         let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
-        let snapshots = try! tle.snapshots(
+        let snapshots = try! SatelliteInfo(tle: tle).generateSnapshots(
             observer: observer,
             julianDateRange: date.julianDate...date.julianDate + 2
         )
 
-        return try! tle.findPasses(
-            noradIndex: tle.noradIndex,
+        return try! SatelliteInfo(tle: tle).findPasses(
             observer: observer,
             coarseSnapshots: snapshots
         )
@@ -424,10 +424,7 @@ struct AllPassesView_Previews: PreviewProvider {
         let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
         let context = AllPassesViewContext(
             selectedNoradIndex: 48274,
-            satelliteInfo: SatelliteInfo(
-                noradIndex: 48274,
-                tle: tianHe
-            ),
+            satelliteInfo: SatelliteInfo(tle: tianHe),
             julianDateRange: Date().julianDate...Date().julianDate + 1,
             observer: observer
         )
@@ -452,7 +449,7 @@ struct AllPassesView_Previews: PreviewProvider {
                                 )
                             ),
                             context: SkyChartContext(
-                                satelliteInfo: SatelliteInfo(noradIndex: 48274, tle: tianHe),
+                                satelliteInfo: SatelliteInfo(tle: tianHe),
                                 snapshots: passSnapshots.snapshots,
                                 observer: observer,
                                 pass: passSnapshots.pass,
@@ -502,4 +499,5 @@ struct AllPassesView_Previews: PreviewProvider {
         }
     }
 }
+
 #endif

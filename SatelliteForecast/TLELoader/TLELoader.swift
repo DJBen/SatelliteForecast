@@ -92,7 +92,6 @@ extension SatelliteInfo {
         let ucsSat = UCSSat.with(noradCatID: Int(tle.noradIndex))
         let qsMag = QSMag.with(noradIndex: tle.noradIndex)
         self.init(
-            noradIndex: tle.noradIndex,
             tle: tle,
             satCat: satCat,
             ucsSat: ucsSat,

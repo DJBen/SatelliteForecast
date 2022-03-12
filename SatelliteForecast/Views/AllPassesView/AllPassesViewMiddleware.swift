@@ -52,14 +52,12 @@ extension EffectMiddleware where
                                let _ = satelliteState.passSnapshots {
                                 logger.debug("Ephemeride of \(noradIndex) are already generated. Skipping.")
                             } else {
-                                let tle = info.tle
                                 logger.debug("Calculating pass within date range \(julianDateRange) for \(String(describing: observer)) at interval of 30s")
 
                                 do {
-                                    let snapshots = try tle.snapshots(
+                                    let snapshots = try info.generateSnapshots(
                                         observer: observer,
                                         julianDateRange: julianDateRange,
-                                        qsMag: info.qsMag,
                                         interval: 30
                                     )
 
@@ -75,11 +73,11 @@ extension EffectMiddleware where
                                         )
                                     )
 
-                                    let passSnapshots = try tle.findPasses(
-                                        noradIndex: tle.noradIndex,
+                                    let passSnapshots = try info.findPasses(
                                         observer: observer,
                                         coarseSnapshots: snapshots,
-                                        qsMag: info.qsMag
+                                        qsMag: info.qsMag,
+                                        crossSectionArea: info.satCat?.rcs
                                     )
 
                                     subject.send(

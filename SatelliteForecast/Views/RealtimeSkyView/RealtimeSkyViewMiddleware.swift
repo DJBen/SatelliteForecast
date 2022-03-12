@@ -29,7 +29,7 @@ extension EffectMiddleware where InputActionType == RealtimeSkyViewAction, Outpu
                         .compactMap { satelliteInfo -> RealtimePropagationResult? in
                             do {
                                 let snapshot = try SatelliteSnapshot(
-                                    tle: satelliteInfo.tle,
+                                    satelliteInfo: satelliteInfo,
                                     julianDate: julianDate,
                                     observer: observer
                                 )

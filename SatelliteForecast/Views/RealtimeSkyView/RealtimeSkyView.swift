@@ -86,20 +86,28 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
         }
     }
 
+    private var displayPropagationResults: [RealtimePropagationResult] {
+        Array(
+            viewModel.state.resources.results.values.filter {
+                $0.snapshot.position.elev > 5
+            }
+        )
+    }
+
     private var visiblePropagationResults: [RealtimePropagationResult] {
-        Array(viewModel.state.resources.results.values.filter {
-            $0.snapshot.position.elev > 0
-        }.sorted(by: { result1, result2 in
-            if let mag1 = result1.satelliteInfo.qsMag?.magnitude, let mag2 = result1.satelliteInfo.qsMag?.magnitude {
+        displayPropagationResults
+        .filter { ($0.snapshot.visualMagnitude ?? .infinity) <= 5.5 }
+        .sorted { result1, result2 in
+            if let mag1 = result1.snapshot.visualMagnitude, let mag2 = result2.snapshot.visualMagnitude {
                 return mag1 < mag2
-            } else if let _ = result1.satelliteInfo.qsMag?.magnitude {
+            } else if let _ = result1.snapshot.visualMagnitude {
                 return true
-            } else if let _ = result2.satelliteInfo.qsMag?.magnitude {
+            } else if let _ = result2.snapshot.visualMagnitude {
                 return false
             } else {
                 return result1.snapshot.position.dist < result2.snapshot.position.dist
             }
-        }))
+        }
     }
 
     @ViewBuilder private func satellitePoint(result: RealtimePropagationResult, rect: CGRect) -> some View {
@@ -138,7 +146,7 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
 
     @ViewBuilder private var satellitePlot: some View {
         ForEach(
-            visiblePropagationResults,
+            displayPropagationResults,
             id: \.noradIndex
         ) { result in
             GeometryReader { geometry in
@@ -199,7 +207,7 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
 
     @ViewBuilder private var satelliteList: some View {
         List {
-            ForEach(visiblePropagationResults.prefix(10), id: \.self) { result in
+            ForEach(visiblePropagationResults, id: \.self) { result in
                 RealtimeSkySatelliteCell(
                     satelliteName: result.satelliteInfo.tle.commonName,
                     snapshot: result.snapshot

@@ -24,4 +24,41 @@ class AstroAlgorithmsTests: XCTestCase {
         XCTAssertEqual(AstroAlgorithms.airMass(zenithAngle: .pi / 6), 1.1547, accuracy: 0.01)
         XCTAssertEqual(AstroAlgorithms.airMass(zenithAngle: .pi / 4), 1.4142, accuracy: 0.01)
     }
+
+    func testSatelliteMagnitude() {
+        let issMagnitude = AstroAlgorithms.satelliteMagnitude(
+            instrinsicMagnitude: -2.5,
+            range: 408,
+            phaseAngle: .pi / 4,
+            zenithAngle: 0
+        )
+        XCTExpectFailure()
+        XCTAssertEqual(issMagnitude, -1.5, accuracy: 0.1)
+
+        let sl16rbMagitude = AstroAlgorithms.satelliteMagnitude(
+            instrinsicMagnitude: 2.0,
+            range: 850,
+            phaseAngle: .pi / 3,
+            zenithAngle: 0
+        )
+        XCTAssertEqual(sl16rbMagitude, 4.2, accuracy: 0.1)
+    }
+
+    func testLambertianSphereMagnitude() {
+        let issMagnitude = AstroAlgorithms.lambertianSphereMagnitude(
+            crossSectionArea: 399.0524,
+            range: 408_000,
+            phaseAngle: .pi / 4,
+            albedo: 0.2
+        )
+        XCTAssertEqual(issMagnitude, -1.5, accuracy: 0.1)
+
+        let sl16rbMagitude = AstroAlgorithms.lambertianSphereMagnitude(
+            crossSectionArea: 11.2276,
+            range: 850_000,
+            phaseAngle: .pi / 3,
+            albedo: 0.2
+        )
+        XCTAssertEqual(sl16rbMagitude, 4.2, accuracy: 0.1)
+    }
 }

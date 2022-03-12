@@ -155,13 +155,13 @@ struct PassPreviewCell_Previews: PreviewProvider {
         // Date range
         let startDate = Date(timeIntervalSinceReferenceDate: 20 * 365 * 86400)
         let julianDateRange = startDate.advanced(by: -60 * 60 * 2).julianDate...startDate.advanced(by: 60 * 60 * 30).julianDate
-        let coarseSnapshots = try! tle.snapshots(
+        let satelliteInfo = SatelliteInfo(tle: tle)
+        let coarseSnapshots = try! satelliteInfo.generateSnapshots(
             observer: observer,
             julianDateRange: julianDateRange,
             interval: 60
         )
-        let passSnapshots = try! tle.findPasses(
-            noradIndex: tle.noradIndex,
+        let passSnapshots = try! satelliteInfo.findPasses(
             observer: observer,
             coarseSnapshots: coarseSnapshots
         )
@@ -169,7 +169,7 @@ struct PassPreviewCell_Previews: PreviewProvider {
         func viewAtPassIndex(_ index: Int) -> some View {
             let passSnapshot = passSnapshots[index]
             return PassPreviewCell(
-                satelliteInfo: SatelliteInfo(noradIndex: 25544, tle: tle),
+                satelliteInfo: SatelliteInfo(tle: tle),
                 snapshots: passSnapshot.snapshots,
                 notableSnapshots: passSnapshot.notableSnapshots,
                 observer: observer,
@@ -184,7 +184,7 @@ struct PassPreviewCell_Previews: PreviewProvider {
                             )
                         ),
                         context: SkyChartContext(
-                            satelliteInfo: SatelliteInfo(noradIndex: 25544, tle: tle),
+                            satelliteInfo: satelliteInfo,
                             snapshots: passSnapshot.snapshots,
                             observer: observer,
                             pass: passSnapshot.pass,

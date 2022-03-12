@@ -11,7 +11,7 @@ import SatelliteForecastCore
 import SatelliteKit
 
 struct SkyChartDynamicIndicatorState: Equatable {
-    let tle: TLE
+    let satelliteInfo: SatelliteInfo
     let pass: Pass
     let observer: LatLonAlt
     let julianDateOffset: Double
@@ -84,11 +84,11 @@ struct SkyChartDynamicIndicator: View {
                 if (state.pass.rise.julianDate..<state.pass.set.julianDate).contains(julianDate) {
                     do {
                         snapshotPairAtReferenceDate = SnapshotsAroundPass(
-                            first: try state.tle.snapshot(
+                            first: try state.satelliteInfo.generateSnapshot(
                                 julianDate: julianDate,
                                 observer: state.observer
                             ),
-                            second: try state.tle.snapshot(
+                            second: try state.satelliteInfo.generateSnapshot(
                                 julianDate: julianDate + TimeConstants.sec2day * 1,
                                 observer: state.observer
                             )

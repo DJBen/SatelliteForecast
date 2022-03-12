@@ -163,13 +163,12 @@ struct AlarmSettingsView_Previews: PreviewProvider {
         // Date range
         let startDate = Date(timeIntervalSinceReferenceDate: 20 * 365 * 86400)
         let julianDateRange = startDate.advanced(by: -60 * 60 * 2).julianDate...startDate.advanced(by: 60 * 60 * 30).julianDate
-        let coarseSnapshots = try! tle.snapshots(
+        let coarseSnapshots = try! SatelliteInfo(tle: tle).generateSnapshots(
             observer: observer,
             julianDateRange: julianDateRange,
             interval: 60
         )
-        let passSnapshotsList = try! tle.findPasses(
-            noradIndex: tle.noradIndex,
+        let passSnapshotsList = try! SatelliteInfo(tle: tle).findPasses(
             observer: observer,
             coarseSnapshots: coarseSnapshots
         )

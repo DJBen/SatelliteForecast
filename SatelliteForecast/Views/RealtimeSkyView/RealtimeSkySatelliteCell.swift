@@ -56,14 +56,13 @@ struct RealtimeSkySatelliteCell_Previews: PreviewProvider {
         let observer = LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0)
         // Date range
         let startDate = Date(timeIntervalSinceReferenceDate: 20 * 365 * 86400)
-
+        let satelliteInfo = SatelliteInfo(tle: tle)
         RealtimeSkySatelliteCell(
             satelliteName: "TIANHE",
             snapshot: try! SatelliteSnapshot(
-                tle: tle,
+                satelliteInfo: satelliteInfo,
                 julianDate: startDate.julianDate,
-                observer: observer,
-                qsMag: QSMag.with(noradIndex: 25544)!
+                observer: observer
             )
         )
     }

@@ -12,11 +12,11 @@ import SatelliteKit
 
 extension SatelliteSnapshot {
     public init(
-        tle: TLE,
+        satelliteInfo: SatelliteInfo,
         julianDate: Double,
-        observer: LatLonAlt,
-        qsMag: QSMag? = nil
+        observer: LatLonAlt
     ) throws {
+        let tle = satelliteInfo.tle
         let satellite = Satellite(withTLE: tle)
         let eciPosition = try satellite.position(julianDays: julianDate)
         let obsCel = geo2eci(julianDays: julianDate, geodetic: observer)
@@ -48,39 +48,42 @@ extension SatelliteSnapshot {
             site: (observer.lat, observer.lon),
             cele: cartesianToRaDec(solarCel)
         )
+        let visualMagnitude: Double?
+        if let crossSectionArea = satelliteInfo.satCat?.rcs {
+            visualMagnitude = AstroAlgorithms.lambertianSphereMagnitude(
+                crossSectionArea: crossSectionArea,
+                range: position.dist * 1000,
+                phaseAngle: phaseAngle,
+                albedo: 0.25
+            )
+        } else {
+            visualMagnitude = nil
+        }
+
         self.init(
             julianDate: julianDate,
             position: position,
             isIlluminated: isIlluminated,
             sunElevation: sunElev,
             phaseAngle: phaseAngle,
-            visualMagnitude: qsMag?.magnitude.map { mag in
-                AstroAlgorithms.satelliteMagnitude(
-                    instrinsicMagnitude: mag,
-                    distToObserver: position.dist,
-                    phaseAngle: phaseAngle,
-                    zenithAngle: (90 - position.elev) * .pi / 180
-                )
-            }
+            visualMagnitude: visualMagnitude
         )
     }
 }
 
-extension TLE {
+extension SatelliteInfo {
     /// Construct a snapshot of the satellite given a date and observer coordinate.
     /// - Parameters:
     ///   - julianDate: The julian date.
     ///   - observer: The observer coordinate in latitude, longitude and altitude.
-    public func snapshot(
+    public func generateSnapshot(
         julianDate: Double,
-        observer: LatLonAlt,
-        qsMag: QSMag? = nil
+        observer: LatLonAlt
     ) throws -> SatelliteSnapshot {
         return try SatelliteSnapshot(
-            tle: self,
+            satelliteInfo: self,
             julianDate: julianDate,
-            observer: observer,
-            qsMag: qsMag
+            observer: observer
         )
     }
 
@@ -90,10 +93,9 @@ extension TLE {
     ///   - dateRange: The date range to generate satellite ephemerides.
     ///   - interval: The interval to generate satellite ephemerides.
     /// - Returns: A list of satellite snapshots over a date range with a given interval at an observer location in chronological order.
-    public func snapshots(
+    public func generateSnapshots(
         observer: LatLonAlt,
         julianDateRange: ClosedRange<Double>,
-        qsMag: QSMag? = nil,
         interval: TimeInterval = 30
     ) throws -> [SatelliteSnapshot] {
         return try stride(
@@ -103,10 +105,9 @@ extension TLE {
             by: interval * TimeConstants.sec2day
         )
         .map { (julianDate) in
-            try snapshot(
+            try generateSnapshot(
                 julianDate: julianDate,
-                observer: observer,
-                qsMag: qsMag
+                observer: observer
             )
         }
     }
@@ -115,13 +116,11 @@ extension TLE {
         noradIndex: UInt,
         observer: LatLonAlt,
         julianDateRange: ClosedRange<Double>,
-        qsMag: QSMag? = nil,
         fineInterval: TimeInterval = 3
     ) throws -> PassSnapshots {
-        let fineSnapshots = try snapshots(
+        let fineSnapshots = try generateSnapshots(
             observer: observer,
             julianDateRange: julianDateRange,
-            qsMag: qsMag,
             interval: fineInterval
         )
 
@@ -251,10 +250,10 @@ extension TLE {
     ///   - passes: A list of satellite passes.
     ///   - snapshots: Resulting snapshots by merging the coarse snapshots and the generated fine snapshots.
     public func findPasses(
-        noradIndex: UInt,
         observer: LatLonAlt,
         coarseSnapshots: [SatelliteSnapshot],
         qsMag: QSMag? = nil,
+        crossSectionArea: Double? = nil,
         minElevation: Double = 10,
         fineInterval: TimeInterval = 3
     ) throws -> [PassSnapshots] {
@@ -278,10 +277,9 @@ extension TLE {
 
             if let fromDate = snapshotBeforeRising?.julianDate, let toDate = snapshotAfterSetting?.julianDate, fromDate < toDate {
                 let passSnapshots = try generatePassInfo(
-                    noradIndex: noradIndex,
+                    noradIndex: tle.noradIndex,
                     observer: observer,
                     julianDateRange: fromDate...toDate,
-                    qsMag: qsMag,
                     fineInterval: fineInterval
                 )
 
