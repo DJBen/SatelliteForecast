@@ -257,7 +257,7 @@ extension RealtimeSkyViewImpl {
                 "realtimeSkyView.navigation.title",
                 tableName: nil,
                 bundle: .main,
-                value: "Realtime sky",
+                value: "Sky now",
                 comment: "The navigation title of the realtime sky view"
             )
         }

@@ -86,7 +86,7 @@ extension TabBarItemModifier {
         enum RealtimeSky {
             static let text: String = NSLocalizedString(
                 "tabs.realtimeSky.text",
-                value: "Realtime sky",
+                value: "Sky now",
                 comment: "The title of the 'Realtime sky' tab of the root view."
             )
         }
