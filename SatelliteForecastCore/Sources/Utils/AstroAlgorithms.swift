@@ -9,6 +9,17 @@ import SatelliteKit
 import Darwin
 
 public enum AstroAlgorithms {
+    public static func sunElevation(julianDate: Double, observer: LatLonAlt) -> Double {
+        azel(
+            julianDate: julianDate,
+            site: (observer.lat, observer.lon),
+            cele: solarGeo(
+                julianDays: julianDate
+            )
+        ).alt
+    }
+
+
     /// Whether two objects have line of sight (and not blocked by earth).
     ///
     /// One of the object's geocentric coordinate can be replaced by sun's coordinate

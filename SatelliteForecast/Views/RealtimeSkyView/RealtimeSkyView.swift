@@ -176,7 +176,7 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
         )
         .environment(
             \.backgroundSkyJulianDateKey,
-             julianDate.map { $0.julianDateRoundedToNearestMinute() }
+             julianDate.map { $0.roundJulianDate(.toMins(1)) }
         )
         .overlay {
             satellitePlot

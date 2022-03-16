@@ -236,7 +236,10 @@ extension SkyChart {
         
         // -- Plantary bodies
         
-        let (sunAlt, sunAzi) = azel(julianDate: params.julianDate, site: (params.observer.lat, params.observer.lon), cele: solarGeo(julianDays: params.julianDate))
+        let (sunAlt, sunAzi) = azel(
+            julianDate: params.julianDate,
+            site: (params.observer.lat, params.observer.lon),
+            cele: solarGeo(julianDays: params.julianDate))
         let sunPoint = Self.point(at: AziEleDst(azim: sunAzi, elev: sunAlt, dist: 0), rect: params.rect)
         
         ctx.cgContext.saveGState()

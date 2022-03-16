@@ -495,7 +495,7 @@ struct AllPassesView_Previews: PreviewProvider {
                 )
             }
             .previewDevice(PreviewDevice(rawValue: previewDevice))
-            .environment(\.backgroundSkyJulianDateKey, passSnapshots.pass.rise.julianDate.julianDateRoundedToNearestMinute())
+            .environment(\.backgroundSkyJulianDateKey, passSnapshots.pass.rise.julianDate.roundJulianDate(.toMins(1)))
         }
     }
 }

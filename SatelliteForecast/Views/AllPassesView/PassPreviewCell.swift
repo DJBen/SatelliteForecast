@@ -222,7 +222,7 @@ struct PassPreviewCell_Previews: PreviewProvider {
                     )
                 )
             )
-            .environment(\.backgroundSkyJulianDateKey, passSnapshot.pass.rise.julianDate.julianDateRoundedToNearestMinute())
+            .environment(\.backgroundSkyJulianDateKey, passSnapshot.pass.rise.julianDate.roundJulianDate(.toMins(1)))
         }
 
         return Group {

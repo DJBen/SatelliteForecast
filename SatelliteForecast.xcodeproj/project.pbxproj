@@ -10,6 +10,8 @@
 		1DAA0710B7B6C3376CEA16CB /* Pods_SatelliteForecast_SatelliteForecastTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CF84B428B2EC72B9D2FF372 /* Pods_SatelliteForecast_SatelliteForecastTests.framework */; };
 		76462F2B1341A54B93996539 /* Pods_SatelliteForecast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F309E703E1576B91309154B8 /* Pods_SatelliteForecast.framework */; };
 		EF0FC06C2677D7A200560AF0 /* AllPassesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0FC06B2677D7A200560AF0 /* AllPassesView.swift */; };
+		EF12BC0E27E1C0CF0083F3A2 /* SatelliteElevationGraph+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF12BC0D27E1C0CF0083F3A2 /* SatelliteElevationGraph+Wiring.swift */; };
+		EF12BC1027E204070083F3A2 /* EnvironmentKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF12BC0F27E204070083F3A2 /* EnvironmentKeys.swift */; };
 		EF16811E27D00E28001BA9C3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EF9D827C2661BBF000616C97 /* Assets.xcassets */; };
 		EF16811F27D00E28001BA9C3 /* Satellites.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EF3D09A12686920800B84232 /* Satellites.xcassets */; };
 		EF16813F27D1793A001BA9C3 /* RealtimeSkyViewMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF16813B27D1793A001BA9C3 /* RealtimeSkyViewMiddleware.swift */; };
@@ -164,6 +166,8 @@
 		A282581E620B8E3ECA2F71AC /* Pods-SatelliteForecast.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecast.release.xcconfig"; path = "Target Support Files/Pods-SatelliteForecast/Pods-SatelliteForecast.release.xcconfig"; sourceTree = "<group>"; };
 		DD9ABC9E05C7D15D34D6BE1B /* Pods-SatelliteForecast-SatelliteForecastTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecast-SatelliteForecastTests.debug.xcconfig"; path = "Target Support Files/Pods-SatelliteForecast-SatelliteForecastTests/Pods-SatelliteForecast-SatelliteForecastTests.debug.xcconfig"; sourceTree = "<group>"; };
 		EF0FC06B2677D7A200560AF0 /* AllPassesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllPassesView.swift; sourceTree = "<group>"; };
+		EF12BC0D27E1C0CF0083F3A2 /* SatelliteElevationGraph+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SatelliteElevationGraph+Wiring.swift"; sourceTree = "<group>"; };
+		EF12BC0F27E204070083F3A2 /* EnvironmentKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentKeys.swift; sourceTree = "<group>"; };
 		EF16811A27CF0248001BA9C3 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		EF16813B27D1793A001BA9C3 /* RealtimeSkyViewMiddleware.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealtimeSkyViewMiddleware.swift; sourceTree = "<group>"; };
 		EF16813C27D1793A001BA9C3 /* RealtimePropagationResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealtimePropagationResult.swift; sourceTree = "<group>"; };
@@ -337,6 +341,14 @@
 			path = AllPassesView;
 			sourceTree = "<group>";
 		};
+		EF12BC0C27E1C0B50083F3A2 /* Wiring */ = {
+			isa = PBXGroup;
+			children = (
+				EF12BC0D27E1C0CF0083F3A2 /* SatelliteElevationGraph+Wiring.swift */,
+			);
+			path = Wiring;
+			sourceTree = "<group>";
+		};
 		EF16813A27D1793A001BA9C3 /* RealtimeSkyView */ = {
 			isa = PBXGroup;
 			children = (
@@ -506,6 +518,7 @@
 				EF19FA07266EC34600D0B2CD /* SkyChart */,
 				EF16813A27D1793A001BA9C3 /* RealtimeSkyView */,
 				EFF750C7266F4DFF005222F8 /* SizeModifier.swift */,
+				EF12BC0F27E204070083F3A2 /* EnvironmentKeys.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -636,6 +649,7 @@
 		EF8A4238267E86700014AE17 /* SatelliteElevationGraph */ = {
 			isa = PBXGroup;
 			children = (
+				EF12BC0C27E1C0B50083F3A2 /* Wiring */,
 				EFAE1F0B2668B10F00A18A42 /* SatelliteElevationGraph.swift */,
 				EF8A423B267EA38C0014AE17 /* SatelliteElevationGraphMiddleware.swift */,
 				EF8A423D267EA3970014AE17 /* SatelliteElevationGraphReducer.swift */,
@@ -988,6 +1002,7 @@
 				EF1CAB39266B8934006319C8 /* SatelliteListViewMiddleware.swift in Sources */,
 				EF1CAB32266B7ABF006319C8 /* PassView.swift in Sources */,
 				EF16816727D5788E001BA9C3 /* RootViewReducer.swift in Sources */,
+				EF12BC1027E204070083F3A2 /* EnvironmentKeys.swift in Sources */,
 				EF16817127D5DC03001BA9C3 /* SatelliteOverviewReducer+Wiring.swift in Sources */,
 				EF16815427D2B59D001BA9C3 /* BackgroundSkyViewReducer+Wiring.swift in Sources */,
 				EF7A3128266B1A2D00CC33C0 /* LocationAction.swift in Sources */,
@@ -1038,6 +1053,7 @@
 				EF16814927D18B1F001BA9C3 /* BackgroundSkyResources.swift in Sources */,
 				EF833AFA26AD6068003EEBB6 /* ShakeMotion+Notification.swift in Sources */,
 				EF847BFA26CF624B0004806F /* NotificationAction.swift in Sources */,
+				EF12BC0E27E1C0CF0083F3A2 /* SatelliteElevationGraph+Wiring.swift in Sources */,
 				EF7A319B266B733C00CC33C0 /* LocalizedStrings.swift in Sources */,
 				EF2EF4DA27B252EA000D5EC8 /* AppStateMappable.swift in Sources */,
 				EFED97AF27D61742003FC289 /* TLELoaderMiddleware+Wiring.swift in Sources */,

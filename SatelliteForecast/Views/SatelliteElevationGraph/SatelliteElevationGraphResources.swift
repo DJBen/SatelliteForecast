@@ -13,5 +13,20 @@ struct SatelliteElevationGraphResources: Equatable {
         let julianDateRange: ClosedRange<Double>
         let image: UIImage
     }
-    var rasterizedElevationGraphs: [UInt: RangeImage] = [:]
+    var rasterizedElevationGraphs: [UInt: [RangeImage]] = [:]
+
+    func rasterizedElevationGraph(
+        noradIndex: UInt,
+        size: CGSize,
+        julianDateRange: ClosedRange<Double>,
+        tolerance: Double = 1e-8
+    ) -> RangeImage? {
+        rasterizedElevationGraphs[noradIndex]?.first {
+            $0.image.size.height == size.height
+            && $0.julianDateRange.roughlyEqualTo(
+                julianDateRange,
+                tolerance: tolerance
+            )
+        }
+    }
 }

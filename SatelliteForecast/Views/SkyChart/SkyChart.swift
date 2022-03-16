@@ -115,9 +115,9 @@ struct SkyChart: View {
 
     private var backgroundSkyJulianDateKey: Double {
         if (context.pass.rise.julianDate..<context.pass.set.julianDate).contains(viewModel.state.referenceDate) {
-            return viewModel.state.referenceDate.julianDateRoundedToNearestMinute()
+            return viewModel.state.referenceDate.roundJulianDate(.toMins(1))
         }
-        return context.pass.rise.julianDate.julianDateRoundedToNearestMinute()
+        return context.pass.rise.julianDate.roundJulianDate(.toMins(1))
     }
 
     @ViewBuilder private var satellitePath: some View {
@@ -333,7 +333,7 @@ struct SkyChart_Previews: PreviewProvider {
             )
             .padding(20)
             .preferredColorScheme(colorScheme)
-            .environment(\.backgroundSkyJulianDateKey, referenceDate.julianDateRoundedToNearestMinute())
+            .environment(\.backgroundSkyJulianDateKey, referenceDate.roundJulianDate(.toMins(1)))
         }
 
         let (tle2, passSnapshots2) = tianHePass
@@ -381,7 +381,7 @@ struct SkyChart_Previews: PreviewProvider {
             )
         )
         .padding(20)
-        .environment(\.backgroundSkyJulianDateKey, passSnapshots2.pass.rise.julianDate.julianDateRoundedToNearestMinute())
+        .environment(\.backgroundSkyJulianDateKey, passSnapshots2.pass.rise.julianDate.roundJulianDate(.toMins(1)))
 
         SkyChart(
             viewModel: .mock(state: .init()),
@@ -410,7 +410,7 @@ struct SkyChart_Previews: PreviewProvider {
         )
         .padding(20)
         .previewDisplayName("Placeholder")
-        .environment(\.backgroundSkyJulianDateKey, passSnapshots2.pass.rise.julianDate.julianDateRoundedToNearestMinute())
+        .environment(\.backgroundSkyJulianDateKey, passSnapshots2.pass.rise.julianDate.roundJulianDate(.toMins(1)))
     }
 }
 #endif

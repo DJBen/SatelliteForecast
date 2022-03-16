@@ -45,6 +45,7 @@ struct PassView: View {
                         configs: .preset
                     )
                 )
+                .environment(\.julianDateRangeKey, context.julianDateRange)
                 .frame(minHeight: 180, idealHeight: 240, maxHeight: 275, alignment: .leading)
                 
                 skyChartProducer.view(
@@ -201,8 +202,7 @@ struct PassView_Previews: PreviewProvider {
                 SatelliteElevationGraph(
                     viewModel: .mock(
                         state: SatelliteElevationGraphState.project(
-                            state: appState,
-                            context: elevationGraphContext
+                            appState: appState
                         )
                     ),
                     context: elevationGraphContext
@@ -232,7 +232,8 @@ struct PassView_Previews: PreviewProvider {
                 )
             )
         )
-        .environment(\.backgroundSkyJulianDateKey, passSnapshots[0].pass.rise.julianDate.julianDateRoundedToNearestMinute())
+        .environment(\.julianDateRangeKey, julianDateRange)
+        .environment(\.backgroundSkyJulianDateKey, passSnapshots[0].pass.rise.julianDate.roundJulianDate(.toMins(1)))
     }
 }
 #endif

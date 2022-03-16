@@ -54,17 +54,6 @@ struct BackgroundSkyViewContext {
     let quality: ChartQuality
 }
 
-struct BackgroundSkyJulianDateKeyEnvironmentKey: EnvironmentKey {
-    static let defaultValue: Double? = nil
-}
-
-extension EnvironmentValues {
-    var backgroundSkyJulianDateKey: Double? {
-        get { self[BackgroundSkyJulianDateKeyEnvironmentKey.self] }
-        set { self[BackgroundSkyJulianDateKeyEnvironmentKey.self] = newValue }
-    }
-}
-
 struct BackgroundSkyView: View {
     @ObservedObject var viewModel: ObservableViewModel<BackgroundSkyViewAction, BackgroundSkyViewState>
     let context: BackgroundSkyViewContext
@@ -96,21 +85,11 @@ struct BackgroundSkyView: View {
         )
     }
 
-    private func sunElevation(julianDate: Double) -> Double {
-        azel(
-            julianDate: julianDate,
-            site: (context.observer.lat, context.observer.lon),
-            cele: solarGeo(
-                julianDays: julianDate
-            )
-        ).alt
-    }
-
     @ViewBuilder func backgroundSky(julianDate: Double) -> some View {
         GeometryReader { geometry in
             Group {
                 let rect = geometry.frame(in: .local)
-                if !(sunElevation(julianDate: julianDate) > -6 &&
+                if !(AstroAlgorithms.sunElevation(julianDate: julianDate, observer: context.observer) > -6 &&
                      context.configs.hidesStarsDuringDay),
                    let image = rasterizedBackgroundSky {
                     Image(uiImage: image)
@@ -174,7 +153,7 @@ struct BackgroundSkyView: View {
                     label: context.configs.bodySymbol,
                     referenceDate: julianDate,
                     observer: context.observer,
-                    sunElevation: sunElevation(julianDate: julianDate)
+                    sunElevation: AstroAlgorithms.sunElevation(julianDate: julianDate, observer: context.observer)
                 )
             }
         }
