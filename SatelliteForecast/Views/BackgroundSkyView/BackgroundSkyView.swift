@@ -5,7 +5,6 @@
 //  Created by Ben Lu on 3/3/22.
 //
 
-import BTree
 import CombineRex
 import SatelliteForecastCore
 import SatelliteKit
@@ -68,21 +67,20 @@ struct BackgroundSkyView: View {
             return nil
         }
 
-        let imageCache: [BackgroundSkyKey: BTree<Double, UIImage>] = (
+        let imageCache: [BackgroundSkyKey: [Double: UIImage]] = (
             context.quality == .full ?
             viewModel.state.resources.rasterizedBackgroundSky
             : viewModel.state.resources.previewBackgroundSkies
         )
 
-        return imageCache[
+        let images = imageCache[
             BackgroundSkyKey(
                 observer: context.observer,
                 configs: context.configs
             )
-        ]?.value(
-            closestTo: backgroundSkyJulianDateKey,
-            within: TimeConstants.min2day
-        )
+        ]
+
+        return images?[backgroundSkyJulianDateKey]
     }
 
     @ViewBuilder func backgroundSky(julianDate: Double) -> some View {
@@ -91,11 +89,13 @@ struct BackgroundSkyView: View {
                 let rect = geometry.frame(in: .local)
                 if !(AstroAlgorithms.sunElevation(julianDate: julianDate, observer: context.observer) > -6 &&
                      context.configs.hidesStarsDuringDay),
-                   let image = rasterizedBackgroundSky {
-                    Image(uiImage: image)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: rect.width, height: rect.height, alignment: .center)
+                let image = rasterizedBackgroundSky {
+                    Image(
+                        uiImage: image
+                    )
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: rect.width, height: rect.height, alignment: .center)
                 } else {
                     // Needs to have a non-empty view so that views on top of it will have a non-zero size
                     Color.clear
@@ -113,26 +113,6 @@ struct BackgroundSkyView: View {
                     .requestRasterizedBackgroundSky(
                         size: contentSize,
                         quality: context.quality,
-                        julianDate: julianDate,
-                        key: BackgroundSkyKey(
-                            observer: context.observer,
-                            configs: context.configs
-                        ),
-                        traitCollection: UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
-                    )
-                )
-            }
-            .onChange(of: backgroundSkyJulianDateKey) { backgroundSkyJulianDateKey in
-
-                guard !contentSize.width.isZero && !contentSize.height.isZero else {
-                    return
-                }
-
-                viewModel.dispatch(
-                    .requestRasterizedBackgroundSky(
-                        size: contentSize,
-                        quality: context.quality,
-                        // Round date to nearest minute
                         julianDate: julianDate,
                         key: BackgroundSkyKey(
                             observer: context.observer,
@@ -160,24 +140,48 @@ struct BackgroundSkyView: View {
     }
 
     var body: some View {
-        if let backgroundSkyJulianDateKey = backgroundSkyJulianDateKey {
-            SkyChartBackground(
-                state: SkyChartBackgroundState(observer: context.observer),
-                configs: context.basicChartConfigs
-            )
-            .background(
-                backgroundSky(
-                    julianDate: backgroundSkyJulianDateKey
+        Group {
+            if let backgroundSkyJulianDateKey = backgroundSkyJulianDateKey {
+                SkyChartBackground(
+                    state: SkyChartBackgroundState(observer: context.observer),
+                    configs: context.basicChartConfigs
                 )
-                .overlay(
-                    planetaryBodiesView(julianDate: backgroundSkyJulianDateKey)
+                .background(
+                    backgroundSky(
+                        julianDate: backgroundSkyJulianDateKey
+                    )
+                    .overlay(
+                        planetaryBodiesView(julianDate: backgroundSkyJulianDateKey)
+                    )
+                    .clipShape(Circle())
                 )
-                .clipShape(Circle())
-            )
-        } else {
-            SkyChartBackground(
-                state: SkyChartBackgroundState(observer: context.observer),
-                configs: context.basicChartConfigs
+            } else {
+                SkyChartBackground(
+                    state: SkyChartBackgroundState(observer: context.observer),
+                    configs: context.basicChartConfigs
+                )
+            }
+        }
+        .onChange(of: backgroundSkyJulianDateKey) { backgroundSkyJulianDateKey in
+            guard !contentSize.width.isZero && !contentSize.height.isZero else {
+                return
+            }
+
+            guard let backgroundSkyJulianDateKey = backgroundSkyJulianDateKey else {
+                return
+            }
+
+            viewModel.dispatch(
+                .requestRasterizedBackgroundSky(
+                    size: contentSize,
+                    quality: context.quality,
+                    julianDate: backgroundSkyJulianDateKey,
+                    key: BackgroundSkyKey(
+                        observer: context.observer,
+                        configs: context.configs
+                    ),
+                    traitCollection: UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
+                )
             )
         }
     }

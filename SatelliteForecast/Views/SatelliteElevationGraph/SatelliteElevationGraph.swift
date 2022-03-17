@@ -245,7 +245,7 @@ struct SatelliteElevationGraph: View {
                     .requestRasterizeElevationGraph(
                         size: size,
                         noradIndex: context.satelliteInfo.noradIndex,
-                        julianDateRange: julianDateRange.roundJulianDate(.to10Mins),
+                        julianDateRange: julianDateRange.roundJulianDate(.toMins(10)),
                         traitCollection: traitCollection
                     )
                 )
@@ -261,7 +261,7 @@ struct SatelliteElevationGraph: View {
                     .requestRasterizeElevationGraph(
                         size: graphingRegionSize,
                         noradIndex: context.satelliteInfo.noradIndex,
-                        julianDateRange: newJulianDateRange.roundJulianDate(.to10Mins),
+                        julianDateRange: newJulianDateRange.roundJulianDate(.toMins(10)),
                         traitCollection: traitCollection
                     )
                 )

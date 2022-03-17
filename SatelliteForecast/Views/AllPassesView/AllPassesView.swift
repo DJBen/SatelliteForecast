@@ -72,16 +72,12 @@ struct AllPassesViewState: Equatable {
         }
     }
 
-    var julianDate: Double
+    var julianDate: Double = 0
     var visiblePasses: [Item]?
     var invisiblePasses: [Item]?
     var selectedPassIndex: Int?
     var satelliteCategory: SatelliteCategory?
     var locationChangeWarningState: AllPassesLocationChangeWarningState?
-    
-    static var empty: AllPassesViewState {
-        AllPassesViewState(julianDate: 0)
-    }
 
     static func project(state: AppState, context: AllPassesViewContext) -> AllPassesViewState {
         if let satelliteTrails = state.satelliteTrails[context.selectedNoradIndex],
@@ -95,7 +91,7 @@ struct AllPassesViewState: Equatable {
                             observer: observer,
                             configs: .preset
                         )
-                    ]?.value(closestTo: passSnapshots.pass.rise.julianDate)
+                    ]?[passSnapshots.pass.rise.julianDate.roundJulianDate(.toMins(1))]
                 } else {
                     rasterizedBackgroundSky = nil
                 }
@@ -374,7 +370,7 @@ extension ViewProducer where Context == AllPassesViewContext, ProducedView == Al
                             )
                         }
                     )
-                    .asObservableViewModel(initialState: .empty, emitsValue: .whenDifferent),
+                    .asObservableViewModel(initialState: .init(), emitsValue: .whenDifferent),
                 context: context,
                 skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
                     .skyChart(viewModel: viewModel),

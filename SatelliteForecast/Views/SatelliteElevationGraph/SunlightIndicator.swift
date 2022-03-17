@@ -164,7 +164,7 @@ struct SunlightIndicator: View, Equatable {
         var julianDateElevations = [Double: Double]()
         
         // Stride in a 10 minute interval across the julian date to improve performance
-        for julianDate in stride(from: julianDateRange.lowerBound.roundJulianDate(.to10Mins), through: julianDateRange.upperBound.roundJulianDate(.to10Mins), by: 10 * TimeConstants.min2day) {
+        for julianDate in stride(from: julianDateRange.lowerBound.roundJulianDate(.toMins(10)), through: julianDateRange.upperBound.roundJulianDate(.toMins(10)), by: 10 * TimeConstants.min2day) {
             julianDateElevations[julianDate] = AstroAlgorithms.sunElevation(julianDate: julianDate, observer: observer)
         }
 

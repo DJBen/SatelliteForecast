@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftDate
 import SatelliteKit
 
 public enum JulianDateUtil {
@@ -14,15 +13,23 @@ public enum JulianDateUtil {
         now: Double,
         before: Double = 2 * TimeConstants.hrs2day,
         after: Double = 7 * 24 * TimeConstants.hrs2day,
-        roundingTo roundDateMode: RoundDateMode = .to10Mins
+        roundingTo roundDateMode: RoundDateMode = .toMins(10)
     ) -> ClosedRange<Double> {
         ((now - before)...(now + after)).roundJulianDate(roundDateMode)
     }
 }
 
+public struct RoundDateMode {
+    let mins: Int
+
+    public static func toMins(_ mins: Int) -> RoundDateMode {
+        RoundDateMode(mins: mins)
+    }
+}
+
 extension ClosedRange where Bound == Double {
     public func roundJulianDate(_ roundDateMode: RoundDateMode) -> ClosedRange<Bound> {
-        Date(julianDate: lowerBound).dateRoundedAt(at: roundDateMode).julianDate...Date(julianDate: upperBound).dateRoundedAt(at: roundDateMode).julianDate
+        lowerBound.roundJulianDate(roundDateMode)...upperBound.roundJulianDate(roundDateMode)
     }
 
     public func roughlyEqualTo(_ rhs: ClosedRange, tolerance: Double) -> Bool {
@@ -40,6 +47,32 @@ extension ClosedRange where Bound == Double {
 
 extension Double {
     public func roundJulianDate(_ roundDateMode: RoundDateMode) -> Double {
-        Date(julianDate: self).dateRoundedAt(at: roundDateMode).julianDate
+        Date(julianDate: self).rounded(
+            minutes: TimeInterval(roundDateMode.mins)
+        ).julianDate
+    }
+}
+
+enum DateRoundingType {
+    case round
+    case ceil
+    case floor
+}
+
+extension Date {
+    func rounded(minutes: TimeInterval, rounding: DateRoundingType = .round) -> Date {
+        return rounded(seconds: minutes * 60, rounding: rounding)
+    }
+    func rounded(seconds: TimeInterval, rounding: DateRoundingType = .round) -> Date {
+        var roundedInterval: TimeInterval = 0
+        switch rounding  {
+        case .round:
+            roundedInterval = (timeIntervalSinceReferenceDate / seconds).rounded() * seconds
+        case .ceil:
+            roundedInterval = ceil(timeIntervalSinceReferenceDate / seconds) * seconds
+        case .floor:
+            roundedInterval = floor(timeIntervalSinceReferenceDate / seconds) * seconds
+        }
+        return Date(timeIntervalSinceReferenceDate: roundedInterval)
     }
 }
