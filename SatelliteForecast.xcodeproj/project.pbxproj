@@ -35,7 +35,7 @@
 		EF16816527D42F6B001BA9C3 /* DynamicTabBarItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF16816427D42F6B001BA9C3 /* DynamicTabBarItemView.swift */; };
 		EF16816727D5788E001BA9C3 /* RootViewReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF16816627D5788E001BA9C3 /* RootViewReducer.swift */; };
 		EF16816927D578B6001BA9C3 /* RootViewReducer+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF16816827D578B6001BA9C3 /* RootViewReducer+Wiring.swift */; };
-		EF16816C27D5D599001BA9C3 /* TLE+Preview.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF16816B27D5D599001BA9C3 /* TLE+Preview.swift */; };
+		EF16816C27D5D599001BA9C3 /* Elements+Preview.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF16816B27D5D599001BA9C3 /* Elements+Preview.swift */; };
 		EF16816F27D5DAE9001BA9C3 /* SatelliteOverviewView+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF16816E27D5DAE9001BA9C3 /* SatelliteOverviewView+Wiring.swift */; };
 		EF16817127D5DC03001BA9C3 /* SatelliteOverviewReducer+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF16817027D5DC03001BA9C3 /* SatelliteOverviewReducer+Wiring.swift */; };
 		EF19FA09266EC38200D0B2CD /* SkyChartMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF19FA08266EC38200D0B2CD /* SkyChartMiddleware.swift */; };
@@ -127,7 +127,7 @@
 		EFED97B127D617F8003FC289 /* ElementsLoaderReducer+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFED97B027D617F8003FC289 /* ElementsLoaderReducer+Wiring.swift */; };
 		EFED97B327D61C0C003FC289 /* active.txt in Resources */ = {isa = PBXBuildFile; fileRef = EFED97B227D61C0C003FC289 /* active.txt */; };
 		EFED97B527D61CB5003FC289 /* visual.txt in Resources */ = {isa = PBXBuildFile; fileRef = EFED97B427D61CB5003FC289 /* visual.txt */; };
-		EFED97B727D62053003FC289 /* LocalTLELoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFED97B627D62053003FC289 /* LocalTLELoader.swift */; };
+		EFED97B727D62053003FC289 /* LocalElementsLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFED97B627D62053003FC289 /* LocalElementsLoader.swift */; };
 		EFED97B927D620CD003FC289 /* tle-new.txt in Resources */ = {isa = PBXBuildFile; fileRef = EFED97B827D620CD003FC289 /* tle-new.txt */; };
 		EFED97BB27D6D689003FC289 /* RootViewMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFED97BA27D6D689003FC289 /* RootViewMiddleware.swift */; };
 		EFED97BD27D6D6C3003FC289 /* RootViewMiddleware+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFED97BC27D6D6C3003FC289 /* RootViewMiddleware+Wiring.swift */; };
@@ -190,7 +190,7 @@
 		EF16816427D42F6B001BA9C3 /* DynamicTabBarItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicTabBarItemView.swift; sourceTree = "<group>"; };
 		EF16816627D5788E001BA9C3 /* RootViewReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewReducer.swift; sourceTree = "<group>"; };
 		EF16816827D578B6001BA9C3 /* RootViewReducer+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RootViewReducer+Wiring.swift"; sourceTree = "<group>"; };
-		EF16816B27D5D599001BA9C3 /* TLE+Preview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TLE+Preview.swift"; sourceTree = "<group>"; };
+		EF16816B27D5D599001BA9C3 /* Elements+Preview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Elements+Preview.swift"; sourceTree = "<group>"; };
 		EF16816E27D5DAE9001BA9C3 /* SatelliteOverviewView+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SatelliteOverviewView+Wiring.swift"; sourceTree = "<group>"; };
 		EF16817027D5DC03001BA9C3 /* SatelliteOverviewReducer+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SatelliteOverviewReducer+Wiring.swift"; sourceTree = "<group>"; };
 		EF19FA08266EC38200D0B2CD /* SkyChartMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyChartMiddleware.swift; sourceTree = "<group>"; };
@@ -288,7 +288,7 @@
 		EFED97B027D617F8003FC289 /* ElementsLoaderReducer+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ElementsLoaderReducer+Wiring.swift"; sourceTree = "<group>"; };
 		EFED97B227D61C0C003FC289 /* active.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = active.txt; sourceTree = "<group>"; };
 		EFED97B427D61CB5003FC289 /* visual.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = visual.txt; sourceTree = "<group>"; };
-		EFED97B627D62053003FC289 /* LocalTLELoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalTLELoader.swift; sourceTree = "<group>"; };
+		EFED97B627D62053003FC289 /* LocalElementsLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalElementsLoader.swift; sourceTree = "<group>"; };
 		EFED97B827D620CD003FC289 /* tle-new.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "tle-new.txt"; sourceTree = "<group>"; };
 		EFED97BA27D6D689003FC289 /* RootViewMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewMiddleware.swift; sourceTree = "<group>"; };
 		EFED97BC27D6D6C3003FC289 /* RootViewMiddleware+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RootViewMiddleware+Wiring.swift"; sourceTree = "<group>"; };
@@ -422,8 +422,8 @@
 		EF16816A27D5D56E001BA9C3 /* Preview Content */ = {
 			isa = PBXGroup;
 			children = (
-				EF16816B27D5D599001BA9C3 /* TLE+Preview.swift */,
-				EFED97B627D62053003FC289 /* LocalTLELoader.swift */,
+				EF16816B27D5D599001BA9C3 /* Elements+Preview.swift */,
+				EFED97B627D62053003FC289 /* LocalElementsLoader.swift */,
 				EFED97B227D61C0C003FC289 /* active.txt */,
 				EFED97B427D61CB5003FC289 /* visual.txt */,
 				EFED97B827D620CD003FC289 /* tle-new.txt */,
@@ -1022,7 +1022,7 @@
 				EF8A423A267E87740014AE17 /* SatelliteElevationGraph+Static.swift in Sources */,
 				EF5CB019266E28FC000019DA /* TimerMiddleware.swift in Sources */,
 				EF62BA4426CE316A00813357 /* PassNotification.swift in Sources */,
-				EFED97B727D62053003FC289 /* LocalTLELoader.swift in Sources */,
+				EFED97B727D62053003FC289 /* LocalElementsLoader.swift in Sources */,
 				EF7A3192266B6AFC00CC33C0 /* AppState.swift in Sources */,
 				EF4AF76C266434CC00D28F47 /* SkyChart.swift in Sources */,
 				EF0FC06C2677D7A200560AF0 /* AllPassesView.swift in Sources */,
@@ -1038,7 +1038,7 @@
 				EF16816F27D5DAE9001BA9C3 /* SatelliteOverviewView+Wiring.swift in Sources */,
 				EF7C665326992FF80017A007 /* ElementsLoader.swift in Sources */,
 				EF7A3135266B493E00CC33C0 /* ElementsLoaderState.swift in Sources */,
-				EF16816C27D5D599001BA9C3 /* TLE+Preview.swift in Sources */,
+				EF16816C27D5D599001BA9C3 /* Elements+Preview.swift in Sources */,
 				EFCF20F226AD4E7E00D87E8B /* DebugMenuReducer.swift in Sources */,
 				EF847BF026CE33650004806F /* AppDelegateMiddleware.swift in Sources */,
 				EF1EDA2C268D21BF0088DD65 /* SatelliteOverviewMiddleware.swift in Sources */,
