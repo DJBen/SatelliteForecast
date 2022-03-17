@@ -135,13 +135,15 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
                 }
             }())
 
-//            Text(
-//                "\(result.noradIndex)"
-//            )
-//                .font(.system(size: 6, weight: .regular, design: .default))
-//                .foregroundColor(.blue)
-//                .offset(x: 1 + 2)
-//                .frame(maxWidth: .infinity, alignment: .leading)
+            if visiblePropagationResults.contains(result) {
+                Text(
+                    Self.satelliteLabelInGraph(result.satelliteInfo)
+                )
+                .font(.system(size: 9, weight: .regular, design: .default))
+                .foregroundColor(.blue)
+                .offset(x: 4)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
         }
     }
 
@@ -262,6 +264,10 @@ extension RealtimeSkyViewImpl {
                 comment: "The navigation title of the realtime sky view"
             )
         }
+    }
+
+    static func satelliteLabelInGraph(_ satelliteInfo: SatelliteInfo) -> String {
+        satelliteInfo.ucsSat?.officialName ?? satelliteInfo.satCat?.name ?? satelliteInfo.elements.commonName
     }
 }
 
