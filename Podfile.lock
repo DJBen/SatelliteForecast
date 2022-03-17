@@ -95,7 +95,7 @@ SPEC CHECKSUMS:
   QSMag: 5a944b9b2392dac7ba1626a70a94be337db49732
   SatelliteCatalog: 132031627b4f096d1f2a16d169286faae121c0cc
   SatelliteCatalogImpl_SQLite: 33b833c3dc7482f1acdcb167e7cb203137c940d3
-  SatelliteForecastCore: 66084318d56c4e541e944bd9cf5025e024ac3f90
+  SatelliteForecastCore: 2cdafd19d95dc96bf2e5a44b504ca1a7b9d625ae
   SatelliteKit: 53e267558b0bd35f1be23f4dfa022b4503aa0226
   SnapshotTesting: 38947050d13960d57a4a9c166fcf51bca7d56970
   SQLite.swift: d2b4642190917051ce6bd1d49aab565fe794eea3
