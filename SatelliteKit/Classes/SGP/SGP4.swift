@@ -9,7 +9,7 @@ import Foundation
 // swiftlint:disable identifier_name
 // swiftlint:disable shorthand_operator
 
-class SGP4: TLEPropagator {
+class SGP4: Propagator {
 
     private var ΔM₀³ = 0.0                  // (1 + eta * cos(M₀))³
 
@@ -101,7 +101,7 @@ class SGP4: TLEPropagator {
         super.e = tle.e₀ - tempe
 
         if super.e >= 1.0 || super.e < -0.001 {
-            throw SatKitError.SGP("ERROR 1: eccentricity out of range 0...1")
+            throw SatKitError.SGP(tle.noradIndex, "ERROR 1: eccentricity out of range 0...1")
         }
 
 /*╭╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╮

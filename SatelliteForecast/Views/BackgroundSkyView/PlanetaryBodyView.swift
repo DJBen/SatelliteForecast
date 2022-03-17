@@ -17,7 +17,7 @@ struct PlanetaryBodyView: View {
     let sunElevation: Double
 
     @ViewBuilder func planetView<Content: View>(
-        celestialCoordinateProvider: (Double) -> (ra: Double, dec: Double),
+        celestialCoordinateProvider: (Double) -> RADec,
         @ViewBuilder planetViewGenerator: @escaping (AziEleDst) -> Content
     ) -> some View {
         let (alt, azi) = azel(
@@ -46,12 +46,12 @@ struct PlanetaryBodyView: View {
                         label: label,
                         rect: rect
                     )
-                        .position(
-                            SkyChart.point(
-                                at: observer,
-                                rect: rect
-                            )
+                    .position(
+                        SkyChart.point(
+                            at: observer,
+                            rect: rect
                         )
+                    )
                 }
             }
         }
@@ -60,7 +60,7 @@ struct PlanetaryBodyView: View {
 
 
 extension BackgroundSkyConfigs.PlantaryBody {
-    private func view<ShapeModifier: ViewModifier, TextLabel: View, Symbol: View> (
+    @ViewBuilder private func view<ShapeModifier: ViewModifier, TextLabel: View, Symbol: View> (
         rect: CGRect,
         label: BackgroundSkyConfigs.PlantaryBodyLabel,
         radius: CGFloat,
@@ -83,19 +83,21 @@ extension BackgroundSkyConfigs.PlantaryBody {
 
         switch label {
         case .text:
-            return AnyView(HStack(spacing: 0) {
+            HStack(spacing: 0) {
                 path
-                textLabel()
-                    .offset(x: radius + 2)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            })
+                textLabel(
+                )
+                .offset(x: radius + 2)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
 
         case .symbol:
-            return AnyView(ZStack {
+            ZStack {
                 path
-                symbol()
-                    .frame(alignment: .center)
-            })
+                symbol(
+                )
+                .frame(alignment: .center)
+            }
         }
     }
 
@@ -122,7 +124,7 @@ extension BackgroundSkyConfigs.PlantaryBody {
         }
     }
 
-    fileprivate var celestialCoordinateProvider: ((Double) -> (ra: Double, dec: Double))? {
+    fileprivate var celestialCoordinateProvider: ((Double) -> RADec)? {
         switch self {
         case .sun:
             return solarGeo(julianDays:)
@@ -146,13 +148,13 @@ extension BackgroundSkyConfigs.PlantaryBody {
         }
     }
 
-    fileprivate func view(
+    @ViewBuilder fileprivate func view(
         label: BackgroundSkyConfigs.PlantaryBodyLabel,
         rect: CGRect
     ) -> some View {
         switch self {
         case .sun:
-            return AnyView(view(
+            view(
                 rect: rect,
                 label: label,
                 radius: 8,
@@ -167,9 +169,9 @@ extension BackgroundSkyConfigs.PlantaryBody {
                         .font(.system(size: 12))
                         .foregroundColor(.white)
                 }
-            ))
+            )
         case .moon:
-            return AnyView(view(
+            view(
                 rect: rect,
                 label: label,
                 radius: 5,
@@ -184,12 +186,12 @@ extension BackgroundSkyConfigs.PlantaryBody {
                         .font(.system(size: 8))
                         .foregroundColor(.white)
                 }
-            ))
+            )
         case .mercury:
             // Hides mercury for now
-            return AnyView(EmptyView())
+            EmptyView()
         case .venus:
-            return AnyView(view(
+            view(
                 rect: rect,
                 label: label,
                 radius: 3.5,
@@ -204,9 +206,9 @@ extension BackgroundSkyConfigs.PlantaryBody {
                         .font(.system(size: 7))
                         .foregroundColor(.white)
                 }
-            ))
+            )
         case .jupiter:
-            return AnyView(view(
+            view(
                 rect: rect,
                 label: label,
                 radius: 3,
@@ -221,9 +223,9 @@ extension BackgroundSkyConfigs.PlantaryBody {
                         .font(.system(size: 6))
                         .foregroundColor(.white)
                 }
-            ))
+            )
         case .saturn:
-            return AnyView(view(
+            view(
                 rect: rect,
                 label: label,
                 radius: 2,
@@ -238,7 +240,7 @@ extension BackgroundSkyConfigs.PlantaryBody {
                         .font(.system(size: 4))
                         .foregroundColor(.white)
                 }
-            ))
+            )
         }
     }
 }

@@ -6,24 +6,28 @@
 //
 
 import SatelliteForecastCore
+import SatelliteKit
 
 public struct RealtimePropagationResult {
-    public let noradIndex: Int
+    public let noradIndex: UInt
     public let snapshot: SatelliteSnapshot
-    /// The delay before next check.
+    public let satelliteInfo: SatelliteInfo
+    /// The earliest julian date that we should repropagate a satellite ephemeris again.
     /// This is used to reduce redundant satellite propagation by delaying the next check of satellites that are not probable to be visible.
     /// For example a satellite with an elevation of -20 deg cannot rise at least within a few minutes.
-    public let nextCheckDelay: Double
+    public let nextCheckJulianDate: Double
 
     public init(
-        noradIndex: Int,
+        noradIndex: UInt,
         snapshot: SatelliteSnapshot,
-        nextCheckDelay: Double
+        satelliteInfo: SatelliteInfo,
+        nextCheckJulianDate: Double
     ) {
         self.noradIndex = noradIndex
         self.snapshot = snapshot
-        self.nextCheckDelay = nextCheckDelay
+        self.satelliteInfo = satelliteInfo
+        self.nextCheckJulianDate = nextCheckJulianDate
     }
 }
 
-extension RealtimePropagationResult: Equatable {}
+extension RealtimePropagationResult: Equatable, Hashable {}

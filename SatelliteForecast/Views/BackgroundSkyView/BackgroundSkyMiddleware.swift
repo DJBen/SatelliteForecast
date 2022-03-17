@@ -26,8 +26,8 @@ extension EffectMiddleware where InputActionType == BackgroundSkyViewAction, Out
                     DispatchQueue.global(qos: .userInitiated).async {
                         let state = getState()
                         let dataSource = quality == .full ? state.rasterizedBackgroundSky : state.previewBackgroundSkies
-                        // Skip if image already generated within the last minute.
-                        if let _ = dataSource[key]?.value(closestTo: julianDate, within: TimeConstants.min2day) {
+                        // Skip if image already generated.
+                        if let _ = dataSource[key]?[julianDate] {
                             return
                         }
 

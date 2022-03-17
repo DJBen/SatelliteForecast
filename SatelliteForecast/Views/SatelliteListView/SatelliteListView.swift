@@ -16,7 +16,7 @@ import SatelliteCatalog
 
 public enum SatelliteListViewAction {
     public struct SelectSatelliteParams {
-        let noradIndex: Int
+        let noradIndex: UInt
         let satelliteInfo: SatelliteInfo
         let julianDateRange: ClosedRange<Double>
         let observer: LatLonAlt?
@@ -60,13 +60,13 @@ fileprivate extension SatelliteInfo {
 }
 
 struct SatelliteListViewState: Equatable {
-    var satelliteInfo: [SatelliteCategory: Result<Map<Int, SatelliteInfo>, SatelliteLoaderError>] = [:]
+    var satelliteInfo: [SatelliteCategory: Loadable<Map<UInt, SatelliteInfo>, TLELoaderError>] = [:]
     var satelliteSearchText: String = ""
-    var selectedNoradIndex: Int?
+    var selectedNoradIndex: UInt?
 
     static func project(state: AppState) -> SatelliteListViewState {
         return SatelliteListViewState(
-            satelliteInfo: state.satelliteLoader.info,
+            satelliteInfo: state.tleLoader.info,
             satelliteSearchText: state.navigationState.listNavigation.satelliteSearchText,
             selectedNoradIndex: state.navigationState.listNavigation.noradIndex
         )
@@ -79,15 +79,15 @@ struct SatelliteListView: View {
     var allPassesViewProducer: ViewProducer<AllPassesViewContext, AllPassesView>
 
     @ViewBuilder func satelliteContent<Content: View, FailedContent: View>(
-        @ViewBuilder contentBuilder: (Map<Int, SatelliteInfo>) -> Content,
-        @ViewBuilder failedContentBuilder: (SatelliteLoaderError) -> FailedContent
+        @ViewBuilder contentBuilder: (Map<UInt, SatelliteInfo>) -> Content,
+        @ViewBuilder failedContentBuilder: (TLELoaderError) -> FailedContent
     ) -> some View {
-        let satellites: Result<Map<Int, SatelliteInfo>, SatelliteLoaderError>? = viewModel.state.satelliteInfo[context.category]?.map { info in
+        let satellites: Loadable<Map<UInt, SatelliteInfo>, TLELoaderError> = viewModel.state.satelliteInfo[context.category]?.map { info in
             let searchText = viewModel.state.satelliteSearchText
             if searchText.isEmpty {
                 return info
             } else {
-                var map = Map<Int, SatelliteInfo>()
+                var map = Map<UInt, SatelliteInfo>()
                 info.forEach { (noradIndex, value) in
                     if value.fitsSearchText(searchText) {
                         map[noradIndex] = value
@@ -95,20 +95,22 @@ struct SatelliteListView: View {
                 }
                 return map
             }
-        }
+        } ?? .notLoaded
         Group {
             switch satellites {
-            case .none:
+            case .notLoaded:
+                Text(verbatim: "The satellites are not loaded.")
+            case .loading:
                 ProgressView("Loading...")
-            case let .success(satellites):
+            case let .loaded(satellites):
                 contentBuilder(satellites)
-            case let .failure(error):
+            case let .failed(error):
                 failedContentBuilder(error)
             }
         }
     }
 
-    private func satellitesView(_ satellites: Map<Int, SatelliteInfo>) -> some View {
+    private func satellitesView(_ satellites: Map<UInt, SatelliteInfo>) -> some View {
         ScrollViewReader { proxy in
             List {
                 ForEach(Array(satellites.keys), id: \.self) { noradIndex in
@@ -247,18 +249,17 @@ struct SatelliteListView_Previews: PreviewProvider {
         ]
         .map {
             SatelliteInfo(
-                noradIndex: $0.noradIndex,
                 tle: $0,
-                satCat: SatCat.with(noradCatID: $0.noradIndex),
-                ucsSat: UCSSat.with(noradCatID: $0.noradIndex)
+                satCat: SatCat.with(noradCatID: Int($0.noradIndex)),
+                ucsSat: UCSSat.with(noradCatID: Int($0.noradIndex))
             )
         }
-        .reduce(into: Map<Int, SatelliteInfo>(), { $0[$1.noradIndex] = $1 })
+        .reduce(into: Map<UInt, SatelliteInfo>(), { $0[$1.noradIndex] = $1 })
 
         SatelliteListView(
             viewModel: .mock(
                 state: SatelliteListViewState(
-                    satelliteInfo: [.brightest100: .success(brightest100)],
+                    satelliteInfo: [.brightest100: .loaded(brightest100)],
                     selectedNoradIndex: nil
                 )
             ),

@@ -236,7 +236,10 @@ extension SkyChart {
         
         // -- Plantary bodies
         
-        let (sunAlt, sunAzi) = azel(julianDate: params.julianDate, site: (params.observer.lat, params.observer.lon), cele: solarGeo(julianDays: params.julianDate))
+        let (sunAlt, sunAzi) = azel(
+            julianDate: params.julianDate,
+            site: (params.observer.lat, params.observer.lon),
+            cele: solarGeo(julianDays: params.julianDate))
         let sunPoint = Self.point(at: AziEleDst(azim: sunAzi, elev: sunAlt, dist: 0), rect: params.rect)
         
         ctx.cgContext.saveGState()
@@ -284,15 +287,14 @@ struct ImageRenderer_Previews: PreviewProvider {
 
         let formatter = ISO8601DateFormatter()
         let date = formatter.date(from: "2021-06-02T06:29:00-0600")!
-
+        let satelliteInfo = SatelliteInfo(tle: tle)
         let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
-        let snapshots = tle.snapshots(
+        let snapshots = try! satelliteInfo.generateSnapshots(
             observer: observer,
             julianDateRange: date.julianDate...date.julianDate + 2
         )
 
-        return tle.findPasses(
-            noradIndex: tle.noradIndex,
+        return try! satelliteInfo.findPasses(
             observer: observer,
             coarseSnapshots: snapshots
         )

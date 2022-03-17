@@ -18,17 +18,25 @@ public struct SatelliteSnapshot {
 
     /// The sun's elevation, ranging from -90 to 90 degrees.
     public let sunElevation: Double
+    /// The sun-satellite-observer angle, in radians.
+    public let phaseAngle: Double
+    /// A best effort estimation of the visual magnitude of the satellite. `nil` if not available.
+    public let visualMagnitude: Double?
 
     public init(
         julianDate: Double,
         position: AziEleDst,
         isIlluminated: Bool,
-        sunElevation: Double
+        sunElevation: Double,
+        phaseAngle: Double,
+        visualMagnitude: Double?
     ) {
         self.julianDate = julianDate
         self.position = position
         self.isIlluminated = isIlluminated
         self.sunElevation = sunElevation
+        self.phaseAngle = phaseAngle
+        self.visualMagnitude = visualMagnitude
     }
 }
 

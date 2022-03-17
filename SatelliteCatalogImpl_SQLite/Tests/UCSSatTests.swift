@@ -6,12 +6,13 @@
 //
 
 import XCTest
-@testable import SatelliteCatalog
+import SatelliteCatalog
+@testable import SatelliteCatalogImpl_SQLite
 import SQLite
 
 class UCSSatTests: XCTestCase {
     func testReadingUSCSat() throws {
-        let DB = try! Connection(Bundle.SatelliteCatalogResourcesBundle.path(forResource: "satellites", ofType: "sqlite")!)
+        let DB = try! Connection(Bundle.SatelliteCatalogImpl_SQLiteResourcesBundle.path(forResource: "satellites", ofType: "sqlite")!)
 
         let rows = try DB.prepare(UCSSat.Table.tableName)
         for row in rows {
@@ -24,6 +25,6 @@ class UCSSatTests: XCTestCase {
         let formatter = DateFormatter()
         formatter.dateFormat = "YYYY-MM-dd"
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
-        XCTAssertEqual(sat.dateOfLaunch, formatter.date(from: "2020-12-28")!.advanced(by: 12 * 60 * 60))
+        XCTAssertEqual(sat.dateOfLaunch, formatter.date(from: "2020-12-27")!)
     }
 }

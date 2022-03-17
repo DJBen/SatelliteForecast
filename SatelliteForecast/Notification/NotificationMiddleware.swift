@@ -12,7 +12,6 @@ import Foundation
 import os
 import SatelliteForecastCore
 import SatelliteKit
-import SwiftDate
 import UserNotifications
 
 fileprivate let logger = Logger(subsystem: "io.djben.notification", category: "middleware")
@@ -30,7 +29,6 @@ extension EffectMiddleware where
                 return Effect { context -> AnyPublisher<DispatchedAction<AppAction>, Never> in
                     let subject = PassthroughSubject<DispatchedAction<AppAction>, Never>()
 
-                    let dateComponents = Date(julianDate: passNotification.pass.rise.julianDate).dateComponents
                     let julianDateDiff = passNotification.pass.rise.julianDate - getState().julianDate
                     let timeInterval = getState().debugMenu.rapidNotificationDelivery ? 10 : julianDateDiff * TimeConstants.day2sec
                     let trigger = UNTimeIntervalNotificationTrigger(
@@ -69,7 +67,7 @@ extension EffectMiddleware where
                     let notificationCenter = UNUserNotificationCenter.current()
                     notificationCenter.add(request) { (error) in
                         if let error = error {
-                            logger.error("Failed to schedule local notification for \(passNotification.pass.noradIndex) at \(dateComponents): \(error.localizedDescription)")
+                            logger.error("Failed to schedule local notification for \(passNotification.pass.noradIndex) at \(Date(julianDate: passNotification.pass.rise.julianDate)): \(error.localizedDescription)")
                         } else {
                             let scheduledPassNotification = ScheduledPassNotification(
                                 id: passNotification.pass.notificationIdentifier,
@@ -214,16 +212,16 @@ extension EffectMiddleware where
                     DispatchQueue.global().async {
                         if let category = satelliteCategory {
                             subject.send(
-                                DispatchedAction(.satelliteLoader(
-                                    .loadSatelliteCategory(
-                                        category,
+                                DispatchedAction(.tleLoader(
+                                    .loadSatelliteTLEs(
+                                        category: category,
                                         selectNoradIndex: SelectNoradIndexParam(
                                             noradIndex: noradIndex,
                                             dateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate),
                                             observer: observer
                                         ),
-                                        calculatePass: SatelliteLoaderCalculatePassParam(
-                                            noradID: noradIndex,
+                                        calculatePass: TLELoaderCalculatePassParam(
+                                            noradIndex: noradIndex,
                                             dateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate),
                                             observer: observer
                                         )
@@ -232,16 +230,16 @@ extension EffectMiddleware where
                             )
                         } else {
                             subject.send(
-                                DispatchedAction(.satelliteLoader(
-                                    .loadSatelliteCategory(
-                                        .brightest100,
+                                DispatchedAction(.tleLoader(
+                                    .loadSatelliteTLEs(
+                                        category: .brightest100,
                                         selectSpecialNoradIndex: SelectNoradIndexParam(
                                             noradIndex: noradIndex,
                                             dateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate),
                                             observer: observer
                                         ),
-                                        calculatePass: SatelliteLoaderCalculatePassParam(
-                                            noradID: noradIndex,
+                                        calculatePass: TLELoaderCalculatePassParam(
+                                            noradIndex: noradIndex,
                                             dateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate),
                                             observer: observer
                                         )

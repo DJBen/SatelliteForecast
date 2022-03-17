@@ -47,13 +47,17 @@ struct SunlightIndicatorViewModel: Equatable {
     let sunEventsXPercent: [SunEventXCoord]
 
     init(
-        julianDateElevations: BTree<Double, Double>
+        julianDateElevations: [Double: Double]
     ) {
+        let keys = julianDateElevations.keys.sorted(by: <)
+
         sunlightGradientStops = {
-            guard let (startDate, firstElevation) = julianDateElevations.first,
-                  let (endDate, lastElevation) = julianDateElevations.last else {
+            guard let startDate = keys.first,
+                  let endDate = keys.last else {
                 return []
             }
+            let firstElevation = julianDateElevations[startDate]!
+            let lastElevation = julianDateElevations[endDate]!
 
             let boundaries: [(Double, Color)] = [
                 (90, Color(.sRGB, red: 255 / 255, green: 250 / 255, blue: 240 / 255, opacity: 1)),
@@ -79,9 +83,9 @@ struct SunlightIndicatorViewModel: Equatable {
             var stops = [Gradient.Stop]()
             stops.append(Gradient.Stop(color: color(elevation: firstElevation), location: 0))
 
-            for index in julianDateElevations.indices where index < julianDateElevations.index(before: julianDateElevations.endIndex) {
-                let (d1, e1) = julianDateElevations[index]
-                let e2 = julianDateElevations[julianDateElevations.index(after: index)].1
+            for (index, key) in keys.enumerated() where index < keys.count - 1 {
+                let (d1, e1) = (key, julianDateElevations[key]!)
+                let e2 = julianDateElevations[keys[index + 1]]!
 
                 let location: CGFloat = CGFloat((d1 - startDate) / (endDate - startDate))
 
@@ -98,14 +102,16 @@ struct SunlightIndicatorViewModel: Equatable {
             return stops
         }()
 
-        let jdElevationsSplitBySunriseOrSet = julianDateElevations.split { s1, s2 in
+        let jdElevationPairs = keys.map { ($0, julianDateElevations[$0]!) }
+
+        let jdElevationsSplitBySunriseOrSet = jdElevationPairs.split { s1, s2 in
             (s1.1 > 0 && s2.1 <= 0) ||
                 (s1.1 <= 0 && s2.1 > 0)
         }
 
         sunEventsXPercent = {
-            guard let (startDate, _) = julianDateElevations.first,
-                  let (endDate, _) = julianDateElevations.last else {
+            guard let (startDate, _) = jdElevationPairs.first,
+                  let (endDate, _) = jdElevationPairs.last else {
                 return []
             }
 
@@ -151,20 +157,17 @@ struct SunlightIndicator: View, Equatable {
         }
     }
     
-    /// An efficient function to map dense satellite snapshots over a date range to a sparser JD -> sun elevation tree.
+    /// An efficient function to map dense satellite snapshots over a date range to a julian date -> sun elevation map.
     /// - Parameter snapshots: The snapshots.
     /// - Returns: A tree mapping from JD -> sun elevations.
-    static func snapshotsToSunElevs(_ snapshots: [SatelliteSnapshot]) -> BTree<Double, Double> {
-        guard let startDate = snapshots.first?.julianDate else {
-            return BTree()
-        }
-        var julianDateElevations = BTree<Double, Double>()
+    static func sunElevations(julianDateRange: ClosedRange<Double>, observer: LatLonAlt) -> [Double: Double] {
+        var julianDateElevations = [Double: Double]()
+        
         // Stride in a 10 minute interval across the julian date to improve performance
-        var previousDate = startDate
-        for snapshot in snapshots where snapshot.julianDate - previousDate >= 10 * TimeConstants.min2day {
-            julianDateElevations.insert((snapshot.julianDate, snapshot.sunElevation))
-            previousDate = snapshot.julianDate
+        for julianDate in stride(from: julianDateRange.lowerBound.roundJulianDate(.toMins(10)), through: julianDateRange.upperBound.roundJulianDate(.toMins(10)), by: 10 * TimeConstants.min2day) {
+            julianDateElevations[julianDate] = AstroAlgorithms.sunElevation(julianDate: julianDate, observer: observer)
         }
+
         return julianDateElevations
     }
 
@@ -208,18 +211,7 @@ struct SunlightIndicator_Previews: PreviewProvider {
         let observerCoordinate = LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0)
         // Date range
         let julianDateRange = Date().advanced(by: -60 * 60 * 2).julianDate...Date().advanced(by: 60 * 60 * 30).julianDate
-
-        let jdElevs = tle.snapshots(
-            observer: observerCoordinate,
-            julianDateRange: julianDateRange,
-            interval: 60
-        )
-        .reduce(
-            into: BTree<Double, Double>(),
-            {
-                $0.insertOrReplace(($1.julianDate, $1.sunElevation))
-            }
-        )
+        let jdElevs = SunlightIndicator.sunElevations(julianDateRange: julianDateRange, observer: observerCoordinate)
         let viewModel = SunlightIndicatorViewModel(
             julianDateElevations: jdElevs
         )

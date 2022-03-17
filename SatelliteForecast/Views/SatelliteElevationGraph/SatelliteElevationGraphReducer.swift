@@ -12,7 +12,13 @@ extension Reducer where ActionType == SatelliteElevationGraphAction, StateType =
     static let satelliteElevationGraphReducer = Reducer.reduce { action, state in
         switch action {
         case let .rasterizedElevationGraph(image, size, noradIndex, julianDateRange):
-            state.rasterizedElevationGraphs[noradIndex] = .init(julianDateRange: julianDateRange, image: image)
+            let newImage = SatelliteElevationGraphResources.RangeImage(julianDateRange: julianDateRange, image: image)
+            if let rangeImages = state.rasterizedElevationGraphs[noradIndex] {
+                state.rasterizedElevationGraphs[noradIndex] = rangeImages + [newImage]
+            } else {
+                state.rasterizedElevationGraphs[noradIndex] = [newImage]
+            }
+
         case .requestRasterizeElevationGraph(size: _, noradIndex: _, julianDateRange: _, traitCollection: _):
             break
         }

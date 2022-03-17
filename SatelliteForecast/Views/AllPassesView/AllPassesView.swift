@@ -15,7 +15,7 @@ import SwiftUI
 
 enum AllPassesViewAction {
     struct CalculatePassesParams: CustomDebugStringConvertible {
-        let selectedNoradIndex: Int
+        let selectedNoradIndex: UInt
         let satelliteInfo: SatelliteInfo
         let julianDateRange: ClosedRange<Double>
         let observer: LatLonAlt
@@ -38,7 +38,7 @@ enum AllPassesViewAction {
 }
 
 struct AllPassesViewContext {
-    let selectedNoradIndex: Int
+    let selectedNoradIndex: UInt
     let satelliteInfo: SatelliteInfo
     let julianDateRange: ClosedRange<Double>
     let observer: LatLonAlt?
@@ -72,16 +72,12 @@ struct AllPassesViewState: Equatable {
         }
     }
 
-    var julianDate: Double
+    var julianDate: Double = 0
     var visiblePasses: [Item]?
     var invisiblePasses: [Item]?
     var selectedPassIndex: Int?
     var satelliteCategory: SatelliteCategory?
     var locationChangeWarningState: AllPassesLocationChangeWarningState?
-    
-    static var empty: AllPassesViewState {
-        AllPassesViewState(julianDate: 0)
-    }
 
     static func project(state: AppState, context: AllPassesViewContext) -> AllPassesViewState {
         if let satelliteTrails = state.satelliteTrails[context.selectedNoradIndex],
@@ -95,7 +91,7 @@ struct AllPassesViewState: Equatable {
                             observer: observer,
                             configs: .preset
                         )
-                    ]?.value(closestTo: passSnapshots.pass.rise.julianDate)
+                    ]?[passSnapshots.pass.rise.julianDate.roundJulianDate(.toMins(1))]
                 } else {
                     rasterizedBackgroundSky = nil
                 }
@@ -374,7 +370,7 @@ extension ViewProducer where Context == AllPassesViewContext, ProducedView == Al
                             )
                         }
                     )
-                    .asObservableViewModel(initialState: .empty, emitsValue: .whenDifferent),
+                    .asObservableViewModel(initialState: .init(), emitsValue: .whenDifferent),
                 context: context,
                 skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
                     .skyChart(viewModel: viewModel),
@@ -386,6 +382,7 @@ extension ViewProducer where Context == AllPassesViewContext, ProducedView == Al
 }
 
 #if DEBUG
+
 struct AllPassesView_Previews: PreviewProvider {
     static let tianHe: TLE = try! TLE(
         raw: """
@@ -402,13 +399,12 @@ struct AllPassesView_Previews: PreviewProvider {
         let date = formatter.date(from: "2021-06-02T06:29:00-0600")!
 
         let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
-        let snapshots = tle.snapshots(
+        let snapshots = try! SatelliteInfo(tle: tle).generateSnapshots(
             observer: observer,
             julianDateRange: date.julianDate...date.julianDate + 2
         )
 
-        return tle.findPasses(
-            noradIndex: tle.noradIndex,
+        return try! SatelliteInfo(tle: tle).findPasses(
             observer: observer,
             coarseSnapshots: snapshots
         )
@@ -424,13 +420,12 @@ struct AllPassesView_Previews: PreviewProvider {
         let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
         let context = AllPassesViewContext(
             selectedNoradIndex: 48274,
-            satelliteInfo: SatelliteInfo(
-                noradIndex: 48274,
-                tle: tianHe
-            ),
+            satelliteInfo: SatelliteInfo(tle: tianHe),
             julianDateRange: Date().julianDate...Date().julianDate + 1,
             observer: observer
         )
+        let passSnapshots = tianHePasses[0]
+
         ForEach(["iPhone SE (2nd generation)", "iPhone 13 Pro Max"], id: \.self) { previewDevice in
             NavigationView {
                 AllPassesView(
@@ -443,7 +438,6 @@ struct AllPassesView_Previews: PreviewProvider {
                     ),
                     context: context,
                     skyChartProducer: ViewProducer<SkyChartContext, SkyChart> { context in
-                        let passSnapshots = tianHePasses[0]
                         return SkyChart(
                             viewModel: .mock(
                                 state: SkyChartViewState(
@@ -451,7 +445,7 @@ struct AllPassesView_Previews: PreviewProvider {
                                 )
                             ),
                             context: SkyChartContext(
-                                satelliteInfo: SatelliteInfo(noradIndex: 48274, tle: tianHe),
+                                satelliteInfo: SatelliteInfo(tle: tianHe),
                                 snapshots: passSnapshots.snapshots,
                                 observer: observer,
                                 pass: passSnapshots.pass,
@@ -487,8 +481,7 @@ struct AllPassesView_Previews: PreviewProvider {
                                         observer: observer,
                                         basicChartConfigs: .init(),
                                         configs: .preset,
-                                        quality: .full,
-                                        backgroundSkyJulianDateKey: passSnapshots.pass.rise.julianDate.julianDateRoundedToNearestMinute()
+                                        quality: .full
                                     )
                                 )
                             )
@@ -498,7 +491,9 @@ struct AllPassesView_Previews: PreviewProvider {
                 )
             }
             .previewDevice(PreviewDevice(rawValue: previewDevice))
+            .environment(\.backgroundSkyJulianDateKey, passSnapshots.pass.rise.julianDate.roundJulianDate(.toMins(1)))
         }
     }
 }
+
 #endif

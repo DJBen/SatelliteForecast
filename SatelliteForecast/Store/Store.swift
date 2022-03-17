@@ -16,9 +16,9 @@ class Store: ReduxStoreBase<AppAction, AppState> {
     static let reducer: Reducer<AppAction, AppState> = [
         Reducer<LocationAction, AppState>.locationReducer.lift(action: \.location),
         Reducer<NotificationAction, AppState>.notificationReducer.lift(action: \.notification),
-        Reducer<SatelliteLoaderAction, SatelliteLoaderState>.satelliteLoaderReducer.lift(),
-        Reducer<SatelliteLoaderOutput, SatelliteLoaderState>.satelliteLoaderOutputReducer.lift(),
-        Reducer<SatelliteOverviewViewAction, AppState>.satelliteOverviewReducer.lift(action: \.satelliteOverview),
+        Reducer<TLELoaderAction, TLELoaderState>.tleLoaderReducer.lift(),
+        Reducer<TLELoaderOutput, TLELoaderState>.tleLoaderOutputReducer.lift(),
+        Reducer.satelliteOverviewReducer.lift(),
         Reducer<SatelliteListViewAction, AppState>.satelliteListViewReducer.lift(action: \.satelliteListView),
         Reducer<AllPassesViewAction, AppState>.allPassesViewReducer.lift(action: \.allPassesView),
         Reducer<PassViewAction, AppState>.passViewReducer.lift(action: \.passView),
@@ -31,12 +31,15 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         Reducer<TLEPropagatorAction, AppState>.tlePropagatorReducer.lift(action: \.tlePropagator),
         Reducer<TimerAction, AppState>.timerReducer.lift(action: \.timer),
         Reducer<DebugMenuAction, DebugMenuState>.debugMenuReducer.lift(),
-        Reducer.backgroundSkyReducer.lift()
+        Reducer.backgroundSkyReducer.lift(),
+        Reducer.realtimeSkyReducer.lift(),
+        Reducer.realtimeSkyOutputReducer.lift(),
+        Reducer.rootViewReducer.lift()
     ]
     .reduce(Reducer<AppAction, AppState>.identity, <>)
 
     static func middlewareBuilder(
-        satelliteLoader: SatelliteLoader
+        tleLoader: TLELoader
     ) -> AnyMiddleware<AppAction, AppAction, AppState> {
         let middlewares: [AnyMiddleware<AppAction, AppAction, AppState>] = [
             LocationMiddleware().lift(),
@@ -52,17 +55,18 @@ class Store: ReduxStoreBase<AppAction, AppState> {
                 )
                 .eraseToAnyMiddleware(),
             EffectMiddleware.locationLogger.lift(),
-            EffectMiddleware.satelliteLoader(satelliteLoader)
+            EffectMiddleware.tleLoader(tleLoader)
                 .lift()
                 .inject(
-                    SatelliteLoaderDependencies()
+                    TLELoaderDependencies()
                 )
                 .eraseToAnyMiddleware(),
-            EffectMiddleware.calculatePassAfterSatelliteLoader.lift(),
-            EffectMiddleware.selectSatelliteAfterSatelliteLoader.lift(),
-            EffectMiddleware.selectSpecialSatelliteAfterSatelliteLoader.lift(),
+            EffectMiddleware.calculatePassAfterTLELoader.lift(),
+            EffectMiddleware.selectSatelliteAfterTLELoader.lift(),
+            EffectMiddleware.selectSpecialSatelliteAfterTLELoader.lift(),
+            EffectMiddleware.rootViewTLELoader.lift(),
             EffectMiddleware.satelliteOverview.lift(),
-            EffectMiddleware.satelliteListView(satelliteLoader: satelliteLoader)
+            EffectMiddleware.satelliteListView(tleLoader: tleLoader)
                 .lift(
                     inputAction: \.satelliteListView
                 )
@@ -97,7 +101,8 @@ class Store: ReduxStoreBase<AppAction, AppState> {
                 .eraseToAnyMiddleware(),
             EffectMiddleware.debugMenu.lift(),
             EffectMiddleware.loggerMiddleware.eraseToAnyMiddleware(),
-            EffectMiddleware.backgroundSky.lift()
+            EffectMiddleware.backgroundSky.lift(),
+            EffectMiddleware.realtimeSky.lift()
         ]
 
         return middlewares.reduce(
@@ -108,12 +113,22 @@ class Store: ReduxStoreBase<AppAction, AppState> {
     }
 
     private init() {
-        let satelliteLoader: SatelliteLoader = SatelliteLoaderImpl(session: URLSession.shared)
+        let tleLoader: TLELoader
+        if ProcessInfo.processInfo.environment["USE_LOCAL_TLES"] == "YES" {
+            print("[TLE Loader] Using local TLE loader")
+            #if DEBUG
+            tleLoader = LocalTLELoader()
+            #else
+            tleLoader = TLELoaderImpl(session: URLSession.shared)
+            #endif
+        } else {
+            tleLoader = TLELoaderImpl(session: URLSession.shared)
+        }
 
         super.init(
             subject: .combine(initialValue: .empty),
             reducer: Store.reducer,
-            middleware: Store.middlewareBuilder(satelliteLoader: satelliteLoader),
+            middleware: Store.middlewareBuilder(tleLoader: tleLoader),
             emitsValue: .whenDifferent
         )
     }

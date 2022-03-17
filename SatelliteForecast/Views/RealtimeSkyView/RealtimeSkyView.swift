@@ -13,7 +13,7 @@ import SwiftRex
 import SwiftUI
 
 enum RealtimeSkyViewAction {
-    case propagateCurrentEphemerides([TLE], observer: LatLonAlt, julianDate: Double)
+    case propagateCurrentEphemerides([SatelliteInfo], observer: LatLonAlt, julianDate: Double)
     case setRealtimeSkyViewActive(Bool)
 }
 
@@ -21,62 +21,226 @@ extension RealtimeSkyViewAction: Equatable {}
 
 enum RealtimeSkyViewOutput {
     case propagatedCurrentEphemerides(
-        results: [Int: RealtimePropagationResult],
-        tles: [TLE],
+        results: [UInt: RealtimePropagationResult],
+        satellites: [SatelliteInfo],
+        partialErrors: [Error],
+        observer: LatLonAlt,
+        julianDate: Double
+    )
+
+    case failedToPropagateCurrentEphemerides(
+        error: Error,
         observer: LatLonAlt,
         julianDate: Double
     )
 }
 
 struct RealtimeSkyViewResources {
-    var results: [Int: RealtimePropagationResult] = [:]
-    var nextCheckDates: [Int: Double] = [:]
+    /// The propagation results containing the satellite snapshot, and an "expiration date" of the snapshot.
+    var results: [UInt: RealtimePropagationResult] = [:]
+    var isRealtimeSkyViewActive: Bool = false
+    var isPropagatingEphemerides: Bool = false
 }
 
 extension RealtimeSkyViewResources: Equatable {}
 
 struct RealtimeSkyViewState {
     var resources: RealtimeSkyViewResources = .init()
-    var tles: [TLE] = []
-    var observer: LatLonAlt = .init(lat: 0, lon: 0, alt: 0)
+    var satellites: [SatelliteInfo]?
+    var observer: LatLonAlt?
     var julianDateOffset: Double = 0
-    var isRealtimeSkyViewActive: Bool = false
-    var isPropagatingEphemerides: Bool = false
 }
 
 extension RealtimeSkyViewState: Equatable {}
 
-struct RealtimeSkyView: View {
+struct RealtimeSkyViewContext {
+    let basicChartConfigs: BasicChartConfigs
+    let backgroundSkyConfigs: BackgroundSkyConfigs
+}
+
+protocol RealtimeSkyView: View {}
+
+struct RealtimeSkyViewImpl: RealtimeSkyView {
     @ObservedObject var viewModel: ObservableViewModel<RealtimeSkyViewAction, RealtimeSkyViewState>
+    let context: RealtimeSkyViewContext
+    let backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext, BackgroundSkyView>
 
     let refreshTimer = Timer.publish(
-        every: 1,
+        every: 0.5,
         on: .main,
         in: .common
     )
     .autoconnect()
     .map(\.julianDate)
 
-    var body: some View {
-        Text(
-            "Hello, World!"
+    @State var julianDate: Double?
+
+    @ViewBuilder private func locationView<Content: View, NoLocationContent: View>(
+        @ViewBuilder contentBuilder: (LatLonAlt) -> Content,
+        @ViewBuilder noLocationContentBuilder: () -> NoLocationContent
+    ) -> some View {
+        if let observer = viewModel.state.observer {
+            contentBuilder(observer)
+        } else {
+            noLocationContentBuilder()
+        }
+    }
+
+    private var displayPropagationResults: [RealtimePropagationResult] {
+        Array(
+            viewModel.state.resources.results.values.filter {
+                $0.snapshot.position.elev > 5
+            }
         )
+    }
+
+    private var visiblePropagationResults: [RealtimePropagationResult] {
+        displayPropagationResults
+        .filter { ($0.snapshot.visualMagnitude ?? .infinity) <= 5.5 }
+        .sorted { result1, result2 in
+            if let mag1 = result1.snapshot.visualMagnitude, let mag2 = result2.snapshot.visualMagnitude {
+                return mag1 < mag2
+            } else if let _ = result1.snapshot.visualMagnitude {
+                return true
+            } else if let _ = result2.snapshot.visualMagnitude {
+                return false
+            } else {
+                return result1.snapshot.position.dist < result2.snapshot.position.dist
+            }
+        }
+    }
+
+    @ViewBuilder private func satellitePoint(result: RealtimePropagationResult, rect: CGRect) -> some View {
+        HStack(spacing: 0) {
+            Path { path in
+                path.addArc(
+                    center: CGPoint(x: rect.midX, y: rect.midY),
+                    radius: 1,
+                    startAngle: Angle(degrees: 0),
+                    endAngle: Angle(degrees: 360),
+                    clockwise: false
+                )
+                path.closeSubpath()
+            }
+            .fill()
+            .foregroundColor({
+                switch result.satelliteInfo.tle.orbitTypeByAltitude {
+                case .leo:
+                    return .blue
+                case .geo:
+                    return .yellow
+                case .meo, .heo:
+                    return .green
+                }
+            }())
+
+//            Text(
+//                "\(result.noradIndex)"
+//            )
+//                .font(.system(size: 6, weight: .regular, design: .default))
+//                .foregroundColor(.blue)
+//                .offset(x: 1 + 2)
+//                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
+    @ViewBuilder private var satellitePlot: some View {
+        ForEach(
+            displayPropagationResults,
+            id: \.noradIndex
+        ) { result in
+            GeometryReader { geometry in
+                let rect = geometry.frame(in: .local)
+                satellitePoint(
+                    result: result,
+                    rect: rect
+                )
+                .position(
+                    SkyChart.point(
+                        at: result.snapshot.position,
+                        rect: rect
+                    )
+                )
+            }
+        }
+    }
+
+    @ViewBuilder private func backgroundSkyView(observer: LatLonAlt) -> some View {
+        backgroundSkyViewProducer.view(
+            BackgroundSkyViewContext(
+                observer: observer,
+                basicChartConfigs: context.basicChartConfigs,
+                configs: context.backgroundSkyConfigs,
+                quality: .full
+            )
+        )
+        .environment(
+            \.backgroundSkyJulianDateKey,
+             julianDate.map { $0.roundJulianDate(.toMins(1)) }
+        )
+        .overlay {
+            satellitePlot
+        }
         .onReceive(refreshTimer) { timerJulianDate in
-            guard viewModel.state.isRealtimeSkyViewActive else {
+            self.julianDate = timerJulianDate + viewModel.state.julianDateOffset
+
+            guard viewModel.state.resources.isRealtimeSkyViewActive else {
                 return
             }
-            if viewModel.state.isPropagatingEphemerides {
+            if viewModel.state.resources.isPropagatingEphemerides {
                 return
             }
-            let julianDate = timerJulianDate + viewModel.state.julianDateOffset
+
+            guard let satellites = viewModel.state.satellites else {
+                return
+            }
+
             viewModel.dispatch(
                 .propagateCurrentEphemerides(
-                    viewModel.state.tles,
-                    observer: viewModel.state.observer,
-                    julianDate: julianDate
+                    satellites,
+                    observer: observer,
+                    julianDate: julianDate!
                 )
             )
         }
+    }
+
+    @ViewBuilder private var satelliteList: some View {
+        List {
+            ForEach(visiblePropagationResults, id: \.self) { result in
+                RealtimeSkySatelliteCell(
+                    satelliteName: result.satelliteInfo.tle.commonName,
+                    snapshot: result.snapshot
+                )
+            }
+        }
+        .listStyle(.inset)
+    }
+
+    var body: some View {
+        NavigationView {
+            locationView { observer in
+                GeometryReader { geometry in
+                    let rect = geometry.frame(in: .local)
+                    VStack(spacing: 24) {
+                        backgroundSkyView(
+                            observer: observer
+                        )
+                        .frame(
+                            width: min(rect.width, rect.height),
+                            height: min(rect.width, rect.height)
+                        )
+                        satelliteList
+                    }
+                    .padding(.top, 16)
+                }
+            } noLocationContentBuilder: {
+                Text(verbatim: "Location not available")
+            }
+            .navigationTitle(Self.Navigation.title)
+            .navigationBarTitleDisplayMode(.inline)
+        }
+        .navigationViewStyle(.stack)
         .onAppear {
             viewModel.dispatch(.setRealtimeSkyViewActive(true))
         }
@@ -86,13 +250,47 @@ struct RealtimeSkyView: View {
     }
 }
 
+extension RealtimeSkyViewImpl {
+    enum Navigation {
+        static var title: String {
+            NSLocalizedString(
+                "realtimeSkyView.navigation.title",
+                tableName: nil,
+                bundle: .main,
+                value: "Sky now",
+                comment: "The navigation title of the realtime sky view"
+            )
+        }
+    }
+}
+
 #if DEBUG
 
 struct RealtimeSkyView_Previews: PreviewProvider {
     static var previews: some View {
-        RealtimeSkyView(
-            viewModel: .mock(state: .init())
+        RealtimeSkyViewImpl(
+            viewModel: .mock(
+                state: .init()
+            ),
+            context: RealtimeSkyViewContext(
+                basicChartConfigs: .init(),
+                backgroundSkyConfigs: .init()
+            ),
+            backgroundSkyViewProducer: .pure(
+                BackgroundSkyView(
+                    viewModel: .mock(
+                        state: BackgroundSkyViewState()
+                    ),
+                    context: BackgroundSkyViewContext(
+                        observer: LatLonAlt(lat: 0, lon: 0, alt: 0),
+                        basicChartConfigs: .init(),
+                        configs: .init(),
+                        quality: .full
+                    )
+                )
+            )
         )
+        .environment(\.backgroundSkyJulianDateKey, 0)
     }
 }
 

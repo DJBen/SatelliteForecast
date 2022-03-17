@@ -8,13 +8,12 @@
 import SwiftRex
 
 extension Reducer where ActionType == BackgroundSkyViewOutput, StateType == BackgroundSkyResources {
-    
+
     func lift() -> Reducer<AppAction, AppState> {
         lift(
             actionGetter: \.backgroundSkyOutput,
-            stateGetter: \AppState.backgroundSkyResources,
-            stateSetter: { appState, state in appState.backgroundSkyResources = state
-            }
+            stateGetter: BackgroundSkyResources.project(appState:),
+            stateSetter: BackgroundSkyResources.apply(appState:state:)
         )
     }
 }

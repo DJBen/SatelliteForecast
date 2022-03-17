@@ -21,15 +21,17 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                     print(notificationAction)
                 case .location(let locationAction):
                     print(locationAction)
-                case .satelliteLoader(let satelliteLoaderAction):
-                    print(satelliteLoaderAction)
-                case .satelliteLoaderOutput(let satelliteLoaderOutput):
-                    switch satelliteLoaderOutput {
-                    case .loadedSatelliteInfo(let satelliteCategory, _, let selectSpecialNoradIndex, let selectNoradIndex, let calculatePass):
-                        print("loadedSatelliteInfo(\(satelliteCategory), selectSpecialNoradIndex: \(String(describing: selectSpecialNoradIndex)), selectNoradIndex: \(String(describing: selectNoradIndex)), calculatePass: \(calculatePass != nil))")
+                case .tleLoader(let tleLoaderAction):
+                    print(tleLoaderAction)
+                case .tleLoaderOutput(let tleLoaderOutput):
+                    switch tleLoaderOutput {
+                    case .loadedSatelliteTLEs(let satelliteCategory, _, let selectSpecialNoradIndex, let selectNoradIndex, let calculatePass):
+                        print("loadedSatelliteTLEs(\(satelliteCategory), selectSpecialNoradIndex: \(String(describing: selectSpecialNoradIndex)), selectNoradIndex: \(String(describing: selectNoradIndex)), calculatePass: \(calculatePass != nil))")
                     case .failedLoadingTLEFile(_, _):
-                        print(satelliteLoaderOutput)
+                        print(tleLoaderOutput)
                     }
+                case .rootView(let rootViewAction):
+                    print(rootViewAction)
                 case .satelliteOverview(let satelliteOverviewViewAction):
                     print(satelliteOverviewViewAction)
                 case .satelliteListView(let satelliteListViewAction):
@@ -52,7 +54,10 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                     // Do nothing
                     break
                 case .backgroundSkyOutput(let backgroundSkyOutput):
-                    print(backgroundSkyOutput)
+                    switch backgroundSkyOutput {
+                    case .rasterizedBackgroundSky(_, let quality, let julianDate, key: _):
+                        print("rasterizedBackgroundSky(quality: \(quality), julianDate: \(julianDate))")
+                    }
                 case .tlePropagator(let tlePropagatorAction):
                     switch tlePropagatorAction {
                     case .foundPassesAndSnapshots(let passSnapshotList, let noradIndex, let observer):
@@ -72,6 +77,22 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                     print(alarmSettingsCellAction)
                 case .alarmSettingsView(let alarmSettingsViewAction):
                     print(alarmSettingsViewAction)
+                case .realtimeSky(let realtimeSkyViewAction):
+                    switch realtimeSkyViewAction {
+                    case .propagateCurrentEphemerides(_, observer: _, julianDate: _):
+                        break
+                        // print("propagateCurrentEphemerides(tles.count: \(tles.count), observer: \(observer), julianDate: \(julianDate))")
+                    case .setRealtimeSkyViewActive(_):
+                        print(realtimeSkyViewAction)
+                    }
+                case .realtimeSkyOutput(let realtimeSkyViewOutput):
+                    switch realtimeSkyViewOutput {
+                    case .propagatedCurrentEphemerides(_, satellites: _, partialErrors: _, observer: _, julianDate: _):
+                        break
+//                        print("propagatedCurrentEphemerides(results.count: \(results.count), partialErrors: \(partialErrors), observer: \(observer), julianDate: \(julianDate))")
+                    case .failedToPropagateCurrentEphemerides(let error, let observer, let julianDate):
+                        print("failedToPropagatedCurrentEphemerides(error: \(error), observer: \(observer), julianDate: \(julianDate))")
+                    }
                 }
             }
         }

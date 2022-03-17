@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum SatelliteCategory: Equatable, Hashable, Codable {
+public enum SatelliteCategory: Equatable, Hashable, Codable {
     /// The brighest 100 (or so) satellites.
     case brightest100
 

@@ -13,7 +13,7 @@ import SatelliteKit
 
 enum SingleSatelliteWrappingViewAction {
     struct LoadSingleSatelliteParams: Equatable {
-        let selectedNoradIndex: Int
+        let selectedNoradIndex: UInt
         let julianDateRange: ClosedRange<Double>
         let observer: LatLonAlt?
     }
@@ -21,26 +21,15 @@ enum SingleSatelliteWrappingViewAction {
 }
 
 struct SingleSatelliteWrappingViewState: Equatable {
-    var satellite: Result<SatelliteInfo, SatelliteLoaderError>?
-
-    static var empty: SingleSatelliteWrappingViewState {
-        SingleSatelliteWrappingViewState()
-    }
+    var satellite: Loadable<SatelliteInfo, TLELoaderError> = .notLoaded
 
     static func project(state: AppState, context: SingleSatelliteWrappingViewContext) -> SingleSatelliteWrappingViewState {
         let noradIndex = context.selectedNoradIndex
-        let satellite: Result<SatelliteInfo, SatelliteLoaderError>?
-        switch state.satelliteLoader.info[.brightest100] {
-        case .none:
-            satellite = nil
-        case let .success(satellites):
-            satellite = satellites[noradIndex].map { .success($0) }
-        case let .failure(error):
-            satellite = .failure(error)
-        }
 
         return SingleSatelliteWrappingViewState(
-            satellite: satellite
+            satellite: state.tleLoader.info[.brightest100]?.flatMap { satellites in
+                satellites[noradIndex]
+            } ?? .notLoaded
         )
     }
 }
@@ -52,16 +41,18 @@ struct SingleSatelliteWrappingView: View {
 
     @ViewBuilder func satelliteContent<Content: View, FailedContent: View>(
         @ViewBuilder contentBuilder: (SatelliteInfo) -> Content,
-        @ViewBuilder failedContentBuilder: (Int, SatelliteLoaderError) -> FailedContent
+        @ViewBuilder failedContentBuilder: (UInt, TLELoaderError) -> FailedContent
     ) -> some View {
         let satellite = viewModel.state.satellite
         Group {
             switch satellite {
-            case .none:
+            case .notLoaded:
+                Text(verbatim: "The satellites are not loaded.")
+            case .loading:
                 ProgressView("Loading...")
-            case let .success(satellite):
+            case let .loaded(satellite):
                 contentBuilder(satellite)
-            case let .failure(error):
+            case let .failed(error):
                 failedContentBuilder(context.selectedNoradIndex, error)
             }
         }
@@ -106,7 +97,7 @@ struct SingleSatelliteWrappingView: View {
 }
 
 struct SingleSatelliteWrappingViewContext {
-    let selectedNoradIndex: Int
+    let selectedNoradIndex: UInt
     let julianDateRange: ClosedRange<Double>
     let observer: LatLonAlt?
 }
@@ -124,7 +115,7 @@ extension ViewProducer where Context == SingleSatelliteWrappingViewContext, Prod
                         )
                     }
                 )
-                .asObservableViewModel(initialState: .empty, emitsValue: .whenDifferent),
+                .asObservableViewModel(initialState: .init(), emitsValue: .whenDifferent),
                 context: context,
                 allPassesViewProducer: ViewProducer<AllPassesViewContext, AllPassesView>
                     .allPassesView(viewModel: viewModel)
@@ -137,7 +128,7 @@ extension ViewProducer where Context == SingleSatelliteWrappingViewContext, Prod
 struct SingleSatelliteWrappingView_Previews: PreviewProvider {
     static var previews: some View {
         SingleSatelliteWrappingView(
-            viewModel: .mock(state: .empty),
+            viewModel: .mock(state: .init()),
             context: SingleSatelliteWrappingViewContext(
                 selectedNoradIndex: 0,
                 julianDateRange: Date(daysSince1950: 1000).julianDate...Date(daysSince1950: 1002).julianDate,

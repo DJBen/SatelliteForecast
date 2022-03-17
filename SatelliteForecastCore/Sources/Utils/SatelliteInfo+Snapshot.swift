@@ -1,5 +1,5 @@
 //
-//  Satellite+Convenience.swift
+//  TLE+Snapshot.swift
 //  SatelliteForecastCore
 //
 //  Created by Ben Lu on 6/4/21.
@@ -7,25 +7,18 @@
 
 import BTree
 import Foundation
+import QSMag
 import SatelliteKit
-
-extension Satellite: Equatable {
-    public static func == (lhs: Satellite, rhs: Satellite) -> Bool {
-        return lhs.tle == rhs.tle &&
-            lhs.commonName == rhs.commonName &&
-            lhs.noradIdent == rhs.noradIdent &&
-            lhs.t₀Days1950 == rhs.t₀Days1950
-    }
-}
 
 extension SatelliteSnapshot {
     public init(
-        tle: TLE,
+        satelliteInfo: SatelliteInfo,
         julianDate: Double,
         observer: LatLonAlt
-    ) {
+    ) throws {
+        let tle = satelliteInfo.tle
         let satellite = Satellite(withTLE: tle)
-        let eciPosition = satellite.position(julianDays: julianDate)
+        let eciPosition = try satellite.position(julianDays: julianDate)
         let obsCel = geo2eci(julianDays: julianDate, geodetic: observer)
 
         func topVector2AziEleDst(_ top: Vector) -> AziEleDst {
@@ -45,31 +38,50 @@ extension SatelliteSnapshot {
             object1Geo: eciPosition,
             object2Geo: solarCel * au2Km
         )
+        let phaseAngle = AstroAlgorithms.phaseAngle(
+            targetPosition: eciPosition,
+            sunPosition: solarCel,
+            observerPosition: obsCel
+        )
         let (sunElev, _) = azel(
             julianDate: julianDate,
             site: (observer.lat, observer.lon),
             cele: cartesianToRaDec(solarCel)
         )
+        let visualMagnitude: Double?
+        if let crossSectionArea = satelliteInfo.satCat?.rcs {
+            visualMagnitude = AstroAlgorithms.lambertianSphereMagnitude(
+                crossSectionArea: crossSectionArea,
+                range: position.dist * 1000,
+                phaseAngle: phaseAngle,
+                albedo: 0.25
+            )
+        } else {
+            visualMagnitude = nil
+        }
+
         self.init(
             julianDate: julianDate,
             position: position,
             isIlluminated: isIlluminated,
-            sunElevation: sunElev
+            sunElevation: sunElev,
+            phaseAngle: phaseAngle,
+            visualMagnitude: visualMagnitude
         )
     }
 }
 
-extension TLE {
+extension SatelliteInfo {
     /// Construct a snapshot of the satellite given a date and observer coordinate.
     /// - Parameters:
     ///   - julianDate: The julian date.
     ///   - observer: The observer coordinate in latitude, longitude and altitude.
-    public func snapshot(
+    public func generateSnapshot(
         julianDate: Double,
         observer: LatLonAlt
-    ) -> SatelliteSnapshot {
-        return SatelliteSnapshot(
-            tle: self,
+    ) throws -> SatelliteSnapshot {
+        return try SatelliteSnapshot(
+            satelliteInfo: self,
             julianDate: julianDate,
             observer: observer
         )
@@ -81,29 +93,32 @@ extension TLE {
     ///   - dateRange: The date range to generate satellite ephemerides.
     ///   - interval: The interval to generate satellite ephemerides.
     /// - Returns: A list of satellite snapshots over a date range with a given interval at an observer location in chronological order.
-    public func snapshots(
+    public func generateSnapshots(
         observer: LatLonAlt,
         julianDateRange: ClosedRange<Double>,
         interval: TimeInterval = 30
-    ) -> [SatelliteSnapshot] {
-        return stride(
+    ) throws -> [SatelliteSnapshot] {
+        return try stride(
             from: julianDateRange.lowerBound,
             // Append interval to overshoot the upperBound and make sure it is included.
             through: julianDateRange.upperBound + interval * TimeConstants.sec2day,
             by: interval * TimeConstants.sec2day
         )
         .map { (julianDate) in
-            snapshot(julianDate: julianDate, observer: observer)
+            try generateSnapshot(
+                julianDate: julianDate,
+                observer: observer
+            )
         }
     }
 
     private func generatePassInfo(
-        noradIndex: Int,
+        noradIndex: UInt,
         observer: LatLonAlt,
         julianDateRange: ClosedRange<Double>,
         fineInterval: TimeInterval = 3
-    ) -> PassSnapshots {
-        let fineSnapshots = snapshots(
+    ) throws -> PassSnapshots {
+        let fineSnapshots = try generateSnapshots(
             observer: observer,
             julianDateRange: julianDateRange,
             interval: fineInterval
@@ -235,12 +250,13 @@ extension TLE {
     ///   - passes: A list of satellite passes.
     ///   - snapshots: Resulting snapshots by merging the coarse snapshots and the generated fine snapshots.
     public func findPasses(
-        noradIndex: Int,
         observer: LatLonAlt,
         coarseSnapshots: [SatelliteSnapshot],
+        qsMag: QSMag? = nil,
+        crossSectionArea: Double? = nil,
         minElevation: Double = 10,
         fineInterval: TimeInterval = 3
-    ) -> [PassSnapshots] {
+    ) throws -> [PassSnapshots] {
         var snapshotBeforeRising: SatelliteSnapshot?
         var snapshotAfterSetting: SatelliteSnapshot?
         var passSnapshotsList = [PassSnapshots]()
@@ -260,8 +276,8 @@ extension TLE {
             }
 
             if let fromDate = snapshotBeforeRising?.julianDate, let toDate = snapshotAfterSetting?.julianDate, fromDate < toDate {
-                let passSnapshots = generatePassInfo(
-                    noradIndex: noradIndex,
+                let passSnapshots = try generatePassInfo(
+                    noradIndex: tle.noradIndex,
                     observer: observer,
                     julianDateRange: fromDate...toDate,
                     fineInterval: fineInterval

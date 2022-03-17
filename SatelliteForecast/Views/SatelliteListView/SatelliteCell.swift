@@ -161,8 +161,10 @@ struct UCSSatCell: View {
                         Image(systemName: "mappin.and.ellipse")
                             .secondaryStyle()
 
-                        Text(sat.launchSite)
+                        if let launchSite = sat.launchSite {
+                            Text(launchSite)
                             .secondaryStyle()
+                        }
                     }
 
                     if let dryMass = sat.dryMass {
@@ -220,7 +222,6 @@ struct SatelliteCell_Previews: PreviewProvider {
         )
         SatelliteCell(
             info: SatelliteInfo(
-                noradIndex: 42758,
                 tle: tle,
                 satCat: SatCat.with(noradCatID: 42758),
                 ucsSat: UCSSat.with(noradCatID: 42758)
@@ -237,7 +238,6 @@ struct SatelliteCell_Previews: PreviewProvider {
         )
         SatelliteCell(
             info: SatelliteInfo(
-                noradIndex: 45190,
                 tle: tle2,
                 satCat: SatCat.with(noradCatID: 45190),
                 ucsSat: UCSSat.with(noradCatID: 45190)
@@ -254,7 +254,6 @@ struct SatelliteCell_Previews: PreviewProvider {
         )
         SatelliteCell(
             info: SatelliteInfo(
-                noradIndex: 25544,
                 tle: tle3,
                 satCat: SatCat.with(noradCatID: 25544),
                 ucsSat: UCSSat.with(noradCatID: 25544)
@@ -271,7 +270,6 @@ struct SatelliteCell_Previews: PreviewProvider {
         )
         SatelliteCell(
             info: SatelliteInfo(
-                noradIndex: 48274,
                 tle: tle4,
                 satCat: SatCat.with(noradCatID: 48274),
                 ucsSat: UCSSat.with(noradCatID: 48274)
@@ -288,7 +286,6 @@ struct SatelliteCell_Previews: PreviewProvider {
         )
         SatelliteCell(
             info: SatelliteInfo(
-                noradIndex: 46265,
                 tle: tle5,
                 satCat: SatCat.with(noradCatID: 46265),
                 ucsSat: UCSSat.with(noradCatID: 46265)

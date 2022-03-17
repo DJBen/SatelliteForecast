@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
   s.name             = 'CombineUtils'
   s.version          = '1.0.0.LOCAL'
-  s.summary          = 'A library that contains utils to the Combine'
+  s.summary          = 'A library that contains utils to the Combine library'
 
   s.homepage         = 'https://github.com/DJBen'
   s.license          = { :type => 'Proprietary', :text => '© 2021 DJBen' }

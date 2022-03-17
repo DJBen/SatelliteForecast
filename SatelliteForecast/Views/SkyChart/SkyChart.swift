@@ -7,7 +7,6 @@
 
 import CombineRex
 import CombineRextensions
-import SwiftDate
 import SwiftUI
 import SwiftUIVisualEffects
 import SatelliteKit
@@ -115,9 +114,9 @@ struct SkyChart: View {
 
     private var backgroundSkyJulianDateKey: Double {
         if (context.pass.rise.julianDate..<context.pass.set.julianDate).contains(viewModel.state.referenceDate) {
-            return viewModel.state.referenceDate.julianDateRoundedToNearestMinute()
+            return viewModel.state.referenceDate.roundJulianDate(.toMins(1))
         }
-        return context.pass.rise.julianDate.julianDateRoundedToNearestMinute()
+        return context.pass.rise.julianDate.roundJulianDate(.toMins(1))
     }
 
     @ViewBuilder private var satellitePath: some View {
@@ -178,15 +177,15 @@ struct SkyChart: View {
                 observer: context.observer,
                 basicChartConfigs: context.configs.basicChartConfigs,
                 configs: context.configs.backgroundSkyConfigs,
-                quality: context.quality,
-                backgroundSkyJulianDateKey: backgroundSkyJulianDateKey
+                quality: context.quality
             )
         )
+        .environment(\.backgroundSkyJulianDateKey, backgroundSkyJulianDateKey)
         .overlay(passInfoLabels)
         .overlay(
             SkyChartDynamicIndicator(
                 state: SkyChartDynamicIndicatorState(
-                    tle: context.satelliteInfo.tle,
+                    satelliteInfo: context.satelliteInfo,
                     pass: context.pass,
                     observer: context.observer,
                     julianDateOffset: viewModel.state.julianDateOffset
@@ -229,12 +228,6 @@ extension ViewProducer where Context == SkyChartContext, ProducedView == SkyChar
     }
 }
 
-extension Double {
-    func julianDateRoundedToNearestMinute() -> Double {
-        Date(julianDate: self).dateRoundedAt(at: .toMins(1)).julianDate
-    }
-}
-
 #if DEBUG
 struct SkyChart_Previews: PreviewProvider {
     static let issPass: (TLE, PassSnapshots) = {
@@ -248,15 +241,14 @@ struct SkyChart_Previews: PreviewProvider {
 
         let formatter = ISO8601DateFormatter()
         let date = formatter.date(from: "2021-06-02T20:35:30+0800")!
-
+        let satelliteInfo = SatelliteInfo(tle: tle)
         let observer = LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0)
-        let snapshots = tle.snapshots(
+        let snapshots = try! satelliteInfo.generateSnapshots(
             observer: observer,
             julianDateRange: date.julianDate...date.addingTimeInterval(800).julianDate
         )
 
-        let passSnapshots = tle.findPasses(
-            noradIndex: tle.noradIndex,
+        let passSnapshots = try! satelliteInfo.findPasses(
             observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
             coarseSnapshots: snapshots
         )
@@ -275,15 +267,14 @@ struct SkyChart_Previews: PreviewProvider {
 
         let formatter = ISO8601DateFormatter()
         let date = formatter.date(from: "2021-06-02T06:29:00-0600")!
-
+        let satelliteInfo = SatelliteInfo(tle: tle)
         let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
-        let snapshots = tle.snapshots(
+        let snapshots = try! satelliteInfo.generateSnapshots(
             observer: observer,
             julianDateRange: date.julianDate...date.addingTimeInterval(800).julianDate
         )
 
-        let passSnapshots = tle.findPasses(
-            noradIndex: tle.noradIndex,
+        let passSnapshots = try! satelliteInfo.findPasses(
             observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
             coarseSnapshots: snapshots
         )
@@ -317,7 +308,7 @@ struct SkyChart_Previews: PreviewProvider {
                     )
                 ),
                 context: SkyChartContext(
-                    satelliteInfo: SatelliteInfo(noradIndex: 48274, tle: tle),
+                    satelliteInfo: SatelliteInfo(tle: tle),
                     snapshots: passSnapshots.snapshots,
                     observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
                     pass: passSnapshots.pass,
@@ -334,14 +325,14 @@ struct SkyChart_Previews: PreviewProvider {
                             observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
                             basicChartConfigs: .init(),
                             configs: .init(),
-                            quality: .full,
-                            backgroundSkyJulianDateKey: referenceDate.julianDateRoundedToNearestMinute()
+                            quality: .full
                         )
                     )
                 )
             )
             .padding(20)
             .preferredColorScheme(colorScheme)
+            .environment(\.backgroundSkyJulianDateKey, referenceDate.roundJulianDate(.toMins(1)))
         }
 
         let (tle2, passSnapshots2) = tianHePass
@@ -366,7 +357,7 @@ struct SkyChart_Previews: PreviewProvider {
                 )
             ),
             context: SkyChartContext(
-                satelliteInfo: SatelliteInfo(noradIndex: 48274, tle: tle2),
+                satelliteInfo: SatelliteInfo(tle: tle2),
                 snapshots: passSnapshots2.snapshots,
                 observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
                 pass: passSnapshots2.pass,
@@ -383,18 +374,18 @@ struct SkyChart_Previews: PreviewProvider {
                         observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
                         basicChartConfigs: .init(),
                         configs: .preset,
-                        quality: .full,
-                        backgroundSkyJulianDateKey: passSnapshots2.pass.rise.julianDate.julianDateRoundedToNearestMinute()
+                        quality: .full
                     )
                 )
             )
         )
         .padding(20)
+        .environment(\.backgroundSkyJulianDateKey, passSnapshots2.pass.rise.julianDate.roundJulianDate(.toMins(1)))
 
         SkyChart(
             viewModel: .mock(state: .init()),
             context: SkyChartContext(
-                satelliteInfo: SatelliteInfo(noradIndex: 48274, tle: tle2),
+                satelliteInfo: SatelliteInfo(tle: tle2),
                 snapshots: passSnapshots2.snapshots,
                 observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
                 pass: passSnapshots2.pass,
@@ -411,14 +402,14 @@ struct SkyChart_Previews: PreviewProvider {
                         observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
                         basicChartConfigs: .init(),
                         configs: .preset,
-                        quality: .full,
-                        backgroundSkyJulianDateKey: passSnapshots2.pass.rise.julianDate.julianDateRoundedToNearestMinute()
+                        quality: .full
                     )
                 )
             )
         )
         .padding(20)
         .previewDisplayName("Placeholder")
+        .environment(\.backgroundSkyJulianDateKey, passSnapshots2.pass.rise.julianDate.roundJulianDate(.toMins(1)))
     }
 }
 #endif

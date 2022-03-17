@@ -8,9 +8,10 @@ target 'SatelliteForecast' do
   pod "CombineRex", "0.8.9"
   pod "CombineRextensions"
   pod "FlagKit"
-  pod 'SwiftDate', '~> 5.0'
+  pod 'QSMag', :path => './QSMag'
   pod "SwiftRex", "0.8.9"
   pod "CombineUtils", :path => './CombineUtils'
+  pod "CombineRexUtils", :path => './CombineRexUtils'
   pod "SatelliteKit", :path => './SatelliteKit'
   pod "StarryNight", :path => './StarryNight'
   pod "SatelliteCatalog", :path => './SatelliteCatalog'

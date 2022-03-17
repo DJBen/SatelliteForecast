@@ -35,67 +35,66 @@ extension EffectMiddleware where
                 case let .calculatePasses(params):
                     return Effect { context -> AnyPublisher<DispatchedAction<AppAction>, Never> in
                         let state = getState()
-                        let (noradIndex, observer, julianDateRange) = (
+                        let (info, noradIndex, observer, julianDateRange) = (
+                            params.satelliteInfo,
                             params.selectedNoradIndex,
                             params.observer,
                             params.julianDateRange
                         )
-
-                        // Precondition: TLE must be ready
-                        guard let info = state.satelliteLoader[noradIndex] else {
-                            logger.fault("TLE not ready for the selected satellite when calculating passes")
-                            return Empty().eraseToAnyPublisher()
-                        }
 
                         // Loads satellite passes
                         let subject = PassthroughSubject<DispatchedAction<AppAction>, Never>()
 
                         DispatchQueue.global(qos: .userInitiated).async {
                             // Use cached satellite ephemerides if calculated within the last hour.
-                            if let satelliteState = state.selectedSatelliteTrails,
+                            if let satelliteState = state.satelliteTrails[noradIndex],
                                abs(julianDateRange.lowerBound - satelliteState.snapshots.first!.julianDate) < TimeConstants.hrs2day,
                                let _ = satelliteState.passSnapshots {
                                 logger.debug("Ephemeride of \(noradIndex) are already generated. Skipping.")
                             } else {
-                                let tle = info.tle
                                 logger.debug("Calculating pass within date range \(julianDateRange) for \(String(describing: observer)) at interval of 30s")
 
-                                let snapshots = tle.snapshots(
-                                    observer: observer,
-                                    julianDateRange: julianDateRange,
-                                    interval: 30
-                                )
+                                do {
+                                    let snapshots = try info.generateSnapshots(
+                                        observer: observer,
+                                        julianDateRange: julianDateRange,
+                                        interval: 30
+                                    )
 
-                                subject.send(
-                                    DispatchedAction<AppAction>(
-                                        .tlePropagator(
-                                            .propagatedSnapshots(
-                                                snapshots,
-                                                noradIndex: noradIndex,
-                                                observer: observer
+                                    subject.send(
+                                        DispatchedAction<AppAction>(
+                                            .tlePropagator(
+                                                .propagatedSnapshots(
+                                                    snapshots,
+                                                    noradIndex: noradIndex,
+                                                    observer: observer
+                                                )
                                             )
                                         )
                                     )
-                                )
 
-                                let passSnapshots = tle.findPasses(
-                                    noradIndex: tle.noradIndex,
-                                    observer: observer,
-                                    coarseSnapshots: snapshots
-                                )
+                                    let passSnapshots = try info.findPasses(
+                                        observer: observer,
+                                        coarseSnapshots: snapshots,
+                                        qsMag: info.qsMag,
+                                        crossSectionArea: info.satCat?.rcs
+                                    )
 
-                                subject.send(
-                                    DispatchedAction<AppAction>(
-                                        .tlePropagator(
-                                            .foundPassesAndSnapshots(
-                                                passSnapshots,
-                                                noradIndex: noradIndex,
-                                                observer: observer
+                                    subject.send(
+                                        DispatchedAction<AppAction>(
+                                            .tlePropagator(
+                                                .foundPassesAndSnapshots(
+                                                    passSnapshots,
+                                                    noradIndex: noradIndex,
+                                                    observer: observer
+                                                )
                                             )
                                         )
                                     )
-                                )
-                                logger.debug("Generated emphemerides and passes of \(noradIndex).")
+                                    logger.debug("Generated emphemerides and passes of \(noradIndex).")
+                                } catch {
+                                    print("Failed to propagate \(noradIndex): \(error)")
+                                }
                             }
 
                             subject.send(completion: .finished)

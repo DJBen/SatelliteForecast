@@ -1,6 +1,6 @@
 /*╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
   ║ MathUtility.swift                                                                         SatKit ║
-  ║ Created by Gavin Eadie on Nov17/15 ... Copyright 2009-20 Ramsay Consulting. All rights reserved. ║
+  ║ Created by Gavin Eadie on Nov17/15 ... Copyright 2009-22 Ramsay Consulting. All rights reserved. ║
   ║──────────────────────────────────────────────────────────────────────────────────────────────────║
   ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝*/
 
@@ -45,11 +45,11 @@ public func almostEqual(_ a: Double, _ b: Double) -> Bool {
 
 extension Double {
     func roundTo3Places() -> Double {
-        return (self*1_000.0).rounded(.toNearestOrEven) / 1_000
+        return (self*1_000.0).rounded(.toNearestOrAwayFromZero) / 1_000.0
     }
 
     func roundTo6Places() -> Double {
-        return (self*1_000_000.0).rounded(.toNearestOrEven) / 1_000_000
+        return (self*1_000_000.0).rounded(.toNearestOrAwayFromZero) / 1_000_000.0
     }
 }
 
@@ -87,16 +87,16 @@ public struct Vector {
         return Vector(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z)
     }
 
+    public static func * (lhs: Vector, scalar: Double) -> Vector {
+        return Vector(lhs.x * scalar, lhs.y * scalar, lhs.z * scalar)
+    }
+
     public func magnitude() -> Double {
-        return (self.x*self.x + self.y*self.y + self.z*self.z).squareRoot()
+        return magnitudeSquared().squareRoot()
     }
 
     public func magnitudeSquared() -> Double {
         return self.x*self.x + self.y*self.y + self.z*self.z
-    }
-
-    public static func * (lhs: Vector, scalar: Double) -> Vector {
-        return Vector(lhs.x * scalar, lhs.y * scalar, lhs.z * scalar)
     }
 }
 

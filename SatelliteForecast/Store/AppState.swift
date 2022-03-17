@@ -16,6 +16,7 @@ struct AppState: Equatable {
             print("[Navigation] \(navigationState)")
         }
     }
+
     /// A date that mostly approximates the current date.
     var currentDate: Double = Date().julianDate
 
@@ -25,13 +26,15 @@ struct AppState: Equatable {
     /// The date range from which ephemerides are generated.
     var skyChartResources: SkyChartResources = .init()
 
+    var realtimeSkyResources: RealtimeSkyViewResources = .init()
+
     var satelliteElevationGraphResources: SatelliteElevationGraphResources = .init()
 
     /// A mapping from NORAD ID to the satellite state.
-    var satelliteTrails: [Int: SatelliteTrails] = [:]
+    var satelliteTrails: [UInt: SatelliteTrails] = [:]
 
     /// Location agnostic satellite information, including its orbit and metadata.
-    var satelliteLoader: SatelliteLoaderResources = .init()
+    var tleLoader: TLELoaderResources = .init()
 
     var locationState: LocationState = .init()
 
@@ -57,7 +60,7 @@ struct AppState: Equatable {
     }
 
     var selectedSatelliteInfo: SatelliteInfo? {
-        navigationState.selectedNoradIndex.flatMap { satelliteLoader[$0] }
+        navigationState.selectedNoradIndex.flatMap { tleLoader[$0] }
     }
 
     var currentSatelliteSnapshots: [SatelliteSnapshot] {

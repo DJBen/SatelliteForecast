@@ -1,10 +1,10 @@
 /*╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
   ║ Astronomy.swift                                                                           SatKit ║
-  ║ Created by Gavin Eadie on Jul06/15.    Copyright 2015-20 Ramsay Consulting. All rights reserved. ║
+  ║ Created by Gavin Eadie on Jul06/15.    Copyright 2015-22 Ramsay Consulting. All rights reserved. ║
   ║──────────────────────────────────────────────────────────────────────────────────────────────────║
   ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝*/
 
-// swiftlint:disable identifier_name
+//swiftlint:disable identifier_name
 
 import Foundation
 
@@ -32,6 +32,16 @@ public struct AziEleDst: Equatable, Hashable, Codable {
     public var elev: Double                                 // elevation (degrees)
     public var dist: Double                                 // distance/range
 
+}
+
+public struct RADec: Equatable, Hashable, Codable {
+    public let ra: Double
+    public let dec: Double
+
+    public init(ra: Double, dec: Double) {
+        self.ra = ra
+        self.dec = dec
+    }
 }
 
 /*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -91,12 +101,15 @@ public func solarCel(julianDays: Double) -> Vector {
                   sin(solarEclpLong) * sin(eclipticInclin))
 }
 
-//  Right Ascension (alpha) and Declination (delta) are returned as decimal degrees.
-public func solarGeo(julianDays: Double) -> (Double, Double) {
+//  Declination (delta) and Right Ascension (alpha) are returned as decimal degrees.
+
+public func solarGeo(julianDays: Double) -> RADec {
     let     solarVector: Vector = solarCel(julianDays: julianDays)
 
-    return (atan2pi(solarVector.y, solarVector.x) * rad2deg,
-            asin(solarVector.z) * rad2deg)
+    return RADec(
+        ra: atan2pi(solarVector.y, solarVector.x) * rad2deg,
+        dec: asin(solarVector.z) * rad2deg
+    )
 }
 
 /*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -135,30 +148,46 @@ public func lunarCel(julianDays: Double) -> Vector {
     return Vector(moonX1, moonY1, moonZ1)
 }
 
-//  (Right_Ascension, Declination) are returned as decimal degrees.
+//  (Declination, Right_Ascension) are returned as decimal degrees.
 
-public func lunarGeo (julianDays: Double) -> (Double, Double) {
+public func lunarGeo (julianDays: Double) -> RADec {
     let     lunarVector: Vector = lunarCel(julianDays: julianDays)
 
-    return (
-        atan2pi(lunarVector.y, lunarVector.x) * rad2deg,
-        asin(lunarVector.z / (lunarVector.x * lunarVector.x +
-            lunarVector.y * lunarVector.y +
-            lunarVector.z * lunarVector.z).squareRoot()) * rad2deg
-    )
+    return RADec(
+        ra: atan2pi(lunarVector.y, lunarVector.x) * rad2deg,
+        dec: asin(lunarVector.z / (lunarVector.x * lunarVector.x +
+                                   lunarVector.y * lunarVector.y +
+                                   lunarVector.z * lunarVector.z).squareRoot()) * rad2deg
+        )
+}
+
+public func azel(julianDate: Double,
+                 site: (Double, Double),
+                 cele: RADec) -> (alt: Double, azi: Double) {
+
+    let hourAngle = (siteMeanSiderealTime(julianDate: julianDate, site.1) - cele.ra) * deg2rad
+
+    let lat = site.0 * deg2rad
+    let dec = cele.dec * deg2rad
+
+    let elev = asin(sin(lat) * sin(dec) + cos(lat) * cos(dec) * cos(hourAngle))
+    let azim = atan2pi(sin(hourAngle), sin(lat) * cos(hourAngle) - cos(lat) * tan(dec))
+
+    return (fmod(elev * rad2deg, 360.0),
+            fmod(azim * rad2deg + 540.0, 360.0))
 }
 
 /*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-  ┃ JD, (lat°, lon°), (ra°, dec°) -> (alt°, azi°)                                                  ┃
+  ┃ Date, (lat°, lon°), (ra°, dec°) -> (alt°, azi°)                                                  ┃
   ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛*/
-public func azel(julianDate: Double,
+public func azel(time: Date,
                  site: (Double, Double),
-                 cele: (Double, Double)) -> (alt: Double, azi: Double) {
+                 cele: RADec) -> (alt: Double, azi: Double) {
 
-    let hourAngle = (siteMeanSiderealTime(julianDate: julianDate, site.1) - cele.0) * deg2rad
+    let hourAngle = (siteMeanSiderealTime(date: time, site.1) - cele.ra) * deg2rad
 
     let lat = site.0 * deg2rad
-    let dec = cele.1 * deg2rad
+    let dec = cele.dec * deg2rad
 
     let elev = asin(sin(lat) * sin(dec) + cos(lat) * cos(dec) * cos(hourAngle))
     let azim = atan2pi(sin(hourAngle), sin(lat) * cos(hourAngle) - cos(lat) * tan(dec))

@@ -20,17 +20,19 @@ extension Reducer where ActionType == BackgroundSkyViewOutput, StateType == Back
         ):
             switch quality {
             case .full:
-                if state.rasterizedBackgroundSky[key] == nil {
-                    state.rasterizedBackgroundSky[key] = BTree()
+                if var existingSkies = state.rasterizedBackgroundSky[key] {
+                    existingSkies[julianDate] = image
+                    state.rasterizedBackgroundSky[key] = existingSkies
+                } else {
+                    state.rasterizedBackgroundSky[key] = [julianDate: image]
                 }
-
-                state.rasterizedBackgroundSky[key]!.insert((julianDate, image))
             case .preview:
-                if state.previewBackgroundSkies[key] == nil {
-                    state.previewBackgroundSkies[key] = BTree()
+                if var existingSkies = state.previewBackgroundSkies[key] {
+                    existingSkies[julianDate] = image
+                    state.previewBackgroundSkies[key] = existingSkies
+                } else {
+                    state.previewBackgroundSkies[key] = [julianDate: image]
                 }
-
-                state.previewBackgroundSkies[key]!.insert((julianDate, image))
             }
         }
     }

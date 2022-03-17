@@ -45,6 +45,7 @@ struct PassView: View {
                         configs: .preset
                     )
                 )
+                .environment(\.julianDateRangeKey, context.julianDateRange)
                 .frame(minHeight: 180, idealHeight: 240, maxHeight: 275, alignment: .leading)
                 
                 skyChartProducer.view(
@@ -126,19 +127,19 @@ struct PassView_Previews: PreviewProvider {
             """
         )
         let julianDateRange = Date().advanced(by: -60 * 60 * 2).julianDate...Date().advanced(by: 60 * 60 * 22).julianDate
+        let satelliteInfo = SatelliteInfo(tle: tle)
         // 2000 Broadway, Redwood City, CA 94063
         let observer = LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0)
-        let snapshots = tle.snapshots(
+        let snapshots = try! satelliteInfo.generateSnapshots(
             observer: observer,
             julianDateRange: julianDateRange
         )
-        let passSnapshots = tle.findPasses(
-            noradIndex: tle.noradIndex,
+        let passSnapshots = try! satelliteInfo.findPasses(
             observer: observer,
             coarseSnapshots: snapshots
         )
         let skyChartContext = SkyChartContext(
-            satelliteInfo: SatelliteInfo(noradIndex: tle.noradIndex, tle: tle),
+            satelliteInfo: satelliteInfo,
             snapshots: snapshots,
             observer: observer,
             pass: passSnapshots.first!.pass,
@@ -146,8 +147,8 @@ struct PassView_Previews: PreviewProvider {
             configs: .preview,
             quality: .preview
         )
-        let brightest100: Map<Int, SatelliteInfo> = [
-            tle.noradIndex: SatelliteInfo(noradIndex: tle.noradIndex, tle: tle)
+        let brightest100: Map<UInt, SatelliteInfo> = [
+            tle.noradIndex: satelliteInfo
         ]
         let appState = AppState(
             navigationState: NavigationState(
@@ -168,9 +169,9 @@ struct PassView_Previews: PreviewProvider {
                     passSnapshots: passSnapshots
                 )
             ],
-            satelliteLoader: SatelliteLoaderResources(
+            tleLoader: TLELoaderResources(
                 info: [
-                    .brightest100: .success(brightest100)
+                    .brightest100: .loaded(brightest100)
                 ]
             ),
             locationState: LocationState(
@@ -179,7 +180,7 @@ struct PassView_Previews: PreviewProvider {
             )
         )
         let context = PassViewContext(
-            satelliteInfo: SatelliteInfo(noradIndex: tle.noradIndex, tle: tle),
+            satelliteInfo: SatelliteInfo(tle: tle),
             julianDateRange: julianDateRange,
             observer: observer,
             snapshots: passSnapshots[0].snapshots,
@@ -187,7 +188,7 @@ struct PassView_Previews: PreviewProvider {
             notableSnapshots: passSnapshots[0].notableSnapshots
         )
         let elevationGraphContext = SatelliteElevationGraphContext(
-            satelliteInfo: SatelliteInfo(noradIndex: tle.noradIndex, tle: tle),
+            satelliteInfo: SatelliteInfo(tle: tle),
             julianDateRange: julianDateRange,
             observer: observer,
             configs: .preset
@@ -201,8 +202,7 @@ struct PassView_Previews: PreviewProvider {
                 SatelliteElevationGraph(
                     viewModel: .mock(
                         state: SatelliteElevationGraphState.project(
-                            state: appState,
-                            context: elevationGraphContext
+                            appState: appState
                         )
                     ),
                     context: elevationGraphContext
@@ -225,14 +225,15 @@ struct PassView_Previews: PreviewProvider {
                                 observer: observer,
                                 basicChartConfigs: .init(),
                                 configs: .preset,
-                                quality: .full,
-                                backgroundSkyJulianDateKey: passSnapshots[0].pass.rise.julianDate.julianDateRoundedToNearestMinute()
+                                quality: .full
                             )
                         )
                     )
                 )
             )
         )
+        .environment(\.julianDateRangeKey, julianDateRange)
+        .environment(\.backgroundSkyJulianDateKey, passSnapshots[0].pass.rise.julianDate.roundJulianDate(.toMins(1)))
     }
 }
 #endif

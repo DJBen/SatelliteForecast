@@ -8,7 +8,7 @@
 import Foundation
 import SwiftRex
 
-extension Reducer where ActionType == SatelliteOverviewViewAction, StateType == AppState {
+extension Reducer where ActionType == SatelliteOverviewViewAction, StateType == SatelliteOverviewViewState {
     static let satelliteOverviewReducer = Reducer.reduce { action, state in
         switch action {
         case let .selectSpecialSatellite(params):
@@ -20,7 +20,10 @@ extension Reducer where ActionType == SatelliteOverviewViewAction, StateType == 
         case .selectAlert:
             state.navigationState.alarmNavigation.enabled = true
         case .returnToSatelliteOverview:
-            state.navigationState = .init()
+            state.navigationState.specialSatelliteNavigation = .init()
+            state.navigationState.listNavigation = .init()
+            state.navigationState.observerNavigation.enabled = false
+            state.navigationState.alarmNavigation.enabled = false
         }
     }
 }

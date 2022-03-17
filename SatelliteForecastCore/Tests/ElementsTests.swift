@@ -1,5 +1,5 @@
 //
-//  SatelliteTests.swift
+//  ElementsTests.swift
 //  SatelliteForecastCore-Unit-Tests
 //
 //  Created by Ben Lu on 6/12/21.
@@ -7,8 +7,9 @@
 
 import XCTest
 import SatelliteKit
+@testable import SatelliteForecastCore
 
-class SatelliteTests: XCTestCase {
+class ElementsTests: XCTestCase {
 
     override func setUpWithError() throws {
     }
@@ -24,15 +25,12 @@ class SatelliteTests: XCTestCase {
             2 25544  51.6453  62.2423 0003364  52.3737  88.5313 15.48937685286109
             """
         )
-        let sat = Satellite(withTLE: tle)
-
+        let satelliteInfo = SatelliteInfo(tle: tle)
         let formatter = ISO8601DateFormatter()
         let date = formatter.date(from: "2021-06-02T20:35:30+0800")!
         let observer = LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0)
-        let coarseSnapshots = sat.snapshots(observer: observer, julianDateRange: date.julianDate..<date.addingTimeInterval(800).julianDate)
-
-        let (passes, snapshotsDuringPass) = sat.findPasses(
-            noradIndex: 25544,
+        let coarseSnapshots = try! satelliteInfo.generateSnapshots(observer: observer, julianDateRange: date.julianDate...date.addingTimeInterval(800).julianDate)
+        let passSnapshots = try! satelliteInfo.findPasses(
             observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
             coarseSnapshots: coarseSnapshots
         )

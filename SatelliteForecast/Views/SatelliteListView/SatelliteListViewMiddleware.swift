@@ -23,7 +23,7 @@ extension EffectMiddleware where InputActionType == SatelliteListViewAction, Out
     ///
     ///   Thus this effect will have two action outputs before it completes.
     static func satelliteListView(
-        satelliteLoader: SatelliteLoader
+        tleLoader: TLELoader
     ) -> EffectMiddleware<SatelliteListViewAction, AppAction, AppState, Void> {
         EffectMiddleware.onAction { (action, _, getState) -> Effect<Void, AppAction> in
             switch action {
@@ -57,12 +57,20 @@ extension EffectMiddleware where InputActionType == SatelliteListViewAction, Out
                     return .doNothing
                 }
 
-                return satelliteLoader.loadSatelliteCategoryPublisher(
+                return tleLoader.loadSatelliteTLEsPublisher(
                     category: category
                 )
-                .map { AppAction.satelliteLoaderOutput(.loadedSatelliteInfo(category, satelliteInfo: $0)) }
+                .map {
+                    AppAction.tleLoaderOutput(
+                        .loadedSatelliteTLEs(category: category, satelliteInfo: $0)
+                    )
+                }
                 .catch { error in
-                    Just(AppAction.satelliteLoaderOutput(.failedLoadingTLEFile(category, error)))
+                    Just(
+                        AppAction.tleLoaderOutput(
+                            .failedLoadingTLEFile(category: category, error: error)
+                        )
+                    )
                 }
                 .asEffect(info: nil)
             }

@@ -23,7 +23,7 @@ enum SatelliteOverviewSection: Equatable, Hashable {
 }
 
 enum SatelliteOverviewItem: Equatable, Hashable {
-    enum SatellitesOfSpecialInterest: Int, Equatable, Hashable {
+    enum SatellitesOfSpecialInterest: UInt, Equatable, Hashable {
         case iss = 25544
         case tianhe = 48274
     }

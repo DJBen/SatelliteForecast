@@ -8,9 +8,9 @@
 import BTree
 
 struct BackgroundSkyResources {
-    var rasterizedBackgroundSky: [BackgroundSkyKey: BTree<Double, UIImage>] = [:]
+    var rasterizedBackgroundSky: [BackgroundSkyKey: [Double: UIImage]] = [:]
 
-    var previewBackgroundSkies: [BackgroundSkyKey: BTree<Double, UIImage>] = [:]
+    var previewBackgroundSkies: [BackgroundSkyKey: [Double: UIImage]] = [:]
 }
 
 extension BackgroundSkyResources: Equatable {}

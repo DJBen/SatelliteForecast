@@ -10,23 +10,32 @@ import SatelliteKit
 import SatelliteForecastCore
 
 struct NavigationState {
+    var tab: Tab = .realtimeSky
     var specialSatelliteNavigation: SpecialSatelliteNavigation = .init()
     var listNavigation: ListNavigation = .init()
     var observerNavigation: ObserverNavigationState = .init()
     var alarmNavigation: AlarmNavigationState = .init()
 
-    var selectedNoradIndex: Int? {
+    var selectedNoradIndex: UInt? {
         return specialSatelliteNavigation.noradIndex ?? listNavigation.noradIndex
     }
 }
 
 extension NavigationState: Equatable {}
 
+enum Tab {
+    case realtimeSky
+    case forecast
+    case settings
+}
+
+extension Tab: Equatable, Hashable {}
+
 struct SpecialSatelliteNavigation {
-    var noradIndex: Int?
+    var noradIndex: UInt?
 
     init(
-        noradIndex: Int? = nil
+        noradIndex: UInt? = nil
     ) {
         self.noradIndex = noradIndex
     }
@@ -37,12 +46,12 @@ extension SpecialSatelliteNavigation: Equatable {}
 struct ListNavigation {
     var satelliteSearchText: String = ""
     var category: SatelliteCategory?
-    var noradIndex: Int?
+    var noradIndex: UInt?
     var selectedPassIndex: Int?
 
     init(
         category: SatelliteCategory? = nil,
-        noradIndex: Int? = nil,
+        noradIndex: UInt? = nil,
         selectedPassIndex: Int? = nil
     ) {
         self.category = category

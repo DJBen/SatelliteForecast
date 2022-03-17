@@ -7,7 +7,7 @@
 
 import CombineRex
 
-extension Reducer where ActionType == RealtimeSkyViewAction, StateType == RealtimeSkyViewState {
+extension Reducer where ActionType == RealtimeSkyViewAction, StateType == RealtimeSkyViewResources {
     static let realtimeSkyReducer = Reducer.reduce { action, state in
         switch action {
         case .setRealtimeSkyViewActive(let isActive):
@@ -18,11 +18,19 @@ extension Reducer where ActionType == RealtimeSkyViewAction, StateType == Realti
     }
 }
 
-extension Reducer where ActionType == RealtimeSkyViewOutput, StateType == RealtimeSkyViewState {
-    static let realtimeSkyReducer = Reducer.reduce { action, state in
+extension Reducer where ActionType == RealtimeSkyViewOutput, StateType == RealtimeSkyViewResources {
+    static let realtimeSkyOutputReducer = Reducer.reduce { action, state in
         switch action {
-        case .propagatedCurrentEphemerides(let results, tles: _, observer: _, julianDate: _):
-            state.resources.results.merge(results, uniquingKeysWith: { $1 })
+        case .propagatedCurrentEphemerides(
+            let results,
+            satellites: _,
+            partialErrors: _,
+            observer: _,
+            julianDate: _
+        ):
+            state.results.merge(results, uniquingKeysWith: { $1 })
+            state.isPropagatingEphemerides = false
+        case .failedToPropagateCurrentEphemerides(error: _, observer: _, julianDate: _):
             state.isPropagatingEphemerides = false
         }
     }
