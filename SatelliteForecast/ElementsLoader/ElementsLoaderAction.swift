@@ -1,5 +1,5 @@
 //
-//  TLELoaderAction.swift
+//  ElementsLoaderAction.swift
 //  SatelliteForecast
 //
 //  Created by Ben Lu on 6/4/21.
@@ -16,33 +16,33 @@ public struct SelectNoradIndexParam {
     let observer: LatLonAlt
 }
 
-public struct TLELoaderCalculatePassParam {
+public struct ElementsLoaderCalculatePassParam {
     let noradIndex: UInt
     let dateRange: ClosedRange<Double>
     let observer: LatLonAlt
 }
 
-public enum TLELoaderAction {
-    /// Load a category of satellite TLEs
-    case loadSatelliteTLEs(
+public enum ElementsLoaderAction {
+    /// Load a category of satellite elements
+    case loadElements(
         category: SatelliteCategory,
         selectSpecialNoradIndex: SelectNoradIndexParam? = nil,
         selectNoradIndex: SelectNoradIndexParam? = nil,
-        calculatePass: TLELoaderCalculatePassParam? = nil
+        calculatePass: ElementsLoaderCalculatePassParam? = nil
     )
 }
 
-public enum TLELoaderOutput {
-    /// Successfully loaded a cateogy of satellite TLEs
-    case loadedSatelliteTLEs(
+public enum ElementsLoaderOutput {
+    /// Successfully loaded a cateogy of satellite elements
+    case loadedSatelliteElements(
         category: SatelliteCategory,
         satelliteInfo: Map<UInt, SatelliteInfo>,
         selectSpecialNoradIndex: SelectNoradIndexParam? = nil,
         selectNoradIndex: SelectNoradIndexParam? = nil,
-        calculatePass: TLELoaderCalculatePassParam? = nil
+        calculatePass: ElementsLoaderCalculatePassParam? = nil
     )
-    case failedLoadingTLEFile(
+    case failedLoadingElements(
         category: SatelliteCategory,
-        error: TLELoaderError
+        error: ElementsLoaderError
     )
 }

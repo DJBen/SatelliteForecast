@@ -13,10 +13,10 @@ enum AppAction {
     case backgroundTask(BackgroundTask)
     case notification(NotificationAction)
     case location(LocationAction)
-    case tleLoader(TLELoaderAction)
-    case tleLoaderOutput(TLELoaderOutput)
+    case elementsLoader(ElementsLoaderAction)
+    case elementsLoaderOutput(ElementsLoaderOutput)
     case timer(TimerAction)
-    case tlePropagator(TLEPropagatorAction)
+    case elementsPropagator(ElementsPropagatorAction)
 
     case rootView(RootViewAction)
     case satelliteOverview(SatelliteOverviewViewAction)
@@ -82,25 +82,25 @@ extension AppAction {
         }
     }
 
-    public var tleLoader: TLELoaderAction? {
+    public var elementsLoader: ElementsLoaderAction? {
         get {
-            guard case let .tleLoader(value) = self else { return nil }
+            guard case let .elementsLoader(value) = self else { return nil }
             return value
         }
         set {
-            guard case .tleLoader = self, let newValue = newValue else { return }
-            self = .tleLoader(newValue)
+            guard case .elementsLoader = self, let newValue = newValue else { return }
+            self = .elementsLoader(newValue)
         }
     }
 
-    public var tleLoaderOutput: TLELoaderOutput? {
+    public var elementsLoaderOutput: ElementsLoaderOutput? {
         get {
-            guard case let .tleLoaderOutput(value) = self else { return nil }
+            guard case let .elementsLoaderOutput(value) = self else { return nil }
             return value
         }
         set {
-            guard case .tleLoaderOutput = self, let newValue = newValue else { return }
-            self = .tleLoaderOutput(newValue)
+            guard case .elementsLoaderOutput = self, let newValue = newValue else { return }
+            self = .elementsLoaderOutput(newValue)
         }
     }
 
@@ -225,14 +225,14 @@ extension AppAction {
         }
     }
 
-    public var tlePropagator: TLEPropagatorAction? {
+    public var elementsPropagator: ElementsPropagatorAction? {
         get {
-            guard case let .tlePropagator(value) = self else { return nil }
+            guard case let .elementsPropagator(value) = self else { return nil }
             return value
         }
         set {
-            guard case .tlePropagator = self, let newValue = newValue else { return }
-            self = .tlePropagator(newValue)
+            guard case .elementsPropagator = self, let newValue = newValue else { return }
+            self = .elementsPropagator(newValue)
         }
     }
 

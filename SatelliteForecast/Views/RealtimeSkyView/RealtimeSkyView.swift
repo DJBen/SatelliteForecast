@@ -58,6 +58,7 @@ struct RealtimeSkyViewContext {
     let backgroundSkyConfigs: BackgroundSkyConfigs
 }
 
+/// A protocol of real time sky view. Preview code can mock the implementation as a depednency.
 protocol RealtimeSkyView: View {}
 
 struct RealtimeSkyViewImpl: RealtimeSkyView {
@@ -124,7 +125,7 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
             }
             .fill()
             .foregroundColor({
-                switch result.satelliteInfo.tle.orbitTypeByAltitude {
+                switch result.satelliteInfo.elements.orbitTypeByAltitude {
                 case .leo:
                     return .blue
                 case .geo:
@@ -209,7 +210,7 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
         List {
             ForEach(visiblePropagationResults, id: \.self) { result in
                 RealtimeSkySatelliteCell(
-                    satelliteName: result.satelliteInfo.tle.commonName,
+                    satelliteName: result.satelliteInfo.elements.commonName,
                     snapshot: result.snapshot
                 )
             }

@@ -16,7 +16,7 @@ extension RealtimeSkyViewState: AppStateMappable {
         RealtimeSkyViewState(
             resources: RealtimeSkyViewResources.project(appState: appState),
             satellites: {
-                guard let values = appState.tleLoader.info[.active]?.content?.values else {
+                guard let values = appState.elementsLoader.info[.active]?.content?.values else {
                     return nil
                 }
                 return Array(values)

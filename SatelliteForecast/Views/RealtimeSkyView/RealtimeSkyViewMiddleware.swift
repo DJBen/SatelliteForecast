@@ -20,7 +20,7 @@ extension EffectMiddleware where InputActionType == RealtimeSkyViewAction, Outpu
                         var partialFailures: [Error] = []
                         let results = satellites.filter { satelliteInfo in
                             // If next check date exceeds the current date, do not check
-                            if let nextCheck = getState().results[satelliteInfo.tle.noradIndex]?.nextCheckJulianDate,
+                            if let nextCheck = getState().results[satelliteInfo.elements.noradIndex]?.nextCheckJulianDate,
                                nextCheck > julianDate {
                                 return false
                             }
@@ -35,7 +35,7 @@ extension EffectMiddleware where InputActionType == RealtimeSkyViewAction, Outpu
                                 )
 
                                 return RealtimePropagationResult(
-                                    noradIndex: satelliteInfo.tle.noradIndex,
+                                    noradIndex: satelliteInfo.elements.noradIndex,
                                     snapshot: snapshot,
                                     satelliteInfo: satelliteInfo,
                                     nextCheckJulianDate: {

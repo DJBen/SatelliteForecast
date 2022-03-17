@@ -1,5 +1,5 @@
 //
-//  TLEPropagatorAction.swift
+//  ElementsPropagatorAction.swift
 //  SatelliteForecastCore
 //
 //  Created by Ben Lu on 6/6/21.
@@ -10,7 +10,7 @@ import SatelliteForecastCore
 import SatelliteKit
 import BTree
 
-enum TLEPropagatorAction {
+enum ElementsPropagatorAction {
     /// Called when found the passes for a satellite. Arguments include a list of passes, and the snapshots interlaced with fine snapshots
     /// during the pass.
     case foundPassesAndSnapshots([PassSnapshots], noradIndex: UInt, observer: LatLonAlt)

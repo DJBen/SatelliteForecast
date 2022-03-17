@@ -20,7 +20,7 @@ struct SatelliteCell: View {
         } else if let satCat = info.satCat {
             return AnyView(CatSatCell(cat: satCat))
         } else {
-            return AnyView(Text(info.tle.commonName))
+            return AnyView(Text(info.elements.commonName))
         }
     }
 
@@ -213,7 +213,7 @@ fileprivate extension View {
 #if DEBUG
 struct SatelliteCell_Previews: PreviewProvider {
     static var previews: some View {
-        let tle = try! TLE(
+        let elements = try! Elements(
             raw: """
             HXMT (HUIYAN)
             1 42758U 17034A   21175.47270383  .00000190  00000-0  25345-4 0  9994
@@ -222,14 +222,14 @@ struct SatelliteCell_Previews: PreviewProvider {
         )
         SatelliteCell(
             info: SatelliteInfo(
-                tle: tle,
+                elements: elements,
                 satCat: SatCat.with(noradCatID: 42758),
                 ucsSat: UCSSat.with(noradCatID: 42758)
             )
         )
         .previewLayout(.sizeThatFits)
 
-        let tle2 = try! TLE(
+        let elements2 = try! Elements(
             raw: """
             Starlink-1234
             1 45190U 20012N   21176.35506752 -.00001501  00000-0 -81927-4 0  9994
@@ -238,14 +238,14 @@ struct SatelliteCell_Previews: PreviewProvider {
         )
         SatelliteCell(
             info: SatelliteInfo(
-                tle: tle2,
+                elements: elements2,
                 satCat: SatCat.with(noradCatID: 45190),
                 ucsSat: UCSSat.with(noradCatID: 45190)
             )
         )
         .previewLayout(.sizeThatFits)
 
-        let tle3 = try! TLE(
+        let elements3 = try! Elements(
             raw: """
             ISS (ZARYA)
             1 25544U 98067A   21152.11066515  .00000451  00000-0  16375-4 0  9992
@@ -254,14 +254,14 @@ struct SatelliteCell_Previews: PreviewProvider {
         )
         SatelliteCell(
             info: SatelliteInfo(
-                tle: tle3,
+                elements: elements3,
                 satCat: SatCat.with(noradCatID: 25544),
                 ucsSat: UCSSat.with(noradCatID: 25544)
             )
         )
         .previewLayout(.sizeThatFits)
 
-        let tle4 = try! TLE(
+        let elements4 = try! Elements(
             raw: """
             TIANHE
             1 48274U 21035A   21177.19899464  .00007627  00000-0  86624-4 0  9996
@@ -270,14 +270,14 @@ struct SatelliteCell_Previews: PreviewProvider {
         )
         SatelliteCell(
             info: SatelliteInfo(
-                tle: tle4,
+                elements: elements4,
                 satCat: SatCat.with(noradCatID: 48274),
                 ucsSat: UCSSat.with(noradCatID: 48274)
             )
         )
         .previewLayout(.sizeThatFits)
 
-        let tle5 = try! TLE(
+        let elements5 = try! Elements(
             raw: """
             SAOCOM 1-B
             1 46265U 20059A   21177.18820872 -.00000213  00000-0 -20180-4 0  9996
@@ -286,7 +286,7 @@ struct SatelliteCell_Previews: PreviewProvider {
         )
         SatelliteCell(
             info: SatelliteInfo(
-                tle: tle5,
+                elements: elements5,
                 satCat: SatCat.with(noradCatID: 46265),
                 ucsSat: UCSSat.with(noradCatID: 46265)
             )

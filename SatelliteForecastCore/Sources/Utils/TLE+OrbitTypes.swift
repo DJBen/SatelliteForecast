@@ -1,5 +1,5 @@
 //
-//  TLE+OrbitTypes.swift
+//  Elements+OrbitTypes.swift
 //  SatelliteForecastCore
 //
 //  Created by Ben Lu on 3/8/22.
@@ -18,7 +18,7 @@ public enum OrbitTypeByAltitude {
     case heo
 }
 
-extension TLE {
+extension Elements {
     public var orbitTypeByAltitude: OrbitTypeByAltitude {
         let semimajorAxis = (a₀ - 1) * EarthConstants.Rₑ
         let period = M_PI * 2 / n₀

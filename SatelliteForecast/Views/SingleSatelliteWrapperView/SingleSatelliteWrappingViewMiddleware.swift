@@ -24,11 +24,11 @@ extension EffectMiddleware where
             switch action {
                 case let .loadSingleSatellite(params):
                 return .just(
-                    .tleLoader(
-                        .loadSatelliteTLEs(
+                    .elementsLoader(
+                        .loadElements(
                             category: .brightest100,
                             calculatePass: params.observer.map { observer in
-                                TLELoaderCalculatePassParam(
+                                ElementsLoaderCalculatePassParam(
                                     noradIndex: params.selectedNoradIndex,
                                     dateRange: params.julianDateRange,
                                     observer: observer

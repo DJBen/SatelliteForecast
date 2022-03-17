@@ -383,7 +383,7 @@ extension ViewProducer where Context == SatelliteElevationGraphContext, Produced
 #if DEBUG
 struct SatelliteElevationGraph_Previews: PreviewProvider {
     static var previews: some View {
-        let tle = try! TLE(
+        let elements = try! Elements(
             raw: """
             ISS (ZARYA)
             1 25544U 98067A   21152.11066515  .00000451  00000-0  16375-4 0  9992
@@ -395,7 +395,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         // 2000 Broadway, Redwood City, CA 94063
         let location = CLLocation(latitude: 37.486743000691185, longitude: -122.22655970246515)
         let observer = LatLonAlt(location: location)
-        let satelliteInfo = SatelliteInfo(tle: tle)
+        let satelliteInfo = SatelliteInfo(elements: elements)
         let context = SatelliteElevationGraphContext(
             satelliteInfo: satelliteInfo,
             julianDateRange: julianDateRange,
@@ -406,11 +406,11 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
             appState: AppState(
                 navigationState: NavigationState(
                     listNavigation: ListNavigation(
-                        noradIndex: tle.noradIndex
+                        noradIndex: elements.noradIndex
                     )
                 ),
                 satelliteTrails: [
-                    tle.noradIndex: SatelliteTrails(
+                    elements.noradIndex: SatelliteTrails(
                         observer: observer,
                         snapshots: try! satelliteInfo.generateSnapshots(
                             observer: observer,
@@ -419,9 +419,9 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                         )
                     )
                 ],
-                tleLoader: TLELoaderResources(
+                elementsLoader: ElementsLoaderResources(
                     info: [.brightest100: .loaded(
-                        [tle.noradIndex: satelliteInfo]
+                        [elements.noradIndex: satelliteInfo]
                     )]
                 ),
                 locationState: LocationState(
@@ -439,14 +439,14 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         .previewLayout(.fixed(width: 720, height: 240))
         .previewDisplayName("ISS")
 
-        let tle2 = try! TLE(
+        let elements2 = try! Elements(
             raw: """
             DFH-1
             1 04382U 70034A   21154.78159189  .00001370  00000-0  21022-3 0  9993
             2 04382  68.4187 192.6131 1052892 188.4862 169.7083 13.08082975404634
             """
         )
-        let satelliteInfo2 = SatelliteInfo(tle: tle2)
+        let satelliteInfo2 = SatelliteInfo(elements: elements2)
         let context2 = SatelliteElevationGraphContext(
             satelliteInfo: satelliteInfo2,
             julianDateRange: julianDateRange,
@@ -457,11 +457,11 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
             appState: AppState(
                 navigationState: NavigationState(
                     listNavigation: ListNavigation(
-                        noradIndex: tle2.noradIndex
+                        noradIndex: elements2.noradIndex
                     )
                 ),
                 satelliteTrails: [
-                    tle2.noradIndex: SatelliteTrails(
+                    elements2.noradIndex: SatelliteTrails(
                         observer: observer,
                         snapshots: try! satelliteInfo2.generateSnapshots(
                             observer: observer,
@@ -470,9 +470,9 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                         )
                     )
                 ],
-                tleLoader: TLELoaderResources(
+                elementsLoader: ElementsLoaderResources(
                     info: [.brightest100: .loaded(
-                        [tle2.noradIndex: satelliteInfo2]
+                        [elements2.noradIndex: satelliteInfo2]
                     )]
                 ),
                 locationState: LocationState(
@@ -486,14 +486,14 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
             .previewLayout(.fixed(width: 720, height: 240))
             .previewDisplayName("DFH-1")
 
-        let tle3 = try! TLE(
+        let elements3 = try! Elements(
             raw: """
             MOLNIYA 2-9
             1 07276U 74026A   21154.36625011 -.00000128  00000-0  00000-0 0  9990
             2 07276  64.2122 283.1177 6670908 285.3565  14.2908  2.45094844240000
             """
         )
-        let satelliteInfo3 = SatelliteInfo(tle: tle3)
+        let satelliteInfo3 = SatelliteInfo(elements: elements3)
         let context3 = SatelliteElevationGraphContext(
             satelliteInfo: satelliteInfo3,
             julianDateRange: julianDateRange,
@@ -504,11 +504,11 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
             appState: AppState(
                 navigationState: NavigationState(
                     listNavigation: ListNavigation(
-                        noradIndex: tle3.noradIndex
+                        noradIndex: elements3.noradIndex
                     )
                 ),
                 satelliteTrails: [
-                    tle3.noradIndex: SatelliteTrails(
+                    elements3.noradIndex: SatelliteTrails(
                         observer: observer,
                         snapshots: try! satelliteInfo3.generateSnapshots(
                             observer: observer,
@@ -517,9 +517,9 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                         )
                     )
                 ],
-                tleLoader: TLELoaderResources(
+                elementsLoader: ElementsLoaderResources(
                     info: [.brightest100: .loaded(
-                        [tle3.noradIndex: satelliteInfo3]
+                        [elements3.noradIndex: satelliteInfo3]
                     )]
                 ),
                 locationState: LocationState(

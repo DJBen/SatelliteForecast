@@ -42,7 +42,7 @@ fileprivate extension SatelliteInfo {
 
         if String(noradIndex).contains(searchText) {
             return true
-        } else if tle.commonName.lowercased().contains(searchText) {
+        } else if elements.commonName.lowercased().contains(searchText) {
             return true
         } else if satCat?.cosparID.lowercased().contains(searchText) ?? false {
             return true
@@ -60,13 +60,13 @@ fileprivate extension SatelliteInfo {
 }
 
 struct SatelliteListViewState: Equatable {
-    var satelliteInfo: [SatelliteCategory: Loadable<Map<UInt, SatelliteInfo>, TLELoaderError>] = [:]
+    var satelliteInfo: [SatelliteCategory: Loadable<Map<UInt, SatelliteInfo>, ElementsLoaderError>] = [:]
     var satelliteSearchText: String = ""
     var selectedNoradIndex: UInt?
 
     static func project(state: AppState) -> SatelliteListViewState {
         return SatelliteListViewState(
-            satelliteInfo: state.tleLoader.info,
+            satelliteInfo: state.elementsLoader.info,
             satelliteSearchText: state.navigationState.listNavigation.satelliteSearchText,
             selectedNoradIndex: state.navigationState.listNavigation.noradIndex
         )
@@ -80,9 +80,9 @@ struct SatelliteListView: View {
 
     @ViewBuilder func satelliteContent<Content: View, FailedContent: View>(
         @ViewBuilder contentBuilder: (Map<UInt, SatelliteInfo>) -> Content,
-        @ViewBuilder failedContentBuilder: (TLELoaderError) -> FailedContent
+        @ViewBuilder failedContentBuilder: (ElementsLoaderError) -> FailedContent
     ) -> some View {
-        let satellites: Loadable<Map<UInt, SatelliteInfo>, TLELoaderError> = viewModel.state.satelliteInfo[context.category]?.map { info in
+        let satellites: Loadable<Map<UInt, SatelliteInfo>, ElementsLoaderError> = viewModel.state.satelliteInfo[context.category]?.map { info in
             let searchText = viewModel.state.satelliteSearchText
             if searchText.isEmpty {
                 return info
@@ -232,14 +232,14 @@ extension ViewProducer where Context == SatelliteListViewContext, ProducedView =
 struct SatelliteListView_Previews: PreviewProvider {
     static var previews: some View {
         let brightest100 = [
-            try! TLE(
+            try! Elements(
                 raw: """
                 ISS (ZARYA)
                 1 25544U 98067A   21152.11066515  .00000451  00000-0  16375-4 0  9992
                 2 25544  51.6453  62.2423 0003364  52.3737  88.5313 15.48937685286109
                 """
             ),
-            try! TLE(
+            try! Elements(
                 raw: """
                 TIANHE
                 1 48274U 21035A   21152.91865056  .00003057  00000-0  33542-4 0  9993
@@ -249,7 +249,7 @@ struct SatelliteListView_Previews: PreviewProvider {
         ]
         .map {
             SatelliteInfo(
-                tle: $0,
+                elements: $0,
                 satCat: SatCat.with(noradCatID: Int($0.noradIndex)),
                 ucsSat: UCSSat.with(noradCatID: Int($0.noradIndex))
             )

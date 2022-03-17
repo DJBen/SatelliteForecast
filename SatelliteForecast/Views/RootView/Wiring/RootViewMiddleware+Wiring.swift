@@ -7,11 +7,11 @@
 
 import CombineRex
 
-extension EffectMiddleware where InputActionType == RootViewAction, OutputActionType == TLELoaderAction, StateType == RootViewState, Dependencies == Void {
+extension EffectMiddleware where InputActionType == RootViewAction, OutputActionType == ElementsLoaderAction, StateType == RootViewState, Dependencies == Void {
     func lift() -> AnyMiddleware<AppAction, AppAction, AppState> {
         lift(
             inputAction: \.rootView,
-            outputAction: AppAction.tleLoader,
+            outputAction: AppAction.elementsLoader,
             state: RootViewState.project(appState:)
         )
         .eraseToAnyMiddleware()
