@@ -1,5 +1,5 @@
 //
-//  TLEOrbitTypesTests.swift
+//  ElementsOrbitTypesTests.swift
 //  SatelliteForecastCore-Unit-Tests
 //
 //  Created by Ben Lu on 3/8/22.
@@ -9,7 +9,7 @@ import XCTest
 import SatelliteKit
 @testable import SatelliteForecastCore
 
-class TLEOrbitTypesTests: XCTestCase {
+class ElementsOrbitTypesTests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -20,7 +20,7 @@ class TLEOrbitTypesTests: XCTestCase {
     }
 
     func testOrbitTypes() throws {
-        let tle = try! TLE(
+        let elements = try! Elements(
             raw: """
             ISS (ZARYA)
             1 25544U 98067A   21152.11066515  .00000451  00000-0  16375-4 0  9992
@@ -28,9 +28,9 @@ class TLEOrbitTypesTests: XCTestCase {
             """
         )
 
-        XCTAssertEqual(tle.orbitTypeByAltitude, .leo)
+        XCTAssertEqual(elements.orbitTypeByAltitude, .leo)
 
-        let tle2 = try! TLE(
+        let elements2 = try! Elements(
             raw: """
             COSMOS 2520
             1 42907U 17046A   22066.68790832  .00000131  00000+0  00000+0 0  9992
@@ -38,9 +38,9 @@ class TLEOrbitTypesTests: XCTestCase {
             """
         )
 
-        XCTAssertEqual(tle2.orbitTypeByAltitude, .geo)
+        XCTAssertEqual(elements2.orbitTypeByAltitude, .geo)
 
-        let tle3 = try! TLE(
+        let elements3 = try! Elements(
             raw: """
             MOLNIYA 2-9
             1 07276U 74026A   21154.36625011 -.00000128  00000-0  00000-0 0  9990
@@ -48,6 +48,6 @@ class TLEOrbitTypesTests: XCTestCase {
             """
         )
 
-        XCTAssertEqual(tle3.orbitTypeByAltitude, .meo)
+        XCTAssertEqual(elements3.orbitTypeByAltitude, .meo)
     }
 }
