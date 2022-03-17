@@ -16,8 +16,8 @@ class Store: ReduxStoreBase<AppAction, AppState> {
     static let reducer: Reducer<AppAction, AppState> = [
         Reducer<LocationAction, AppState>.locationReducer.lift(action: \.location),
         Reducer<NotificationAction, AppState>.notificationReducer.lift(action: \.notification),
-        Reducer<TLELoaderAction, TLELoaderState>.tleLoaderReducer.lift(),
-        Reducer<TLELoaderOutput, TLELoaderState>.tleLoaderOutputReducer.lift(),
+        Reducer<ElementsLoaderAction, ElementsLoaderState>.elementsLoaderReducer.lift(),
+        Reducer<ElementsLoaderOutput, ElementsLoaderState>.elementsLoaderOutputReducer.lift(),
         Reducer.satelliteOverviewReducer.lift(),
         Reducer<SatelliteListViewAction, AppState>.satelliteListViewReducer.lift(action: \.satelliteListView),
         Reducer<AllPassesViewAction, AppState>.allPassesViewReducer.lift(action: \.allPassesView),
@@ -28,7 +28,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             state: \.satelliteElevationGraphResources
         ),
         Reducer<SkyChartOutput, SkyChartResources>.skyChartOutputReducer.lift(),
-        Reducer<TLEPropagatorAction, AppState>.tlePropagatorReducer.lift(action: \.tlePropagator),
+        Reducer<ElementsPropagatorAction, AppState>.elementsPropagatorReducer.lift(action: \.elementsPropagator),
         Reducer<TimerAction, AppState>.timerReducer.lift(action: \.timer),
         Reducer<DebugMenuAction, DebugMenuState>.debugMenuReducer.lift(),
         Reducer.backgroundSkyReducer.lift(),
@@ -39,7 +39,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
     .reduce(Reducer<AppAction, AppState>.identity, <>)
 
     static func middlewareBuilder(
-        tleLoader: TLELoader
+        elementsLoader: ElementsLoader
     ) -> AnyMiddleware<AppAction, AppAction, AppState> {
         let middlewares: [AnyMiddleware<AppAction, AppAction, AppState>] = [
             LocationMiddleware().lift(),
@@ -55,18 +55,18 @@ class Store: ReduxStoreBase<AppAction, AppState> {
                 )
                 .eraseToAnyMiddleware(),
             EffectMiddleware.locationLogger.lift(),
-            EffectMiddleware.tleLoader(tleLoader)
+            EffectMiddleware.elementsLoader(elementsLoader)
                 .lift()
                 .inject(
-                    TLELoaderDependencies()
+                    ElementsLoaderDependencies()
                 )
                 .eraseToAnyMiddleware(),
-            EffectMiddleware.calculatePassAfterTLELoader.lift(),
-            EffectMiddleware.selectSatelliteAfterTLELoader.lift(),
-            EffectMiddleware.selectSpecialSatelliteAfterTLELoader.lift(),
-            EffectMiddleware.rootViewTLELoader.lift(),
+            EffectMiddleware.calculatePassAfterElementsLoader.lift(),
+            EffectMiddleware.selectSatelliteAfterElementsLoader.lift(),
+            EffectMiddleware.selectSpecialSatelliteAfterElementsLoader.lift(),
+            EffectMiddleware.rootViewElementsLoader.lift(),
             EffectMiddleware.satelliteOverview.lift(),
-            EffectMiddleware.satelliteListView(tleLoader: tleLoader)
+            EffectMiddleware.satelliteListView(elementsLoader: elementsLoader)
                 .lift(
                     inputAction: \.satelliteListView
                 )
@@ -113,22 +113,22 @@ class Store: ReduxStoreBase<AppAction, AppState> {
     }
 
     private init() {
-        let tleLoader: TLELoader
+        let elementsLoader: ElementsLoader
         if ProcessInfo.processInfo.environment["USE_LOCAL_TLES"] == "YES" {
-            print("[TLE Loader] Using local TLE loader")
+            print("[Elements Loader] Using local Elements loader")
             #if DEBUG
-            tleLoader = LocalTLELoader()
+            elementsLoader = LocalElementsLoader()
             #else
-            tleLoader = TLELoaderImpl(session: URLSession.shared)
+            elementsLoader = ElementsLoaderImpl(session: URLSession.shared)
             #endif
         } else {
-            tleLoader = TLELoaderImpl(session: URLSession.shared)
+            elementsLoader = ElementsLoaderImpl(session: URLSession.shared)
         }
 
         super.init(
             subject: .combine(initialValue: .empty),
             reducer: Store.reducer,
-            middleware: Store.middlewareBuilder(tleLoader: tleLoader),
+            middleware: Store.middlewareBuilder(elementsLoader: elementsLoader),
             emitsValue: .whenDifferent
         )
     }

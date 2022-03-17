@@ -1,5 +1,5 @@
 //
-//  TLELoaderMiddleware.swift
+//  ElementsLoaderMiddleware.swift
 //  SatelliteForecast
 //
 //  Created by Ben Lu on 6/4/21.
@@ -14,33 +14,33 @@ import SatelliteKit
 import SatelliteForecastCore
 import SatelliteCatalog
 
-fileprivate let logger = Logger(subsystem: "io.djben.tleLoader", category: "middleware")
+fileprivate let logger = Logger(subsystem: "io.djben.elementsLoader", category: "middleware")
 
-struct TLELoaderDependencies {
+struct ElementsLoaderDependencies {
     let updateInterval: TimeInterval = 4 * 60 * 60
 }
 
 extension EffectMiddleware where
-    InputActionType == TLELoaderAction,
-    OutputActionType == TLELoaderOutput,
-    StateType == TLELoaderState,
-    Dependencies == TLELoaderDependencies {
+    InputActionType == ElementsLoaderAction,
+    OutputActionType == ElementsLoaderOutput,
+    StateType == ElementsLoaderState,
+    Dependencies == ElementsLoaderDependencies {
 
-    static func tleLoader(
-        _ tleLoader: TLELoader
-    ) -> MiddlewareReader<TLELoaderDependencies, EffectMiddleware<TLELoaderAction, TLELoaderOutput, TLELoaderState, TLELoaderDependencies>> {
-        EffectMiddleware<TLELoaderAction, TLELoaderOutput, TLELoaderState, TLELoaderDependencies>
-        .onAction { (inputAction, dispatcher, getState) -> Effect<TLELoaderDependencies, TLELoaderOutput> in
+    static func elementsLoader(
+        _ elementsLoader: ElementsLoader
+    ) -> MiddlewareReader<ElementsLoaderDependencies, EffectMiddleware<ElementsLoaderAction, ElementsLoaderOutput, ElementsLoaderState, ElementsLoaderDependencies>> {
+        EffectMiddleware<ElementsLoaderAction, ElementsLoaderOutput, ElementsLoaderState, ElementsLoaderDependencies>
+        .onAction { (inputAction, dispatcher, getState) -> Effect<ElementsLoaderDependencies, ElementsLoaderOutput> in
             switch inputAction {
-            case let .loadSatelliteTLEs(category, selectSpecialNoradIndex, selectNoradIndex, calculatePass):
-                return Effect(token: category) { context -> AnyPublisher<DispatchedAction<TLELoaderOutput>, Never> in
-                    func loadSatellitePublisher() -> AnyPublisher<DispatchedAction<TLELoaderOutput>, Never> {
-                        tleLoader.loadSatelliteTLEsPublisher(
+            case let .loadElements(category, selectSpecialNoradIndex, selectNoradIndex, calculatePass):
+                return Effect(token: category) { context -> AnyPublisher<DispatchedAction<ElementsLoaderOutput>, Never> in
+                    func loadSatellitePublisher() -> AnyPublisher<DispatchedAction<ElementsLoaderOutput>, Never> {
+                        elementsLoader.loadElementsPublisher(
                             category: category
                         )
-                        .map { map -> DispatchedAction<TLELoaderOutput> in
+                        .map { map -> DispatchedAction<ElementsLoaderOutput> in
                             DispatchedAction(
-                                .loadedSatelliteTLEs(
+                                .loadedSatelliteElements(
                                     category: category,
                                     satelliteInfo: map,
                                     selectSpecialNoradIndex: selectSpecialNoradIndex,
@@ -52,7 +52,7 @@ extension EffectMiddleware where
                         .catch { error in
                             Just(
                                 DispatchedAction(
-                                    .failedLoadingTLEFile(category: category, error: error)
+                                    .failedLoadingElements(category: category, error: error)
                                 )
                             )
                         }
@@ -60,21 +60,21 @@ extension EffectMiddleware where
                     }
 
                     if let result = getState().resources.info[category], let infoMap = result.content {
-                        let mostRecentTLEAge = infoMap.map {
-                            Date(julianDate: getState().currentDate).timeIntervalSince(Date(daysSince1950: $1.tle.t₀))
+                        let mostRecentElementsAge = infoMap.map {
+                            Date(julianDate: getState().currentDate).timeIntervalSince(Date(daysSince1950: $1.elements.t₀))
                         }
                         .min() ?? 0
 
-                        if mostRecentTLEAge > context.dependencies.updateInterval {
-                            logger.notice("Most recent TLE age \(mostRecentTLEAge) too old: updating.")
+                        if mostRecentElementsAge > context.dependencies.updateInterval {
+                            logger.notice("Most recent Elements age \(mostRecentElementsAge) too old: updating.")
                             return loadSatellitePublisher()
                         }
 
-                        logger.notice("Most recent TLE age \(mostRecentTLEAge) is new: skip update.")
+                        logger.notice("Most recent Elements age \(mostRecentElementsAge) is new: skip update.")
 
-                        return Just<DispatchedAction<TLELoaderOutput>>(
+                        return Just<DispatchedAction<ElementsLoaderOutput>>(
                             DispatchedAction(
-                                .loadedSatelliteTLEs(
+                                .loadedSatelliteElements(
                                     category: category,
                                     satelliteInfo: infoMap,
                                     calculatePass: calculatePass
@@ -91,12 +91,12 @@ extension EffectMiddleware where
     }
 }
 
-extension EffectMiddleware where InputActionType == TLELoaderOutput, OutputActionType == SatelliteOverviewViewAction, StateType == TLELoaderState, Dependencies == Void {
+extension EffectMiddleware where InputActionType == ElementsLoaderOutput, OutputActionType == SatelliteOverviewViewAction, StateType == ElementsLoaderState, Dependencies == Void {
     /// This middleware triggers `calculatePass` event after satellite has been loaded
-    static var selectSpecialSatelliteAfterTLELoader: EffectMiddleware<TLELoaderOutput, SatelliteOverviewViewAction, TLELoaderState, Void> {
+    static var selectSpecialSatelliteAfterElementsLoader: EffectMiddleware<ElementsLoaderOutput, SatelliteOverviewViewAction, ElementsLoaderState, Void> {
         EffectMiddleware.onAction { action, dispatcher, getState in
             switch action {
-            case .loadedSatelliteTLEs(_, _, let selectSpecialNoradIndex, _, _):
+            case .loadedSatelliteElements(_, _, let selectSpecialNoradIndex, _, _):
                 guard let selectSpecialNoradIndex = selectSpecialNoradIndex else {
                     return .doNothing
                 }
@@ -112,19 +112,19 @@ extension EffectMiddleware where InputActionType == TLELoaderOutput, OutputActio
                     from: dispatcher
                 )
 
-            case .failedLoadingTLEFile(_, _):
+            case .failedLoadingElements(_, _):
                 return .doNothing
             }
         }
     }
 }
 
-extension EffectMiddleware where InputActionType == TLELoaderOutput, OutputActionType == SatelliteListViewAction, StateType == TLELoaderState, Dependencies == Void {
+extension EffectMiddleware where InputActionType == ElementsLoaderOutput, OutputActionType == SatelliteListViewAction, StateType == ElementsLoaderState, Dependencies == Void {
     /// This middleware triggers `calculatePass` event after satellite has been loaded
-    static var selectSatelliteAfterTLELoader: EffectMiddleware<TLELoaderOutput, SatelliteListViewAction, TLELoaderState, Void> {
+    static var selectSatelliteAfterElementsLoader: EffectMiddleware<ElementsLoaderOutput, SatelliteListViewAction, ElementsLoaderState, Void> {
         EffectMiddleware.onAction { action, dispatcher, getState in
             switch action {
-            case .loadedSatelliteTLEs(_, let satelliteInfoMap, _, let selectNoradIndex, _):
+            case .loadedSatelliteElements(_, let satelliteInfoMap, _, let selectNoradIndex, _):
                 guard let selectNoradIndex = selectNoradIndex, let satelliteInfo = satelliteInfoMap[selectNoradIndex.noradIndex] else {
                     return .doNothing
                 }
@@ -141,19 +141,19 @@ extension EffectMiddleware where InputActionType == TLELoaderOutput, OutputActio
                     from: dispatcher
                 )
 
-            case .failedLoadingTLEFile(_, _):
+            case .failedLoadingElements(_, _):
                 return .doNothing
             }
         }
     }
 }
 
-extension EffectMiddleware where InputActionType == TLELoaderOutput, OutputActionType == AllPassesViewAction, StateType == TLELoaderState, Dependencies == Void {
+extension EffectMiddleware where InputActionType == ElementsLoaderOutput, OutputActionType == AllPassesViewAction, StateType == ElementsLoaderState, Dependencies == Void {
     /// This middleware triggers `calculatePass` event after satellite has been loaded
-    static var calculatePassAfterTLELoader: EffectMiddleware<TLELoaderOutput, AllPassesViewAction, TLELoaderState, Void> {
+    static var calculatePassAfterElementsLoader: EffectMiddleware<ElementsLoaderOutput, AllPassesViewAction, ElementsLoaderState, Void> {
         EffectMiddleware.onAction { action, dispatcher, getState in
             switch action {
-            case .loadedSatelliteTLEs(_, let satelliteInfoMap, _, _, let calculatePass):
+            case .loadedSatelliteElements(_, let satelliteInfoMap, _, _, let calculatePass):
                 guard let calculatePass = calculatePass, let satelliteInfo = satelliteInfoMap[calculatePass.noradIndex] else {
                     return .doNothing
                 }
@@ -170,7 +170,7 @@ extension EffectMiddleware where InputActionType == TLELoaderOutput, OutputActio
                     from: dispatcher
                 )
 
-            case .failedLoadingTLEFile(_, _):
+            case .failedLoadingElements(_, _):
                 return .doNothing
             }
         }

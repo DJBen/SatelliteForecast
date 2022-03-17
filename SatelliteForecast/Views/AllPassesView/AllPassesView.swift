@@ -200,7 +200,7 @@ struct AllPassesView: View {
                     .scheduleNotification(
                         PassNotification(
                             pass: item.passSnapshots.pass,
-                            satelliteName: context.satelliteInfo.tle.commonName,
+                            satelliteName: context.satelliteInfo.elements.commonName,
                             category: viewModel.state.satelliteCategory,
                             observer: context.observer!,
                             timeOffset: 0
@@ -330,12 +330,12 @@ struct AllPassesView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .navigationTitle(context.satelliteInfo.tle.commonName)
+        .navigationTitle(context.satelliteInfo.elements.commonName)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
                 VStack(alignment: .center, spacing: 4) {
-                    Text(context.satelliteInfo.tle.commonName)
+                    Text(context.satelliteInfo.elements.commonName)
                         .font(.headline)
                         .frame(alignment: .center)
                         .multilineTextAlignment(.center)
@@ -384,7 +384,7 @@ extension ViewProducer where Context == AllPassesViewContext, ProducedView == Al
 #if DEBUG
 
 struct AllPassesView_Previews: PreviewProvider {
-    static let tianHe: TLE = try! TLE(
+    static let tianHe: Elements = try! Elements(
         raw: """
             TIANHE
             1 48274U 21035A   21152.91865056  .00003057  00000-0  33542-4 0  9993
@@ -393,18 +393,18 @@ struct AllPassesView_Previews: PreviewProvider {
     )
 
     static let tianHePasses: [PassSnapshots] = {
-        let tle = tianHe
+        let elements = tianHe
 
         let formatter = ISO8601DateFormatter()
         let date = formatter.date(from: "2021-06-02T06:29:00-0600")!
 
         let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
-        let snapshots = try! SatelliteInfo(tle: tle).generateSnapshots(
+        let snapshots = try! SatelliteInfo(elements: elements).generateSnapshots(
             observer: observer,
             julianDateRange: date.julianDate...date.julianDate + 2
         )
 
-        return try! SatelliteInfo(tle: tle).findPasses(
+        return try! SatelliteInfo(elements: elements).findPasses(
             observer: observer,
             coarseSnapshots: snapshots
         )
@@ -420,7 +420,7 @@ struct AllPassesView_Previews: PreviewProvider {
         let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
         let context = AllPassesViewContext(
             selectedNoradIndex: 48274,
-            satelliteInfo: SatelliteInfo(tle: tianHe),
+            satelliteInfo: SatelliteInfo(elements: tianHe),
             julianDateRange: Date().julianDate...Date().julianDate + 1,
             observer: observer
         )
@@ -445,7 +445,7 @@ struct AllPassesView_Previews: PreviewProvider {
                                 )
                             ),
                             context: SkyChartContext(
-                                satelliteInfo: SatelliteInfo(tle: tianHe),
+                                satelliteInfo: SatelliteInfo(elements: tianHe),
                                 snapshots: passSnapshots.snapshots,
                                 observer: observer,
                                 pass: passSnapshots.pass,

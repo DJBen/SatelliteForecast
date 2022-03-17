@@ -12,7 +12,7 @@ extension Reducer where ActionType == RootViewAction, StateType == RootViewState
         switch action {
         case .selectTab(let tab):
             state.selectedTab = tab
-        case .loadTLEsForRealtimeSky:
+        case .loadElementsForRealtimeSky:
             break
         }
     }

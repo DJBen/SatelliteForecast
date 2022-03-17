@@ -151,7 +151,7 @@ extension ViewProducer where Context == Void, ProducedView == AlarmSettingsView 
 #if DEBUG
 struct AlarmSettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        let tle = try! TLE(
+        let elements = try! Elements(
             raw: """
             ISS (ZARYA)
             1 25544U 98067A   21155.08058252  .00001489  00000-0  35252-4 0  9997
@@ -163,12 +163,12 @@ struct AlarmSettingsView_Previews: PreviewProvider {
         // Date range
         let startDate = Date(timeIntervalSinceReferenceDate: 20 * 365 * 86400)
         let julianDateRange = startDate.advanced(by: -60 * 60 * 2).julianDate...startDate.advanced(by: 60 * 60 * 30).julianDate
-        let coarseSnapshots = try! SatelliteInfo(tle: tle).generateSnapshots(
+        let coarseSnapshots = try! SatelliteInfo(elements: elements).generateSnapshots(
             observer: observer,
             julianDateRange: julianDateRange,
             interval: 60
         )
-        let passSnapshotsList = try! SatelliteInfo(tle: tle).findPasses(
+        let passSnapshotsList = try! SatelliteInfo(elements: elements).findPasses(
             observer: observer,
             coarseSnapshots: coarseSnapshots
         )

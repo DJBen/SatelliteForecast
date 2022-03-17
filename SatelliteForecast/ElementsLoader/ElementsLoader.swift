@@ -1,5 +1,5 @@
 //
-//  TLELoader.swift
+//  ElementsLoader.swift
 //  SatelliteForecast
 //
 //  Created by Ben Lu on 7/9/21.
@@ -14,15 +14,15 @@ import SatelliteForecastCore
 import SatelliteKit
 
 /// Abstracts common logic of satellite loader into publishers.
-public protocol TLELoader {
-    func loadSatelliteTLEsPublisher(category: SatelliteCategory) -> AnyPublisher<Map<UInt, SatelliteInfo>, TLELoaderError>
+public protocol ElementsLoader {
+    func loadElementsPublisher(category: SatelliteCategory) -> AnyPublisher<Map<UInt, SatelliteInfo>, ElementsLoaderError>
 }
 
-public struct TLELoaderImpl {
+public struct ElementsLoaderImpl {
     let session: URLSession
 }
 
-extension TLELoaderImpl: TLELoader {
+extension ElementsLoaderImpl: ElementsLoader {
     /// Load satellite data of a selected category from local file. If not exist, it will throw the upstream error provided in the argument.
     /// - Parameters:
     ///   - category: The selected category of satellite data to load.
@@ -52,7 +52,7 @@ extension TLELoaderImpl: TLELoader {
         }
     }
 
-    public func loadSatelliteTLEsPublisher(category: SatelliteCategory) -> AnyPublisher<Map<UInt, SatelliteInfo>, TLELoaderError> {
+    public func loadElementsPublisher(category: SatelliteCategory) -> AnyPublisher<Map<UInt, SatelliteInfo>, ElementsLoaderError> {
         session
             .dataTaskPublisher(for: URLRequest(url: category.url))
             .map { $0.data }
@@ -60,14 +60,14 @@ extension TLELoaderImpl: TLELoader {
                 // Try to load local file if exists when network failed.
                 loadLocalSatelliteDataPublisher(category: category, upstreamError: error)
             }
-            .mapError { TLELoaderError.other($0) }
+            .mapError { ElementsLoaderError.other($0) }
             .tryMap { data -> Map<UInt, SatelliteInfo> in
                 precondition(!Thread.isMainThread)
-                let tles = try TLE.load(chunk: String(data: data, encoding: .utf8)!)
-                let info = tles
-                    .map(SatelliteInfo.init(tle:))
-                    // Sort the satellite list in reverse chronological order of the freshness of TLE.
-                    .sorted(by: { $0.tle.t₀ > $1.tle.t₀ })
+                let elementss = try Elements.load(chunk: String(data: data, encoding: .utf8)!)
+                let info = elementss
+                    .map(SatelliteInfo.init(elements:))
+                    // Sort the satellite list in reverse chronological order of the freshness of Elements.
+                    .sorted(by: { $0.elements.t₀ > $1.elements.t₀ })
                     .reduce(into: Map<UInt, SatelliteInfo>(), { $0[$1.noradIndex] = $1 })
 
                 saveLocalSatelliteData(category: category, data: data)
@@ -77,7 +77,7 @@ extension TLELoaderImpl: TLELoader {
             }
             .mapError { error in
                 if let satKitError = error as? SatKitError {
-                    return .tle(satKitError)
+                    return .elements(satKitError)
                 } else {
                     return .other(error)
                 }
@@ -87,12 +87,12 @@ extension TLELoaderImpl: TLELoader {
 }
 
 extension SatelliteInfo {
-    init(tle: TLE) {
-        let satCat = SatCat.with(noradCatID: Int(tle.noradIndex))
-        let ucsSat = UCSSat.with(noradCatID: Int(tle.noradIndex))
-        let qsMag = QSMag.with(noradIndex: tle.noradIndex)
+    init(elements: Elements) {
+        let satCat = SatCat.with(noradCatID: Int(elements.noradIndex))
+        let ucsSat = UCSSat.with(noradCatID: Int(elements.noradIndex))
+        let qsMag = QSMag.with(noradIndex: elements.noradIndex)
         self.init(
-            tle: tle,
+            elements: elements,
             satCat: satCat,
             ucsSat: ucsSat,
             qsMag: qsMag

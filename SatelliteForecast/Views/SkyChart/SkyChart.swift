@@ -230,8 +230,8 @@ extension ViewProducer where Context == SkyChartContext, ProducedView == SkyChar
 
 #if DEBUG
 struct SkyChart_Previews: PreviewProvider {
-    static let issPass: (TLE, PassSnapshots) = {
-        let tle = try! TLE(
+    static let issPass: (Elements, PassSnapshots) = {
+        let elements = try! Elements(
             raw: """
             ISS (ZARYA)
             1 25544U 98067A   21152.11066515  .00000451  00000-0  16375-4 0  9992
@@ -241,7 +241,7 @@ struct SkyChart_Previews: PreviewProvider {
 
         let formatter = ISO8601DateFormatter()
         let date = formatter.date(from: "2021-06-02T20:35:30+0800")!
-        let satelliteInfo = SatelliteInfo(tle: tle)
+        let satelliteInfo = SatelliteInfo(elements: elements)
         let observer = LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0)
         let snapshots = try! satelliteInfo.generateSnapshots(
             observer: observer,
@@ -253,11 +253,11 @@ struct SkyChart_Previews: PreviewProvider {
             coarseSnapshots: snapshots
         )
         let firstPassSnapshots = passSnapshots.first!
-        return (tle, firstPassSnapshots)
+        return (elements, firstPassSnapshots)
     }()
 
-    static let tianHePass: (TLE, PassSnapshots) = {
-        let tle = try! TLE(
+    static let tianHePass: (Elements, PassSnapshots) = {
+        let elements = try! Elements(
             raw: """
             TIANHE
             1 48274U 21035A   21152.91865056  .00003057  00000-0  33542-4 0  9993
@@ -267,7 +267,7 @@ struct SkyChart_Previews: PreviewProvider {
 
         let formatter = ISO8601DateFormatter()
         let date = formatter.date(from: "2021-06-02T06:29:00-0600")!
-        let satelliteInfo = SatelliteInfo(tle: tle)
+        let satelliteInfo = SatelliteInfo(elements: elements)
         let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
         let snapshots = try! satelliteInfo.generateSnapshots(
             observer: observer,
@@ -279,11 +279,11 @@ struct SkyChart_Previews: PreviewProvider {
             coarseSnapshots: snapshots
         )
         let firstPassSnapshots = passSnapshots.first!
-        return (tle, firstPassSnapshots)
+        return (elements, firstPassSnapshots)
     }()
 
     static var previews: some View {
-        let (tle, passSnapshots) = issPass
+        let (elements, passSnapshots) = issPass
 
         ForEach(ColorScheme.allCases, id: \.self) { colorScheme in
             let traitCollection = UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
@@ -308,7 +308,7 @@ struct SkyChart_Previews: PreviewProvider {
                     )
                 ),
                 context: SkyChartContext(
-                    satelliteInfo: SatelliteInfo(tle: tle),
+                    satelliteInfo: SatelliteInfo(elements: elements),
                     snapshots: passSnapshots.snapshots,
                     observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
                     pass: passSnapshots.pass,
@@ -335,7 +335,7 @@ struct SkyChart_Previews: PreviewProvider {
             .environment(\.backgroundSkyJulianDateKey, referenceDate.roundJulianDate(.toMins(1)))
         }
 
-        let (tle2, passSnapshots2) = tianHePass
+        let (elements2, passSnapshots2) = tianHePass
 
         SkyChart(
             viewModel: .mock(
@@ -357,7 +357,7 @@ struct SkyChart_Previews: PreviewProvider {
                 )
             ),
             context: SkyChartContext(
-                satelliteInfo: SatelliteInfo(tle: tle2),
+                satelliteInfo: SatelliteInfo(elements: elements2),
                 snapshots: passSnapshots2.snapshots,
                 observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
                 pass: passSnapshots2.pass,
@@ -385,7 +385,7 @@ struct SkyChart_Previews: PreviewProvider {
         SkyChart(
             viewModel: .mock(state: .init()),
             context: SkyChartContext(
-                satelliteInfo: SatelliteInfo(tle: tle2),
+                satelliteInfo: SatelliteInfo(elements: elements2),
                 snapshots: passSnapshots2.snapshots,
                 observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
                 pass: passSnapshots2.pass,

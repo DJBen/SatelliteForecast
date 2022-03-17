@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
   s.name             = 'SatelliteForecastCore'
   s.version          = '1.0.0.LOCAL'
-  s.summary          = 'The core features in satellite forecast, including TLE propagation and pass finding.'
+  s.summary          = 'The core features in satellite forecast, including Elements propagation and pass finding.'
 
   s.homepage         = 'https://github.com/DJBen'
   s.license          = { :type => 'Proprietary', :text => '© 2021 DJBen' }

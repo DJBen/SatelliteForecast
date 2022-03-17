@@ -277,7 +277,7 @@ import SwiftUI
 
 struct ImageRenderer_Previews: PreviewProvider {
     static let tianHePasses: [PassSnapshots] = {
-        let tle = try! TLE(
+        let elements = try! Elements(
             raw: """
             TIANHE
             1 48274U 21035A   21152.91865056  .00003057  00000-0  33542-4 0  9993
@@ -287,7 +287,7 @@ struct ImageRenderer_Previews: PreviewProvider {
 
         let formatter = ISO8601DateFormatter()
         let date = formatter.date(from: "2021-06-02T06:29:00-0600")!
-        let satelliteInfo = SatelliteInfo(tle: tle)
+        let satelliteInfo = SatelliteInfo(elements: elements)
         let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
         let snapshots = try! satelliteInfo.generateSnapshots(
             observer: observer,

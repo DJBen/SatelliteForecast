@@ -1,5 +1,5 @@
 //
-//  TLE+Snapshot.swift
+//  Elements+Snapshot.swift
 //  SatelliteForecastCore
 //
 //  Created by Ben Lu on 6/4/21.
@@ -16,8 +16,8 @@ extension SatelliteSnapshot {
         julianDate: Double,
         observer: LatLonAlt
     ) throws {
-        let tle = satelliteInfo.tle
-        let satellite = Satellite(withTLE: tle)
+        let elements = satelliteInfo.elements
+        let satellite = Satellite(withTLE: elements)
         let eciPosition = try satellite.position(julianDays: julianDate)
         let obsCel = geo2eci(julianDays: julianDate, geodetic: observer)
 
@@ -277,7 +277,7 @@ extension SatelliteInfo {
 
             if let fromDate = snapshotBeforeRising?.julianDate, let toDate = snapshotAfterSetting?.julianDate, fromDate < toDate {
                 let passSnapshots = try generatePassInfo(
-                    noradIndex: tle.noradIndex,
+                    noradIndex: elements.noradIndex,
                     observer: observer,
                     julianDateRange: fromDate...toDate,
                     fineInterval: fineInterval

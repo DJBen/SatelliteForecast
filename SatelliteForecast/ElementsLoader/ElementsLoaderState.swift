@@ -1,5 +1,5 @@
 //
-//  TLELoaderState.swift
+//  ElementsLoaderState.swift
 //  SatelliteForecast
 //
 //  Created by Ben Lu on 6/4/21.
@@ -10,11 +10,11 @@ import Foundation
 import SatelliteForecastCore
 import SatelliteKit
 
-public struct TLELoaderResources {
-    public var info: [SatelliteCategory: Loadable<Map<UInt, SatelliteInfo>, TLELoaderError>]
+public struct ElementsLoaderResources {
+    public var info: [SatelliteCategory: Loadable<Map<UInt, SatelliteInfo>, ElementsLoaderError>]
 
     public init(
-        info: [SatelliteCategory: Loadable<Map<UInt, SatelliteInfo>, TLELoaderError>] = [:]
+        info: [SatelliteCategory: Loadable<Map<UInt, SatelliteInfo>, ElementsLoaderError>] = [:]
     ) {
         self.info = info
     }
@@ -26,14 +26,14 @@ public struct TLELoaderResources {
     }
 }
 
-extension TLELoaderResources: Equatable {}
+extension ElementsLoaderResources: Equatable {}
 
-public struct TLELoaderState {
-    public var resources: TLELoaderResources
+public struct ElementsLoaderState {
+    public var resources: ElementsLoaderResources
     public var currentDate: Double
 
     public init(
-        resources: TLELoaderResources = .init(),
+        resources: ElementsLoaderResources = .init(),
         currentDate: Double = 0
     ) {
         self.resources = resources
@@ -41,4 +41,4 @@ public struct TLELoaderState {
     }
 }
 
-extension TLELoaderState: Equatable {}
+extension ElementsLoaderState: Equatable {}

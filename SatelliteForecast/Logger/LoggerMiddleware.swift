@@ -21,14 +21,14 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                     print(notificationAction)
                 case .location(let locationAction):
                     print(locationAction)
-                case .tleLoader(let tleLoaderAction):
-                    print(tleLoaderAction)
-                case .tleLoaderOutput(let tleLoaderOutput):
-                    switch tleLoaderOutput {
-                    case .loadedSatelliteTLEs(let satelliteCategory, _, let selectSpecialNoradIndex, let selectNoradIndex, let calculatePass):
-                        print("loadedSatelliteTLEs(\(satelliteCategory), selectSpecialNoradIndex: \(String(describing: selectSpecialNoradIndex)), selectNoradIndex: \(String(describing: selectNoradIndex)), calculatePass: \(calculatePass != nil))")
-                    case .failedLoadingTLEFile(_, _):
-                        print(tleLoaderOutput)
+                case .elementsLoader(let elementsLoaderAction):
+                    print(elementsLoaderAction)
+                case .elementsLoaderOutput(let elementsLoaderOutput):
+                    switch elementsLoaderOutput {
+                    case .loadedSatelliteElements(let satelliteCategory, _, let selectSpecialNoradIndex, let selectNoradIndex, let calculatePass):
+                        print("loadedSatelliteElements(\(satelliteCategory), selectSpecialNoradIndex: \(String(describing: selectSpecialNoradIndex)), selectNoradIndex: \(String(describing: selectNoradIndex)), calculatePass: \(calculatePass != nil))")
+                    case .failedLoadingElements(_, _):
+                        print(elementsLoaderOutput)
                     }
                 case .rootView(let rootViewAction):
                     print(rootViewAction)
@@ -58,14 +58,14 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                     case .rasterizedBackgroundSky(_, let quality, let julianDate, key: _):
                         print("rasterizedBackgroundSky(quality: \(quality), julianDate: \(julianDate))")
                     }
-                case .tlePropagator(let tlePropagatorAction):
-                    switch tlePropagatorAction {
+                case .elementsPropagator(let elementsPropagatorAction):
+                    switch elementsPropagatorAction {
                     case .foundPassesAndSnapshots(let passSnapshotList, let noradIndex, let observer):
                         print("foundPassesAndSnapshots(passes: \(passSnapshotList.count), noradIndex: \(noradIndex), observer: \(observer))")
                     case .propagatedSnapshots(let snapshots, let noradIndex, let observer):
                         print("propagatedSnapshots(snapshots: \(snapshots.count), noradIndex: \(noradIndex), observer: \(observer))")
                     case .purgePassesAndSnapshots:
-                        print(tlePropagatorAction)
+                        print(elementsPropagatorAction)
                     }
                 case .timer(let timerAction):
                     print(timerAction)
@@ -81,7 +81,7 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                     switch realtimeSkyViewAction {
                     case .propagateCurrentEphemerides(_, observer: _, julianDate: _):
                         break
-                        // print("propagateCurrentEphemerides(tles.count: \(tles.count), observer: \(observer), julianDate: \(julianDate))")
+                        // print("propagateCurrentEphemerides(elementss.count: \(elementss.count), observer: \(observer), julianDate: \(julianDate))")
                     case .setRealtimeSkyViewActive(_):
                         print(realtimeSkyViewAction)
                     }

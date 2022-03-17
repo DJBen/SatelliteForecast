@@ -1,5 +1,5 @@
 //
-//  TLEPropagatorReducer.swift
+//  ElementsPropagatorReducer.swift
 //  SatelliteForecast
 //
 //  Created by Ben Lu on 6/7/21.
@@ -12,10 +12,10 @@ import SatelliteKit
 import SatelliteForecastCore
 import BTree
 
-fileprivate let logger = Logger(subsystem: "io.djben.TLEPropagator", category: "reducer")
+fileprivate let logger = Logger(subsystem: "io.djben.ElementsPropagator", category: "reducer")
 
-extension Reducer where ActionType == TLEPropagatorAction, StateType == AppState {
-    static let tlePropagatorReducer = Reducer.reduce { action, state in
+extension Reducer where ActionType == ElementsPropagatorAction, StateType == AppState {
+    static let elementsPropagatorReducer = Reducer.reduce { action, state in
         switch action {
         case let .foundPassesAndSnapshots(passSnapshots, noradIndex, observer):
             logger.info("Found \(passSnapshots.count) passes for \(noradIndex). Detailed snapshots count: \(passSnapshots.count)")

@@ -45,7 +45,7 @@ extension RealtimeSkySatelliteCell {
 
 struct RealtimeSkySatelliteCell_Previews: PreviewProvider {
     static var previews: some View {
-        let tle = try! TLE(
+        let elements = try! Elements(
             raw: """
             ISS (ZARYA)
             1 25544U 98067A   21155.08058252  .00001489  00000-0  35252-4 0  9997
@@ -56,7 +56,7 @@ struct RealtimeSkySatelliteCell_Previews: PreviewProvider {
         let observer = LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0)
         // Date range
         let startDate = Date(timeIntervalSinceReferenceDate: 20 * 365 * 86400)
-        let satelliteInfo = SatelliteInfo(tle: tle)
+        let satelliteInfo = SatelliteInfo(elements: elements)
         RealtimeSkySatelliteCell(
             satelliteName: "TIANHE",
             snapshot: try! SatelliteSnapshot(

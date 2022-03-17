@@ -119,7 +119,7 @@ import CoreLocation
 #if DEBUG
 struct PassView_Previews: PreviewProvider {
     static var previews: some View {
-        let tle = try! TLE(
+        let elements = try! Elements(
             raw: """
             TIANHE
             1 48274U 21035A   21152.91865056  .00003057  00000-0  33542-4 0  9993
@@ -127,7 +127,7 @@ struct PassView_Previews: PreviewProvider {
             """
         )
         let julianDateRange = Date().advanced(by: -60 * 60 * 2).julianDate...Date().advanced(by: 60 * 60 * 22).julianDate
-        let satelliteInfo = SatelliteInfo(tle: tle)
+        let satelliteInfo = SatelliteInfo(elements: elements)
         // 2000 Broadway, Redwood City, CA 94063
         let observer = LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0)
         let snapshots = try! satelliteInfo.generateSnapshots(
@@ -148,13 +148,13 @@ struct PassView_Previews: PreviewProvider {
             quality: .preview
         )
         let brightest100: Map<UInt, SatelliteInfo> = [
-            tle.noradIndex: satelliteInfo
+            elements.noradIndex: satelliteInfo
         ]
         let appState = AppState(
             navigationState: NavigationState(
                 listNavigation: ListNavigation(
                     category: .brightest100,
-                    noradIndex: tle.noradIndex,
+                    noradIndex: elements.noradIndex,
                     selectedPassIndex: 0
                 )
             ),
@@ -163,13 +163,13 @@ struct PassView_Previews: PreviewProvider {
                 previewSatellitePaths: [:]
             ),
             satelliteTrails: [
-                tle.noradIndex: SatelliteTrails(
+                elements.noradIndex: SatelliteTrails(
                     observer: observer,
                     snapshots: snapshots,
                     passSnapshots: passSnapshots
                 )
             ],
-            tleLoader: TLELoaderResources(
+            elementsLoader: ElementsLoaderResources(
                 info: [
                     .brightest100: .loaded(brightest100)
                 ]
@@ -180,7 +180,7 @@ struct PassView_Previews: PreviewProvider {
             )
         )
         let context = PassViewContext(
-            satelliteInfo: SatelliteInfo(tle: tle),
+            satelliteInfo: SatelliteInfo(elements: elements),
             julianDateRange: julianDateRange,
             observer: observer,
             snapshots: passSnapshots[0].snapshots,
@@ -188,7 +188,7 @@ struct PassView_Previews: PreviewProvider {
             notableSnapshots: passSnapshots[0].notableSnapshots
         )
         let elevationGraphContext = SatelliteElevationGraphContext(
-            satelliteInfo: SatelliteInfo(tle: tle),
+            satelliteInfo: SatelliteInfo(elements: elements),
             julianDateRange: julianDateRange,
             observer: observer,
             configs: .preset

@@ -143,7 +143,7 @@ struct PassPreviewCell: View {
 #if DEBUG
 struct PassPreviewCell_Previews: PreviewProvider {
     static var previews: some View {
-        let tle = try! TLE(
+        let elements = try! Elements(
             raw: """
             ISS (ZARYA)
             1 25544U 98067A   21155.08058252  .00001489  00000-0  35252-4 0  9997
@@ -155,7 +155,7 @@ struct PassPreviewCell_Previews: PreviewProvider {
         // Date range
         let startDate = Date(timeIntervalSinceReferenceDate: 20 * 365 * 86400)
         let julianDateRange = startDate.advanced(by: -60 * 60 * 2).julianDate...startDate.advanced(by: 60 * 60 * 30).julianDate
-        let satelliteInfo = SatelliteInfo(tle: tle)
+        let satelliteInfo = SatelliteInfo(elements: elements)
         let coarseSnapshots = try! satelliteInfo.generateSnapshots(
             observer: observer,
             julianDateRange: julianDateRange,
@@ -169,7 +169,7 @@ struct PassPreviewCell_Previews: PreviewProvider {
         func viewAtPassIndex(_ index: Int) -> some View {
             let passSnapshot = passSnapshots[index]
             return PassPreviewCell(
-                satelliteInfo: SatelliteInfo(tle: tle),
+                satelliteInfo: SatelliteInfo(elements: elements),
                 snapshots: passSnapshot.snapshots,
                 notableSnapshots: passSnapshot.notableSnapshots,
                 observer: observer,

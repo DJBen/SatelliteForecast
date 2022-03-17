@@ -212,15 +212,15 @@ extension EffectMiddleware where
                     DispatchQueue.global().async {
                         if let category = satelliteCategory {
                             subject.send(
-                                DispatchedAction(.tleLoader(
-                                    .loadSatelliteTLEs(
+                                DispatchedAction(.elementsLoader(
+                                    .loadElements(
                                         category: category,
                                         selectNoradIndex: SelectNoradIndexParam(
                                             noradIndex: noradIndex,
                                             dateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate),
                                             observer: observer
                                         ),
-                                        calculatePass: TLELoaderCalculatePassParam(
+                                        calculatePass: ElementsLoaderCalculatePassParam(
                                             noradIndex: noradIndex,
                                             dateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate),
                                             observer: observer
@@ -230,15 +230,15 @@ extension EffectMiddleware where
                             )
                         } else {
                             subject.send(
-                                DispatchedAction(.tleLoader(
-                                    .loadSatelliteTLEs(
+                                DispatchedAction(.elementsLoader(
+                                    .loadElements(
                                         category: .brightest100,
                                         selectSpecialNoradIndex: SelectNoradIndexParam(
                                             noradIndex: noradIndex,
                                             dateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate),
                                             observer: observer
                                         ),
-                                        calculatePass: TLELoaderCalculatePassParam(
+                                        calculatePass: ElementsLoaderCalculatePassParam(
                                             noradIndex: noradIndex,
                                             dateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate),
                                             observer: observer

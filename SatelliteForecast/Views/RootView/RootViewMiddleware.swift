@@ -8,15 +8,15 @@
 import Combine
 import CombineRex
 
-extension EffectMiddleware where InputActionType == RootViewAction, OutputActionType == TLELoaderAction, StateType == RootViewState, Dependencies == Void {
-    static var rootViewTLELoader: EffectMiddleware<RootViewAction, TLELoaderAction, RootViewState, Void> {
+extension EffectMiddleware where InputActionType == RootViewAction, OutputActionType == ElementsLoaderAction, StateType == RootViewState, Dependencies == Void {
+    static var rootViewElementsLoader: EffectMiddleware<RootViewAction, ElementsLoaderAction, RootViewState, Void> {
         EffectMiddleware.onAction { action, dispatcher, getState in
             switch action {
             case .selectTab(_):
                 return .doNothing
-            case .loadTLEsForRealtimeSky:
+            case .loadElementsForRealtimeSky:
                 return .sequence(
-                    .loadSatelliteTLEs(
+                    .loadElements(
                         category: .active
                     ),
                     from: dispatcher

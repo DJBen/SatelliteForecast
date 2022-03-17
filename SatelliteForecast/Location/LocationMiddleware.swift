@@ -77,7 +77,7 @@ class LocationMiddleware: NSObject, MiddlewareProtocol {
                     }
                     break
                 }
-                output.dispatch(.tlePropagator(.purgePassesAndSnapshots))
+                output.dispatch(.elementsPropagator(.purgePassesAndSnapshots))
             case .authorizationDidChange(_):
                 break
             case let .locationChanged(location):

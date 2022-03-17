@@ -29,7 +29,7 @@ extension EffectMiddleware where
                 switch action {
                 case let .recalculatePasses(params):
                     return .sequence([
-                        .tlePropagator(.purgePassesAndSnapshots),
+                        .elementsPropagator(.purgePassesAndSnapshots),
                         .allPassesView(.calculatePasses(params))
                     ])
                 case let .calculatePasses(params):
@@ -63,7 +63,7 @@ extension EffectMiddleware where
 
                                     subject.send(
                                         DispatchedAction<AppAction>(
-                                            .tlePropagator(
+                                            .elementsPropagator(
                                                 .propagatedSnapshots(
                                                     snapshots,
                                                     noradIndex: noradIndex,
@@ -82,7 +82,7 @@ extension EffectMiddleware where
 
                                     subject.send(
                                         DispatchedAction<AppAction>(
-                                            .tlePropagator(
+                                            .elementsPropagator(
                                                 .foundPassesAndSnapshots(
                                                     passSnapshots,
                                                     noradIndex: noradIndex,
