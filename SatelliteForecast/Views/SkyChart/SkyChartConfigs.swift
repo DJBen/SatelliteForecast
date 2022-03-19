@@ -19,14 +19,16 @@ struct BackgroundSkyConfigs: Equatable, Hashable {
     struct StarMagToDisplayRadiusMappingFunction: Equatable, Hashable {
         let multiplier: Double
         let exponent: Double
+        let minimum: Double
 
-        init(multipler: Double = 3, exponent: Double = -0.425) {
+        init(multipler: Double = 3, exponent: Double = -0.425, minimum: Double = 0.0) {
             self.multiplier = multipler
             self.exponent = exponent
+            self.minimum = minimum
         }
 
         func apply(_ value: Double) -> CGFloat {
-            CGFloat(multiplier * exp(exponent * value))
+            max(minimum, CGFloat(multiplier * exp(exponent * value)))
         }
     }
 

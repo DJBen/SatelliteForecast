@@ -35,7 +35,7 @@ extension Reducer where ActionType == RealtimeSkyViewOutput, StateType == Realti
             }
 
             state.displayResults = state.results.filter { (_, result) in
-                result.snapshot.position.elev > 10
+                result.snapshot.position.elev > 5
             }
             .map { $1 }
 

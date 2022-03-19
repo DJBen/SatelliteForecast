@@ -58,6 +58,7 @@ extension RealtimeSkyViewState: Equatable {}
 struct RealtimeSkyViewContext {
     let basicChartConfigs: BasicChartConfigs
     let backgroundSkyConfigs: BackgroundSkyConfigs
+    let satelliteMagToRadiusFunction: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction
 }
 
 /// A protocol of real time sky view. Preview code can mock the implementation as a depednency.
@@ -77,6 +78,7 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
     .map(\.julianDate)
 
     @State var julianDate: Double?
+    @State var rotateLoadingCircle = false
 
     @ViewBuilder private func locationView<Content: View, NoLocationContent: View>(
         @ViewBuilder contentBuilder: (LatLonAlt) -> Content,
@@ -119,7 +121,7 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
                             Self.satelliteLabelInGraph(result.satelliteInfo)
                         )
                         .font(.system(size: 9, weight: .regular, design: .default))
-                        .foregroundColor(.blue)
+                        .foregroundColor(.yellow)
                         .offset(y: 12)
                         .frame(alignment: .leading)
                         .position(
@@ -136,10 +138,42 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
         }
     }
 
+    private func paths(from results: [RealtimePropagationResult], rect: CGRect) -> Path {
+        Path { path in
+            for result in results {
+                let point = SkyChart.point(
+                    at: result.snapshot.position,
+                    rect: rect
+                )
+
+                path.addArc(
+                    center: CGPoint(x: point.x, y: point.y),
+                    radius: context.satelliteMagToRadiusFunction.apply(result.snapshot.visualMagnitude ?? 5.5),
+                    startAngle: Angle(degrees: 0),
+                    endAngle: Angle(degrees: 360),
+                    clockwise: false
+                )
+                path.closeSubpath()
+            }
+        }
+    }
+
     @ViewBuilder private var satellitePlot: some View {
         if viewModel.state.resources.isRealtimeSkyViewActive {
             GeometryReader { geometry in
                 let rect = geometry.frame(in: .local)
+
+                paths(
+                    from: viewModel.state.resources.displayResults,
+                    rect: rect
+                )
+                .fill(.blue)
+
+                paths(
+                    from: visiblePropagationResults,
+                    rect: rect
+                )
+                .fill(.orange)
 
                 Path { path in
                     for result in visiblePropagationResults {
@@ -159,24 +193,6 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
                     }
                 }
                 .stroke(.gray, lineWidth: 1)
-
-                Path { path in
-                    for result in viewModel.state.resources.displayResults {
-                        let point = SkyChart.point(
-                            at: result.snapshot.position,
-                            rect: rect
-                        )
-                        path.addArc(
-                            center: CGPoint(x: point.x, y: point.y),
-                            radius: 1,
-                            startAngle: Angle(degrees: 0),
-                            endAngle: Angle(degrees: 360),
-                            clockwise: false
-                        )
-                        path.closeSubpath()
-                    }
-                }
-                .fill(.blue)
             }
         } else {
             Color.clear
@@ -226,16 +242,68 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
         }
     }
 
-    @ViewBuilder private var satelliteList: some View {
-        List {
-            ForEach(visiblePropagationResults, id: \.self) { result in
-                RealtimeSkySatelliteCell(
-                    satelliteName: result.satelliteInfo.elements.commonName,
-                    snapshot: result.snapshot
+    @ViewBuilder private var satelliteLoadingView: some View {
+        VStack {
+            Circle(
+            )
+            .trim(from: 1 / 12, to: 1)
+            .stroke(.secondary)
+            .rotationEffect(.degrees(rotateLoadingCircle ? 0 : -360), anchor: .center)
+            .onAppear {
+                withAnimation(
+                    .linear(
+                        duration: 1.5
+                    ).repeatForever(
+                        autoreverses: false
+                    )
+                ) {
+                    rotateLoadingCircle.toggle()
+                }
+            }
+            .frame(width: 72, height: 72)
+            .overlay(
+                Image(
+                    "glyph_observatory"
                 )
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .foregroundColor(Color.secondary)
+                .frame(width: 42, height: 42)
+            )
+
+            Text(
+                Self.SatelliteList.loadingText
+            )
+            .foregroundColor(.secondary)
+        }
+    }
+
+    @ViewBuilder private var satelliteList: some View {
+        switch viewModel.state.satellites {
+        case .notLoaded:
+            Color.clear
+        case .loading:
+            satelliteLoadingView
+        case .failed(_):
+            Color.clear
+        case .loaded(_):
+            if visiblePropagationResults.isEmpty {
+                Text(
+                    Self.SatelliteList.emptyText
+                )
+                .foregroundColor(.secondary)
+            } else {
+                List {
+                    ForEach(visiblePropagationResults, id: \.self) { result in
+                        RealtimeSkySatelliteCell(
+                            satelliteName: result.satelliteInfo.elements.commonName,
+                            snapshot: result.snapshot
+                        )
+                    }
+                }
+                .listStyle(.inset)
             }
         }
-        .listStyle(.inset)
     }
 
     var body: some View {
@@ -243,7 +311,7 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
             locationView { observer in
                 GeometryReader { geometry in
                     let rect = geometry.frame(in: .local)
-                    VStack(spacing: 24) {
+                    VStack(spacing: 16) {
                         backgroundSkyView(
                             observer: observer
                         )
@@ -251,7 +319,8 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
                             width: min(rect.width, rect.height),
                             height: min(rect.width, rect.height)
                         )
-                        satelliteList
+
+                        satelliteList.padding(.top, 24)
                     }
                     .padding(.top, 16)
                 }
@@ -284,6 +353,28 @@ extension RealtimeSkyViewImpl {
         }
     }
 
+    enum SatelliteList {
+        static var loadingText: String {
+            NSLocalizedString(
+                "realtimeSkyView.satelliteList.loadingText",
+                tableName: nil,
+                bundle: .main,
+                value: "Searching for satellites...",
+                comment: "The loading text for the satellite list"
+            )
+        }
+
+        static var emptyText: String {
+            NSLocalizedString(
+                "realtimeSkyView.satelliteList.emptyText",
+                tableName: nil,
+                bundle: .main,
+                value: "No satellite currently visible",
+                comment: "The empty text for the satellite list"
+            )
+        }
+    }
+
     static func satelliteLabelInGraph(_ satelliteInfo: SatelliteInfo) -> String {
         satelliteInfo.ucsSat?.officialName ?? satelliteInfo.satCat?.name ?? satelliteInfo.elements.commonName
     }
@@ -299,7 +390,8 @@ struct RealtimeSkyView_Previews: PreviewProvider {
             ),
             context: RealtimeSkyViewContext(
                 basicChartConfigs: .init(),
-                backgroundSkyConfigs: .init()
+                backgroundSkyConfigs: .init(),
+                satelliteMagToRadiusFunction: .init()
             ),
             backgroundSkyViewProducer: .pure(
                 BackgroundSkyView(

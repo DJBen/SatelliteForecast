@@ -60,7 +60,8 @@ struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewViewType:
             realtimeSkyViewProducer.view(
                 RealtimeSkyViewContext(
                     basicChartConfigs: .init(),
-                    backgroundSkyConfigs: .preset
+                    backgroundSkyConfigs: .preset,
+                    satelliteMagToRadiusFunction: .init(multipler: 3.2, exponent: -0.38, minimum: 0.75)
                 )
             )
             .modifier(
