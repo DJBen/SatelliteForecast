@@ -158,7 +158,7 @@ public func lunarGeo (julianDays: Double) -> RADec {
         dec: asin(lunarVector.z / (lunarVector.x * lunarVector.x +
                                    lunarVector.y * lunarVector.y +
                                    lunarVector.z * lunarVector.z).squareRoot()) * rad2deg
-        )
+    )
 }
 
 public func azel(julianDate: Double,

@@ -17,5 +17,8 @@ extension ElementsLoaderState: AppStateMappable {
 
     static func apply(appState: inout AppState, state: ElementsLoaderState) {
         appState.elementsLoader = state.resources
+        if appState.realtimeSkyResources.results.isEmpty {
+
+        }
     }
 }

@@ -12,11 +12,14 @@ import SatelliteKit
 
 public struct ElementsLoaderResources {
     public var info: [SatelliteCategory: Loadable<Map<UInt, SatelliteInfo>, ElementsLoaderError>]
+    public var visibleCandidates: Loadable<[SatelliteInfo], ElementsLoaderError>
 
     public init(
-        info: [SatelliteCategory: Loadable<Map<UInt, SatelliteInfo>, ElementsLoaderError>] = [:]
+        info: [SatelliteCategory: Loadable<Map<UInt, SatelliteInfo>, ElementsLoaderError>] = [:],
+        visibleCandidates: Loadable<[SatelliteInfo], ElementsLoaderError> = .notLoaded
     ) {
         self.info = info
+        self.visibleCandidates = visibleCandidates
     }
 
     public subscript(noradIndex: UInt) -> SatelliteInfo? {

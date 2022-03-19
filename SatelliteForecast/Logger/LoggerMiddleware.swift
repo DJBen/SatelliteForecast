@@ -81,15 +81,16 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                     switch realtimeSkyViewAction {
                     case .propagateCurrentEphemerides(_, observer: _, julianDate: _):
                         break
-                        // print("propagateCurrentEphemerides(elementss.count: \(elementss.count), observer: \(observer), julianDate: \(julianDate))")
+//                    case .propagateCurrentEphemerides(let elements, let observer, let julianDate):
+//                         print("propagateCurrentEphemerides(elements.count: \(elements.count), observer: \(observer), julianDate: \(julianDate))")
                     case .setRealtimeSkyViewActive(_):
                         print(realtimeSkyViewAction)
                     }
                 case .realtimeSkyOutput(let realtimeSkyViewOutput):
                     switch realtimeSkyViewOutput {
-                    case .propagatedCurrentEphemerides(_, satellites: _, partialErrors: _, observer: _, julianDate: _):
-                        break
-//                        print("propagatedCurrentEphemerides(results.count: \(results.count), partialErrors: \(partialErrors), observer: \(observer), julianDate: \(julianDate))")
+
+                    case .propagatedCurrentEphemerides(let results, satellites: _, let partialErrors, let observer, let julianDate):
+                        print("propagatedCurrentEphemerides(results.count: \(results.count), partialErrors: \(partialErrors), observer: \(observer), julianDate: \(julianDate))")
                     case .failedToPropagateCurrentEphemerides(let error, let observer, let julianDate):
                         print("failedToPropagatedCurrentEphemerides(error: \(error), observer: \(observer), julianDate: \(julianDate))")
                     }

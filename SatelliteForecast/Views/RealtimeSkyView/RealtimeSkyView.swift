@@ -5,6 +5,7 @@
 //  Created by Ben Lu on 3/2/22.
 //
 
+import BTree
 import CombineRex
 import CombineRextensions
 import SatelliteForecastCore
@@ -21,7 +22,7 @@ extension RealtimeSkyViewAction: Equatable {}
 
 enum RealtimeSkyViewOutput {
     case propagatedCurrentEphemerides(
-        results: [UInt: RealtimePropagationResult],
+        results: BTree<Double, RealtimePropagationResult>,
         satellites: [SatelliteInfo],
         partialErrors: [Error],
         observer: LatLonAlt,
@@ -36,8 +37,9 @@ enum RealtimeSkyViewOutput {
 }
 
 struct RealtimeSkyViewResources {
-    /// The propagation results containing the satellite snapshot, and an "expiration date" of the snapshot.
-    var results: [UInt: RealtimePropagationResult] = [:]
+    /// The propagation results containing the satellite snapshot ordered by the time when next check should take place.
+    var results: BTree<Double, RealtimePropagationResult> = .init()
+    var displayResults: [RealtimePropagationResult] = []
     var isRealtimeSkyViewActive: Bool = false
     var isPropagatingEphemerides: Bool = false
 }
@@ -46,7 +48,7 @@ extension RealtimeSkyViewResources: Equatable {}
 
 struct RealtimeSkyViewState {
     var resources: RealtimeSkyViewResources = .init()
-    var satellites: [SatelliteInfo]?
+    var satellites: Loadable<[SatelliteInfo], ElementsLoaderError> = .notLoaded
     var observer: LatLonAlt?
     var julianDateOffset: Double = 0
 }
@@ -87,16 +89,8 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
         }
     }
 
-    private var displayPropagationResults: [RealtimePropagationResult] {
-        Array(
-            viewModel.state.resources.results.values.filter {
-                $0.snapshot.position.elev > 5
-            }
-        )
-    }
-
     private var visiblePropagationResults: [RealtimePropagationResult] {
-        displayPropagationResults
+        viewModel.state.resources.displayResults
         .filter { ($0.snapshot.visualMagnitude ?? .infinity) <= 5.5 }
         .sorted { result1, result2 in
             if let mag1 = result1.snapshot.visualMagnitude, let mag2 = result2.snapshot.visualMagnitude {
@@ -148,23 +142,27 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
     }
 
     @ViewBuilder private var satellitePlot: some View {
-        ForEach(
-            displayPropagationResults,
-            id: \.noradIndex
-        ) { result in
-            GeometryReader { geometry in
-                let rect = geometry.frame(in: .local)
-                satellitePoint(
-                    result: result,
-                    rect: rect
-                )
-                .position(
-                    SkyChart.point(
-                        at: result.snapshot.position,
+        if viewModel.state.resources.isRealtimeSkyViewActive {
+            ForEach(
+                viewModel.state.resources.displayResults,
+                id: \.noradIndex
+            ) { result in
+                GeometryReader { geometry in
+                    let rect = geometry.frame(in: .local)
+                    satellitePoint(
+                        result: result,
                         rect: rect
                     )
-                )
+                    .position(
+                        SkyChart.point(
+                            at: result.snapshot.position,
+                            rect: rect
+                        )
+                    )
+                }
             }
+        } else {
+            Color.clear
         }
     }
 
@@ -194,7 +192,7 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
                 return
             }
 
-            guard let satellites = viewModel.state.satellites else {
+            guard case .loaded(let satellites) = viewModel.state.satellites else {
                 return
             }
 

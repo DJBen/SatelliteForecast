@@ -16,6 +16,10 @@ extension Reducer where ActionType == ElementsLoaderAction, StateType == Element
         switch action {
         case .loadElements(let category, _, _, _):
             state.resources.info[category] = .loading
+
+            if category == .active {
+                state.resources.visibleCandidates = .loading
+            }
         }
     }
 }
@@ -25,9 +29,18 @@ extension Reducer where ActionType == ElementsLoaderOutput, StateType == Element
         switch action {
         case let .loadedSatelliteElements(category, info, _, _, _):
             state.resources.info[category] = .loaded(info)
+            if category == .active {
+                state.resources.visibleCandidates = .loaded(Array(info.values.filter { satelliteInfo in
+                    satelliteInfo.elements.orbitTypeByAltitude == .leo
+                }))
+            }
             logger.notice("Loaded \(info.count) Elements entries")
         case let .failedLoadingElements(category, error):
             state.resources.info[category] = .failed(error)
+
+            if category == .active {
+                state.resources.visibleCandidates = .failed(error)
+            }
             logger.error("Failed loading Elements for category \(String(describing: category)): \(String(describing: error))")
             break
         }

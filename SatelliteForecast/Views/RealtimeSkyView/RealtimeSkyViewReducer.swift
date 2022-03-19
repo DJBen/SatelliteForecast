@@ -26,9 +26,19 @@ extension Reducer where ActionType == RealtimeSkyViewOutput, StateType == Realti
             satellites: _,
             partialErrors: _,
             observer: _,
-            julianDate: _
+            let julianDate
         ):
-            state.results.merge(results, uniquingKeysWith: { $1 })
+
+            state.results = state.results.suffix(from: julianDate)
+            for (nextCheckJulianDate, result) in results {
+                state.results.insert((nextCheckJulianDate, result))
+            }
+
+            state.displayResults = state.results.filter { (_, result) in
+                result.snapshot.position.elev > 10
+            }
+            .map { $1 }
+
             state.isPropagatingEphemerides = false
         case .failedToPropagateCurrentEphemerides(error: _, observer: _, julianDate: _):
             state.isPropagatingEphemerides = false

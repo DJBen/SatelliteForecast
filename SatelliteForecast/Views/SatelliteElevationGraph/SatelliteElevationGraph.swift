@@ -303,7 +303,6 @@ struct SatelliteElevationGraph: View {
                     ),
                     width: rect.width
                 )
-                .equatable()
             }
         }
         .frame(

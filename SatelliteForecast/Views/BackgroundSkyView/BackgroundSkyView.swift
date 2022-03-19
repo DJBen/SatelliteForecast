@@ -146,6 +146,7 @@ struct BackgroundSkyView: View {
                     state: SkyChartBackgroundState(observer: context.observer),
                     configs: context.basicChartConfigs
                 )
+                .equatable()
                 .background(
                     backgroundSky(
                         julianDate: backgroundSkyJulianDateKey

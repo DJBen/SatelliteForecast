@@ -18,6 +18,8 @@ target 'SatelliteForecast' do
   pod "SatelliteCatalogImpl_SQLite", :path => './SatelliteCatalogImpl_SQLite'
   pod "SatelliteForecastCore", :path => './SatelliteForecastCore'
   pod "SwiftUIVisualEffects", :path => './SwiftUIVisualEffects'
+  pod "VSOP87", :path => './VSOP87'
+  pod "VSOP87_SatelliteKitExtensions", :path => './VSOP87_SatelliteKitExtensions'
 
   target 'SatelliteForecastTests' do
     inherit! :complete
