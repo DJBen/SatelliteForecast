@@ -105,61 +105,78 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
         }
     }
 
-    @ViewBuilder private func satellitePoint(result: RealtimePropagationResult, rect: CGRect) -> some View {
-        HStack(spacing: 0) {
-            Path { path in
-                path.addArc(
-                    center: CGPoint(x: rect.midX, y: rect.midY),
-                    radius: 1,
-                    startAngle: Angle(degrees: 0),
-                    endAngle: Angle(degrees: 360),
-                    clockwise: false
-                )
-                path.closeSubpath()
-            }
-            .fill()
-            .foregroundColor({
-                switch result.satelliteInfo.elements.orbitTypeByAltitude {
-                case .leo:
-                    return .blue
-                case .geo:
-                    return .yellow
-                case .meo, .heo:
-                    return .green
-                }
-            }())
+    @ViewBuilder private var satellitePlotLabels: some View {
+        if viewModel.state.resources.isRealtimeSkyViewActive {
+            GeometryReader { geometry in
+                let rect = geometry.frame(in: .local)
 
-            if visiblePropagationResults.contains(result) {
-                Text(
-                    Self.satelliteLabelInGraph(result.satelliteInfo)
-                )
-                .font(.system(size: 9, weight: .regular, design: .default))
-                .foregroundColor(.blue)
-                .offset(x: 4)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                ZStack(alignment: .center) {
+                    ForEach(
+                        visiblePropagationResults,
+                        id: \.self
+                    ) { result in
+                        Text(
+                            Self.satelliteLabelInGraph(result.satelliteInfo)
+                        )
+                        .font(.system(size: 9, weight: .regular, design: .default))
+                        .foregroundColor(.blue)
+                        .offset(y: 12)
+                        .frame(alignment: .leading)
+                        .position(
+                            SkyChart.point(
+                                at: result.snapshot.position,
+                                rect: rect
+                            )
+                        )
+                    }
+                }
             }
+        } else {
+            Color.clear
         }
     }
 
     @ViewBuilder private var satellitePlot: some View {
         if viewModel.state.resources.isRealtimeSkyViewActive {
-            ForEach(
-                viewModel.state.resources.displayResults,
-                id: \.noradIndex
-            ) { result in
-                GeometryReader { geometry in
-                    let rect = geometry.frame(in: .local)
-                    satellitePoint(
-                        result: result,
-                        rect: rect
-                    )
-                    .position(
-                        SkyChart.point(
+            GeometryReader { geometry in
+                let rect = geometry.frame(in: .local)
+
+                Path { path in
+                    for result in visiblePropagationResults {
+                        let point = SkyChart.point(
                             at: result.snapshot.position,
                             rect: rect
                         )
-                    )
+
+                        path.move(to: CGPoint(x: point.x - 4, y: point.y))
+                        path.addLine(to: CGPoint(x: point.x - 8, y: point.y))
+                        path.move(to: CGPoint(x: point.x + 4, y: point.y))
+                        path.addLine(to: CGPoint(x: point.x + 8, y: point.y))
+                        path.move(to: CGPoint(x: point.x, y: point.y - 4))
+                        path.addLine(to: CGPoint(x: point.x, y: point.y - 8))
+                        path.move(to: CGPoint(x: point.x, y: point.y + 4))
+                        path.addLine(to: CGPoint(x: point.x, y: point.y + 8))
+                    }
                 }
+                .stroke(.gray, lineWidth: 1)
+
+                Path { path in
+                    for result in viewModel.state.resources.displayResults {
+                        let point = SkyChart.point(
+                            at: result.snapshot.position,
+                            rect: rect
+                        )
+                        path.addArc(
+                            center: CGPoint(x: point.x, y: point.y),
+                            radius: 1,
+                            startAngle: Angle(degrees: 0),
+                            endAngle: Angle(degrees: 360),
+                            clockwise: false
+                        )
+                        path.closeSubpath()
+                    }
+                }
+                .fill(.blue)
             }
         } else {
             Color.clear
@@ -182,6 +199,9 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
         .overlay {
             satellitePlot
         }
+        .overlay(
+            satellitePlotLabels
+        )
         .onReceive(refreshTimer) { timerJulianDate in
             self.julianDate = timerJulianDate + viewModel.state.julianDateOffset
 
