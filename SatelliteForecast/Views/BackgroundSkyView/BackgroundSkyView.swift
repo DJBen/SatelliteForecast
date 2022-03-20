@@ -8,8 +8,10 @@
 import CombineRex
 import SatelliteForecastCore
 import SatelliteKit
+import SolarSystem
 import SwiftRex
 import SwiftUI
+import VSOP87
 
 /// A key uniquely determining the rendering of a sky chart's background. Same key is guaranteed to render the same background.
 struct BackgroundSkyKey: Equatable, Hashable {
@@ -87,7 +89,7 @@ struct BackgroundSkyView: View {
         GeometryReader { geometry in
             Group {
                 let rect = geometry.frame(in: .local)
-                if !(AstroAlgorithms.sunElevation(julianDate: julianDate, observer: context.observer) > -6 &&
+                if !(SolarSystemBody.sun.aziEle(julianDay: julianDate, observer: context.observer).elev > -6 &&
                      context.configs.hidesStarsDuringDay),
                 let image = rasterizedBackgroundSky {
                     Image(
@@ -133,7 +135,7 @@ struct BackgroundSkyView: View {
                     label: context.configs.bodySymbol,
                     referenceDate: julianDate,
                     observer: context.observer,
-                    sunElevation: AstroAlgorithms.sunElevation(julianDate: julianDate, observer: context.observer)
+                    sunElevation: SolarSystemBody.sun.aziEle(julianDay: julianDate, observer: context.observer).elev
                 )
             }
         }

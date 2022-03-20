@@ -9,6 +9,8 @@ import BTree
 import SatelliteForecastCore
 import SatelliteKit
 import StarryNight
+import SolarSystem
+import VSOP87
 
 struct SatellitePassPathRenderParams: Equatable {
     var rect: CGRect
@@ -57,7 +59,7 @@ extension SkyChart {
         return min(rect.width, rect.height) / 2
     }
 
-    static func point(at coordinate: AziEleDst, rect: CGRect) -> CGPoint {
+    static func point<Coordinate: AziEleProviding>(at coordinate: Coordinate, rect: CGRect) -> CGPoint {
         let dist = (90 - coordinate.elev) / 90.0 * Double(radius(fromRect: rect))
         let xOffset = sin(coordinate.azim * deg2rad) * dist
         let yOffset = cos(coordinate.azim * deg2rad) * dist
@@ -182,22 +184,22 @@ extension SkyChart {
             guard let center = constellation.displayCenter else {
                 continue
             }
-            let (alt, _) = azel(
+            let alt = azel(
                 julianDate: params.julianDate,
                 site: (params.observer.lat, params.observer.lon),
                 cele: cartesianToRaDec(center)
-            )
+            ).elev
             if alt < 0 {
                 continue
             }
             for line in constellation.connectionLines {
-                let (alt1, azi1) = azel(julianDate: params.julianDate, site: (params.observer.lat, params.observer.lon), cele: cartesianToRaDec(line.star1.physicalInfo.coordinate))
-                let (alt2, azi2) = azel(julianDate: params.julianDate, site: (params.observer.lat, params.observer.lon), cele: cartesianToRaDec(line.star2.physicalInfo.coordinate))
-                if alt1 < 0 || alt2 < 0 {
+                let aziElev1 = azel(julianDate: params.julianDate, site: (params.observer.lat, params.observer.lon), cele: cartesianToRaDec(line.star1.physicalInfo.coordinate))
+                let aziElev2 = azel(julianDate: params.julianDate, site: (params.observer.lat, params.observer.lon), cele: cartesianToRaDec(line.star2.physicalInfo.coordinate))
+                if aziElev1.elev < 0 || aziElev2.elev < 0 {
                     continue
                 }
-                let point1 = Self.point(at: AziEleDst(azim: azi1, elev: alt1, dist: 0), rect: params.rect)
-                let point2 = Self.point(at: AziEleDst(azim: azi2, elev: alt2, dist: 0), rect: params.rect)
+                let point1 = Self.point(at: AziEleDst(azim: aziElev1.azim, elev: aziElev1.elev, dist: 0), rect: params.rect)
+                let point2 = Self.point(at: AziEleDst(azim: aziElev2.azim, elev: aziElev2.elev, dist: 0), rect: params.rect)
 
                 ctx.cgContext.move(to: point1)
                 ctx.cgContext.addLine(to: point2)
@@ -212,14 +214,14 @@ extension SkyChart {
         ctx.cgContext.setFillColor(params.starColor.cgColor)
 
         for star in params.stars {
-            let (alt, azi) = azel(
+            let aziElev = azel(
                 julianDate: params.julianDate,
                 site: (params.observer.lat, params.observer.lon),
                 cele: cartesianToRaDec(star.physicalInfo.coordinate))
-            if alt < 0 {
+            if aziElev.elev < 0 {
                 continue
             }
-            let point = Self.point(at: AziEleDst(azim: azi, elev: alt, dist: 0), rect: params.rect)
+            let point = Self.point(at: AziEleDst(azim: aziElev.azim, elev: aziElev.elev, dist: 0), rect: params.rect)
 
             ctx.cgContext.move(to: point)
 
@@ -235,12 +237,13 @@ extension SkyChart {
         }
         
         // -- Plantary bodies
-        
-        let (sunAlt, sunAzi) = azel(
-            julianDate: params.julianDate,
-            site: (params.observer.lat, params.observer.lon),
-            cele: solarGeo(julianDays: params.julianDate))
-        let sunPoint = Self.point(at: AziEleDst(azim: sunAzi, elev: sunAlt, dist: 0), rect: params.rect)
+
+
+        let sunAziElev = SolarSystemBody.sun.aziEle(
+            julianDay: params.julianDate,
+            observer: params.observer
+        )
+        let sunPoint = Self.point(at: AziEleDst(azim: sunAziElev.azim, elev: sunAziElev.elev, dist: 0), rect: params.rect)
         
         ctx.cgContext.saveGState()
         ctx.cgContext.addEllipse(in: params.rect)
@@ -251,8 +254,8 @@ extension SkyChart {
         ctx.cgContext.addEllipse(in: CGRect(x: sunPoint.x - 7, y: sunPoint.y - 7, width: 14, height: 14))
         ctx.cgContext.drawPath(using: .fill)
 
-        let (moonAlt, moonAzi) = azel(julianDate: params.julianDate, site: (params.observer.lat, params.observer.lon), cele: lunarGeo(julianDays: params.julianDate))
-        let moonPoint = Self.point(at: AziEleDst(azim: moonAzi, elev: moonAlt, dist: 0), rect: params.rect)
+        let moonAziElev = azel(julianDate: params.julianDate, site: (params.observer.lat, params.observer.lon), cele: lunarGeo(julianDays: params.julianDate))
+        let moonPoint = Self.point(at: AziEleDst(azim: moonAziElev.azim, elev: moonAziElev.elev, dist: 0), rect: params.rect)
         ctx.cgContext.setFillColor(UIColor.gray.cgColor)
         ctx.cgContext.setShadow(offset: .zero, blur: 12, color: UIColor.systemYellow.cgColor)
         ctx.cgContext.addEllipse(in: CGRect(x: moonPoint.x - 5, y: moonPoint.y - 5, width: 10, height: 10))

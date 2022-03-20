@@ -41,6 +41,7 @@ struct BackgroundSkyConfigs: Equatable, Hashable {
         case moon
         case mercury
         case venus
+        case mars
         case jupiter
         case saturn
     }

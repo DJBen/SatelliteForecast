@@ -19,8 +19,13 @@ PODS:
     - QSMag (= 1.0.0.LOCAL)
     - SatelliteCatalog (= 1.0.0.LOCAL)
     - SatelliteKit (= 1.0.0.LOCAL)
+    - SolarSystem (= 1.0.0.LOCAL)
+    - VSOP87 (= 1.0.0.LOCAL)
   - SatelliteKit (1.0.0.LOCAL)
   - SnapshotTesting (1.8.2)
+  - SolarSystem (1.0.0.LOCAL):
+    - SatelliteKit (= 1.0.0.LOCAL)
+    - VSOP87 (= 1.0.0.LOCAL)
   - SQLite.swift (0.12.2):
     - SQLite.swift/standard (= 0.12.2)
   - SQLite.swift/standard (0.12.2)
@@ -35,6 +40,7 @@ PODS:
     - CombineRex (~> 0.8.9)
     - SnapshotTesting (~> 1.8.2)
     - SwiftRex (~> 0.8.9)
+  - VSOP87 (1.0.0.LOCAL)
 
 DEPENDENCIES:
   - BTree (~> 4.1.0)
@@ -48,10 +54,12 @@ DEPENDENCIES:
   - SatelliteCatalogImpl_SQLite (from `./SatelliteCatalogImpl_SQLite`)
   - SatelliteForecastCore (from `./SatelliteForecastCore`)
   - SatelliteKit (from `./SatelliteKit`)
+  - SolarSystem (from `./SolarSystem`)
   - StarryNight (from `./StarryNight`)
   - SwiftRex (= 0.8.9)
   - SwiftUIVisualEffects (from `./SwiftUIVisualEffects`)
   - TestingExtensions (~> 0.2.11)
+  - VSOP87 (from `./VSOP87`)
 
 SPEC REPOS:
   trunk:
@@ -80,10 +88,14 @@ EXTERNAL SOURCES:
     :path: "./SatelliteForecastCore"
   SatelliteKit:
     :path: "./SatelliteKit"
+  SolarSystem:
+    :path: "./SolarSystem"
   StarryNight:
     :path: "./StarryNight"
   SwiftUIVisualEffects:
     :path: "./SwiftUIVisualEffects"
+  VSOP87:
+    :path: "./VSOP87"
 
 SPEC CHECKSUMS:
   BTree: 99b99930790b88dc5e8bafbf666a5dfb8d7808b4
@@ -95,16 +107,18 @@ SPEC CHECKSUMS:
   QSMag: 5a944b9b2392dac7ba1626a70a94be337db49732
   SatelliteCatalog: 132031627b4f096d1f2a16d169286faae121c0cc
   SatelliteCatalogImpl_SQLite: 33b833c3dc7482f1acdcb167e7cb203137c940d3
-  SatelliteForecastCore: 2cdafd19d95dc96bf2e5a44b504ca1a7b9d625ae
+  SatelliteForecastCore: 9bee010920da256e90bc924127de366435a92e93
   SatelliteKit: 53e267558b0bd35f1be23f4dfa022b4503aa0226
   SnapshotTesting: 38947050d13960d57a4a9c166fcf51bca7d56970
+  SolarSystem: 35e239cc2baf5262e3ff48336384eddeeafa1070
   SQLite.swift: d2b4642190917051ce6bd1d49aab565fe794eea3
   StarryNight: 4cecdd344ee93f3a82aff6e0a52ff5c045bb4207
   STRegex: d49e88d0fe58538d3175fdd989bc1243b9be2a07
   SwiftRex: 77cb0bd1953a81e3b4ce92fb563a91ba9c297078
   SwiftUIVisualEffects: 4b341110ba61926c0287feef7b09b49fc0e7fac3
   TestingExtensions: 75654c5acd46d63c09317cfa0c84f402882a29b0
+  VSOP87: 8e7bfe95fa935a74bf597458e0e9376a54a35fec
 
-PODFILE CHECKSUM: 31a73f6ec932ecea0a56d74c27484aaba46ee1d4
+PODFILE CHECKSUM: a2c65ffb8cefb63d958c80381c8d6770a9d41d5e
 
 COCOAPODS: 1.11.3

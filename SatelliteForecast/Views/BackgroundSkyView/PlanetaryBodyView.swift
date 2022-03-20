@@ -8,6 +8,8 @@
 import Foundation
 import SwiftUI
 import SatelliteKit
+import SolarSystem
+import VSOP87
 
 struct PlanetaryBodyView: View {
     let planetaryBody: BackgroundSkyConfigs.PlantaryBody
@@ -17,19 +19,14 @@ struct PlanetaryBodyView: View {
     let sunElevation: Double
 
     @ViewBuilder func planetView<Content: View>(
-        celestialCoordinateProvider: (Double) -> RADec,
-        @ViewBuilder planetViewGenerator: @escaping (AziEleDst) -> Content
+        solarSystemBody: SolarSystemBody,
+        @ViewBuilder planetViewGenerator: @escaping (SolarSystemBody, AziEle) -> Content
     ) -> some View {
-        let (alt, azi) = azel(
-            julianDate: referenceDate,
-            site: (observer.lat, observer.lon),
-            cele: celestialCoordinateProvider(referenceDate)
-        )
-        let planetCoordinate = AziEleDst(azim: azi, elev: alt, dist: 0)
+        let aziElev = solarSystemBody.aziEle(julianDay: referenceDate, observer: observer)
 
-        if planetCoordinate.elev >= 0 {
+        if aziElev.elev >= 0 {
             GeometryReader { geometry in
-                planetViewGenerator(planetCoordinate)
+                planetViewGenerator(solarSystemBody, aziElev)
             }
         }
     }
@@ -38,17 +35,17 @@ struct PlanetaryBodyView: View {
         GeometryReader { geometry in
             let rect = geometry.frame(in: .local)
 
-            if let celestialCoordinateProvider = planetaryBody.celestialCoordinateProvider, planetaryBody.visible(sunElevation: sunElevation) {
+            if planetaryBody.visible(sunElevation: sunElevation) {
                 planetView(
-                    celestialCoordinateProvider: celestialCoordinateProvider
-                ) { observer in
+                    solarSystemBody: SolarSystemBody(planetaryBody)
+                ) { solarSystemBody, coordinate in
                     planetaryBody.view(
                         label: label,
                         rect: rect
                     )
                     .position(
                         SkyChart.point(
-                            at: observer,
+                            at: coordinate,
                             rect: rect
                         )
                     )
@@ -58,6 +55,19 @@ struct PlanetaryBodyView: View {
     }
 }
 
+extension SolarSystemBody {
+    init(_ planetaryBody: BackgroundSkyConfigs.PlantaryBody) {
+        switch planetaryBody {
+        case .sun: self = .sun
+        case .moon: self = .moon
+        case .mercury: self = .mercury
+        case .venus: self = .venus
+        case .mars: self = .mars
+        case .jupiter: self = .jupiter
+        case .saturn: self = .saturn
+        }
+    }
+}
 
 extension BackgroundSkyConfigs.PlantaryBody {
     @ViewBuilder private func view<ShapeModifier: ViewModifier, TextLabel: View, Symbol: View> (
@@ -124,27 +134,16 @@ extension BackgroundSkyConfigs.PlantaryBody {
         }
     }
 
-    fileprivate var celestialCoordinateProvider: ((Double) -> RADec)? {
-        switch self {
-        case .sun:
-            return solarGeo(julianDays:)
-        case .moon:
-            return lunarGeo(julianDays:)
-        case .venus, .jupiter, .saturn, .mercury:
-            return nil
-        }
-    }
-
     fileprivate func visible(sunElevation: Double) -> Bool {
         switch self {
         case .sun, .moon:
             return true
         case .venus:
-            return sunElevation > -6
-        case .mercury, .jupiter:
-            return sunElevation > -12
+            return sunElevation < -6
+        case .mercury, .jupiter, .mars:
+            return sunElevation < -12
         case .saturn:
-            return sunElevation > -16
+            return sunElevation < -16
         }
     }
 
@@ -188,8 +187,22 @@ extension BackgroundSkyConfigs.PlantaryBody {
                 }
             )
         case .mercury:
-            // Hides mercury for now
-            EmptyView()
+            view(
+                rect: rect,
+                label: label,
+                radius: 2,
+                shapeModifier: PlanetsShapeModifier(),
+                textLabel: {
+                    Text("Mercury")
+                        .font(.caption2)
+                        .foregroundColor(.yellow)
+                },
+                symbol: {
+                    Text("☿")
+                        .font(.system(size: 5))
+                        .foregroundColor(.white)
+                }
+            )
         case .venus:
             view(
                 rect: rect,
@@ -204,6 +217,23 @@ extension BackgroundSkyConfigs.PlantaryBody {
                 symbol: {
                     Text("♀")
                         .font(.system(size: 7))
+                        .foregroundColor(.white)
+                }
+            )
+        case .mars:
+            view(
+                rect: rect,
+                label: label,
+                radius: 2,
+                shapeModifier: PlanetsShapeModifier(),
+                textLabel: {
+                    Text("Mars")
+                        .font(.caption2)
+                        .foregroundColor(.red)
+                },
+                symbol: {
+                    Text("♂")
+                        .font(.system(size: 6))
                         .foregroundColor(.white)
                 }
             )

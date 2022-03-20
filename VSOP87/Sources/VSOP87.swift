@@ -6,10 +6,13 @@
 //  Copyright © 2022 Ben Lu. All rights reserved.
 //
 
-public enum PlanetBody {
+public enum SolarSystemBody {
+    case sun
     case mercury
     case venus
+    case earth
     case earthMoonBarycenter
+    case moon
     case mars
     case jupiter
     case saturn
@@ -24,41 +27,63 @@ public struct RectangularCoordinate {
     public let z: Double
 
     public init(
-        x: Double = 0,
-        y: Double = 0,
-        z: Double = 0
+        _ x: Double = 0,
+        _ y: Double = 0,
+        _ z: Double = 0
     ) {
         self.x = x
         self.y = y
         self.z = z
     }
 
+    public static prefix func - (v: RectangularCoordinate) -> RectangularCoordinate {
+        return RectangularCoordinate(-v.x, -v.y, -v.z)
+    }
+
+    public static func + (lhs: RectangularCoordinate, rhs: RectangularCoordinate) -> RectangularCoordinate {
+        return RectangularCoordinate(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z)
+    }
+
+    public static func - (lhs: RectangularCoordinate, rhs: RectangularCoordinate) -> RectangularCoordinate {
+        return RectangularCoordinate(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z)
+    }
+
+    public static func * (lhs: RectangularCoordinate, scalar: Double) -> RectangularCoordinate {
+        return RectangularCoordinate(lhs.x * scalar, lhs.y * scalar, lhs.z * scalar)
+    }
+
     init(array: [Double]) {
-        init(x: array[0], y: array[1], z: array[2])
+        self.init(array[0], array[1], array[2])
     }
 }
 
 public enum VSOP87 {
-    public static func getPlanetBodyCoordinate(_ planetBody: PlanetBody, julianDay: Double) -> RectangularCoordinate {
-        let julianCentury = (julianDay - 2451545.0) / 365250.0
+    public static func getBodyHeliocentricEclipticCoordinate(_ solarSystemBody: SolarSystemBody, julianDay: Double) -> RectangularCoordinate {
+        let julianMillenia = (julianDay - 2451545.0) / 365250.0
 
-        switch planetBody {
+        switch solarSystemBody {
+        case .sun:
+            return RectangularCoordinate()
         case .mercury:
-            return RectangularCoordinate(array: VSOP87a_XSmall.getMercury(t: julianDay))
+            return RectangularCoordinate(array: VSOP87a_XSmall.getMercury(t: julianMillenia))
         case .venus:
-            return RectangularCoordinate(array: VSOP87a_XSmall.getVenus(t: julianDay))
+            return RectangularCoordinate(array: VSOP87a_XSmall.getVenus(t: julianMillenia))
+        case .earth:
+            return RectangularCoordinate(array: VSOP87a_XSmall.getEarth(t: julianMillenia))
         case .earthMoonBarycenter:
-            return RectangularCoordinate(array: VSOP87a_XSmall.getEmb(t: julianDay))
+            return RectangularCoordinate(array: VSOP87a_XSmall.getEmb(t: julianMillenia))
+        case .moon:
+            return RectangularCoordinate(array: VSOP87a_XSmall.getMoon(earth: VSOP87a_XSmall.getEarth(t: julianMillenia), emb: VSOP87a_XSmall.getEmb(t: julianMillenia)))
         case .mars:
-            return RectangularCoordinate(array: VSOP87a_XSmall.getMars(t: julianDay))
+            return RectangularCoordinate(array: VSOP87a_XSmall.getMars(t: julianMillenia))
         case .jupiter:
-            return RectangularCoordinate(array: VSOP87a_XSmall.getJupiter(t: julianDay))
+            return RectangularCoordinate(array: VSOP87a_XSmall.getJupiter(t: julianMillenia))
         case .saturn:
-            return RectangularCoordinate(array: VSOP87a_XSmall.getSaturn(t: julianDay))
+            return RectangularCoordinate(array: VSOP87a_XSmall.getSaturn(t: julianMillenia))
         case .uranus:
-            return RectangularCoordinate(array: VSOP87a_XSmall.getUranus(t: julianDay))
+            return RectangularCoordinate(array: VSOP87a_XSmall.getUranus(t: julianMillenia))
         case .neptune:
-            return RectangularCoordinate(array: VSOP87a_XSmall.getNeptune(t: julianDay))
+            return RectangularCoordinate(array: VSOP87a_XSmall.getNeptune(t: julianMillenia))
         }
     }
 }

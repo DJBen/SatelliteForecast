@@ -120,11 +120,30 @@ struct UCSSatCell: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             HStack(alignment: .top) {
-                Text(sat.name)
-                    .font(.headline)
-                    .bold()
-                    .lineLimit(nil)
-                    .fixedSize(horizontal: false, vertical: true)
+                VStack(alignment: .leading) {
+                    Text(sat.officialName)
+                        .font(.headline)
+                        .bold()
+                        .lineLimit(nil)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    let unofficialName: String? = {
+                        if let indexOfLeftParens = sat.name.firstIndex(of: "("),
+                           let indexOfRightParens = sat.name.lastIndex(of: ")") {
+                            let startIndex = sat.name.index(after: indexOfLeftParens)
+                            return String(sat.name[startIndex..<indexOfRightParens])
+                        } else {
+                            return nil
+                        }
+                    }()
+
+                    if let unofficialName = unofficialName {
+                        Text(unofficialName)
+                            .font(.subheadline)
+                            .lineLimit(nil)
+                            .foregroundColor(.secondary)
+                    }
+                }
 
                 Spacer()
 
@@ -194,7 +213,7 @@ struct UCSSatCell: View {
                             .aspectRatio(contentMode: .fit)
                     }
                     .frame(
-                        maxWidth: 150,
+                        maxWidth: 135,
                         alignment: .trailing
                     )
                 }
@@ -205,7 +224,7 @@ struct UCSSatCell: View {
 
 fileprivate extension View {
     func secondaryStyle() -> some View {
-        font(.caption)
+        font(.caption2)
         .foregroundColor(Color(UIColor.secondaryLabel))
     }
 }

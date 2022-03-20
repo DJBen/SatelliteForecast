@@ -9,6 +9,8 @@ import SwiftUI
 import SatelliteKit
 import SatelliteForecastCore
 import BTree
+import SolarSystem
+import VSOP87
 
 struct SunlightIndicatorViewModel: Equatable {
     enum SunEvent: Equatable, Hashable {
@@ -165,7 +167,7 @@ struct SunlightIndicator: View, Equatable {
         
         // Stride in a 10 minute interval across the julian date to improve performance
         for julianDate in stride(from: julianDateRange.lowerBound.roundJulianDate(.toMins(10)), through: julianDateRange.upperBound.roundJulianDate(.toMins(10)), by: 10 * TimeConstants.min2day) {
-            julianDateElevations[julianDate] = AstroAlgorithms.sunElevation(julianDate: julianDate, observer: observer)
+            julianDateElevations[julianDate] = SolarSystemBody.sun.aziEle(julianDay: julianDate, observer: observer).elev
         }
 
         return julianDateElevations

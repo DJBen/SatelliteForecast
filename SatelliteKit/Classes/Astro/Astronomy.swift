@@ -21,7 +21,7 @@ public struct LatLonAlt: Equatable, Hashable, Codable {
 
 }
 
-public struct AziEleDst: Equatable, Hashable, Codable {
+public struct AziEleDst: AziEleProviding, Hashable, Codable {
     public init(azim: Double, elev: Double, dist: Double) {
         self.azim = azim
         self.elev = elev
@@ -42,6 +42,30 @@ public struct RADec: Equatable, Hashable, Codable {
         self.ra = ra
         self.dec = dec
     }
+
+    public init(vector: Vector) {
+        self.init(
+            ra: atan2pi(vector.y, vector.x) * rad2deg,
+            dec: asin(vector.z / (vector.x * vector.x +
+                                  vector.y * vector.y +
+                                  vector.z * vector.z).squareRoot()) * rad2deg
+        )
+    }
+}
+
+public protocol AziEleProviding: Equatable {
+    var azim: Double { get }
+    var elev: Double { get }
+}
+
+public struct AziEle: AziEleProviding, Hashable, Codable {
+    public init(azim: Double, elev: Double) {
+        self.azim = azim
+        self.elev = elev
+    }
+
+    public var azim: Double                                 // azimuth (degrees)
+    public var elev: Double                                 // elevation (degrees)
 }
 
 /*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -163,7 +187,7 @@ public func lunarGeo (julianDays: Double) -> RADec {
 
 public func azel(julianDate: Double,
                  site: (Double, Double),
-                 cele: RADec) -> (alt: Double, azi: Double) {
+                 cele: RADec) -> AziEle {
 
     let hourAngle = (siteMeanSiderealTime(julianDate: julianDate, site.1) - cele.ra) * deg2rad
 
@@ -173,8 +197,10 @@ public func azel(julianDate: Double,
     let elev = asin(sin(lat) * sin(dec) + cos(lat) * cos(dec) * cos(hourAngle))
     let azim = atan2pi(sin(hourAngle), sin(lat) * cos(hourAngle) - cos(lat) * tan(dec))
 
-    return (fmod(elev * rad2deg, 360.0),
-            fmod(azim * rad2deg + 540.0, 360.0))
+    return AziEle(
+        azim: fmod(azim * rad2deg + 540.0, 360.0),
+        elev: fmod(elev * rad2deg, 360.0)
+    )
 }
 
 /*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -182,7 +208,7 @@ public func azel(julianDate: Double,
   ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛*/
 public func azel(time: Date,
                  site: (Double, Double),
-                 cele: RADec) -> (alt: Double, azi: Double) {
+                 cele: RADec) -> AziEle {
 
     let hourAngle = (siteMeanSiderealTime(date: time, site.1) - cele.ra) * deg2rad
 
@@ -192,8 +218,10 @@ public func azel(time: Date,
     let elev = asin(sin(lat) * sin(dec) + cos(lat) * cos(dec) * cos(hourAngle))
     let azim = atan2pi(sin(hourAngle), sin(lat) * cos(hourAngle) - cos(lat) * tan(dec))
 
-    return (fmod(elev * rad2deg, 360.0),
-            fmod(azim * rad2deg + 540.0, 360.0))
+    return AziEle(
+        azim: fmod(azim * rad2deg + 540.0, 360.0),
+        elev: fmod(elev * rad2deg, 360.0)
+    )
 }
 
 /*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓

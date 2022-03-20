@@ -9,6 +9,8 @@ import BTree
 import Foundation
 import QSMag
 import SatelliteKit
+import SolarSystem
+import VSOP87
 
 extension SatelliteSnapshot {
     public init(
@@ -43,11 +45,11 @@ extension SatelliteSnapshot {
             sunPosition: solarCel,
             observerPosition: obsCel
         )
-        let (sunElev, _) = azel(
+        let sunElev = azel(
             julianDate: julianDate,
             site: (observer.lat, observer.lon),
             cele: cartesianToRaDec(solarCel)
-        )
+        ).elev
         let visualMagnitude: Double?
         if let crossSectionArea = satelliteInfo.satCat?.rcs {
             visualMagnitude = AstroAlgorithms.lambertianSphereMagnitude(
@@ -207,11 +209,10 @@ extension SatelliteInfo {
             }
         }
 
-        let sunElev = azel(
-            julianDate: maxElevDatePos.julianDate,
-            site: (observer.lat, observer.lon),
-            cele: solarGeo(julianDays: maxElevDatePos.julianDate)
-        ).alt
+        let sunElev = SolarSystemBody.sun.aziEle(
+            julianDay: maxElevDatePos.julianDate,
+            observer: observer
+        ).elev
 
         let pass = Pass(
             noradIndex: noradIndex,

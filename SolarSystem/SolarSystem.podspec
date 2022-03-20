@@ -7,9 +7,9 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = 'VSOP87_SatelliteKitExtensions'
+  s.name             = 'SolarSystem'
   s.version          = '1.0.0.LOCAL'
-  s.summary          = 'Extensions on SatelliteKit for VSOP87 planet theory.'
+  s.summary          = 'A library that calculates the positions of main bodies of the solar system.'
 
   s.homepage         = 'https://github.com/DJBen'
   s.license          = { :type => 'Proprietary', :text => '© 2021 DJBen' }
@@ -26,6 +26,8 @@ Pod::Spec.new do |s|
 
   s.test_spec 'Tests' do |test_spec|
     test_spec.source_files = 'Tests/**/*.swift'
+    
+    test_spec.dependency 'SatelliteKit', '1.0.0.LOCAL'
 
     test_spec.framework = 'XCTest'
   end
