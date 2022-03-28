@@ -38,10 +38,6 @@ struct SatelliteOverviewViewImpl: SatelliteOverviewView {
     @ObservedObject var viewModel: ObservableViewModel<SatelliteOverviewViewAction, SatelliteOverviewViewState>
     let listViewProducer: ViewProducer<SatelliteListViewContext, SatelliteListView>
     let singleSatelliteWrappingViewProducer: ViewProducer<SingleSatelliteWrappingViewContext, SingleSatelliteWrappingView>
-    let observerCellViewProducer: ViewProducer<Void, ObserverCell>
-    let locationSettingsViewProducer: ViewProducer<Void, LocationSettingsView>
-    let alarmSettingsCellProducer: ViewProducer<Void, AlarmSettingsCell>
-    let alarmSettingsViewProducer: ViewProducer<Void, AlarmSettingsView>
 
     let sections: [SatelliteOverviewSection] = [
         .satellitesOfSpecialInterest([
@@ -52,10 +48,6 @@ struct SatelliteOverviewViewImpl: SatelliteOverviewView {
             .category(.brightest100),
             .category(.active),
             .category(.last30DayLaunches)
-        ]),
-        .settings([
-            .settings(.alert),
-            .settings(.observer)
         ])
     ]
 
@@ -73,13 +65,6 @@ struct SatelliteOverviewViewImpl: SatelliteOverviewView {
             )
         case let .category(category):
             viewModel.dispatch(.selectCategory(category))
-        case let .settings(settings):
-            switch settings {
-            case .observer:
-                viewModel.dispatch(.selectObserver)
-            case .alert:
-                viewModel.dispatch(.selectAlert)
-            }
         case .none:
             viewModel.dispatch(.returnToSatelliteOverview)
         }
@@ -103,13 +88,6 @@ struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                     observer: viewModel.state.location.map(LatLonAlt.init)
                 )
             )
-        case let .settings(settings):
-            switch settings {
-            case .observer:
-                locationSettingsViewProducer.view()
-            case .alert:
-                alarmSettingsViewProducer.view()
-            }
         }
     }
 
@@ -129,9 +107,7 @@ struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                 SatelliteOverviewCell(
                     model: SatelliteOverviewCellModel(
                         item: item
-                    ),
-                    observerCellViewProducer: observerCellViewProducer,
-                    alarmSettingsCellProducer: alarmSettingsCellProducer
+                    )
                 )
             }
         )
@@ -153,7 +129,7 @@ struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                         .id(item)
                 }
             }
-        case .satellitesOfSpecialInterest(_), .settings(_):
+        case .satellitesOfSpecialInterest(_):
             ForEach(section.items, id: \.self) { item in
                 navigationLink(for: item)
                     .id(item)
@@ -199,11 +175,7 @@ struct SatelliteOverviewView_Previews: PreviewProvider {
                 )
             ),
             listViewProducer: .crash,
-            singleSatelliteWrappingViewProducer: .crash,
-            observerCellViewProducer: .crash,
-            locationSettingsViewProducer: .crash,
-            alarmSettingsCellProducer: .crash,
-            alarmSettingsViewProducer: .crash
+            singleSatelliteWrappingViewProducer: .crash
         )
     }
 }

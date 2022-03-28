@@ -11,11 +11,14 @@ import CombineRextensions
 extension SettingsOverviewViewState: AppStateMappable {
     static func project(appState: AppState) -> SettingsOverviewViewState {
         SettingsOverviewViewState(
+            observerNavigation: appState.navigationState.observerNavigation,
+            alarmNavigation: appState.navigationState.alarmNavigation
         )
     }
 
     static func apply(appState: inout AppState, state: SettingsOverviewViewState) {
-
+        appState.navigationState.observerNavigation = state.observerNavigation
+        appState.navigationState.alarmNavigation = state.alarmNavigation
     }
 }
 
@@ -32,8 +35,10 @@ extension ViewProducer where Context == Void, ProducedView == SettingsOverviewVi
                     state: SettingsOverviewViewState.project(appState:)
                 )
                 .asObservableViewModel(initialState: .init(), emitsValue: .whenDifferent),
-                alarmSettingsViewProducer: .alarmSettingsView(viewModel: viewModel),
-                locationSettingsViewProducer: .locationSettings(viewModel: viewModel)
+                observerCellViewProducer: .observerCell(viewModel: viewModel),
+                locationSettingsViewProducer: .locationSettings(viewModel: viewModel),
+                alarmSettingsCellProducer: .alarmSettingsCell(viewModel: viewModel),
+                alarmSettingsViewProducer: .alarmSettingsView(viewModel: viewModel)
             )
         }
     }

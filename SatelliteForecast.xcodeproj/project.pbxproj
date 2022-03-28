@@ -121,8 +121,7 @@
 		EFCF20F426AD545400D87E8B /* DebugMenuMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFCF20F326AD545400D87E8B /* DebugMenuMiddleware.swift */; };
 		EFD8E73F27E6B7DC0098D208 /* SettingsOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFD8E73E27E6B7DC0098D208 /* SettingsOverviewView.swift */; };
 		EFD8E74227E6B7F30098D208 /* SettingsOverviewView+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFD8E74127E6B7F30098D208 /* SettingsOverviewView+Wiring.swift */; };
-		EFD8E74627F192480098D208 /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFD8E74527F192480098D208 /* MenuView.swift */; };
-		EFD8E74827F197A00098D208 /* MenuView+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFD8E74727F197A00098D208 /* MenuView+Wiring.swift */; };
+		EFD8E74B27F1B6870098D208 /* SettingsOverviewItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFD8E74A27F1B6870098D208 /* SettingsOverviewItem.swift */; };
 		EFE7215C26BE57BD0009C29B /* LocationSettingsCurrentLocationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE7215B26BE57BD0009C29B /* LocationSettingsCurrentLocationCell.swift */; };
 		EFE7216026BF58E20009C29B /* CLPlacemark+Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE7215F26BF58E20009C29B /* CLPlacemark+Formatting.swift */; };
 		EFE7216226BF59500009C29B /* CLLocationCoordinate2D+Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE7216126BF59500009C29B /* CLLocationCoordinate2D+Formatting.swift */; };
@@ -286,8 +285,7 @@
 		EFCF20F326AD545400D87E8B /* DebugMenuMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugMenuMiddleware.swift; sourceTree = "<group>"; };
 		EFD8E73E27E6B7DC0098D208 /* SettingsOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsOverviewView.swift; sourceTree = "<group>"; };
 		EFD8E74127E6B7F30098D208 /* SettingsOverviewView+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsOverviewView+Wiring.swift"; sourceTree = "<group>"; };
-		EFD8E74527F192480098D208 /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
-		EFD8E74727F197A00098D208 /* MenuView+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MenuView+Wiring.swift"; sourceTree = "<group>"; };
+		EFD8E74A27F1B6870098D208 /* SettingsOverviewItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsOverviewItem.swift; sourceTree = "<group>"; };
 		EFE7215B26BE57BD0009C29B /* LocationSettingsCurrentLocationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSettingsCurrentLocationCell.swift; sourceTree = "<group>"; };
 		EFE7215F26BF58E20009C29B /* CLPlacemark+Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CLPlacemark+Formatting.swift"; sourceTree = "<group>"; };
 		EFE7216126BF59500009C29B /* CLLocationCoordinate2D+Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CLLocationCoordinate2D+Formatting.swift"; sourceTree = "<group>"; };
@@ -498,8 +496,6 @@
 			children = (
 				EF16816D27D5D7B0001BA9C3 /* Wiring */,
 				EF3D099B2685A12200B84232 /* SatelliteOverviewView.swift */,
-				EFD8E74527F192480098D208 /* MenuView.swift */,
-				EFD8E74727F197A00098D208 /* MenuView+Wiring.swift */,
 				EF3D099D26864DDF00B84232 /* SatelliteOverviewCell.swift */,
 				EF8BD19F26B5544500DE9F33 /* SatelliteOverviewSection.swift */,
 				EF1EDA2B268D21BF0088DD65 /* SatelliteOverviewMiddleware.swift */,
@@ -750,6 +746,7 @@
 			isa = PBXGroup;
 			children = (
 				EFD8E74027E6B7E60098D208 /* Wiring */,
+				EFD8E74A27F1B6870098D208 /* SettingsOverviewItem.swift */,
 				EFD8E73E27E6B7DC0098D208 /* SettingsOverviewView.swift */,
 			);
 			path = SettingsOverview;
@@ -1034,6 +1031,7 @@
 				EF12BC1027E204070083F3A2 /* EnvironmentKeys.swift in Sources */,
 				EF16817127D5DC03001BA9C3 /* SatelliteOverviewReducer+Wiring.swift in Sources */,
 				EF16815427D2B59D001BA9C3 /* BackgroundSkyViewReducer+Wiring.swift in Sources */,
+				EFD8E74B27F1B6870098D208 /* SettingsOverviewItem.swift in Sources */,
 				EF7A3128266B1A2D00CC33C0 /* LocationAction.swift in Sources */,
 				EF847BF826CF2AB40004806F /* NotificationReducer.swift in Sources */,
 				EF833AFC26ADE9B0003EEBB6 /* SatelliteElevationGraphBackground.swift in Sources */,
@@ -1093,7 +1091,6 @@
 				EF58EC1426A6325B0026ADB9 /* PassLabel.swift in Sources */,
 				EF7D4DD826D25A2C005E49D0 /* SatelliteCategory.swift in Sources */,
 				EFED97BF27D6DB06003FC289 /* ViewDidLoadModifier.swift in Sources */,
-				EFD8E74827F197A00098D208 /* MenuView+Wiring.swift in Sources */,
 				EF8BD19E26B5448F00DE9F33 /* ObserverCell.swift in Sources */,
 				EF3D099C2685A12200B84232 /* SatelliteOverviewView.swift in Sources */,
 				EF16815E27D420F8001BA9C3 /* RootView.swift in Sources */,
@@ -1102,7 +1099,6 @@
 				EF3D09A72689CA3D00B84232 /* SatelliteOverviewReducer.swift in Sources */,
 				EFED97BB27D6D689003FC289 /* RootViewMiddleware.swift in Sources */,
 				EF2FBB2326CA74D60046EF28 /* AllPassesLocationChangeWarning.swift in Sources */,
-				EFD8E74627F192480098D208 /* MenuView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

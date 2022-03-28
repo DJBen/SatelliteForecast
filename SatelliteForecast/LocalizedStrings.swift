@@ -228,6 +228,16 @@ enum LocalizedStrings {
         }
     }
 
+    enum SettingsOverviewView {
+        static let title = NSLocalizedString(
+            "SettingsOverviewView.title",
+            tableName: nil,
+            bundle: .main,
+            value: "Settings",
+            comment: "The title for settings"
+        )
+    }
+
     enum SatelliteOverviewView {
         static func sectionTitle(_ section: SatelliteOverviewSection) -> String {
             switch section {
@@ -246,14 +256,6 @@ enum LocalizedStrings {
                     bundle: .main,
                     value: "Satellites by categories",
                     comment: "The section title for satellites grouped by categories"
-                )
-            case .settings:
-                return NSLocalizedString(
-                    "SatelliteListView.sectionOverviewView.section.settings",
-                    tableName: nil,
-                    bundle: .main,
-                    value: "Settings",
-                    comment: "The section title for settings"
                 )
             }
         }
