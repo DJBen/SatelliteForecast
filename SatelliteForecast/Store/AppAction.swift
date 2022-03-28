@@ -20,6 +20,7 @@ enum AppAction {
 
     case rootView(RootViewAction)
     case satelliteOverview(SatelliteOverviewViewAction)
+    case settingsOverview(SettingsOverviewViewAction)
     case satelliteListView(SatelliteListViewAction)
     case singleSatelliteWrappingView(SingleSatelliteWrappingViewAction)
     case allPassesView(AllPassesViewAction)
@@ -123,6 +124,17 @@ extension AppAction {
         set {
             guard case .satelliteOverview = self, let newValue = newValue else { return }
             self = .satelliteOverview(newValue)
+        }
+    }
+
+    public var settingsOverview: SettingsOverviewViewAction? {
+        get {
+            guard case let .settingsOverview(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .settingsOverview = self, let newValue = newValue else { return }
+            self = .settingsOverview(newValue)
         }
     }
 

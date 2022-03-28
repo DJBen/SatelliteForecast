@@ -1,41 +1,25 @@
 //
-//  SatelliteOverviewView.swift
+//  MenuView.swift
 //  SatelliteForecast
 //
-//  Created by Ben Lu on 6/24/21.
+//  Created by Ben Lu on 3/27/22.
 //
 
+import CombineRex
+import CombineRextensions
 import SatelliteForecastCore
 import SatelliteKit
 import SwiftUI
-import SwiftRex
-import CombineRex
-import CombineRextensions
-import CoreLocation
 
-enum SatelliteOverviewViewAction {
-    struct SelectSpecialSatelliteParams: Equatable {
-        let noradIndex: UInt
-        let julianDateRange: ClosedRange<Double>
-        let observer: LatLonAlt?
-    }
-    case selectSpecialSatellite(SelectSpecialSatelliteParams)
-    case selectCategory(SatelliteCategory)
-    case selectObserver
-    case selectAlert
-    case returnToSatelliteOverview
+struct MenuViewContext {
+    let sections: [SatelliteOverviewSection]
+    let julianDateRange: ClosedRange<Double>
+    let observer: LatLonAlt
+    @Binding var sectionItem: SatelliteOverviewItem?
 }
 
-struct SatelliteOverviewViewState: Equatable {
-    var navigationState: NavigationState = .init()
-    var julianDate: Double = 0
-    var location: CLLocation?
-}
-
-protocol SatelliteOverviewView: View {}
-
-struct SatelliteOverviewViewImpl: SatelliteOverviewView {
-    @ObservedObject var viewModel: ObservableViewModel<SatelliteOverviewViewAction, SatelliteOverviewViewState>
+struct MenuView: View {
+    let context: MenuViewContext
     let listViewProducer: ViewProducer<SatelliteListViewContext, SatelliteListView>
     let singleSatelliteWrappingViewProducer: ViewProducer<SingleSatelliteWrappingViewContext, SingleSatelliteWrappingView>
     let observerCellViewProducer: ViewProducer<Void, ObserverCell>
@@ -43,64 +27,22 @@ struct SatelliteOverviewViewImpl: SatelliteOverviewView {
     let alarmSettingsCellProducer: ViewProducer<Void, AlarmSettingsCell>
     let alarmSettingsViewProducer: ViewProducer<Void, AlarmSettingsView>
 
-    let sections: [SatelliteOverviewSection] = [
-        .satellitesOfSpecialInterest([
-            .specialSatellites(.iss),
-            .specialSatellites(.tianhe)
-        ]),
-        .categories([
-            .category(.brightest100),
-            .category(.active),
-            .category(.last30DayLaunches)
-        ]),
-        .settings([
-            .settings(.alert),
-            .settings(.observer)
-        ])
-    ]
-
-    private func setNavigationItem(_ item: SatelliteOverviewItem?) {
-        switch item {
-        case let .specialSatellites(satellite):
-            viewModel.dispatch(
-                .selectSpecialSatellite(
-                    .init(
-                        noradIndex: satellite.rawValue,
-                        julianDateRange: JulianDateUtil.createJulianDateRange(now: viewModel.state.julianDate),
-                        observer: viewModel.state.location.map(LatLonAlt.init)
-                    )
-                )
-            )
-        case let .category(category):
-            viewModel.dispatch(.selectCategory(category))
-        case let .settings(settings):
-            switch settings {
-            case .observer:
-                viewModel.dispatch(.selectObserver)
-            case .alert:
-                viewModel.dispatch(.selectAlert)
-            }
-        case .none:
-            viewModel.dispatch(.returnToSatelliteOverview)
-        }
-    }
-
     @ViewBuilder private func destination(for item: SatelliteOverviewItem) -> some View {
         switch item {
         case let .specialSatellites(satellite):
             singleSatelliteWrappingViewProducer.view(
                 SingleSatelliteWrappingViewContext(
                     selectedNoradIndex: satellite.rawValue,
-                    julianDateRange: JulianDateUtil.createJulianDateRange(now: viewModel.state.julianDate),
-                    observer: viewModel.state.location.map(LatLonAlt.init)
+                    julianDateRange: context.julianDateRange,
+                    observer: context.observer
                 )
             )
         case let .category(category):
             listViewProducer.view(
                 SatelliteListViewContext(
                     category: category,
-                    julianDateRange: JulianDateUtil.createJulianDateRange(now: viewModel.state.julianDate),
-                    observer: viewModel.state.location.map(LatLonAlt.init)
+                    julianDateRange: context.julianDateRange,
+                    observer: context.observer
                 )
             )
         case let .settings(settings):
@@ -119,12 +61,7 @@ struct SatelliteOverviewViewImpl: SatelliteOverviewView {
         NavigationLink(
             destination: LazyView(destination(for: item)),
             tag: item,
-            selection: Binding<SatelliteOverviewItem?>(
-                get: {
-                    viewModel.state.navigationState.selectedSatelliteOverviewItem
-                },
-                set: self.setNavigationItem
-            ),
+            selection: context.$sectionItem,
             label: {
                 SatelliteOverviewCell(
                     model: SatelliteOverviewCellModel(
@@ -169,7 +106,7 @@ struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                     spacing: 10,
                     pinnedViews: []
                 ) {
-                    ForEach(sections, id: \.self) { section in
+                    ForEach(context.sections, id: \.self) { section in
                         Section(
                             header: Text(LocalizedStrings.SatelliteOverviewView.sectionTitle(section))
                                 .font(.headline.lowercaseSmallCaps().weight(.semibold))
@@ -189,14 +126,29 @@ struct SatelliteOverviewViewImpl: SatelliteOverviewView {
 }
 
 #if DEBUG
-struct SatelliteOverviewView_Previews: PreviewProvider {
+
+struct MenuView_Previews: PreviewProvider {
     static var previews: some View {
-        SatelliteOverviewViewImpl(
-            viewModel: .mock(
-                state: SatelliteOverviewViewState(
-                    navigationState: .init(),
-                    julianDate: 0
-                )
+        MenuView(
+            context: MenuViewContext(
+                sections:  [
+                    .satellitesOfSpecialInterest([
+                        .specialSatellites(.iss),
+                        .specialSatellites(.tianhe)
+                    ]),
+                    .categories([
+                        .category(.brightest100),
+                        .category(.active),
+                        .category(.last30DayLaunches)
+                    ]),
+                    .settings([
+                        .settings(.alert),
+                        .settings(.observer)
+                    ])
+                ],
+                julianDateRange: JulianDateUtil.createJulianDateRange(now: 0),
+                observer: LatLonAlt(lat: 0, lon: 0, alt: 0),
+                sectionItem: .constant(nil)
             ),
             listViewProducer: .crash,
             singleSatelliteWrappingViewProducer: .crash,
@@ -204,7 +156,9 @@ struct SatelliteOverviewView_Previews: PreviewProvider {
             locationSettingsViewProducer: .crash,
             alarmSettingsCellProducer: .crash,
             alarmSettingsViewProducer: .crash
+
         )
     }
 }
+
 #endif

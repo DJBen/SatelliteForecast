@@ -5,7 +5,8 @@
 //  Created by Ben Lu on 3/6/22.
 //
 
-import Foundation
+import CombineRex
+import CombineRextensions
 
 extension SatelliteOverviewViewState: AppStateMappable {
     static func project(appState: AppState) -> SatelliteOverviewViewState {
@@ -18,5 +19,26 @@ extension SatelliteOverviewViewState: AppStateMappable {
 
     static func apply(appState: inout AppState, state: SatelliteOverviewViewState) {
         appState.navigationState = state.navigationState
+    }
+}
+
+extension ViewProducer where Context == Void, ProducedView == SatelliteOverviewViewImpl {
+    static func satelliteOverview<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
+        ViewProducer<Context, ProducedView> { context in
+            SatelliteOverviewViewImpl(
+                viewModel: viewModel.projection(
+                    action: AppAction.satelliteOverview,
+                    state: SatelliteOverviewViewState.project(appState:)
+                )
+                .asObservableViewModel(initialState: .init(), emitsValue: .whenDifferent),
+                listViewProducer: ViewProducer<SatelliteListViewContext, SatelliteListView>
+                    .satelliteListView(viewModel: viewModel),
+                singleSatelliteWrappingViewProducer: ViewProducer<SingleSatelliteWrappingViewContext, SingleSatelliteWrappingView>.singleSatelliteWrappingView(viewModel: viewModel),
+                observerCellViewProducer: ViewProducer<Void, ObserverCell>.observerCell(viewModel: viewModel),
+                locationSettingsViewProducer: ViewProducer<Void, LocationSettingsView>.locationSettings(viewModel: viewModel),
+                alarmSettingsCellProducer: ViewProducer<Void, AlarmSettingsCell>.alarmSettingsCell(viewModel: viewModel),
+                alarmSettingsViewProducer: ViewProducer<Void, AlarmSettingsView>.alarmSettingsView(viewModel: viewModel)
+            )
+        }
     }
 }
