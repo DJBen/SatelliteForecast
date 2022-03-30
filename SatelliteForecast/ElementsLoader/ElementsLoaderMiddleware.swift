@@ -17,6 +17,7 @@ import SatelliteCatalog
 fileprivate let logger = Logger(subsystem: "io.djben.elementsLoader", category: "middleware")
 
 struct ElementsLoaderDependencies {
+    let elementLoader: ElementsLoader
     let updateInterval: TimeInterval = 4 * 60 * 60
 }
 
@@ -26,16 +27,14 @@ extension EffectMiddleware where
     StateType == ElementsLoaderState,
     Dependencies == ElementsLoaderDependencies {
 
-    static func elementsLoader(
-        _ elementsLoader: ElementsLoader
-    ) -> MiddlewareReader<ElementsLoaderDependencies, EffectMiddleware<ElementsLoaderAction, ElementsLoaderOutput, ElementsLoaderState, ElementsLoaderDependencies>> {
+    static var elementsLoader: MiddlewareReader<ElementsLoaderDependencies, EffectMiddleware<ElementsLoaderAction, ElementsLoaderOutput, ElementsLoaderState, ElementsLoaderDependencies>> {
         EffectMiddleware<ElementsLoaderAction, ElementsLoaderOutput, ElementsLoaderState, ElementsLoaderDependencies>
         .onAction { (inputAction, dispatcher, getState) -> Effect<ElementsLoaderDependencies, ElementsLoaderOutput> in
             switch inputAction {
             case let .loadElements(category, selectSpecialNoradIndex, selectNoradIndex, calculatePass):
                 return Effect(token: category) { context -> AnyPublisher<DispatchedAction<ElementsLoaderOutput>, Never> in
                     func loadSatellitePublisher() -> AnyPublisher<DispatchedAction<ElementsLoaderOutput>, Never> {
-                        elementsLoader.loadElementsPublisher(
+                        context.dependencies.elementLoader.loadElementsPublisher(
                             category: category
                         )
                         .map { map -> DispatchedAction<ElementsLoaderOutput> in

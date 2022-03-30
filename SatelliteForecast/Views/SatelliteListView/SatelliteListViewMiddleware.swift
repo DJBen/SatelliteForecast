@@ -14,7 +14,11 @@ import SatelliteKit
 
 fileprivate let logger = Logger(subsystem: "io.djben.satelliteListView", category: "middleware")
 
-extension EffectMiddleware where InputActionType == SatelliteListViewAction, OutputActionType == AppAction, StateType == AppState, Dependencies == Void {
+struct SatelliteListViewMiddlewareDependencies {
+    let elementsLoader: ElementsLoader
+}
+
+extension EffectMiddleware where InputActionType == SatelliteListViewAction, OutputActionType == AppAction, StateType == AppState, Dependencies == SatelliteListViewMiddlewareDependencies {
 
     /// A middeware that listens to `SatelliteListViewAction`.
     /// - `selectSatellite(noradIndex)`: It asynchronously does two things:
@@ -22,10 +26,8 @@ extension EffectMiddleware where InputActionType == SatelliteListViewAction, Out
     ///   - Find all the passes in the same period, and generate a fine ephemeris during each pass.
     ///
     ///   Thus this effect will have two action outputs before it completes.
-    static func satelliteListView(
-        elementsLoader: ElementsLoader
-    ) -> EffectMiddleware<SatelliteListViewAction, AppAction, AppState, Void> {
-        EffectMiddleware.onAction { (action, _, getState) -> Effect<Void, AppAction> in
+    static var satelliteListView: MiddlewareReader<SatelliteListViewMiddlewareDependencies, EffectMiddleware<SatelliteListViewAction, AppAction, AppState, SatelliteListViewMiddlewareDependencies>> {
+        EffectMiddleware.onAction { (action, dispatcher, getState) -> Effect<SatelliteListViewMiddlewareDependencies, AppAction> in
             switch action {
             case let .selectSatellite(params):
                 guard let params = params else {
@@ -57,22 +59,30 @@ extension EffectMiddleware where InputActionType == SatelliteListViewAction, Out
                     return .doNothing
                 }
 
-                return elementsLoader.loadElementsPublisher(
-                    category: category
-                )
-                .map {
-                    AppAction.elementsLoaderOutput(
-                        .loadedSatelliteElements(category: category, satelliteInfo: $0)
+                return Effect(token: "retryLoadingSatelliteList") { context -> AnyPublisher<DispatchedAction<AppAction>, Never> in
+                    context.dependencies.elementsLoader.loadElementsPublisher(
+                        category: category
                     )
-                }
-                .catch { error in
-                    Just(
-                        AppAction.elementsLoaderOutput(
-                            .failedLoadingElements(category: category, error: error)
+                    .map {
+                        DispatchedAction(
+                            AppAction.elementsLoaderOutput(
+                                .loadedSatelliteElements(category: category, satelliteInfo: $0)
+                            ),
+                            dispatcher: dispatcher
                         )
-                    )
+                    }
+                    .catch { error in
+                        Just(
+                            DispatchedAction(
+                                AppAction.elementsLoaderOutput(
+                                    .failedLoadingElements(category: category, error: error)
+                                ),
+                                dispatcher: dispatcher
+                            )
+                        )
+                    }
+                    .eraseToAnyPublisher()
                 }
-                .asEffect(info: nil)
             }
         }
     }
