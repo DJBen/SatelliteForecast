@@ -116,6 +116,8 @@
 		EF9D82A32661BBF100616C97 /* SatelliteForecastApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9D827A2661BBF000616C97 /* SatelliteForecastApp.swift */; };
 		EFAE1F0C2668B10F00A18A42 /* SatelliteElevationGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F0B2668B10F00A18A42 /* SatelliteElevationGraph.swift */; };
 		EFAE1F132669E7A800A18A42 /* SunlightIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F122669E7A800A18A42 /* SunlightIndicator.swift */; };
+		EFB6111B27F4E9B3003557E5 /* SettingsOverviewReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB6111A27F4E9B3003557E5 /* SettingsOverviewReducer.swift */; };
+		EFB6111D27F4EA47003557E5 /* SettingsOverviewReducer+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB6111C27F4EA47003557E5 /* SettingsOverviewReducer+Wiring.swift */; };
 		EFCF20F026AD020E00D87E8B /* DebugMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFCF20EF26AD020E00D87E8B /* DebugMenu.swift */; };
 		EFCF20F226AD4E7E00D87E8B /* DebugMenuReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFCF20F126AD4E7E00D87E8B /* DebugMenuReducer.swift */; };
 		EFCF20F426AD545400D87E8B /* DebugMenuMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFCF20F326AD545400D87E8B /* DebugMenuMiddleware.swift */; };
@@ -280,6 +282,8 @@
 		EFAE1F0B2668B10F00A18A42 /* SatelliteElevationGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteElevationGraph.swift; sourceTree = "<group>"; };
 		EFAE1F122669E7A800A18A42 /* SunlightIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunlightIndicator.swift; sourceTree = "<group>"; };
 		EFB1B4D027BCDFC40025974C /* SatelliteForecastTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SatelliteForecastTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EFB6111A27F4E9B3003557E5 /* SettingsOverviewReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsOverviewReducer.swift; sourceTree = "<group>"; };
+		EFB6111C27F4EA47003557E5 /* SettingsOverviewReducer+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsOverviewReducer+Wiring.swift"; sourceTree = "<group>"; };
 		EFCF20EF26AD020E00D87E8B /* DebugMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugMenu.swift; sourceTree = "<group>"; };
 		EFCF20F126AD4E7E00D87E8B /* DebugMenuReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugMenuReducer.swift; sourceTree = "<group>"; };
 		EFCF20F326AD545400D87E8B /* DebugMenuMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugMenuMiddleware.swift; sourceTree = "<group>"; };
@@ -748,6 +752,7 @@
 				EFD8E74027E6B7E60098D208 /* Wiring */,
 				EFD8E74A27F1B6870098D208 /* SettingsOverviewItem.swift */,
 				EFD8E73E27E6B7DC0098D208 /* SettingsOverviewView.swift */,
+				EFB6111A27F4E9B3003557E5 /* SettingsOverviewReducer.swift */,
 			);
 			path = SettingsOverview;
 			sourceTree = "<group>";
@@ -756,6 +761,7 @@
 			isa = PBXGroup;
 			children = (
 				EFD8E74127E6B7F30098D208 /* SettingsOverviewView+Wiring.swift */,
+				EFB6111C27F4EA47003557E5 /* SettingsOverviewReducer+Wiring.swift */,
 			);
 			path = Wiring;
 			sourceTree = "<group>";
@@ -1018,6 +1024,7 @@
 				EF1CAB36266B87B6006319C8 /* SatelliteListViewReducer.swift in Sources */,
 				EF5A908426A0D68400EADA2D /* LazyView.swift in Sources */,
 				EFD8E73F27E6B7DC0098D208 /* SettingsOverviewView.swift in Sources */,
+				EFB6111B27F4E9B3003557E5 /* SettingsOverviewReducer.swift in Sources */,
 				EF847BFE26CF985C0004806F /* UIColor+Convenience.swift in Sources */,
 				EF8A4235267C53630014AE17 /* PassViewReducer.swift in Sources */,
 				EF7A3125266B1A2500CC33C0 /* LocationState.swift in Sources */,
@@ -1080,6 +1087,7 @@
 				EF5CB01E266E2933000019DA /* ElementsPropagatorAction.swift in Sources */,
 				EF16814927D18B1F001BA9C3 /* BackgroundSkyResources.swift in Sources */,
 				EF833AFA26AD6068003EEBB6 /* ShakeMotion+Notification.swift in Sources */,
+				EFB6111D27F4EA47003557E5 /* SettingsOverviewReducer+Wiring.swift in Sources */,
 				EF847BFA26CF624B0004806F /* NotificationAction.swift in Sources */,
 				EF12BC0E27E1C0CF0083F3A2 /* SatelliteElevationGraph+Wiring.swift in Sources */,
 				EF7A319B266B733C00CC33C0 /* LocalizedStrings.swift in Sources */,

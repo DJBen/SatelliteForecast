@@ -19,6 +19,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         Reducer<ElementsLoaderAction, ElementsLoaderState>.elementsLoaderReducer.lift(),
         Reducer<ElementsLoaderOutput, ElementsLoaderState>.elementsLoaderOutputReducer.lift(),
         Reducer.satelliteOverviewReducer.lift(),
+        Reducer.settingsOverviewReducer.lift(),
         Reducer<SatelliteListViewAction, AppState>.satelliteListViewReducer.lift(action: \.satelliteListView),
         Reducer<AllPassesViewAction, AppState>.allPassesViewReducer.lift(action: \.allPassesView),
         Reducer<PassViewAction, AppState>.passViewReducer.lift(action: \.passView),

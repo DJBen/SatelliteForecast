@@ -40,9 +40,9 @@ struct SettingsOverviewViewImpl: SettingsOverviewView {
     @ViewBuilder private func destination(for item: SettingsOverviewItem) -> some View {
         switch item {
         case .observer:
-            observerCellViewProducer.view()
+            locationSettingsViewProducer.view()
         case .alarms:
-            alarmSettingsCellProducer.view()
+            alarmSettingsViewProducer.view()
         }
     }
 
