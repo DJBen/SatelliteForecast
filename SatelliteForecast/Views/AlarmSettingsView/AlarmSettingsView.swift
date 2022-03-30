@@ -26,16 +26,16 @@ struct AlarmSettingsViewState: Equatable {
     var notificationItems: [Item] = []
     var currentDate: Double = 0
     
-    static func project(state: AppState) -> AlarmSettingsViewState {
+    static func project(appState: AppState) -> AlarmSettingsViewState {
         AlarmSettingsViewState(
-            notificationItems: state.notificationState.scheduledPassNotifications.compactMap { scheduledNotification -> Item? in
+            notificationItems: appState.notificationState.scheduledPassNotifications.compactMap { scheduledNotification -> Item? in
                 return Item(
                     id: scheduledNotification.id,
                     passNotification: scheduledNotification.notification
                 )
             }
             .sorted(by: { $0.passNotification.pass.rise.julianDate < $1.passNotification.pass.rise.julianDate }),
-            currentDate: state.julianDate
+            currentDate: appState.julianDate
         )
     }
     
@@ -140,7 +140,7 @@ extension ViewProducer where Context == Void, ProducedView == AlarmSettingsView 
                 viewModel: viewModel
                     .projection(
                         action: AppAction.alarmSettingsView,
-                        state: AlarmSettingsViewState.project(state:)
+                        state: AlarmSettingsViewState.project(appState:)
                     )
                     .asObservableViewModel(initialState: .empty, emitsValue: .whenDifferent)
             )

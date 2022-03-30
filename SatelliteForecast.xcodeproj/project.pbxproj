@@ -118,6 +118,9 @@
 		EFAE1F132669E7A800A18A42 /* SunlightIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAE1F122669E7A800A18A42 /* SunlightIndicator.swift */; };
 		EFB6111B27F4E9B3003557E5 /* SettingsOverviewReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB6111A27F4E9B3003557E5 /* SettingsOverviewReducer.swift */; };
 		EFB6111D27F4EA47003557E5 /* SettingsOverviewReducer+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB6111C27F4EA47003557E5 /* SettingsOverviewReducer+Wiring.swift */; };
+		EFB6112027F4EF4D003557E5 /* SkyChart+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB6111F27F4EF4D003557E5 /* SkyChart+Wiring.swift */; };
+		EFB6112327F4F779003557E5 /* PassView+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB6112227F4F779003557E5 /* PassView+Wiring.swift */; };
+		EFB6112627F509A9003557E5 /* AllPassesView+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB6112527F509A9003557E5 /* AllPassesView+Wiring.swift */; };
 		EFCF20F026AD020E00D87E8B /* DebugMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFCF20EF26AD020E00D87E8B /* DebugMenu.swift */; };
 		EFCF20F226AD4E7E00D87E8B /* DebugMenuReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFCF20F126AD4E7E00D87E8B /* DebugMenuReducer.swift */; };
 		EFCF20F426AD545400D87E8B /* DebugMenuMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFCF20F326AD545400D87E8B /* DebugMenuMiddleware.swift */; };
@@ -284,6 +287,9 @@
 		EFB1B4D027BCDFC40025974C /* SatelliteForecastTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SatelliteForecastTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFB6111A27F4E9B3003557E5 /* SettingsOverviewReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsOverviewReducer.swift; sourceTree = "<group>"; };
 		EFB6111C27F4EA47003557E5 /* SettingsOverviewReducer+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsOverviewReducer+Wiring.swift"; sourceTree = "<group>"; };
+		EFB6111F27F4EF4D003557E5 /* SkyChart+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SkyChart+Wiring.swift"; sourceTree = "<group>"; };
+		EFB6112227F4F779003557E5 /* PassView+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PassView+Wiring.swift"; sourceTree = "<group>"; };
+		EFB6112527F509A9003557E5 /* AllPassesView+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AllPassesView+Wiring.swift"; sourceTree = "<group>"; };
 		EFCF20EF26AD020E00D87E8B /* DebugMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugMenu.swift; sourceTree = "<group>"; };
 		EFCF20F126AD4E7E00D87E8B /* DebugMenuReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugMenuReducer.swift; sourceTree = "<group>"; };
 		EFCF20F326AD545400D87E8B /* DebugMenuMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugMenuMiddleware.swift; sourceTree = "<group>"; };
@@ -342,6 +348,7 @@
 		EF0FC06A2677D73000560AF0 /* AllPassesView */ = {
 			isa = PBXGroup;
 			children = (
+				EFB6112427F50994003557E5 /* Wiring */,
 				EF0FC06B2677D7A200560AF0 /* AllPassesView.swift */,
 				EF5CB021266EAF6F000019DA /* AllPassesViewMiddleware.swift */,
 				EF465650267B38780040B762 /* AllPassesViewReducer.swift */,
@@ -453,6 +460,7 @@
 		EF19FA07266EC34600D0B2CD /* SkyChart */ = {
 			isa = PBXGroup;
 			children = (
+				EFB6111E27F4EF43003557E5 /* Wiring */,
 				EF4AF76B266434CC00D28F47 /* SkyChart.swift */,
 				EF283B0426B23122008223C1 /* SkyChartDynamicIndicator.swift */,
 				EF833B0526B12FB0003EEBB6 /* SkyChartBackground.swift */,
@@ -481,6 +489,7 @@
 		EF1CAB43266C51F5006319C8 /* PassView */ = {
 			isa = PBXGroup;
 			children = (
+				EFB6112127F4EFD9003557E5 /* Wiring */,
 				EF1CAB31266B7ABF006319C8 /* PassView.swift */,
 				EF8A4234267C53630014AE17 /* PassViewReducer.swift */,
 			);
@@ -734,6 +743,30 @@
 				EF67A7BD27BCF024007305DA /* MiddlewareTests.swift */,
 			);
 			path = SatelliteForecastTests;
+			sourceTree = "<group>";
+		};
+		EFB6111E27F4EF43003557E5 /* Wiring */ = {
+			isa = PBXGroup;
+			children = (
+				EFB6111F27F4EF4D003557E5 /* SkyChart+Wiring.swift */,
+			);
+			path = Wiring;
+			sourceTree = "<group>";
+		};
+		EFB6112127F4EFD9003557E5 /* Wiring */ = {
+			isa = PBXGroup;
+			children = (
+				EFB6112227F4F779003557E5 /* PassView+Wiring.swift */,
+			);
+			path = Wiring;
+			sourceTree = "<group>";
+		};
+		EFB6112427F50994003557E5 /* Wiring */ = {
+			isa = PBXGroup;
+			children = (
+				EFB6112527F509A9003557E5 /* AllPassesView+Wiring.swift */,
+			);
+			path = Wiring;
 			sourceTree = "<group>";
 		};
 		EFCF20EE26AD020400D87E8B /* Debug */ = {
@@ -1054,11 +1087,13 @@
 				EF16815927D2D6CF001BA9C3 /* RealtimeSkyViewReducer+Wiring.swift in Sources */,
 				EFE7216026BF58E20009C29B /* CLPlacemark+Formatting.swift in Sources */,
 				EF8A423A267E87740014AE17 /* SatelliteElevationGraph+Static.swift in Sources */,
+				EFB6112627F509A9003557E5 /* AllPassesView+Wiring.swift in Sources */,
 				EF5CB019266E28FC000019DA /* TimerMiddleware.swift in Sources */,
 				EF62BA4426CE316A00813357 /* PassNotification.swift in Sources */,
 				EFED97B727D62053003FC289 /* LocalElementsLoader.swift in Sources */,
 				EF7A3192266B6AFC00CC33C0 /* AppState.swift in Sources */,
 				EF4AF76C266434CC00D28F47 /* SkyChart.swift in Sources */,
+				EFB6112027F4EF4D003557E5 /* SkyChart+Wiring.swift in Sources */,
 				EF0FC06C2677D7A200560AF0 /* AllPassesView.swift in Sources */,
 				EF7C6651269918060017A007 /* ElementsLoaderError.swift in Sources */,
 				EF19FA0B266EC7CE00D0B2CD /* SkyChartReducer.swift in Sources */,
@@ -1071,6 +1106,7 @@
 				EF16814D27D201A7001BA9C3 /* ChartQuality.swift in Sources */,
 				EF283B0526B23122008223C1 /* SkyChartDynamicIndicator.swift in Sources */,
 				EF16816F27D5DAE9001BA9C3 /* SatelliteOverviewView+Wiring.swift in Sources */,
+				EFB6112327F4F779003557E5 /* PassView+Wiring.swift in Sources */,
 				EF7C665326992FF80017A007 /* ElementsLoader.swift in Sources */,
 				EF7A3135266B493E00CC33C0 /* ElementsLoaderState.swift in Sources */,
 				EF16816C27D5D599001BA9C3 /* Elements+Preview.swift in Sources */,

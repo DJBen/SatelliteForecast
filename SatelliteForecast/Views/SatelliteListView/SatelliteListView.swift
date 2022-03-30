@@ -64,11 +64,11 @@ struct SatelliteListViewState: Equatable {
     var satelliteSearchText: String = ""
     var selectedNoradIndex: UInt?
 
-    static func project(state: AppState) -> SatelliteListViewState {
+    static func project(appState: AppState) -> SatelliteListViewState {
         return SatelliteListViewState(
-            satelliteInfo: state.elementsLoader.info,
-            satelliteSearchText: state.navigationState.listNavigation.satelliteSearchText,
-            selectedNoradIndex: state.navigationState.listNavigation.noradIndex
+            satelliteInfo: appState.elementsLoader.info,
+            satelliteSearchText: appState.navigationState.listNavigation.satelliteSearchText,
+            selectedNoradIndex: appState.navigationState.listNavigation.noradIndex
         )
     }
 }
@@ -119,7 +119,6 @@ struct SatelliteListView: View {
                         destination: LazyView(
                             allPassesViewProducer.view(
                                 AllPassesViewContext(
-                                    selectedNoradIndex: noradIndex,
                                     satelliteInfo: satelliteInfo,
                                     julianDateRange: context.julianDateRange,
                                     observer: context.observer
@@ -213,11 +212,7 @@ extension ViewProducer where Context == SatelliteListViewContext, ProducedView =
                 viewModel: viewModel
                     .projection(
                         action: AppAction.satelliteListView,
-                        state: { appState in 
-                            SatelliteListViewState.project(
-                                state: appState
-                            )
-                        }
+                        state: SatelliteListViewState.project(appState:)
                     )
                     .asObservableViewModel(initialState: .init(), emitsValue: .whenDifferent),
                 context: context,

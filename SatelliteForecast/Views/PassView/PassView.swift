@@ -16,13 +16,7 @@ enum PassViewAction {
 }
 
 struct PassViewState: Equatable {
-    static var empty: PassViewState {
-        PassViewState()
-    }
-    
-    static func project(state: AppState) -> PassViewState {
-        return PassViewState()
-    }
+
 }
 
 /// The satellite detail view shows satellite passes and the sky chart during the first visible pass (if available).
@@ -92,26 +86,6 @@ struct PassViewContext {
     var snapshots: [SatelliteSnapshot]
     var pass: Pass
     var notableSnapshots: NotableSnapshots
-}
-
-extension ViewProducer where Context == PassViewContext, ProducedView == PassView {
-    static func passView<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
-        ViewProducer<PassViewContext, PassView> { context in
-            PassView(
-                viewModel: viewModel
-                    .projection(
-                        action: AppAction.passView,
-                        state: PassViewState.project(state:)
-                    )
-                    .asObservableViewModel(initialState: .empty, emitsValue: .whenDifferent),
-                context: context,
-                elevationGraphProducer: ViewProducer<SatelliteElevationGraphContext, SatelliteElevationGraph>
-                    .satelliteElevationGraph(viewModel: viewModel),
-                skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
-                    .skyChart(viewModel: viewModel)
-            )
-        }
-    }
 }
 
 import CoreLocation

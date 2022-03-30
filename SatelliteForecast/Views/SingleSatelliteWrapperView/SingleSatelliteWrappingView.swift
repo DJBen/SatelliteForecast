@@ -5,6 +5,7 @@
 //  Created by Ben Lu on 7/9/21.
 //
 
+import BTree
 import SwiftUI
 import CombineRex
 import CombineRextensions
@@ -21,15 +22,11 @@ enum SingleSatelliteWrappingViewAction {
 }
 
 struct SingleSatelliteWrappingViewState: Equatable {
-    var satellite: Loadable<SatelliteInfo, ElementsLoaderError> = .notLoaded
+    var elementsLoader: ElementsLoaderResources = .init()
 
-    static func project(state: AppState, context: SingleSatelliteWrappingViewContext) -> SingleSatelliteWrappingViewState {
-        let noradIndex = context.selectedNoradIndex
-
+    static func project(appState: AppState) -> SingleSatelliteWrappingViewState {
         return SingleSatelliteWrappingViewState(
-            satellite: state.elementsLoader.info[.brightest100]?.flatMap { satellites in
-                satellites[noradIndex]
-            } ?? .notLoaded
+            elementsLoader: appState.elementsLoader
         )
     }
 }
@@ -39,11 +36,16 @@ struct SingleSatelliteWrappingView: View {
     let context: SingleSatelliteWrappingViewContext
     let allPassesViewProducer: ViewProducer<AllPassesViewContext, AllPassesView>
 
+    private var satellite: Loadable<SatelliteInfo, ElementsLoaderError> {
+        viewModel.state.elementsLoader.info[.brightest100]?.flatMap { satellites in
+            satellites[context.selectedNoradIndex]
+        } ?? .notLoaded
+    }
+
     @ViewBuilder func satelliteContent<Content: View, FailedContent: View>(
         @ViewBuilder contentBuilder: (SatelliteInfo) -> Content,
         @ViewBuilder failedContentBuilder: (UInt, ElementsLoaderError) -> FailedContent
     ) -> some View {
-        let satellite = viewModel.state.satellite
         Group {
             switch satellite {
             case .notLoaded:
@@ -62,7 +64,6 @@ struct SingleSatelliteWrappingView: View {
         satelliteContent { satelliteInfo in
             allPassesViewProducer.view(
                 AllPassesViewContext(
-                    selectedNoradIndex: satelliteInfo.noradIndex,
                     satelliteInfo: satelliteInfo,
                     julianDateRange: context.julianDateRange,
                     observer: context.observer
@@ -108,12 +109,7 @@ extension ViewProducer where Context == SingleSatelliteWrappingViewContext, Prod
             SingleSatelliteWrappingView(
                 viewModel: viewModel.projection(
                     action: AppAction.singleSatelliteWrappingView,
-                    state: { appAction in 
-                        SingleSatelliteWrappingViewState.project(
-                            state: appAction,
-                            context: context
-                        )
-                    }
+                    state: SingleSatelliteWrappingViewState.project(appState:)
                 )
                 .asObservableViewModel(initialState: .init(), emitsValue: .whenDifferent),
                 context: context,

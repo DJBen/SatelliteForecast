@@ -38,13 +38,26 @@ enum AllPassesViewAction {
 }
 
 struct AllPassesViewContext {
-    let selectedNoradIndex: UInt
     let satelliteInfo: SatelliteInfo
     let julianDateRange: ClosedRange<Double>
     let observer: LatLonAlt?
 }
 
-struct AllPassesViewState: Equatable {
+struct AllPassesViewState {
+    var julianDate: Double = 0
+    var scheduledPassNotifications: Set<ScheduledPassNotification> = []
+    var skyChartResources: SkyChartResources = .init()
+    var backgroundSkyResources: BackgroundSkyResources = .init()
+    var location: CLLocation?
+    var placemark: CLPlacemark?
+    var selectedPassIndex: Int?
+    var satelliteCategory: SatelliteCategory?
+    var satelliteTrails: [UInt: SatelliteTrails] = [:]
+}
+
+extension AllPassesViewState: Equatable {}
+
+struct AllPassesView: View {
     struct Item: Equatable, Identifiable {
         let index: Int
         let passSnapshots: PassSnapshots
@@ -66,95 +79,68 @@ struct AllPassesViewState: Equatable {
             self.rasterizedSatellitePath = rasterizedSatellitePath
             self.rasterizedBackgroundSky = rasterizedBackgroundSky
         }
-        
+
         var id: String {
             return "\(passSnapshots.pass.notificationIdentifier)-scheduled:\(hasScheduledAlert)"
         }
     }
 
-    var julianDate: Double = 0
-    var visiblePasses: [Item]?
-    var invisiblePasses: [Item]?
-    var selectedPassIndex: Int?
-    var satelliteCategory: SatelliteCategory?
-    var locationChangeWarningState: AllPassesLocationChangeWarningState?
-
-    static func project(state: AppState, context: AllPassesViewContext) -> AllPassesViewState {
-        if let satelliteTrails = state.satelliteTrails[context.selectedNoradIndex],
-           let passSnapshotsList = satelliteTrails.passSnapshots {
-            let items = passSnapshotsList.enumerated().map { index, passSnapshots -> Item in
-                let rasterizedSatellitePath = state.skyChartResources.previewSatellitePaths[passSnapshots.pass]
-                let rasterizedBackgroundSky: UIImage?
-                if let observer = context.observer {
-                    rasterizedBackgroundSky = state.backgroundSkyResources.previewBackgroundSkies[
-                        BackgroundSkyKey(
-                            observer: observer,
-                            configs: .preset
-                        )
-                    ]?[passSnapshots.pass.rise.julianDate.roundJulianDate(.toMins(1))]
-                } else {
-                    rasterizedBackgroundSky = nil
-                }
-                return Item(
-                    index: index,
-                    passSnapshots: passSnapshots,
-                    hasScheduledAlert: state.notificationState.scheduledPassNotifications.contains(
-                        where: { $0.id == passSnapshots.pass.notificationIdentifier }
-                    ),
-                    rasterizedSatellitePath: rasterizedSatellitePath,
-                    rasterizedBackgroundSky: rasterizedBackgroundSky
-                )
-            }
-            let itemsByVisibility = Dictionary(grouping: items, by: \.passSnapshots.pass.visibility)
-            let visiblePasses = itemsByVisibility[.visible] ?? []
-            let invisiblePasses = (itemsByVisibility[.daylight] ?? []) + (itemsByVisibility[.unlit] ?? [])
-            let locationStateChangeWarning: AllPassesLocationChangeWarningState? = {
-                guard let observer = context.observer.map({ CLLocation($0).coordinate }),
-                        let newObserver = state.locationState.location?.coordinate else {
-                    return nil
-                }
-                if CLLocation(latitude: observer.latitude, longitude: observer.longitude).distance(from: CLLocation(latitude: newObserver.latitude, longitude: newObserver.longitude)) > 1000 {
-                    return AllPassesLocationChangeWarningState(
-                        observer: newObserver,
-                        observerDescription: state.locationState.placemark?.formattedString,
-                        oldObserver: observer
-                    )
-                } else {
-                    return nil
-                }
-            }()
-            
-            return AllPassesViewState(
-                julianDate: state.julianDate,
-                visiblePasses: visiblePasses
-                    .sorted { $0.passSnapshots.pass.rise.julianDate < $1.passSnapshots.pass.rise.julianDate },
-                invisiblePasses: invisiblePasses
-                    .sorted { $0.passSnapshots.pass.rise.julianDate < $1.passSnapshots.pass.rise.julianDate },
-                selectedPassIndex: state.navigationState.listNavigation.selectedPassIndex,
-                satelliteCategory: state.navigationState.listNavigation.category,
-                locationChangeWarningState: locationStateChangeWarning
-            )
-        } else {
-            return AllPassesViewState(
-                julianDate: state.julianDate,
-                visiblePasses: nil,
-                invisiblePasses: nil,
-                selectedPassIndex: state.navigationState.listNavigation.selectedPassIndex,
-                satelliteCategory: state.navigationState.listNavigation.category
-            )
-        }
-    }
-}
-
-struct AllPassesView: View {
     @ObservedObject var viewModel: ObservableViewModel<AllPassesViewAction, AllPassesViewState>
 
     let context: AllPassesViewContext
     let skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
     let passViewProducer: ViewProducer<PassViewContext, PassView>
 
-    private func navigationLink<Label: View>(
-        item: AllPassesViewState.Item,
+    private var itemsByVisibility: [Pass.Visibility: [Item]]? {
+        guard let satelliteTrail = viewModel.state.satelliteTrails[context.satelliteInfo.noradIndex],
+              let passSnapshotsList = satelliteTrail.passSnapshots else {
+            return nil
+        }
+
+        let items = passSnapshotsList.enumerated().map { index, passSnapshots -> Item in
+            let rasterizedSatellitePath = viewModel.state.skyChartResources.previewSatellitePaths[passSnapshots.pass]
+            let rasterizedBackgroundSky: UIImage?
+            if let observer = context.observer {
+                rasterizedBackgroundSky = viewModel.state.backgroundSkyResources.previewBackgroundSkies[
+                    BackgroundSkyKey(
+                        observer: observer,
+                        configs: .preset
+                    )
+                ]?[passSnapshots.pass.rise.julianDate.roundJulianDate(.toMins(1))]
+            } else {
+                rasterizedBackgroundSky = nil
+            }
+            return Item(
+                index: index,
+                passSnapshots: passSnapshots,
+                hasScheduledAlert: viewModel.state.scheduledPassNotifications.contains(
+                    where: { $0.id == passSnapshots.pass.notificationIdentifier }
+                ),
+                rasterizedSatellitePath: rasterizedSatellitePath,
+                rasterizedBackgroundSky: rasterizedBackgroundSky
+            )
+        }
+        return Dictionary(grouping: items, by: \.passSnapshots.pass.visibility)
+    }
+
+    private var locationStateChangeWarning: AllPassesLocationChangeWarningState? {
+        guard let observer = context.observer.map({ CLLocation($0).coordinate }),
+              let newObserver = viewModel.state.location?.coordinate else {
+            return nil
+        }
+        if CLLocation(latitude: observer.latitude, longitude: observer.longitude).distance(from: CLLocation(latitude: newObserver.latitude, longitude: newObserver.longitude)) > 1000 {
+            return AllPassesLocationChangeWarningState(
+                observer: newObserver,
+                observerDescription: viewModel.state.placemark?.formattedString,
+                oldObserver: observer
+            )
+        } else {
+            return nil
+        }
+    }
+
+    @ViewBuilder private func navigationLink<Label: View>(
+        item: Item,
         observer: LatLonAlt,
         @ViewBuilder label: () -> Label
     ) -> some View {
@@ -184,7 +170,7 @@ struct AllPassesView: View {
         )
     }
     
-    @ViewBuilder private func swipeActionLeftButtons(item: AllPassesViewState.Item) -> some View {
+    @ViewBuilder private func swipeActionLeftButtons(item: Item) -> some View {
         if item.hasScheduledAlert {
             Button {
                 viewModel.dispatch(
@@ -215,7 +201,7 @@ struct AllPassesView: View {
         }
     }
 
-    @ViewBuilder private func passesList(_ items: [AllPassesViewState.Item]?, observer: LatLonAlt) -> some View {
+    @ViewBuilder private func passesList(_ items: [Item]?, observer: LatLonAlt) -> some View {
         if let items = items {
             if items.isEmpty {
                 Text("No passes found")
@@ -282,17 +268,17 @@ struct AllPassesView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            if let locationChangeWarningState = viewModel.state.locationChangeWarningState {
+            if let locationStateChangeWarning = locationStateChangeWarning {
                 AllPassesLocationChangeWarning(
-                    state: locationChangeWarningState,
+                    state: locationStateChangeWarning,
                     onRecalculatePasses: {
                         viewModel.dispatch(
                             .recalculatePasses(
                                 .init(
-                                    selectedNoradIndex: context.selectedNoradIndex,
+                                    selectedNoradIndex: context.satelliteInfo.noradIndex,
                                     satelliteInfo: context.satelliteInfo,
                                     julianDateRange: context.julianDateRange,
-                                    observer: LatLonAlt(lat: locationChangeWarningState.observer.latitude, lon: locationChangeWarningState.observer.longitude, alt: 0)
+                                    observer: LatLonAlt(lat: locationStateChangeWarning.observer.latitude, lon: locationStateChangeWarning.observer.longitude, alt: 0)
                                 )
                             )
                         )
@@ -301,17 +287,25 @@ struct AllPassesView: View {
             }
             
             if let observer = context.observer {
-                List {
+                let items = itemsByVisibility
+                let visiblePasses: [Item] = items?[.visible] ?? []
+                let invisiblePasses: [Item] = (items?[.daylight] ?? []) + (items?[.unlit] ?? [])
+
+                SwiftUI.List {
                     Section(header: observerHeader(observer: observer)) {
                         EmptyView()
                     }
-                    
+
                     Section(header: visiblePassHeader) {
-                        passesList(viewModel.state.visiblePasses, observer: observer)
+                        Group {
+                            passesList(visiblePasses, observer: observer)
+                        }
                     }
 
                     Section(header: invisiblePassHeader) {
-                        passesList(viewModel.state.invisiblePasses, observer: observer)
+                        Group {
+                            passesList(invisiblePasses, observer: observer)
+                        }
                     }
                 }
             } else {
@@ -356,31 +350,6 @@ struct AllPassesView: View {
     }
 }
 
-extension ViewProducer where Context == AllPassesViewContext, ProducedView == AllPassesView {
-    static func allPassesView<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
-        ViewProducer<Context, ProducedView> { context in
-            AllPassesView(
-                viewModel: viewModel
-                    .projection(
-                        action: { AppAction.allPassesView($0) },
-                        state: { appState in
-                            AllPassesViewState.project(
-                                state: appState,
-                                context: context
-                            )
-                        }
-                    )
-                    .asObservableViewModel(initialState: .init(), emitsValue: .whenDifferent),
-                context: context,
-                skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
-                    .skyChart(viewModel: viewModel),
-                passViewProducer: ViewProducer<PassViewContext, PassView>
-                    .passView(viewModel: viewModel)
-            )
-        }
-    }
-}
-
 #if DEBUG
 
 struct AllPassesView_Previews: PreviewProvider {
@@ -411,15 +380,9 @@ struct AllPassesView_Previews: PreviewProvider {
     }()
 
     static var previews: some View {
-        let items = tianHePasses.enumerated().map { index, passSnapshots in
-            AllPassesViewState.Item(index: index, passSnapshots: passSnapshots, hasScheduledAlert: false)
-        }
-        let itemsByVisibility = Dictionary(grouping: items, by: \.passSnapshots.pass.visibility)
-        let visiblePasses = itemsByVisibility[.visible] ?? []
-        let invisiblePasses = (itemsByVisibility[.daylight] ?? []) + (itemsByVisibility[.unlit] ?? [])
         let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
+        let location = CLLocation(observer)
         let context = AllPassesViewContext(
-            selectedNoradIndex: 48274,
             satelliteInfo: SatelliteInfo(elements: tianHe),
             julianDateRange: Date().julianDate...Date().julianDate + 1,
             observer: observer
@@ -432,8 +395,14 @@ struct AllPassesView_Previews: PreviewProvider {
                     viewModel: .mock(
                         state: AllPassesViewState(
                             julianDate: Date().julianDate,
-                            visiblePasses: visiblePasses,
-                            invisiblePasses: invisiblePasses
+                            scheduledPassNotifications: [],
+                            skyChartResources: .init(),
+                            backgroundSkyResources: .init(),
+                            location: location,
+                            placemark: nil,
+                            selectedPassIndex: nil,
+                            satelliteCategory: nil,
+                            satelliteTrails: [48274: SatelliteTrails(observer: observer, passSnapshots: tianHePasses)]
                         )
                     ),
                     context: context,
