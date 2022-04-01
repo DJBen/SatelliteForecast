@@ -55,7 +55,12 @@ extension ElementsLoaderImpl: ElementsLoader {
     public func loadElementsPublisher(category: SatelliteCategory) -> AnyPublisher<Map<UInt, SatelliteInfo>, ElementsLoaderError> {
         session
             .dataTaskPublisher(for: URLRequest(url: category.url))
-            .map { $0.data }
+            .tryMap { (data, response) in
+                guard response.mimeType == "text/plain" else {
+                    throw ElementsLoaderError.unexpectedMimeType(response.mimeType)
+                }
+                return data
+            }
             .tryCatch { error in
                 // Try to load local file if exists when network failed.
                 loadLocalSatelliteDataPublisher(category: category, upstreamError: error)

@@ -38,10 +38,6 @@ struct SatelliteOverviewViewImpl: SatelliteOverviewView {
     @ObservedObject var viewModel: ObservableViewModel<SatelliteOverviewViewAction, SatelliteOverviewViewState>
     let listViewProducer: ViewProducer<SatelliteListViewContext, SatelliteListView>
     let singleSatelliteWrappingViewProducer: ViewProducer<SingleSatelliteWrappingViewContext, SingleSatelliteWrappingView>
-    let observerCellViewProducer: ViewProducer<Void, ObserverCell>
-    let locationSettingsViewProducer: ViewProducer<Void, LocationSettingsView>
-    let alarmSettingsCellProducer: ViewProducer<Void, AlarmSettingsCell>
-    let alarmSettingsViewProducer: ViewProducer<Void, AlarmSettingsView>
 
     let sections: [SatelliteOverviewSection] = [
         .satellitesOfSpecialInterest([
@@ -52,12 +48,27 @@ struct SatelliteOverviewViewImpl: SatelliteOverviewView {
             .category(.brightest100),
             .category(.active),
             .category(.last30DayLaunches)
-        ]),
-        .settings([
-            .settings(.alert),
-            .settings(.observer)
         ])
     ]
+
+    private func setNavigationItem(_ item: SatelliteOverviewItem?) {
+        switch item {
+        case let .specialSatellites(satellite):
+            viewModel.dispatch(
+                .selectSpecialSatellite(
+                    .init(
+                        noradIndex: satellite.rawValue,
+                        julianDateRange: JulianDateUtil.createJulianDateRange(now: viewModel.state.julianDate),
+                        observer: viewModel.state.location.map(LatLonAlt.init)
+                    )
+                )
+            )
+        case let .category(category):
+            viewModel.dispatch(.selectCategory(category))
+        case .none:
+            viewModel.dispatch(.returnToSatelliteOverview)
+        }
+    }
 
     @ViewBuilder private func destination(for item: SatelliteOverviewItem) -> some View {
         switch item {
@@ -77,39 +88,6 @@ struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                     observer: viewModel.state.location.map(LatLonAlt.init)
                 )
             )
-        case let .settings(settings):
-            switch settings {
-            case .observer:
-                locationSettingsViewProducer.view()
-            case .alert:
-                alarmSettingsViewProducer.view()
-            }
-        }
-    }
-
-    private func setNavigationItem(_ item: SatelliteOverviewItem?) {
-        switch item {
-        case let .specialSatellites(satellite):
-            viewModel.dispatch(
-                .selectSpecialSatellite(
-                    .init(
-                        noradIndex: satellite.rawValue,
-                        julianDateRange: JulianDateUtil.createJulianDateRange(now: viewModel.state.julianDate),
-                        observer: viewModel.state.location.map(LatLonAlt.init)
-                    )
-                )
-            )
-        case let .category(category):
-            viewModel.dispatch(.selectCategory(category))
-        case let .settings(settings):
-            switch settings {
-            case .observer:
-                viewModel.dispatch(.selectObserver)
-            case .alert:
-                viewModel.dispatch(.selectAlert)
-            }
-        case .none:
-            viewModel.dispatch(.returnToSatelliteOverview)
         }
     }
 
@@ -129,9 +107,7 @@ struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                 SatelliteOverviewCell(
                     model: SatelliteOverviewCellModel(
                         item: item
-                    ),
-                    observerCellViewProducer: observerCellViewProducer,
-                    alarmSettingsCellProducer: alarmSettingsCellProducer
+                    )
                 )
             }
         )
@@ -153,7 +129,7 @@ struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                         .id(item)
                 }
             }
-        case .satellitesOfSpecialInterest(_), .settings(_):
+        case .satellitesOfSpecialInterest(_):
             ForEach(section.items, id: \.self) { item in
                 navigationLink(for: item)
                     .id(item)
@@ -188,27 +164,6 @@ struct SatelliteOverviewViewImpl: SatelliteOverviewView {
     }
 }
 
-extension ViewProducer where Context == Void, ProducedView == SatelliteOverviewViewImpl {
-    static func satelliteOverview<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
-        ViewProducer<Context, ProducedView> { context in
-            SatelliteOverviewViewImpl(
-                viewModel: viewModel.projection(
-                    action: AppAction.satelliteOverview,
-                    state: SatelliteOverviewViewState.project(appState:)
-                )
-                .asObservableViewModel(initialState: .init(), emitsValue: .whenDifferent),
-                listViewProducer: ViewProducer<SatelliteListViewContext, SatelliteListView>
-                    .satelliteListView(viewModel: viewModel),
-                singleSatelliteWrappingViewProducer: ViewProducer<SingleSatelliteWrappingViewContext, SingleSatelliteWrappingView>.singleSatelliteWrappingView(viewModel: viewModel),
-                observerCellViewProducer: ViewProducer<Void, ObserverCell>.observerCell(viewModel: viewModel),
-                locationSettingsViewProducer: ViewProducer<Void, LocationSettingsView>.locationSettings(viewModel: viewModel),
-                alarmSettingsCellProducer: ViewProducer<Void, AlarmSettingsCell>.alarmSettingsCell(viewModel: viewModel),
-                alarmSettingsViewProducer: ViewProducer<Void, AlarmSettingsView>.alarmSettingsView(viewModel: viewModel)
-            )
-        }
-    }
-}
-
 #if DEBUG
 struct SatelliteOverviewView_Previews: PreviewProvider {
     static var previews: some View {
@@ -220,11 +175,7 @@ struct SatelliteOverviewView_Previews: PreviewProvider {
                 )
             ),
             listViewProducer: .crash,
-            singleSatelliteWrappingViewProducer: .crash,
-            observerCellViewProducer: .crash,
-            locationSettingsViewProducer: .crash,
-            alarmSettingsCellProducer: .crash,
-            alarmSettingsViewProducer: .crash
+            singleSatelliteWrappingViewProducer: .crash
         )
     }
 }

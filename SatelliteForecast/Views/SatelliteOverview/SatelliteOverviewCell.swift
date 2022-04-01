@@ -17,8 +17,6 @@ struct SatelliteOverviewCellModel {
 /// An overview cell contains a category of satellites.
 struct SatelliteOverviewCell: View {
     let model: SatelliteOverviewCellModel
-    let observerCellViewProducer: ViewProducer<Void, ObserverCell>
-    let alarmSettingsCellProducer: ViewProducer<Void, AlarmSettingsCell>
 
     @ViewBuilder var body: some View {
         switch model.item {
@@ -26,13 +24,6 @@ struct SatelliteOverviewCell: View {
             SatelliteOverviewSpecialSatelliteCell(satellite: satellite)
         case let .category(category):
             SatelliteOverviewCategoryCell(category: category)
-        case let .settings(settings):
-            switch settings {
-            case .observer:
-                observerCellViewProducer.view()
-            case .alert:
-                alarmSettingsCellProducer.view()
-            }
         }
     }
 }
@@ -161,37 +152,27 @@ struct SatelliteOverviewCell_Previews: PreviewProvider {
                             SatelliteOverviewCell(
                                 model: SatelliteOverviewCellModel(
                                     item: .specialSatellites(.iss)
-                                ),
-                                observerCellViewProducer: .crash,
-                                alarmSettingsCellProducer: .crash
+                                )
                             )
                             SatelliteOverviewCell(
                                 model: SatelliteOverviewCellModel(
                                     item: .specialSatellites(.tianhe)
-                                ),
-                                observerCellViewProducer: .crash,
-                                alarmSettingsCellProducer: .crash
+                                )
                             )
                             SatelliteOverviewCell(
                                 model: SatelliteOverviewCellModel(
                                     item: .category(.brightest100)
-                                ),
-                                observerCellViewProducer: .crash,
-                                alarmSettingsCellProducer: .crash
+                                )
                             )
                             SatelliteOverviewCell(
                                 model: SatelliteOverviewCellModel(
                                     item: .category(.active)
-                                ),
-                                observerCellViewProducer: .crash,
-                                alarmSettingsCellProducer: .crash
+                                )
                             )
                             SatelliteOverviewCell(
                                 model: SatelliteOverviewCellModel(
                                     item: .category(.last30DayLaunches)
-                                ),
-                                observerCellViewProducer: .crash,
-                                alarmSettingsCellProducer: .crash
+                                )
                             )
                         }
                     )

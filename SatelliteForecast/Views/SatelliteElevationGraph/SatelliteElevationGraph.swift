@@ -11,7 +11,6 @@ import SwiftUI
 import SatelliteKit
 import SatelliteForecastCore
 import CoreLocation
-import CombineRextensions
 
 struct SatelliteElevationGraphConfigs: Equatable {
     var timeGridLineInterval: TimeInterval

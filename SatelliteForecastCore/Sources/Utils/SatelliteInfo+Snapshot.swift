@@ -35,6 +35,7 @@ extension SatelliteSnapshot {
         let position = topVector2AziEleDst(
             cel2top(julianDays: julianDate, satCel: eciPosition, obsCel: obsCel)
         )
+        let distance = (eciPosition - obsCel).magnitude()
         let solarCel = solarCel(julianDays: julianDate)
         let isIlluminated = AstroAlgorithms.hasLineOfSight(
             object1Geo: eciPosition,
@@ -65,6 +66,7 @@ extension SatelliteSnapshot {
         self.init(
             julianDate: julianDate,
             position: position,
+            distance: distance,
             isIlluminated: isIlluminated,
             sunElevation: sunElev,
             phaseAngle: phaseAngle,

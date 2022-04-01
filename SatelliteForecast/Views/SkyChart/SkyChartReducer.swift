@@ -9,26 +9,16 @@ import Foundation
 import BTree
 import SwiftRex
 
-extension Reducer where ActionType == SkyChartOutput, StateType == SkyChartResources {
+extension Reducer where ActionType == SkyChartOutput, StateType == SkyChartViewState {
     static let skyChartOutputReducer = Reducer.reduce { action, state in
         switch action {
         case let .rasterizedSatellitePath(image, quality, pass):
             switch quality {
             case .full:
-                state.rasterizedSatellitePaths[pass] = image
+                state.resources.rasterizedSatellitePaths[pass] = image
             case .preview:
-                state.previewSatellitePaths[pass] = image
+                state.resources.previewSatellitePaths[pass] = image
             }
         }
-    }
-
-    func lift() -> Reducer<AppAction, AppState> {
-        lift(
-            actionGetter: \.skyChartOutput,
-            stateGetter: \AppState.skyChartResources,
-            stateSetter: { appState, state in
-                appState.skyChartResources = state
-            }
-        )
     }
 }

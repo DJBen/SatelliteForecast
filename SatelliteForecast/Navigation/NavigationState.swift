@@ -10,7 +10,7 @@ import SatelliteKit
 import SatelliteForecastCore
 
 struct NavigationState {
-    var tab: Tab = .realtimeSky
+    var tab: Tab = .forecast
     var specialSatelliteNavigation: SpecialSatelliteNavigation = .init()
     var listNavigation: ListNavigation = .init()
     var observerNavigation: ObserverNavigationState = .init()

@@ -1,0 +1,39 @@
+//
+//  PassView+Wiring.swift
+//  SatelliteForecast
+//
+//  Created by Ben Lu on 3/30/22.
+//
+
+import CombineRex
+import CombineRextensions
+
+extension PassViewState: AppStateMappable {
+    static func project(appState: AppState) -> PassViewState {
+        return PassViewState()
+    }
+    
+    static func apply(appState: inout AppState, state: PassViewState) {
+        
+    }
+}
+
+extension ViewProducer where Context == PassViewContext, ProducedView == PassView {
+    static func passView<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
+        ViewProducer<PassViewContext, PassView> { context in
+            PassView(
+                viewModel: viewModel
+                    .projection(
+                        action: AppAction.passView,
+                        state: PassViewState.project(appState:)
+                    )
+                    .asObservableViewModel(initialState: .init(), emitsValue: .whenDifferent),
+                context: context,
+                elevationGraphProducer: ViewProducer<SatelliteElevationGraphContext, SatelliteElevationGraph>
+                    .satelliteElevationGraph(viewModel: viewModel),
+                skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
+                    .skyChart(viewModel: viewModel)
+            )
+        }
+    }
+}

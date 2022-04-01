@@ -18,24 +18,27 @@ enum RootViewAction {
 extension RootViewAction: Equatable {}
 
 struct RootViewState {
-    var selectedTab: Tab = .realtimeSky
+    var selectedTab: Tab = .forecast
 }
 
 extension RootViewState: Equatable {}
 
-struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewViewType: SatelliteOverviewView>: View {
+struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewViewType: SatelliteOverviewView, SettingsOverViewViewType: SettingsOverviewView>: View {
     @ObservedObject var viewModel: ObservableViewModel<RootViewAction, RootViewState>
     let realtimeSkyViewProducer: ViewProducer<RealtimeSkyViewContext, RealtimeSkyViewType>
     let satelliteOverviewViewProducer: ViewProducer<Void, SatelliteOverviewViewType>
+    let settingsOverviewProducer: ViewProducer<Void, SettingsOverViewViewType>
 
     init(
         viewModel: ObservableViewModel<RootViewAction, RootViewState>,
         realtimeSkyViewProducer: ViewProducer<RealtimeSkyViewContext, RealtimeSkyViewType>,
-        satelliteOverviewViewProducer: ViewProducer<Void, SatelliteOverviewViewType>
+        satelliteOverviewViewProducer: ViewProducer<Void, SatelliteOverviewViewType>,
+        settingsOverviewProducer: ViewProducer<Void, SettingsOverViewViewType>
     ) {
         self.viewModel = viewModel
         self.realtimeSkyViewProducer = realtimeSkyViewProducer
         self.satelliteOverviewViewProducer = satelliteOverviewViewProducer
+        self.settingsOverviewProducer = settingsOverviewProducer
 
         let navBarAppearance = UINavigationBarAppearance()
         navBarAppearance.configureWithOpaqueBackground()
@@ -57,11 +60,20 @@ struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewViewType:
                 onChange: RootViewAction.selectTab
             )
         ) {
+            satelliteOverviewViewProducer.view(
+            )
+            .modifier(
+                TabBarItemModifier(
+                    tab: .forecast,
+                    selectedTab: viewModel.state.selectedTab
+                )
+            )
+
             realtimeSkyViewProducer.view(
                 RealtimeSkyViewContext(
                     basicChartConfigs: .init(),
                     backgroundSkyConfigs: .preset,
-                    satelliteMagToRadiusFunction: .init(multipler: 3.2, exponent: -0.38, minimum: 0.75)
+                    satelliteMagToRadiusFunction: .init(multipler: 3.2, exponent: -0.32, minimum: 1)
                 )
             )
             .modifier(
@@ -71,18 +83,17 @@ struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewViewType:
                 )
             )
 
-            satelliteOverviewViewProducer.view(
+            settingsOverviewProducer.view(
             )
             .modifier(
                 TabBarItemModifier(
-                    tab: .forecast,
+                    tab: .settings,
                     selectedTab: viewModel.state.selectedTab
                 )
             )
         }
         .onLoad {
             viewModel.dispatch(.loadElementsForRealtimeSky)
-
         }
     }
 }
@@ -102,6 +113,12 @@ struct RootView_Previews: PreviewProvider {
         }
     }
 
+    struct MockSettingsView: SettingsOverviewView {
+        var body: some View {
+            Color.purple
+        }
+    }
+
     static var previews: some View {
         RootView(
             viewModel: .mock(
@@ -116,7 +133,8 @@ struct RootView_Previews: PreviewProvider {
                 }
             ),
             realtimeSkyViewProducer: .pure(MockRealtimeSkyView()),
-            satelliteOverviewViewProducer: .pure(MockSatelliteOverviewView())
+            satelliteOverviewViewProducer: .pure(MockSatelliteOverviewView()),
+            settingsOverviewProducer: .pure(MockSettingsView())
         )
     }
 }

@@ -19,6 +19,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         Reducer<ElementsLoaderAction, ElementsLoaderState>.elementsLoaderReducer.lift(),
         Reducer<ElementsLoaderOutput, ElementsLoaderState>.elementsLoaderOutputReducer.lift(),
         Reducer.satelliteOverviewReducer.lift(),
+        Reducer.settingsOverviewReducer.lift(),
         Reducer<SatelliteListViewAction, AppState>.satelliteListViewReducer.lift(action: \.satelliteListView),
         Reducer<AllPassesViewAction, AppState>.allPassesViewReducer.lift(action: \.allPassesView),
         Reducer<PassViewAction, AppState>.passViewReducer.lift(action: \.passView),
@@ -27,7 +28,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             action: \.satelliteElevationGraph,
             state: \.satelliteElevationGraphResources
         ),
-        Reducer<SkyChartOutput, SkyChartResources>.skyChartOutputReducer.lift(),
+        Reducer.skyChartOutputReducer.lift(),
         Reducer<ElementsPropagatorAction, AppState>.elementsPropagatorReducer.lift(action: \.elementsPropagator),
         Reducer<TimerAction, AppState>.timerReducer.lift(action: \.timer),
         Reducer<DebugMenuAction, DebugMenuState>.debugMenuReducer.lift(),
@@ -38,7 +39,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
     ]
     .reduce(Reducer<AppAction, AppState>.identity, <>)
 
-    static func middlewareBuilder(
+    static func buildMiddleware(
         elementsLoader: ElementsLoader
     ) -> AnyMiddleware<AppAction, AppAction, AppState> {
         let middlewares: [AnyMiddleware<AppAction, AppAction, AppState>] = [
@@ -55,10 +56,10 @@ class Store: ReduxStoreBase<AppAction, AppState> {
                 )
                 .eraseToAnyMiddleware(),
             EffectMiddleware.locationLogger.lift(),
-            EffectMiddleware.elementsLoader(elementsLoader)
+            EffectMiddleware.elementsLoader
                 .lift()
                 .inject(
-                    ElementsLoaderDependencies()
+                    ElementsLoaderDependencies(elementLoader: elementsLoader)
                 )
                 .eraseToAnyMiddleware(),
             EffectMiddleware.calculatePassAfterElementsLoader.lift(),
@@ -66,9 +67,12 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             EffectMiddleware.selectSpecialSatelliteAfterElementsLoader.lift(),
             EffectMiddleware.rootViewElementsLoader.lift(),
             EffectMiddleware.satelliteOverview.lift(),
-            EffectMiddleware.satelliteListView(elementsLoader: elementsLoader)
+            EffectMiddleware.satelliteListView
                 .lift(
                     inputAction: \.satelliteListView
+                )
+                .inject(
+                    SatelliteListViewMiddlewareDependencies(elementsLoader: elementsLoader)
                 )
                 .eraseToAnyMiddleware(),
             EffectMiddleware.singleSatelliteWrappingView
@@ -128,7 +132,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         super.init(
             subject: .combine(initialValue: .empty),
             reducer: Store.reducer,
-            middleware: Store.middlewareBuilder(elementsLoader: elementsLoader),
+            middleware: Store.buildMiddleware(elementsLoader: elementsLoader),
             emitsValue: .whenDifferent
         )
     }

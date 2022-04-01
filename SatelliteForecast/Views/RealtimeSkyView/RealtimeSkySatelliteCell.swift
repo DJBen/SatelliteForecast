@@ -11,23 +11,73 @@ import SwiftUI
 import QSMag
 
 struct RealtimeSkySatelliteCell: View {
-    var satelliteName: String
+    @Binding var isFocused: Bool
+    var satelliteInfo: SatelliteInfo
     var snapshot: SatelliteSnapshot
+
+    private var magnitudeText: String {
+        if snapshot.isIlluminated {
+            return snapshot.visualMagnitude.map( RealtimeSkySatelliteCell.formattedMagnitude) ?? ""
+        } else {
+            return NSLocalizedString(
+                "RealtimeSkySatelliteCell.magnitudeText.notIlluminated",
+                tableName: nil,
+                bundle: .main,
+                value: "Not illuminated",
+                comment: """
+                The text indicating the satellite is not illuminated.
+                """
+            )
+        }
+    }
+
+    private func distanceText(_ distance: Double) -> String {
+        let format = NSLocalizedString(
+            "RealtimeSkySatelliteCell.distanceText",
+            tableName: nil,
+            bundle: .main,
+            value: "Distance %@ km",
+            comment: """
+                The format text showing the distance betweent the satellite to the observer
+                """
+        )
+        let formatter = NumberFormatter()
+        formatter.maximumFractionDigits = 1
+        formatter.minimumFractionDigits = 1
+        return String(format: format, formatter.string(from: distance as NSNumber)!)
+    }
 
     var body: some View {
         HStack {
-            Text(
-                satelliteName
+            Image(
+                systemName: isFocused ? "circle.inset.filled" : "circle"
             )
-            .font(.body)
+            .foregroundColor(isFocused ? .orange : Color(UIColor.tertiaryLabel))
 
-            Spacer()
+            VStack(alignment: .leading) {
+                HStack {
+                    Text(
+                        satelliteInfo.ucsSat?.officialName ?? satelliteInfo.elements.commonName
+                    )
+                    .font(.body)
 
-            Text(
-                snapshot.visualMagnitude.map( RealtimeSkySatelliteCell.formattedMagnitude) ?? ""
-            )
-            .font(.body)
-            .foregroundColor(.secondary)
+                    Spacer()
+
+                    Text(
+                        magnitudeText
+                    )
+                    .font(.body)
+                    .foregroundColor(.secondary)
+                }
+
+                HStack {
+                    Text(
+                        distanceText(snapshot.distance)
+                    )
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                }
+            }
         }
     }
 }
@@ -44,6 +94,12 @@ extension RealtimeSkySatelliteCell {
 #if DEBUG
 
 struct RealtimeSkySatelliteCell_Previews: PreviewProvider {
+    struct Container {
+        @State var isFocused = false
+    }
+
+    static let container = Container()
+
     static var previews: some View {
         let elements = try! Elements(
             raw: """
@@ -58,7 +114,8 @@ struct RealtimeSkySatelliteCell_Previews: PreviewProvider {
         let startDate = Date(timeIntervalSinceReferenceDate: 20 * 365 * 86400)
         let satelliteInfo = SatelliteInfo(elements: elements)
         RealtimeSkySatelliteCell(
-            satelliteName: "TIANHE",
+            isFocused: container.$isFocused,
+            satelliteInfo: satelliteInfo,
             snapshot: try! SatelliteSnapshot(
                 satelliteInfo: satelliteInfo,
                 julianDate: startDate.julianDate,

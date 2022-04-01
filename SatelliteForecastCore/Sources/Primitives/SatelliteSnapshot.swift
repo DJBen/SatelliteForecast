@@ -14,6 +14,8 @@ import BTree
 public struct SatelliteSnapshot {
     public let julianDate: Double
     public let position: AziEleDst
+    /// Distance between the observer and the satellite, in km.
+    public let distance: Double
     public let isIlluminated: Bool
 
     /// The sun's elevation, ranging from -90 to 90 degrees.
@@ -26,6 +28,7 @@ public struct SatelliteSnapshot {
     public init(
         julianDate: Double,
         position: AziEleDst,
+        distance: Double,
         isIlluminated: Bool,
         sunElevation: Double,
         phaseAngle: Double,
@@ -33,6 +36,7 @@ public struct SatelliteSnapshot {
     ) {
         self.julianDate = julianDate
         self.position = position
+        self.distance = distance
         self.isIlluminated = isIlluminated
         self.sunElevation = sunElevation
         self.phaseAngle = phaseAngle

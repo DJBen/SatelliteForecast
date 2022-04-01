@@ -10,12 +10,22 @@ import SatelliteKit
 
 public enum ElementsLoaderError: Error, LocalizedError {
     case elements(SatKitError)
+    case unexpectedMimeType(String?)
     case other(Error)
 
     public var errorDescription: String? {
         switch self {
         case let .elements(error):
             return error.localizedDescription
+        case .unexpectedMimeType(let mimeType):
+            let format = NSLocalizedString(
+                "ElementsLoaderError.unexpectedMimeType.description",
+                tableName: nil,
+                bundle: .main,
+                value: "Unexpected mime type %@ found for satellite elements.",
+                comment: "Description for ElementsLoaderError.unexpectedMimeType"
+            )
+            return String(format: format, mimeType ?? "none")
         case let .other(error):
             let nsError = error as NSError
             return nsError.localizedDescription
