@@ -82,7 +82,17 @@ struct BackgroundSkyView: View {
             )
         ]
 
-        return images?[backgroundSkyJulianDateKey]
+        // When time moves forward the background image will be pointed at a new key,
+        // causing temporary loss of background sky view.
+        // We use the backup image in the past temporarily to fill the gap and ensure smooth display
+        let backupKey = (backgroundSkyJulianDateKey - TimeConstants.min2day).roundJulianDate(.toMins(1))
+        if let backgroundSkyImage = images?[backgroundSkyJulianDateKey] {
+            return backgroundSkyImage
+        } else if let backupImage = images?[backupKey] {
+            return backupImage
+        } else {
+            return nil
+        }
     }
 
     @ViewBuilder func backgroundSky(julianDate: Double) -> some View {
