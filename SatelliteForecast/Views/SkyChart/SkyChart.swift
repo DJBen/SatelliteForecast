@@ -34,17 +34,6 @@ struct SkyChartViewState: Equatable {
     var julianDateOffset: Double = 0
     var resources: SkyChartResources = .init()
     var backgroundSky: BackgroundSkyResources = .init()
-    
-    static func project(
-        appState: AppState
-    ) -> SkyChartViewState {
-        return SkyChartViewState(
-            referenceDate: appState.julianDate,
-            julianDateOffset: appState.debugMenu.effectiveOffset,
-            resources: appState.skyChartResources,
-            backgroundSky: appState.backgroundSkyResources
-        )
-    }
 }
 
 struct SkyChart: View {

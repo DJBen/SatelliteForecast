@@ -63,7 +63,7 @@ struct TabBarItemModifier: ViewModifier {
         case .forecast:
             Image("glyph_pass")
         case .settings:
-            Image(systemName: "gearshape")
+            Image(systemName: "gear")
         }
     }
 
@@ -74,7 +74,7 @@ struct TabBarItemModifier: ViewModifier {
         case .forecast:
             Image("glyph_pass")
         case .settings:
-            Image(systemName: "gearshape.fill")
+            Image(systemName: "gear")
         }
     }
 }

@@ -107,12 +107,39 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
         }
     }
 
+    /// The propagation results that should have labels shown
+    private var showLabelPropagationResults: [RealtimePropagationResult] {
+        let visiblePropagationResults = visiblePropagationResults
+        return viewModel.state.resources.displayResults.filter { result in
+            result.snapshot.position.elev > 15 && !visiblePropagationResults.contains(result)
+        }
+    }
+
     @ViewBuilder private var satellitePlotLabels: some View {
         if viewModel.state.resources.isRealtimeSkyViewActive {
             GeometryReader { geometry in
                 let rect = geometry.frame(in: .local)
 
                 ZStack(alignment: .center) {
+                    ForEach(
+                        showLabelPropagationResults,
+                        id: \.self
+                    ) { result in
+                        Text(
+                            Self.satelliteLabelInGraph(result.satelliteInfo)
+                        )
+                        .font(.system(size: 8, weight: .regular, design: .default))
+                        .foregroundColor(.gray)
+                        .offset(y: 8)
+                        .frame(alignment: .leading)
+                        .position(
+                            SkyChart.point(
+                                at: result.snapshot.position,
+                                rect: rect
+                            )
+                        )
+                    }
+
                     ForEach(
                         visiblePropagationResults,
                         id: \.self
@@ -121,7 +148,7 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
                             Self.satelliteLabelInGraph(result.satelliteInfo)
                         )
                         .font(.system(size: 9, weight: .regular, design: .default))
-                        .foregroundColor(.yellow)
+                        .foregroundColor(.orange)
                         .offset(y: 12)
                         .frame(alignment: .leading)
                         .position(
@@ -244,37 +271,12 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
 
     @ViewBuilder private var satelliteLoadingView: some View {
         VStack {
-            Circle(
-            )
-            .trim(from: 1 / 12, to: 1)
-            .stroke(.secondary)
-            .rotationEffect(.degrees(rotateLoadingCircle ? 0 : -360), anchor: .center)
-            .onAppear {
-                withAnimation(
-                    .linear(
-                        duration: 1.5
-                    ).repeatForever(
-                        autoreverses: false
-                    )
-                ) {
-                    rotateLoadingCircle.toggle()
-                }
-            }
-            .frame(width: 72, height: 72)
-            .overlay(
-                Image(
-                    "glyph_observatory"
+            ProgressView {
+                Text(
+                    Self.SatelliteList.loadingText
                 )
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .foregroundColor(Color.secondary)
-                .frame(width: 42, height: 42)
-            )
-
-            Text(
-                Self.SatelliteList.loadingText
-            )
-            .foregroundColor(.secondary)
+                .foregroundColor(.secondary)
+            }
         }
     }
 
@@ -296,7 +298,8 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
                 List {
                     ForEach(visiblePropagationResults, id: \.self) { result in
                         RealtimeSkySatelliteCell(
-                            satelliteName: result.satelliteInfo.elements.commonName,
+                            isFocused: .constant(false),
+                            satelliteInfo: result.satelliteInfo,
                             snapshot: result.snapshot
                         )
                     }

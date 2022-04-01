@@ -28,7 +28,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             action: \.satelliteElevationGraph,
             state: \.satelliteElevationGraphResources
         ),
-        Reducer<SkyChartOutput, SkyChartResources>.skyChartOutputReducer.lift(),
+        Reducer.skyChartOutputReducer.lift(),
         Reducer<ElementsPropagatorAction, AppState>.elementsPropagatorReducer.lift(action: \.elementsPropagator),
         Reducer<TimerAction, AppState>.timerReducer.lift(action: \.timer),
         Reducer<DebugMenuAction, DebugMenuState>.debugMenuReducer.lift(),

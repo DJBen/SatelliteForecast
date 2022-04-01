@@ -68,12 +68,4 @@ extension EffectMiddleware where
             }
         }
     }
-
-    func lift() -> AnyMiddleware<AppAction, AppAction, AppState> {
-        lift(
-            inputAction: \.skyChart,
-            outputAction: AppAction.skyChartOutput
-        )
-        .eraseToAnyMiddleware()
-    }
 }

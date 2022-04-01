@@ -121,6 +121,8 @@
 		EFB6112027F4EF4D003557E5 /* SkyChart+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB6111F27F4EF4D003557E5 /* SkyChart+Wiring.swift */; };
 		EFB6112327F4F779003557E5 /* PassView+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB6112227F4F779003557E5 /* PassView+Wiring.swift */; };
 		EFB6112627F509A9003557E5 /* AllPassesView+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB6112527F509A9003557E5 /* AllPassesView+Wiring.swift */; };
+		EFB6112827F50E1E003557E5 /* SkyChartMiddleware+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB6112727F50E1E003557E5 /* SkyChartMiddleware+Wiring.swift */; };
+		EFB6112A27F50EAC003557E5 /* SkyChartReducer+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB6112927F50EAC003557E5 /* SkyChartReducer+Wiring.swift */; };
 		EFCF20F026AD020E00D87E8B /* DebugMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFCF20EF26AD020E00D87E8B /* DebugMenu.swift */; };
 		EFCF20F226AD4E7E00D87E8B /* DebugMenuReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFCF20F126AD4E7E00D87E8B /* DebugMenuReducer.swift */; };
 		EFCF20F426AD545400D87E8B /* DebugMenuMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFCF20F326AD545400D87E8B /* DebugMenuMiddleware.swift */; };
@@ -290,6 +292,8 @@
 		EFB6111F27F4EF4D003557E5 /* SkyChart+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SkyChart+Wiring.swift"; sourceTree = "<group>"; };
 		EFB6112227F4F779003557E5 /* PassView+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PassView+Wiring.swift"; sourceTree = "<group>"; };
 		EFB6112527F509A9003557E5 /* AllPassesView+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AllPassesView+Wiring.swift"; sourceTree = "<group>"; };
+		EFB6112727F50E1E003557E5 /* SkyChartMiddleware+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SkyChartMiddleware+Wiring.swift"; sourceTree = "<group>"; };
+		EFB6112927F50EAC003557E5 /* SkyChartReducer+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SkyChartReducer+Wiring.swift"; sourceTree = "<group>"; };
 		EFCF20EF26AD020E00D87E8B /* DebugMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugMenu.swift; sourceTree = "<group>"; };
 		EFCF20F126AD4E7E00D87E8B /* DebugMenuReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugMenuReducer.swift; sourceTree = "<group>"; };
 		EFCF20F326AD545400D87E8B /* DebugMenuMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugMenuMiddleware.swift; sourceTree = "<group>"; };
@@ -749,6 +753,8 @@
 			isa = PBXGroup;
 			children = (
 				EFB6111F27F4EF4D003557E5 /* SkyChart+Wiring.swift */,
+				EFB6112727F50E1E003557E5 /* SkyChartMiddleware+Wiring.swift */,
+				EFB6112927F50EAC003557E5 /* SkyChartReducer+Wiring.swift */,
 			);
 			path = Wiring;
 			sourceTree = "<group>";
@@ -1072,10 +1078,12 @@
 				EF16817127D5DC03001BA9C3 /* SatelliteOverviewReducer+Wiring.swift in Sources */,
 				EF16815427D2B59D001BA9C3 /* BackgroundSkyViewReducer+Wiring.swift in Sources */,
 				EFD8E74B27F1B6870098D208 /* SettingsOverviewItem.swift in Sources */,
+				EFB6112A27F50EAC003557E5 /* SkyChartReducer+Wiring.swift in Sources */,
 				EF7A3128266B1A2D00CC33C0 /* LocationAction.swift in Sources */,
 				EF847BF826CF2AB40004806F /* NotificationReducer.swift in Sources */,
 				EF833AFC26ADE9B0003EEBB6 /* SatelliteElevationGraphBackground.swift in Sources */,
 				EF8A423C267EA38C0014AE17 /* SatelliteElevationGraphMiddleware.swift in Sources */,
+				EFB6112827F50E1E003557E5 /* SkyChartMiddleware+Wiring.swift in Sources */,
 				EF7A3198266B6E4900CC33C0 /* SatelliteListView.swift in Sources */,
 				EF16815B27D2D8E2001BA9C3 /* RealtimeSkyViewMiddleware+Wiring.swift in Sources */,
 				EFED97BD27D6D6C3003FC289 /* RootViewMiddleware+Wiring.swift in Sources */,

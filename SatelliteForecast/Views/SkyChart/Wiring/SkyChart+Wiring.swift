@@ -9,6 +9,23 @@ import CombineRex
 import CombineRextensions
 import SwiftUI
 
+extension SkyChartViewState: AppStateMappable {
+    static func project(
+        appState: AppState
+    ) -> SkyChartViewState {
+        return SkyChartViewState(
+            referenceDate: appState.julianDate,
+            julianDateOffset: appState.debugMenu.effectiveOffset,
+            resources: appState.skyChartResources,
+            backgroundSky: appState.backgroundSkyResources
+        )
+    }
+
+    static func apply(appState: inout AppState, state: SkyChartViewState) {
+        appState.skyChartResources = state.resources
+    }
+}
+
 extension ViewProducer where Context == SkyChartContext, ProducedView == SkyChart {
     static func skyChart<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
         ViewProducer<Context, ProducedView> { context in
