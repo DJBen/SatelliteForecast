@@ -10,11 +10,15 @@ import SatelliteForecast
 import SatelliteKit
 import BTree
 
-enum ElementsPropagatorAction {
+public enum ElementsPropagatorAction {
     /// Called when found the passes for a satellite. Arguments include a list of passes, and the snapshots interlaced with fine snapshots
     /// during the pass.
     case foundPassesAndSnapshots([PassSnapshots], noradIndex: UInt, observer: LatLonAlt)
     /// Generated coarse snapshots of ephemerides of a satellite, relative to an observer.
     case propagatedSnapshots([SatelliteSnapshot], noradIndex: UInt, observer: LatLonAlt)
+
+    /// Clear all passes and snapshots
     case purgePassesAndSnapshots
 }
+
+extension ElementsPropagatorAction: Equatable {}

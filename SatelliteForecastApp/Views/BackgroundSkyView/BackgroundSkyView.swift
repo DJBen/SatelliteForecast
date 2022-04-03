@@ -11,7 +11,6 @@ import SatelliteKit
 import SolarSystem
 import SwiftRex
 import SwiftUI
-import VSOP87
 
 /// A key uniquely determining the rendering of a sky chart's background. Same key is guaranteed to render the same background.
 struct BackgroundSkyKey: Equatable, Hashable {

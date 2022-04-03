@@ -10,7 +10,6 @@ import SatelliteForecast
 import SatelliteKit
 import StarryNight
 import SolarSystem
-import VSOP87
 
 struct SatellitePassPathRenderParams: Equatable {
     var rect: CGRect

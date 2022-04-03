@@ -5,16 +5,25 @@
 //  Created by Ben Lu on 3/15/22.
 //
 
-import Foundation
+import SatelliteForecast
 
 extension SatelliteElevationGraphState: AppStateMappable {
     static func project(
         appState: AppState
     ) -> SatelliteElevationGraphState {
+        let selectedSatellitePass: Pass? = {
+            guard let noradIndex = appState.navigationState.selectedNoradIndex,
+                  let selectedPassIndex = appState.navigationState.listNavigation.selectedPassIndex else {
+                return nil
+            }
+
+            return appState.elementsPropagatorResources.satelliteTrails[noradIndex]?.passSnapshots?[selectedPassIndex].pass
+        }()
+
         return SatelliteElevationGraphState(
             currentJulianDate: appState.julianDate,
             satelliteElevationGraphResources: appState.satelliteElevationGraphResources,
-            highlightedDateRange: appState.selectedSatellitePass.map { pass -> ClosedRange<Double> in
+            highlightedDateRange: selectedSatellitePass.map { pass -> ClosedRange<Double> in
                 return pass.rise.julianDate...pass.set.julianDate
             }
         )

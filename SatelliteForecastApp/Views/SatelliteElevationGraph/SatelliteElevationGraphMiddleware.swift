@@ -34,7 +34,7 @@ extension EffectMiddleware where
                             return
                         }
 
-                        guard let snapshots = getState().selectedSatelliteTrails?.snapshots else {
+                        guard let snapshots = state.navigationState.selectedNoradIndex.flatMap({ state.elementsPropagatorResources.satelliteTrails[$0] })?.snapshots else {
                             return
                         }
 

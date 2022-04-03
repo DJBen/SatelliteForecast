@@ -30,8 +30,7 @@ struct AppState: Equatable {
 
     var satelliteElevationGraphResources: SatelliteElevationGraphResources = .init()
 
-    /// A mapping from NORAD ID to the satellite state.
-    var satelliteTrails: [UInt: SatelliteTrails] = [:]
+    var elementsPropagatorResources: ElementsPropagatorResources = .init()
 
     /// Location agnostic satellite information, including its orbit and metadata.
     var elementsLoader: ElementsLoaderResources = .init()
@@ -55,27 +54,8 @@ struct AppState: Equatable {
         currentDate + debugMenu.effectiveOffset
     }
 
-    var selectedSatelliteTrails: SatelliteTrails? {
-        navigationState.selectedNoradIndex.flatMap { satelliteTrails[$0] }
-    }
-
     var selectedSatelliteInfo: SatelliteInfo? {
         navigationState.selectedNoradIndex.flatMap { elementsLoader[$0] }
-    }
-
-    var currentSatelliteSnapshots: [SatelliteSnapshot] {
-        get {
-            guard let selectedSatelliteNoradIndex = navigationState.selectedNoradIndex else {
-                return []
-            }
-            return satelliteTrails[selectedSatelliteNoradIndex]?.snapshots ?? []
-        }
-        set {
-            guard let selectedSatelliteNoradIndex = navigationState.selectedNoradIndex else {
-                return
-            }
-            satelliteTrails[selectedSatelliteNoradIndex]?.snapshots = newValue
-        }
     }
 
     var selectedSatellitePass: Pass? {
@@ -84,6 +64,6 @@ struct AppState: Equatable {
             return nil
         }
 
-        return satelliteTrails[noradIndex]?.passSnapshots?[selectedPassIndex].pass
+        return elementsPropagatorResources.satelliteTrails[noradIndex]?.passSnapshots?[selectedPassIndex].pass
     }
 }

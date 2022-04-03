@@ -8,7 +8,6 @@
 import XCTest
 @testable import SolarSystem
 import SatelliteKit
-import VSOP87
 
 class SolarSystemTests: XCTestCase {
     func testSunCoordinate() throws {

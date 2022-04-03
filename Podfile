@@ -20,7 +20,6 @@ target 'SatelliteForecastApp' do
   pod "SatelliteForecastImpl", :path => './SatelliteForecastImpl'
   pod "SolarSystem", :path => './SolarSystem'
   pod "SwiftUIVisualEffects", :path => './SwiftUIVisualEffects'
-  pod "VSOP87", :path => './VSOP87'
 
   target 'SatelliteForecastTests' do
     inherit! :complete

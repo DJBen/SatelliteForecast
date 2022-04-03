@@ -10,7 +10,6 @@ import SatelliteKit
 import SatelliteForecast
 import BTree
 import SolarSystem
-import VSOP87
 
 struct SunlightIndicatorViewModel: Equatable {
     enum SunEvent: Equatable, Hashable {

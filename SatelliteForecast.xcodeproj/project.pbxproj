@@ -50,6 +50,8 @@
 		EF2EF4DA27B252EA000D5EC8 /* AppStateMappable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF2EF4D927B252EA000D5EC8 /* AppStateMappable.swift */; };
 		EF2EF4DD27B42661000D5EC8 /* LoggerMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF2EF4DC27B42661000D5EC8 /* LoggerMiddleware.swift */; };
 		EF2FBB2326CA74D60046EF28 /* AllPassesLocationChangeWarning.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF2FBB2226CA74D60046EF28 /* AllPassesLocationChangeWarning.swift */; };
+		EF325F3B27F9794600FDE42E /* ElementsPropagatorReducer+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF325F3A27F9794600FDE42E /* ElementsPropagatorReducer+Wiring.swift */; };
+		EF325F3D27F979D400FDE42E /* ElementsPropagatorResources+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF325F3C27F979D400FDE42E /* ElementsPropagatorResources+Wiring.swift */; };
 		EF3D099C2685A12200B84232 /* SatelliteOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3D099B2685A12200B84232 /* SatelliteOverviewView.swift */; };
 		EF3D099E26864DDF00B84232 /* SatelliteOverviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3D099D26864DDF00B84232 /* SatelliteOverviewCell.swift */; };
 		EF3D09A026864FD800B84232 /* SatelliteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3D099F26864FD800B84232 /* SatelliteCell.swift */; };
@@ -66,8 +68,6 @@
 		EF5A908426A0D68400EADA2D /* LazyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5A908326A0D68400EADA2D /* LazyView.swift */; };
 		EF5CB017266E28EE000019DA /* TimerReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5CB016266E28EE000019DA /* TimerReducer.swift */; };
 		EF5CB019266E28FC000019DA /* TimerMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5CB018266E28FC000019DA /* TimerMiddleware.swift */; };
-		EF5CB01D266E2933000019DA /* ElementsPropagatorReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5CB01B266E2933000019DA /* ElementsPropagatorReducer.swift */; };
-		EF5CB01E266E2933000019DA /* ElementsPropagatorAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5CB01C266E2933000019DA /* ElementsPropagatorAction.swift */; };
 		EF5CB022266EAF6F000019DA /* AllPassesViewMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5CB021266EAF6F000019DA /* AllPassesViewMiddleware.swift */; };
 		EF62BA4426CE316A00813357 /* PassNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF62BA4326CE316A00813357 /* PassNotification.swift */; };
 		EF67A7BE27BCF024007305DA /* MiddlewareTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF67A7BD27BCF024007305DA /* MiddlewareTests.swift */; };
@@ -213,6 +213,8 @@
 		EF2EF4D927B252EA000D5EC8 /* AppStateMappable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateMappable.swift; sourceTree = "<group>"; };
 		EF2EF4DC27B42661000D5EC8 /* LoggerMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggerMiddleware.swift; sourceTree = "<group>"; };
 		EF2FBB2226CA74D60046EF28 /* AllPassesLocationChangeWarning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllPassesLocationChangeWarning.swift; sourceTree = "<group>"; };
+		EF325F3A27F9794600FDE42E /* ElementsPropagatorReducer+Wiring.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ElementsPropagatorReducer+Wiring.swift"; sourceTree = "<group>"; };
+		EF325F3C27F979D400FDE42E /* ElementsPropagatorResources+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ElementsPropagatorResources+Wiring.swift"; sourceTree = "<group>"; };
 		EF3D099B2685A12200B84232 /* SatelliteOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteOverviewView.swift; sourceTree = "<group>"; };
 		EF3D099D26864DDF00B84232 /* SatelliteOverviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteOverviewCell.swift; sourceTree = "<group>"; };
 		EF3D099F26864FD800B84232 /* SatelliteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteCell.swift; sourceTree = "<group>"; };
@@ -230,8 +232,6 @@
 		EF5A908326A0D68400EADA2D /* LazyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyView.swift; sourceTree = "<group>"; };
 		EF5CB016266E28EE000019DA /* TimerReducer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimerReducer.swift; sourceTree = "<group>"; };
 		EF5CB018266E28FC000019DA /* TimerMiddleware.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimerMiddleware.swift; sourceTree = "<group>"; };
-		EF5CB01B266E2933000019DA /* ElementsPropagatorReducer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ElementsPropagatorReducer.swift; sourceTree = "<group>"; };
-		EF5CB01C266E2933000019DA /* ElementsPropagatorAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ElementsPropagatorAction.swift; sourceTree = "<group>"; };
 		EF5CB021266EAF6F000019DA /* AllPassesViewMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllPassesViewMiddleware.swift; sourceTree = "<group>"; };
 		EF62BA4326CE316A00813357 /* PassNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassNotification.swift; sourceTree = "<group>"; };
 		EF67A7BD27BCF024007305DA /* MiddlewareTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiddlewareTests.swift; sourceTree = "<group>"; };
@@ -502,6 +502,15 @@
 			path = Logger;
 			sourceTree = "<group>";
 		};
+		EF325F3927F9794600FDE42E /* Wiring */ = {
+			isa = PBXGroup;
+			children = (
+				EF325F3C27F979D400FDE42E /* ElementsPropagatorResources+Wiring.swift */,
+				EF325F3A27F9794600FDE42E /* ElementsPropagatorReducer+Wiring.swift */,
+			);
+			path = Wiring;
+			sourceTree = "<group>";
+		};
 		EF3D099A2685A10F00B84232 /* SatelliteOverview */ = {
 			isa = PBXGroup;
 			children = (
@@ -563,8 +572,7 @@
 		EF5CB01A266E2933000019DA /* ElementsPropagator */ = {
 			isa = PBXGroup;
 			children = (
-				EF5CB01B266E2933000019DA /* ElementsPropagatorReducer.swift */,
-				EF5CB01C266E2933000019DA /* ElementsPropagatorAction.swift */,
+				EF325F3927F9794600FDE42E /* Wiring */,
 			);
 			path = ElementsPropagator;
 			sourceTree = "<group>";
@@ -1063,6 +1071,7 @@
 				EFB6111B27F4E9B3003557E5 /* SettingsOverviewReducer.swift in Sources */,
 				EF847BFE26CF985C0004806F /* UIColor+Convenience.swift in Sources */,
 				EF8A4235267C53630014AE17 /* PassViewReducer.swift in Sources */,
+				EF325F3D27F979D400FDE42E /* ElementsPropagatorResources+Wiring.swift in Sources */,
 				EF7A3125266B1A2500CC33C0 /* LocationState.swift in Sources */,
 				EF7C6658269AA0D00017A007 /* SingleSatelliteWrappingViewMiddleware.swift in Sources */,
 				EF16814127D1793A001BA9C3 /* RealtimeSkyView.swift in Sources */,
@@ -1108,6 +1117,7 @@
 				EF16814B27D19AE2001BA9C3 /* BackgroundSkyMiddleware.swift in Sources */,
 				EF16814027D1793A001BA9C3 /* RealtimePropagationResult.swift in Sources */,
 				EF16814D27D201A7001BA9C3 /* ChartQuality.swift in Sources */,
+				EF325F3B27F9794600FDE42E /* ElementsPropagatorReducer+Wiring.swift in Sources */,
 				EF283B0526B23122008223C1 /* SkyChartDynamicIndicator.swift in Sources */,
 				EF16816F27D5DAE9001BA9C3 /* SatelliteOverviewView+Wiring.swift in Sources */,
 				EFB6112327F4F779003557E5 /* PassView+Wiring.swift in Sources */,
@@ -1121,8 +1131,6 @@
 				EF833B0026AE2515003EEBB6 /* SkyChartSatelliteIndicator.swift in Sources */,
 				EFF750C8266F4DFF005222F8 /* SizeModifier.swift in Sources */,
 				EF16815227D2B557001BA9C3 /* BackgroundSkyViewMiddleware+Wiring.swift in Sources */,
-				EF5CB01D266E2933000019DA /* ElementsPropagatorReducer.swift in Sources */,
-				EF5CB01E266E2933000019DA /* ElementsPropagatorAction.swift in Sources */,
 				EF16814927D18B1F001BA9C3 /* BackgroundSkyResources.swift in Sources */,
 				EF833AFA26AD6068003EEBB6 /* ShakeMotion+Notification.swift in Sources */,
 				EFB6111D27F4EA47003557E5 /* SettingsOverviewReducer+Wiring.swift in Sources */,

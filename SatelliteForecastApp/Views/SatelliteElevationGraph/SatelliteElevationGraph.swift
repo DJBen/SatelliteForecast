@@ -407,16 +407,18 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                         noradIndex: elements.noradIndex
                     )
                 ),
-                satelliteTrails: [
-                    elements.noradIndex: SatelliteTrails(
-                        observer: observer,
-                        snapshots: try! satelliteInfo.generateSnapshots(
+                elementsPropagatorResources: ElementsPropagatorResources(
+                    satelliteTrails: [
+                        elements.noradIndex: SatelliteTrails(
                             observer: observer,
-                            julianDateRange: julianDateRange,
-                            interval: 20
+                            snapshots: try! satelliteInfo.generateSnapshots(
+                                observer: observer,
+                                julianDateRange: julianDateRange,
+                                interval: 20
+                            )
                         )
-                    )
-                ],
+                    ]
+                ),
                 elementsLoader: ElementsLoaderResources(
                     info: [.brightest100: .loaded(
                         [elements.noradIndex: satelliteInfo]
@@ -458,16 +460,18 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                         noradIndex: elements2.noradIndex
                     )
                 ),
-                satelliteTrails: [
-                    elements2.noradIndex: SatelliteTrails(
-                        observer: observer,
-                        snapshots: try! satelliteInfo2.generateSnapshots(
+                elementsPropagatorResources: ElementsPropagatorResources(
+                    satelliteTrails: [
+                        elements2.noradIndex: SatelliteTrails(
                             observer: observer,
-                            julianDateRange: julianDateRange,
-                            interval: 20
+                            snapshots: try! satelliteInfo2.generateSnapshots(
+                                observer: observer,
+                                julianDateRange: julianDateRange,
+                                interval: 20
+                            )
                         )
-                    )
-                ],
+                    ]
+                ),
                 elementsLoader: ElementsLoaderResources(
                     info: [.brightest100: .loaded(
                         [elements2.noradIndex: satelliteInfo2]
@@ -505,16 +509,18 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                         noradIndex: elements3.noradIndex
                     )
                 ),
-                satelliteTrails: [
-                    elements3.noradIndex: SatelliteTrails(
-                        observer: observer,
-                        snapshots: try! satelliteInfo3.generateSnapshots(
+                elementsPropagatorResources: ElementsPropagatorResources(
+                    satelliteTrails: [
+                        elements3.noradIndex: SatelliteTrails(
                             observer: observer,
-                            julianDateRange: julianDateRange,
-                            interval: 20
+                            snapshots: try! satelliteInfo3.generateSnapshots(
+                                observer: observer,
+                                julianDateRange: julianDateRange,
+                                interval: 20
+                            )
                         )
-                    )
-                ],
+                    ]
+                ),
                 elementsLoader: ElementsLoaderResources(
                     info: [.brightest100: .loaded(
                         [elements3.noradIndex: satelliteInfo3]

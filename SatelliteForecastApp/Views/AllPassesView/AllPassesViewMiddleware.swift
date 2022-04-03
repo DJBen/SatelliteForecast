@@ -47,7 +47,7 @@ extension EffectMiddleware where
 
                         DispatchQueue.global(qos: .userInitiated).async {
                             // Use cached satellite ephemerides if calculated within the last hour.
-                            if let satelliteState = state.satelliteTrails[noradIndex],
+                            if let satelliteState = state.elementsPropagatorResources.satelliteTrails[noradIndex],
                                abs(julianDateRange.lowerBound - satelliteState.snapshots.first!.julianDate) < TimeConstants.hrs2day,
                                let _ = satelliteState.passSnapshots {
                                 logger.debug("Ephemeride of \(noradIndex) are already generated. Skipping.")
@@ -111,7 +111,7 @@ extension EffectMiddleware where
                         let subject = PassthroughSubject<DispatchedAction<AppAction>, Never>()
                         let state = getState()
                         let pass = passNotification.pass
-                        guard let passSnapshots = state.satelliteTrails[pass.noradIndex]?.passSnapshots?.first(where: { $0.pass == pass }) else {
+                        guard let passSnapshots = state.elementsPropagatorResources.satelliteTrails[pass.noradIndex]?.passSnapshots?.first(where: { $0.pass == pass }) else {
 //                            logger.debug("\(pass.noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate) lacks snapshots: rasterization on hold")
                             subject.send(DispatchedAction(.notification(.requestNotificationAuthorization(pendingNotification: passNotification))))
                             subject.send(completion: .finished)

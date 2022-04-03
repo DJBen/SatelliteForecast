@@ -11,7 +11,6 @@ import QSMag
 import SatelliteKit
 import SatelliteForecast
 import SolarSystem
-import VSOP87
 
 extension SatelliteSnapshot {
     public init(

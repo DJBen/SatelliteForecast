@@ -19,7 +19,7 @@ extension AllPassesViewState: AppStateMappable {
             placemark: appState.locationState.placemark,
             selectedPassIndex: appState.navigationState.listNavigation.selectedPassIndex,
             satelliteCategory: appState.navigationState.listNavigation.category,
-            satelliteTrails: appState.satelliteTrails
+            satelliteTrails: appState.elementsPropagatorResources.satelliteTrails
         )
     }
 

@@ -14,8 +14,8 @@ import BTree
 
 fileprivate let logger = Logger(subsystem: "io.djben.ElementsPropagator", category: "reducer")
 
-extension Reducer where ActionType == ElementsPropagatorAction, StateType == AppState {
-    static let elementsPropagatorReducer = Reducer.reduce { action, state in
+extension Reducer where ActionType == ElementsPropagatorAction, StateType == ElementsPropagatorResources {
+    public static let elementsPropagatorReducer = Reducer.reduce { action, state in
         switch action {
         case let .foundPassesAndSnapshots(passSnapshots, noradIndex, observer):
             logger.info("Found \(passSnapshots.count) passes for \(noradIndex). Detailed snapshots count: \(passSnapshots.count)")
@@ -38,6 +38,7 @@ extension Reducer where ActionType == ElementsPropagatorAction, StateType == App
                     snapshots: satelliteSnapshots
                 )
             }
+
         case .purgePassesAndSnapshots:
             state.satelliteTrails = [:]
         }

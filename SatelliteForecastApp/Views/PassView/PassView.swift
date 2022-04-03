@@ -136,13 +136,15 @@ struct PassView_Previews: PreviewProvider {
                 rasterizedSatellitePaths: [:],
                 previewSatellitePaths: [:]
             ),
-            satelliteTrails: [
-                elements.noradIndex: SatelliteTrails(
-                    observer: observer,
-                    snapshots: snapshots,
-                    passSnapshots: passSnapshots
-                )
-            ],
+            elementsPropagatorResources: ElementsPropagatorResources(
+                satelliteTrails: [
+                    elements.noradIndex: SatelliteTrails(
+                        observer: observer,
+                        snapshots: snapshots,
+                        passSnapshots: passSnapshots
+                    )
+                ]
+            ),
             elementsLoader: ElementsLoaderResources(
                 info: [
                     .brightest100: .loaded(brightest100)

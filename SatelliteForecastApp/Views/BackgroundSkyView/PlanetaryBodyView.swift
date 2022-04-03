@@ -9,7 +9,6 @@ import Foundation
 import SwiftUI
 import SatelliteKit
 import SolarSystem
-import VSOP87
 
 struct PlanetaryBodyView: View {
     let planetaryBody: BackgroundSkyConfigs.PlantaryBody
