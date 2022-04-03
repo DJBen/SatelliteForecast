@@ -1,6 +1,6 @@
 //
 //  UCSSat.swift
-//  SatelliteForecastCore
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 6/23/21.
 //

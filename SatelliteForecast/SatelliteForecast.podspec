@@ -1,5 +1,5 @@
 #
-# Be sure to run `pod lib lint SatelliteForecastImpl.podspec' to ensure this is a
+# Be sure to run `pod lib lint SatelliteForecast.podspec' to ensure this is a
 # valid spec before submitting.
 #
 # Any lines starting with a # are optional, but their use is encouraged
@@ -7,9 +7,9 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = 'SatelliteForecastImpl'
+  s.name             = 'SatelliteForecast'
   s.version          = '1.0.0.LOCAL'
-  s.summary          = 'The implementation of SatelliteForecast app.'
+  s.summary          = 'The primitives and core features in satellite forecast.'
 
   s.homepage         = 'https://github.com/DJBen'
   s.license          = { :type => 'Proprietary', :text => '© 2021 DJBen' }
@@ -21,19 +21,14 @@ Pod::Spec.new do |s|
   s.swift_version = ['5.4']
   s.source_files = 'Sources/**/*.swift'
 
-  s.dependency 'BTree', "~> 4.1.0"
-  s.dependency 'CombineRex', "0.8.9"
-  s.dependency 'CombineRextensions'
-  s.dependency 'SatelliteKit', '1.0.0.LOCAL'
-  s.dependency 'SatelliteForecast', '1.0.0.LOCAL'
+  s.dependency 'BTree', '~> 4.1.0'
+  s.dependency 'QSMag', '1.0.0.LOCAL'
   s.dependency 'SatelliteCatalog', '1.0.0.LOCAL'
-  s.dependency 'SatelliteCatalogImpl_SQLite', '1.0.0.LOCAL'
-  s.dependency 'SolarSystem', '1.0.0.LOCAL'
-  s.dependency 'VSOP87', '1.0.0.LOCAL'
+  s.dependency 'SatelliteKit', '1.0.0.LOCAL'
 
   s.test_spec 'Tests' do |test_spec|
     test_spec.source_files = 'Tests/**/*.swift'
+
     test_spec.framework = 'XCTest'
-    test_spec.dependency 'TestingExtensions', '~> 0.2.11'
   end
 end

@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1DAA0710B7B6C3376CEA16CB /* Pods_SatelliteForecast_SatelliteForecastTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CF84B428B2EC72B9D2FF372 /* Pods_SatelliteForecast_SatelliteForecastTests.framework */; };
-		76462F2B1341A54B93996539 /* Pods_SatelliteForecast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F309E703E1576B91309154B8 /* Pods_SatelliteForecast.framework */; };
+		0F4D18CB8769B457A044BE12 /* Pods_SatelliteForecastApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A5D2224DCC9C43D59863B01 /* Pods_SatelliteForecastApp.framework */; };
+		5A7D9D3F0643933E5CD75DEA /* Pods_SatelliteForecastApp_SatelliteForecastTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A0F3C2E7636CFDD88F4AEFC /* Pods_SatelliteForecastApp_SatelliteForecastTests.framework */; };
 		EF0FC06C2677D7A200560AF0 /* AllPassesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0FC06B2677D7A200560AF0 /* AllPassesView.swift */; };
 		EF12BC0E27E1C0CF0083F3A2 /* SatelliteElevationGraph+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF12BC0D27E1C0CF0083F3A2 /* SatelliteElevationGraph+Wiring.swift */; };
 		EF12BC1027E204070083F3A2 /* EnvironmentKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF12BC0F27E204070083F3A2 /* EnvironmentKeys.swift */; };
@@ -71,25 +71,21 @@
 		EF5CB022266EAF6F000019DA /* AllPassesViewMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5CB021266EAF6F000019DA /* AllPassesViewMiddleware.swift */; };
 		EF62BA4426CE316A00813357 /* PassNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF62BA4326CE316A00813357 /* PassNotification.swift */; };
 		EF67A7BE27BCF024007305DA /* MiddlewareTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF67A7BD27BCF024007305DA /* MiddlewareTests.swift */; };
+		EF773DAD27F7B55F0071893B /* SatelliteListView+ElementsLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF773DAC27F7B55F0071893B /* SatelliteListView+ElementsLoader.swift */; };
+		EF773DAF27F7B5B10071893B /* SatelliteOverviewView+ElementsLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF773DAE27F7B5B10071893B /* SatelliteOverviewView+ElementsLoader.swift */; };
+		EF773DB127F7B8D60071893B /* AllPassesView+ElementsLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF773DB027F7B8D60071893B /* AllPassesView+ElementsLoader.swift */; };
 		EF7A311E266AFBF800CC33C0 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A311D266AFBF800CC33C0 /* Store.swift */; };
 		EF7A3122266B03B400CC33C0 /* LocationMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A3121266B03B400CC33C0 /* LocationMiddleware.swift */; };
 		EF7A3125266B1A2500CC33C0 /* LocationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A3124266B1A2500CC33C0 /* LocationState.swift */; };
 		EF7A3128266B1A2D00CC33C0 /* LocationAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A3127266B1A2D00CC33C0 /* LocationAction.swift */; };
 		EF7A312B266B1A3800CC33C0 /* LocationReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A312A266B1A3800CC33C0 /* LocationReducer.swift */; };
-		EF7A3132266B493300CC33C0 /* ElementsLoaderMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A3131266B493300CC33C0 /* ElementsLoaderMiddleware.swift */; };
-		EF7A3135266B493E00CC33C0 /* ElementsLoaderState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A3134266B493E00CC33C0 /* ElementsLoaderState.swift */; };
-		EF7A3138266B4A5300CC33C0 /* ElementsLoaderAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A3137266B4A5300CC33C0 /* ElementsLoaderAction.swift */; };
-		EF7A313E266B538900CC33C0 /* ElementsLoaderReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A313D266B538900CC33C0 /* ElementsLoaderReducer.swift */; };
 		EF7A3192266B6AFC00CC33C0 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A3190266B6ADF00CC33C0 /* AppState.swift */; };
 		EF7A3194266B6B0B00CC33C0 /* AppAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A318E266B6AD800CC33C0 /* AppAction.swift */; };
 		EF7A3198266B6E4900CC33C0 /* SatelliteListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A3196266B6BBF00CC33C0 /* SatelliteListView.swift */; };
 		EF7A319B266B733C00CC33C0 /* LocalizedStrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A319A266B733C00CC33C0 /* LocalizedStrings.swift */; };
-		EF7C6651269918060017A007 /* ElementsLoaderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7C6650269918060017A007 /* ElementsLoaderError.swift */; };
-		EF7C665326992FF80017A007 /* ElementsLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7C665226992FF80017A007 /* ElementsLoader.swift */; };
 		EF7C6656269930B40017A007 /* SingleSatelliteWrappingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7C6655269930B40017A007 /* SingleSatelliteWrappingView.swift */; };
 		EF7C6658269AA0D00017A007 /* SingleSatelliteWrappingViewMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7C6657269AA0D00017A007 /* SingleSatelliteWrappingViewMiddleware.swift */; };
 		EF7D4DD626D1E822005E49D0 /* Pass+Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7D4DD526D1E822005E49D0 /* Pass+Notification.swift */; };
-		EF7D4DD826D25A2C005E49D0 /* SatelliteCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7D4DD726D25A2C005E49D0 /* SatelliteCategory.swift */; };
 		EF833AFA26AD6068003EEBB6 /* ShakeMotion+Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF833AF926AD6068003EEBB6 /* ShakeMotion+Notification.swift */; };
 		EF833AFC26ADE9B0003EEBB6 /* SatelliteElevationGraphBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF833AFB26ADE9B0003EEBB6 /* SatelliteElevationGraphBackground.swift */; };
 		EF833AFE26ADF421003EEBB6 /* DateFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF833AFD26ADF421003EEBB6 /* DateFooter.swift */; };
@@ -152,7 +148,7 @@
 			containerPortal = EF9D82752661BBEF00616C97 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = EF9D82802661BBF000616C97;
-			remoteInfo = SatelliteForecast;
+			remoteInfo = SatelliteForecastApp;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -170,11 +166,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		00EB358EC730ED8A76D9DC14 /* Pods-SatelliteForecast.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecast.debug.xcconfig"; path = "Target Support Files/Pods-SatelliteForecast/Pods-SatelliteForecast.debug.xcconfig"; sourceTree = "<group>"; };
-		267C71EE8DACC4F6A4291153 /* Pods-SatelliteForecast-SatelliteForecastTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecast-SatelliteForecastTests.release.xcconfig"; path = "Target Support Files/Pods-SatelliteForecast-SatelliteForecastTests/Pods-SatelliteForecast-SatelliteForecastTests.release.xcconfig"; sourceTree = "<group>"; };
-		5CF84B428B2EC72B9D2FF372 /* Pods_SatelliteForecast_SatelliteForecastTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SatelliteForecast_SatelliteForecastTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		A282581E620B8E3ECA2F71AC /* Pods-SatelliteForecast.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecast.release.xcconfig"; path = "Target Support Files/Pods-SatelliteForecast/Pods-SatelliteForecast.release.xcconfig"; sourceTree = "<group>"; };
-		DD9ABC9E05C7D15D34D6BE1B /* Pods-SatelliteForecast-SatelliteForecastTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecast-SatelliteForecastTests.debug.xcconfig"; path = "Target Support Files/Pods-SatelliteForecast-SatelliteForecastTests/Pods-SatelliteForecast-SatelliteForecastTests.debug.xcconfig"; sourceTree = "<group>"; };
+		1AA3AE2D94CA96D5D6AC1CB9 /* Pods-SatelliteForecastApp-SatelliteForecastTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecastApp-SatelliteForecastTests.release.xcconfig"; path = "Target Support Files/Pods-SatelliteForecastApp-SatelliteForecastTests/Pods-SatelliteForecastApp-SatelliteForecastTests.release.xcconfig"; sourceTree = "<group>"; };
+		3AA73DC9226C29CDF02C36FA /* Pods-SatelliteForecastApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecastApp.debug.xcconfig"; path = "Target Support Files/Pods-SatelliteForecastApp/Pods-SatelliteForecastApp.debug.xcconfig"; sourceTree = "<group>"; };
+		4A5D2224DCC9C43D59863B01 /* Pods_SatelliteForecastApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SatelliteForecastApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7A0F3C2E7636CFDD88F4AEFC /* Pods_SatelliteForecastApp_SatelliteForecastTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SatelliteForecastApp_SatelliteForecastTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7CDD9857A20102072D724D11 /* Pods-SatelliteForecastApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecastApp.release.xcconfig"; path = "Target Support Files/Pods-SatelliteForecastApp/Pods-SatelliteForecastApp.release.xcconfig"; sourceTree = "<group>"; };
+		7F53B1E12EADC537A88A0AF1 /* Pods-SatelliteForecastApp-SatelliteForecastTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecastApp-SatelliteForecastTests.debug.xcconfig"; path = "Target Support Files/Pods-SatelliteForecastApp-SatelliteForecastTests/Pods-SatelliteForecastApp-SatelliteForecastTests.debug.xcconfig"; sourceTree = "<group>"; };
 		EF0FC06B2677D7A200560AF0 /* AllPassesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllPassesView.swift; sourceTree = "<group>"; };
 		EF12BC0D27E1C0CF0083F3A2 /* SatelliteElevationGraph+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SatelliteElevationGraph+Wiring.swift"; sourceTree = "<group>"; };
 		EF12BC0F27E204070083F3A2 /* EnvironmentKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentKeys.swift; sourceTree = "<group>"; };
@@ -238,25 +235,21 @@
 		EF5CB021266EAF6F000019DA /* AllPassesViewMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllPassesViewMiddleware.swift; sourceTree = "<group>"; };
 		EF62BA4326CE316A00813357 /* PassNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassNotification.swift; sourceTree = "<group>"; };
 		EF67A7BD27BCF024007305DA /* MiddlewareTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiddlewareTests.swift; sourceTree = "<group>"; };
+		EF773DAC27F7B55F0071893B /* SatelliteListView+ElementsLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SatelliteListView+ElementsLoader.swift"; sourceTree = "<group>"; };
+		EF773DAE27F7B5B10071893B /* SatelliteOverviewView+ElementsLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SatelliteOverviewView+ElementsLoader.swift"; sourceTree = "<group>"; };
+		EF773DB027F7B8D60071893B /* AllPassesView+ElementsLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AllPassesView+ElementsLoader.swift"; sourceTree = "<group>"; };
 		EF7A311D266AFBF800CC33C0 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		EF7A3121266B03B400CC33C0 /* LocationMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationMiddleware.swift; sourceTree = "<group>"; };
 		EF7A3124266B1A2500CC33C0 /* LocationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationState.swift; sourceTree = "<group>"; };
 		EF7A3127266B1A2D00CC33C0 /* LocationAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationAction.swift; sourceTree = "<group>"; };
 		EF7A312A266B1A3800CC33C0 /* LocationReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationReducer.swift; sourceTree = "<group>"; };
-		EF7A3131266B493300CC33C0 /* ElementsLoaderMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementsLoaderMiddleware.swift; sourceTree = "<group>"; };
-		EF7A3134266B493E00CC33C0 /* ElementsLoaderState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementsLoaderState.swift; sourceTree = "<group>"; };
-		EF7A3137266B4A5300CC33C0 /* ElementsLoaderAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementsLoaderAction.swift; sourceTree = "<group>"; };
-		EF7A313D266B538900CC33C0 /* ElementsLoaderReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementsLoaderReducer.swift; sourceTree = "<group>"; };
 		EF7A318E266B6AD800CC33C0 /* AppAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAction.swift; sourceTree = "<group>"; };
 		EF7A3190266B6ADF00CC33C0 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		EF7A3196266B6BBF00CC33C0 /* SatelliteListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteListView.swift; sourceTree = "<group>"; };
 		EF7A319A266B733C00CC33C0 /* LocalizedStrings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizedStrings.swift; sourceTree = "<group>"; };
-		EF7C6650269918060017A007 /* ElementsLoaderError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementsLoaderError.swift; sourceTree = "<group>"; };
-		EF7C665226992FF80017A007 /* ElementsLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementsLoader.swift; sourceTree = "<group>"; };
 		EF7C6655269930B40017A007 /* SingleSatelliteWrappingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleSatelliteWrappingView.swift; sourceTree = "<group>"; };
 		EF7C6657269AA0D00017A007 /* SingleSatelliteWrappingViewMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleSatelliteWrappingViewMiddleware.swift; sourceTree = "<group>"; };
 		EF7D4DD526D1E822005E49D0 /* Pass+Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Pass+Notification.swift"; sourceTree = "<group>"; };
-		EF7D4DD726D25A2C005E49D0 /* SatelliteCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteCategory.swift; sourceTree = "<group>"; };
 		EF833AF926AD6068003EEBB6 /* ShakeMotion+Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ShakeMotion+Notification.swift"; sourceTree = "<group>"; };
 		EF833AFB26ADE9B0003EEBB6 /* SatelliteElevationGraphBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteElevationGraphBackground.swift; sourceTree = "<group>"; };
 		EF833AFD26ADF421003EEBB6 /* DateFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFooter.swift; sourceTree = "<group>"; };
@@ -283,7 +276,7 @@
 		EF98F85F26ABDA7B0086B2FA /* SatelliteElevationGraphCurrentIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteElevationGraphCurrentIndicator.swift; sourceTree = "<group>"; };
 		EF9D827A2661BBF000616C97 /* SatelliteForecastApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteForecastApp.swift; sourceTree = "<group>"; };
 		EF9D827C2661BBF000616C97 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		EF9D82812661BBF000616C97 /* SatelliteForecast.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SatelliteForecast.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EF9D82812661BBF000616C97 /* SatelliteForecastApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SatelliteForecastApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFAE1F0B2668B10F00A18A42 /* SatelliteElevationGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteElevationGraph.swift; sourceTree = "<group>"; };
 		EFAE1F122669E7A800A18A42 /* SunlightIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunlightIndicator.swift; sourceTree = "<group>"; };
 		EFB1B4D027BCDFC40025974C /* SatelliteForecastTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SatelliteForecastTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -315,7 +308,6 @@
 		EFED97BE27D6DB06003FC289 /* ViewDidLoadModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDidLoadModifier.swift; sourceTree = "<group>"; };
 		EFF750C7266F4DFF005222F8 /* SizeModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeModifier.swift; sourceTree = "<group>"; };
 		EFFD227826B788D30010E1F6 /* LocationSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSettingsView.swift; sourceTree = "<group>"; };
-		F309E703E1576B91309154B8 /* Pods_SatelliteForecast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SatelliteForecast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -323,7 +315,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				76462F2B1341A54B93996539 /* Pods_SatelliteForecast.framework in Frameworks */,
+				0F4D18CB8769B457A044BE12 /* Pods_SatelliteForecastApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -331,7 +323,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1DAA0710B7B6C3376CEA16CB /* Pods_SatelliteForecast_SatelliteForecastTests.framework in Frameworks */,
+				5A7D9D3F0643933E5CD75DEA /* Pods_SatelliteForecastApp_SatelliteForecastTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -341,10 +333,10 @@
 		38032A026A794DBA01ED4368 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				00EB358EC730ED8A76D9DC14 /* Pods-SatelliteForecast.debug.xcconfig */,
-				A282581E620B8E3ECA2F71AC /* Pods-SatelliteForecast.release.xcconfig */,
-				DD9ABC9E05C7D15D34D6BE1B /* Pods-SatelliteForecast-SatelliteForecastTests.debug.xcconfig */,
-				267C71EE8DACC4F6A4291153 /* Pods-SatelliteForecast-SatelliteForecastTests.release.xcconfig */,
+				3AA73DC9226C29CDF02C36FA /* Pods-SatelliteForecastApp.debug.xcconfig */,
+				7CDD9857A20102072D724D11 /* Pods-SatelliteForecastApp.release.xcconfig */,
+				7F53B1E12EADC537A88A0AF1 /* Pods-SatelliteForecastApp-SatelliteForecastTests.debug.xcconfig */,
+				1AA3AE2D94CA96D5D6AC1CB9 /* Pods-SatelliteForecastApp-SatelliteForecastTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -457,6 +449,7 @@
 			children = (
 				EF16816E27D5DAE9001BA9C3 /* SatelliteOverviewView+Wiring.swift */,
 				EF16817027D5DC03001BA9C3 /* SatelliteOverviewReducer+Wiring.swift */,
+				EF773DAE27F7B5B10071893B /* SatelliteOverviewView+ElementsLoader.swift */,
 			);
 			path = Wiring;
 			sourceTree = "<group>";
@@ -482,6 +475,7 @@
 		EF1CAB34266B8747006319C8 /* SatelliteListView */ = {
 			isa = PBXGroup;
 			children = (
+				EF773DAB27F7B5510071893B /* Wiring */,
 				EF7A3196266B6BBF00CC33C0 /* SatelliteListView.swift */,
 				EF1CAB38266B8934006319C8 /* SatelliteListViewMiddleware.swift */,
 				EF1CAB35266B87B6006319C8 /* SatelliteListViewReducer.swift */,
@@ -575,6 +569,14 @@
 			path = ElementsPropagator;
 			sourceTree = "<group>";
 		};
+		EF773DAB27F7B5510071893B /* Wiring */ = {
+			isa = PBXGroup;
+			children = (
+				EF773DAC27F7B55F0071893B /* SatelliteListView+ElementsLoader.swift */,
+			);
+			path = Wiring;
+			sourceTree = "<group>";
+		};
 		EF7A3120266B03A100CC33C0 /* Location */ = {
 			isa = PBXGroup;
 			children = (
@@ -592,13 +594,6 @@
 			isa = PBXGroup;
 			children = (
 				EFED97AB27D616FF003FC289 /* Wiring */,
-				EF7D4DD726D25A2C005E49D0 /* SatelliteCategory.swift */,
-				EF7A3137266B4A5300CC33C0 /* ElementsLoaderAction.swift */,
-				EF7A3134266B493E00CC33C0 /* ElementsLoaderState.swift */,
-				EF7A3131266B493300CC33C0 /* ElementsLoaderMiddleware.swift */,
-				EF7A313D266B538900CC33C0 /* ElementsLoaderReducer.swift */,
-				EF7C6650269918060017A007 /* ElementsLoaderError.swift */,
-				EF7C665226992FF80017A007 /* ElementsLoader.swift */,
 			);
 			path = ElementsLoader;
 			sourceTree = "<group>";
@@ -691,7 +686,7 @@
 			isa = PBXGroup;
 			children = (
 				EF2EF4D727B11C0A000D5EC8 /* README.md */,
-				EF9D82792661BBEF00616C97 /* SatelliteForecast */,
+				EF9D82792661BBEF00616C97 /* SatelliteForecastApp */,
 				EFB1B4D127BCDFC40025974C /* SatelliteForecastTests */,
 				EF9D82822661BBF000616C97 /* Products */,
 				38032A026A794DBA01ED4368 /* Pods */,
@@ -699,7 +694,7 @@
 			);
 			sourceTree = "<group>";
 		};
-		EF9D82792661BBEF00616C97 /* SatelliteForecast */ = {
+		EF9D82792661BBEF00616C97 /* SatelliteForecastApp */ = {
 			isa = PBXGroup;
 			children = (
 				EF9D827A2661BBF000616C97 /* SatelliteForecastApp.swift */,
@@ -721,13 +716,13 @@
 				EF7A3120266B03A100CC33C0 /* Location */,
 				EF16816A27D5D56E001BA9C3 /* Preview Content */,
 			);
-			path = SatelliteForecast;
+			path = SatelliteForecastApp;
 			sourceTree = "<group>";
 		};
 		EF9D82822661BBF000616C97 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				EF9D82812661BBF000616C97 /* SatelliteForecast.app */,
+				EF9D82812661BBF000616C97 /* SatelliteForecastApp.app */,
 				EFB1B4D027BCDFC40025974C /* SatelliteForecastTests.xctest */,
 			);
 			name = Products;
@@ -771,6 +766,7 @@
 			isa = PBXGroup;
 			children = (
 				EFB6112527F509A9003557E5 /* AllPassesView+Wiring.swift */,
+				EF773DB027F7B8D60071893B /* AllPassesView+ElementsLoader.swift */,
 			);
 			path = Wiring;
 			sourceTree = "<group>";
@@ -828,8 +824,8 @@
 			isa = PBXGroup;
 			children = (
 				EF16811A27CF0248001BA9C3 /* XCTest.framework */,
-				F309E703E1576B91309154B8 /* Pods_SatelliteForecast.framework */,
-				5CF84B428B2EC72B9D2FF372 /* Pods_SatelliteForecast_SatelliteForecastTests.framework */,
+				4A5D2224DCC9C43D59863B01 /* Pods_SatelliteForecastApp.framework */,
+				7A0F3C2E7636CFDD88F4AEFC /* Pods_SatelliteForecastApp_SatelliteForecastTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -837,35 +833,35 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		EF9D82802661BBF000616C97 /* SatelliteForecast */ = {
+		EF9D82802661BBF000616C97 /* SatelliteForecastApp */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EF9D82AB2661BBF100616C97 /* Build configuration list for PBXNativeTarget "SatelliteForecast" */;
+			buildConfigurationList = EF9D82AB2661BBF100616C97 /* Build configuration list for PBXNativeTarget "SatelliteForecastApp" */;
 			buildPhases = (
-				E4A24AD93095F96102337786 /* [CP] Check Pods Manifest.lock */,
+				CB5025CC9485D2A635F89056 /* [CP] Check Pods Manifest.lock */,
 				EF9D827D2661BBF000616C97 /* Sources */,
 				EF9D827E2661BBF000616C97 /* Frameworks */,
 				EFAE1EF5266862B500A18A42 /* Embed Frameworks */,
 				EF5A907F269FA50400EADA2D /* Resources */,
-				07ABDB8DA843A2B67F2BBFFA /* [CP] Embed Pods Frameworks */,
+				2482E89CC6966D33D7A138D7 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = SatelliteForecast;
-			productName = SatelliteForecast;
-			productReference = EF9D82812661BBF000616C97 /* SatelliteForecast.app */;
+			name = SatelliteForecastApp;
+			productName = SatelliteForecastApp;
+			productReference = EF9D82812661BBF000616C97 /* SatelliteForecastApp.app */;
 			productType = "com.apple.product-type.application";
 		};
 		EFB1B4CF27BCDFC40025974C /* SatelliteForecastTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = EFB1B4D627BCDFC40025974C /* Build configuration list for PBXNativeTarget "SatelliteForecastTests" */;
 			buildPhases = (
-				5BAC9DAC720FCE14C3459FF3 /* [CP] Check Pods Manifest.lock */,
+				159D59B9BDE614326D4A93EB /* [CP] Check Pods Manifest.lock */,
 				EFB1B4CC27BCDFC40025974C /* Sources */,
 				EFB1B4CD27BCDFC40025974C /* Frameworks */,
 				EFB1B4CE27BCDFC40025974C /* Resources */,
-				7644E9D7A7620A09B77C2469 /* [CP] Embed Pods Frameworks */,
+				310FBD760F57CE274D22E8CC /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -908,7 +904,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				EF9D82802661BBF000616C97 /* SatelliteForecast */,
+				EF9D82802661BBF000616C97 /* SatelliteForecastApp */,
 				EFB1B4CF27BCDFC40025974C /* SatelliteForecastTests */,
 			);
 		};
@@ -937,24 +933,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		07ABDB8DA843A2B67F2BBFFA /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SatelliteForecast/Pods-SatelliteForecast-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SatelliteForecast/Pods-SatelliteForecast-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SatelliteForecast/Pods-SatelliteForecast-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		5BAC9DAC720FCE14C3459FF3 /* [CP] Check Pods Manifest.lock */ = {
+		159D59B9BDE614326D4A93EB /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -969,31 +948,48 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SatelliteForecast-SatelliteForecastTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-SatelliteForecastApp-SatelliteForecastTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		7644E9D7A7620A09B77C2469 /* [CP] Embed Pods Frameworks */ = {
+		2482E89CC6966D33D7A138D7 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SatelliteForecast-SatelliteForecastTests/Pods-SatelliteForecast-SatelliteForecastTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-SatelliteForecastApp/Pods-SatelliteForecastApp-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SatelliteForecast-SatelliteForecastTests/Pods-SatelliteForecast-SatelliteForecastTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-SatelliteForecastApp/Pods-SatelliteForecastApp-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SatelliteForecast-SatelliteForecastTests/Pods-SatelliteForecast-SatelliteForecastTests-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SatelliteForecastApp/Pods-SatelliteForecastApp-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		E4A24AD93095F96102337786 /* [CP] Check Pods Manifest.lock */ = {
+		310FBD760F57CE274D22E8CC /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SatelliteForecastApp-SatelliteForecastTests/Pods-SatelliteForecastApp-SatelliteForecastTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SatelliteForecastApp-SatelliteForecastTests/Pods-SatelliteForecastApp-SatelliteForecastTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SatelliteForecastApp-SatelliteForecastTests/Pods-SatelliteForecastApp-SatelliteForecastTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		CB5025CC9485D2A635F89056 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1008,7 +1004,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SatelliteForecast-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-SatelliteForecastApp-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1027,15 +1023,16 @@
 				EFCF20F426AD545400D87E8B /* DebugMenuMiddleware.swift in Sources */,
 				EF8A424226812A940014AE17 /* PlanetaryBodyView.swift in Sources */,
 				EF98F86026ABDA7B0086B2FA /* SatelliteElevationGraphCurrentIndicator.swift in Sources */,
+				EF773DB127F7B8D60071893B /* AllPassesView+ElementsLoader.swift in Sources */,
 				EF46564D267AF7070040B762 /* SkyChartConfigs.swift in Sources */,
 				EF5CB017266E28EE000019DA /* TimerReducer.swift in Sources */,
 				EF51D98927D98BB60087AA9E /* RealtimeSkySatelliteCell.swift in Sources */,
 				EF16816927D578B6001BA9C3 /* RootViewReducer+Wiring.swift in Sources */,
 				EF3D099E26864DDF00B84232 /* SatelliteOverviewCell.swift in Sources */,
-				EF7A3132266B493300CC33C0 /* ElementsLoaderMiddleware.swift in Sources */,
 				EF16815027D2B4A1001BA9C3 /* BackgroundSkyView+Wiring.swift in Sources */,
 				EFE7215C26BE57BD0009C29B /* LocationSettingsCurrentLocationCell.swift in Sources */,
 				EF19FA09266EC38200D0B2CD /* SkyChartMiddleware.swift in Sources */,
+				EF773DAF27F7B5B10071893B /* SatelliteOverviewView+ElementsLoader.swift in Sources */,
 				EF16813F27D1793A001BA9C3 /* RealtimeSkyViewMiddleware.swift in Sources */,
 				EF7A312B266B1A3800CC33C0 /* LocationReducer.swift in Sources */,
 				EF847C0726D0AA230004806F /* NotificationState.swift in Sources */,
@@ -1073,6 +1070,7 @@
 				EF3D09A5268875B100B84232 /* NavigationState.swift in Sources */,
 				EF1CAB39266B8934006319C8 /* SatelliteListViewMiddleware.swift in Sources */,
 				EF1CAB32266B7ABF006319C8 /* PassView.swift in Sources */,
+				EF773DAD27F7B55F0071893B /* SatelliteListView+ElementsLoader.swift in Sources */,
 				EF16816727D5788E001BA9C3 /* RootViewReducer.swift in Sources */,
 				EF12BC1027E204070083F3A2 /* EnvironmentKeys.swift in Sources */,
 				EF16817127D5DC03001BA9C3 /* SatelliteOverviewReducer+Wiring.swift in Sources */,
@@ -1103,20 +1101,16 @@
 				EF4AF76C266434CC00D28F47 /* SkyChart.swift in Sources */,
 				EFB6112027F4EF4D003557E5 /* SkyChart+Wiring.swift in Sources */,
 				EF0FC06C2677D7A200560AF0 /* AllPassesView.swift in Sources */,
-				EF7C6651269918060017A007 /* ElementsLoaderError.swift in Sources */,
 				EF19FA0B266EC7CE00D0B2CD /* SkyChartReducer.swift in Sources */,
 				EFD8E74227E6B7F30098D208 /* SettingsOverviewView+Wiring.swift in Sources */,
 				EF46564B2679C81F0040B762 /* PassPreviewCell.swift in Sources */,
 				EF16816327D42F2C001BA9C3 /* TabBarItemModifier.swift in Sources */,
 				EF16814B27D19AE2001BA9C3 /* BackgroundSkyMiddleware.swift in Sources */,
-				EF7A3138266B4A5300CC33C0 /* ElementsLoaderAction.swift in Sources */,
 				EF16814027D1793A001BA9C3 /* RealtimePropagationResult.swift in Sources */,
 				EF16814D27D201A7001BA9C3 /* ChartQuality.swift in Sources */,
 				EF283B0526B23122008223C1 /* SkyChartDynamicIndicator.swift in Sources */,
 				EF16816F27D5DAE9001BA9C3 /* SatelliteOverviewView+Wiring.swift in Sources */,
 				EFB6112327F4F779003557E5 /* PassView+Wiring.swift in Sources */,
-				EF7C665326992FF80017A007 /* ElementsLoader.swift in Sources */,
-				EF7A3135266B493E00CC33C0 /* ElementsLoaderState.swift in Sources */,
 				EF16816C27D5D599001BA9C3 /* Elements+Preview.swift in Sources */,
 				EFCF20F226AD4E7E00D87E8B /* DebugMenuReducer.swift in Sources */,
 				EF847BF026CE33650004806F /* AppDelegateMiddleware.swift in Sources */,
@@ -1141,13 +1135,11 @@
 				EFCF20F026AD020E00D87E8B /* DebugMenu.swift in Sources */,
 				EFED97AD27D6170C003FC289 /* ElementsLoaderState+Wiring.swift in Sources */,
 				EF58EC1426A6325B0026ADB9 /* PassLabel.swift in Sources */,
-				EF7D4DD826D25A2C005E49D0 /* SatelliteCategory.swift in Sources */,
 				EFED97BF27D6DB06003FC289 /* ViewDidLoadModifier.swift in Sources */,
 				EF8BD19E26B5448F00DE9F33 /* ObserverCell.swift in Sources */,
 				EF3D099C2685A12200B84232 /* SatelliteOverviewView.swift in Sources */,
 				EF16815E27D420F8001BA9C3 /* RootView.swift in Sources */,
 				EF465651267B38780040B762 /* AllPassesViewReducer.swift in Sources */,
-				EF7A313E266B538900CC33C0 /* ElementsLoaderReducer.swift in Sources */,
 				EF3D09A72689CA3D00B84232 /* SatelliteOverviewReducer.swift in Sources */,
 				EFED97BB27D6D689003FC289 /* RootViewMiddleware.swift in Sources */,
 				EF2FBB2326CA74D60046EF28 /* AllPassesLocationChangeWarning.swift in Sources */,
@@ -1167,7 +1159,7 @@
 /* Begin PBXTargetDependency section */
 		EFB1B4D527BCDFC40025974C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = EF9D82802661BBF000616C97 /* SatelliteForecast */;
+			target = EF9D82802661BBF000616C97 /* SatelliteForecastApp */;
 			targetProxy = EFB1B4D427BCDFC40025974C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -1294,25 +1286,25 @@
 		};
 		EF9D82AC2661BBF100616C97 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 00EB358EC730ED8A76D9DC14 /* Pods-SatelliteForecast.debug.xcconfig */;
+			baseConfigurationReference = 3AA73DC9226C29CDF02C36FA /* Pods-SatelliteForecastApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 0.1.2;
-				DEVELOPMENT_ASSET_PATHS = "SatelliteForecast/Preview\\ Content";
+				DEVELOPMENT_ASSET_PATHS = "SatelliteForecastApp/Preview\\ Content";
 				DEVELOPMENT_TEAM = 52RD2GH5DP;
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = SatelliteForecast/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/SatelliteForecastApp/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.1.2;
-				PRODUCT_BUNDLE_IDENTIFIER = io.djben.SatelliteForecast;
-				PRODUCT_NAME = SatelliteForecast;
+				PRODUCT_BUNDLE_IDENTIFIER = io.djben.SatelliteForecastApp;
+				PRODUCT_NAME = SatelliteForecastApp;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -1321,25 +1313,25 @@
 		};
 		EF9D82AD2661BBF100616C97 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A282581E620B8E3ECA2F71AC /* Pods-SatelliteForecast.release.xcconfig */;
+			baseConfigurationReference = 7CDD9857A20102072D724D11 /* Pods-SatelliteForecastApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 0.1.2;
-				DEVELOPMENT_ASSET_PATHS = "SatelliteForecast/Preview\\ Content";
+				DEVELOPMENT_ASSET_PATHS = "SatelliteForecastApp/Preview\\ Content";
 				DEVELOPMENT_TEAM = 52RD2GH5DP;
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = SatelliteForecast/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/SatelliteForecastApp/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.1.2;
-				PRODUCT_BUNDLE_IDENTIFIER = io.djben.SatelliteForecast;
-				PRODUCT_NAME = SatelliteForecast;
+				PRODUCT_BUNDLE_IDENTIFIER = io.djben.SatelliteForecastApp;
+				PRODUCT_NAME = SatelliteForecastApp;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -1349,7 +1341,7 @@
 		};
 		EFB1B4D727BCDFC40025974C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DD9ABC9E05C7D15D34D6BE1B /* Pods-SatelliteForecast-SatelliteForecastTests.debug.xcconfig */;
+			baseConfigurationReference = 7F53B1E12EADC537A88A0AF1 /* Pods-SatelliteForecastApp-SatelliteForecastTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -1365,13 +1357,13 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SatelliteForecast.app/SatelliteForecast";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SatelliteForecastApp.app/SatelliteForecastApp";
 			};
 			name = Debug;
 		};
 		EFB1B4D827BCDFC40025974C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 267C71EE8DACC4F6A4291153 /* Pods-SatelliteForecast-SatelliteForecastTests.release.xcconfig */;
+			baseConfigurationReference = 1AA3AE2D94CA96D5D6AC1CB9 /* Pods-SatelliteForecastApp-SatelliteForecastTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -1387,7 +1379,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SatelliteForecast.app/SatelliteForecast";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SatelliteForecastApp.app/SatelliteForecastApp";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -1404,7 +1396,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EF9D82AB2661BBF100616C97 /* Build configuration list for PBXNativeTarget "SatelliteForecast" */ = {
+		EF9D82AB2661BBF100616C97 /* Build configuration list for PBXNativeTarget "SatelliteForecastApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EF9D82AC2661BBF100616C97 /* Debug */,

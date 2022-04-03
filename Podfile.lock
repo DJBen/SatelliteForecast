@@ -14,10 +14,18 @@ PODS:
   - SatelliteCatalogImpl_SQLite (1.0.0.LOCAL):
     - SatelliteCatalog (= 1.0.0.LOCAL)
     - SQLite.swift (~> 0.12.2)
-  - SatelliteForecastCore (1.0.0.LOCAL):
+  - SatelliteForecast (1.0.0.LOCAL):
     - BTree (~> 4.1.0)
     - QSMag (= 1.0.0.LOCAL)
     - SatelliteCatalog (= 1.0.0.LOCAL)
+    - SatelliteKit (= 1.0.0.LOCAL)
+  - SatelliteForecastImpl (1.0.0.LOCAL):
+    - BTree (~> 4.1.0)
+    - CombineRex (= 0.8.9)
+    - CombineRextensions
+    - SatelliteCatalog (= 1.0.0.LOCAL)
+    - SatelliteCatalogImpl_SQLite (= 1.0.0.LOCAL)
+    - SatelliteForecast (= 1.0.0.LOCAL)
     - SatelliteKit (= 1.0.0.LOCAL)
     - SolarSystem (= 1.0.0.LOCAL)
     - VSOP87 (= 1.0.0.LOCAL)
@@ -52,7 +60,8 @@ DEPENDENCIES:
   - QSMag (from `./QSMag`)
   - SatelliteCatalog (from `./SatelliteCatalog`)
   - SatelliteCatalogImpl_SQLite (from `./SatelliteCatalogImpl_SQLite`)
-  - SatelliteForecastCore (from `./SatelliteForecastCore`)
+  - SatelliteForecast (from `./SatelliteForecast`)
+  - SatelliteForecastImpl (from `./SatelliteForecastImpl`)
   - SatelliteKit (from `./SatelliteKit`)
   - SolarSystem (from `./SolarSystem`)
   - StarryNight (from `./StarryNight`)
@@ -84,8 +93,10 @@ EXTERNAL SOURCES:
     :path: "./SatelliteCatalog"
   SatelliteCatalogImpl_SQLite:
     :path: "./SatelliteCatalogImpl_SQLite"
-  SatelliteForecastCore:
-    :path: "./SatelliteForecastCore"
+  SatelliteForecast:
+    :path: "./SatelliteForecast"
+  SatelliteForecastImpl:
+    :path: "./SatelliteForecastImpl"
   SatelliteKit:
     :path: "./SatelliteKit"
   SolarSystem:
@@ -107,7 +118,8 @@ SPEC CHECKSUMS:
   QSMag: 5a944b9b2392dac7ba1626a70a94be337db49732
   SatelliteCatalog: 132031627b4f096d1f2a16d169286faae121c0cc
   SatelliteCatalogImpl_SQLite: 33b833c3dc7482f1acdcb167e7cb203137c940d3
-  SatelliteForecastCore: 9bee010920da256e90bc924127de366435a92e93
+  SatelliteForecast: b624f8eed1f70dff695f618cfdfeace262561287
+  SatelliteForecastImpl: f01cc79e32062c2d1eab8ea6d67eddb28bd9146b
   SatelliteKit: 53e267558b0bd35f1be23f4dfa022b4503aa0226
   SnapshotTesting: 38947050d13960d57a4a9c166fcf51bca7d56970
   SolarSystem: 35e239cc2baf5262e3ff48336384eddeeafa1070
@@ -119,6 +131,6 @@ SPEC CHECKSUMS:
   TestingExtensions: 75654c5acd46d63c09317cfa0c84f402882a29b0
   VSOP87: 8e7bfe95fa935a74bf597458e0e9376a54a35fec
 
-PODFILE CHECKSUM: a2c65ffb8cefb63d958c80381c8d6770a9d41d5e
+PODFILE CHECKSUM: f232a7b6ebbf7dc4b6fa04a115319636f9893493
 
 COCOAPODS: 1.11.3
