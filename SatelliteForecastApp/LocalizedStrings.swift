@@ -310,7 +310,7 @@ enum LocalizedStrings {
                     tableName: nil,
                     bundle: .main,
                     value: """
-                    A multinational collaborative project featuring the largest spacecraft in orbit. 
+                    A multinational collaborative project featuring the largest spacecraft in orbit since 1998. 
                     """,
                     comment: "The description of ISS in overview page."
                 )
@@ -319,7 +319,7 @@ enum LocalizedStrings {
                     "SatelliteOverview.sectionOverviewCell.description.satellite.tianhe",
                     tableName: nil,
                     bundle: .main,
-                    value: "The first module to launch of the Tiangong space station.",
+                    value: "The first module of China's Tiangong space station.",
                     comment: "The description of Tianhe in overview page."
                 )
             }
@@ -656,10 +656,13 @@ enum LocalizedStrings {
                         value: "You are observing from %@.",
                         comment: "The body of observer info"
                     )
-                    return String(format: format,             CLLocationCoordinate2D(
-                        latitude: observer.lat,
-                        longitude: observer.lon
-                    ).formattedString)
+                    return String(
+                        format: format,
+                        CLLocationCoordinate2D(
+                            latitude: observer.lat,
+                            longitude: observer.lon
+                        ).formattedString
+                    )
                 }
             }
             
@@ -757,6 +760,7 @@ enum LocalizedStrings {
         private static let durationFormatter: RelativeDateTimeFormatter = {
             let formatter = RelativeDateTimeFormatter()
             formatter.dateTimeStyle = .named
+            formatter.formattingContext = .beginningOfSentence
             return formatter
         }()
 
@@ -766,7 +770,7 @@ enum LocalizedStrings {
                     "PassPreviewCell.relativeDate.riseInTheFuture",
                     tableName: nil,
                     bundle: .main,
-                    value: "Rising %@",
+                    value: "%@",
                     comment: "A string describing that the satellite rises in a specific time in the future"
                 )
                 return String(
@@ -779,7 +783,7 @@ enum LocalizedStrings {
                     "PassPreviewCell.relativeDate.alreadyPassed",
                     tableName: nil,
                     bundle: .main,
-                    value: "Passed %@",
+                    value: "%@",
                     comment: "A string describing that the satellite has already set in a specific time in the past"
                 )
                 return String(

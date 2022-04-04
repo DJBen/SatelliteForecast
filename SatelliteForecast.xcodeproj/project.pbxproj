@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0F4D18CB8769B457A044BE12 /* Pods_SatelliteForecastApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A5D2224DCC9C43D59863B01 /* Pods_SatelliteForecastApp.framework */; };
-		5A7D9D3F0643933E5CD75DEA /* Pods_SatelliteForecastApp_SatelliteForecastTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A0F3C2E7636CFDD88F4AEFC /* Pods_SatelliteForecastApp_SatelliteForecastTests.framework */; };
+		677991D8DAA40F43E85B8CD1 /* Pods_SatelliteForecastApp_SatelliteForecastTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F2DA9CED75267C2A76268E02 /* Pods_SatelliteForecastApp_SatelliteForecastTests.framework */; };
+		9D5F2E9FA1BC31892A719C75 /* Pods_SatelliteForecastApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9945F4772B6B668C069E6F6 /* Pods_SatelliteForecastApp.framework */; };
 		EF0FC06C2677D7A200560AF0 /* AllPassesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0FC06B2677D7A200560AF0 /* AllPassesView.swift */; };
 		EF12BC0E27E1C0CF0083F3A2 /* SatelliteElevationGraph+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF12BC0D27E1C0CF0083F3A2 /* SatelliteElevationGraph+Wiring.swift */; };
 		EF12BC1027E204070083F3A2 /* EnvironmentKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF12BC0F27E204070083F3A2 /* EnvironmentKeys.swift */; };
@@ -166,12 +166,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		1AA3AE2D94CA96D5D6AC1CB9 /* Pods-SatelliteForecastApp-SatelliteForecastTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecastApp-SatelliteForecastTests.release.xcconfig"; path = "Target Support Files/Pods-SatelliteForecastApp-SatelliteForecastTests/Pods-SatelliteForecastApp-SatelliteForecastTests.release.xcconfig"; sourceTree = "<group>"; };
-		3AA73DC9226C29CDF02C36FA /* Pods-SatelliteForecastApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecastApp.debug.xcconfig"; path = "Target Support Files/Pods-SatelliteForecastApp/Pods-SatelliteForecastApp.debug.xcconfig"; sourceTree = "<group>"; };
-		4A5D2224DCC9C43D59863B01 /* Pods_SatelliteForecastApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SatelliteForecastApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		7A0F3C2E7636CFDD88F4AEFC /* Pods_SatelliteForecastApp_SatelliteForecastTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SatelliteForecastApp_SatelliteForecastTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		7CDD9857A20102072D724D11 /* Pods-SatelliteForecastApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecastApp.release.xcconfig"; path = "Target Support Files/Pods-SatelliteForecastApp/Pods-SatelliteForecastApp.release.xcconfig"; sourceTree = "<group>"; };
-		7F53B1E12EADC537A88A0AF1 /* Pods-SatelliteForecastApp-SatelliteForecastTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecastApp-SatelliteForecastTests.debug.xcconfig"; path = "Target Support Files/Pods-SatelliteForecastApp-SatelliteForecastTests/Pods-SatelliteForecastApp-SatelliteForecastTests.debug.xcconfig"; sourceTree = "<group>"; };
+		3932167AA31CE53CA54BAEE3 /* Pods-SatelliteForecastApp-SatelliteForecastTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecastApp-SatelliteForecastTests.release.xcconfig"; path = "Target Support Files/Pods-SatelliteForecastApp-SatelliteForecastTests/Pods-SatelliteForecastApp-SatelliteForecastTests.release.xcconfig"; sourceTree = "<group>"; };
+		AC142A702A08126D7FE9A76D /* Pods-SatelliteForecastApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecastApp.debug.xcconfig"; path = "Target Support Files/Pods-SatelliteForecastApp/Pods-SatelliteForecastApp.debug.xcconfig"; sourceTree = "<group>"; };
+		C29A9D5D55929796BC8D229F /* Pods-SatelliteForecastApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecastApp.release.xcconfig"; path = "Target Support Files/Pods-SatelliteForecastApp/Pods-SatelliteForecastApp.release.xcconfig"; sourceTree = "<group>"; };
+		D9945F4772B6B668C069E6F6 /* Pods_SatelliteForecastApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SatelliteForecastApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EF0FC06B2677D7A200560AF0 /* AllPassesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllPassesView.swift; sourceTree = "<group>"; };
 		EF12BC0D27E1C0CF0083F3A2 /* SatelliteElevationGraph+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SatelliteElevationGraph+Wiring.swift"; sourceTree = "<group>"; };
 		EF12BC0F27E204070083F3A2 /* EnvironmentKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentKeys.swift; sourceTree = "<group>"; };
@@ -308,6 +306,8 @@
 		EFED97BE27D6DB06003FC289 /* ViewDidLoadModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDidLoadModifier.swift; sourceTree = "<group>"; };
 		EFF750C7266F4DFF005222F8 /* SizeModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeModifier.swift; sourceTree = "<group>"; };
 		EFFD227826B788D30010E1F6 /* LocationSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSettingsView.swift; sourceTree = "<group>"; };
+		F2DA9CED75267C2A76268E02 /* Pods_SatelliteForecastApp_SatelliteForecastTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SatelliteForecastApp_SatelliteForecastTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F504DDA258D8B037E084EA3D /* Pods-SatelliteForecastApp-SatelliteForecastTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecastApp-SatelliteForecastTests.debug.xcconfig"; path = "Target Support Files/Pods-SatelliteForecastApp-SatelliteForecastTests/Pods-SatelliteForecastApp-SatelliteForecastTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -315,7 +315,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0F4D18CB8769B457A044BE12 /* Pods_SatelliteForecastApp.framework in Frameworks */,
+				9D5F2E9FA1BC31892A719C75 /* Pods_SatelliteForecastApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -323,7 +323,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5A7D9D3F0643933E5CD75DEA /* Pods_SatelliteForecastApp_SatelliteForecastTests.framework in Frameworks */,
+				677991D8DAA40F43E85B8CD1 /* Pods_SatelliteForecastApp_SatelliteForecastTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -333,10 +333,10 @@
 		38032A026A794DBA01ED4368 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				3AA73DC9226C29CDF02C36FA /* Pods-SatelliteForecastApp.debug.xcconfig */,
-				7CDD9857A20102072D724D11 /* Pods-SatelliteForecastApp.release.xcconfig */,
-				7F53B1E12EADC537A88A0AF1 /* Pods-SatelliteForecastApp-SatelliteForecastTests.debug.xcconfig */,
-				1AA3AE2D94CA96D5D6AC1CB9 /* Pods-SatelliteForecastApp-SatelliteForecastTests.release.xcconfig */,
+				AC142A702A08126D7FE9A76D /* Pods-SatelliteForecastApp.debug.xcconfig */,
+				C29A9D5D55929796BC8D229F /* Pods-SatelliteForecastApp.release.xcconfig */,
+				F504DDA258D8B037E084EA3D /* Pods-SatelliteForecastApp-SatelliteForecastTests.debug.xcconfig */,
+				3932167AA31CE53CA54BAEE3 /* Pods-SatelliteForecastApp-SatelliteForecastTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -832,8 +832,8 @@
 			isa = PBXGroup;
 			children = (
 				EF16811A27CF0248001BA9C3 /* XCTest.framework */,
-				4A5D2224DCC9C43D59863B01 /* Pods_SatelliteForecastApp.framework */,
-				7A0F3C2E7636CFDD88F4AEFC /* Pods_SatelliteForecastApp_SatelliteForecastTests.framework */,
+				D9945F4772B6B668C069E6F6 /* Pods_SatelliteForecastApp.framework */,
+				F2DA9CED75267C2A76268E02 /* Pods_SatelliteForecastApp_SatelliteForecastTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -845,12 +845,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = EF9D82AB2661BBF100616C97 /* Build configuration list for PBXNativeTarget "SatelliteForecastApp" */;
 			buildPhases = (
-				CB5025CC9485D2A635F89056 /* [CP] Check Pods Manifest.lock */,
+				9DF68ECCE5B7F58322ECC7C6 /* [CP] Check Pods Manifest.lock */,
 				EF9D827D2661BBF000616C97 /* Sources */,
 				EF9D827E2661BBF000616C97 /* Frameworks */,
 				EFAE1EF5266862B500A18A42 /* Embed Frameworks */,
 				EF5A907F269FA50400EADA2D /* Resources */,
-				2482E89CC6966D33D7A138D7 /* [CP] Embed Pods Frameworks */,
+				89B01093B5E460FBB0F17F29 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -865,11 +865,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = EFB1B4D627BCDFC40025974C /* Build configuration list for PBXNativeTarget "SatelliteForecastTests" */;
 			buildPhases = (
-				159D59B9BDE614326D4A93EB /* [CP] Check Pods Manifest.lock */,
+				2E0D40473144AC952B58018E /* [CP] Check Pods Manifest.lock */,
 				EFB1B4CC27BCDFC40025974C /* Sources */,
 				EFB1B4CD27BCDFC40025974C /* Frameworks */,
 				EFB1B4CE27BCDFC40025974C /* Resources */,
-				310FBD760F57CE274D22E8CC /* [CP] Embed Pods Frameworks */,
+				3765E689376DFC7903F097CB /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -941,7 +941,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		159D59B9BDE614326D4A93EB /* [CP] Check Pods Manifest.lock */ = {
+		2E0D40473144AC952B58018E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -963,24 +963,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		2482E89CC6966D33D7A138D7 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SatelliteForecastApp/Pods-SatelliteForecastApp-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SatelliteForecastApp/Pods-SatelliteForecastApp-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SatelliteForecastApp/Pods-SatelliteForecastApp-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		310FBD760F57CE274D22E8CC /* [CP] Embed Pods Frameworks */ = {
+		3765E689376DFC7903F097CB /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -997,7 +980,24 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SatelliteForecastApp-SatelliteForecastTests/Pods-SatelliteForecastApp-SatelliteForecastTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		CB5025CC9485D2A635F89056 /* [CP] Check Pods Manifest.lock */ = {
+		89B01093B5E460FBB0F17F29 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SatelliteForecastApp/Pods-SatelliteForecastApp-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SatelliteForecastApp/Pods-SatelliteForecastApp-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SatelliteForecastApp/Pods-SatelliteForecastApp-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9DF68ECCE5B7F58322ECC7C6 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1294,7 +1294,7 @@
 		};
 		EF9D82AC2661BBF100616C97 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3AA73DC9226C29CDF02C36FA /* Pods-SatelliteForecastApp.debug.xcconfig */;
+			baseConfigurationReference = AC142A702A08126D7FE9A76D /* Pods-SatelliteForecastApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -1321,7 +1321,7 @@
 		};
 		EF9D82AD2661BBF100616C97 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7CDD9857A20102072D724D11 /* Pods-SatelliteForecastApp.release.xcconfig */;
+			baseConfigurationReference = C29A9D5D55929796BC8D229F /* Pods-SatelliteForecastApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -1349,7 +1349,7 @@
 		};
 		EFB1B4D727BCDFC40025974C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7F53B1E12EADC537A88A0AF1 /* Pods-SatelliteForecastApp-SatelliteForecastTests.debug.xcconfig */;
+			baseConfigurationReference = F504DDA258D8B037E084EA3D /* Pods-SatelliteForecastApp-SatelliteForecastTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -1371,7 +1371,7 @@
 		};
 		EFB1B4D827BCDFC40025974C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1AA3AE2D94CA96D5D6AC1CB9 /* Pods-SatelliteForecastApp-SatelliteForecastTests.release.xcconfig */;
+			baseConfigurationReference = 3932167AA31CE53CA54BAEE3 /* Pods-SatelliteForecastApp-SatelliteForecastTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";

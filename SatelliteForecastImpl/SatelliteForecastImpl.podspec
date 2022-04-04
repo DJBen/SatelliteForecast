@@ -20,6 +20,9 @@ Pod::Spec.new do |s|
 
   s.swift_version = ['5.4']
   s.source_files = 'Sources/**/*.swift'
+  s.resource_bundles = {
+    'SatelliteForecastImplResources' => ['Assets/*.*']
+  }
 
   s.dependency 'BTree', "~> 4.1.0"
   s.dependency 'CombineRex', "0.8.9"

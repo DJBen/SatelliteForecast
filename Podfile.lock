@@ -113,7 +113,7 @@ SPEC CHECKSUMS:
   SatelliteCatalog: 132031627b4f096d1f2a16d169286faae121c0cc
   SatelliteCatalogImpl_SQLite: 33b833c3dc7482f1acdcb167e7cb203137c940d3
   SatelliteForecast: b624f8eed1f70dff695f618cfdfeace262561287
-  SatelliteForecastImpl: 86669207ee21a8114307e3a71b017b916667fff2
+  SatelliteForecastImpl: 50e63a12d9610096ef37319bb72836ded8b85a4a
   SatelliteKit: 53e267558b0bd35f1be23f4dfa022b4503aa0226
   SnapshotTesting: 38947050d13960d57a4a9c166fcf51bca7d56970
   SolarSystem: 2357ba7d4cf1073a87368a783c819322eea185e3
@@ -124,6 +124,6 @@ SPEC CHECKSUMS:
   SwiftUIVisualEffects: 4b341110ba61926c0287feef7b09b49fc0e7fac3
   TestingExtensions: 75654c5acd46d63c09317cfa0c84f402882a29b0
 
-PODFILE CHECKSUM: 7f40b7deaaaba90e3c4d7e2be156cb58ff184cf9
+PODFILE CHECKSUM: ee40939e8884e3c6d43566ded1dc75ade36c0628
 
 COCOAPODS: 1.11.3

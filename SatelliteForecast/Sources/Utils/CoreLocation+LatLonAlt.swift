@@ -24,6 +24,15 @@ extension CLLocation {
     }
 }
 
+extension CLLocationCoordinate2D {
+    public init(_ latLonAlt: LatLonAlt) {
+        self.init(
+            latitude: latLonAlt.lat,
+            longitude: limit180(latLonAlt.lon)
+        )
+    }
+}
+
 extension LatLonAlt {
     public init(location: CLLocation) {
         self.init(
