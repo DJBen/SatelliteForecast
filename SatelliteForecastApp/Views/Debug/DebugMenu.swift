@@ -50,15 +50,15 @@ struct DebugMenuState: Equatable {
         DebugMenuState(
             trueJulianDate: state.currentDate,
             config: state.debugMenu,
-            pendingNotifications: state.notificationState.pendingNotifications,
-            deliveredNotifications: state.notificationState.deliveredNotifications
+            pendingNotifications: state.notificationResources.pendingNotifications,
+            deliveredNotifications: state.notificationResources.deliveredNotifications
         )
     }
 
     static func apply(appState: inout AppState, state: DebugMenuState) {
         appState.debugMenu = state.config
-        appState.notificationState.pendingNotifications = state.pendingNotifications
-        appState.notificationState.deliveredNotifications = state.deliveredNotifications
+        appState.notificationResources.pendingNotifications = state.pendingNotifications
+        appState.notificationResources.deliveredNotifications = state.deliveredNotifications
     }
 }
 

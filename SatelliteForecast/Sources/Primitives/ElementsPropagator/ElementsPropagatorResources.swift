@@ -1,6 +1,6 @@
 //
 //  ElementsPropagatorResources.swift
-//  SatelliteForecastApp
+//  SatelliteForecast
 //
 //  Created by Ben Lu on 4/2/22.
 //

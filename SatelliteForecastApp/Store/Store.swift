@@ -22,7 +22,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         Reducer.satelliteOverviewReducer.lift(),
         Reducer.settingsOverviewReducer.lift(),
         Reducer<SatelliteListViewAction, AppState>.satelliteListViewReducer.lift(action: \.satelliteListView),
-        Reducer<AllPassesViewAction, AppState>.allPassesViewReducer.lift(action: \.allPassesView),
+        Reducer.allPassesViewReducer.lift(),
         Reducer<PassViewAction, AppState>.passViewReducer.lift(action: \.passView),
         Reducer<SatelliteElevationGraphAction, SatelliteElevationGraphResources>.satelliteElevationGraphReducer
         .lift(
@@ -31,6 +31,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         ),
         Reducer.skyChartOutputReducer.lift(),
         Reducer.elementsPropagatorReducer.lift(),
+        Reducer.elementsPropagatorOutputReducer.lift(),
         Reducer<TimerAction, AppState>.timerReducer.lift(action: \.timer),
         Reducer<DebugMenuAction, DebugMenuState>.debugMenuReducer.lift(),
         Reducer.backgroundSkyReducer.lift(),
@@ -63,7 +64,9 @@ class Store: ReduxStoreBase<AppAction, AppState> {
                     ElementsLoaderDependencies(elementsLoader: elementsLoader)
                 )
                 .eraseToAnyMiddleware(),
-            EffectMiddleware.calculatePassAfterElementsLoader.lift(),
+            EffectMiddleware.elementsPropagator.lift(),
+            EffectMiddleware.elementsPropagatorChainer.lift(),
+            EffectMiddleware.elementsLoaderToElementsPropagator.lift(),
             EffectMiddleware.selectSatelliteAfterElementsLoader.lift(),
             EffectMiddleware.selectSpecialSatelliteAfterElementsLoader.lift(),
             EffectMiddleware.rootViewElementsLoader.lift(),
@@ -81,11 +84,8 @@ class Store: ReduxStoreBase<AppAction, AppState> {
                     inputAction: \.singleSatelliteWrappingView
                 )
                 .eraseToAnyMiddleware(),
-            EffectMiddleware.allPassesView
-                .lift(
-                    inputAction: \.allPassesView
-                )
-                .eraseToAnyMiddleware(),
+            EffectMiddleware.allPassesViewToElementsPropagator.lift(),
+            EffectMiddleware.allPassesViewToNotification.lift(),
             EffectMiddleware.skyChart.lift(),
             EffectMiddleware.satelliteElevationGraph
                 .lift(

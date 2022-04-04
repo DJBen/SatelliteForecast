@@ -45,7 +45,7 @@ extension EffectMiddleware where
                         
                         return .sequence([
                             .backgroundTask(.submitHandleCalculatingUpcomingPasses),
-                            .notification(.saveNotificationsToPersistenceStorage(getState().notificationState.scheduledPassNotifications))
+                            .notification(.saveNotificationsToPersistenceStorage(getState().notificationResources.scheduledPassNotifications))
                         ])
                     @unknown default:
                         return .doNothing

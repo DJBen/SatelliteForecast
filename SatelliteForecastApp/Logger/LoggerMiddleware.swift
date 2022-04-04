@@ -61,13 +61,13 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                         print("rasterizedBackgroundSky(quality: \(quality), julianDate: \(julianDate))")
                     }
                 case .elementsPropagator(let elementsPropagatorAction):
-                    switch elementsPropagatorAction {
+                    print(elementsPropagatorAction)
+                case .elementsPropagatorOutput(let elementsPropagatorOutput):
+                    switch elementsPropagatorOutput {
                     case .foundPassesAndSnapshots(let passSnapshotList, let noradIndex, let observer):
                         print("foundPassesAndSnapshots(passes: \(passSnapshotList.count), noradIndex: \(noradIndex), observer: \(observer))")
                     case .propagatedSnapshots(let snapshots, let noradIndex, let observer):
                         print("propagatedSnapshots(snapshots: \(snapshots.count), noradIndex: \(noradIndex), observer: \(observer))")
-                    case .purgePassesAndSnapshots:
-                        print(elementsPropagatorAction)
                     }
                 case .timer(let timerAction):
                     print(timerAction)

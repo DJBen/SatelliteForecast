@@ -9,7 +9,7 @@ import Foundation
 import SwiftRex
 import SatelliteKit
 
-extension Reducer where ActionType == AllPassesViewAction, StateType == AppState {
+extension Reducer where ActionType == AllPassesViewAction, StateType == AllPassesViewState {
     static let allPassesViewReducer = Reducer.reduce { action, state in
         switch action {
         case .calculatePasses:
@@ -17,8 +17,8 @@ extension Reducer where ActionType == AllPassesViewAction, StateType == AppState
         case .recalculatePasses:
             break
         case let .selectPass(index):
-            state.navigationState.listNavigation.selectedPassIndex = index
-        case .scheduleNotification(_):
+            state.selectedPassIndex = index
+        case .scheduleNotification(_, _):
             break
         case .unscheduleNotification(_):
             break

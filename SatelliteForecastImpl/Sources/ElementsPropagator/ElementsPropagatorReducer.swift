@@ -17,6 +17,19 @@ fileprivate let logger = Logger(subsystem: "io.djben.ElementsPropagator", catego
 extension Reducer where ActionType == ElementsPropagatorAction, StateType == ElementsPropagatorResources {
     public static let elementsPropagatorReducer = Reducer.reduce { action, state in
         switch action {
+        case .purgePassesAndSnapshots:
+            state.satelliteTrails = [:]
+        case .calculatePasses(_):
+            break
+        case .recalculatePasses(_):
+            break
+        }
+    }
+}
+
+extension Reducer where ActionType == ElementsPropagatorOutput, StateType == ElementsPropagatorResources {
+    public static let elementsPropagatorOutputReducer = Reducer.reduce { action, state in
+        switch action {
         case let .foundPassesAndSnapshots(passSnapshots, noradIndex, observer):
             logger.info("Found \(passSnapshots.count) passes for \(noradIndex). Detailed snapshots count: \(passSnapshots.count)")
             if let _ = state.satelliteTrails[noradIndex] {
@@ -38,9 +51,6 @@ extension Reducer where ActionType == ElementsPropagatorAction, StateType == Ele
                     snapshots: satelliteSnapshots
                 )
             }
-
-        case .purgePassesAndSnapshots:
-            state.satelliteTrails = [:]
         }
     }
 }

@@ -28,7 +28,7 @@ struct AlarmSettingsViewState: Equatable {
     
     static func project(appState: AppState) -> AlarmSettingsViewState {
         AlarmSettingsViewState(
-            notificationItems: appState.notificationState.scheduledPassNotifications.compactMap { scheduledNotification -> Item? in
+            notificationItems: appState.notificationResources.scheduledPassNotifications.compactMap { scheduledNotification -> Item? in
                 return Item(
                     id: scheduledNotification.id,
                     passNotification: scheduledNotification.notification

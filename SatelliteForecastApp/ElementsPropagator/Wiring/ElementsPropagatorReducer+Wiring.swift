@@ -18,3 +18,13 @@ extension Reducer where ActionType == ElementsPropagatorAction, StateType == Ele
         )
     }
 }
+
+extension Reducer where ActionType == ElementsPropagatorOutput, StateType == ElementsPropagatorResources {
+    func lift() -> Reducer<AppAction, AppState> {
+        lift(
+            actionGetter: \.elementsPropagatorOutput,
+            stateGetter: ElementsPropagatorResources.project(appState:),
+            stateSetter: ElementsPropagatorResources.apply(appState:state:)
+        )
+    }
+}

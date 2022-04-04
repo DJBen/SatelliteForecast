@@ -18,7 +18,7 @@ enum AppAction {
     case elementsLoaderOutput(ElementsLoaderOutput)
     case timer(TimerAction)
     case elementsPropagator(ElementsPropagatorAction)
-
+    case elementsPropagatorOutput(ElementsPropagatorOutput)
     case rootView(RootViewAction)
     case satelliteOverview(SatelliteOverviewViewAction)
     case settingsOverview(SettingsOverviewViewAction)
@@ -246,6 +246,17 @@ extension AppAction {
         set {
             guard case .elementsPropagator = self, let newValue = newValue else { return }
             self = .elementsPropagator(newValue)
+        }
+    }
+
+    public var elementsPropagatorOutput: ElementsPropagatorOutput? {
+        get {
+            guard case let .elementsPropagatorOutput(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .elementsPropagatorOutput = self, let newValue = newValue else { return }
+            self = .elementsPropagatorOutput(newValue)
         }
     }
 

@@ -68,12 +68,15 @@
 		EF5A908426A0D68400EADA2D /* LazyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5A908326A0D68400EADA2D /* LazyView.swift */; };
 		EF5CB017266E28EE000019DA /* TimerReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5CB016266E28EE000019DA /* TimerReducer.swift */; };
 		EF5CB019266E28FC000019DA /* TimerMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5CB018266E28FC000019DA /* TimerMiddleware.swift */; };
-		EF5CB022266EAF6F000019DA /* AllPassesViewMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5CB021266EAF6F000019DA /* AllPassesViewMiddleware.swift */; };
 		EF62BA4426CE316A00813357 /* PassNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF62BA4326CE316A00813357 /* PassNotification.swift */; };
+		EF66ED1D27FAC53700CD3136 /* AllPassesViewReducer+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF66ED1C27FAC53700CD3136 /* AllPassesViewReducer+Wiring.swift */; };
+		EF66ED2327FAD0E200CD3136 /* ElementsPropagatorMiddleware+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF66ED2227FAD0E200CD3136 /* ElementsPropagatorMiddleware+Wiring.swift */; };
+		EF66ED2527FAD43E00CD3136 /* AllPassesViewMiddleware+Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF66ED2427FAD43E00CD3136 /* AllPassesViewMiddleware+Notifications.swift */; };
+		EF66ED2727FAD6AD00CD3136 /* AllPassesViewMiddleware+ElementsPropagator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF66ED2627FAD6AD00CD3136 /* AllPassesViewMiddleware+ElementsPropagator.swift */; };
 		EF67A7BE27BCF024007305DA /* MiddlewareTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF67A7BD27BCF024007305DA /* MiddlewareTests.swift */; };
 		EF773DAD27F7B55F0071893B /* SatelliteListView+ElementsLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF773DAC27F7B55F0071893B /* SatelliteListView+ElementsLoader.swift */; };
 		EF773DAF27F7B5B10071893B /* SatelliteOverviewView+ElementsLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF773DAE27F7B5B10071893B /* SatelliteOverviewView+ElementsLoader.swift */; };
-		EF773DB127F7B8D60071893B /* AllPassesView+ElementsLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF773DB027F7B8D60071893B /* AllPassesView+ElementsLoader.swift */; };
+		EF773DB127F7B8D60071893B /* ElementsLoaderMiddleware+ElementPropagator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF773DB027F7B8D60071893B /* ElementsLoaderMiddleware+ElementPropagator.swift */; };
 		EF7A311E266AFBF800CC33C0 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A311D266AFBF800CC33C0 /* Store.swift */; };
 		EF7A3122266B03B400CC33C0 /* LocationMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A3121266B03B400CC33C0 /* LocationMiddleware.swift */; };
 		EF7A3125266B1A2500CC33C0 /* LocationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7A3124266B1A2500CC33C0 /* LocationState.swift */; };
@@ -230,12 +233,15 @@
 		EF5A908326A0D68400EADA2D /* LazyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyView.swift; sourceTree = "<group>"; };
 		EF5CB016266E28EE000019DA /* TimerReducer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimerReducer.swift; sourceTree = "<group>"; };
 		EF5CB018266E28FC000019DA /* TimerMiddleware.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimerMiddleware.swift; sourceTree = "<group>"; };
-		EF5CB021266EAF6F000019DA /* AllPassesViewMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllPassesViewMiddleware.swift; sourceTree = "<group>"; };
 		EF62BA4326CE316A00813357 /* PassNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassNotification.swift; sourceTree = "<group>"; };
+		EF66ED1C27FAC53700CD3136 /* AllPassesViewReducer+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AllPassesViewReducer+Wiring.swift"; sourceTree = "<group>"; };
+		EF66ED2227FAD0E200CD3136 /* ElementsPropagatorMiddleware+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ElementsPropagatorMiddleware+Wiring.swift"; sourceTree = "<group>"; };
+		EF66ED2427FAD43E00CD3136 /* AllPassesViewMiddleware+Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AllPassesViewMiddleware+Notifications.swift"; sourceTree = "<group>"; };
+		EF66ED2627FAD6AD00CD3136 /* AllPassesViewMiddleware+ElementsPropagator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AllPassesViewMiddleware+ElementsPropagator.swift"; sourceTree = "<group>"; };
 		EF67A7BD27BCF024007305DA /* MiddlewareTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiddlewareTests.swift; sourceTree = "<group>"; };
 		EF773DAC27F7B55F0071893B /* SatelliteListView+ElementsLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SatelliteListView+ElementsLoader.swift"; sourceTree = "<group>"; };
 		EF773DAE27F7B5B10071893B /* SatelliteOverviewView+ElementsLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SatelliteOverviewView+ElementsLoader.swift"; sourceTree = "<group>"; };
-		EF773DB027F7B8D60071893B /* AllPassesView+ElementsLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AllPassesView+ElementsLoader.swift"; sourceTree = "<group>"; };
+		EF773DB027F7B8D60071893B /* ElementsLoaderMiddleware+ElementPropagator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ElementsLoaderMiddleware+ElementPropagator.swift"; sourceTree = "<group>"; };
 		EF7A311D266AFBF800CC33C0 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		EF7A3121266B03B400CC33C0 /* LocationMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationMiddleware.swift; sourceTree = "<group>"; };
 		EF7A3124266B1A2500CC33C0 /* LocationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationState.swift; sourceTree = "<group>"; };
@@ -346,7 +352,6 @@
 			children = (
 				EFB6112427F50994003557E5 /* Wiring */,
 				EF0FC06B2677D7A200560AF0 /* AllPassesView.swift */,
-				EF5CB021266EAF6F000019DA /* AllPassesViewMiddleware.swift */,
 				EF465650267B38780040B762 /* AllPassesViewReducer.swift */,
 				EF46564A2679C81F0040B762 /* PassPreviewCell.swift */,
 				EF2FBB2226CA74D60046EF28 /* AllPassesLocationChangeWarning.swift */,
@@ -507,6 +512,7 @@
 			children = (
 				EF325F3C27F979D400FDE42E /* ElementsPropagatorResources+Wiring.swift */,
 				EF325F3A27F9794600FDE42E /* ElementsPropagatorReducer+Wiring.swift */,
+				EF66ED2227FAD0E200CD3136 /* ElementsPropagatorMiddleware+Wiring.swift */,
 			);
 			path = Wiring;
 			sourceTree = "<group>";
@@ -774,7 +780,9 @@
 			isa = PBXGroup;
 			children = (
 				EFB6112527F509A9003557E5 /* AllPassesView+Wiring.swift */,
-				EF773DB027F7B8D60071893B /* AllPassesView+ElementsLoader.swift */,
+				EF66ED1C27FAC53700CD3136 /* AllPassesViewReducer+Wiring.swift */,
+				EF66ED2427FAD43E00CD3136 /* AllPassesViewMiddleware+Notifications.swift */,
+				EF66ED2627FAD6AD00CD3136 /* AllPassesViewMiddleware+ElementsPropagator.swift */,
 			);
 			path = Wiring;
 			sourceTree = "<group>";
@@ -812,6 +820,7 @@
 		EFED97AB27D616FF003FC289 /* Wiring */ = {
 			isa = PBXGroup;
 			children = (
+				EF773DB027F7B8D60071893B /* ElementsLoaderMiddleware+ElementPropagator.swift */,
 				EFED97AC27D6170C003FC289 /* ElementsLoaderState+Wiring.swift */,
 				EFED97AE27D61742003FC289 /* ElementsLoaderMiddleware+Wiring.swift */,
 				EFED97B027D617F8003FC289 /* ElementsLoaderReducer+Wiring.swift */,
@@ -1031,7 +1040,7 @@
 				EFCF20F426AD545400D87E8B /* DebugMenuMiddleware.swift in Sources */,
 				EF8A424226812A940014AE17 /* PlanetaryBodyView.swift in Sources */,
 				EF98F86026ABDA7B0086B2FA /* SatelliteElevationGraphCurrentIndicator.swift in Sources */,
-				EF773DB127F7B8D60071893B /* AllPassesView+ElementsLoader.swift in Sources */,
+				EF773DB127F7B8D60071893B /* ElementsLoaderMiddleware+ElementPropagator.swift in Sources */,
 				EF46564D267AF7070040B762 /* SkyChartConfigs.swift in Sources */,
 				EF5CB017266E28EE000019DA /* TimerReducer.swift in Sources */,
 				EF51D98927D98BB60087AA9E /* RealtimeSkySatelliteCell.swift in Sources */,
@@ -1042,14 +1051,15 @@
 				EF19FA09266EC38200D0B2CD /* SkyChartMiddleware.swift in Sources */,
 				EF773DAF27F7B5B10071893B /* SatelliteOverviewView+ElementsLoader.swift in Sources */,
 				EF16813F27D1793A001BA9C3 /* RealtimeSkyViewMiddleware.swift in Sources */,
+				EF66ED1D27FAC53700CD3136 /* AllPassesViewReducer+Wiring.swift in Sources */,
 				EF7A312B266B1A3800CC33C0 /* LocationReducer.swift in Sources */,
 				EF847C0726D0AA230004806F /* NotificationState.swift in Sources */,
 				EFFD227926B788D30010E1F6 /* LocationSettingsView.swift in Sources */,
 				EF833B0626B12FB0003EEBB6 /* SkyChartBackground.swift in Sources */,
-				EF5CB022266EAF6F000019DA /* AllPassesViewMiddleware.swift in Sources */,
 				EF847BF426CF23B60004806F /* NotificationMiddleware.swift in Sources */,
 				EF16814727D181D7001BA9C3 /* BackgroundSkyReducer.swift in Sources */,
 				EF8BD1A026B5544500DE9F33 /* SatelliteOverviewSection.swift in Sources */,
+				EF66ED2727FAD6AD00CD3136 /* AllPassesViewMiddleware+ElementsPropagator.swift in Sources */,
 				EF847BFC26CF96B20004806F /* AlarmSettingsCell.swift in Sources */,
 				EFAE1F132669E7A800A18A42 /* SunlightIndicator.swift in Sources */,
 				EF847C0526D099FF0004806F /* AlarmSettingsViewMiddleware.swift in Sources */,
@@ -1145,8 +1155,10 @@
 				EF58EC1426A6325B0026ADB9 /* PassLabel.swift in Sources */,
 				EFED97BF27D6DB06003FC289 /* ViewDidLoadModifier.swift in Sources */,
 				EF8BD19E26B5448F00DE9F33 /* ObserverCell.swift in Sources */,
+				EF66ED2327FAD0E200CD3136 /* ElementsPropagatorMiddleware+Wiring.swift in Sources */,
 				EF3D099C2685A12200B84232 /* SatelliteOverviewView.swift in Sources */,
 				EF16815E27D420F8001BA9C3 /* RootView.swift in Sources */,
+				EF66ED2527FAD43E00CD3136 /* AllPassesViewMiddleware+Notifications.swift in Sources */,
 				EF465651267B38780040B762 /* AllPassesViewReducer.swift in Sources */,
 				EF3D09A72689CA3D00B84232 /* SatelliteOverviewReducer.swift in Sources */,
 				EFED97BB27D6D689003FC289 /* RootViewMiddleware.swift in Sources */,

@@ -39,7 +39,7 @@ struct AppState: Equatable {
 
     var debugMenu: DebugMenuConfig = .init()
 
-    var notificationState: NotificationState = NotificationState()
+    var notificationResources: NotificationResources = NotificationResources()
 
     static var empty: AppState {
         return AppState()

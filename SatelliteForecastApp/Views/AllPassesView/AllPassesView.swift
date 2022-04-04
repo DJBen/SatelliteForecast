@@ -14,27 +14,18 @@ import SatelliteKit
 import SwiftUI
 
 enum AllPassesViewAction {
-    struct CalculatePassesParams: CustomDebugStringConvertible {
-        let selectedNoradIndex: UInt
-        let satelliteInfo: SatelliteInfo
-        let julianDateRange: ClosedRange<Double>
-        let observer: LatLonAlt
-
-        var debugDescription: String {
-            return "selectedNoradIndex: \(selectedNoradIndex), julianDateRange: \(julianDateRange), observer: \(observer)"
-        }
-    }
-    
+    case selectPass(index: Int?)
     /// Calculate the passes.
     case calculatePasses(CalculatePassesParams)
     /// Recaculate passes using the latest location.
     case recalculatePasses(CalculatePassesParams)
-    case selectPass(index: Int?)
-    
-    // It will trigger the model change after a delay to accomodate for animation
-    case scheduleNotification(PassNotification)
-    // It will trigger the model change after a delay to accomodate for animation
+    case scheduleNotification(PassNotification, passSnapshots: PassSnapshots)
     case unscheduleNotification(pass: Pass)
+}
+
+/// The outputs that occurs as a ersult of `AllPassesViewAction`s.
+enum AllPassesViewExternalOutput {
+    case purgePassesAndSnapshots
 }
 
 struct AllPassesViewContext {
@@ -190,7 +181,8 @@ struct AllPassesView: View {
                             category: viewModel.state.satelliteCategory,
                             observer: context.observer!,
                             timeOffset: 0
-                        )
+                        ),
+                        passSnapshots: item.passSnapshots
                     )
                 )
                 

@@ -7,11 +7,12 @@
 
 import CombineRex
 import CombineRextensions
+import SatelliteForecast
 import SatelliteForecastImpl
 
-extension EffectMiddleware where InputActionType == ElementsLoaderOutput, OutputActionType == AllPassesViewAction, StateType == ElementsLoaderState, Dependencies == Void {
+extension EffectMiddleware where InputActionType == ElementsLoaderOutput, OutputActionType == ElementsPropagatorAction, StateType == ElementsLoaderState, Dependencies == Void {
     /// This middleware triggers `calculatePass` event after satellite has been loaded
-    static var calculatePassAfterElementsLoader: EffectMiddleware<ElementsLoaderOutput, AllPassesViewAction, ElementsLoaderState, Void> {
+    static var elementsLoaderToElementsPropagator: EffectMiddleware<ElementsLoaderOutput, ElementsPropagatorAction, ElementsLoaderState, Void> {
         EffectMiddleware.onAction { action, dispatcher, getState in
             switch action {
             case .loadedSatelliteElements(_, let satelliteInfoMap, _, _, let calculatePass):
@@ -21,7 +22,7 @@ extension EffectMiddleware where InputActionType == ElementsLoaderOutput, Output
 
                 return .just(
                     .calculatePasses(
-                        AllPassesViewAction.CalculatePassesParams(
+                        CalculatePassesParams(
                             selectedNoradIndex: calculatePass.noradIndex,
                             satelliteInfo: satelliteInfo,
                             julianDateRange: calculatePass.dateRange,
@@ -35,5 +36,16 @@ extension EffectMiddleware where InputActionType == ElementsLoaderOutput, Output
                 return .doNothing
             }
         }
+    }
+}
+
+extension EffectMiddleware where InputActionType == ElementsLoaderOutput, OutputActionType == ElementsPropagatorAction, StateType == ElementsLoaderState, Dependencies == Void {
+    func lift() -> AnyMiddleware<AppAction, AppAction, AppState> {
+        lift(
+            inputAction: \.elementsLoaderOutput,
+            outputAction: AppAction.elementsPropagator,
+            state: ElementsLoaderState.project(appState:)
+        )
+        .eraseToAnyMiddleware()
     }
 }

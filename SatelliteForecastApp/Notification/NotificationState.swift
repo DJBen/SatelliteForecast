@@ -1,6 +1,6 @@
 //
-//  NotificationState.swift
-//  NotificationState
+//  NotificationResources.swift
+//  NotificationResources
 //
 //  Created by Ben Lu on 8/20/21.
 //
@@ -9,7 +9,7 @@ import Foundation
 import SatelliteForecast
 import UserNotifications
 
-struct NotificationState: Equatable {
+struct NotificationResources: Equatable {
     var scheduledPassNotifications: Set<ScheduledPassNotification> = []
     var pendingNotifications: [UNNotificationRequest] = []
     var deliveredNotifications: [UNNotification] = []

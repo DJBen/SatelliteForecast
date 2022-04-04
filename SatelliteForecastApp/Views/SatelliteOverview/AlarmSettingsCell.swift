@@ -17,7 +17,7 @@ struct AlarmSettingsCellState: Equatable {
     var scheduledPassNotifications: Set<ScheduledPassNotification> = []
 
     static func project(state: AppState) -> AlarmSettingsCellState {
-        AlarmSettingsCellState(scheduledPassNotifications: state.notificationState.scheduledPassNotifications)
+        AlarmSettingsCellState(scheduledPassNotifications: state.notificationResources.scheduledPassNotifications)
     }
 
     static var empty: AlarmSettingsCellState {

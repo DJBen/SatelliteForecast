@@ -12,7 +12,7 @@ extension AllPassesViewState: AppStateMappable {
     static func project(appState: AppState) -> AllPassesViewState {
         return AllPassesViewState(
             julianDate: appState.julianDate,
-            scheduledPassNotifications: appState.notificationState.scheduledPassNotifications,
+            scheduledPassNotifications: appState.notificationResources.scheduledPassNotifications,
             skyChartResources: appState.skyChartResources,
             backgroundSkyResources: appState.backgroundSkyResources,
             location: appState.locationState.location,
