@@ -21,6 +21,8 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                     print(notificationAction)
                 case .location(let locationAction):
                     print(locationAction)
+                case .locationOutput(let locationOutput):
+                    print(locationOutput)
                 case .elementsLoader(let elementsLoaderAction):
                     print(elementsLoaderAction)
                 case .elementsLoaderOutput(let elementsLoaderOutput):

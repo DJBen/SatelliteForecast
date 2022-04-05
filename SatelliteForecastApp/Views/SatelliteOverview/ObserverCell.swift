@@ -11,6 +11,8 @@ import CombineRextensions
 import MapKit
 import SwiftUI
 import SatelliteKit
+import SatelliteForecast
+import SatelliteForecastImpl
 import SwiftUIVisualEffects
 
 enum ObserverCellAction {
@@ -18,10 +20,10 @@ enum ObserverCellAction {
 }
 
 struct ObserverCellState: Equatable {
-    var locationState: LocationState = .init()
+    var locationResources: LocationResources = .init()
 
     static func project(state: AppState) -> ObserverCellState {
-        ObserverCellState(locationState: state.locationState)
+        ObserverCellState(locationResources: state.locationResources)
     }
 }
 
@@ -49,8 +51,8 @@ struct ObserverCell: View {
     }
 
     private var annotationItems: [CustomLocationMarker] {
-        let locationState = viewModel.state.locationState
-        switch locationState.selection {
+        let locationResources = viewModel.state.locationResources
+        switch locationResources.selection {
         case let .custom(completion, placemark):
             return [
                 CustomLocationMarker(
@@ -91,10 +93,10 @@ struct ObserverCell: View {
             if rect.isEmpty {
                 EmptyView()
             } else {
-                let locationState = viewModel.state.locationState
-                switch locationState.authorizationStatus {
+                let locationResources = viewModel.state.locationResources
+                switch locationResources.authorizationStatus {
                 case .authorizedAlways, .authorizedWhenInUse:
-                    if let location = viewModel.state.locationState.location {
+                    if let location = viewModel.state.locationResources.location {
                         map(coordinate: location.coordinate, rect: rect)
                     } else {
                         ZStack {
@@ -104,7 +106,7 @@ struct ObserverCell: View {
                         }
                     }
                 case .denied, .restricted:
-                    if let location = viewModel.state.locationState.location {
+                    if let location = viewModel.state.locationResources.location {
                         map(coordinate: location.coordinate, rect: rect)
                     } else {
                         ZStack {
@@ -125,23 +127,23 @@ struct ObserverCell: View {
     }
 
     var secondaryLabelText: String? {
-        let locationState = viewModel.state.locationState
+        let locationResources = viewModel.state.locationResources
 
-        switch locationState.authorizationStatus {
+        switch locationResources.authorizationStatus {
         case .authorizedAlways, .authorizedWhenInUse:
-            if let placemark = locationState.placemark {
+            if let placemark = locationResources.placemark {
                 return placemark.formattedString
             } else {
                 return nil
             }
         case .denied:
-            if let placemark = locationState.placemark {
+            if let placemark = locationResources.placemark {
                 return placemark.formattedString
             } else {
                 return "Tap to manually select a location"
             }
         case .restricted, .notDetermined:
-            if let placemark = locationState.placemark {
+            if let placemark = locationResources.placemark {
                 return placemark.formattedString
             } else {
                 return nil
@@ -152,11 +154,11 @@ struct ObserverCell: View {
     }
 
     var titleText: String {
-        let locationState = viewModel.state.locationState
+        let locationResources = viewModel.state.locationResources
 
-        switch locationState.selection {
+        switch locationResources.selection {
         case .currentLocation:
-            switch locationState.authorizationStatus {
+            switch locationResources.authorizationStatus {
             case .denied, .restricted:
                 return LocalizedStrings.ObserverCell.Title.requiresLocationSelection
             default:
@@ -200,7 +202,7 @@ struct ObserverCell: View {
                             .vibrancyEffect()
                     }
 
-                    if let coordinate = viewModel.state.locationState.location?.coordinate {
+                    if let coordinate = viewModel.state.locationResources.location?.coordinate {
                         Text(coordinate.formattedString)
                             .modifier(SecondaryLabelModifier())
                             .vibrancyEffect()
@@ -243,7 +245,7 @@ struct ObserverCell_Previews: PreviewProvider {
         ObserverCell(
             viewModel: .mock(
                 state: ObserverCellState(
-                    locationState: LocationState(
+                    locationResources: LocationResources(
                         authorizationStatus: .authorizedAlways,
                         currentLocation: location
                     )
@@ -255,7 +257,7 @@ struct ObserverCell_Previews: PreviewProvider {
         ObserverCell(
             viewModel: .mock(
                 state: ObserverCellState(
-                    locationState: LocationState(
+                    locationResources: LocationResources(
                         authorizationStatus: .denied
                     )
                 )

@@ -12,6 +12,7 @@ import SwiftRex
 import CombineRextensions
 import SatelliteKit
 import SatelliteForecast
+import SatelliteForecastImpl
 import SatelliteCatalog
 
 public enum SatelliteListViewAction {

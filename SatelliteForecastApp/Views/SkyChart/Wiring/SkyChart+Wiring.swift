@@ -7,6 +7,8 @@
 
 import CombineRex
 import CombineRextensions
+import SatelliteForecast
+import SatelliteForecastImpl
 import SwiftUI
 
 extension SkyChartViewState: AppStateMappable {
@@ -17,7 +19,8 @@ extension SkyChartViewState: AppStateMappable {
             referenceDate: appState.julianDate,
             julianDateOffset: appState.debugMenu.effectiveOffset,
             resources: appState.skyChartResources,
-            backgroundSky: appState.backgroundSkyResources
+            backgroundSky: appState.backgroundSkyResources,
+            elementsPropagatorResources: appState.elementsPropagatorResources
         )
     }
 

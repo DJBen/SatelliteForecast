@@ -35,7 +35,7 @@ struct AppState: Equatable {
     /// Location agnostic satellite information, including its orbit and metadata.
     var elementsLoader: ElementsLoaderResources = .init()
 
-    var locationState: LocationState = .init()
+    var locationResources: LocationResources = .init()
 
     var debugMenu: DebugMenuConfig = .init()
 

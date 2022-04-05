@@ -28,6 +28,8 @@ PODS:
     - SatelliteForecast (= 1.0.0.LOCAL)
     - SatelliteKit (= 1.0.0.LOCAL)
     - SolarSystem (= 1.0.0.LOCAL)
+    - StarryNight (= 1.0.0.LOCAL)
+    - SwiftUIVisualEffects
   - SatelliteKit (1.0.0.LOCAL)
   - SnapshotTesting (1.8.2)
   - SolarSystem (1.0.0.LOCAL):
@@ -113,7 +115,7 @@ SPEC CHECKSUMS:
   SatelliteCatalog: 132031627b4f096d1f2a16d169286faae121c0cc
   SatelliteCatalogImpl_SQLite: 33b833c3dc7482f1acdcb167e7cb203137c940d3
   SatelliteForecast: b624f8eed1f70dff695f618cfdfeace262561287
-  SatelliteForecastImpl: 50e63a12d9610096ef37319bb72836ded8b85a4a
+  SatelliteForecastImpl: 5f13bf1b7ff3249957a33b309e88c4e8ad5b971b
   SatelliteKit: 53e267558b0bd35f1be23f4dfa022b4503aa0226
   SnapshotTesting: 38947050d13960d57a4a9c166fcf51bca7d56970
   SolarSystem: 2357ba7d4cf1073a87368a783c819322eea185e3

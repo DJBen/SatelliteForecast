@@ -16,7 +16,7 @@ extension RealtimeSkyViewState: AppStateMappable {
         RealtimeSkyViewState(
             resources: RealtimeSkyViewResources.project(appState: appState),
             satellites: appState.elementsLoader.visibleCandidates,
-            observer: appState.locationState.location.map(LatLonAlt.init(location:)),
+            observer: appState.locationResources.location.map(LatLonAlt.init(location:)),
             julianDateOffset: appState.debugMenu.effectiveOffset
         )
     }

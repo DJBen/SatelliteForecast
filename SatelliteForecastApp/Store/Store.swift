@@ -15,7 +15,9 @@ class Store: ReduxStoreBase<AppAction, AppState> {
     static let shared = Store()
 
     static let reducer: Reducer<AppAction, AppState> = [
-        Reducer<LocationAction, AppState>.locationReducer.lift(action: \.location),
+        Reducer.locationReducer.lift(),
+        Reducer.locationOutputReducer.lift(),
+        Reducer.navigationReducerFromLocationAction.lift(),
         Reducer<NotificationAction, AppState>.notificationReducer.lift(action: \.notification),
         Reducer<ElementsLoaderAction, ElementsLoaderState>.elementsLoaderReducer.lift(),
         Reducer<ElementsLoaderOutput, ElementsLoaderState>.elementsLoaderOutputReducer.lift(),
@@ -23,7 +25,6 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         Reducer.settingsOverviewReducer.lift(),
         Reducer<SatelliteListViewAction, AppState>.satelliteListViewReducer.lift(action: \.satelliteListView),
         Reducer.allPassesViewReducer.lift(),
-        Reducer<PassViewAction, AppState>.passViewReducer.lift(action: \.passView),
         Reducer<SatelliteElevationGraphAction, SatelliteElevationGraphResources>.satelliteElevationGraphReducer
         .lift(
             action: \.satelliteElevationGraph,
@@ -57,7 +58,9 @@ class Store: ReduxStoreBase<AppAction, AppState> {
                     inputAction: \.notification
                 )
                 .eraseToAnyMiddleware(),
-            EffectMiddleware.locationLogger.lift(),
+            EffectMiddleware.locationChainer.lift(),
+            EffectMiddleware.locationToElementsPropagator.lift(),
+            EffectMiddleware.locationOutputLogger.lift(),
             EffectMiddleware.elementsLoader
                 .lift()
                 .inject(
@@ -87,12 +90,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             EffectMiddleware.allPassesViewToElementsPropagator.lift(),
             EffectMiddleware.allPassesViewToNotification.lift(),
             EffectMiddleware.skyChart.lift(),
-            EffectMiddleware.satelliteElevationGraph
-                .lift(
-                    inputAction: \.satelliteElevationGraph,
-                    outputAction: AppAction.satelliteElevationGraph
-                )
-                .eraseToAnyMiddleware(),
+            EffectMiddleware.satelliteElevationGraph.lift(),
             EffectMiddleware.timer
                 .lift(
                     inputAction: \.timer,

@@ -6,6 +6,8 @@
 //
 
 import CombineRex
+import SatelliteForecast
+import SatelliteForecastImpl
 
 extension EffectMiddleware where InputActionType == BackgroundSkyViewAction, OutputActionType == BackgroundSkyViewOutput, StateType == BackgroundSkyResources, Dependencies == Void {
 

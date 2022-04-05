@@ -32,6 +32,8 @@ Pod::Spec.new do |s|
   s.dependency 'SatelliteCatalog', '1.0.0.LOCAL'
   s.dependency 'SatelliteCatalogImpl_SQLite', '1.0.0.LOCAL'
   s.dependency 'SolarSystem', '1.0.0.LOCAL'
+  s.dependency 'StarryNight', '1.0.0.LOCAL'
+  s.dependency 'SwiftUIVisualEffects'
 
   s.test_spec 'Tests' do |test_spec|
     test_spec.source_files = 'Tests/**/*.swift'

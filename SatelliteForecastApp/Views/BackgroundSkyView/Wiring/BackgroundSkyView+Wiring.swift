@@ -7,6 +7,8 @@
 
 import CombineRex
 import CombineRextensions
+import SatelliteForecast
+import SatelliteForecastImpl
 
 extension BackgroundSkyViewState: AppStateMappable {
     static func project(appState: AppState) -> BackgroundSkyViewState {
@@ -42,10 +44,10 @@ extension ViewProducer where Context == BackgroundSkyViewContext, ProducedView =
                     action: AppAction.backgroundSky,
                     state: BackgroundSkyViewState.project(appState:)
                 )
-                    .asObservableViewModel(
-                        initialState: .init(),
-                        emitsValue: .whenDifferent
-                    ),
+                .asObservableViewModel(
+                    initialState: .init(),
+                    emitsValue: .whenDifferent
+                ),
                 context: context
             )
         }

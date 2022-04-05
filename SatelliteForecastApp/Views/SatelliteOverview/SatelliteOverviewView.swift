@@ -6,6 +6,7 @@
 //
 
 import SatelliteForecast
+import SatelliteForecastImpl
 import SatelliteKit
 import SwiftUI
 import SwiftRex

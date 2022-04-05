@@ -7,6 +7,7 @@
 
 import CombineRex
 import CombineRextensions
+import SatelliteForecastImpl
 
 extension AllPassesViewState: AppStateMappable {
     static func project(appState: AppState) -> AllPassesViewState {
@@ -15,8 +16,8 @@ extension AllPassesViewState: AppStateMappable {
             scheduledPassNotifications: appState.notificationResources.scheduledPassNotifications,
             skyChartResources: appState.skyChartResources,
             backgroundSkyResources: appState.backgroundSkyResources,
-            location: appState.locationState.location,
-            placemark: appState.locationState.placemark,
+            location: appState.locationResources.location,
+            placemark: appState.locationResources.placemark,
             selectedPassIndex: appState.navigationState.listNavigation.selectedPassIndex,
             satelliteCategory: appState.navigationState.listNavigation.category,
             satelliteTrails: appState.elementsPropagatorResources.satelliteTrails

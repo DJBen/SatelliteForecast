@@ -13,7 +13,7 @@ extension SatelliteOverviewViewState: AppStateMappable {
         SatelliteOverviewViewState(
             navigationState: appState.navigationState,
             julianDate: appState.julianDate,
-            location: appState.locationState.location
+            location: appState.locationResources.location
         )
     }
 

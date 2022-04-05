@@ -10,6 +10,7 @@ import CombineRex
 import os
 import StarryNight
 import SatelliteForecast
+import SatelliteForecastImpl
 
 fileprivate let logger = Logger(subsystem: "io.djben.allPassesView", category: "middleware")
 
@@ -153,7 +154,7 @@ extension EffectMiddleware where InputActionType == AllPassesViewAction, OutputA
         lift(
             inputAction: \.allPassesView,
             outputAction: AppAction.notification,
-            state: { _ in () }
+            state: { _ in }
         )
         .eraseToAnyMiddleware()
     }

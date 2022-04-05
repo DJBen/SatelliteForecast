@@ -6,6 +6,7 @@
 //
 
 import SwiftRex
+import SatelliteForecastImpl
 
 extension Reducer where ActionType == AllPassesViewAction, StateType == AllPassesViewState {
     func lift() -> Reducer<AppAction, AppState> {

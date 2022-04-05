@@ -6,6 +6,8 @@
 //
 
 import SwiftRex
+import SatelliteForecast
+import SatelliteForecastImpl
 
 extension Reducer where ActionType == BackgroundSkyViewOutput, StateType == BackgroundSkyResources {
 

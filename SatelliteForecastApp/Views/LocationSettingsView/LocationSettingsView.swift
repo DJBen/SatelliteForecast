@@ -9,6 +9,7 @@ import Combine
 import CombineRex
 import MapKit
 import SatelliteForecast
+import SatelliteForecastImpl
 import SwiftUI
 
 struct LocationSettingsViewState: Equatable {
@@ -21,15 +22,15 @@ struct LocationSettingsViewState: Equatable {
 
     var currentLocation: CLLocation?
     var currentLocationPlacemark: CLPlacemark?
-    var locationSelection: LocationState.Selection
+    var locationSelection: LocationResources.Selection
     var autocompletionResult: Result<[MKLocalSearchCompletion], Error>?
 
     static func project(state: AppState) -> LocationSettingsViewState {
         LocationSettingsViewState(
-            currentLocation: state.locationState.currentLocation,
-            currentLocationPlacemark: state.locationState.currentLocationPlacemark,
-            locationSelection: state.locationState.selection,
-            autocompletionResult: state.locationState.autocompletionResult
+            currentLocation: state.locationResources.currentLocation,
+            currentLocationPlacemark: state.locationResources.currentLocationPlacemark,
+            locationSelection: state.locationResources.selection,
+            autocompletionResult: state.locationResources.autocompletionResult
         )
     }
 
@@ -95,7 +96,7 @@ struct LocationSettingsView: View {
     @ObservedObject var viewModel: ObservableViewModel<LocationAction, LocationSettingsViewState>
     @StateObject private var searchDebouncer = SearchDebouncer()
     @State private var selection: String?
-    @State private var nextLocationSelection: LocationState.Selection?
+    @State private var nextLocationSelection: LocationResources.Selection?
 
     @ViewBuilder private func autocompletionCell(locationAutoCompletion: MKLocalSearchCompletion) -> some View {
         HStack {

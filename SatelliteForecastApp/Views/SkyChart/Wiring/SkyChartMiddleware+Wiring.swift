@@ -6,12 +6,15 @@
 //
 
 import CombineRex
+import SatelliteForecast
+import SatelliteForecastImpl
 
-extension EffectMiddleware where InputActionType == SkyChartAction, OutputActionType == SkyChartOutput, StateType == AppState, Dependencies == Void {
+extension EffectMiddleware where InputActionType == SkyChartAction, OutputActionType == SkyChartOutput, StateType == SkyChartViewState, Dependencies == Void {
     func lift() -> AnyMiddleware<AppAction, AppAction, AppState> {
         lift(
             inputAction: \.skyChart,
-            outputAction: AppAction.skyChartOutput
+            outputAction: AppAction.skyChartOutput,
+            state: SkyChartViewState.project(appState:)
         )
         .eraseToAnyMiddleware()
     }

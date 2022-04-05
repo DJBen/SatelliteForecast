@@ -7,6 +7,8 @@
 
 import CombineRex
 import CombineRextensions
+import SatelliteForecast
+import SatelliteForecastImpl
 
 extension PassViewState: AppStateMappable {
     static func project(appState: AppState) -> PassViewState {

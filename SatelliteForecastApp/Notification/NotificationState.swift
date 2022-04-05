@@ -7,6 +7,7 @@
 
 import Foundation
 import SatelliteForecast
+import SatelliteForecastImpl
 import UserNotifications
 
 struct NotificationResources: Equatable {

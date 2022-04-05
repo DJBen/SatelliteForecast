@@ -14,6 +14,7 @@ enum AppAction {
     case backgroundTask(BackgroundTask)
     case notification(NotificationAction)
     case location(LocationAction)
+    case locationOutput(LocationOutput)
     case elementsLoader(ElementsLoaderAction)
     case elementsLoaderOutput(ElementsLoaderOutput)
     case timer(TimerAction)
@@ -81,6 +82,17 @@ extension AppAction {
         set {
             guard case .location = self, let newValue = newValue else { return }
             self = .location(newValue)
+        }
+    }
+
+    public var locationOutput: LocationOutput? {
+        get {
+            guard case let .locationOutput(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .locationOutput = self, let newValue = newValue else { return }
+            self = .locationOutput(newValue)
         }
     }
 

@@ -38,7 +38,7 @@ extension EffectMiddleware where
                 case let .triggerPassDeepLink(category, noradIndex):
                     return Effect { context -> AnyPublisher<DispatchedAction<AppAction>, Never> in
                         let subject = PassthroughSubject<DispatchedAction<AppAction>, Never>()
-                        guard let observer = getState().locationState.location.map(LatLonAlt.init) else {
+                        guard let observer = getState().locationResources.location.map(LatLonAlt.init) else {
                             subject.send(completion: .finished)
                             return subject.eraseToAnyPublisher()
                         }

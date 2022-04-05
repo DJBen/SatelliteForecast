@@ -33,7 +33,7 @@ extension EffectMiddleware where InputActionType == AllPassesViewAction, OutputA
         lift(
             inputAction: \.allPassesView,
             outputAction: AppAction.elementsPropagator,
-            state: { _ in () }
+            state: { _ in }
         )
         .eraseToAnyMiddleware()
     }
