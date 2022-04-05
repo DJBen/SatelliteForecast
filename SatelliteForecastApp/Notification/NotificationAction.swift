@@ -38,6 +38,5 @@ enum NotificationAction {
     case loadedNotifications(Set<ScheduledPassNotification>)
     case fetchedPendingNotifications([UNNotificationRequest])
     case fetchedDeliveredNotifications([UNNotification])
-
     case addNotification(ScheduledPassNotification)
 }

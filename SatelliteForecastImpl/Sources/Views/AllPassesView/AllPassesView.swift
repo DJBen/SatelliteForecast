@@ -37,6 +37,7 @@ public struct AllPassesViewContext {
 
 public struct AllPassesViewState {
     public var julianDate: Double = 0
+    public var julianDateOffset: Double = 0
     public var scheduledPassNotifications: Set<ScheduledPassNotification> = []
     public var skyChartResources: SkyChartResources = .init()
     public var backgroundSkyResources: BackgroundSkyResources = .init()
@@ -46,8 +47,9 @@ public struct AllPassesViewState {
     public var satelliteCategory: SatelliteCategory?
     public var satelliteTrails: [UInt: SatelliteTrails] = [:]
 
-    public init(julianDate: Double = 0, scheduledPassNotifications: Set<ScheduledPassNotification> = [], skyChartResources: SkyChartResources = .init(), backgroundSkyResources: BackgroundSkyResources = .init(), location: CLLocation? = nil, placemark: CLPlacemark? = nil, selectedPassIndex: Int? = nil, satelliteCategory: SatelliteCategory? = nil, satelliteTrails: [UInt : SatelliteTrails] = [:]) {
+    public init(julianDate: Double = 0, julianDateOffset: Double = 0, scheduledPassNotifications: Set<ScheduledPassNotification> = [], skyChartResources: SkyChartResources = .init(), backgroundSkyResources: BackgroundSkyResources = .init(), location: CLLocation? = nil, placemark: CLPlacemark? = nil, selectedPassIndex: Int? = nil, satelliteCategory: SatelliteCategory? = nil, satelliteTrails: [UInt : SatelliteTrails] = [:]) {
         self.julianDate = julianDate
+        self.julianDateOffset = julianDateOffset
         self.scheduledPassNotifications = scheduledPassNotifications
         self.skyChartResources = skyChartResources
         self.backgroundSkyResources = backgroundSkyResources
@@ -94,6 +96,21 @@ public struct AllPassesView: View {
     let context: AllPassesViewContext
     let skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
     let passViewProducer: ViewProducer<PassViewContext, PassView>
+
+    let refreshTimer = Timer.publish(
+        every: 5,
+        on: .main,
+        in: .common
+    )
+    .autoconnect()
+    .map(\.julianDate)
+
+    struct MissionControlState {
+        var dateCoordinate: DateCoordinate
+        var groundTrack: [DateCoordinate]
+    }
+
+    @State var missionControlState: MissionControlState?
 
     public init(
         viewModel: ObservableViewModel<AllPassesViewAction, AllPassesViewState>,
@@ -275,12 +292,15 @@ public struct AllPassesView: View {
     }
     
     @ViewBuilder private func observerHeader(observer: LatLonAlt) -> some View {
-        Text(
-            AllPassesView.Section.ObserverInfo.body(observer: observer)
-        )
-        .font(.headline.lowercaseSmallCaps())
-        .foregroundColor(Color(UIColor.secondaryLabel))
-        .textCase(nil)
+        if let missionControlState = missionControlState {
+            MissionControlView(
+                currentDateCoordinate: missionControlState.dateCoordinate,
+                satelliteGroundTrack: missionControlState.groundTrack
+            )
+            .frame(width: 368, height: 280)
+        } else {
+            Color.clear
+        }
     }
     
     public var body: some View {
@@ -363,6 +383,33 @@ public struct AllPassesView: View {
                     .multilineTextAlignment(.center)
                 }
             }
+        }
+        .onReceive(refreshTimer) { timerJulianDate in
+            self.propagateMissionControl(julianDate: timerJulianDate)
+        }
+        .onLoad {
+            self.propagateMissionControl(julianDate: Date().julianDate + viewModel.state.julianDateOffset)
+        }
+    }
+
+    private func propagateMissionControl(julianDate: Double) {
+        let jd = julianDate + viewModel.state.julianDateOffset
+        do {
+            let satelliteCoordinate = try Satellite(
+                withTLE: context.satelliteInfo.elements
+            ).geoPosition(
+                julianDays: jd
+            )
+            let groundTrack = try context.satelliteInfo.elements.generateGroundTrack(
+                julianDateRange: (jd - TimeConstants.hrs2day)...(jd + TimeConstants.hrs2day),
+                interval: TimeConstants.min2day
+            )
+            self.missionControlState = MissionControlState(
+                dateCoordinate: DateCoordinate(julianDate: jd, coordinate: satelliteCoordinate),
+                groundTrack: groundTrack
+            )
+        } catch {
+            print("Error generating ground track: \(error)")
         }
     }
 }

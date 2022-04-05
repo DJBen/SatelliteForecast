@@ -5,48 +5,96 @@
 //  Created by Ben Lu on 4/3/22.
 //
 
+import Combine
 import SwiftUI
 import MapKit
 import SatelliteForecast
 import SatelliteKit
+import SwiftUIVisualEffects
 
 /// A world map showing the satellite ground tracks akin to that of mission control room of space agencies.
 struct MissionControlView: View {
     var currentDateCoordinate: DateCoordinate
     var satelliteGroundTrack: [DateCoordinate]
 
-    @State var showResetButton: Bool = false
+    @State var viewportIsOriginal: Bool = true
+    var showResetButton: Bool {
+        !viewportIsOriginal
+    }
+
+    @State private var resetButtonPublisher = PassthroughSubject<Void, Never>()
+
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        MissionControlViewControllerWrapperView(
-            currentDateCoordinate: currentDateCoordinate,
-            satelliteGroundTrack: satelliteGroundTrack,
-            viewPortWillChange: {
-                showResetButton = true
+        ZStack(alignment: .topLeading) {
+            MissionControlViewControllerWrapperView(
+                currentDateCoordinate: currentDateCoordinate,
+                satelliteGroundTrack: satelliteGroundTrack,
+                viewportIsOriginal: $viewportIsOriginal,
+                resetButtonTappedPublisher: resetButtonPublisher.eraseToAnyPublisher()
+            )
+
+            if showResetButton {
+                Group {
+                    Button(
+                        NSLocalizedString(
+                            "MissionControlView.resetButton.title",
+                            tableName: nil,
+                            bundle: .main,
+                            value: "Recenter",
+                            comment: """
+                        The title for the reset button within mission control view to restore the
+                        viewport to its orignal position.
+                        """
+                        )
+                    ) {
+                        resetButtonPublisher.send(())
+                    }
+                    .padding([.top, .bottom], 8)
+                    .padding([.leading, .trailing], 16)
+                    .vibrancyEffect()
+                    .background(
+                        Color.clear.blurEffect()
+                    )
+                }
+                .cornerRadius(16)
+                .blurEffectStyle(colorScheme == .light ? .systemChromeMaterialLight : .systemChromeMaterialDark)
+                .vibrancyEffectStyle(.fill)
             }
-        )
+        }
+        .cornerRadius(16)
     }
 }
 
 struct MissionControlViewControllerWrapperView: UIViewControllerRepresentable {
     class Coordinator: NSObject, MissionControlViewControllerDelegate {
-        let viewPortWillChange: () -> Void
+        @Binding var viewportIsOriginal: Bool
 
-        init(viewPortWillChange: @escaping () -> Void) {
-            self.viewPortWillChange = viewPortWillChange
+        init(viewportIsOriginal: Binding<Bool>) {
+            self._viewportIsOriginal = viewportIsOriginal
         }
 
-        func missionControlWillChangeViewPort(_ viewController: MissionControlViewController) {
-            viewPortWillChange()
+        func missionControlDidChangeViewPort(_ viewController: MissionControlViewController) {
+            viewportIsOriginal = false
+        }
+
+        func missionControlDidResetViewport(_ viewController: MissionControlViewController) {
+            viewportIsOriginal = true
         }
     }
 
     var currentDateCoordinate: DateCoordinate
     var satelliteGroundTrack: [DateCoordinate]
-    var viewPortWillChange: () -> Void
+    @Binding var viewportIsOriginal: Bool
+    var resetButtonTappedPublisher: AnyPublisher<Void, Never>
 
     func makeUIViewController(context: Context) -> MissionControlViewController {
-        return MissionControlViewController()
+        let viewController = MissionControlViewController(
+            resetButtonTappedPublisher: resetButtonTappedPublisher
+        )
+        viewController.delegate = context.coordinator
+        return viewController
     }
 
     func updateUIViewController(_ uiViewController: MissionControlViewController, context: Context) {
@@ -57,12 +105,15 @@ struct MissionControlViewControllerWrapperView: UIViewControllerRepresentable {
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(viewPortWillChange: viewPortWillChange)
+        Coordinator(
+            viewportIsOriginal: $viewportIsOriginal
+        )
     }
 }
 
 @objc protocol MissionControlViewControllerDelegate {
-    func missionControlWillChangeViewPort(_ viewController: MissionControlViewController)
+    func missionControlDidChangeViewPort(_ viewController: MissionControlViewController)
+    func missionControlDidResetViewport(_ viewController: MissionControlViewController)
 }
 
 class GroundTrackOverlay: MKPolyline {
@@ -84,15 +135,29 @@ class GroundTrackOverlay: MKPolyline {
 }
 
 class CurrentPositionAnnotation: MKPointAnnotation {
-
 }
 
-class MissionControlViewController: UIViewController, MKMapViewDelegate {
+class MissionControlViewController: UIViewController {
     var mapView: MKMapView!
     weak var delegate: MissionControlViewControllerDelegate?
 
     var currentDateCoordinate: DateCoordinate?
     var dateCoordinates: [DateCoordinate]?
+
+    var cancellables = Set<AnyCancellable>()
+
+    init(resetButtonTappedPublisher: AnyPublisher<Void, Never>) {
+        super.init(nibName: nil, bundle: nil)
+
+        resetButtonTappedPublisher.sink(receiveValue: { [unowned self] in
+            self.resetViewport()
+        })
+        .store(in: &cancellables)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -106,9 +171,9 @@ class MissionControlViewController: UIViewController, MKMapViewDelegate {
         let camera = MKMapCamera(
             lookingAtCenter: CLLocationCoordinate2D(),
             fromEyeCoordinate: CLLocationCoordinate2D(),
-            eyeAltitude: 20_000_000
+            eyeAltitude: 2_000_000
         )
-        mapView.setCamera(camera, animated: false)
+        mapView.setCamera(camera, animated: true)
         mapView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(mapView)
 
@@ -123,8 +188,10 @@ class MissionControlViewController: UIViewController, MKMapViewDelegate {
         dateCoordinates: [DateCoordinate]
     ) {
         if self.currentDateCoordinate == currentDateCoordinate && self.dateCoordinates == dateCoordinates {
+            print("same")
             return
         }
+        print("animates")
 
         if self.currentDateCoordinate == nil {
             mapView.setCenter(CLLocationCoordinate2D(currentDateCoordinate.coordinate), animated: true)
@@ -149,17 +216,36 @@ class MissionControlViewController: UIViewController, MKMapViewDelegate {
         )
         mapView.addOverlay(afterPolyline)
 
-        if let existingAnnotation = mapView.annotations.first(where: { $0 is CurrentPositionAnnotation }) {
-            mapView.removeAnnotation(existingAnnotation)
+        var currentPositionAnnotation: CurrentPositionAnnotation
+        if let existingAnnotation = mapView.annotations.first(where: { $0 is CurrentPositionAnnotation }) as? CurrentPositionAnnotation {
+            currentPositionAnnotation = existingAnnotation
+        } else {
+            currentPositionAnnotation = CurrentPositionAnnotation()
+            mapView.addAnnotation(currentPositionAnnotation)
         }
-        let currentPositionAnnotation = CurrentPositionAnnotation()
-        currentPositionAnnotation.coordinate = CLLocationCoordinate2D(currentDateCoordinate.coordinate)
-        mapView.addAnnotation(currentPositionAnnotation)
+        UIView.animate(withDuration: 5, delay: 0, options: [.curveLinear]) {
+            currentPositionAnnotation.coordinate = CLLocationCoordinate2D(currentDateCoordinate.coordinate)
+        }
         self.dateCoordinates = dateCoordinates
     }
 
-    func mapView(_ mapView: MKMapView, regionWillChangeAnimated animated: Bool) {
-        delegate?.missionControlWillChangeViewPort(self)
+    func resetViewport() {
+        if let currentDateCoordinate = currentDateCoordinate {
+            mapView.setCenter(CLLocationCoordinate2D(currentDateCoordinate.coordinate), animated: true)
+        }
+    }
+}
+
+extension MissionControlViewController: MKMapViewDelegate {
+    func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
+        guard let coordinate = self.currentDateCoordinate?.coordinate else {
+            return
+        }
+        if mapView.centerCoordinate !~= CLLocationCoordinate2D(coordinate) {
+            delegate?.missionControlDidChangeViewPort(self)
+        } else {
+            delegate?.missionControlDidResetViewport(self)
+        }
     }
 
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
@@ -246,7 +332,7 @@ class MissionControlViewController: UIViewController, MKMapViewDelegate {
                 polyline: polyline,
                 colorsAndStops: colorsAndStops
             )
-            renderer.lineWidth = 20
+            renderer.lineWidth = 10
             return renderer
         }
 
@@ -279,7 +365,7 @@ struct MissionControlView_Previews: PreviewProvider {
             currentDateCoordinate: issGroundTrack[issGroundTrack.count / 2],
             satelliteGroundTrack: issGroundTrack
         )
-        .previewLayout(.fixed(width: 368, height: 240))
+        .frame(width: 368, height: 280)
     }
 }
 

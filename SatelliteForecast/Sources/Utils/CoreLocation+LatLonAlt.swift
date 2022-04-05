@@ -33,9 +33,18 @@ extension CLLocationCoordinate2D {
     }
 }
 
+infix operator !~= : ComparisonPrecedence
 extension CLLocationCoordinate2D: Equatable {
     public static func ==(lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
         return lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
+    }
+
+    public static func ~=(lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
+        return abs(lhs.latitude - rhs.latitude) < 1e-6 && abs(lhs.longitude - rhs.longitude) < 1e-6
+    }
+
+    public static func !~=(lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
+        return !(lhs ~= rhs)
     }
 }
 
