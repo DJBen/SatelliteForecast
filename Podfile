@@ -1,7 +1,7 @@
 platform :ios, '15.2'
 inhibit_all_warnings!
 
-target 'SatelliteForecast' do  
+target 'SatelliteForecastApp' do  
   use_frameworks!
 
   pod "BTree", "~> 4.1.0"
@@ -16,10 +16,10 @@ target 'SatelliteForecast' do
   pod "StarryNight", :path => './StarryNight'
   pod "SatelliteCatalog", :path => './SatelliteCatalog'
   pod "SatelliteCatalogImpl_SQLite", :path => './SatelliteCatalogImpl_SQLite'
-  pod "SatelliteForecastCore", :path => './SatelliteForecastCore'
+  pod "SatelliteForecast", :path => './SatelliteForecast'
+  pod "SatelliteForecastImpl", :path => './SatelliteForecastImpl'
   pod "SolarSystem", :path => './SolarSystem'
   pod "SwiftUIVisualEffects", :path => './SwiftUIVisualEffects'
-  pod "VSOP87", :path => './VSOP87'
 
   target 'SatelliteForecastTests' do
     inherit! :complete
@@ -35,4 +35,3 @@ post_install do |installer|
     end
   end
 end
-

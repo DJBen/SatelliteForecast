@@ -13,7 +13,7 @@
     "targetForVariableExpansion" : {
       "containerPath" : "container:SatelliteForecast.xcodeproj",
       "identifier" : "EF9D82802661BBF000616C97",
-      "name" : "SatelliteForecast"
+      "name" : "SatelliteForecastApp"
     }
   },
   "testTargets" : [

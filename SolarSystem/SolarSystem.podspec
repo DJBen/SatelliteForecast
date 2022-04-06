@@ -21,7 +21,6 @@ Pod::Spec.new do |s|
   s.swift_version = ['5.4']
   s.source_files = 'Sources/**/*.swift'
 
-  s.dependency 'VSOP87', '1.0.0.LOCAL'
   s.dependency 'SatelliteKit', '1.0.0.LOCAL'
 
   s.test_spec 'Tests' do |test_spec|

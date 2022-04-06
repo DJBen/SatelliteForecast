@@ -8,7 +8,7 @@
 import XCTest
 import CombineRex
 import TestingExtensions
-@testable import SatelliteForecast
+@testable import SatelliteForecastApp
 
 class MiddlewareTests: XCTestCase {
 

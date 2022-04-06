@@ -20,4 +20,24 @@ Pod::Spec.new do |s|
 
   s.swift_version = ['5.4']
   s.source_files = 'Sources/**/*.swift'
+  s.resource_bundles = {
+    'SatelliteForecastImplResources' => ['Assets/*.*']
+  }
+
+  s.dependency 'BTree', "~> 4.1.0"
+  s.dependency 'CombineRex', "0.8.9"
+  s.dependency 'CombineRextensions'
+  s.dependency 'SatelliteKit', '1.0.0.LOCAL'
+  s.dependency 'SatelliteForecast', '1.0.0.LOCAL'
+  s.dependency 'SatelliteCatalog', '1.0.0.LOCAL'
+  s.dependency 'SatelliteCatalogImpl_SQLite', '1.0.0.LOCAL'
+  s.dependency 'SolarSystem', '1.0.0.LOCAL'
+  s.dependency 'StarryNight', '1.0.0.LOCAL'
+  s.dependency 'SwiftUIVisualEffects'
+
+  s.test_spec 'Tests' do |test_spec|
+    test_spec.source_files = 'Tests/**/*.swift'
+    test_spec.framework = 'XCTest'
+    test_spec.dependency 'TestingExtensions', '~> 0.2.11'
+  end
 end

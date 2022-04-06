@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import VSOP87
 import SatelliteKit
 
 extension SolarSystemBody {
