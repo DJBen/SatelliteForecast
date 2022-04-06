@@ -39,12 +39,8 @@ extension CLLocationCoordinate2D: Equatable {
         return lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
     }
 
-    public static func ~=(lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
-        return abs(lhs.latitude - rhs.latitude) < 1e-6 && abs(lhs.longitude - rhs.longitude) < 1e-6
-    }
-
-    public static func !~=(lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
-        return !(lhs ~= rhs)
+    public func close(to rhs: CLLocationCoordinate2D, tolerance: CGFloat) -> Bool {
+        return abs(latitude - rhs.latitude) < tolerance && abs(longitude - rhs.longitude) < tolerance
     }
 }
 

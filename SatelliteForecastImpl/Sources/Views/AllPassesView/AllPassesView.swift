@@ -476,7 +476,11 @@ extension AllPassesView {
                     "AllPassesView.section.visible.headerCaption",
                     tableName: nil,
                     bundle: .main,
-                    value: "Satellite is illuminated by the sun for a significant portion of the pass in contrast to a sufficiently dark sky.",
+                    value: """
+                    Satellites can be seen when the sky is dark enough while still being \
+                    illuminated by the sun. Viewing condition is best short after sunset and \
+                    before sunrise.
+                    """,
                     comment: "The caption under the header of visible passes"
                 )
             }
@@ -498,7 +502,10 @@ extension AllPassesView {
                     "AllPassesView.section.invisible.headerCaption",
                     tableName: nil,
                     bundle: .main,
-                    value: "Satellite is either blocked by earth's shadow or outshone by the sunlight.",
+                    value: """
+                    Satellites faded into earth's shadow cannot be seen; \
+                    like stars, they cannot be seen in broad daylight either.
+                    """,
                     comment: "The caption under the header of invisible passes"
                 )
             }

@@ -22,6 +22,13 @@ struct MissionControlView: View {
         !viewportIsOriginal
     }
 
+    enum ZoomLevel: Equatable, Hashable {
+        case global
+        case close
+    }
+
+    @State var zoomLevel: ZoomLevel = .global
+
     @State private var resetButtonPublisher = PassthroughSubject<Void, Never>()
 
     @Environment(\.colorScheme) private var colorScheme
@@ -32,11 +39,39 @@ struct MissionControlView: View {
                 currentDateCoordinate: currentDateCoordinate,
                 satelliteGroundTrack: satelliteGroundTrack,
                 viewportIsOriginal: $viewportIsOriginal,
+                zoomLevel: $zoomLevel,
                 resetButtonTappedPublisher: resetButtonPublisher.eraseToAnyPublisher()
             )
 
-            if showResetButton {
-                Group {
+            VStack(alignment: .leading) {
+                Picker(
+                    selection: $zoomLevel,
+                    content: {
+                        Image(
+                            systemName: "globe"
+                        )
+                        .tag(ZoomLevel.global)
+
+                        Image(
+                            systemName: "eyeglasses"
+                        )
+                        .tag(ZoomLevel.close)
+                    },
+                    label: {
+                        Text(verbatim: "Select zoom level")
+                    }
+                )
+                .pickerStyle(.segmented)
+                .frame(width: 84)
+                .vibrancyEffect()
+                .background(
+                    Color.clear.blurEffect()
+                )
+                .cornerRadius(8)
+                .blurEffectStyle(colorScheme == .light ? .systemChromeMaterialLight : .systemChromeMaterialDark)
+                .vibrancyEffectStyle(.fill)
+
+                if showResetButton {
                     Button(
                         NSLocalizedString(
                             "MissionControlView.resetButton.title",
@@ -44,24 +79,25 @@ struct MissionControlView: View {
                             bundle: .main,
                             value: "Recenter",
                             comment: """
-                        The title for the reset button within mission control view to restore the
-                        viewport to its orignal position.
-                        """
+                            The title for the reset button within mission control view to restore the
+                            viewport to its orignal position.
+                            """
                         )
                     ) {
                         resetButtonPublisher.send(())
                     }
                     .padding([.top, .bottom], 8)
-                    .padding([.leading, .trailing], 16)
+                    .padding([.leading, .trailing], 8)
                     .vibrancyEffect()
                     .background(
                         Color.clear.blurEffect()
                     )
+                    .cornerRadius(8)
+                    .blurEffectStyle(colorScheme == .light ? .systemChromeMaterialLight : .systemChromeMaterialDark)
+                    .vibrancyEffectStyle(.fill)
                 }
-                .cornerRadius(16)
-                .blurEffectStyle(colorScheme == .light ? .systemChromeMaterialLight : .systemChromeMaterialDark)
-                .vibrancyEffectStyle(.fill)
             }
+            .padding(8)
         }
         .cornerRadius(16)
     }
@@ -87,6 +123,7 @@ struct MissionControlViewControllerWrapperView: UIViewControllerRepresentable {
     var currentDateCoordinate: DateCoordinate
     var satelliteGroundTrack: [DateCoordinate]
     @Binding var viewportIsOriginal: Bool
+    @Binding var zoomLevel: MissionControlView.ZoomLevel
     var resetButtonTappedPublisher: AnyPublisher<Void, Never>
 
     func makeUIViewController(context: Context) -> MissionControlViewController {
@@ -100,7 +137,8 @@ struct MissionControlViewControllerWrapperView: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: MissionControlViewController, context: Context) {
         uiViewController.setState(
             currentDateCoordinate: currentDateCoordinate,
-            dateCoordinates: satelliteGroundTrack
+            dateCoordinates: satelliteGroundTrack,
+            zoomLevel: zoomLevel
         )
     }
 
@@ -146,7 +184,9 @@ class MissionControlViewController: UIViewController {
 
     var cancellables = Set<AnyCancellable>()
 
-    init(resetButtonTappedPublisher: AnyPublisher<Void, Never>) {
+    init(
+        resetButtonTappedPublisher: AnyPublisher<Void, Never>
+    ) {
         super.init(nibName: nil, bundle: nil)
 
         resetButtonTappedPublisher.sink(receiveValue: { [unowned self] in
@@ -171,7 +211,7 @@ class MissionControlViewController: UIViewController {
         let camera = MKMapCamera(
             lookingAtCenter: CLLocationCoordinate2D(),
             fromEyeCoordinate: CLLocationCoordinate2D(),
-            eyeAltitude: 2_000_000
+            eyeAltitude: 20_000_000
         )
         mapView.setCamera(camera, animated: true)
         mapView.translatesAutoresizingMaskIntoConstraints = false
@@ -185,8 +225,18 @@ class MissionControlViewController: UIViewController {
 
     func setState(
         currentDateCoordinate: DateCoordinate,
-        dateCoordinates: [DateCoordinate]
+        dateCoordinates: [DateCoordinate],
+        zoomLevel: MissionControlView.ZoomLevel
     ) {
+        if mapView.camera.centerCoordinateDistance != 0 && abs(mapView.camera.centerCoordinateDistance - centerCoordinateDistance(for: zoomLevel)) > 1 {
+            let camera = MKMapCamera(
+                lookingAtCenter: CLLocationCoordinate2D(currentDateCoordinate.coordinate),
+                fromEyeCoordinate: CLLocationCoordinate2D(currentDateCoordinate.coordinate),
+                eyeAltitude: centerCoordinateDistance(for: zoomLevel)
+            )
+            mapView.setCamera(camera, animated: true)
+        }
+
         if self.currentDateCoordinate == currentDateCoordinate && self.dateCoordinates == dateCoordinates {
             return
         }
@@ -232,6 +282,15 @@ class MissionControlViewController: UIViewController {
             mapView.setCenter(CLLocationCoordinate2D(currentDateCoordinate.coordinate), animated: true)
         }
     }
+
+    func centerCoordinateDistance(for zoomLevel: MissionControlView.ZoomLevel) -> Double {
+        switch zoomLevel {
+        case .global:
+            return 20_000_000
+        case .close:
+            return 2_000_000
+        }
+    }
 }
 
 extension MissionControlViewController: MKMapViewDelegate {
@@ -239,10 +298,11 @@ extension MissionControlViewController: MKMapViewDelegate {
         guard let coordinate = self.currentDateCoordinate?.coordinate else {
             return
         }
-        if mapView.centerCoordinate !~= CLLocationCoordinate2D(coordinate) {
-            delegate?.missionControlDidChangeViewPort(self)
-        } else {
+        let tolerance = mapView.camera.centerCoordinateDistance == 0 ? 1e-5 : mapView.camera.centerCoordinateDistance * 1e-10
+        if mapView.centerCoordinate.close(to: CLLocationCoordinate2D(coordinate), tolerance: tolerance) {
             delegate?.missionControlDidResetViewport(self)
+        } else {
+            delegate?.missionControlDidChangeViewPort(self)
         }
     }
 
