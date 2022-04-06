@@ -154,21 +154,16 @@ struct MissionControlViewControllerWrapperView: UIViewControllerRepresentable {
     func missionControlDidResetViewport(_ viewController: MissionControlViewController)
 }
 
-class GroundTrackOverlay: MKPolyline {
-    private(set) var id: String!
-    private(set) var dateCoordinates: [DateCoordinate]!
+extension MKGeodesicPolyline {
+    static private var sf_identifierAssociationKey: UInt8 = 0
 
-    public convenience init(
-        id: String,
-        dateCoordinates: [DateCoordinate]
-    ) {
-        self.init(
-            coordinates: dateCoordinates.map(\.coordinate).map { CLLocationCoordinate2D($0) },
-            count: dateCoordinates.count
-        )
-
-        self.id = id
-        self.dateCoordinates = dateCoordinates
+    var sf_identifier: String! {
+        get {
+            return objc_getAssociatedObject(self, &MKGeodesicPolyline.sf_identifierAssociationKey) as? String
+        }
+        set(newValue) {
+            objc_setAssociatedObject(self, &MKGeodesicPolyline.sf_identifierAssociationKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+        }
     }
 }
 
@@ -247,21 +242,27 @@ class MissionControlViewController: UIViewController {
         self.currentDateCoordinate = currentDateCoordinate
 
         mapView.overlays
-            .filter { $0 is GroundTrackOverlay }
+            .filter { $0 is MKGeodesicPolyline }
             .forEach { mapView.removeOverlay($0) }
-        let polyline = GroundTrackOverlay(
-            id: "before",
-            dateCoordinates: dateCoordinates.prefix(
-                while: { $0.julianDate <= currentDateCoordinate.julianDate }
-            )
+        let beforeDataset = dateCoordinates.prefix(
+            while: { $0.julianDate <= currentDateCoordinate.julianDate }
         )
+        let polyline = MKGeodesicPolyline(
+            points: beforeDataset
+            .map(\.coordinate).map { MKMapPoint(CLLocationCoordinate2D($0)) },
+            count: beforeDataset.count
+        )
+        polyline.sf_identifier = "before"
         mapView.addOverlay(polyline)
-        let afterPolyline = GroundTrackOverlay(
-            id: "after",
-            dateCoordinates: Array(dateCoordinates.drop(
-                while: { $0.julianDate < currentDateCoordinate.julianDate }
-            ))
+        let afterDataset = dateCoordinates.drop(
+            while: { $0.julianDate < currentDateCoordinate.julianDate }
         )
+        let afterPolyline = MKGeodesicPolyline(
+            points: Array(afterDataset)
+            .map(\.coordinate).map { MKMapPoint(CLLocationCoordinate2D($0)) },
+            count: afterDataset.count
+        )
+        afterPolyline.sf_identifier = "after"
         mapView.addOverlay(afterPolyline)
 
         var currentPositionAnnotation: CurrentPositionAnnotation
@@ -331,10 +332,8 @@ extension MissionControlViewController: MKMapViewDelegate {
     }
 
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
-        if let polyline = overlay as? GroundTrackOverlay,
-           let firstGroundTrack = polyline.dateCoordinates.first,
-           let lastGroundTrack = polyline.dateCoordinates.last {
-            let isBefore = polyline.id.contains("before")
+        if let polyline = overlay as? MKGeodesicPolyline {
+            let isBefore = polyline.sf_identifier.contains("before")
 
             let colorsAndStops: [GradientPathRenderer.ColorAndStop]
 

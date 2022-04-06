@@ -295,12 +295,29 @@ public struct AllPassesView: View {
     
     @ViewBuilder private func mapHeader() -> some View {
         if let missionControlState = missionControlState {
-            MissionControlView(
-                currentDateCoordinate: missionControlState.dateCoordinate,
-                satelliteGroundTrack: missionControlState.groundTrack
-            )
-            .aspectRatio(1.33, contentMode: .fill)
-            .padding([.leading, .trailing], -16)
+            VStack {
+                MissionControlView(
+                    currentDateCoordinate: missionControlState.dateCoordinate,
+                    satelliteGroundTrack: missionControlState.groundTrack
+                )
+                .aspectRatio(1.33, contentMode: .fill)
+                .padding([.leading, .trailing], -16)
+
+                Text(
+                    CLLocationCoordinate2D(missionControlState.dateCoordinate.coordinate).formattedString
+                )
+                .textCase(nil)
+                .font(.caption)
+                .foregroundColor(.secondary)
+
+                Text(
+                    Self.MissionControlHeader.altitudeString(missionControlState.dateCoordinate.coordinate.alt)
+                )
+                .textCase(nil)
+                .font(.caption)
+                .foregroundColor(.secondary)
+            }
+
         } else {
             Color.clear
         }
@@ -438,6 +455,22 @@ extension AllPassesView {
             format: format,
             dateFormatter.string(from: Date(julianDate: range.upperBound))
         )
+    }
+
+    enum MissionControlHeader {
+        static func altitudeString(_ altitude: Double) -> String {
+            let altitudeFormat = NSLocalizedString(
+                "AllPassesView.missionControlHeader.altitudeFormat",
+                tableName: nil,
+                bundle: .main,
+                value: "%@ km above ground",
+                comment: "The altitude format of mission control header"
+            )
+            let numberFormatter = NumberFormatter()
+            numberFormatter.maximumFractionDigits = 2
+            numberFormatter.minimumFractionDigits = 2
+            return String(format: altitudeFormat, numberFormatter.string(from: altitude as NSNumber)!)
+        }
     }
 
     enum Section {
