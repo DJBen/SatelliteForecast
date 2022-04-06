@@ -19,13 +19,21 @@ fileprivate let logger = Logger(subsystem: "io.djben.elementsLoader", category: 
 
 public struct ElementsLoaderDependencies {
     public let elementLoader: ElementsLoader
+    public let dateProvider: () -> Date
     public let updateInterval: TimeInterval
 
-    public init(elementsLoader: ElementsLoader, updateInterval: TimeInterval = 4 * 60 * 60) {
+    public init(
+        elementsLoader: ElementsLoader,
+        dateProvider: @escaping () -> Date,
+        updateInterval: TimeInterval = 4 * 60 * 60
+    ) {
         self.elementLoader = elementsLoader
+        self.dateProvider = dateProvider
         self.updateInterval = updateInterval
     }
 }
+
+public typealias ElementsLoaderEffectMiddleware = EffectMiddleware<ElementsLoaderAction, ElementsLoaderOutput, ElementsLoaderState, ElementsLoaderDependencies>
 
 extension EffectMiddleware where
     InputActionType == ElementsLoaderAction,
@@ -33,9 +41,8 @@ extension EffectMiddleware where
     StateType == ElementsLoaderState,
     Dependencies == ElementsLoaderDependencies {
 
-    public static var elementsLoader: MiddlewareReader<ElementsLoaderDependencies, EffectMiddleware<ElementsLoaderAction, ElementsLoaderOutput, ElementsLoaderState, ElementsLoaderDependencies>> {
-        EffectMiddleware<ElementsLoaderAction, ElementsLoaderOutput, ElementsLoaderState, ElementsLoaderDependencies>
-        .onAction { (inputAction, dispatcher, getState) -> Effect<ElementsLoaderDependencies, ElementsLoaderOutput> in
+    public static var elementsLoader: MiddlewareReader<ElementsLoaderDependencies, ElementsLoaderEffectMiddleware> {
+        ElementsLoaderEffectMiddleware.onAction { (inputAction, dispatcher, getState) -> Effect<ElementsLoaderDependencies, ElementsLoaderOutput> in
             switch inputAction {
             case let .loadElements(category, selectSpecialNoradIndex, selectNoradIndex, calculatePass):
                 return Effect(token: category) { context -> AnyPublisher<DispatchedAction<ElementsLoaderOutput>, Never> in
@@ -65,8 +72,9 @@ extension EffectMiddleware where
                     }
 
                     if let result = getState().resources.info[category], let infoMap = result.content {
+                        let julianDate = context.dependencies.dateProvider().julianDate + getState().julianDateOffset
                         let mostRecentElementsAge = infoMap.map {
-                            Date(julianDate: getState().currentDate).timeIntervalSince(Date(daysSince1950: $1.elements.t₀))
+                            Date(julianDate: julianDate).timeIntervalSince(Date(daysSince1950: $1.elements.t₀))
                         }
                         .min() ?? 0
 

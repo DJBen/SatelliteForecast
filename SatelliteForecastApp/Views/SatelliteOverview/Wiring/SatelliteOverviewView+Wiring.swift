@@ -12,7 +12,6 @@ extension SatelliteOverviewViewState: AppStateMappable {
     static func project(appState: AppState) -> SatelliteOverviewViewState {
         SatelliteOverviewViewState(
             navigationState: appState.navigationState,
-            julianDate: appState.julianDate,
             location: appState.locationResources.location
         )
     }
@@ -22,7 +21,7 @@ extension SatelliteOverviewViewState: AppStateMappable {
     }
 }
 
-extension ViewProducer where Context == Void, ProducedView == SatelliteOverviewViewImpl {
+extension ViewProducer where Context == SatelliteOverviewViewContext, ProducedView == SatelliteOverviewViewImpl {
     static func satelliteOverview<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
         ViewProducer<Context, ProducedView> { context in
             SatelliteOverviewViewImpl(
@@ -31,6 +30,7 @@ extension ViewProducer where Context == Void, ProducedView == SatelliteOverviewV
                     state: SatelliteOverviewViewState.project(appState:)
                 )
                 .asObservableViewModel(initialState: .init(), emitsValue: .whenDifferent),
+                context: context,
                 listViewProducer: ViewProducer<SatelliteListViewContext, SatelliteListView>
                     .satelliteListView(viewModel: viewModel),
                 singleSatelliteWrappingViewProducer: ViewProducer<SingleSatelliteWrappingViewContext, SingleSatelliteWrappingView>.singleSatelliteWrappingView(viewModel: viewModel)

@@ -67,7 +67,8 @@ struct SingleSatelliteWrappingView: View {
                 AllPassesViewContext(
                     satelliteInfo: satelliteInfo,
                     julianDateRange: context.julianDateRange,
-                    observer: context.observer
+                    observer: context.observer,
+                    julianDateProvider: context.julianDateProvider
                 )
             )
         }
@@ -102,6 +103,7 @@ struct SingleSatelliteWrappingViewContext {
     let selectedNoradIndex: UInt
     let julianDateRange: ClosedRange<Double>
     let observer: LatLonAlt?
+    let julianDateProvider: () -> Double
 }
 
 extension ViewProducer where Context == SingleSatelliteWrappingViewContext, ProducedView == SingleSatelliteWrappingView {
@@ -129,7 +131,8 @@ struct SingleSatelliteWrappingView_Previews: PreviewProvider {
             context: SingleSatelliteWrappingViewContext(
                 selectedNoradIndex: 0,
                 julianDateRange: Date(daysSince1950: 1000).julianDate...Date(daysSince1950: 1002).julianDate,
-                observer: nil
+                observer: nil,
+                julianDateProvider: { Date(daysSince1950: 1001).julianDate }
             ),
             allPassesViewProducer: .crash
         )

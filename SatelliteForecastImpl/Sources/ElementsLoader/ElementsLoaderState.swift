@@ -12,14 +12,14 @@ import SatelliteKit
 
 public struct ElementsLoaderState {
     public var resources: ElementsLoaderResources
-    public var currentDate: Double
+    public var julianDateOffset: Double
 
     public init(
-        resources: ElementsLoaderResources = .init(),
-        currentDate: Double = 0
+        resources: ElementsLoaderResources,
+        julianDateOffset: Double
     ) {
         self.resources = resources
-        self.currentDate = currentDate
+        self.julianDateOffset = julianDateOffset
     }
 }
 

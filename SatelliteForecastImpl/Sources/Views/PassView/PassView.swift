@@ -48,7 +48,8 @@ public struct PassView: View {
                         satelliteInfo: context.satelliteInfo,
                         julianDateRange: context.julianDateRange,
                         observer: context.observer,
-                        configs: .init()
+                        configs: .init(),
+                        julianDateProvider: context.julianDateProvider
                     )
                 )
                 .environment(\.julianDateRangeKey, context.julianDateRange)
@@ -62,7 +63,8 @@ public struct PassView: View {
                         pass: context.pass,
                         notableSnapshots: context.notableSnapshots,
                         configs: .preset,
-                        quality: .full
+                        quality: .full,
+                        julianDateProvider: context.julianDateProvider
                     )
                 )
                 .frame(height: min(rect.width, rect.height))
@@ -98,14 +100,16 @@ public struct PassViewContext {
     public let snapshots: [SatelliteSnapshot]
     public let pass: Pass
     public let notableSnapshots: NotableSnapshots
+    public let julianDateProvider: () -> Double
 
-    public init(satelliteInfo: SatelliteInfo, julianDateRange: ClosedRange<Double>, observer: LatLonAlt, snapshots: [SatelliteSnapshot], pass: Pass, notableSnapshots: NotableSnapshots) {
+    public init(satelliteInfo: SatelliteInfo, julianDateRange: ClosedRange<Double>, observer: LatLonAlt, snapshots: [SatelliteSnapshot], pass: Pass, notableSnapshots: NotableSnapshots, julianDateProvider: @escaping () -> Double) {
         self.satelliteInfo = satelliteInfo
         self.julianDateRange = julianDateRange
         self.observer = observer
         self.snapshots = snapshots
         self.pass = pass
         self.notableSnapshots = notableSnapshots
+        self.julianDateProvider = julianDateProvider
     }
 }
 
@@ -155,7 +159,8 @@ struct PassView_Previews: PreviewProvider {
             pass: passSnapshots.first!.pass,
             notableSnapshots: passSnapshots.first!.notableSnapshots,
             configs: .preview,
-            quality: .preview
+            quality: .preview,
+            julianDateProvider: { Date().julianDate }
         )
         let brightest100: Map<UInt, SatelliteInfo> = [
             elements.noradIndex: satelliteInfo
@@ -170,14 +175,12 @@ struct PassView_Previews: PreviewProvider {
             ]
         )
         let satelliteGraphState = SatelliteElevationGraphState(
-            currentJulianDate: Date().julianDate,
             satelliteElevationGraphResources: SatelliteElevationGraphResources(),
             elementsPropagatorResources: elementPropagatorResources,
             selectedNoradIndex: elements.noradIndex,
             highlightedDateRange: nil
         )
         let skyChartState = SkyChartViewState(
-            referenceDate: Date().julianDate,
             julianDateOffset: 0,
             resources: SkyChartResources(
                 rasterizedSatellitePaths: [:],
@@ -192,13 +195,15 @@ struct PassView_Previews: PreviewProvider {
             observer: observer,
             snapshots: passSnapshots[0].snapshots,
             pass: passSnapshots[0].pass,
-            notableSnapshots: passSnapshots[0].notableSnapshots
+            notableSnapshots: passSnapshots[0].notableSnapshots,
+            julianDateProvider: { Date().julianDate }
         )
         let elevationGraphContext = SatelliteElevationGraphContext(
             satelliteInfo: SatelliteInfo(elements: elements),
             julianDateRange: julianDateRange,
             observer: observer,
-            configs: .init()
+            configs: .init(),
+            julianDateProvider: { Date().julianDate }
         )
         PassView(
             viewModel: .mock(

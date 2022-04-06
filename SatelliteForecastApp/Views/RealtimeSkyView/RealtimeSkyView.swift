@@ -79,7 +79,6 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
     .map(\.julianDate)
 
     @State var julianDate: Double?
-    @State var rotateLoadingCircle = false
 
     @ViewBuilder private func locationView<Content: View, NoLocationContent: View>(
         @ViewBuilder contentBuilder: (LatLonAlt) -> Content,

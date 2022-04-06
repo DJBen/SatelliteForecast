@@ -12,14 +12,11 @@ extension ElementsLoaderState: AppStateMappable {
     static func project(appState: AppState) -> ElementsLoaderState {
         return ElementsLoaderState(
             resources: appState.elementsLoader,
-            currentDate: appState.currentDate
+            julianDateOffset: appState.debugMenu.effectiveOffset
         )
     }
 
     static func apply(appState: inout AppState, state: ElementsLoaderState) {
         appState.elementsLoader = state.resources
-        if appState.realtimeSkyResources.results.isEmpty {
-
-        }
     }
 }

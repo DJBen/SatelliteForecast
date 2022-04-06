@@ -88,7 +88,7 @@ struct SatelliteElevationGraphBackground_Previews: PreviewProvider {
     static var previews: some View {
         SatelliteElevationGraphBackground(
             state: SatelliteElevationGraphBackgroundState(
-                julianDateRange: Date().julianDate...Date().julianDate + 1  ,
+                julianDateRange: Date().julianDate...Date().julianDate + 1,
                 configs: .init()
             ),
             graphingRegionSize: .constant(CGSize(width: 1000, height: 250))

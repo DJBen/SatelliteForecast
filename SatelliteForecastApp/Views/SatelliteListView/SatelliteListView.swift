@@ -122,7 +122,8 @@ struct SatelliteListView: View {
                                 AllPassesViewContext(
                                     satelliteInfo: satelliteInfo,
                                     julianDateRange: context.julianDateRange,
-                                    observer: context.observer
+                                    observer: context.observer,
+                                    julianDateProvider: context.julianDateProvider
                                 )
                             )
                         ),
@@ -204,6 +205,7 @@ struct SatelliteListViewContext {
     let category: SatelliteCategory
     let julianDateRange: ClosedRange<Double>
     let observer: LatLonAlt?
+    let julianDateProvider: () -> Double
 }
 
 extension ViewProducer where Context == SatelliteListViewContext, ProducedView == SatelliteListView {
@@ -262,7 +264,8 @@ struct SatelliteListView_Previews: PreviewProvider {
             context: SatelliteListViewContext(
                 category: .brightest100,
                 julianDateRange: Date(daysSince1950: 1000).julianDate...Date(daysSince1950: 1002).julianDate,
-                observer: nil
+                observer: nil,
+                julianDateProvider: { Date(daysSince1950: 1001).julianDate }
             ),
             allPassesViewProducer: .crash
         )

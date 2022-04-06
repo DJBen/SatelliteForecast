@@ -17,9 +17,6 @@ struct AppState: Equatable {
         }
     }
 
-    /// A date that mostly approximates the current date.
-    var currentDate: Double = Date().julianDate
-
     /// The rendered background sky images, cached for performance.
     var backgroundSkyResources: BackgroundSkyResources = .init()
 
@@ -46,13 +43,6 @@ struct AppState: Equatable {
     }
 
     // MARK: - Derived properties
-
-    /// The julian date for consumptions of display and calculation.
-    /// This julian date will take into account of artificial offsets in debug mode, and is not always a true representation
-    /// of the current date.
-    var julianDate: Double {
-        currentDate + debugMenu.effectiveOffset
-    }
 
     var selectedSatelliteInfo: SatelliteInfo? {
         navigationState.selectedNoradIndex.flatMap { elementsLoader[$0] }

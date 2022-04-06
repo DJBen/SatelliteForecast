@@ -29,14 +29,19 @@ enum SatelliteOverviewViewAction {
 
 struct SatelliteOverviewViewState: Equatable {
     var navigationState: NavigationState = .init()
-    var julianDate: Double = 0
     var location: CLLocation?
+    var julianDateOffset: Double = 0
 }
 
 protocol SatelliteOverviewView: View {}
 
+struct SatelliteOverviewViewContext {
+    let julianDateProvider: () -> Double
+}
+
 struct SatelliteOverviewViewImpl: SatelliteOverviewView {
     @ObservedObject var viewModel: ObservableViewModel<SatelliteOverviewViewAction, SatelliteOverviewViewState>
+    let context: SatelliteOverviewViewContext
     let listViewProducer: ViewProducer<SatelliteListViewContext, SatelliteListView>
     let singleSatelliteWrappingViewProducer: ViewProducer<SingleSatelliteWrappingViewContext, SingleSatelliteWrappingView>
 
@@ -59,7 +64,7 @@ struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                 .selectSpecialSatellite(
                     .init(
                         noradIndex: satellite.rawValue,
-                        julianDateRange: JulianDateUtil.createJulianDateRange(now: viewModel.state.julianDate),
+                        julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
                         observer: viewModel.state.location.map(LatLonAlt.init)
                     )
                 )
@@ -77,16 +82,18 @@ struct SatelliteOverviewViewImpl: SatelliteOverviewView {
             singleSatelliteWrappingViewProducer.view(
                 SingleSatelliteWrappingViewContext(
                     selectedNoradIndex: satellite.rawValue,
-                    julianDateRange: JulianDateUtil.createJulianDateRange(now: viewModel.state.julianDate),
-                    observer: viewModel.state.location.map(LatLonAlt.init)
+                    julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
+                    observer: viewModel.state.location.map(LatLonAlt.init),
+                    julianDateProvider: context.julianDateProvider
                 )
             )
         case let .category(category):
             listViewProducer.view(
                 SatelliteListViewContext(
                     category: category,
-                    julianDateRange: JulianDateUtil.createJulianDateRange(now: viewModel.state.julianDate),
-                    observer: viewModel.state.location.map(LatLonAlt.init)
+                    julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
+                    observer: viewModel.state.location.map(LatLonAlt.init),
+                    julianDateProvider: context.julianDateProvider
                 )
             )
         }
@@ -171,9 +178,11 @@ struct SatelliteOverviewView_Previews: PreviewProvider {
         SatelliteOverviewViewImpl(
             viewModel: .mock(
                 state: SatelliteOverviewViewState(
-                    navigationState: .init(),
-                    julianDate: 0
+                    navigationState: .init()
                 )
+            ),
+            context: SatelliteOverviewViewContext(
+                julianDateProvider: { Date().julianDate }
             ),
             listViewProducer: .crash,
             singleSatelliteWrappingViewProducer: .crash

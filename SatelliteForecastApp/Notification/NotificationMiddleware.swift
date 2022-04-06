@@ -17,20 +17,30 @@ import UserNotifications
 
 fileprivate let logger = Logger(subsystem: "io.djben.notification", category: "middleware")
 
+public struct NotificationMiddlewareDependencies {
+    public let dateProvider: () -> Date
+
+    public init(dateProvider: @escaping () -> Date) {
+        self.dateProvider = dateProvider
+    }
+}
+
 extension EffectMiddleware where
     InputActionType == NotificationAction,
     OutputActionType == AppAction,
     StateType == AppState,
     Dependencies == Void {
 
-    static var notification: EffectMiddleware<NotificationAction, AppAction, AppState, Void> {
-        EffectMiddleware<NotificationAction, AppAction, AppState, Void>.onAction { action, _, getState in
+    typealias NotificationEffectMiddleware = EffectMiddleware<NotificationAction, AppAction, AppState, NotificationMiddlewareDependencies>
+
+    static var notification: MiddlewareReader<NotificationMiddlewareDependencies, NotificationEffectMiddleware> {
+        NotificationEffectMiddleware.onAction { action, _, getState in
             switch action {
             case let .scheduleNotification(passNotification):
                 return Effect { context -> AnyPublisher<DispatchedAction<AppAction>, Never> in
                     let subject = PassthroughSubject<DispatchedAction<AppAction>, Never>()
-
-                    let julianDateDiff = passNotification.pass.rise.julianDate - getState().julianDate
+                    let julianDate = context.dependencies.dateProvider().julianDate + getState().debugMenu.effectiveOffset
+                    let julianDateDiff = passNotification.pass.rise.julianDate - julianDate
                     let timeInterval = getState().debugMenu.rapidNotificationDelivery ? 10 : julianDateDiff * TimeConstants.day2sec
                     let trigger = UNTimeIntervalNotificationTrigger(
                         timeInterval: timeInterval,
@@ -85,14 +95,14 @@ extension EffectMiddleware where
                 }
                 
             case let .cancelNotifications(ids):
-                return .fireAndForget {
+                return .fireAndForget { _ in
                     let notificationCenter = UNUserNotificationCenter.current()
 
                     notificationCenter.removePendingNotificationRequests(withIdentifiers: Array(ids))
                 }
                 
             case .registerNotifications:
-                return .fireAndForget {
+                return .fireAndForget { _ in
                     let passCategory = UNNotificationCategory(
                         identifier: "PASS",
                         actions: [],
@@ -211,6 +221,8 @@ extension EffectMiddleware where
                     let subject = PassthroughSubject<DispatchedAction<AppAction>, Never>()
 
                     DispatchQueue.global().async {
+                        let julianDate = context.dependencies.dateProvider().julianDate + getState().debugMenu.effectiveOffset
+
                         if let category = satelliteCategory {
                             subject.send(
                                 DispatchedAction(.elementsLoader(
@@ -218,12 +230,12 @@ extension EffectMiddleware where
                                         category: category,
                                         selectNoradIndex: SelectNoradIndexParam(
                                             noradIndex: noradIndex,
-                                            dateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate),
+                                            dateRange: JulianDateUtil.createJulianDateRange(now: julianDate),
                                             observer: observer
                                         ),
                                         calculatePass: ElementsLoaderCalculatePassParam(
                                             noradIndex: noradIndex,
-                                            dateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate),
+                                            dateRange: JulianDateUtil.createJulianDateRange(now: julianDate),
                                             observer: observer
                                         )
                                     )
@@ -236,12 +248,12 @@ extension EffectMiddleware where
                                         category: .brightest100,
                                         selectSpecialNoradIndex: SelectNoradIndexParam(
                                             noradIndex: noradIndex,
-                                            dateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate),
+                                            dateRange: JulianDateUtil.createJulianDateRange(now: julianDate),
                                             observer: observer
                                         ),
                                         calculatePass: ElementsLoaderCalculatePassParam(
                                             noradIndex: noradIndex,
-                                            dateRange: JulianDateUtil.createJulianDateRange(now: getState().julianDate),
+                                            dateRange: JulianDateUtil.createJulianDateRange(now: julianDate),
                                             observer: observer
                                         )
                                     )

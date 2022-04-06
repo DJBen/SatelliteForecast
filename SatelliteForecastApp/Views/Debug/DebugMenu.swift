@@ -48,7 +48,7 @@ struct DebugMenuState: Equatable {
 
     static func project(state: AppState) -> DebugMenuState {
         DebugMenuState(
-            trueJulianDate: state.currentDate,
+            trueJulianDate: Date().julianDate,
             config: state.debugMenu,
             pendingNotifications: state.notificationResources.pendingNotifications,
             deliveredNotifications: state.notificationResources.deliveredNotifications

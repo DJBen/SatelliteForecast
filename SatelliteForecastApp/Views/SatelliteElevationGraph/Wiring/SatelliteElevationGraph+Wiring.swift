@@ -24,13 +24,13 @@ extension SatelliteElevationGraphState: AppStateMappable {
         }()
 
         return SatelliteElevationGraphState(
-            currentJulianDate: appState.julianDate,
             satelliteElevationGraphResources: appState.satelliteElevationGraphResources,
             elementsPropagatorResources: appState.elementsPropagatorResources,
             selectedNoradIndex: appState.navigationState.selectedNoradIndex,
             highlightedDateRange: selectedSatellitePass.map { pass -> ClosedRange<Double> in
                 return pass.rise.julianDate...pass.set.julianDate
-            }
+            },
+            julianDateOffset: appState.debugMenu.effectiveOffset
         )
     }
 

@@ -8,13 +8,17 @@
 import CombineRex
 import SatelliteForecastImpl
 
-extension MiddlewareReader where MiddlewareType == EffectMiddleware<ElementsLoaderAction, ElementsLoaderOutput, ElementsLoaderState, ElementsLoaderDependencies>, Dependencies == ElementsLoaderDependencies {
-    func lift() -> MiddlewareReader<ElementsLoaderDependencies, LiftMiddleware<AppAction, AppAction, AppState, EffectMiddleware<ElementsLoaderAction, ElementsLoaderOutput, ElementsLoaderState, ElementsLoaderDependencies>>> {
+extension MiddlewareReader where MiddlewareType == ElementsLoaderEffectMiddleware, Dependencies == ElementsLoaderDependencies {
+    func lift(dependencies: ElementsLoaderDependencies) -> AnyMiddleware<AppAction, AppAction, AppState> {
         return lift(
             inputAction: \AppAction.elementsLoader,
             outputAction: AppAction.elementsLoaderOutput,
             state: ElementsLoaderState.project(appState:)
         )
+        .inject(
+            dependencies
+        )
+        .eraseToAnyMiddleware()
     }
 }
 

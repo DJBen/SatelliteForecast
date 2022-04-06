@@ -45,8 +45,6 @@
 		EF3D09A72689CA3D00B84232 /* SatelliteOverviewReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3D09A62689CA3D00B84232 /* SatelliteOverviewReducer.swift */; };
 		EF465653267BE7680040B762 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF465652267BE7680040B762 /* AppDelegate.swift */; };
 		EF51D98927D98BB60087AA9E /* RealtimeSkySatelliteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF51D98827D98BB60087AA9E /* RealtimeSkySatelliteCell.swift */; };
-		EF5CB017266E28EE000019DA /* TimerReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5CB016266E28EE000019DA /* TimerReducer.swift */; };
-		EF5CB019266E28FC000019DA /* TimerMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5CB018266E28FC000019DA /* TimerMiddleware.swift */; };
 		EF66ED1D27FAC53700CD3136 /* AllPassesViewReducer+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF66ED1C27FAC53700CD3136 /* AllPassesViewReducer+Wiring.swift */; };
 		EF66ED2327FAD0E200CD3136 /* ElementsPropagatorMiddleware+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF66ED2227FAD0E200CD3136 /* ElementsPropagatorMiddleware+Wiring.swift */; };
 		EF66ED2527FAD43E00CD3136 /* AllPassesViewMiddleware+Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF66ED2427FAD43E00CD3136 /* AllPassesViewMiddleware+Notifications.swift */; };
@@ -76,7 +74,7 @@
 		EF847BFC26CF96B20004806F /* AlarmSettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF847BFB26CF96B20004806F /* AlarmSettingsCell.swift */; };
 		EF847C0126CF9DFA0004806F /* AlarmSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF847C0026CF9DFA0004806F /* AlarmSettingsView.swift */; };
 		EF847C0526D099FF0004806F /* AlarmSettingsViewMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF847C0426D099FF0004806F /* AlarmSettingsViewMiddleware.swift */; };
-		EF847C0726D0AA230004806F /* NotificationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF847C0626D0AA230004806F /* NotificationState.swift */; };
+		EF847C0726D0AA230004806F /* NotificationResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF847C0626D0AA230004806F /* NotificationResources.swift */; };
 		EF8BD19E26B5448F00DE9F33 /* ObserverCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8BD19D26B5448F00DE9F33 /* ObserverCell.swift */; };
 		EF8BD1A026B5544500DE9F33 /* SatelliteOverviewSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8BD19F26B5544500DE9F33 /* SatelliteOverviewSection.swift */; };
 		EF9D82A32661BBF100616C97 /* SatelliteForecastApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9D827A2661BBF000616C97 /* SatelliteForecastApp.swift */; };
@@ -171,8 +169,6 @@
 		EF3D09A62689CA3D00B84232 /* SatelliteOverviewReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteOverviewReducer.swift; sourceTree = "<group>"; };
 		EF465652267BE7680040B762 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EF51D98827D98BB60087AA9E /* RealtimeSkySatelliteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealtimeSkySatelliteCell.swift; sourceTree = "<group>"; };
-		EF5CB016266E28EE000019DA /* TimerReducer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimerReducer.swift; sourceTree = "<group>"; };
-		EF5CB018266E28FC000019DA /* TimerMiddleware.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimerMiddleware.swift; sourceTree = "<group>"; };
 		EF66ED1C27FAC53700CD3136 /* AllPassesViewReducer+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AllPassesViewReducer+Wiring.swift"; sourceTree = "<group>"; };
 		EF66ED2227FAD0E200CD3136 /* ElementsPropagatorMiddleware+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ElementsPropagatorMiddleware+Wiring.swift"; sourceTree = "<group>"; };
 		EF66ED2427FAD43E00CD3136 /* AllPassesViewMiddleware+Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AllPassesViewMiddleware+Notifications.swift"; sourceTree = "<group>"; };
@@ -202,7 +198,7 @@
 		EF847BFB26CF96B20004806F /* AlarmSettingsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmSettingsCell.swift; sourceTree = "<group>"; };
 		EF847C0026CF9DFA0004806F /* AlarmSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmSettingsView.swift; sourceTree = "<group>"; };
 		EF847C0426D099FF0004806F /* AlarmSettingsViewMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmSettingsViewMiddleware.swift; sourceTree = "<group>"; };
-		EF847C0626D0AA230004806F /* NotificationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationState.swift; sourceTree = "<group>"; };
+		EF847C0626D0AA230004806F /* NotificationResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationResources.swift; sourceTree = "<group>"; };
 		EF864272266DFFE9004F0AFA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EF8BD19D26B5448F00DE9F33 /* ObserverCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObserverCell.swift; sourceTree = "<group>"; };
 		EF8BD19F26B5544500DE9F33 /* SatelliteOverviewSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteOverviewSection.swift; sourceTree = "<group>"; };
@@ -454,15 +450,6 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		EF5CB015266E28EE000019DA /* Timer */ = {
-			isa = PBXGroup;
-			children = (
-				EF5CB018266E28FC000019DA /* TimerMiddleware.swift */,
-				EF5CB016266E28EE000019DA /* TimerReducer.swift */,
-			);
-			path = Timer;
-			sourceTree = "<group>";
-		};
 		EF5CB01A266E2933000019DA /* ElementsPropagator */ = {
 			isa = PBXGroup;
 			children = (
@@ -546,7 +533,7 @@
 			isa = PBXGroup;
 			children = (
 				EF847BF926CF624B0004806F /* NotificationAction.swift */,
-				EF847C0626D0AA230004806F /* NotificationState.swift */,
+				EF847C0626D0AA230004806F /* NotificationResources.swift */,
 				EF847BF326CF23B60004806F /* NotificationMiddleware.swift */,
 				EF847BF726CF2AB40004806F /* NotificationReducer.swift */,
 			);
@@ -604,7 +591,6 @@
 				EF847BF626CF29F20004806F /* BackgroundTask */,
 				EF847BF526CF29E50004806F /* Notification */,
 				EF833AF826AD6054003EEBB6 /* Motion */,
-				EF5CB015266E28EE000019DA /* Timer */,
 				EF9F0F5B26C1018300F009AF /* Navigation */,
 				EF4AF76A266434A500D28F47 /* Views */,
 				EF7A3130266B489A00CC33C0 /* ElementsLoader */,
@@ -922,7 +908,6 @@
 				EF7A311E266AFBF800CC33C0 /* Store.swift in Sources */,
 				EFCF20F426AD545400D87E8B /* DebugMenuMiddleware.swift in Sources */,
 				EF773DB127F7B8D60071893B /* ElementsLoaderMiddleware+ElementPropagator.swift in Sources */,
-				EF5CB017266E28EE000019DA /* TimerReducer.swift in Sources */,
 				EF51D98927D98BB60087AA9E /* RealtimeSkySatelliteCell.swift in Sources */,
 				EF16816927D578B6001BA9C3 /* RootViewReducer+Wiring.swift in Sources */,
 				EF74261D27FC1CE800DAF469 /* SatelliteElevationGraphMiddleware+Wiring.swift in Sources */,
@@ -933,7 +918,7 @@
 				EF16813F27D1793A001BA9C3 /* RealtimeSkyViewMiddleware.swift in Sources */,
 				EF66ED4427FBE0EB00CD3136 /* NavigationReducer+Location.swift in Sources */,
 				EF66ED1D27FAC53700CD3136 /* AllPassesViewReducer+Wiring.swift in Sources */,
-				EF847C0726D0AA230004806F /* NotificationState.swift in Sources */,
+				EF847C0726D0AA230004806F /* NotificationResources.swift in Sources */,
 				EFFD227926B788D30010E1F6 /* LocationSettingsView.swift in Sources */,
 				EF847BF426CF23B60004806F /* NotificationMiddleware.swift in Sources */,
 				EF8BD1A026B5544500DE9F33 /* SatelliteOverviewSection.swift in Sources */,
@@ -971,7 +956,6 @@
 				EF465653267BE7680040B762 /* AppDelegate.swift in Sources */,
 				EF16815927D2D6CF001BA9C3 /* RealtimeSkyViewReducer+Wiring.swift in Sources */,
 				EFB6112627F509A9003557E5 /* AllPassesView+Wiring.swift in Sources */,
-				EF5CB019266E28FC000019DA /* TimerMiddleware.swift in Sources */,
 				EFED97B727D62053003FC289 /* LocalElementsLoader.swift in Sources */,
 				EF7A3192266B6AFC00CC33C0 /* AppState.swift in Sources */,
 				EFB6112027F4EF4D003557E5 /* SkyChart+Wiring.swift in Sources */,

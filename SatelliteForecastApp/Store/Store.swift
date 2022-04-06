@@ -33,7 +33,6 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         Reducer.skyChartOutputReducer.lift(),
         Reducer.elementsPropagatorReducer.lift(),
         Reducer.elementsPropagatorOutputReducer.lift(),
-        Reducer<TimerAction, AppState>.timerReducer.lift(action: \.timer),
         Reducer<DebugMenuAction, DebugMenuState>.debugMenuReducer.lift(),
         Reducer.backgroundSkyReducer.lift(),
         Reducer.realtimeSkyReducer.lift(),
@@ -57,16 +56,19 @@ class Store: ReduxStoreBase<AppAction, AppState> {
                 .lift(
                     inputAction: \.notification
                 )
+                .inject(
+                    NotificationMiddlewareDependencies(dateProvider: Date.init)
+                )
                 .eraseToAnyMiddleware(),
             EffectMiddleware.locationChainer.lift(),
             EffectMiddleware.locationToElementsPropagator.lift(),
             EffectMiddleware.locationOutputLogger.lift(),
-            EffectMiddleware.elementsLoader
-                .lift()
-                .inject(
-                    ElementsLoaderDependencies(elementsLoader: elementsLoader)
+            EffectMiddleware.elementsLoader.lift(
+                dependencies: ElementsLoaderDependencies(
+                    elementsLoader: elementsLoader,
+                    dateProvider: Date.init
                 )
-                .eraseToAnyMiddleware(),
+            ),
             EffectMiddleware.elementsPropagator.lift(),
             EffectMiddleware.elementsPropagatorChainer.lift(),
             EffectMiddleware.elementsLoaderToElementsPropagator.lift(),
@@ -91,18 +93,14 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             EffectMiddleware.allPassesViewToNotification.lift(),
             EffectMiddleware.skyChart.lift(),
             EffectMiddleware.satelliteElevationGraph.lift(),
-            EffectMiddleware.timer
-                .lift(
-                    inputAction: \.timer,
-                    outputAction: AppAction.timer
-                )
-                .eraseToAnyMiddleware(),
             EffectMiddleware.alarmSettingsView
                 .lift(
                     inputAction: \.alarmSettingsView
                 )
                 .eraseToAnyMiddleware(),
-            EffectMiddleware.debugMenu.lift(),
+            EffectMiddleware.debugMenu.lift(
+                dependencies: DebugMenuMiddlewareDependencies(dateProvider: Date.init)
+            ),
             EffectMiddleware.loggerMiddleware.eraseToAnyMiddleware(),
             EffectMiddleware.backgroundSky.lift(),
             EffectMiddleware.realtimeSky.lift()

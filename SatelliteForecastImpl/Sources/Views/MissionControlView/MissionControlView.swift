@@ -188,10 +188,8 @@ class MissionControlViewController: UIViewController {
         dateCoordinates: [DateCoordinate]
     ) {
         if self.currentDateCoordinate == currentDateCoordinate && self.dateCoordinates == dateCoordinates {
-            print("same")
             return
         }
-        print("animates")
 
         if self.currentDateCoordinate == nil {
             mapView.setCenter(CLLocationCoordinate2D(currentDateCoordinate.coordinate), animated: true)

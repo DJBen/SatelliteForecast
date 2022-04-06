@@ -18,10 +18,10 @@ struct PassPreviewCell: View {
     var notableSnapshots: NotableSnapshots
     var observer: LatLonAlt
     var pass: Pass
-    var referenceDate: Double
     var hasScheduledAlert: Bool
-    
     var skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
+    var julianDateOffset: Double
+    var julianDateProvider: () -> Double
 
     static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -115,7 +115,7 @@ struct PassPreviewCell: View {
                         
                         Spacer(minLength: 4)
                         
-                        Text(PassPreviewCell.relativeDate(pass: pass, referenceDate: referenceDate))
+                        Text(PassPreviewCell.relativeDate(pass: pass, referenceDate: julianDateProvider() + julianDateOffset))
                             .font(.caption)
                             .foregroundColor(Color(UIColor.secondaryLabel))
                     }
@@ -130,7 +130,8 @@ struct PassPreviewCell: View {
                         pass: pass,
                         notableSnapshots: notableSnapshots,
                         configs: .preview,
-                        quality: .preview
+                        quality: .preview,
+                        julianDateProvider: julianDateProvider
                     )
                 )
                 .padding(5)
@@ -251,14 +252,11 @@ struct PassPreviewCell_Previews: PreviewProvider {
                 notableSnapshots: passSnapshot.notableSnapshots,
                 observer: observer,
                 pass: passSnapshot.pass,
-                referenceDate: startDate.julianDate,
                 hasScheduledAlert: false,
                 skyChartProducer: .pure(
                     SkyChart(
                         viewModel: .mock(
-                            state: SkyChartViewState(
-                                referenceDate: passSnapshot.pass.rise.julianDate
-                            )
+                            state: SkyChartViewState()
                         ),
                         context: SkyChartContext(
                             satelliteInfo: satelliteInfo,
@@ -281,7 +279,8 @@ struct PassPreviewCell_Previews: PreviewProvider {
                                 ),
                                 showPassInfoLabels: false
                             ),
-                            quality: .preview
+                            quality: .preview,
+                            julianDateProvider: { passSnapshot.pass.rise.julianDate }
                         ),
                         backgroundSkyViewProducer: .pure(
                             BackgroundSkyView(
@@ -297,7 +296,9 @@ struct PassPreviewCell_Previews: PreviewProvider {
                             )
                         )
                     )
-                )
+                ),
+                julianDateOffset: 0,
+                julianDateProvider: { startDate.julianDate }
             )
             .environment(\.backgroundSkyJulianDateKey, passSnapshot.pass.rise.julianDate.roundJulianDate(.toMins(1)))
         }

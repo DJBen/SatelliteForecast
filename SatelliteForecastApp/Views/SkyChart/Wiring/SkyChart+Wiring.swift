@@ -16,7 +16,6 @@ extension SkyChartViewState: AppStateMappable {
         appState: AppState
     ) -> SkyChartViewState {
         return SkyChartViewState(
-            referenceDate: appState.julianDate,
             julianDateOffset: appState.debugMenu.effectiveOffset,
             resources: appState.skyChartResources,
             backgroundSky: appState.backgroundSkyResources,

@@ -26,7 +26,11 @@ struct SatelliteForecastApp: App {
             ViewProducer.root(
                 viewModel: store
             )
-            .view()
+            .view(
+                RootViewContext(
+                    julianDateProvider: { Date().julianDate }
+                )
+            )
             .sheet(
                 isPresented: Binding<Bool>(
                     get: {
@@ -43,7 +47,6 @@ struct SatelliteForecastApp: App {
                 }
             )
             .onAppear {
-                store.dispatch(.timer(.start))
                 store.dispatch(.location(.requestAuthorization))
             }
             .onChange(of: scenePhase) { phase in

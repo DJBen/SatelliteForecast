@@ -28,7 +28,6 @@ public enum SkyChartOutput {
 
 /// A state used in a single sky chart view
 public struct SkyChartViewState: Equatable {
-    public var referenceDate: Double = 0
     /// The julian date offset between the julian date in display and the actual julian date.
     /// This property is being used by the dynamic label
     public var julianDateOffset: Double = 0
@@ -37,13 +36,11 @@ public struct SkyChartViewState: Equatable {
     public var elementsPropagatorResources: ElementsPropagatorResources = .init()
 
     public init(
-        referenceDate: Double = 0,
         julianDateOffset: Double = 0,
         resources: SkyChartResources = .init(),
         backgroundSky: BackgroundSkyResources = .init(),
         elementsPropagatorResources: ElementsPropagatorResources = .init()
     ) {
-        self.referenceDate = referenceDate
         self.julianDateOffset = julianDateOffset
         self.resources = resources
         self.backgroundSky = backgroundSky
@@ -58,8 +55,24 @@ public struct SkyChart: View {
 
     @State private var contentSize: CGSize = .zero
 
+    let refreshTimer = Timer.publish(
+        every: 10,
+        on: .main,
+        in: .common
+    )
+        .autoconnect()
+        .map(\.julianDate)
+
+    @State var backgroundSkyJulianDateKey: Double?
+
     @Environment(\.colorScheme) var colorScheme
 
+    private func propagateBackgroundSkyJulianDateKey(_ julianDate: Double) {
+        if (context.pass.rise.julianDate..<context.pass.set.julianDate).contains(julianDate) {
+            backgroundSkyJulianDateKey = julianDate.roundJulianDate(.toMins(1))
+        }
+        backgroundSkyJulianDateKey = context.pass.rise.julianDate.roundJulianDate(.toMins(1))
+    }
     public init(
         viewModel: ObservableViewModel<SkyChartAction, SkyChartViewState>,
         context: SkyChartContext,
@@ -126,13 +139,6 @@ public struct SkyChart: View {
         }
     }
 
-    private var backgroundSkyJulianDateKey: Double {
-        if (context.pass.rise.julianDate..<context.pass.set.julianDate).contains(viewModel.state.referenceDate) {
-            return viewModel.state.referenceDate.roundJulianDate(.toMins(1))
-        }
-        return context.pass.rise.julianDate.roundJulianDate(.toMins(1))
-    }
-
     @ViewBuilder private var satellitePath: some View {
         GeometryReader { geometry in
             let rect = geometry.frame(in: .local)
@@ -165,16 +171,6 @@ public struct SkyChart: View {
                         traitCollection: UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
                     )
                 )
-            }
-            .onChange(of: viewModel.state.referenceDate) { newReferenceDate in
-                guard !contentSize.width.isZero && !contentSize.height.isZero else {
-                    return
-                }
-
-                // Show live sky during the pass
-                guard (context.pass.rise.julianDate..<context.pass.set.julianDate).contains(viewModel.state.referenceDate) else {
-                    return
-                }
             }
         }
     }
@@ -210,6 +206,12 @@ public struct SkyChart: View {
             satellitePath.overlay(loadingIndicator)
             .clipShape(Circle())
         )
+        .onLoad {
+            propagateBackgroundSkyJulianDateKey(context.julianDateProvider() + viewModel.state.julianDateOffset)
+        }
+        .onReceive(refreshTimer) { julianDate in
+            propagateBackgroundSkyJulianDateKey(julianDate + viewModel.state.julianDateOffset)
+        }
     }
 }
 
@@ -221,6 +223,7 @@ public struct SkyChartContext {
     public let notableSnapshots: NotableSnapshots
     public let configs: SkyChartConfigs
     public let quality: ChartQuality
+    public let julianDateProvider: () -> Double
 }
 
 extension SkyChart.PassLabel {
@@ -320,7 +323,6 @@ struct SkyChart_Previews: PreviewProvider {
             SkyChart(
                 viewModel: .mock(
                     state: SkyChartViewState(
-                        referenceDate: referenceDate,
                         resources: SkyChartResources(
                             rasterizedSatellitePaths: [
                                 passSnapshots.pass: SkyChart.rasterizedSatellitePassPath(
@@ -343,7 +345,8 @@ struct SkyChart_Previews: PreviewProvider {
                     pass: passSnapshots.pass,
                     notableSnapshots: passSnapshots.notableSnapshots,
                     configs: .preset,
-                    quality: .full
+                    quality: .full,
+                    julianDateProvider: { referenceDate }
                 ),
                 backgroundSkyViewProducer: .pure(
                     BackgroundSkyView(
@@ -369,7 +372,6 @@ struct SkyChart_Previews: PreviewProvider {
         SkyChart(
             viewModel: .mock(
                 state: SkyChartViewState(
-                    referenceDate: passSnapshots2.pass.rise.julianDate,
                     resources: SkyChartResources(
                         rasterizedSatellitePaths: [
                             passSnapshots2.pass: SkyChart.rasterizedSatellitePassPath(
@@ -392,7 +394,8 @@ struct SkyChart_Previews: PreviewProvider {
                 pass: passSnapshots2.pass,
                 notableSnapshots: passSnapshots2.notableSnapshots,
                 configs: .preset,
-                quality: .full
+                quality: .full,
+                julianDateProvider: { passSnapshots2.pass.rise.julianDate }
             ),
             backgroundSkyViewProducer: .pure(
                 BackgroundSkyView(
@@ -420,7 +423,8 @@ struct SkyChart_Previews: PreviewProvider {
                 pass: passSnapshots2.pass,
                 notableSnapshots: passSnapshots2.notableSnapshots,
                 configs: .preset,
-                quality: .full
+                quality: .full,
+                julianDateProvider: { passSnapshots2.pass.rise.julianDate }
             ),
             backgroundSkyViewProducer: .pure(
                 BackgroundSkyView(

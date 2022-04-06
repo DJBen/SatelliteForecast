@@ -43,34 +43,36 @@ public struct SatelliteElevationGraphContext {
     /// the time window of the satellite elevations (usually spanning a few days) shifts forward by that amount of seconds.
     /// To prevent generating graph at a high frequency, this time is time spent before generating a new elevation graph.
     public let elevationGraphTolerance: Double = TimeConstants.min2day
+    public let julianDateProvider: () -> Double
 
-    public init(satelliteInfo: SatelliteInfo, julianDateRange: ClosedRange<Double>, observer: LatLonAlt, configs: SatelliteElevationGraphConfigs) {
+    public init(satelliteInfo: SatelliteInfo, julianDateRange: ClosedRange<Double>, observer: LatLonAlt, configs: SatelliteElevationGraphConfigs, julianDateProvider: @escaping () -> Double) {
         self.satelliteInfo = satelliteInfo
         self.julianDateRange = julianDateRange
         self.observer = observer
         self.configs = configs
+        self.julianDateProvider = julianDateProvider
     }
 }
 
 public struct SatelliteElevationGraphState: Equatable {
-    public var currentJulianDate: Double = 0
     public var satelliteElevationGraphResources: SatelliteElevationGraphResources = .init()
     public var elementsPropagatorResources: ElementsPropagatorResources = .init()
     public var selectedNoradIndex: UInt?
     public var highlightedDateRange: ClosedRange<Double>?
+    public var julianDateOffset: Double = 0
 
     public init(
-        currentJulianDate: Double = 0,
         satelliteElevationGraphResources: SatelliteElevationGraphResources = .init(),
         elementsPropagatorResources: ElementsPropagatorResources = .init(),
         selectedNoradIndex: UInt? = nil,
-        highlightedDateRange: ClosedRange<Double>? = nil
+        highlightedDateRange: ClosedRange<Double>? = nil,
+        julianDateOffset: Double = 0
     ) {
-        self.currentJulianDate = currentJulianDate
         self.satelliteElevationGraphResources = satelliteElevationGraphResources
         self.elementsPropagatorResources = elementsPropagatorResources
         self.selectedNoradIndex = selectedNoradIndex
         self.highlightedDateRange = highlightedDateRange
+        self.julianDateOffset = julianDateOffset
     }
 }
 
@@ -120,9 +122,13 @@ public struct SatelliteElevationGraph: View {
         )
     }
 
+    var currentJulianDate: Double {
+        context.julianDateProvider() + viewModel.state.julianDateOffset
+    }
+
     var currentSnapshot: SatelliteSnapshot {
         try! context.satelliteInfo.generateSnapshot(
-            julianDate: viewModel.state.currentJulianDate,
+            julianDate: currentJulianDate,
             observer: context.observer
         )
     }
@@ -245,12 +251,12 @@ public struct SatelliteElevationGraph: View {
     @ViewBuilder private var currentIndicator: some View {
         julianDateRangePresent { julianDateRange in
             let state = viewModel.state
-            let x = (state.currentJulianDate - julianDateRange.lowerBound) / (julianDateRange.upperBound - julianDateRange.lowerBound)
+            let x = (currentJulianDate - julianDateRange.lowerBound) / (julianDateRange.upperBound - julianDateRange.lowerBound)
             let y = 1 - (currentSnapshot.position.elev + 90) / 180
 
             SatelliteElevationGraphCurrentIndicator(
                 percentageCoordinate: CGPoint(x: x, y: y),
-                currentJulianDate: state.currentJulianDate
+                currentJulianDate: currentJulianDate
             )
         }
     }
@@ -410,10 +416,10 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
             satelliteInfo: satelliteInfo,
             julianDateRange: julianDateRange,
             observer: observer,
-            configs: .init()
+            configs: .init(),
+            julianDateProvider: { Date().julianDate }
         )
         let viewModel = SatelliteElevationGraphState(
-            currentJulianDate: Date().julianDate,
             satelliteElevationGraphResources: SatelliteElevationGraphResources(),
             elementsPropagatorResources: ElementsPropagatorResources(
                 satelliteTrails: [
@@ -451,10 +457,10 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
             satelliteInfo: satelliteInfo2,
             julianDateRange: julianDateRange,
             observer: observer,
-            configs: .init()
+            configs: .init(),
+            julianDateProvider: { Date().julianDate }
         )
         let viewModel2 = SatelliteElevationGraphState(
-            currentJulianDate: Date().julianDate,
             satelliteElevationGraphResources: SatelliteElevationGraphResources(),
             elementsPropagatorResources: ElementsPropagatorResources(
                 satelliteTrails: [
@@ -489,10 +495,10 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
             satelliteInfo: satelliteInfo3,
             julianDateRange: julianDateRange,
             observer: observer,
-            configs: .init()
+            configs: .init(),
+            julianDateProvider: { Date().julianDate }
         )
         let viewModel3 = SatelliteElevationGraphState(
-            currentJulianDate: Date().julianDate,
             satelliteElevationGraphResources: SatelliteElevationGraphResources(),
             elementsPropagatorResources: ElementsPropagatorResources(
                 satelliteTrails: [

@@ -71,8 +71,6 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                     case .propagatedSnapshots(let snapshots, let noradIndex, let observer):
                         print("propagatedSnapshots(snapshots: \(snapshots.count), noradIndex: \(noradIndex), observer: \(observer))")
                     }
-                case .timer(let timerAction):
-                    print(timerAction)
                 case .debugMenu(let debugMenuAction):
                     print(debugMenuAction)
                 case .observerCell(let observerCellAction):

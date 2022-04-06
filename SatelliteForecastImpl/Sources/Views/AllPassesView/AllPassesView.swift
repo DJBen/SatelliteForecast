@@ -27,16 +27,17 @@ public struct AllPassesViewContext {
     public let satelliteInfo: SatelliteInfo
     public let julianDateRange: ClosedRange<Double>
     public let observer: LatLonAlt?
+    public let julianDateProvider: () -> Double
 
-    public init(satelliteInfo: SatelliteInfo, julianDateRange: ClosedRange<Double>, observer: LatLonAlt?) {
+    public init(satelliteInfo: SatelliteInfo, julianDateRange: ClosedRange<Double>, observer: LatLonAlt?, julianDateProvider: @escaping () -> Double) {
         self.satelliteInfo = satelliteInfo
         self.julianDateRange = julianDateRange
         self.observer = observer
+        self.julianDateProvider = julianDateProvider
     }
 }
 
 public struct AllPassesViewState {
-    public var julianDate: Double = 0
     public var julianDateOffset: Double = 0
     public var scheduledPassNotifications: Set<ScheduledPassNotification> = []
     public var skyChartResources: SkyChartResources = .init()
@@ -47,8 +48,7 @@ public struct AllPassesViewState {
     public var satelliteCategory: SatelliteCategory?
     public var satelliteTrails: [UInt: SatelliteTrails] = [:]
 
-    public init(julianDate: Double = 0, julianDateOffset: Double = 0, scheduledPassNotifications: Set<ScheduledPassNotification> = [], skyChartResources: SkyChartResources = .init(), backgroundSkyResources: BackgroundSkyResources = .init(), location: CLLocation? = nil, placemark: CLPlacemark? = nil, selectedPassIndex: Int? = nil, satelliteCategory: SatelliteCategory? = nil, satelliteTrails: [UInt : SatelliteTrails] = [:]) {
-        self.julianDate = julianDate
+    public init(julianDateOffset: Double = 0, scheduledPassNotifications: Set<ScheduledPassNotification> = [], skyChartResources: SkyChartResources = .init(), backgroundSkyResources: BackgroundSkyResources = .init(), location: CLLocation? = nil, placemark: CLPlacemark? = nil, selectedPassIndex: Int? = nil, satelliteCategory: SatelliteCategory? = nil, satelliteTrails: [UInt : SatelliteTrails] = [:]) {
         self.julianDateOffset = julianDateOffset
         self.scheduledPassNotifications = scheduledPassNotifications
         self.skyChartResources = skyChartResources
@@ -186,7 +186,8 @@ public struct AllPassesView: View {
                         observer: observer,
                         snapshots: item.passSnapshots.snapshots,
                         pass: item.passSnapshots.pass,
-                        notableSnapshots: item.passSnapshots.notableSnapshots
+                        notableSnapshots: item.passSnapshots.notableSnapshots,
+                        julianDateProvider: context.julianDateProvider
                     )
                 )
             ),
@@ -248,9 +249,10 @@ public struct AllPassesView: View {
                             notableSnapshots: item.passSnapshots.notableSnapshots,
                             observer: observer,
                             pass: item.passSnapshots.pass,
-                            referenceDate: viewModel.state.julianDate,
                             hasScheduledAlert: item.hasScheduledAlert,
-                            skyChartProducer: skyChartProducer
+                            skyChartProducer: skyChartProducer,
+                            julianDateOffset: viewModel.state.julianDateOffset,
+                            julianDateProvider: context.julianDateProvider
                         )
                     }
                     .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10))
@@ -291,13 +293,14 @@ public struct AllPassesView: View {
         .textCase(nil)
     }
     
-    @ViewBuilder private func observerHeader(observer: LatLonAlt) -> some View {
+    @ViewBuilder private func mapHeader() -> some View {
         if let missionControlState = missionControlState {
             MissionControlView(
                 currentDateCoordinate: missionControlState.dateCoordinate,
                 satelliteGroundTrack: missionControlState.groundTrack
             )
-            .frame(width: 368, height: 280)
+            .aspectRatio(1.33, contentMode: .fill)
+            .padding([.leading, .trailing], -16)
         } else {
             Color.clear
         }
@@ -329,7 +332,7 @@ public struct AllPassesView: View {
                 let invisiblePasses: [Item] = (items?[.daylight] ?? []) + (items?[.unlit] ?? [])
 
                 SwiftUI.List {
-                    SwiftUI.Section(header: observerHeader(observer: observer)) {
+                    SwiftUI.Section(header: mapHeader()) {
                         EmptyView()
                     }
 
@@ -374,7 +377,7 @@ public struct AllPassesView: View {
                     Text(
                         AllPassesView.searchPassRangeToolbarText(
                             range: context.julianDateRange,
-                            now: viewModel.state.julianDate
+                            now: context.julianDateProvider() + viewModel.state.julianDateOffset
                         )
                     )
                     .lineLimit(2)
@@ -385,10 +388,10 @@ public struct AllPassesView: View {
             }
         }
         .onReceive(refreshTimer) { timerJulianDate in
-            self.propagateMissionControl(julianDate: timerJulianDate)
+            self.propagateMissionControl(julianDate: timerJulianDate + viewModel.state.julianDateOffset)
         }
         .onLoad {
-            self.propagateMissionControl(julianDate: Date().julianDate + viewModel.state.julianDateOffset)
+            self.propagateMissionControl(julianDate: context.julianDateProvider() + viewModel.state.julianDateOffset)
         }
     }
 
@@ -539,7 +542,8 @@ struct AllPassesView_Previews: PreviewProvider {
         let context = AllPassesViewContext(
             satelliteInfo: SatelliteInfo(elements: tianHe),
             julianDateRange: Date().julianDate...Date().julianDate + 1,
-            observer: observer
+            observer: observer,
+            julianDateProvider: { Date().julianDate }
         )
         let passSnapshots = tianHePasses[0]
 
@@ -548,7 +552,6 @@ struct AllPassesView_Previews: PreviewProvider {
                 AllPassesView(
                     viewModel: .mock(
                         state: AllPassesViewState(
-                            julianDate: Date().julianDate,
                             scheduledPassNotifications: [],
                             skyChartResources: .init(),
                             backgroundSkyResources: .init(),
@@ -563,9 +566,7 @@ struct AllPassesView_Previews: PreviewProvider {
                     skyChartProducer: ViewProducer<SkyChartContext, SkyChart> { context in
                         return SkyChart(
                             viewModel: .mock(
-                                state: SkyChartViewState(
-                                    referenceDate: passSnapshots.pass.rise.julianDate
-                                )
+                                state: SkyChartViewState()
                             ),
                             context: SkyChartContext(
                                 satelliteInfo: SatelliteInfo(elements: tianHe),
@@ -593,7 +594,8 @@ struct AllPassesView_Previews: PreviewProvider {
                                     ),
                                     showPassInfoLabels: false
                                 ),
-                                quality: .preview
+                                quality: .preview,
+                                julianDateProvider: { passSnapshots.pass.rise.julianDate }
                             ),
                             backgroundSkyViewProducer: .pure(
                                 BackgroundSkyView(

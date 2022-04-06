@@ -25,8 +25,7 @@ struct AlarmSettingsViewState: Equatable {
     }
     
     var notificationItems: [Item] = []
-    var currentDate: Double = 0
-    
+
     static func project(appState: AppState) -> AlarmSettingsViewState {
         AlarmSettingsViewState(
             notificationItems: appState.notificationResources.scheduledPassNotifications.compactMap { scheduledNotification -> Item? in
@@ -35,8 +34,7 @@ struct AlarmSettingsViewState: Equatable {
                     passNotification: scheduledNotification.notification
                 )
             }
-            .sorted(by: { $0.passNotification.pass.rise.julianDate < $1.passNotification.pass.rise.julianDate }),
-            currentDate: appState.julianDate
+            .sorted(by: { $0.passNotification.pass.rise.julianDate < $1.passNotification.pass.rise.julianDate })
         )
     }
     
@@ -190,8 +188,7 @@ struct AlarmSettingsView_Previews: PreviewProvider {
         AlarmSettingsView(
             viewModel: .mock(
                 state: AlarmSettingsViewState(
-                    notificationItems: items,
-                    currentDate: startDate.julianDate
+                    notificationItems: items
                 )
             )
         )

@@ -17,7 +17,6 @@ enum AppAction {
     case locationOutput(LocationOutput)
     case elementsLoader(ElementsLoaderAction)
     case elementsLoaderOutput(ElementsLoaderOutput)
-    case timer(TimerAction)
     case elementsPropagator(ElementsPropagatorAction)
     case elementsPropagatorOutput(ElementsPropagatorOutput)
     case rootView(RootViewAction)
@@ -269,17 +268,6 @@ extension AppAction {
         set {
             guard case .elementsPropagatorOutput = self, let newValue = newValue else { return }
             self = .elementsPropagatorOutput(newValue)
-        }
-    }
-
-    public var timer: TimerAction? {
-        get {
-            guard case let .timer(value) = self else { return nil }
-            return value
-        }
-        set {
-            guard case .timer = self, let newValue = newValue else { return }
-            self = .timer(newValue)
         }
     }
 

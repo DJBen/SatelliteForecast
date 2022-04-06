@@ -23,19 +23,26 @@ struct RootViewState {
 
 extension RootViewState: Equatable {}
 
+struct RootViewContext {
+    let julianDateProvider: () -> Double
+}
+
 struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewViewType: SatelliteOverviewView, SettingsOverViewViewType: SettingsOverviewView>: View {
     @ObservedObject var viewModel: ObservableViewModel<RootViewAction, RootViewState>
+    let context: RootViewContext
     let realtimeSkyViewProducer: ViewProducer<RealtimeSkyViewContext, RealtimeSkyViewType>
-    let satelliteOverviewViewProducer: ViewProducer<Void, SatelliteOverviewViewType>
+    let satelliteOverviewViewProducer: ViewProducer<SatelliteOverviewViewContext, SatelliteOverviewViewType>
     let settingsOverviewProducer: ViewProducer<Void, SettingsOverViewViewType>
 
     init(
         viewModel: ObservableViewModel<RootViewAction, RootViewState>,
+        context: RootViewContext,
         realtimeSkyViewProducer: ViewProducer<RealtimeSkyViewContext, RealtimeSkyViewType>,
-        satelliteOverviewViewProducer: ViewProducer<Void, SatelliteOverviewViewType>,
+        satelliteOverviewViewProducer: ViewProducer<SatelliteOverviewViewContext, SatelliteOverviewViewType>,
         settingsOverviewProducer: ViewProducer<Void, SettingsOverViewViewType>
     ) {
         self.viewModel = viewModel
+        self.context = context
         self.realtimeSkyViewProducer = realtimeSkyViewProducer
         self.satelliteOverviewViewProducer = satelliteOverviewViewProducer
         self.settingsOverviewProducer = settingsOverviewProducer
@@ -61,6 +68,9 @@ struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewViewType:
             )
         ) {
             satelliteOverviewViewProducer.view(
+                SatelliteOverviewViewContext(
+                    julianDateProvider: context.julianDateProvider
+                )
             )
             .modifier(
                 TabBarItemModifier(
@@ -132,6 +142,7 @@ struct RootView_Previews: PreviewProvider {
                     }
                 }
             ),
+            context: RootViewContext(julianDateProvider: { Date().julianDate }),
             realtimeSkyViewProducer: .pure(MockRealtimeSkyView()),
             satelliteOverviewViewProducer: .pure(MockSatelliteOverviewView()),
             settingsOverviewProducer: .pure(MockSettingsView())
