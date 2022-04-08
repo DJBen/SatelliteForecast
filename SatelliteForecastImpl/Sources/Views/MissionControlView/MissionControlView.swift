@@ -154,6 +154,8 @@ struct MissionControlViewControllerWrapperView: UIViewControllerRepresentable {
     func missionControlDidResetViewport(_ viewController: MissionControlViewController)
 }
 
+// Subclassing `MKGeodesicPolyline` leads to a strange crash.
+// Instead we use the good old `objc_getAssociatedObject`.
 extension MKGeodesicPolyline {
     static private var sf_identifierAssociationKey: UInt8 = 0
 

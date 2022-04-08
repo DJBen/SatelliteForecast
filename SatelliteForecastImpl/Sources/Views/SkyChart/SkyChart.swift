@@ -378,8 +378,8 @@ struct SkyChart_Previews: PreviewProvider {
                                 params: SatellitePassPathRenderParams(
                                     rect: CGRect(origin: .zero, size: CGSize(width: 388, height: 805)),
                                     snapshotsDuringPass: passSnapshots2.snapshots,
-                                    illuminatedColor: UIColor(Color("satellitePath_illuminated")),
-                                    unlitColor: UIColor(Color("satellitePath_notIlluminated"))
+                                    illuminatedColor: UIColor(Color("satellitePath_illuminated", bundle: .satelliteForecastImplResourcesBundle)),
+                                    unlitColor: UIColor(Color("satellitePath_notIlluminated", bundle: .satelliteForecastImplResourcesBundle))
                                 )
                             )
                         ],

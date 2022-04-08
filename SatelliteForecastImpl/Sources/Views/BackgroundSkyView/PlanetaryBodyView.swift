@@ -130,7 +130,7 @@ extension BackgroundSkyConfigs.PlantaryBody {
     private struct PlanetsShapeModifier: ViewModifier {
         func body(content: Content) -> some View {
             content
-                .foregroundColor(Color("star"))
+                .foregroundColor(Color("star", bundle: .satelliteForecastImplResourcesBundle))
         }
     }
 

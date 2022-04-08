@@ -59,6 +59,7 @@ public struct BackgroundSkyViewContext {
     }
 }
 
+/// A view that renders a alt-alz projection of background sky.
 public struct BackgroundSkyView: View {
     @ObservedObject var viewModel: ObservableViewModel<BackgroundSkyViewAction, BackgroundSkyViewState>
     let context: BackgroundSkyViewContext
@@ -166,8 +167,8 @@ public struct BackgroundSkyView: View {
     public var body: some View {
         Group {
             if let backgroundSkyJulianDateKey = backgroundSkyJulianDateKey {
-                SkyChartBackground(
-                    state: SkyChartBackgroundState(observer: context.observer),
+                SkyChartLegend(
+                    state: SkyChartLegendState(observer: context.observer),
                     configs: context.basicChartConfigs
                 )
                 .equatable()
@@ -181,8 +182,8 @@ public struct BackgroundSkyView: View {
                     .clipShape(Circle())
                 )
             } else {
-                SkyChartBackground(
-                    state: SkyChartBackgroundState(observer: context.observer),
+                SkyChartLegend(
+                    state: SkyChartLegendState(observer: context.observer),
                     configs: context.basicChartConfigs
                 )
             }

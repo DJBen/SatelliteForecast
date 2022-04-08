@@ -9,12 +9,13 @@ import SwiftUI
 import SatelliteKit
 import SatelliteForecast
 
-struct SkyChartBackgroundState: Equatable {
+struct SkyChartLegendState: Equatable {
     var observer: LatLonAlt
 }
 
-struct SkyChartBackground: View, Equatable {
-    var state: SkyChartBackgroundState
+/// A watch face of sky chart that contains the direction marks
+struct SkyChartLegend: View, Equatable {
+    var state: SkyChartLegendState
     var configs: BasicChartConfigs
 
     @ViewBuilder var backgroundPath: some View {
@@ -30,7 +31,13 @@ struct SkyChartBackground: View, Equatable {
                 )
                 path.closeSubpath()
             }
-            .stroke(Color("skyChartStroke"), lineWidth: 1)
+            .stroke(
+                Color(
+                    "skyChartStroke",
+                    bundle: .satelliteForecastImplResourcesBundle
+                ),
+                lineWidth: 1
+            )
         }
     }
 
@@ -48,7 +55,7 @@ struct SkyChartBackground: View, Equatable {
                     path.addLine(to: point2)
                 }
             }
-            .stroke(Color("skyChartStroke"), lineWidth: 1)
+            .stroke(Color("skyChartStroke", bundle: .satelliteForecastImplResourcesBundle), lineWidth: 1)
         }
     }
 
@@ -109,3 +116,20 @@ struct SkyChartBackground: View, Equatable {
             .overlay(azimuthMarkTexts)
     }
 }
+
+#if DEBUG
+
+struct SkyChartLegend_Previews: PreviewProvider {
+    static var previews: some View {
+        let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
+
+        ForEach(ColorScheme.allCases, id: \.self) { colorScheme in
+            SkyChartLegend(
+                state: SkyChartLegendState(observer: observer),
+                configs: BasicChartConfigs()
+            )
+            .preferredColorScheme(colorScheme)
+        }
+    }
+}
+#endif

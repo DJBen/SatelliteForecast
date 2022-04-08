@@ -10,7 +10,7 @@
 		677991D8DAA40F43E85B8CD1 /* Pods_SatelliteForecastApp_SatelliteForecastTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F2DA9CED75267C2A76268E02 /* Pods_SatelliteForecastApp_SatelliteForecastTests.framework */; };
 		9D5F2E9FA1BC31892A719C75 /* Pods_SatelliteForecastApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9945F4772B6B668C069E6F6 /* Pods_SatelliteForecastApp.framework */; };
 		EF12BC0E27E1C0CF0083F3A2 /* SatelliteElevationGraph+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF12BC0D27E1C0CF0083F3A2 /* SatelliteElevationGraph+Wiring.swift */; };
-		EF16811E27D00E28001BA9C3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EF9D827C2661BBF000616C97 /* Assets.xcassets */; };
+		EF16811E27D00E28001BA9C3 /* Icons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EF9D827C2661BBF000616C97 /* Icons.xcassets */; };
 		EF16811F27D00E28001BA9C3 /* Satellites.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EF3D09A12686920800B84232 /* Satellites.xcassets */; };
 		EF16813F27D1793A001BA9C3 /* RealtimeSkyViewMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF16813B27D1793A001BA9C3 /* RealtimeSkyViewMiddleware.swift */; };
 		EF16814027D1793A001BA9C3 /* RealtimePropagationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF16813C27D1793A001BA9C3 /* RealtimePropagationResult.swift */; };
@@ -203,7 +203,7 @@
 		EF8BD19D26B5448F00DE9F33 /* ObserverCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObserverCell.swift; sourceTree = "<group>"; };
 		EF8BD19F26B5544500DE9F33 /* SatelliteOverviewSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteOverviewSection.swift; sourceTree = "<group>"; };
 		EF9D827A2661BBF000616C97 /* SatelliteForecastApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteForecastApp.swift; sourceTree = "<group>"; };
-		EF9D827C2661BBF000616C97 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		EF9D827C2661BBF000616C97 /* Icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Icons.xcassets; sourceTree = "<group>"; };
 		EF9D82812661BBF000616C97 /* SatelliteForecastApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SatelliteForecastApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFB1B4D027BCDFC40025974C /* SatelliteForecastTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SatelliteForecastTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFB6111A27F4E9B3003557E5 /* SettingsOverviewReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsOverviewReducer.swift; sourceTree = "<group>"; };
@@ -583,7 +583,7 @@
 				EF9D827A2661BBF000616C97 /* SatelliteForecastApp.swift */,
 				EF7A319A266B733C00CC33C0 /* LocalizedStrings.swift */,
 				EF864272266DFFE9004F0AFA /* Info.plist */,
-				EF9D827C2661BBF000616C97 /* Assets.xcassets */,
+				EF9D827C2661BBF000616C97 /* Icons.xcassets */,
 				EF3D09A12686920800B84232 /* Satellites.xcassets */,
 				EF7A318D266B6ABC00CC33C0 /* Store */,
 				EF847BEE26CE334D0004806F /* AppDelegate */,
@@ -801,7 +801,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EF16811E27D00E28001BA9C3 /* Assets.xcassets in Resources */,
+				EF16811E27D00E28001BA9C3 /* Icons.xcassets in Resources */,
 				EFED97B327D61C0C003FC289 /* active.txt in Resources */,
 				EFED97B527D61CB5003FC289 /* visual.txt in Resources */,
 				EFED97B927D620CD003FC289 /* tle-new.txt in Resources */,
