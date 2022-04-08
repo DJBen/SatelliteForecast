@@ -1,6 +1,6 @@
 //
 //  RealtimeSkySatelliteCell.swift
-//  SatelliteForecast
+//  SatelliteForecastImpl
 //
 //  Created by Ben Lu on 3/9/22.
 //

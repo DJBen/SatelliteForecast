@@ -14,37 +14,36 @@ import SatelliteKit
 import SatelliteForecast
 import SatelliteForecastImpl
 
-enum AlarmSettingsViewAction {
+public enum AlarmSettingsViewAction {
     case deleteNotifications(ids: Set<String>)
 }
 
-struct AlarmSettingsViewState: Equatable {
-    struct Item: Equatable, Identifiable {
-        let id: String
-        let passNotification: PassNotification
-    }
-    
-    var notificationItems: [Item] = []
+public struct AlarmSettingsViewState: Equatable {
+    public struct Item: Equatable, Identifiable {
+        public let id: String
+        public let passNotification: PassNotification
 
-    static func project(appState: AppState) -> AlarmSettingsViewState {
-        AlarmSettingsViewState(
-            notificationItems: appState.notificationResources.scheduledPassNotifications.compactMap { scheduledNotification -> Item? in
-                return Item(
-                    id: scheduledNotification.id,
-                    passNotification: scheduledNotification.notification
-                )
-            }
-            .sorted(by: { $0.passNotification.pass.rise.julianDate < $1.passNotification.pass.rise.julianDate })
-        )
+        public init(id: String, passNotification: PassNotification) {
+            self.id = id
+            self.passNotification = passNotification
+        }
     }
     
-    static var empty: AlarmSettingsViewState {
-        AlarmSettingsViewState()
+    public var notificationItems: [Item] = []
+
+    public init(notificationItems: [AlarmSettingsViewState.Item] = []) {
+        self.notificationItems = notificationItems
     }
 }
 
-struct AlarmSettingsView: View {
+public struct AlarmSettingsView: View {
     @ObservedObject var viewModel: ObservableViewModel<AlarmSettingsViewAction, AlarmSettingsViewState>
+
+    public init(
+        viewModel: ObservableViewModel<AlarmSettingsViewAction, AlarmSettingsViewState>
+    ) {
+        self.viewModel = viewModel
+    }
     
     @ViewBuilder private func itemView(_ item: AlarmSettingsViewState.Item) -> some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -69,19 +68,19 @@ struct AlarmSettingsView: View {
                 Spacer()
                 
                 if item.passNotification.timeOffset != 0 {
-                    Text(LocalizedStrings.AlarmSettingsView.alarmOffsetDescription(timeInterval: item.passNotification.timeOffset))
+                    Text(AlarmSettingsView.alarmOffsetDescription(timeInterval: item.passNotification.timeOffset))
                         .font(.caption)
                         .foregroundColor(Color(UIColor.secondaryLabel))
                 }
             }
                         
             VStack(alignment: .leading, spacing: 4) {
-                Text(LocalizedStrings.AlarmSettingsView.passDescription(pass: item.passNotification.pass))
+                Text(AlarmSettingsView.passDescription(pass: item.passNotification.pass))
                     .font(.caption)
                     .multilineTextAlignment(.leading)
                     .foregroundColor(.primary)
                 
-                Text(LocalizedStrings.AlarmSettingsView.passVisibilityDescription(pass: item.passNotification.pass))
+                Text(AlarmSettingsView.passVisibilityDescription(pass: item.passNotification.pass))
                     .font(.caption)
                     .multilineTextAlignment(.leading)
                     .foregroundColor(.primary)
@@ -123,7 +122,7 @@ struct AlarmSettingsView: View {
         }
     }
     
-    var body: some View {
+    public var body: some View {
         alarmList
         .navigationBarTitle("Alarms", displayMode: .inline)
         .toolbar {
@@ -132,19 +131,94 @@ struct AlarmSettingsView: View {
     }
 }
 
-extension ViewProducer where Context == Void, ProducedView == AlarmSettingsView {
-    static func alarmSettingsView<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
-        ViewProducer<Context, ProducedView> { context in
-            AlarmSettingsView(
-                viewModel: viewModel
-                    .projection(
-                        action: AppAction.alarmSettingsView,
-                        state: AlarmSettingsViewState.project(appState:)
-                    )
-                    .asObservableViewModel(initialState: .empty, emitsValue: .whenDifferent)
+extension AlarmSettingsView {
+    static func alarmOffsetDescription(timeInterval: TimeInterval) -> String {
+        let beforeFormat = NSLocalizedString(
+            "AlarmSettingsView.alarmOffsetDescription.before",
+            tableName: nil,
+            bundle: .main,
+            value: "%@ before rise",
+            comment: "The time interval description for each alarm in the alarm settings view"
+        )
+
+        let afterFormat = NSLocalizedString(
+            "AlarmSettingsView.alarmOffsetDescription.after",
+            tableName: nil,
+            bundle: .main,
+            value: "%@ after rise",
+            comment: "The time interval description for each alarm in the alarm settings view"
+        )
+
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.hour, .minute]
+        formatter.unitsStyle = .short
+
+        return String(
+            format: timeInterval > 0 ? afterFormat : beforeFormat,
+            formatter.string(from: abs(timeInterval))!
+        )
+    }
+
+    static func passDescription(pass: Pass) -> String {
+        let format = NSLocalizedString(
+            "AlarmSettingsView.passDescription",
+            tableName: nil,
+            bundle: .main,
+            value: "Rises at %@ and sets at %@.",
+            comment: "The pass description for each alarm in the alarm settings view"
+        )
+
+        return String(
+            format: format,
+            Date(julianDate: pass.rise.julianDate).formatted(date: .omitted, time: .standard),
+            Date(julianDate: pass.set.julianDate).formatted(date: .omitted, time: .standard)
+        )
+    }
+
+    static func passVisibilityDescription(pass: Pass) -> String {
+        let visibleFormat = NSLocalizedString(
+            "AlarmSettingsView.passVisibilityDescription.visible",
+            tableName: nil,
+            bundle: .main,
+            value: "Max visible elevation %.1f degrees.",
+            comment: "The pass description for each alarm in the alarm settings view"
+        )
+
+        let daytimeFormat = NSLocalizedString(
+            "AlarmSettingsView.passVisibilityDescription.daytime",
+            tableName: nil,
+            bundle: .main,
+            value: "The pass occurs during daylight with a max elevation of %.1f degrees.",
+            comment: "The pass description for each alarm in the alarm settings view"
+        )
+
+        let unlitFormat = NSLocalizedString(
+            "AlarmSettingsView.passVisibilityDescription.unlit",
+            tableName: nil,
+            bundle: .main,
+            value: "The pass is not illuminated with a max elevation of %.1f degrees.",
+            comment: "The pass description for each alarm in the alarm settings view"
+        )
+
+        switch pass.visibility {
+        case .visible:
+            return String(
+                format: visibleFormat,
+                pass.highestIlluminatedElevation
+            )
+        case .daylight:
+            return String(
+                format: daytimeFormat,
+                pass.transit.elev
+            )
+        case .unlit:
+            return String(
+                format: unlitFormat,
+                pass.transit.elev
             )
         }
     }
+
 }
 
 #if DEBUG

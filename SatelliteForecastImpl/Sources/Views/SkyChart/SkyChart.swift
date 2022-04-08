@@ -1,6 +1,6 @@
 //
 //  SkyChart.swift
-//  SatelliteForecast
+//  SatelliteForecastImpl
 //
 //  Created by Ben Lu on 5/30/21.
 //
@@ -329,8 +329,16 @@ struct SkyChart_Previews: PreviewProvider {
                                     params: SatellitePassPathRenderParams(
                                         rect: CGRect(origin: .zero, size: CGSize(width: 388, height: 805)),
                                         snapshotsDuringPass: passSnapshots.snapshots,
-                                        illuminatedColor: UIColor(named: "satellitePath_illuminated", in: nil, compatibleWith: traitCollection)!,
-                                        unlitColor: UIColor(named: "satellitePath_notIlluminated", in: nil, compatibleWith: traitCollection)!
+                                        illuminatedColor: UIColor(
+                                            named: "satellitePath_illuminated",
+                                            in: .satelliteForecastImplResourcesBundle,
+                                            compatibleWith: traitCollection
+                                        )!,
+                                        unlitColor: UIColor(
+                                            named: "satellitePath_notIlluminated",
+                                            in: .satelliteForecastImplResourcesBundle,
+                                            compatibleWith: traitCollection
+                                        )!
                                     )
                                 )
                             ],

@@ -14,14 +14,14 @@ import SatelliteKit
 import SwiftRex
 import SwiftUI
 
-enum RealtimeSkyViewAction {
+public enum RealtimeSkyViewAction {
     case propagateCurrentEphemerides([SatelliteInfo], observer: LatLonAlt, julianDate: Double)
     case setRealtimeSkyViewActive(Bool)
 }
 
 extension RealtimeSkyViewAction: Equatable {}
 
-enum RealtimeSkyViewOutput {
+public enum RealtimeSkyViewOutput {
     case propagatedCurrentEphemerides(
         results: BTree<Double, RealtimePropagationResult>,
         satellites: [SatelliteInfo],
@@ -37,38 +37,56 @@ enum RealtimeSkyViewOutput {
     )
 }
 
-struct RealtimeSkyViewResources {
-    /// The propagation results containing the satellite snapshot ordered by the time when next check should take place.
-    var results: BTree<Double, RealtimePropagationResult> = .init()
-    var displayResults: [RealtimePropagationResult] = []
-    var isRealtimeSkyViewActive: Bool = false
-    var isPropagatingEphemerides: Bool = false
-}
+public struct RealtimeSkyViewState {
+    public var resources: RealtimeSkyViewResources = .init()
+    public var satellites: Loadable<[SatelliteInfo], ElementsLoaderError> = .notLoaded
+    public var observer: LatLonAlt?
+    public var julianDateOffset: Double = 0
 
-extension RealtimeSkyViewResources: Equatable {}
-
-struct RealtimeSkyViewState {
-    var resources: RealtimeSkyViewResources = .init()
-    var satellites: Loadable<[SatelliteInfo], ElementsLoaderError> = .notLoaded
-    var observer: LatLonAlt?
-    var julianDateOffset: Double = 0
+    public init(
+        resources: RealtimeSkyViewResources = .init(),
+        satellites: Loadable<[SatelliteInfo], ElementsLoaderError> = .notLoaded,
+        observer: LatLonAlt? = nil,
+        julianDateOffset: Double = 0
+    ) {
+        self.resources = resources
+        self.satellites = satellites
+        self.observer = observer
+        self.julianDateOffset = julianDateOffset
+    }
 }
 
 extension RealtimeSkyViewState: Equatable {}
 
-struct RealtimeSkyViewContext {
-    let basicChartConfigs: BasicChartConfigs
-    let backgroundSkyConfigs: BackgroundSkyConfigs
-    let satelliteMagToRadiusFunction: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction
+public struct RealtimeSkyViewContext {
+    public let basicChartConfigs: BasicChartConfigs
+    public let backgroundSkyConfigs: BackgroundSkyConfigs
+    public let satelliteMagToRadiusFunction: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction
+
+    public init(basicChartConfigs: BasicChartConfigs, backgroundSkyConfigs: BackgroundSkyConfigs, satelliteMagToRadiusFunction: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction) {
+        self.basicChartConfigs = basicChartConfigs
+        self.backgroundSkyConfigs = backgroundSkyConfigs
+        self.satelliteMagToRadiusFunction = satelliteMagToRadiusFunction
+    }
 }
 
 /// A protocol of real time sky view. Preview code can mock the implementation as a depednency.
-protocol RealtimeSkyView: View {}
+public protocol RealtimeSkyView: View {}
 
-struct RealtimeSkyViewImpl: RealtimeSkyView {
+public struct RealtimeSkyViewImpl: RealtimeSkyView {
     @ObservedObject var viewModel: ObservableViewModel<RealtimeSkyViewAction, RealtimeSkyViewState>
     let context: RealtimeSkyViewContext
     let backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext, BackgroundSkyView>
+
+    public init(
+        viewModel: ObservableViewModel<RealtimeSkyViewAction, RealtimeSkyViewState>,
+        context: RealtimeSkyViewContext,
+        backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext, BackgroundSkyView>
+    ) {
+        self.viewModel = viewModel
+        self.context = context
+        self.backgroundSkyViewProducer = backgroundSkyViewProducer
+    }
 
     let refreshTimer = Timer.publish(
         every: 0.5,
@@ -309,7 +327,7 @@ struct RealtimeSkyViewImpl: RealtimeSkyView {
         }
     }
 
-    var body: some View {
+    public var body: some View {
         NavigationView {
             locationView { observer in
                 GeometryReader { geometry in

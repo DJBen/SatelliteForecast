@@ -7,7 +7,6 @@
 
 import Contacts
 import CombineRex
-import CombineRextensions
 import MapKit
 import SwiftUI
 import SatelliteKit
@@ -15,20 +14,29 @@ import SatelliteForecast
 import SatelliteForecastImpl
 import SwiftUIVisualEffects
 
-enum ObserverCellAction {
+public enum ObserverCellAction {
 
 }
 
-struct ObserverCellState: Equatable {
+public struct ObserverCellState {
     var locationResources: LocationResources = .init()
 
-    static func project(state: AppState) -> ObserverCellState {
-        ObserverCellState(locationResources: state.locationResources)
+    public init(locationResources: LocationResources = .init()) {
+        self.locationResources = locationResources
     }
 }
 
-struct ObserverCell: View {
+extension ObserverCellState: Equatable {}
+
+public struct ObserverCell: View {
     @ObservedObject var viewModel: ObservableViewModel<ObserverCellAction, ObserverCellState>
+
+    public init(
+        viewModel: ObservableViewModel<ObserverCellAction, ObserverCellState>
+    ) {
+        self.viewModel = viewModel
+    }
+
     @State private var textRegionSize: CGSize = .zero
 
     @Environment(\.colorScheme) private var colorScheme
@@ -160,9 +168,9 @@ struct ObserverCell: View {
         case .currentLocation:
             switch locationResources.authorizationStatus {
             case .denied, .restricted:
-                return LocalizedStrings.ObserverCell.Title.requiresLocationSelection
+                return ObserverCell.Title.requiresLocationSelection
             default:
-                return LocalizedStrings.ObserverCell.Title.currentLocation
+                return ObserverCell.Title.currentLocation
             }
         case let .custom(completion, _):
             return completion.title
@@ -179,7 +187,7 @@ struct ObserverCell: View {
         }
     }
 
-    var body: some View {
+    public var body: some View {
         VStack(alignment: .leading) {
             Spacer()
                 .frame(height: 135)
@@ -223,17 +231,23 @@ struct ObserverCell: View {
     }
 }
 
-extension ViewProducer where Context == Void, ProducedView == ObserverCell {
-    static func observerCell<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
-        ViewProducer<Context, ProducedView> { context in
-            ObserverCell(
-                viewModel: viewModel.projection(
-                    action: AppAction.observerCell,
-                    state: ObserverCellState.project(state:)
-                )
-                .asObservableViewModel(initialState: .init(), emitsValue: .whenDifferent)
-            )
-        }
+extension ObserverCell {
+    enum Title {
+        static let currentLocation: String = NSLocalizedString(
+            "SatelliteListView.observerCell.title.currentLocation",
+            tableName: nil,
+            bundle: .main,
+            value: "Current location",
+            comment: "The current location text, indicating that the observer location is the current location."
+        )
+
+        static let requiresLocationSelection: String = NSLocalizedString(
+            "SatelliteListView.observerCell.title.requiresLocationSelection",
+            tableName: nil,
+            bundle: .main,
+            value: "Requires location selection",
+            comment: "The text indicating that location service is not available, nor has the user selecetd a location manually."
+        )
     }
 }
 

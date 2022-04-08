@@ -1,37 +1,60 @@
 //
 //  SettingsOverviewView.swift
-//  SatelliteForecast
+//  SatelliteForecastImpl
 //
 //  Created by Ben Lu on 3/19/22.
 //
 
 import CombineRex
 import CombineRextensions
+import SatelliteForecast
 import SatelliteForecastImpl
 import SwiftRex
 import SwiftUI
 
-enum SettingsOverviewViewAction {
+public enum SettingsOverviewViewAction {
     case selectSettingItem(SettingsOverviewItem?)
 }
 
 extension SettingsOverviewViewAction: Equatable {}
 
-struct SettingsOverviewViewState {
-    var observerNavigation: ObserverNavigationState = .init()
-    var alarmNavigation: AlarmNavigationState = .init()
+public struct SettingsOverviewViewState {
+    public var observerNavigation: ObserverNavigationState = .init()
+    public var alarmNavigation: AlarmNavigationState = .init()
+
+    public init(
+        observerNavigation: ObserverNavigationState = .init(),
+        alarmNavigation: AlarmNavigationState = .init()
+    ) {
+        self.observerNavigation = observerNavigation
+        self.alarmNavigation = alarmNavigation
+    }
 }
 
 extension SettingsOverviewViewState: Equatable {}
 
-protocol SettingsOverviewView: View {}
+public protocol SettingsOverviewView: View {}
 
-struct SettingsOverviewViewImpl: SettingsOverviewView {
+public struct SettingsOverviewViewImpl: SettingsOverviewView {
     @ObservedObject var viewModel: ObservableViewModel<SettingsOverviewViewAction, SettingsOverviewViewState>
     let observerCellViewProducer: ViewProducer<Void, ObserverCell>
     let locationSettingsViewProducer: ViewProducer<Void, LocationSettingsView>
     let alarmSettingsCellProducer: ViewProducer<Void, AlarmSettingsCell>
     let alarmSettingsViewProducer: ViewProducer<Void, AlarmSettingsView>
+
+    public init(
+        viewModel: ObservableViewModel<SettingsOverviewViewAction, SettingsOverviewViewState>,
+        observerCellViewProducer: ViewProducer<Void, ObserverCell>,
+        locationSettingsViewProducer: ViewProducer<Void, LocationSettingsView>,
+        alarmSettingsCellProducer: ViewProducer<Void, AlarmSettingsCell>,
+        alarmSettingsViewProducer: ViewProducer<Void, AlarmSettingsView>
+    ) {
+        self.viewModel = viewModel
+        self.observerCellViewProducer = observerCellViewProducer
+        self.locationSettingsViewProducer = locationSettingsViewProducer
+        self.alarmSettingsCellProducer = alarmSettingsCellProducer
+        self.alarmSettingsViewProducer = alarmSettingsViewProducer
+    }
 
     let items: [SettingsOverviewItem] = [
         .observer,
@@ -109,7 +132,7 @@ struct SettingsOverviewViewImpl: SettingsOverviewView {
         }
     }
 
-    var body: some View {
+    public var body: some View {
         NavigationView {
             ScrollView {
                 LazyVStack(

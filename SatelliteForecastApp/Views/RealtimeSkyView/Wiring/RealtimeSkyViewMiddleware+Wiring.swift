@@ -6,6 +6,8 @@
 //
 
 import CombineRex
+import SatelliteForecast
+import SatelliteForecastImpl
 
 extension EffectMiddleware where InputActionType == RealtimeSkyViewAction, OutputActionType == RealtimeSkyViewOutput, StateType == RealtimeSkyViewResources, Dependencies == Void {
     func lift() -> AnyMiddleware<AppAction, AppAction, AppState> {

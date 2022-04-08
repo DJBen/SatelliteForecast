@@ -12,7 +12,7 @@ import SatelliteForecast
 import SatelliteKit
 
 extension EffectMiddleware where InputActionType == RealtimeSkyViewAction, OutputActionType == RealtimeSkyViewOutput, StateType == RealtimeSkyViewResources, Dependencies == Void {
-    static var realtimeSky: EffectMiddleware<RealtimeSkyViewAction, RealtimeSkyViewOutput, RealtimeSkyViewResources, Void> {
+    public static var realtimeSky: EffectMiddleware<RealtimeSkyViewAction, RealtimeSkyViewOutput, RealtimeSkyViewResources, Void> {
         EffectMiddleware.onAction { action, dispatcher, getState in
             switch action {
             case .propagateCurrentEphemerides(let satellites, let observer, let julianDate):

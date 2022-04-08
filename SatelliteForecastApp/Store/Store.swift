@@ -93,11 +93,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             EffectMiddleware.allPassesViewToNotification.lift(),
             EffectMiddleware.skyChart.lift(),
             EffectMiddleware.satelliteElevationGraph.lift(),
-            EffectMiddleware.alarmSettingsView
-            .lift(
-                inputAction: \.alarmSettingsView
-            )
-            .eraseToAnyMiddleware(),
+            EffectMiddleware.alarmSettingsViewToNotification.lift(),
             EffectMiddleware.debugMenu.lift(
                 dependencies: DebugMenuMiddlewareDependencies(dateProvider: Date.init)
             ),

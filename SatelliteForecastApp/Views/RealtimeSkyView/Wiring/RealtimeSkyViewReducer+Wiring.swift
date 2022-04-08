@@ -6,6 +6,8 @@
 //
 
 import SwiftRex
+import SatelliteForecast
+import SatelliteForecastImpl
 
 extension Reducer where ActionType == RealtimeSkyViewAction, StateType == RealtimeSkyViewResources {
     func lift() -> Reducer<AppAction, AppState> {

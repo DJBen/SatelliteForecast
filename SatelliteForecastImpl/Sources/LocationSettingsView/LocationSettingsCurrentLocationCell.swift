@@ -8,11 +8,22 @@
 import SwiftUI
 import CoreLocation
 import Contacts
+import SatelliteForecastImpl
 
-struct LocationSettingsCurrentLocationCell: View {
+public struct LocationSettingsCurrentLocationCell: View {
     var currentLocation: CLLocation?
     var currentLocationPlacemark: CLPlacemark?
     var isSelected: Bool = false
+
+    public init(
+        currentLocation: CLLocation?,
+        currentLocationPlacemark: CLPlacemark?,
+        isSelected: Bool = false
+    ) {
+        self.currentLocation = currentLocation
+        self.currentLocationPlacemark = currentLocationPlacemark
+        self.isSelected = isSelected
+    }
 
     static let addressFormatter: CNPostalAddressFormatter = {
         let formatter = CNPostalAddressFormatter()
@@ -20,7 +31,7 @@ struct LocationSettingsCurrentLocationCell: View {
         return formatter
     }()
 
-    var body: some View {
+    public var body: some View {
         HStack {
             if let _ = currentLocation {
                 Image(systemName: "location")
@@ -66,11 +77,15 @@ struct LocationSettingsCurrentLocationCell: View {
 #if DEBUG
 struct LocationSettingsCurrentLocationCell_Previews: PreviewProvider {
     static var previews: some View {
-        LocationSettingsCurrentLocationCell()
+        LocationSettingsCurrentLocationCell(
+            currentLocation: nil,
+            currentLocationPlacemark: nil
+        )
             .previewLayout(.fixed(width: 350, height: 50))
 
         LocationSettingsCurrentLocationCell(
-            currentLocation: CLLocation(latitude: 32.123, longitude: 45.678)
+            currentLocation: CLLocation(latitude: 32.123, longitude: 45.678),
+            currentLocationPlacemark: nil
         )
         .previewLayout(.fixed(width: 350, height: 50))
     }

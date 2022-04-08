@@ -6,9 +6,10 @@
 //
 
 import CombineRex
+import SatelliteForecast
 
 extension Reducer where ActionType == RealtimeSkyViewAction, StateType == RealtimeSkyViewResources {
-    static let realtimeSkyReducer = Reducer.reduce { action, state in
+    public static let realtimeSkyReducer = Reducer.reduce { action, state in
         switch action {
         case .setRealtimeSkyViewActive(let isActive):
             state.isRealtimeSkyViewActive = isActive
@@ -19,7 +20,7 @@ extension Reducer where ActionType == RealtimeSkyViewAction, StateType == Realti
 }
 
 extension Reducer where ActionType == RealtimeSkyViewOutput, StateType == RealtimeSkyViewResources {
-    static let realtimeSkyOutputReducer = Reducer.reduce { action, state in
+    public static let realtimeSkyOutputReducer = Reducer.reduce { action, state in
         switch action {
         case .propagatedCurrentEphemerides(
             let results,

@@ -12,30 +12,24 @@ import SatelliteForecast
 import SatelliteForecastImpl
 import SwiftUI
 
-struct LocationSettingsViewState: Equatable {
-    static func == (lhs: LocationSettingsViewState, rhs: LocationSettingsViewState) -> Bool {
+public struct LocationSettingsViewState: Equatable {
+    var locationSelection: LocationResources.Selection = .currentLocation
+    var currentLocation: CLLocation?
+    var currentLocationPlacemark: CLPlacemark?
+    var autocompletionResult: Result<[MKLocalSearchCompletion], Error>?
+
+    public init(locationSelection: LocationResources.Selection = .currentLocation, currentLocation: CLLocation? = nil, currentLocationPlacemark: CLPlacemark? = nil, autocompletionResult: Result<[MKLocalSearchCompletion], Error>? = nil) {
+        self.locationSelection = locationSelection
+        self.currentLocation = currentLocation
+        self.currentLocationPlacemark = currentLocationPlacemark
+        self.autocompletionResult = autocompletionResult
+    }
+
+    public static func == (lhs: LocationSettingsViewState, rhs: LocationSettingsViewState) -> Bool {
         return lhs.currentLocation == rhs.currentLocation &&
         lhs.currentLocationPlacemark == rhs.currentLocationPlacemark &&
         lhs.locationSelection == rhs.locationSelection &&
         lhs.autocompletionResult?.successValue == rhs.autocompletionResult?.successValue
-    }
-
-    var currentLocation: CLLocation?
-    var currentLocationPlacemark: CLPlacemark?
-    var locationSelection: LocationResources.Selection
-    var autocompletionResult: Result<[MKLocalSearchCompletion], Error>?
-
-    static func project(state: AppState) -> LocationSettingsViewState {
-        LocationSettingsViewState(
-            currentLocation: state.locationResources.currentLocation,
-            currentLocationPlacemark: state.locationResources.currentLocationPlacemark,
-            locationSelection: state.locationResources.selection,
-            autocompletionResult: state.locationResources.autocompletionResult
-        )
-    }
-
-    static var empty: LocationSettingsViewState {
-        LocationSettingsViewState(locationSelection: .currentLocation)
     }
 }
 
@@ -92,8 +86,15 @@ fileprivate class SearchDebouncer: NSObject, ObservableObject {
     }
 }
 
-struct LocationSettingsView: View {
+public struct LocationSettingsView: View {
     @ObservedObject var viewModel: ObservableViewModel<LocationAction, LocationSettingsViewState>
+
+    public init(
+        viewModel: ObservableViewModel<LocationAction, LocationSettingsViewState>
+    ) {
+        self.viewModel = viewModel
+    }
+
     @StateObject private var searchDebouncer = SearchDebouncer()
     @State private var selection: String?
     @State private var nextLocationSelection: LocationResources.Selection?
@@ -120,7 +121,7 @@ struct LocationSettingsView: View {
         }
     }
 
-    var body: some View {
+    public var body: some View {
         List {
             Section(content: {
                 Button(action: {
@@ -212,35 +213,41 @@ struct LocationSettingsView: View {
                 self.nextLocationSelection = nil
             }
         } message: {
-            Text(LocalizedStrings.LocationSettingsView.alertMessage(from: nextLocationSelection ?? .currentLocation))
+            Text(LocationSettingsView.alertMessage(from: nextLocationSelection ?? .currentLocation))
         }
     }
-
-
 }
 
-import CombineRextensions
-
-extension ViewProducer where Context == Void, ProducedView == LocationSettingsView {
-    static func locationSettings<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
-        ViewProducer<Context, ProducedView> { context in
-            LocationSettingsView(
-                viewModel: viewModel
-                    .projection(
-                        action: { AppAction.location($0) },
-                        state: LocationSettingsViewState.project(state:)
-                    )
-                    .asObservableViewModel(initialState: .empty, emitsValue: .whenDifferent)
+extension LocationSettingsView {
+    static func alertMessage(from locationSelection: LocationResources.Selection) -> String {
+        switch locationSelection {
+        case .currentLocation:
+            return NSLocalizedString(
+                "SatelliteListView.locationSettingsView.alert.message.currentLocation",
+                tableName: nil,
+                bundle: .main,
+                value: "Please confirm to change location to your current location. This will affect all the satellite predictions.",
+                comment: "The alert message to confirm that the user is changing into his/her current location."
             )
+        case let .custom(completion, _):
+            let format = NSLocalizedString(
+                "SatelliteListView.locationSettingsView.alert.message.custom",
+                tableName: nil,
+                bundle: .main,
+                value: "Please confirm to change location to %@. This will affect all the satellite predictions.",
+                comment: "The alert message to confirm that the user is changing into a custom location."
+            )
+            return String(format: format, completion.title)
         }
     }
 }
+
 
 #if DEBUG
 struct LocationSettingsView_Previews: PreviewProvider {
     static var previews: some View {
         LocationSettingsView(
-            viewModel: .mock(state: .empty)
+            viewModel: .mock(state: .init())
         )
     }
 }

@@ -10,24 +10,26 @@ import CombineRex
 import CombineRextensions
 import SatelliteForecastImpl
 
-enum AlarmSettingsCellAction {
+public enum AlarmSettingsCellAction {
 
 }
 
-struct AlarmSettingsCellState: Equatable {
-    var scheduledPassNotifications: Set<ScheduledPassNotification> = []
+public struct AlarmSettingsCellState: Equatable {
+    public var scheduledPassNotifications: Set<ScheduledPassNotification> = []
 
-    static func project(state: AppState) -> AlarmSettingsCellState {
-        AlarmSettingsCellState(scheduledPassNotifications: state.notificationResources.scheduledPassNotifications)
-    }
-
-    static var empty: AlarmSettingsCellState {
-        AlarmSettingsCellState()
+    public init(scheduledPassNotifications: Set<ScheduledPassNotification> = []) {
+        self.scheduledPassNotifications = scheduledPassNotifications
     }
 }
 
-struct AlarmSettingsCell: View {
+public struct AlarmSettingsCell: View {
     @ObservedObject var viewModel: ObservableViewModel<AlarmSettingsCellAction, AlarmSettingsCellState>
+
+    public init(
+        viewModel: ObservableViewModel<AlarmSettingsCellAction, AlarmSettingsCellState>
+    ) {
+        self.viewModel = viewModel
+    }
 
     @Environment(\.colorScheme) private var colorScheme
 
@@ -47,21 +49,21 @@ struct AlarmSettingsCell: View {
         )
     }
     
-    var body: some View {
+    public var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
                 Image(systemName: viewModel.state.scheduledPassNotifications.isEmpty ? "bell" : "bell.fill")
                     .font(.headline)
                     .foregroundColor(Color(UIColor.label))
                 
-                Text(LocalizedStrings.AlarmSettingsCell.title)
+                Text(AlarmSettingsCell.title)
                     .font(.headline)
                     .foregroundColor(Color(UIColor.label))
 
                 Spacer()
             }
 
-            Text(LocalizedStrings.AlarmSettingsCell.description(numberOfAlerts: viewModel.state.scheduledPassNotifications.count))
+            Text(AlarmSettingsCell.description(numberOfAlerts: viewModel.state.scheduledPassNotifications.count))
                 .font(.caption)
                 .multilineTextAlignment(.leading)
                 .foregroundColor(Color(UIColor.label))
@@ -77,16 +79,36 @@ struct AlarmSettingsCell: View {
     }
 }
 
-extension ViewProducer where Context == Void, ProducedView == AlarmSettingsCell {
-    static func alarmSettingsCell<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
-        ViewProducer<Context, ProducedView> { context in
-            AlarmSettingsCell(
-                viewModel: viewModel.projection(
-                    action: AppAction.alarmSettingsCell,
-                    state: AlarmSettingsCellState.project(state:)
-                )
-                .asObservableViewModel(initialState: .empty, emitsValue: .whenDifferent)
+extension AlarmSettingsCell {
+    static var title: String {
+        NSLocalizedString(
+            "SatelliteOverview.alarmSettingsCell.title",
+            tableName: nil,
+            bundle: .main,
+            value: "Manage alarms",
+            comment: "The title for alarm settings cell"
+        )
+    }
+
+    static func description(numberOfAlerts: Int) -> String {
+        if numberOfAlerts == 0 {
+            return NSLocalizedString(
+                "SatelliteOverview.alarmSettingsCell.description.zero",
+                tableName: nil,
+                bundle: .main,
+                value: "You currently haven't set up any alarms.",
+                comment: "The description for alarm settings cell when the seller hasn't set up any alarms"
             )
+        } else {
+            let format = NSLocalizedString(
+                "SatelliteOverview.alarmSettingsCell.description.nonZero",
+                tableName: nil,
+                bundle: .main,
+                value: "You have %d pending alarm(s)",
+                comment: "The description for alarm settings cell when the seller has set up some alarms"
+            )
+
+            return String(format: format, numberOfAlerts)
         }
     }
 }

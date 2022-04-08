@@ -194,26 +194,6 @@ enum LocalizedStrings {
         }
     }
 
-    enum ObserverCell {
-        enum Title {
-            static let currentLocation: String = NSLocalizedString(
-                "SatelliteListView.observerCell.title.currentLocation",
-                tableName: nil,
-                bundle: .main,
-                value: "Current location",
-                comment: "The current location text, indicating that the observer location is the current location."
-            )
-
-            static let requiresLocationSelection: String = NSLocalizedString(
-                "SatelliteListView.observerCell.title.requiresLocationSelection",
-                tableName: nil,
-                bundle: .main,
-                value: "Requires location selection",
-                comment: "The text indicating that location service is not available, nor has the user selecetd a location manually."
-            )
-        }
-    }
-
     enum SatelliteOverviewCell {
         static func satelliteOfSpecialInterestLocalizedTitle(_ satellite: SatelliteOverviewItem.SatellitesOfSpecialInterest) -> String {
             switch satellite {
@@ -235,6 +215,7 @@ enum LocalizedStrings {
                 )
             }
         }
+
         static func satelliteOfSpecialInterestLocalizedDescription(_ satellite: SatelliteOverviewItem.SatellitesOfSpecialInterest) -> String {
             switch satellite {
             case .iss:
@@ -257,6 +238,7 @@ enum LocalizedStrings {
                 )
             }
         }
+
         static func categoryLocalizedString(_ category: SatelliteCategory) -> String {
             switch category {
             case .brightest100:
@@ -283,153 +265,6 @@ enum LocalizedStrings {
                     value: "All active satellites",
                     comment: "The section header for all active satellites"
                 )
-            }
-        }
-    }
-    
-    enum AlarmSettingsCell {
-        static var title: String {
-            NSLocalizedString(
-                "SatelliteOverview.alarmSettingsCell.title",
-                tableName: nil,
-                bundle: .main,
-                value: "Manage alarms",
-                comment: "The title for alarm settings cell"
-            )
-        }
-        
-        static func description(numberOfAlerts: Int) -> String {
-            if numberOfAlerts == 0 {
-                return NSLocalizedString(
-                    "SatelliteOverview.alarmSettingsCell.description.zero",
-                    tableName: nil,
-                    bundle: .main,
-                    value: "You currently haven't set up any alarms.",
-                    comment: "The description for alarm settings cell when the seller hasn't set up any alarms"
-                )
-            } else {
-                let format = NSLocalizedString(
-                    "SatelliteOverview.alarmSettingsCell.description.nonZero",
-                    tableName: nil,
-                    bundle: .main,
-                    value: "You have %d pending alarm(s)",
-                    comment: "The description for alarm settings cell when the seller has set up some alarms"
-                )
-                
-                return String(format: format, numberOfAlerts)
-            }
-        }
-    }
-    
-    enum AlarmSettingsView {
-        static func alarmOffsetDescription(timeInterval: TimeInterval) -> String {
-            let beforeFormat = NSLocalizedString(
-                "AlarmSettingsView.alarmOffsetDescription.before",
-                tableName: nil,
-                bundle: .main,
-                value: "%@ before rise",
-                comment: "The time interval description for each alarm in the alarm settings view"
-            )
-            
-            let afterFormat = NSLocalizedString(
-                "AlarmSettingsView.alarmOffsetDescription.after",
-                tableName: nil,
-                bundle: .main,
-                value: "%@ after rise",
-                comment: "The time interval description for each alarm in the alarm settings view"
-            )
-            
-            let formatter = DateComponentsFormatter()
-            formatter.allowedUnits = [.hour, .minute]
-            formatter.unitsStyle = .short
-
-            return String(
-                format: timeInterval > 0 ? afterFormat : beforeFormat,
-                formatter.string(from: abs(timeInterval))!
-            )
-        }
-        
-        static func passDescription(pass: Pass) -> String {
-            let format = NSLocalizedString(
-                "AlarmSettingsView.passDescription",
-                tableName: nil,
-                bundle: .main,
-                value: "Rises at %@ and sets at %@.",
-                comment: "The pass description for each alarm in the alarm settings view"
-            )
-            
-            return String(
-                format: format,
-                Date(julianDate: pass.rise.julianDate).formatted(date: .omitted, time: .standard),
-                Date(julianDate: pass.set.julianDate).formatted(date: .omitted, time: .standard)
-            )
-        }
-        
-        static func passVisibilityDescription(pass: Pass) -> String {
-            let visibleFormat = NSLocalizedString(
-                "AlarmSettingsView.passVisibilityDescription.visible",
-                tableName: nil,
-                bundle: .main,
-                value: "Max visible elevation %.1f degrees.",
-                comment: "The pass description for each alarm in the alarm settings view"
-            )
-            
-            let daytimeFormat = NSLocalizedString(
-                "AlarmSettingsView.passVisibilityDescription.daytime",
-                tableName: nil,
-                bundle: .main,
-                value: "The pass occurs during daylight with a max elevation of %.1f degrees.",
-                comment: "The pass description for each alarm in the alarm settings view"
-            )
-            
-            let unlitFormat = NSLocalizedString(
-                "AlarmSettingsView.passVisibilityDescription.unlit",
-                tableName: nil,
-                bundle: .main,
-                value: "The pass is not illuminated with a max elevation of %.1f degrees.",
-                comment: "The pass description for each alarm in the alarm settings view"
-            )
-                        
-            switch pass.visibility {
-            case .visible:
-                return String(
-                    format: visibleFormat,
-                    pass.highestIlluminatedElevation
-                )
-            case .daylight:
-                return String(
-                    format: daytimeFormat,
-                    pass.transit.elev
-                )
-            case .unlit:
-                return String(
-                    format: unlitFormat,
-                    pass.transit.elev
-                )
-            }
-        }
-    }
-
-    enum LocationSettingsView {
-        static func alertMessage(from locationSelection: LocationResources.Selection) -> String {
-            switch locationSelection {
-            case .currentLocation:
-                return NSLocalizedString(
-                    "SatelliteListView.locationSettingsView.alert.message.currentLocation",
-                    tableName: nil,
-                    bundle: .main,
-                    value: "Please confirm to change location to your current location. This will affect all the satellite predictions.",
-                    comment: "The alert message to confirm that the user is changing into his/her current location."
-                )
-            case let .custom(completion, _):
-                let format = NSLocalizedString(
-                    "SatelliteListView.locationSettingsView.alert.message.custom",
-                    tableName: nil,
-                    bundle: .main,
-                    value: "Please confirm to change location to %@. This will affect all the satellite predictions.",
-                    comment: "The alert message to confirm that the user is changing into a custom location."
-                )
-                return String(format: format, completion.title)
             }
         }
     }
