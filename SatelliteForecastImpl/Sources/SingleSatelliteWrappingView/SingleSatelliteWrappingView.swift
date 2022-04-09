@@ -13,29 +13,57 @@ import SatelliteForecast
 import SatelliteForecastImpl
 import SatelliteKit
 
-enum SingleSatelliteWrappingViewAction {
-    struct LoadSingleSatelliteParams: Equatable {
-        let selectedNoradIndex: UInt
-        let julianDateRange: ClosedRange<Double>
-        let observer: LatLonAlt?
+public enum SingleSatelliteWrappingViewAction {
+    public struct LoadSingleSatelliteParams: Equatable {
+        public let selectedNoradIndex: UInt
+        public let julianDateRange: ClosedRange<Double>
+        public let observer: LatLonAlt?
+
+        public init(selectedNoradIndex: UInt, julianDateRange: ClosedRange<Double>, observer: LatLonAlt?) {
+            self.selectedNoradIndex = selectedNoradIndex
+            self.julianDateRange = julianDateRange
+            self.observer = observer
+        }
     }
     case loadSingleSatellite(LoadSingleSatelliteParams)
 }
 
-struct SingleSatelliteWrappingViewState: Equatable {
-    var elementsLoader: ElementsLoaderResources = .init()
+public struct SingleSatelliteWrappingViewState: Equatable {
+    public var elementsLoader: ElementsLoaderResources = .init()
 
-    static func project(appState: AppState) -> SingleSatelliteWrappingViewState {
-        return SingleSatelliteWrappingViewState(
-            elementsLoader: appState.elementsLoader
-        )
+    public init(elementsLoader: ElementsLoaderResources = .init()) {
+        self.elementsLoader = elementsLoader
     }
 }
 
-struct SingleSatelliteWrappingView: View {
+public struct SingleSatelliteWrappingViewContext {
+    public let selectedNoradIndex: UInt
+    public let julianDateRange: ClosedRange<Double>
+    public let observer: LatLonAlt?
+    public let julianDateProvider: () -> Double
+
+    public init(selectedNoradIndex: UInt, julianDateRange: ClosedRange<Double>, observer: LatLonAlt?, julianDateProvider: @escaping () -> Double) {
+        self.selectedNoradIndex = selectedNoradIndex
+        self.julianDateRange = julianDateRange
+        self.observer = observer
+        self.julianDateProvider = julianDateProvider
+    }
+}
+
+public struct SingleSatelliteWrappingView: View {
     @ObservedObject var viewModel: ObservableViewModel<SingleSatelliteWrappingViewAction, SingleSatelliteWrappingViewState>
     let context: SingleSatelliteWrappingViewContext
     let allPassesViewProducer: ViewProducer<AllPassesViewContext, AllPassesView>
+
+    public init(
+        viewModel: ObservableViewModel<SingleSatelliteWrappingViewAction, SingleSatelliteWrappingViewState>,
+        context: SingleSatelliteWrappingViewContext,
+        allPassesViewProducer: ViewProducer<AllPassesViewContext, AllPassesView>
+    ) {
+        self.viewModel = viewModel
+        self.context = context
+        self.allPassesViewProducer = allPassesViewProducer
+    }
 
     private var satellite: Loadable<SatelliteInfo, ElementsLoaderError> {
         viewModel.state.elementsLoader.info[.brightest100]?.flatMap { satellites in
@@ -61,7 +89,7 @@ struct SingleSatelliteWrappingView: View {
         }
     }
 
-    var body: some View {
+    public var body: some View {
         satelliteContent { satelliteInfo in
             allPassesViewProducer.view(
                 AllPassesViewContext(
@@ -99,31 +127,8 @@ struct SingleSatelliteWrappingView: View {
     }
 }
 
-struct SingleSatelliteWrappingViewContext {
-    let selectedNoradIndex: UInt
-    let julianDateRange: ClosedRange<Double>
-    let observer: LatLonAlt?
-    let julianDateProvider: () -> Double
-}
-
-extension ViewProducer where Context == SingleSatelliteWrappingViewContext, ProducedView == SingleSatelliteWrappingView {
-    static func singleSatelliteWrappingView<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
-        ViewProducer<Context, ProducedView> { context in
-            SingleSatelliteWrappingView(
-                viewModel: viewModel.projection(
-                    action: AppAction.singleSatelliteWrappingView,
-                    state: SingleSatelliteWrappingViewState.project(appState:)
-                )
-                .asObservableViewModel(initialState: .init(), emitsValue: .whenDifferent),
-                context: context,
-                allPassesViewProducer: ViewProducer<AllPassesViewContext, AllPassesView>
-                    .allPassesView(viewModel: viewModel)
-            )
-        }
-    }
-}
-
 #if DEBUG
+
 struct SingleSatelliteWrappingView_Previews: PreviewProvider {
     static var previews: some View {
         SingleSatelliteWrappingView(
@@ -138,4 +143,5 @@ struct SingleSatelliteWrappingView_Previews: PreviewProvider {
         )
     }
 }
+
 #endif

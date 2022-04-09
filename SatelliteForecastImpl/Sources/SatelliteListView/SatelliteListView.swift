@@ -17,14 +17,26 @@ import SatelliteCatalog
 
 public enum SatelliteListViewAction {
     public struct SelectSatelliteParams {
-        let noradIndex: UInt
-        let satelliteInfo: SatelliteInfo
-        let julianDateRange: ClosedRange<Double>
-        let observer: LatLonAlt?
+        public let noradIndex: UInt
+        public let satelliteInfo: SatelliteInfo
+        public let julianDateRange: ClosedRange<Double>
+        public let observer: LatLonAlt?
+
+        public init(
+            noradIndex: UInt,
+            satelliteInfo: SatelliteInfo,
+            julianDateRange: ClosedRange<Double>,
+            observer: LatLonAlt?
+        ) {
+            self.noradIndex = noradIndex
+            self.satelliteInfo = satelliteInfo
+            self.julianDateRange = julianDateRange
+            self.observer = observer
+        }
     }
     case selectSatellite(SelectSatelliteParams?)
     case satelliteSearchTextChanged(String)
-    case retryLoadingSatelliteList
+    case retryLoadingSatelliteList(category: SatelliteCategory)
 }
 
 private let yearFormatter: DateFormatter = {
@@ -60,24 +72,48 @@ fileprivate extension SatelliteInfo {
     }
 }
 
-struct SatelliteListViewState: Equatable {
-    var satelliteInfo: [SatelliteCategory: Loadable<Map<UInt, SatelliteInfo>, ElementsLoaderError>] = [:]
-    var satelliteSearchText: String = ""
-    var selectedNoradIndex: UInt?
+public struct SatelliteListViewState {
+    public var satelliteInfo: [SatelliteCategory: Loadable<Map<UInt, SatelliteInfo>, ElementsLoaderError>] = [:]
+    public var satelliteSearchText: String = ""
+    public var selectedNoradIndex: UInt?
 
-    static func project(appState: AppState) -> SatelliteListViewState {
-        return SatelliteListViewState(
-            satelliteInfo: appState.elementsLoader.info,
-            satelliteSearchText: appState.navigationState.listNavigation.satelliteSearchText,
-            selectedNoradIndex: appState.navigationState.listNavigation.noradIndex
-        )
+    public init(satelliteInfo: [SatelliteCategory : Loadable<Map<UInt, SatelliteInfo>, ElementsLoaderError>] = [:], satelliteSearchText: String = "", selectedNoradIndex: UInt? = nil) {
+        self.satelliteInfo = satelliteInfo
+        self.satelliteSearchText = satelliteSearchText
+        self.selectedNoradIndex = selectedNoradIndex
     }
 }
 
-struct SatelliteListView: View {
+extension SatelliteListViewState: Equatable {}
+
+public struct SatelliteListViewContext {
+    public let category: SatelliteCategory
+    public let julianDateRange: ClosedRange<Double>
+    public let observer: LatLonAlt?
+    public let julianDateProvider: () -> Double
+
+    public init(category: SatelliteCategory, julianDateRange: ClosedRange<Double>, observer: LatLonAlt?, julianDateProvider: @escaping () -> Double) {
+        self.category = category
+        self.julianDateRange = julianDateRange
+        self.observer = observer
+        self.julianDateProvider = julianDateProvider
+    }
+}
+
+public struct SatelliteListView: View {
     @ObservedObject var viewModel: ObservableViewModel<SatelliteListViewAction, SatelliteListViewState>
     let context: SatelliteListViewContext
-    var allPassesViewProducer: ViewProducer<AllPassesViewContext, AllPassesView>
+    let allPassesViewProducer: ViewProducer<AllPassesViewContext, AllPassesView>
+
+    public init(
+        viewModel: ObservableViewModel<SatelliteListViewAction, SatelliteListViewState>,
+        context: SatelliteListViewContext,
+        allPassesViewProducer: ViewProducer<AllPassesViewContext, AllPassesView>
+    ) {
+        self.viewModel = viewModel
+        self.context = context
+        self.allPassesViewProducer = allPassesViewProducer
+    }
 
     @ViewBuilder func satelliteContent<Content: View, FailedContent: View>(
         @ViewBuilder contentBuilder: (Map<UInt, SatelliteInfo>) -> Content,
@@ -180,14 +216,20 @@ struct SatelliteListView: View {
 
             Button(
                 "Retry",
-                action: { viewModel.dispatch(.retryLoadingSatelliteList) }
+                action: {
+                    viewModel.dispatch(
+                        .retryLoadingSatelliteList(
+                            category: context.category
+                        )
+                    )
+                }
             )
             .font(Font.headline)
             .foregroundColor(Color(UIColor.systemBlue))
         }
     }
 
-    var body: some View {
+    public var body: some View {
         satelliteContent(
             contentBuilder: { satellites in
                 satellitesView(
@@ -198,31 +240,6 @@ struct SatelliteListView: View {
                 failureView(error)
             }
         )
-    }
-}
-
-struct SatelliteListViewContext {
-    let category: SatelliteCategory
-    let julianDateRange: ClosedRange<Double>
-    let observer: LatLonAlt?
-    let julianDateProvider: () -> Double
-}
-
-extension ViewProducer where Context == SatelliteListViewContext, ProducedView == SatelliteListView {
-    static func satelliteListView<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
-        ViewProducer<Context, ProducedView> { context in
-            SatelliteListView(
-                viewModel: viewModel
-                    .projection(
-                        action: AppAction.satelliteListView,
-                        state: SatelliteListViewState.project(appState:)
-                    )
-                    .asObservableViewModel(initialState: .init(), emitsValue: .whenDifferent),
-                context: context,
-                allPassesViewProducer: ViewProducer<AllPassesViewContext, AllPassesView>
-                    .allPassesView(viewModel: viewModel)
-            )
-        }
     }
 }
 

@@ -20,12 +20,12 @@ extension EffectMiddleware where InputActionType == ElementsLoaderOutput, Output
                 }
 
                 return .just(
-                    .selectSpecialSatellite(
-                        SatelliteOverviewViewAction.SelectSpecialSatelliteParams(
-                            noradIndex: selectSpecialNoradIndex.noradIndex,
-                            julianDateRange: selectSpecialNoradIndex.dateRange,
-                            observer: selectSpecialNoradIndex.observer
-                        )
+                    .selectNavigationItem(
+                        .specialSatellites(
+                            .init(rawValue: selectSpecialNoradIndex.noradIndex)!
+                        ),
+                        julianDateRange: selectSpecialNoradIndex.dateRange,
+                        observer: selectSpecialNoradIndex.observer
                     ),
                     from: dispatcher
                 )

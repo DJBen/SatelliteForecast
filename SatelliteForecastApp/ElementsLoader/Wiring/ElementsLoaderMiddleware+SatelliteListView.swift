@@ -1,5 +1,5 @@
 //
-//  SatelliteListView+ElementsLoader.swift
+//  SatelliteListViewMiddleware+ElementsLoader.swift
 //  SatelliteForecast
 //
 //  Created by Ben Lu on 4/1/22.
@@ -9,9 +9,9 @@ import CombineRex
 import CombineRextensions
 import SatelliteForecastImpl
 
-extension EffectMiddleware where InputActionType == ElementsLoaderOutput, OutputActionType == SatelliteListViewAction, StateType == ElementsLoaderState, Dependencies == Void {
+extension EffectMiddleware where InputActionType == ElementsLoaderOutput, OutputActionType == SatelliteListViewAction, StateType == Void, Dependencies == Void {
     /// This middleware triggers `calculatePass` event after satellite has been loaded
-    static var selectSatelliteAfterElementsLoader: EffectMiddleware<ElementsLoaderOutput, SatelliteListViewAction, ElementsLoaderState, Void> {
+    static var elementsLoaderToSatelliteList: EffectMiddleware<ElementsLoaderOutput, SatelliteListViewAction, Void, Void> {
         EffectMiddleware.onAction { action, dispatcher, getState in
             switch action {
             case .loadedSatelliteElements(_, let satelliteInfoMap, _, let selectNoradIndex, _):
@@ -35,5 +35,14 @@ extension EffectMiddleware where InputActionType == ElementsLoaderOutput, Output
                 return .doNothing
             }
         }
+    }
+
+    func lift() -> AnyMiddleware<AppAction, AppAction, AppState> {
+        lift(
+            inputAction: \.elementsLoaderOutput,
+            outputAction: AppAction.satelliteListView,
+            state: { _ in }
+        )
+        .eraseToAnyMiddleware()
     }
 }

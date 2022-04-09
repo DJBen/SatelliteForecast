@@ -59,13 +59,13 @@ struct SatelliteOverviewSpecialSatelliteCell: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
-                        Text(LocalizedStrings.SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedTitle(satellite))
+                        Text(SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedTitle(satellite))
                             .font(.headline)
                             .foregroundColor(Color(UIColor.label))
                         Spacer()
                     }
 
-                    Text(LocalizedStrings.SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedDescription(satellite))
+                    Text(SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedDescription(satellite))
                         .font(.caption)
                         .multilineTextAlignment(.leading)
                         .foregroundColor(colorScheme == .light ? Color(UIColor.systemGray2) : Color(UIColor.systemGray4))
@@ -119,7 +119,7 @@ struct SatelliteOverviewCategoryCell: View {
 
     var body: some View {
         Text(
-            LocalizedStrings.SatelliteOverviewCell.categoryLocalizedString(category)
+            SatelliteOverviewCell.categoryLocalizedString(category)
         )
         .font(.headline)
         .foregroundColor(Color(UIColor.label))
@@ -135,6 +135,82 @@ struct SatelliteOverviewCategoryCell: View {
         )
         .fixedSize(horizontal: false, vertical: true)
     }
+}
+
+extension SatelliteOverviewCell {
+    static func satelliteOfSpecialInterestLocalizedTitle(_ satellite: SatelliteOverviewItem.SatellitesOfSpecialInterest) -> String {
+        switch satellite {
+        case .iss:
+            return NSLocalizedString(
+                "SatelliteOverview.sectionOverviewCell.title.satellite.iss",
+                tableName: nil,
+                bundle: .main,
+                value: "International Space Station",
+                comment: "The title of ISS, displayed in the 'Satellite of special interest' section."
+            )
+        case .tianhe:
+            return NSLocalizedString(
+                "SatelliteOverview.sectionOverviewCell.title.satellite.tianhe",
+                tableName: nil,
+                bundle: .main,
+                value: "Tianhe (CSS Core Module)",
+                comment: "The title of Tianhe, displayed in the 'Satellite of special interest' section."
+            )
+        }
+    }
+
+    static func satelliteOfSpecialInterestLocalizedDescription(_ satellite: SatelliteOverviewItem.SatellitesOfSpecialInterest) -> String {
+        switch satellite {
+        case .iss:
+            return NSLocalizedString(
+                "SatelliteOverview.sectionOverviewCell.description.satellite.iss",
+                tableName: nil,
+                bundle: .main,
+                value: """
+                    A multinational collaborative project featuring the largest spacecraft in orbit since 1998.
+                    """,
+                comment: "The description of ISS in overview page."
+            )
+        case .tianhe:
+            return NSLocalizedString(
+                "SatelliteOverview.sectionOverviewCell.description.satellite.tianhe",
+                tableName: nil,
+                bundle: .main,
+                value: "The first module of China's Tiangong space station.",
+                comment: "The description of Tianhe in overview page."
+            )
+        }
+    }
+
+    static func categoryLocalizedString(_ category: SatelliteCategory) -> String {
+        switch category {
+        case .brightest100:
+            return NSLocalizedString(
+                "SatelliteOverview.sectionOverviewCell.category.brightest100",
+                tableName: nil,
+                bundle: .main,
+                value: "Brightest 100 satellites",
+                comment: "The section header for the brightest 100 satellites"
+            )
+        case .last30DayLaunches:
+            return NSLocalizedString(
+                "SatelliteOverview.sectionOverviewCell.category.last30DayLaunches",
+                tableName: nil,
+                bundle: .main,
+                value: "Launches in the past 30 days",
+                comment: "The section header for launches in the past 30 days"
+            )
+        case .active:
+            return NSLocalizedString(
+                "SatelliteOverview.sectionOverviewCell.category.active",
+                tableName: nil,
+                bundle: .main,
+                value: "All active satellites",
+                comment: "The section header for all active satellites"
+            )
+        }
+    }
+
 }
 
 #if DEBUG
