@@ -1,5 +1,5 @@
 //
-//  SatelliteListViewMiddleware+ElementsLoader.swift
+//  ElementsLoaderMiddleware+SatelliteListView.swift
 //  SatelliteForecast
 //
 //  Created by Ben Lu on 4/1/22.
