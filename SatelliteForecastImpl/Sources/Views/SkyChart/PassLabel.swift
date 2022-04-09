@@ -46,7 +46,7 @@ struct PassLabelModifier: ViewModifier {
     func body(content: Content) -> some View {
         content.fixedSize()
             .padding(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
-            .foregroundColor(Color("passInfoLabel_foreground"))
+            .foregroundColor(Color("passInfoLabel_foreground", bundle: .satelliteForecastImplResourcesBundle))
             .font(.caption.weight(.semibold).monospaced())
             .background(LinearGradient(gradient: Gradient(colors: [Color(UIColor.systemIndigo), Color(UIColor.systemBlue)]), startPoint: .leading, endPoint: .trailing).rotationEffect(rotationAngle))
             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
@@ -67,7 +67,7 @@ struct HighlightedPassLabelModifier: ViewModifier {
         let gradient = shouldHighlight ? Gradient(colors: [Color(UIColor.systemPink), Color(UIColor.systemOrange)]) : Gradient(colors: [Color(UIColor.systemGray), Color(UIColor.systemGray2)])
         content.fixedSize()
             .padding(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
-            .foregroundColor(Color("passInfoLabel_foreground"))
+            .foregroundColor(Color("passInfoLabel_foreground", bundle: .satelliteForecastImplResourcesBundle))
             .font(.caption.weight(.semibold).monospaced())
             .background(LinearGradient(gradient: gradient, startPoint: .leading, endPoint: .trailing).rotationEffect(rotationAngle))
             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))

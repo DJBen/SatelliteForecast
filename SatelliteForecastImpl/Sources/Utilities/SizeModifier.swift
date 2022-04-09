@@ -1,6 +1,6 @@
 //
 //  SizeModifier.swift
-//  SatelliteForecast
+//  SatelliteForecastImpl
 //
 //  Created by Ben Lu on 6/8/21.
 //

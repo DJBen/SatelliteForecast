@@ -1,6 +1,6 @@
 //
 //  PlanetaryBodyView.swift
-//  SatelliteForecast
+//  SatelliteForecastImpl
 //
 //  Created by Ben Lu on 6/21/21.
 //
@@ -130,7 +130,7 @@ extension BackgroundSkyConfigs.PlantaryBody {
     private struct PlanetsShapeModifier: ViewModifier {
         func body(content: Content) -> some View {
             content
-                .foregroundColor(Color("star"))
+                .foregroundColor(Color("star", bundle: .satelliteForecastImplResourcesBundle))
         }
     }
 

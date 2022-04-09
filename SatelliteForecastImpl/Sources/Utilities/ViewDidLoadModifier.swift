@@ -1,6 +1,6 @@
 //
 //  ViewDidLoadModifier.swift
-//  SatelliteForecast
+//  SatelliteForecastImpl
 //
 //  Created by Ben Lu on 3/7/22.
 //

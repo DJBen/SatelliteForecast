@@ -1,6 +1,6 @@
 //
 //  ChartQuality.swift
-//  SatelliteForecast
+//  SatelliteForecastImpl
 //
 //  Created by Ben Lu on 3/4/22.
 //

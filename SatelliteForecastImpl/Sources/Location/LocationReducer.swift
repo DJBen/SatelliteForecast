@@ -1,6 +1,6 @@
 //
 //  CoreLocationReducer.swift
-//  SatelliteForecast
+//  SatelliteForecastImpl
 //
 //  Created by Ben Lu on 6/4/21.
 //

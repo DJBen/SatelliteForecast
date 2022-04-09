@@ -1,0 +1,254 @@
+//
+//  LocationSettingsView.swift
+//  LocationSettingsView
+//
+//  Created by Ben Lu on 8/1/21.
+//
+
+import Combine
+import CombineRex
+import MapKit
+import SatelliteForecast
+import SatelliteForecastImpl
+import SwiftUI
+
+public struct LocationSettingsViewState: Equatable {
+    var locationSelection: LocationResources.Selection = .currentLocation
+    var currentLocation: CLLocation?
+    var currentLocationPlacemark: CLPlacemark?
+    var autocompletionResult: Result<[MKLocalSearchCompletion], Error>?
+
+    public init(locationSelection: LocationResources.Selection = .currentLocation, currentLocation: CLLocation? = nil, currentLocationPlacemark: CLPlacemark? = nil, autocompletionResult: Result<[MKLocalSearchCompletion], Error>? = nil) {
+        self.locationSelection = locationSelection
+        self.currentLocation = currentLocation
+        self.currentLocationPlacemark = currentLocationPlacemark
+        self.autocompletionResult = autocompletionResult
+    }
+
+    public static func == (lhs: LocationSettingsViewState, rhs: LocationSettingsViewState) -> Bool {
+        return lhs.currentLocation == rhs.currentLocation &&
+        lhs.currentLocationPlacemark == rhs.currentLocationPlacemark &&
+        lhs.locationSelection == rhs.locationSelection &&
+        lhs.autocompletionResult?.successValue == rhs.autocompletionResult?.successValue
+    }
+}
+
+fileprivate class SearchDebouncer: NSObject, ObservableObject {
+    @Published var searchTerm = ""
+    @Published var debouncedSearchTerm = ""
+
+    @Published var selectedAutoCompletion: MKLocalSearchCompletion?
+    @Published var autocompletionPlacemark: MKPlacemark?
+
+    private var cancellables : Set<AnyCancellable> = []
+
+    private static func reconcileLocation(location: MKLocalSearchCompletion?) -> AnyPublisher<MKPlacemark?, Error> {
+        guard let location = location else {
+            return Just(nil)
+                .setFailureType(to: Error.self)
+                .eraseToAnyPublisher()
+        }
+
+        let searchRequest = MKLocalSearch.Request(completion: location)
+        let search = MKLocalSearch(request: searchRequest)
+        return Future() { promise in
+            search.start { (response, error) in
+                if let error = error {
+                    promise(.failure(error))
+                } else {
+                    promise(.success(response?.mapItems.first?.placemark))
+                }
+            }
+        }
+        .eraseToAnyPublisher()
+    }
+
+    override init() {
+        super.init()
+
+        $searchTerm
+            .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
+            .removeDuplicates()
+            .assign(to: \.debouncedSearchTerm, on: self)
+            .store(in: &cancellables)
+
+        $selectedAutoCompletion
+            .removeDuplicates()
+            .flatMap { autoCompletion in
+                Self.reconcileLocation(location: autoCompletion)
+            }
+            .sink { completion in
+
+            } receiveValue: { [unowned self] coordinate in
+                self.autocompletionPlacemark = coordinate
+            }
+            .store(in: &cancellables)
+    }
+}
+
+public struct LocationSettingsView: View {
+    @ObservedObject var viewModel: ObservableViewModel<LocationAction, LocationSettingsViewState>
+
+    public init(
+        viewModel: ObservableViewModel<LocationAction, LocationSettingsViewState>
+    ) {
+        self.viewModel = viewModel
+    }
+
+    @StateObject private var searchDebouncer = SearchDebouncer()
+    @State private var selection: String?
+    @State private var nextLocationSelection: LocationResources.Selection?
+
+    @ViewBuilder private func autocompletionCell(locationAutoCompletion: MKLocalSearchCompletion) -> some View {
+        HStack {
+            VStack(alignment: .leading) {
+                Text(locationAutoCompletion.title)
+                Text(locationAutoCompletion.subtitle)
+                    .font(.system(.caption))
+                    .foregroundColor(Color.secondary)
+                    .tint(nil)
+            }
+
+            switch viewModel.state.locationSelection {
+            case .currentLocation:
+                EmptyView()
+            case let .custom(completion, _):
+                if completion == locationAutoCompletion {
+                    Spacer()
+                    Image(systemName: "checkmark")
+                }
+            }
+        }
+    }
+
+    public var body: some View {
+        List {
+            Section(content: {
+                Button(action: {
+                    if viewModel.state.currentLocation == nil {
+                        UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+                    } else if viewModel.state.locationSelection != .currentLocation {
+                        nextLocationSelection = .currentLocation
+                    }
+                }) {
+                    LocationSettingsCurrentLocationCell(
+                        currentLocation: viewModel.state.currentLocation,
+                        currentLocationPlacemark: viewModel.state.currentLocationPlacemark,
+                        isSelected: viewModel.state.locationSelection == .currentLocation
+                    )
+                }
+            }, header: {
+                Text("Current location")
+            })
+
+            switch viewModel.state.locationSelection {
+            case .currentLocation:
+                EmptyView()
+            case let .custom(completion, _):
+                Section(content: {
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text(completion.title)
+                            Text(completion.subtitle)
+                                .font(.system(.caption))
+                                .tint(nil)
+                        }
+                        Spacer()
+                        Image(systemName: "checkmark")
+                    }
+                }, header: {
+                    Text("Custom location")
+                })
+            }
+
+            Section {
+                ForEach(viewModel.state.autocompletionResult?.successValue ?? [], id: \.self) { locationAutoCompletion in
+                    Button(action: {
+                        searchDebouncer.selectedAutoCompletion = locationAutoCompletion
+                    }) {
+                        autocompletionCell(locationAutoCompletion: locationAutoCompletion)
+                    }
+                }
+            }
+        }
+        .searchable(
+            text: $searchDebouncer.searchTerm,
+            placement: .navigationBarDrawer(displayMode: .always),
+            prompt: "Enter address"
+        )
+        .navigationTitle(Text("Select Location"))
+        .onReceive(
+            searchDebouncer.$debouncedSearchTerm
+        ) { newSearchTerm in
+            viewModel.dispatch(.requestAutoCompletion(newSearchTerm))
+        }
+        .onReceive(
+            searchDebouncer.$autocompletionPlacemark
+        ) { placemark in
+            guard let autoCompletion = searchDebouncer.selectedAutoCompletion,
+                    let placemark = placemark else {
+                return
+            }
+            nextLocationSelection = .custom(autoCompletion, placemark)
+        }
+        .alert(
+            Text("Location change"),
+            isPresented: Binding<Bool>(
+                get: {
+                    nextLocationSelection != nil
+                },
+                set: { _ in
+                }
+            )
+        ) {
+            Button("No", role: .cancel) {
+                nextLocationSelection = nil
+            }
+
+            Button("Confirm", role: .none) {
+                guard let nextLocationSelection = nextLocationSelection else {
+                    fatalError()
+                }
+                viewModel.dispatch(.selectLocation(nextLocationSelection))
+                self.nextLocationSelection = nil
+            }
+        } message: {
+            Text(LocationSettingsView.alertMessage(from: nextLocationSelection ?? .currentLocation))
+        }
+    }
+}
+
+extension LocationSettingsView {
+    static func alertMessage(from locationSelection: LocationResources.Selection) -> String {
+        switch locationSelection {
+        case .currentLocation:
+            return NSLocalizedString(
+                "SatelliteListView.locationSettingsView.alert.message.currentLocation",
+                tableName: nil,
+                bundle: .main,
+                value: "Please confirm to change location to your current location. This will affect all the satellite predictions.",
+                comment: "The alert message to confirm that the user is changing into his/her current location."
+            )
+        case let .custom(completion, _):
+            let format = NSLocalizedString(
+                "SatelliteListView.locationSettingsView.alert.message.custom",
+                tableName: nil,
+                bundle: .main,
+                value: "Please confirm to change location to %@. This will affect all the satellite predictions.",
+                comment: "The alert message to confirm that the user is changing into a custom location."
+            )
+            return String(format: format, completion.title)
+        }
+    }
+}
+
+
+#if DEBUG
+struct LocationSettingsView_Previews: PreviewProvider {
+    static var previews: some View {
+        LocationSettingsView(
+            viewModel: .mock(state: .init())
+        )
+    }
+}
+#endif

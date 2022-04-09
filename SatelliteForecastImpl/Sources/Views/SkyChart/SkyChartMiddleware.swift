@@ -1,6 +1,6 @@
 //
 //  SkyChartMiddleware.swift
-//  SatelliteForecast
+//  SatelliteForecastImpl
 //
 //  Created by Ben Lu on 6/7/21.
 //
@@ -48,8 +48,16 @@ extension EffectMiddleware where
                                 params: SatellitePassPathRenderParams(
                                     rect: CGRect(origin: .zero, size: size),
                                     snapshotsDuringPass: passSnapshots.snapshots,
-                                    illuminatedColor: UIColor(named: "satellitePath_illuminated")!,
-                                    unlitColor: UIColor(named: "satellitePath_notIlluminated")!,
+                                    illuminatedColor: UIColor(
+                                        named: "satellitePath_illuminated",
+                                        in: .satelliteForecastImplResourcesBundle,
+                                        compatibleWith: nil
+                                    )!,
+                                    unlitColor: UIColor(
+                                        named: "satellitePath_notIlluminated",
+                                        in: .satelliteForecastImplResourcesBundle,
+                                        compatibleWith: nil
+                                    )!,
                                     arrowSize: quality == .preview ? 8 : 16
                                 )
                             )

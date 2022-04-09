@@ -1,6 +1,6 @@
 //
 //  BackgroundSkyMiddleware.swift
-//  SatelliteForecast
+//  SatelliteForecastImpl
 //
 //  Created by Ben Lu on 3/3/22.
 //
@@ -47,12 +47,12 @@ extension EffectMiddleware where InputActionType == BackgroundSkyViewAction, Out
                                 julianDate: julianDate,
                                 starColor: UIColor(
                                     named: "star",
-                                    in: nil,
+                                    in: .satelliteForecastImplResourcesBundle,
                                     compatibleWith: traitCollection
                                 )!,
                                 constellationLineColor: UIColor(
                                     named: "constellationLine",
-                                    in: nil,
+                                    in: .satelliteForecastImplResourcesBundle,
                                     compatibleWith: traitCollection
                                 )!,
                                 magToRadius: key.configs.starMagToDisplayRadiusMappingFunction.apply

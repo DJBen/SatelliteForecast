@@ -23,7 +23,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         Reducer<ElementsLoaderOutput, ElementsLoaderState>.elementsLoaderOutputReducer.lift(),
         Reducer.satelliteOverviewReducer.lift(),
         Reducer.settingsOverviewReducer.lift(),
-        Reducer<SatelliteListViewAction, AppState>.satelliteListViewReducer.lift(action: \.satelliteListView),
+        Reducer.satelliteListViewReducer.lift(),
         Reducer.allPassesViewReducer.lift(),
         Reducer<SatelliteElevationGraphAction, SatelliteElevationGraphResources>.satelliteElevationGraphReducer
         .lift(
@@ -47,19 +47,19 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         let middlewares: [AnyMiddleware<AppAction, AppAction, AppState>] = [
             LocationMiddleware().lift(),
             EffectMiddleware.appDelegate
-                .lift(
-                    inputAction: \.appDelegate
-                )
-                .eraseToAnyMiddleware(),
+            .lift(
+                inputAction: \.appDelegate
+            )
+            .eraseToAnyMiddleware(),
             EffectMiddleware.backgroundTask.lift(),
             EffectMiddleware.notification
-                .lift(
-                    inputAction: \.notification
-                )
-                .inject(
-                    NotificationMiddlewareDependencies(dateProvider: Date.init)
-                )
-                .eraseToAnyMiddleware(),
+            .lift(
+                inputAction: \.notification
+            )
+            .inject(
+                NotificationMiddlewareDependencies(dateProvider: Date.init)
+            )
+            .eraseToAnyMiddleware(),
             EffectMiddleware.locationChainer.lift(),
             EffectMiddleware.locationToElementsPropagator.lift(),
             EffectMiddleware.locationOutputLogger.lift(),
@@ -72,32 +72,18 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             EffectMiddleware.elementsPropagator.lift(),
             EffectMiddleware.elementsPropagatorChainer.lift(),
             EffectMiddleware.elementsLoaderToElementsPropagator.lift(),
-            EffectMiddleware.selectSatelliteAfterElementsLoader.lift(),
+            EffectMiddleware.elementsLoaderToSatelliteList.lift(),
             EffectMiddleware.selectSpecialSatelliteAfterElementsLoader.lift(),
             EffectMiddleware.rootViewElementsLoader.lift(),
-            EffectMiddleware.satelliteOverview.lift(),
-            EffectMiddleware.satelliteListView
-                .lift(
-                    inputAction: \.satelliteListView
-                )
-                .inject(
-                    SatelliteListViewMiddlewareDependencies(elementsLoader: elementsLoader)
-                )
-                .eraseToAnyMiddleware(),
-            EffectMiddleware.singleSatelliteWrappingView
-                .lift(
-                    inputAction: \.singleSatelliteWrappingView
-                )
-                .eraseToAnyMiddleware(),
+            EffectMiddleware.satelliteOverviewToElementLoader.lift(),
+            EffectMiddleware.satelliteListViewToElementPropagator.lift(),
+            EffectMiddleware.satelliteListToElementLoader.lift(),
+            EffectMiddleware.singleSatelliteWrappingViewToElementsLoader.lift(),
             EffectMiddleware.allPassesViewToElementsPropagator.lift(),
             EffectMiddleware.allPassesViewToNotification.lift(),
             EffectMiddleware.skyChart.lift(),
             EffectMiddleware.satelliteElevationGraph.lift(),
-            EffectMiddleware.alarmSettingsView
-                .lift(
-                    inputAction: \.alarmSettingsView
-                )
-                .eraseToAnyMiddleware(),
+            EffectMiddleware.alarmSettingsViewToNotification.lift(),
             EffectMiddleware.debugMenu.lift(
                 dependencies: DebugMenuMiddlewareDependencies(dateProvider: Date.init)
             ),

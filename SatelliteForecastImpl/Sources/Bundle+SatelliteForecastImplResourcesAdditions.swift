@@ -20,7 +20,7 @@ internal extension Bundle {
         guard let bundleURL = mainBundle.url(forResource: "SatelliteForecastImplResources", withExtension: "bundle"),
               let bundle = Bundle(url: bundleURL)
         else {
-            fatalError("Could not find resource bundle for QSMag within main application bundle.")
+            fatalError("Could not find resource bundle for SatelliteForecastImplResources within main application bundle.")
         }
 
         return bundle

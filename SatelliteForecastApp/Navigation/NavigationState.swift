@@ -61,15 +61,3 @@ struct ListNavigation {
 }
 
 extension ListNavigation: Equatable {}
-
-struct ObserverNavigationState {
-    var enabled: Bool = false
-}
-
-extension ObserverNavigationState: Equatable {}
-
-struct AlarmNavigationState {
-    var enabled: Bool = false
-}
-
-extension AlarmNavigationState: Equatable {}

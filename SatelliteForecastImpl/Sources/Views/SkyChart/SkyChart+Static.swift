@@ -1,6 +1,6 @@
 //
 //  SkyChart+Static.swift
-//  SatelliteForecast
+//  SatelliteForecastImpl
 //
 //  Created by Ben Lu on 6/17/21.
 //
@@ -364,11 +364,25 @@ struct ImageRenderer_Previews: PreviewProvider {
                                         constellations: Self.constellations,
                                         observer: observer,
                                         julianDate: pass.rise.julianDate,
-                                        starColor: UIColor(named: "star")!,
-                                        constellationLineColor: UIColor(named: "constellationLine")!,
+                                        starColor: UIColor(
+                                            named: "star",
+                                            in: .satelliteForecastImplResourcesBundle,
+                                            compatibleWith: nil
+                                        )!,
+                                        constellationLineColor: UIColor(
+                                            named: "constellationLine",
+                                            in: .satelliteForecastImplResourcesBundle,
+                                            compatibleWith: nil
+                                        )!,
                                         drawPlanaryBodies: true,
                                         backgroundFillColor: UIColor.secondarySystemBackground,
-                                        border: BackgroundSkyRenderParams.Border(borderColor: UIColor(named: "skyChartStroke")!),
+                                        border: BackgroundSkyRenderParams.Border(
+                                            borderColor: UIColor(
+                                                named: "skyChartStroke",
+                                                in: .satelliteForecastImplResourcesBundle,
+                                                compatibleWith: nil
+                                            )!
+                                        ),
                                         magToRadius: { CGFloat(3 * exp(-0.425 * $0)) }
                                     )
                                 )

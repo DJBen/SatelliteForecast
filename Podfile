@@ -18,6 +18,7 @@ target 'SatelliteForecastApp' do
   pod "SatelliteCatalogImpl_SQLite", :path => './SatelliteCatalogImpl_SQLite'
   pod "SatelliteForecast", :path => './SatelliteForecast'
   pod "SatelliteForecastImpl", :path => './SatelliteForecastImpl'
+  pod 'SecondaryTabView', :path => './SecondaryTabView'
   pod "SolarSystem", :path => './SolarSystem'
   pod "SwiftUIVisualEffects", :path => './SwiftUIVisualEffects'
 

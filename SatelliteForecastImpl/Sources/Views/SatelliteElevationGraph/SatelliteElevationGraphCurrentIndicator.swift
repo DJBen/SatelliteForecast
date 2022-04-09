@@ -1,6 +1,6 @@
 //
 //  SatelliteElevationGraphCurrentIndicator.swift
-//  SatelliteForecast
+//  SatelliteForecastImpl
 //
 //  Created by Ben Lu on 7/23/21.
 //
