@@ -17,6 +17,7 @@ import SwiftUI
 public enum RealtimeSkyViewAction {
     case propagateCurrentEphemerides([SatelliteInfo], observer: LatLonAlt, julianDate: Double)
     case setRealtimeSkyViewActive(Bool)
+    case loadElements
 }
 
 extension RealtimeSkyViewAction: Equatable {}
@@ -354,6 +355,9 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
         .navigationViewStyle(.stack)
         .onAppear {
             viewModel.dispatch(.setRealtimeSkyViewActive(true))
+            if case .notLoaded = viewModel.state.satellites {
+                viewModel.dispatch(.loadElements)
+            }
         }
         .onDisappear {
             viewModel.dispatch(.setRealtimeSkyViewActive(false))

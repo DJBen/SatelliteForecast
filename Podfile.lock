@@ -19,6 +19,7 @@ PODS:
     - QSMag (= 1.0.0.LOCAL)
     - SatelliteCatalog (= 1.0.0.LOCAL)
     - SatelliteKit (= 1.0.0.LOCAL)
+    - StarryNight (= 1.0.0.LOCAL)
   - SatelliteForecastImpl (1.0.0.LOCAL):
     - BTree (~> 4.1.0)
     - CombineRex (= 0.8.9)
@@ -118,7 +119,7 @@ SPEC CHECKSUMS:
   QSMag: 5a944b9b2392dac7ba1626a70a94be337db49732
   SatelliteCatalog: 132031627b4f096d1f2a16d169286faae121c0cc
   SatelliteCatalogImpl_SQLite: 33b833c3dc7482f1acdcb167e7cb203137c940d3
-  SatelliteForecast: b624f8eed1f70dff695f618cfdfeace262561287
+  SatelliteForecast: 7c37fa5ed3552cfe64ea0cf999e5f64c3be40b1f
   SatelliteForecastImpl: 5f13bf1b7ff3249957a33b309e88c4e8ad5b971b
   SatelliteKit: 53e267558b0bd35f1be23f4dfa022b4503aa0226
   SecondaryTabView: 6b413852af90f4e37cf6dab79c38cfeb20a53dd9

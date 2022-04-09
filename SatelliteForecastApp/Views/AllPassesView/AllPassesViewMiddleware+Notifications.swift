@@ -45,11 +45,19 @@ extension EffectMiddleware where InputActionType == AllPassesViewAction, OutputA
                                         constellations: Constellation.all,
                                         observer: passNotification.observer,
                                         julianDate: pass.rise.julianDate,
-                                        starColor: UIColor(named: "star")!,
-                                        constellationLineColor: UIColor(named: "constellationLine")!,
+                                        starColor: SkyChartTheme.starColor(
+                                            traitCollection: traitCollection
+                                        ),
+                                        constellationLineColor: SkyChartTheme.constellationLineColor(
+                                            traitCollection: traitCollection
+                                        ),
                                         drawPlanaryBodies: true,
                                         backgroundFillColor: UIColor.secondarySystemBackground,
-                                        border: BackgroundSkyRenderParams.Border(borderColor: UIColor(named: "skyChartStroke")!),
+                                        border: BackgroundSkyRenderParams.Border(
+                                            borderColor: SkyChartTheme.skyChartStrokeColor(
+                                                traitCollection: traitCollection
+                                            )
+                                        ),
                                         magToRadius: { CGFloat(3 * exp(-0.425 * $0)) }
                                     )
                                 )
@@ -59,8 +67,14 @@ extension EffectMiddleware where InputActionType == AllPassesViewAction, OutputA
                                     params: SatellitePassPathRenderParams(
                                         rect: imageRect,
                                         snapshotsDuringPass: passSnapshots.snapshots,
-                                        illuminatedColor: UIColor(named: "satellitePath_illuminated")!,
-                                        unlitColor: UIColor(named: "satellitePath_notIlluminated")!
+                                        illuminatedColor: SkyChartTheme.satellitePathColor(
+                                            illuminated: true,
+                                            traitCollection: traitCollection
+                                        ),
+                                        unlitColor: SkyChartTheme.satellitePathColor(
+                                            illuminated: false,
+                                            traitCollection: traitCollection
+                                        )
                                     )
                                 )
                             }

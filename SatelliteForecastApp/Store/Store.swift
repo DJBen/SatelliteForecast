@@ -19,8 +19,8 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         Reducer.locationOutputReducer.lift(),
         Reducer.navigationReducerFromLocationAction.lift(),
         Reducer<NotificationAction, AppState>.notificationReducer.lift(action: \.notification),
-        Reducer<ElementsLoaderAction, ElementsLoaderState>.elementsLoaderReducer.lift(),
-        Reducer<ElementsLoaderOutput, ElementsLoaderState>.elementsLoaderOutputReducer.lift(),
+        Reducer.elementsLoaderReducer.lift(),
+        Reducer.elementsLoaderOutputReducer.lift(),
         Reducer.satelliteOverviewReducer.lift(),
         Reducer.settingsOverviewReducer.lift(),
         Reducer.satelliteListViewReducer.lift(),
@@ -89,7 +89,8 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             ),
             EffectMiddleware.loggerMiddleware.eraseToAnyMiddleware(),
             EffectMiddleware.backgroundSky.lift(),
-            EffectMiddleware.realtimeSky.lift()
+            EffectMiddleware.realtimeSky.lift(),
+            EffectMiddleware.realtimeSkyToElementsLoader.lift()
         ]
 
         return middlewares.reduce(

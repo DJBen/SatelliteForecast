@@ -25,6 +25,7 @@ Pod::Spec.new do |s|
   s.dependency 'QSMag', '1.0.0.LOCAL'
   s.dependency 'SatelliteCatalog', '1.0.0.LOCAL'
   s.dependency 'SatelliteKit', '1.0.0.LOCAL'
+  s.dependency 'StarryNight', '1.0.0.LOCAL'
 
   s.test_spec 'Tests' do |test_spec|
     test_spec.source_files = 'Tests/**/*.swift'

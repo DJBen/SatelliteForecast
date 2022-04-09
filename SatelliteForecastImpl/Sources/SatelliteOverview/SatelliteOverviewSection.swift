@@ -26,7 +26,7 @@ public enum SatelliteOverviewItem: Equatable, Hashable {
         case iss = 25544
         case tianhe = 48274
     }
-    case specialSatellites(SatellitesOfSpecialInterest)
+    case specialSatellite(SatellitesOfSpecialInterest)
     case category(SatelliteCategory)
 }
 

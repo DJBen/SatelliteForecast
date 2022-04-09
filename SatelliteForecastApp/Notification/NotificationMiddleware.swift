@@ -34,7 +34,7 @@ extension EffectMiddleware where
     typealias NotificationEffectMiddleware = EffectMiddleware<NotificationAction, AppAction, AppState, NotificationMiddlewareDependencies>
 
     static var notification: MiddlewareReader<NotificationMiddlewareDependencies, NotificationEffectMiddleware> {
-        NotificationEffectMiddleware.onAction { action, _, getState in
+        NotificationEffectMiddleware.onAction { action, dispatcher, getState in
             switch action {
             case let .scheduleNotification(passNotification):
                 return Effect { context -> AnyPublisher<DispatchedAction<AppAction>, Never> in
@@ -225,39 +225,37 @@ extension EffectMiddleware where
 
                         if let category = satelliteCategory {
                             subject.send(
-                                DispatchedAction(.elementsLoader(
-                                    .loadElements(
-                                        category: category,
-                                        selectNoradIndex: SelectNoradIndexParam(
-                                            noradIndex: noradIndex,
-                                            dateRange: JulianDateUtil.createJulianDateRange(now: julianDate),
-                                            observer: observer
-                                        ),
-                                        calculatePass: ElementsLoaderCalculatePassParam(
-                                            noradIndex: noradIndex,
-                                            dateRange: JulianDateUtil.createJulianDateRange(now: julianDate),
-                                            observer: observer
+                                DispatchedAction(
+                                    .elementsLoader(
+                                        .loadElements(
+                                            category: category,
+                                            selectNoradIndex: SelectNoradIndexParam(
+                                                noradIndex: noradIndex,
+                                                dateRange: JulianDateUtil.createJulianDateRange(now: julianDate),
+                                                observer: observer
+                                            ),
+                                            calculatePass: ElementsLoaderCalculatePassParam(
+                                                noradIndex: noradIndex,
+                                                dateRange: JulianDateUtil.createJulianDateRange(now: julianDate),
+                                                observer: observer
+                                            )
                                         )
-                                    )
-                                ))
+                                    ),
+                                    dispatcher: dispatcher
+                                )
                             )
                         } else {
                             subject.send(
-                                DispatchedAction(.elementsLoader(
-                                    .loadElements(
-                                        category: .brightest100,
-                                        selectSpecialNoradIndex: SelectNoradIndexParam(
-                                            noradIndex: noradIndex,
-                                            dateRange: JulianDateUtil.createJulianDateRange(now: julianDate),
-                                            observer: observer
-                                        ),
-                                        calculatePass: ElementsLoaderCalculatePassParam(
-                                            noradIndex: noradIndex,
-                                            dateRange: JulianDateUtil.createJulianDateRange(now: julianDate),
+                                DispatchedAction(
+                                    .satelliteOverview(
+                                        .selectNavigationItem(
+                                            .specialSatellite(.init(rawValue: noradIndex)!),
+                                            julianDateRange: JulianDateUtil.createJulianDateRange(now: julianDate),
                                             observer: observer
                                         )
-                                    )
-                                ))
+                                    ),
+                                    dispatcher: dispatcher
+                                )
                             )
                         }
                         subject.send(completion: .finished)

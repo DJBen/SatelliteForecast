@@ -15,13 +15,6 @@ extension EffectMiddleware where InputActionType == RootViewAction, OutputAction
             switch action {
             case .selectTab(_):
                 return .doNothing
-            case .loadElementsForRealtimeSky:
-                return .sequence(
-                    .loadElements(
-                        category: .active
-                    ),
-                    from: dispatcher
-                )
             }
         }
     }

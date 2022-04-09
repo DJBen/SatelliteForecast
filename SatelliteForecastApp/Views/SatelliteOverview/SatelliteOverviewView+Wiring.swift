@@ -46,7 +46,7 @@ extension NavigationState {
     fileprivate var selectedSatelliteOverviewItem: SatelliteOverviewItem? {
         get {
             if let specialNoradIndex = specialSatelliteNavigation.noradIndex {
-                return .specialSatellites(SatelliteOverviewItem.SatellitesOfSpecialInterest(rawValue: specialNoradIndex)!)
+                return .specialSatellite(SatelliteOverviewItem.SatellitesOfSpecialInterest(rawValue: specialNoradIndex)!)
             } else if let category = listNavigation.category {
                 return .category(category)
             } else {
@@ -56,7 +56,7 @@ extension NavigationState {
 
         set {
             switch newValue {
-            case .specialSatellites(let specialSatellite):
+            case .specialSatellite(let specialSatellite):
                 self.listNavigation = .init()
                 self.specialSatelliteNavigation.noradIndex = specialSatellite.rawValue
             case .category(let category):

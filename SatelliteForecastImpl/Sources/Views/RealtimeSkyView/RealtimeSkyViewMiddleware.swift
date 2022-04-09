@@ -15,6 +15,8 @@ extension EffectMiddleware where InputActionType == RealtimeSkyViewAction, Outpu
     public static var realtimeSky: EffectMiddleware<RealtimeSkyViewAction, RealtimeSkyViewOutput, RealtimeSkyViewResources, Void> {
         EffectMiddleware.onAction { action, dispatcher, getState in
             switch action {
+            case .loadElements:
+                return .doNothing
             case .propagateCurrentEphemerides(let satellites, let observer, let julianDate):
                 return Effect<Void, RealtimeSkyViewOutput> { context in
                     Future<DispatchedAction<RealtimeSkyViewOutput>, Never> { completion in

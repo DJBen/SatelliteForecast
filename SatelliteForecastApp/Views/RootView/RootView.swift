@@ -14,7 +14,6 @@ import SatelliteForecastImpl
 
 enum RootViewAction {
     case selectTab(Tab)
-    case loadElementsForRealtimeSky
 }
 
 extension RootViewAction: Equatable {}
@@ -104,9 +103,6 @@ struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewViewType:
                 )
             )
         }
-        .onLoad {
-            viewModel.dispatch(.loadElementsForRealtimeSky)
-        }
     }
 }
 
@@ -139,8 +135,6 @@ struct RootView_Previews: PreviewProvider {
                     switch action {
                     case .selectTab(let tab):
                         state.selectedTab = tab
-                    case .loadElementsForRealtimeSky:
-                        break
                     }
                 }
             ),

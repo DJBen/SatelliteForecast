@@ -71,8 +71,10 @@ extension EffectMiddleware where
                         .eraseToAnyPublisher()
                     }
 
-                    if let result = getState().resources.info[category], let infoMap = result.content {
-                        let julianDate = context.dependencies.dateProvider().julianDate + getState().julianDateOffset
+                    let state = getState()
+
+                    if let result = state.resources.info[category], let infoMap = result.content {
+                        let julianDate = context.dependencies.dateProvider().julianDate + state.julianDateOffset
                         let mostRecentElementsAge = infoMap.map {
                             Date(julianDate: julianDate).timeIntervalSince(Date(daysSince1950: $1.elements.t₀))
                         }
@@ -90,6 +92,8 @@ extension EffectMiddleware where
                                 .loadedSatelliteElements(
                                     category: category,
                                     satelliteInfo: infoMap,
+                                    selectSpecialNoradIndex: selectSpecialNoradIndex,
+                                    selectNoradIndex: selectNoradIndex,
                                     calculatePass: calculatePass
                                 )
                             )

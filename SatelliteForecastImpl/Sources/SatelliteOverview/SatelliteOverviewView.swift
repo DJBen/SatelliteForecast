@@ -68,8 +68,8 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
 
     let sections: [SatelliteOverviewSection] = [
         .satellitesOfSpecialInterest([
-            .specialSatellites(.iss),
-            .specialSatellites(.tianhe)
+            .specialSatellite(.iss),
+            .specialSatellite(.tianhe)
         ]),
         .categories([
             .category(.brightest100),
@@ -80,7 +80,7 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
 
     @ViewBuilder private func destination(for item: SatelliteOverviewItem) -> some View {
         switch item {
-        case let .specialSatellites(satellite):
+        case let .specialSatellite(satellite):
             singleSatelliteWrappingViewProducer.view(
                 SingleSatelliteWrappingViewContext(
                     selectedNoradIndex: satellite.rawValue,

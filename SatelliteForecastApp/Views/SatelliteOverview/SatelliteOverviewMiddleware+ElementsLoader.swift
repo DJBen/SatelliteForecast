@@ -1,5 +1,5 @@
 //
-//  SatelliteOverviewMiddlware+ElementsLoader.swift
+//  SatelliteOverviewMiddleware+ElementsLoader.swift
 //  SatelliteForecastApp
 //
 //  Created by Ben Lu on 4/9/22.
@@ -21,7 +21,7 @@ Dependencies == Void {
             switch action {
             case .selectNavigationItem(let item, let julianDateRange, let observer):
                 switch item {
-                case .specialSatellites(let satelliteOption):
+                case .specialSatellite(let satelliteOption):
                     return .just(
                         .loadElements(
                             category: .brightest100,

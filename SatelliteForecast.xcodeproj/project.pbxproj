@@ -68,7 +68,9 @@
 		EF847C0726D0AA230004806F /* NotificationResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF847C0626D0AA230004806F /* NotificationResources.swift */; };
 		EF991A8C2800E7400090C7F6 /* SatelliteListViewMiddlware+ElementsLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF991A8B2800E7400090C7F6 /* SatelliteListViewMiddlware+ElementsLoader.swift */; };
 		EF991A8E2800EE940090C7F6 /* SatelliteListViewReducer+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF991A8D2800EE940090C7F6 /* SatelliteListViewReducer+Wiring.swift */; };
-		EF991A9028016D3B0090C7F6 /* SatelliteOverviewMiddlware+ElementsLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF991A8F28016D3B0090C7F6 /* SatelliteOverviewMiddlware+ElementsLoader.swift */; };
+		EF991A9028016D3B0090C7F6 /* SatelliteOverviewMiddleware+ElementsLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF991A8F28016D3B0090C7F6 /* SatelliteOverviewMiddleware+ElementsLoader.swift */; };
+		EF991A96280196F90090C7F6 /* RootViewMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF991A95280196F90090C7F6 /* RootViewMiddleware.swift */; };
+		EF991A98280197FA0090C7F6 /* RealtimeSkyViewMiddleware+ElementsLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF991A97280197FA0090C7F6 /* RealtimeSkyViewMiddleware+ElementsLoader.swift */; };
 		EF9D82A32661BBF100616C97 /* SatelliteForecastApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9D827A2661BBF000616C97 /* SatelliteForecastApp.swift */; };
 		EFB6111D27F4EA47003557E5 /* SettingsOverviewReducer+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB6111C27F4EA47003557E5 /* SettingsOverviewReducer+Wiring.swift */; };
 		EFB6112027F4EF4D003557E5 /* SkyChart+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB6111F27F4EF4D003557E5 /* SkyChart+Wiring.swift */; };
@@ -87,7 +89,6 @@
 		EFED97B527D61CB5003FC289 /* visual.txt in Resources */ = {isa = PBXBuildFile; fileRef = EFED97B427D61CB5003FC289 /* visual.txt */; };
 		EFED97B727D62053003FC289 /* LocalElementsLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFED97B627D62053003FC289 /* LocalElementsLoader.swift */; };
 		EFED97B927D620CD003FC289 /* tle-new.txt in Resources */ = {isa = PBXBuildFile; fileRef = EFED97B827D620CD003FC289 /* tle-new.txt */; };
-		EFED97BB27D6D689003FC289 /* RootViewMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFED97BA27D6D689003FC289 /* RootViewMiddleware.swift */; };
 		EFED97BD27D6D6C3003FC289 /* RootViewMiddleware+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFED97BC27D6D6C3003FC289 /* RootViewMiddleware+Wiring.swift */; };
 /* End PBXBuildFile section */
 
@@ -180,7 +181,9 @@
 		EF864272266DFFE9004F0AFA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EF991A8B2800E7400090C7F6 /* SatelliteListViewMiddlware+ElementsLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SatelliteListViewMiddlware+ElementsLoader.swift"; sourceTree = "<group>"; };
 		EF991A8D2800EE940090C7F6 /* SatelliteListViewReducer+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SatelliteListViewReducer+Wiring.swift"; sourceTree = "<group>"; };
-		EF991A8F28016D3B0090C7F6 /* SatelliteOverviewMiddlware+ElementsLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SatelliteOverviewMiddlware+ElementsLoader.swift"; sourceTree = "<group>"; };
+		EF991A8F28016D3B0090C7F6 /* SatelliteOverviewMiddleware+ElementsLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SatelliteOverviewMiddleware+ElementsLoader.swift"; sourceTree = "<group>"; };
+		EF991A95280196F90090C7F6 /* RootViewMiddleware.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootViewMiddleware.swift; sourceTree = "<group>"; };
+		EF991A97280197FA0090C7F6 /* RealtimeSkyViewMiddleware+ElementsLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RealtimeSkyViewMiddleware+ElementsLoader.swift"; sourceTree = "<group>"; };
 		EF9D827A2661BBF000616C97 /* SatelliteForecastApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteForecastApp.swift; sourceTree = "<group>"; };
 		EF9D827C2661BBF000616C97 /* Icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Icons.xcassets; sourceTree = "<group>"; };
 		EF9D82812661BBF000616C97 /* SatelliteForecastApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SatelliteForecastApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -202,7 +205,6 @@
 		EFED97B427D61CB5003FC289 /* visual.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = visual.txt; sourceTree = "<group>"; };
 		EFED97B627D62053003FC289 /* LocalElementsLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalElementsLoader.swift; sourceTree = "<group>"; };
 		EFED97B827D620CD003FC289 /* tle-new.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "tle-new.txt"; sourceTree = "<group>"; };
-		EFED97BA27D6D689003FC289 /* RootViewMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewMiddleware.swift; sourceTree = "<group>"; };
 		EFED97BC27D6D6C3003FC289 /* RootViewMiddleware+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RootViewMiddleware+Wiring.swift"; sourceTree = "<group>"; };
 		F2DA9CED75267C2A76268E02 /* Pods_SatelliteForecastApp_SatelliteForecastTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SatelliteForecastApp_SatelliteForecastTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F504DDA258D8B037E084EA3D /* Pods-SatelliteForecastApp-SatelliteForecastTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecastApp-SatelliteForecastTests.debug.xcconfig"; path = "Target Support Files/Pods-SatelliteForecastApp-SatelliteForecastTests/Pods-SatelliteForecastApp-SatelliteForecastTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -256,6 +258,7 @@
 				EF16815627D2D235001BA9C3 /* RealtimeSkyView+Wiring.swift */,
 				EF16815827D2D6CF001BA9C3 /* RealtimeSkyViewReducer+Wiring.swift */,
 				EF16815A27D2D8E2001BA9C3 /* RealtimeSkyViewMiddleware+Wiring.swift */,
+				EF991A97280197FA0090C7F6 /* RealtimeSkyViewMiddleware+ElementsLoader.swift */,
 			);
 			path = RealtimeSkyView;
 			sourceTree = "<group>";
@@ -275,7 +278,7 @@
 			children = (
 				EF16815F27D42261001BA9C3 /* Wiring */,
 				EF16815D27D420F8001BA9C3 /* RootView.swift */,
-				EFED97BA27D6D689003FC289 /* RootViewMiddleware.swift */,
+				EF991A95280196F90090C7F6 /* RootViewMiddleware.swift */,
 				EF16816627D5788E001BA9C3 /* RootViewReducer.swift */,
 				EF16816227D42F2C001BA9C3 /* TabBarItemModifier.swift */,
 				EF16816427D42F6B001BA9C3 /* DynamicTabBarItemView.swift */,
@@ -348,7 +351,7 @@
 				EF16816E27D5DAE9001BA9C3 /* SatelliteOverviewView+Wiring.swift */,
 				EF16817027D5DC03001BA9C3 /* SatelliteOverviewReducer+Wiring.swift */,
 				EF773DAE27F7B5B10071893B /* ElementsLoaderMiddleware+SatelliteOverviewView.swift */,
-				EF991A8F28016D3B0090C7F6 /* SatelliteOverviewMiddlware+ElementsLoader.swift */,
+				EF991A8F28016D3B0090C7F6 /* SatelliteOverviewMiddleware+ElementsLoader.swift */,
 			);
 			path = SatelliteOverview;
 			sourceTree = "<group>";
@@ -397,9 +400,9 @@
 		EF7A3130266B489A00CC33C0 /* ElementsLoader */ = {
 			isa = PBXGroup;
 			children = (
+				EFED97AC27D6170C003FC289 /* ElementsLoaderState+Wiring.swift */,
 				EF773DAC27F7B55F0071893B /* ElementsLoaderMiddleware+SatelliteListView.swift */,
 				EF773DB027F7B8D60071893B /* ElementsLoaderMiddleware+ElementPropagator.swift */,
-				EFED97AC27D6170C003FC289 /* ElementsLoaderState+Wiring.swift */,
 				EFED97AE27D61742003FC289 /* ElementsLoaderMiddleware+Wiring.swift */,
 				EFED97B027D617F8003FC289 /* ElementsLoaderReducer+Wiring.swift */,
 			);
@@ -821,6 +824,7 @@
 				EF847BF026CE33650004806F /* AppDelegateMiddleware.swift in Sources */,
 				EF991A8C2800E7400090C7F6 /* SatelliteListViewMiddlware+ElementsLoader.swift in Sources */,
 				EF847BF226CE49FA0004806F /* BackgroundTaskMiddleware.swift in Sources */,
+				EF991A98280197FA0090C7F6 /* RealtimeSkyViewMiddleware+ElementsLoader.swift in Sources */,
 				EF16816527D42F6B001BA9C3 /* DynamicTabBarItemView.swift in Sources */,
 				EF2EF4DD27B42661000D5EC8 /* LoggerMiddleware.swift in Sources */,
 				EF74263B2800E2FA00DAF469 /* SatelliteListViewMiddlware+ElementsPropagator.swift in Sources */,
@@ -839,10 +843,10 @@
 				EFED97AD27D6170C003FC289 /* ElementsLoaderState+Wiring.swift in Sources */,
 				EF66ED2327FAD0E200CD3136 /* ElementsPropagatorMiddleware+Wiring.swift in Sources */,
 				EF16815E27D420F8001BA9C3 /* RootView.swift in Sources */,
-				EF991A9028016D3B0090C7F6 /* SatelliteOverviewMiddlware+ElementsLoader.swift in Sources */,
+				EF991A96280196F90090C7F6 /* RootViewMiddleware.swift in Sources */,
+				EF991A9028016D3B0090C7F6 /* SatelliteOverviewMiddleware+ElementsLoader.swift in Sources */,
 				EF66ED2527FAD43E00CD3136 /* AllPassesViewMiddleware+Notifications.swift in Sources */,
 				EF74263727FFE0F000DAF469 /* SingleSatelliteWrappingView+Wiring.swift in Sources */,
-				EFED97BB27D6D689003FC289 /* RootViewMiddleware.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

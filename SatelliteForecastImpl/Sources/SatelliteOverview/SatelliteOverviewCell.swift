@@ -21,7 +21,7 @@ struct SatelliteOverviewCell: View {
 
     @ViewBuilder var body: some View {
         switch model.item {
-        case let .specialSatellites(satellite):
+        case let .specialSatellite(satellite):
             SatelliteOverviewSpecialSatelliteCell(satellite: satellite)
         case let .category(category):
             SatelliteOverviewCategoryCell(category: category)
@@ -228,12 +228,12 @@ struct SatelliteOverviewCell_Previews: PreviewProvider {
                         content: {
                             SatelliteOverviewCell(
                                 model: SatelliteOverviewCellModel(
-                                    item: .specialSatellites(.iss)
+                                    item: .specialSatellite(.iss)
                                 )
                             )
                             SatelliteOverviewCell(
                                 model: SatelliteOverviewCellModel(
-                                    item: .specialSatellites(.tianhe)
+                                    item: .specialSatellite(.tianhe)
                                 )
                             )
                             SatelliteOverviewCell(

@@ -11,6 +11,8 @@ import SatelliteForecast
 extension Reducer where ActionType == RealtimeSkyViewAction, StateType == RealtimeSkyViewResources {
     public static let realtimeSkyReducer = Reducer.reduce { action, state in
         switch action {
+        case .loadElements:
+            break
         case .setRealtimeSkyViewActive(let isActive):
             state.isRealtimeSkyViewActive = isActive
         case .propagateCurrentEphemerides(_, observer: _, julianDate: _):

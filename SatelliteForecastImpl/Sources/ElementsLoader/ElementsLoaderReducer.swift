@@ -15,6 +15,10 @@ extension Reducer where ActionType == ElementsLoaderAction, StateType == Element
     public static let elementsLoaderReducer = Reducer.reduce { action, state in
         switch action {
         case .loadElements(let category, _, _, _):
+            guard case .notLoaded = state.resources.info[category] ?? .notLoaded else {
+                return
+            }
+
             state.resources.info[category] = .loading
 
             if category == .active {
@@ -42,7 +46,6 @@ extension Reducer where ActionType == ElementsLoaderOutput, StateType == Element
                 state.resources.visibleCandidates = .failed(error)
             }
             logger.error("Failed loading Elements for category \(String(describing: category)): \(String(describing: error))")
-            break
         }
     }
 }
