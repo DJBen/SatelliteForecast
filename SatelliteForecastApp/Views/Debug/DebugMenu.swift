@@ -83,6 +83,7 @@ struct DebugMenu: View {
                         viewModel.dispatch(.toggleFreezeTime(newValue))
                     }
                 )
+                .animation()
             ) {
                 Text("Freeze time")
             }
@@ -96,6 +97,7 @@ struct DebugMenu: View {
                         viewModel.dispatch(.toggleMockedOffset(newValue))
                     }
                 )
+                .animation()
             ) {
                 Text("Mock date and time")
             }
@@ -103,7 +105,7 @@ struct DebugMenu: View {
             if state.config.mockedOffsetOn {
                 DatePicker(
                     "",
-                    selection: $dateWithinPicker
+                    selection: $dateWithinPicker.animation()
                 )
 
                 HStack {
@@ -201,6 +203,7 @@ struct DebugMenu: View {
                                     viewModel.dispatch(.toggleRapidNotificationDelivery(newValue))
                                 }
                             )
+                            .animation()
                         ) {
                             Text("Deliver notifications 10 seconds after scheduled")
                         }
