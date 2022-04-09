@@ -31,6 +31,7 @@ PODS:
     - StarryNight (= 1.0.0.LOCAL)
     - SwiftUIVisualEffects
   - SatelliteKit (1.0.0.LOCAL)
+  - SecondaryTabView (1.0.0.LOCAL)
   - SnapshotTesting (1.8.2)
   - SolarSystem (1.0.0.LOCAL):
     - SatelliteKit (= 1.0.0.LOCAL)
@@ -62,6 +63,7 @@ DEPENDENCIES:
   - SatelliteForecast (from `./SatelliteForecast`)
   - SatelliteForecastImpl (from `./SatelliteForecastImpl`)
   - SatelliteKit (from `./SatelliteKit`)
+  - SecondaryTabView (from `./SecondaryTabView`)
   - SolarSystem (from `./SolarSystem`)
   - StarryNight (from `./StarryNight`)
   - SwiftRex (= 0.8.9)
@@ -97,6 +99,8 @@ EXTERNAL SOURCES:
     :path: "./SatelliteForecastImpl"
   SatelliteKit:
     :path: "./SatelliteKit"
+  SecondaryTabView:
+    :path: "./SecondaryTabView"
   SolarSystem:
     :path: "./SolarSystem"
   StarryNight:
@@ -117,6 +121,7 @@ SPEC CHECKSUMS:
   SatelliteForecast: b624f8eed1f70dff695f618cfdfeace262561287
   SatelliteForecastImpl: 5f13bf1b7ff3249957a33b309e88c4e8ad5b971b
   SatelliteKit: 53e267558b0bd35f1be23f4dfa022b4503aa0226
+  SecondaryTabView: 6b413852af90f4e37cf6dab79c38cfeb20a53dd9
   SnapshotTesting: 38947050d13960d57a4a9c166fcf51bca7d56970
   SolarSystem: 2357ba7d4cf1073a87368a783c819322eea185e3
   SQLite.swift: d2b4642190917051ce6bd1d49aab565fe794eea3
@@ -126,6 +131,6 @@ SPEC CHECKSUMS:
   SwiftUIVisualEffects: 4b341110ba61926c0287feef7b09b49fc0e7fac3
   TestingExtensions: 75654c5acd46d63c09317cfa0c84f402882a29b0
 
-PODFILE CHECKSUM: ee40939e8884e3c6d43566ded1dc75ade36c0628
+PODFILE CHECKSUM: 429bbb5bd6b833c55b81f2b246d47d73d0e4abed
 
 COCOAPODS: 1.11.3
