@@ -5,6 +5,7 @@
 //  Created by Ben Lu on 8/18/21.
 //
 
+import BackgroundTasks
 import Foundation
 import Combine
 import CombineRex
@@ -42,7 +43,7 @@ extension EffectMiddleware where
                         return .doNothing
                     case .background:
                         logger.debug("App enters background")
-                        
+
                         return .sequence([
                             .backgroundTask(.submitHandleCalculatingUpcomingPasses),
                             .notification(.saveNotificationsToPersistenceStorage(getState().notificationResources.scheduledPassNotifications))

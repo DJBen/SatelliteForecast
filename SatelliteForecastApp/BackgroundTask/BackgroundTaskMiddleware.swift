@@ -13,7 +13,7 @@ import os
 
 fileprivate let logger = Logger(subsystem: "io.djben.backgroundTasks", category: "middleware")
 
-fileprivate let calculateUpcomingPassesTaskID = "io.djben.SatelliteForecast.backgroundTasks.calculateUpcomingPasses"
+fileprivate let calculateUpcomingPassesTaskID = "calculateUpcomingPasses"
 
 enum BackgroundTask {
     case registerHandleCalculatingUpcomingPasses
@@ -36,18 +36,20 @@ extension EffectMiddleware where
             switch action {
             case .registerHandleCalculatingUpcomingPasses:
                 return .fireAndForget {
-                    BGTaskScheduler.shared.register(
-                        forTaskWithIdentifier: calculateUpcomingPassesTaskID,
-                        using: nil,
-                        launchHandler: BackgroundTask.handleCalculatingUpcomingPasses(task:)
+                    precondition(
+                        BGTaskScheduler.shared.register(
+                            forTaskWithIdentifier: calculateUpcomingPassesTaskID,
+                            using: nil,
+                            launchHandler: BackgroundTask.handleCalculatingUpcomingPasses(task:)
+                        )
                     )
                 }
             case .submitHandleCalculatingUpcomingPasses:
                 return .fireAndForget {
+                    // For some reason, `BGAppRefreshTaskRequest` refuses to be scheduled
                     let request = BGProcessingTaskRequest(identifier: calculateUpcomingPassesTaskID)
-                    // Calculation of passes is power intensive
-                    request.requiresExternalPower = true
-                    request.earliestBeginDate = Date(timeIntervalSinceNow: 0)
+                    request.earliestBeginDate = Date(timeIntervalSinceNow: 60)
+                    request.requiresNetworkConnectivity = true
                     
                     do {
                         try BGTaskScheduler.shared.submit(request)
