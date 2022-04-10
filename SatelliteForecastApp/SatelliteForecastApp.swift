@@ -11,6 +11,7 @@ import SatelliteForecast
 import SwiftRex
 import CombineRex
 import CombineRextensions
+import CoreMotion
 
 @main
 struct SatelliteForecastApp: App {
@@ -20,6 +21,7 @@ struct SatelliteForecastApp: App {
         emitsValue: .whenDifferent
     )
     @Environment(\.scenePhase) private var scenePhase
+    let motionManager = CMMotionManager()
 
     var body: some Scene {
         WindowGroup {
@@ -57,6 +59,7 @@ struct SatelliteForecastApp: App {
                 store.dispatch(.debugMenu(.toggleDebugMenu(true)))
                 #endif
             }
+            .environment(\.motionManagerKey, motionManager)
         }
     }
 }

@@ -102,7 +102,9 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
     @ViewBuilder private func navigationLink(for item: SettingsOverviewItem) -> some View {
         Section {
             NavigationLink(
-                destination: LazyView(destination(for: item)),
+                destination: LazyView {
+                    destination(for: item)
+                },
                 tag: item,
                 selection: Binding<SettingsOverviewItem?>(
                     get: {

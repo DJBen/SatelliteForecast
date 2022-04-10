@@ -11,6 +11,7 @@ import CombineRextensions
 import SatelliteForecast
 import SatelliteKit
 import SwiftUI
+import CoreMotion
 
 public enum PassViewAction {
 }
@@ -54,7 +55,7 @@ public struct PassView: View {
                 )
                 .environment(\.julianDateRangeKey, context.julianDateRange)
                 .frame(minHeight: 180, idealHeight: 240, maxHeight: 275, alignment: .leading)
-                
+
                 skyChartProducer.view(
                     SkyChartContext(
                         satelliteInfo: context.satelliteInfo,
@@ -64,7 +65,8 @@ public struct PassView: View {
                         notableSnapshots: context.notableSnapshots,
                         configs: .preset,
                         quality: .full,
-                        julianDateProvider: context.julianDateProvider
+                        julianDateProvider: context.julianDateProvider,
+                        deviceMotion: context.deviceMotion
                     )
                 )
                 .frame(height: min(rect.width, rect.height))
@@ -101,8 +103,9 @@ public struct PassViewContext {
     public let pass: Pass
     public let notableSnapshots: NotableSnapshots
     public let julianDateProvider: () -> Double
+    public let deviceMotion: Loadable<CMDeviceMotion, Error>
 
-    public init(satelliteInfo: SatelliteInfo, julianDateRange: ClosedRange<Double>, observer: LatLonAlt, snapshots: [SatelliteSnapshot], pass: Pass, notableSnapshots: NotableSnapshots, julianDateProvider: @escaping () -> Double) {
+    public init(satelliteInfo: SatelliteInfo, julianDateRange: ClosedRange<Double>, observer: LatLonAlt, snapshots: [SatelliteSnapshot], pass: Pass, notableSnapshots: NotableSnapshots, julianDateProvider: @escaping () -> Double, deviceMotion: Loadable<CMDeviceMotion, Error> = .notLoaded) {
         self.satelliteInfo = satelliteInfo
         self.julianDateRange = julianDateRange
         self.observer = observer
@@ -110,6 +113,7 @@ public struct PassViewContext {
         self.pass = pass
         self.notableSnapshots = notableSnapshots
         self.julianDateProvider = julianDateProvider
+        self.deviceMotion = deviceMotion
     }
 }
 

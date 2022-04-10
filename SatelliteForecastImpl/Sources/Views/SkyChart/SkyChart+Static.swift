@@ -28,6 +28,11 @@ extension SkyChart {
         return min(rect.width, rect.height) / 2
     }
 
+    /// Convert the polar coordinates to cartesian coordinate bounded in a rect.
+    /// - Parameters:
+    ///   - coordinate: The polar coordinate
+    ///   - rect: The bounding rectangle.
+    /// - Returns: The cartesian coordinate bounded by a rectangle.
     public static func point<Coordinate: AziEleProviding>(at coordinate: Coordinate, rect: CGRect) -> CGPoint {
         let dist = (90 - coordinate.elev) / 90.0 * Double(radius(fromRect: rect))
         let xOffset = sin(coordinate.azim * deg2rad) * dist
@@ -47,11 +52,11 @@ extension SkyChart {
         )
     }
 
-    /// The rotation angle in radians, and the rotation angle for the text to be the most easily legible.
+    /// The rotation angle in radians, and the rotation angle for the text to be the most legible.
     /// - Parameters:
     ///   - snapshotPair: A pair of satellite snapshots.
     ///   - rect: The rectangle of the view.
-    /// - Returns: The rotation angle in radians, and the rotation angle for the text to be the most easily legible.
+    /// - Returns: The rotation angle in radians, and the rotation angle for the text to be the most legible.
     public static func rotationAndTextRotation(snapshotPair: SnapshotsAroundPass, rect: CGRect) -> (Double, Double) {
         let position = Self.point(at: snapshotPair.first.position, rect: rect)
         let afterPosition = Self.point(at: snapshotPair.second.position, rect: rect)

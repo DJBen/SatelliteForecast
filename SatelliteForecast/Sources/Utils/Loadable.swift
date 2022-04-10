@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum Loadable<Content, ErrorType: LocalizedError> {
+public enum Loadable<Content, ErrorType> {
     case notLoaded
     case loading
     case loaded(Content)

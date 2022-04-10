@@ -105,7 +105,9 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
         for item: SatelliteOverviewItem
     ) -> some View {
         NavigationLink(
-            destination: LazyView(destination(for: item)),
+            destination: LazyView {
+                destination(for: item)
+            },
             tag: item,
             selection: Binding<SatelliteOverviewItem?>(
                 get: {

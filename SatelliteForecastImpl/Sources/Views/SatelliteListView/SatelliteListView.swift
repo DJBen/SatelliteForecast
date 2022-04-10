@@ -153,7 +153,7 @@ public struct SatelliteListView: View {
                 ForEach(Array(satellites.keys), id: \.self) { noradIndex in
                     let satelliteInfo = satellites[noradIndex]!
                     NavigationLink(
-                        destination: LazyView(
+                        destination: LazyView {
                             allPassesViewProducer.view(
                                 AllPassesViewContext(
                                     satelliteInfo: satelliteInfo,
@@ -162,7 +162,7 @@ public struct SatelliteListView: View {
                                     julianDateProvider: context.julianDateProvider
                                 )
                             )
-                        ),
+                        },
                         rowTag: noradIndex,
                         viewModel: viewModel,
                         pathToSelectedRowTag: \.selectedNoradIndex,
