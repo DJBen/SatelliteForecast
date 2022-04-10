@@ -89,18 +89,22 @@ public struct BasicChartConfigs: Equatable, Hashable {
 
     public var directionTextOutset: CGFloat = 30
 
+    public var showsAttitude: Bool = true
+
     public init(
         showAzimuthTexts: Bool = true,
         azimuthMarkInterval: Int = 15,
         azimuthMarkLength: CGFloat = 3,
         showDirections: Bool = true,
-        directionTextOutset: CGFloat = 30
+        directionTextOutset: CGFloat = 30,
+        showsAttitude: Bool = true
     ) {
         self.showAzimuthTexts = showAzimuthTexts
         self.azimuthMarkInterval = azimuthMarkInterval
         self.azimuthMarkLength = azimuthMarkLength
         self.showDirections = showDirections
         self.directionTextOutset = directionTextOutset
+        self.showsAttitude = showsAttitude
     }
 }
 
@@ -130,7 +134,8 @@ public struct SkyChartConfigs: Equatable, Hashable {
                 azimuthMarkInterval: 90,
                 azimuthMarkLength: 2,
                 showDirections: false,
-                directionTextOutset: 30
+                directionTextOutset: 30,
+                showsAttitude: false
             ),
             showPassInfoLabels: false
         )

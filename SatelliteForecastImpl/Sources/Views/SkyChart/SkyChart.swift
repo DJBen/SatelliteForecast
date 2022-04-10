@@ -14,6 +14,7 @@ import SatelliteForecast
 import StarryNight
 import CombineRextensions
 import BTree
+import CoreMotion
 
 public enum SkyChartAction {
     case requestRasterizedSatellitePath(size: CGSize, quality: ChartQuality, pass: Pass, traitCollection: UITraitCollection)
@@ -60,8 +61,8 @@ public struct SkyChart: View {
         on: .main,
         in: .common
     )
-        .autoconnect()
-        .map(\.julianDate)
+    .autoconnect()
+    .map(\.julianDate)
 
     @State var backgroundSkyJulianDateKey: Double?
 
@@ -181,6 +182,14 @@ public struct SkyChart: View {
         }
     }
 
+    @ViewBuilder private var attitudeIndicator: some View {
+        if context.configs.basicChartConfigs.showsAttitude {
+            CompassAttitudeView(deviceMotion: context.deviceMotion)
+        } else {
+            Color.clear
+        }
+    }
+
     public var body: some View {
         backgroundSkyViewProducer.view(
             BackgroundSkyViewContext(
@@ -202,6 +211,7 @@ public struct SkyChart: View {
                 )
             ).clipShape(Circle())
         )
+        .overlay(attitudeIndicator)
         .background(
             satellitePath.overlay(loadingIndicator)
             .clipShape(Circle())
@@ -224,6 +234,19 @@ public struct SkyChartContext {
     public let configs: SkyChartConfigs
     public let quality: ChartQuality
     public let julianDateProvider: () -> Double
+    public let deviceMotion: Loadable<CMDeviceMotion, Error>
+
+    public init(satelliteInfo: SatelliteInfo, snapshots: [SatelliteSnapshot], observer: LatLonAlt, pass: Pass, notableSnapshots: NotableSnapshots, configs: SkyChartConfigs, quality: ChartQuality, julianDateProvider: @escaping () -> Double, deviceMotion: Loadable<CMDeviceMotion, Error> = .notLoaded) {
+        self.satelliteInfo = satelliteInfo
+        self.snapshots = snapshots
+        self.observer = observer
+        self.pass = pass
+        self.notableSnapshots = notableSnapshots
+        self.configs = configs
+        self.quality = quality
+        self.julianDateProvider = julianDateProvider
+        self.deviceMotion = deviceMotion
+    }
 }
 
 extension SkyChart.PassLabel {

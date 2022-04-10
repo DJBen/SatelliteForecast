@@ -175,10 +175,18 @@ public struct AllPassesView: View {
     @ViewBuilder private func navigationLink<Label: View>(
         item: Item,
         observer: LatLonAlt,
-        @ViewBuilder label: () -> Label
+        @ViewBuilder label: @escaping () -> Label
     ) -> some View {
-        NavigationLink(
-            destination: LazyView(
+        MotionManagerView(
+            isActive: Binding<Bool>(
+                get: {
+                    viewModel.state.selectedPassIndex == item.index
+                },
+                set: { _ in }
+            )
+        ) { deviceMotionResult in
+            NavigationLink(
+            destination: LazyView {
                 passViewProducer.view(
                     PassViewContext(
                         satelliteInfo: context.satelliteInfo,
@@ -187,10 +195,11 @@ public struct AllPassesView: View {
                         snapshots: item.passSnapshots.snapshots,
                         pass: item.passSnapshots.pass,
                         notableSnapshots: item.passSnapshots.notableSnapshots,
-                        julianDateProvider: context.julianDateProvider
+                        julianDateProvider: context.julianDateProvider,
+                        deviceMotion: deviceMotionResult
                     )
                 )
-            ),
+            },
             tag: item.index,
             selection: Binding<Int?>(
                 get: {
@@ -202,6 +211,7 @@ public struct AllPassesView: View {
             ),
             label: label
         )
+        }
     }
     
     @ViewBuilder private func swipeActionLeftButtons(item: Item) -> some View {
@@ -322,8 +332,8 @@ public struct AllPassesView: View {
             Color.clear
         }
     }
-    
-    public var body: some View {
+
+    @ViewBuilder private var allPassesList: some View {
         VStack(spacing: 0) {
             if let locationChangeWarning = locationChangeWarning {
                 AllPassesLocationChangeWarning(
@@ -342,7 +352,7 @@ public struct AllPassesView: View {
                     }
                 )
             }
-            
+
             if let observer = context.observer {
                 let items = itemsByVisibility
                 let visiblePasses: [Item] = items?[.visible] ?? []
@@ -380,6 +390,10 @@ public struct AllPassesView: View {
                 }
             }
         }
+    }
+    
+    public var body: some View {
+        allPassesList
         .frame(maxWidth: .infinity)
         .navigationTitle(context.satelliteInfo.elements.commonName)
         .navigationBarTitleDisplayMode(.inline)

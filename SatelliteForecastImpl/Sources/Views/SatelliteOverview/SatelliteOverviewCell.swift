@@ -37,12 +37,12 @@ struct SatelliteOverviewSpecialSatelliteCell: View {
     @ViewBuilder private func background(satellite: SatelliteOverviewItem.SatellitesOfSpecialInterest) -> some View {
         switch satellite {
         case .iss:
-            Image("25544")
+            Image("25544", bundle: .satelliteForecastImplResourcesBundle)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
             
         case .tianhe:
-            Image("48274")
+            Image("48274", bundle: .satelliteForecastImplResourcesBundle)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
         }

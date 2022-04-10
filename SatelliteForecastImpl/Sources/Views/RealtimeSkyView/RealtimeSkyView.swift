@@ -13,6 +13,7 @@ import SatelliteForecastImpl
 import SatelliteKit
 import SwiftRex
 import SwiftUI
+import CoreMotion
 
 public enum RealtimeSkyViewAction {
     case propagateCurrentEphemerides([SatelliteInfo], observer: LatLonAlt, julianDate: Double)
@@ -245,7 +246,15 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
         }
     }
 
-    @ViewBuilder private func backgroundSkyView(observer: LatLonAlt) -> some View {
+    @ViewBuilder private func attitudeIndicator(deviceMotion: Loadable<CMDeviceMotion, Error>) -> some View {
+        if context.basicChartConfigs.showsAttitude {
+            CompassAttitudeView(deviceMotion: deviceMotion)
+        } else {
+            Color.clear
+        }
+    }
+
+    @ViewBuilder private func backgroundSkyView(observer: LatLonAlt, deviceMotion: Loadable<CMDeviceMotion, Error>) -> some View {
         backgroundSkyViewProducer.view(
             BackgroundSkyViewContext(
                 observer: observer,
@@ -263,6 +272,9 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
         }
         .overlay(
             satellitePlotLabels
+        )
+        .overlay(
+            attitudeIndicator(deviceMotion: deviceMotion)
         )
         .onReceive(refreshTimer) { timerJulianDate in
             self.julianDate = timerJulianDate + viewModel.state.julianDateOffset
@@ -334,9 +346,14 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
                 GeometryReader { geometry in
                     let rect = geometry.frame(in: .local)
                     VStack(spacing: 16) {
-                        backgroundSkyView(
-                            observer: observer
-                        )
+                        MotionManagerView(
+                            isActive: $viewModel.state.resources.isRealtimeSkyViewActive
+                        ) { deviceMotionResult in
+                            backgroundSkyView(
+                                observer: observer,
+                                deviceMotion: deviceMotionResult
+                            )
+                        }
                         .frame(
                             width: min(rect.width, rect.height),
                             height: min(rect.width, rect.height)

@@ -14,21 +14,21 @@ import Regex
 struct SatelliteCell: View {
     let info: SatelliteInfo
 
-    var body: some View {
+    @ViewBuilder var body: some View {
         if let ucsSat = info.ucsSat, let satCat = info.satCat {
-            return AnyView(UCSSatCell(cat: satCat, sat: ucsSat))
+            UCSSatCell(cat: satCat, sat: ucsSat)
         } else if let satCat = info.satCat {
-            return AnyView(CatSatCell(cat: satCat))
+            CatSatCell(cat: satCat)
         } else {
-            return AnyView(Text(info.elements.commonName))
+            Text(info.elements.commonName)
         }
     }
 
     static func image(cat: SatCat) -> UIImage? {
-        if let image = UIImage(named: "\(cat.noradID)") {
+        if let image = UIImage(named: "\(cat.noradID)", in: .satelliteForecastImplResourcesBundle, compatibleWith: nil) {
             return image
         } else if cat.name.contains("STARLINK") {
-            return UIImage(named: "starlink")
+            return UIImage(named: "starlink", in: .satelliteForecastImplResourcesBundle, compatibleWith: nil)
         }
         return nil
     }

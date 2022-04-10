@@ -11,7 +11,6 @@
 		9D5F2E9FA1BC31892A719C75 /* Pods_SatelliteForecastApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9945F4772B6B668C069E6F6 /* Pods_SatelliteForecastApp.framework */; };
 		EF12BC0E27E1C0CF0083F3A2 /* SatelliteElevationGraph+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF12BC0D27E1C0CF0083F3A2 /* SatelliteElevationGraph+Wiring.swift */; };
 		EF16811E27D00E28001BA9C3 /* Icons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EF9D827C2661BBF000616C97 /* Icons.xcassets */; };
-		EF16811F27D00E28001BA9C3 /* Satellites.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EF3D09A12686920800B84232 /* Satellites.xcassets */; };
 		EF16815027D2B4A1001BA9C3 /* BackgroundSkyView+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF16814F27D2B4A1001BA9C3 /* BackgroundSkyView+Wiring.swift */; };
 		EF16815227D2B557001BA9C3 /* BackgroundSkyViewMiddleware+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF16815127D2B557001BA9C3 /* BackgroundSkyViewMiddleware+Wiring.swift */; };
 		EF16815427D2B59D001BA9C3 /* BackgroundSkyViewReducer+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF16815327D2B59D001BA9C3 /* BackgroundSkyViewReducer+Wiring.swift */; };
@@ -142,7 +141,6 @@
 		EF2EF4DC27B42661000D5EC8 /* LoggerMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggerMiddleware.swift; sourceTree = "<group>"; };
 		EF325F3A27F9794600FDE42E /* ElementsPropagatorReducer+Wiring.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ElementsPropagatorReducer+Wiring.swift"; sourceTree = "<group>"; };
 		EF325F3C27F979D400FDE42E /* ElementsPropagatorResources+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ElementsPropagatorResources+Wiring.swift"; sourceTree = "<group>"; };
-		EF3D09A12686920800B84232 /* Satellites.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Satellites.xcassets; sourceTree = "<group>"; };
 		EF3D09A4268875B100B84232 /* NavigationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationState.swift; sourceTree = "<group>"; };
 		EF465652267BE7680040B762 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EF66ED1C27FAC53700CD3136 /* AllPassesViewReducer+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AllPassesViewReducer+Wiring.swift"; sourceTree = "<group>"; };
@@ -502,7 +500,6 @@
 				EF7A319A266B733C00CC33C0 /* LocalizedStrings.swift */,
 				EF864272266DFFE9004F0AFA /* Info.plist */,
 				EF9D827C2661BBF000616C97 /* Icons.xcassets */,
-				EF3D09A12686920800B84232 /* Satellites.xcassets */,
 				EF7A318D266B6ABC00CC33C0 /* Store */,
 				EF847BEE26CE334D0004806F /* AppDelegate */,
 				EF2EF4DB27B42646000D5EC8 /* Logger */,
@@ -673,7 +670,6 @@
 				EFED97B327D61C0C003FC289 /* active.txt in Resources */,
 				EFED97B527D61CB5003FC289 /* visual.txt in Resources */,
 				EFED97B927D620CD003FC289 /* tle-new.txt in Resources */,
-				EF16811F27D00E28001BA9C3 /* Satellites.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
