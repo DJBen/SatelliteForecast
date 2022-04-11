@@ -11,11 +11,23 @@ import SatelliteKit
 import SatelliteForecast
 
 extension SkyChart {
-    struct PassLabel<BackgroundModifier: ViewModifier>: View {
-        let text: String
+    struct PassLabel<BackgroundModifier: ViewModifier, Content: View>: View {
         let snapshotPair: SnapshotsAroundPass
         let rect: CGRect
         let modifierFactory: (Angle) -> BackgroundModifier
+        let content: () -> Content
+
+        public init(
+            snapshotPair: SnapshotsAroundPass,
+            rect: CGRect,
+            modifierFactory: @escaping (Angle) -> BackgroundModifier,
+            @ViewBuilder content: @escaping () -> Content
+        ) {
+            self.snapshotPair = snapshotPair
+            self.rect = rect
+            self.modifierFactory = modifierFactory
+            self.content = content
+        }
         
         var body: some View {
             let (rot, textRotation) = SkyChart.rotationAndTextRotation(snapshotPair: snapshotPair, rect: rect)
@@ -28,11 +40,12 @@ extension SkyChart {
                 .stroke(Color.gray)
                 .frame(alignment: .leading)
 
-                Text(text)
-                    .modifier(modifierFactory(.radians(textRotation)))
-                    .rotationEffect(.radians(textRotation))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .offset(x: 20, y: 0)
+                content(
+                )
+                .modifier(modifierFactory(.radians(textRotation)))
+                .rotationEffect(.radians(textRotation))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .offset(x: 20, y: 0)
             }
             .rotationEffect(.radians(rot))
             .position(SkyChart.point(at: textPosition, rect: rect))

@@ -40,6 +40,15 @@ extension SkyChart {
         return CGPoint(x: rect.midX - CGFloat(xOffset), y: rect.midY - CGFloat(yOffset))
     }
 
+    public static func aziEle(at point: CGPoint, in rect: CGRect) -> AziEle {
+        let x = rect.midX - point.x
+        let y = rect.midY - point.y
+        let azi = limit360(atan2(x, y) * rad2deg)
+        let radius = min(rect.width, rect.height) / 2
+        let ele = (radius - sqrt(x * x + y * y)) / radius * 90
+        return AziEle(azim: Double(azi), elev: Double(ele))
+    }
+
     public static func azimuthMarkPoints(azimuth: Double, length: CGFloat, rect: CGRect) -> (CGPoint, CGPoint) {
         func point(_ azim: Double, dist: Double) -> CGPoint {
             let xOffset = sin(azim * deg2rad) * dist
@@ -350,38 +359,42 @@ struct ImageRenderer_Previews: PreviewProvider {
                 .aspectRatio(contentMode: .fit)
                 .overlay(
                     SkyChart.PassLabel(
-                        text: "Rise",
                         snapshotPair: notableSnapshots.rise,
                         rect: rect,
                         modifierFactory: PassLabelModifier.init(rotationAngle:)
-                    )
+                    ) {
+                        Text(verbatim: "Rise")
+                    }
                 )
                 .overlay(
                     SkyChart.PassLabel(
-                        text: "Transit",
                         snapshotPair: notableSnapshots.transit,
                         rect: rect,
                         modifierFactory: PassLabelModifier.init(rotationAngle:)
-                    )
+                    ) {
+                        Text("Transit")
+                    }
                 )
                 .overlay(
                     SkyChart.PassLabel(
-                        text: "Set",
                         snapshotPair: notableSnapshots.set,
                         rect: rect,
                         modifierFactory: PassLabelModifier.init(rotationAngle:)
-                    )
+                    ) {
+                        Text("Set")
+                    }
                 )
                 .overlay(
                     SkyChart.PassLabel(
-                        text: "Special",
                         snapshotPair: SnapshotsAroundPass(
                             first: snapshots[snapshots.index(snapshots.startIndex, offsetBy: snapshots.count / 3)],
                             second: snapshots[snapshots.index(snapshots.startIndex, offsetBy: snapshots.count / 3 + 1)]
                         ),
                         rect: rect,
                         modifierFactory: HighlightedPassLabelModifier.curry(shouldHighlight: true)
-                    )
+                    ) {
+                        Text("Special")
+                    }
                 )
             }
         }

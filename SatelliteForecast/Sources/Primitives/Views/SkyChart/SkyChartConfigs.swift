@@ -116,6 +116,9 @@ public struct SkyChartConfigs: Equatable, Hashable {
 
     public var showPassInfoLabels: Bool = true
 
+    /// Whether to show more information when the user taps / drags on the passing trajectory, or taps on the label.
+    public var showMoreInfoOnTap: Bool = true
+
     public static var preset: SkyChartConfigs {
         return SkyChartConfigs()
     }
@@ -137,13 +140,20 @@ public struct SkyChartConfigs: Equatable, Hashable {
                 directionTextOutset: 30,
                 showsAttitude: false
             ),
-            showPassInfoLabels: false
+            showPassInfoLabels: false,
+            showMoreInfoOnTap: false
         )
     }
 
-    public init(backgroundSkyConfigs: BackgroundSkyConfigs = .preset, basicChartConfigs: BasicChartConfigs = .init(), showPassInfoLabels: Bool = true) {
+    public init(
+        backgroundSkyConfigs: BackgroundSkyConfigs = .preset,
+        basicChartConfigs: BasicChartConfigs = .init(),
+        showPassInfoLabels: Bool = true,
+        showMoreInfoOnTap: Bool = true
+    ) {
         self.backgroundSkyConfigs = backgroundSkyConfigs
         self.basicChartConfigs = basicChartConfigs
         self.showPassInfoLabels = showPassInfoLabels
+        self.showMoreInfoOnTap = showMoreInfoOnTap
     }
 }

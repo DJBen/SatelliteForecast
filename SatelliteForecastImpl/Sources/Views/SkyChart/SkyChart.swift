@@ -91,37 +91,55 @@ public struct SkyChart: View {
 
                 ZStack {
                     PassLabel(
-                        text: "↑ \(Self.labelDateFormatter.string(from: Date(julianDate: context.pass.rise.julianDate)))",
                         snapshotPair: context.notableSnapshots.rise,
                         rect: rect,
                         modifierFactory: PassLabelModifier.init(rotationAngle:)
-                    )
+                    ) {
+                        Text(
+                            """
+                            ↑ \(Self.labelDateFormatter.string(from: Date(julianDate: context.pass.rise.julianDate)))
+                            """
+                        )
+                    }
 
                     PassLabel(
-                        text: "↓ \(Self.labelDateFormatter.string(from: Date(julianDate: context.pass.set.julianDate)))",
                         snapshotPair: context.notableSnapshots.set,
                         rect: rect,
                         modifierFactory: PassLabelModifier.init(rotationAngle:)
-                    )
+                    ) {
+                        Text(
+                            """
+                            ↓ \(Self.labelDateFormatter.string(from: Date(julianDate: context.pass.set.julianDate)))
+                            """
+                        )
+                    }
 
                     PassLabel(
-                        text: "∠\(Self.labelAngleFormatter.string(from: NSNumber(value: context.pass.transit.elev))!)° \(Self.labelDateFormatter.string(from: Date(julianDate: context.pass.transit.julianDate)))",
                         snapshotPair: context.notableSnapshots.transit,
                         rect: rect,
                         modifierFactory: PassLabelModifier.init(rotationAngle:)
-                    )
+                    ) {
+                        Text(
+                            """
+                            ∠\(Self.labelAngleFormatter.string(from: NSNumber(value: context.pass.transit.elev))!)° \(Self.labelDateFormatter.string(from: Date(julianDate: context.pass.transit.julianDate)))
+                            """
+                        )
+                    }
 
                     ForEach(context.pass.illumination.changes, id: \.datePosition) { change in
                         if let illuminationChangeAndSnapshots = context.notableSnapshots.illuminationChanges.value(of: change.datePosition.julianDate) {
                             PassLabel(
-                                text: SkyChart.PassLabel<PassLabelModifier>.textForIlluminationChange(
-                                    change,
-                                    dateFormatter: Self.labelDateFormatter
-                                ),
                                 snapshotPair: illuminationChangeAndSnapshots.snapshots,
                                 rect: rect,
                                 modifierFactory: PassLabelModifier.init(rotationAngle:)
-                            )
+                            ) {
+                                Text(
+                                    SkyChart.PassLabel<PassLabelModifier, Text>.textForIlluminationChange(
+                                        change,
+                                        dateFormatter: Self.labelDateFormatter
+                                    )
+                                )
+                            }
                         }
                     }
                 }
@@ -215,6 +233,12 @@ public struct SkyChart: View {
         .background(
             satellitePath.overlay(loadingIndicator)
             .clipShape(Circle())
+        )
+        .modifier(
+            SkyChartGestureModifier(
+                isGestureEnabled: context.configs.showMoreInfoOnTap,
+                contentRect: CGRect(origin: .zero, size: contentSize)
+            )
         )
         .onLoad {
             propagateBackgroundSkyJulianDateKey(context.julianDateProvider() + viewModel.state.julianDateOffset)

@@ -62,14 +62,17 @@ struct SkyChartDynamicIndicator: View {
                 let rect = geometry.frame(in: .local)
 
                 SkyChart.PassLabel(
-                    text: """
-                    ∠\(Self.labelAngleFormatter.string(from: NSNumber(value: snapshotPair.first.position.elev))!)°
-                    \(Self.labelDateFormatter.string(from: Date(julianDate: snapshotPair.first.julianDate)))
-                    """,
                     snapshotPair: snapshotPair,
                     rect: rect,
                     modifierFactory: HighlightedPassLabelModifier.curry(shouldHighlight: snapshotPair.first.isIlluminated)
-                )
+                ) {
+                    Text(
+                        verbatim: """
+                        ∠\(Self.labelAngleFormatter.string(from: NSNumber(value: snapshotPair.first.position.elev))!)°
+                        \(Self.labelDateFormatter.string(from: Date(julianDate: snapshotPair.first.julianDate)))
+                        """
+                    )
+                }
                 .blurEffectStyle(colorScheme == .light ? .systemMaterialDark : .systemMaterialLight)
                 .vibrancyEffectStyle(.fill)
             }
