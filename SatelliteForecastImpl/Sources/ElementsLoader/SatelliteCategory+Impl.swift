@@ -12,11 +12,11 @@ extension SatelliteCategory {
     public var url: URL {
         switch self {
         case .brightest100:
-            return URL(string: "https://www.celestrak.com/NORAD/elements/visual.txt")!
+            return URL(string: "https://celestrak.com/NORAD/elements/gp.php?GROUP=visual&FORMAT=tle")!
         case .last30DayLaunches:
-            return URL(string: "https://celestrak.com/NORAD/elements/elements-new.txt")!
+            return URL(string: "https://celestrak.com/NORAD/elements/gp.php?GROUP=last-30-days&FORMAT=tle")!
         case .active:
-            return URL(string: "https://celestrak.com/NORAD/elements/active.txt")!
+            return URL(string: "https://celestrak.com/NORAD/elements/gp.php?GROUP=active&FORMAT=tle")!
         }
     }
 

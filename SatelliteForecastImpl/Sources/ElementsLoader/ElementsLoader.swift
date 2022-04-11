@@ -55,9 +55,6 @@ extension ElementsLoaderImpl: ElementsLoader {
         session
             .dataTaskPublisher(for: URLRequest(url: category.url))
             .tryMap { (data, response) in
-                guard response.mimeType == "text/plain" else {
-                    throw ElementsLoaderError.unexpectedMimeType(response.mimeType)
-                }
                 return data
             }
             .tryCatch { error in
