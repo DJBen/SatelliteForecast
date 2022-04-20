@@ -89,6 +89,8 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                         print(realtimeSkyViewAction)
                     case .loadElements:
                         print(realtimeSkyViewAction)
+                    case .purgeElements:
+                        print(realtimeSkyViewAction)
                     }
                 case .realtimeSkyOutput(let realtimeSkyViewOutput):
                     switch realtimeSkyViewOutput {

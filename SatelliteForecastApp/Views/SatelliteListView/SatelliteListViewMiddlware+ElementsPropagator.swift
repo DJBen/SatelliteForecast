@@ -7,6 +7,7 @@
 
 import CombineRex
 import CombineRextensions
+import SatelliteForecast
 import SatelliteForecastImpl
 
 extension EffectMiddleware where InputActionType == SatelliteListViewAction, OutputActionType == ElementsPropagatorAction, StateType == Void, Dependencies == Void {

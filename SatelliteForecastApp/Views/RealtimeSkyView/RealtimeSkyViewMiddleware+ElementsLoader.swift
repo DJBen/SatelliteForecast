@@ -24,6 +24,8 @@ extension EffectMiddleware where InputActionType == RealtimeSkyViewAction, Outpu
                         category: .active
                     )
                 )
+            case .purgeElements:
+                return .doNothing
             }
         }
     }

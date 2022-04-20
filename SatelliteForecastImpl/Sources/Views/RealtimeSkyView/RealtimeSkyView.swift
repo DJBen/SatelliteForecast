@@ -15,30 +15,6 @@ import SwiftRex
 import SwiftUI
 import CoreMotion
 
-public enum RealtimeSkyViewAction {
-    case propagateCurrentEphemerides([SatelliteInfo], observer: LatLonAlt, julianDate: Double)
-    case setRealtimeSkyViewActive(Bool)
-    case loadElements
-}
-
-extension RealtimeSkyViewAction: Equatable {}
-
-public enum RealtimeSkyViewOutput {
-    case propagatedCurrentEphemerides(
-        results: BTree<Double, RealtimePropagationResult>,
-        satellites: [SatelliteInfo],
-        partialErrors: [Error],
-        observer: LatLonAlt,
-        julianDate: Double
-    )
-
-    case failedToPropagateCurrentEphemerides(
-        error: Error,
-        observer: LatLonAlt,
-        julianDate: Double
-    )
-}
-
 public struct RealtimeSkyViewState {
     public var resources: RealtimeSkyViewResources = .init()
     public var satellites: Loadable<[SatelliteInfo], ElementsLoaderError> = .notLoaded

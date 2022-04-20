@@ -5,6 +5,7 @@
 //  Created by Ben Lu on 3/3/22.
 //
 
+import BTree
 import CombineRex
 import SatelliteForecast
 
@@ -17,6 +18,8 @@ extension Reducer where ActionType == RealtimeSkyViewAction, StateType == Realti
             state.isRealtimeSkyViewActive = isActive
         case .propagateCurrentEphemerides(_, observer: _, julianDate: _):
             state.isPropagatingEphemerides = true
+        case .purgeElements:
+            state.results = BTree()
         }
     }
 }

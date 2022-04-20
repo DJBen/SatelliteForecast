@@ -44,14 +44,3 @@ extension EffectMiddleware where InputActionType == LocationOutput, OutputAction
         .eraseToAnyMiddleware()
     }
 }
-
-extension EffectMiddleware where InputActionType == LocationAction, OutputActionType == ElementsPropagatorAction, StateType == Void, Dependencies == Void {
-    func lift() -> AnyMiddleware<AppAction, AppAction, AppState> {
-        return lift(
-            inputAction: \.location,
-            outputAction: AppAction.elementsPropagator,
-            state: { _ in }
-        )
-        .eraseToAnyMiddleware()
-    }
-}

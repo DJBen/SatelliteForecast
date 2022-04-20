@@ -7,6 +7,7 @@
 
 import Foundation
 import SatelliteKit
+import SatelliteForecast
 import SatelliteForecastImpl
 
 enum AppAction {
