@@ -140,10 +140,8 @@ extension BackgroundSkyConfigs.PlantaryBody {
             return true
         case .venus:
             return sunElevation < -6
-        case .mercury, .jupiter, .mars:
+        case .mercury, .jupiter, .mars, .saturn:
             return sunElevation < -12
-        case .saturn:
-            return sunElevation < -16
         }
     }
 

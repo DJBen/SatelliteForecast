@@ -48,7 +48,17 @@ public struct AllPassesViewState {
     public var satelliteCategory: SatelliteCategory?
     public var satelliteTrails: [UInt: SatelliteTrails] = [:]
 
-    public init(julianDateOffset: Double = 0, scheduledPassNotifications: Set<ScheduledPassNotification> = [], skyChartResources: SkyChartResources = .init(), backgroundSkyResources: BackgroundSkyResources = .init(), location: CLLocation? = nil, placemark: CLPlacemark? = nil, selectedPassIndex: Int? = nil, satelliteCategory: SatelliteCategory? = nil, satelliteTrails: [UInt : SatelliteTrails] = [:]) {
+    public init(
+        julianDateOffset: Double = 0,
+        scheduledPassNotifications: Set<ScheduledPassNotification> = [],
+        skyChartResources: SkyChartResources = .init(),
+        backgroundSkyResources: BackgroundSkyResources = .init(),
+        location: CLLocation? = nil,
+        placemark: CLPlacemark? = nil,
+        selectedPassIndex: Int? = nil,
+        satelliteCategory: SatelliteCategory? = nil,
+        satelliteTrails: [UInt : SatelliteTrails] = [:]
+    ) {
         self.julianDateOffset = julianDateOffset
         self.scheduledPassNotifications = scheduledPassNotifications
         self.skyChartResources = skyChartResources
@@ -186,31 +196,31 @@ public struct AllPassesView: View {
             )
         ) { deviceMotionResult in
             NavigationLink(
-            destination: LazyView {
-                passViewProducer.view(
-                    PassViewContext(
-                        satelliteInfo: context.satelliteInfo,
-                        julianDateRange: context.julianDateRange,
-                        observer: observer,
-                        snapshots: item.passSnapshots.snapshots,
-                        pass: item.passSnapshots.pass,
-                        notableSnapshots: item.passSnapshots.notableSnapshots,
-                        julianDateProvider: context.julianDateProvider,
-                        deviceMotion: deviceMotionResult
+                destination: LazyView {
+                    passViewProducer.view(
+                        PassViewContext(
+                            satelliteInfo: context.satelliteInfo,
+                            julianDateRange: context.julianDateRange,
+                            observer: observer,
+                            snapshots: item.passSnapshots.snapshots,
+                            pass: item.passSnapshots.pass,
+                            notableSnapshots: item.passSnapshots.notableSnapshots,
+                            julianDateProvider: context.julianDateProvider,
+                            deviceMotion: deviceMotionResult
+                        )
                     )
-                )
-            },
-            tag: item.index,
-            selection: Binding<Int?>(
-                get: {
-                    viewModel.state.selectedPassIndex
                 },
-                set: {
-                    viewModel.dispatch(.selectPass(index: $0))
-                }
-            ),
-            label: label
-        )
+                tag: item.index,
+                selection: Binding<Int?>(
+                    get: {
+                        viewModel.state.selectedPassIndex
+                    },
+                    set: {
+                        viewModel.dispatch(.selectPass(index: $0))
+                    }
+                ),
+                label: label
+            )
         }
     }
     
