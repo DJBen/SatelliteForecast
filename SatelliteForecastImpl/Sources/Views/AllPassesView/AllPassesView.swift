@@ -200,11 +200,10 @@ public struct AllPassesView: View {
                     passViewProducer.view(
                         PassViewContext(
                             satelliteInfo: context.satelliteInfo,
+                            category: viewModel.state.satelliteCategory,
                             julianDateRange: context.julianDateRange,
                             observer: observer,
-                            snapshots: item.passSnapshots.snapshots,
-                            pass: item.passSnapshots.pass,
-                            notableSnapshots: item.passSnapshots.notableSnapshots,
+                            passSnapshots: item.passSnapshots,
                             julianDateProvider: context.julianDateProvider,
                             deviceMotion: deviceMotionResult
                         )
@@ -243,6 +242,7 @@ public struct AllPassesView: View {
                             satelliteName: context.satelliteInfo.elements.commonName,
                             category: viewModel.state.satelliteCategory,
                             observer: context.observer!,
+                            timing: .rise,
                             timeOffset: 0
                         ),
                         passSnapshots: item.passSnapshots

@@ -48,15 +48,18 @@ struct ListNavigation {
     var category: SatelliteCategory?
     var noradIndex: UInt?
     var selectedPassIndex: Int?
+    var showAlarmConfigurationModal: Bool
 
     init(
         category: SatelliteCategory? = nil,
         noradIndex: UInt? = nil,
-        selectedPassIndex: Int? = nil
+        selectedPassIndex: Int? = nil,
+        showAlarmConfigurationModal: Bool = false
     ) {
         self.category = category
         self.noradIndex = noradIndex
         self.selectedPassIndex = selectedPassIndex
+        self.showAlarmConfigurationModal = showAlarmConfigurationModal
     }
 }
 

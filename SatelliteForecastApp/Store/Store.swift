@@ -30,6 +30,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             action: \.satelliteElevationGraph,
             state: \.satelliteElevationGraphResources
         ),
+        Reducer.passViewReducer.lift(),
         Reducer.skyChartOutputReducer.lift(),
         Reducer.elementsPropagatorReducer.lift(),
         Reducer.elementsPropagatorOutputReducer.lift(),
@@ -37,7 +38,8 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         Reducer.backgroundSkyReducer.lift(),
         Reducer.realtimeSkyReducer.lift(),
         Reducer.realtimeSkyOutputReducer.lift(),
-        Reducer.rootViewReducer.lift()
+        Reducer.rootViewReducer.lift(),
+        Reducer.passAlarmSettingsModalReducer.lift()
     ]
     .reduce(Reducer<AppAction, AppState>.identity, <>)
 
@@ -91,7 +93,8 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             EffectMiddleware.loggerMiddleware.eraseToAnyMiddleware(),
             EffectMiddleware.backgroundSky.lift(),
             EffectMiddleware.realtimeSky.lift(),
-            EffectMiddleware.realtimeSkyToElementsLoader.lift()
+            EffectMiddleware.realtimeSkyToElementsLoader.lift(),
+            EffectMiddleware.passAlarmSettingsToNotification.lift()
         ]
 
         return middlewares.reduce(

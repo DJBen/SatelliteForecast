@@ -14,7 +14,7 @@ import BTree
 public struct Pass {
     public let noradIndex: UInt
     
-    public struct DatePosition {
+    public struct DatePosition: Comparable {
         public let julianDate: Double
         public let azim: Double
         public let elev: Double
@@ -23,6 +23,10 @@ public struct Pass {
             self.julianDate = julianDate
             self.azim = azim
             self.elev = elev
+        }
+
+        public static func < (lhs: Pass.DatePosition, rhs: Pass.DatePosition) -> Bool {
+            return lhs.julianDate < rhs.julianDate
         }
     }
 
@@ -41,42 +45,15 @@ public struct Pass {
     /// Note that the transit point is not always illuminated. Use `highestIlluminatedElevation` to get the highest illuminated elevation.
     public let transit: DatePosition
 
-    /// The highest illuminated elevation, in degrees.
-    public var highestIlluminatedElevation: Double {
-        if illumination.changes.isEmpty {
-            if illumination.initiallyIlluminated {
-                return transit.elev
-            } else {
-                return 0
-            }
-        } else {
-            var highest: Double = 0
-            var lastPointIlluminated = illumination.initiallyIlluminated
-            var lastIlluminationStartJulianDate: Double? = illumination.initiallyIlluminated ? rise.julianDate : nil
-
-            for change in illumination.changes {
-                switch change {
-                case let .exitsShadow(datePosition):
-                    highest = max(highest, datePosition.elev)
-                    lastIlluminationStartJulianDate = datePosition.julianDate
-                    lastPointIlluminated = true
-                case let .entersShadow(datePosition):
-                    if let lastIlluminationStartJulianDate = lastIlluminationStartJulianDate,
-                       lastIlluminationStartJulianDate < transit.julianDate && datePosition.julianDate >= transit.julianDate {
-                        highest = transit.elev
-                    } else {
-                        highest = max(highest, datePosition.elev)
-                    }
-                    lastPointIlluminated = false
-                }
-            }
-
-            if lastPointIlluminated, let lastIlluminationStartJulianDate = lastIlluminationStartJulianDate, lastIlluminationStartJulianDate < transit.julianDate {
-                highest = transit.elev
-            }
-
-            return highest
+    /// The highest illuminated date and position. If the entire pass is not illuminated, return `nil`.
+    public var highestIlluminated: DatePosition? {
+        let segments = illuminationSegments
+        // If transit is illuminated, return transit
+        if let _ = segments.first(where: { $0.1 && $0.0.contains(transit) }) {
+            return transit
         }
+        let illuminatedDatePositions = segments.filter { $0.1 }.flatMap { [$0.0.lowerBound, $0.0.upperBound] }
+        return illuminatedDatePositions.max(by: { $0.elev < $1.elev })
     }
     
     public struct Illumination {
@@ -107,7 +84,45 @@ public struct Pass {
 
     /// Whether any part of the pass above a certain elevation is illuminated.
     public func hasAnyIllumination(aboveElevation elev: Double = 10) -> Bool {
-        return highestIlluminatedElevation >= elev
+        return highestIlluminated?.elev ?? 0 >= elev
+    }
+
+    /// Return segments of continuous illumination state.
+    /// For example if a sallite rises illuminated, and the enters shadow, the segments are going to be
+    /// `[(rise...entersShadow, true), (entersShadow...set, false)]`.
+    var illuminationSegments: [(ClosedRange<DatePosition>, Bool)] {
+        var segments = [(ClosedRange<DatePosition>, Bool)]()
+        var start = rise
+        var isIlluminated = illumination.initiallyIlluminated
+        for illuminationChange in illumination.changes {
+            segments.append(
+                (start...illuminationChange.datePosition, isIlluminated)
+            )
+            start = illuminationChange.datePosition
+            isIlluminated = {
+                switch illuminationChange {
+                case .entersShadow(_):
+                    return false
+                case .exitsShadow(_):
+                    return true
+                }
+            }()
+        }
+        segments.append(
+            (start...set, isIlluminated)
+        )
+        return segments
+    }
+
+    /// Whether the satellite is illuminated at a certain time.
+    /// - Parameter julianDate: The julian date.
+    /// - Returns: Whether the satellite is illuminated.
+    public func isIlluminated(at julianDate: Double) -> Bool {
+        for (datePositionRange, isIlluminated) in illuminationSegments where isIlluminated {
+            let julianDateRange = datePositionRange.lowerBound.julianDate...datePositionRange.upperBound.julianDate
+            return julianDateRange.contains(julianDate)
+        }
+        return false
     }
 
     /// The elevation of the sun at transit. A satellite pass can usually only be seen after civil twilight or before civil dawn when sun is

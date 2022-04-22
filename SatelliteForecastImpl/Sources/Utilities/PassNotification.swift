@@ -33,18 +33,45 @@ public struct PassNotification {
     public let satelliteName: String
     public let category: SatelliteCategory?
     public let observer: LatLonAlt
+    public let timing: Timing
     public let timeOffset: TimeInterval
 
-    public init(pass: Pass, satelliteName: String, category: SatelliteCategory?, observer: LatLonAlt, timeOffset: TimeInterval) {
+    public enum Timing: Equatable, Codable, CaseIterable {
+        case rise
+        case set
+        case transit
+        case highestIlluminated
+    }
+
+    public init(
+        pass: Pass,
+        satelliteName: String,
+        category: SatelliteCategory?,
+        observer: LatLonAlt,
+        timing: Timing,
+        timeOffset: TimeInterval
+    ) {
         self.pass = pass
         self.satelliteName = satelliteName
         self.category = category
         self.observer = observer
+        self.timing = timing
         self.timeOffset = timeOffset
     }
 
     public var alertJulianDate: Double {
-        pass.rise.julianDate + timeOffset * TimeConstants.sec2day
+        let baseJulianDate: Double
+        switch timing {
+        case .rise:
+            baseJulianDate = pass.rise.julianDate
+        case .set:
+            baseJulianDate = pass.set.julianDate
+        case .transit:
+            baseJulianDate = pass.transit.julianDate
+        case .highestIlluminated:
+            baseJulianDate = pass.highestIlluminated?.julianDate ?? 0
+        }
+        return baseJulianDate + timeOffset * TimeConstants.sec2day
     }
 }
 

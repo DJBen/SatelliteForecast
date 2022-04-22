@@ -137,12 +137,12 @@ enum LocalizedStrings {
                 if pass.illumination.changes.isEmpty {
                     visibilityString = String(
                         format: entirelyVisibleFormat,
-                        pass.highestIlluminatedElevation
+                        pass.highestIlluminated?.elev ?? 0
                     )
                 } else {
                     visibilityString = String(
                         format: partiallyVisibleFormat,
-                        pass.highestIlluminatedElevation
+                        pass.highestIlluminated?.elev ?? 0
                     )
                 }
             case .daylight:

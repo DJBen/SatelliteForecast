@@ -14,11 +14,20 @@ import SwiftUI
 import CoreMotion
 
 public enum PassViewAction {
+    case showAlarmConfiguration(Bool)
 }
 
-public struct PassViewState: Equatable {
-    public init() {}
+public struct PassViewState {
+    public var showAlarmConfigurationModal: Bool
+
+    public init(
+        showAlarmConfigurationModal: Bool = false
+    ) {
+        self.showAlarmConfigurationModal = showAlarmConfigurationModal
+    }
 }
+
+extension PassViewState: Equatable {}
 
 /// The satellite detail view shows satellite passes and the sky chart during the first visible pass (if available).
 public struct PassView: View {
@@ -27,17 +36,20 @@ public struct PassView: View {
     var context: PassViewContext
     var elevationGraphProducer: ViewProducer<SatelliteElevationGraphContext, SatelliteElevationGraph>
     var skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
+    var passAlarmSettingsProducer: ViewProducer<PassAlarmSettingsModalViewContext, PassAlarmSettingsModalView>
 
     public init(
         viewModel: ObservableViewModel<PassViewAction, PassViewState>,
         context: PassViewContext,
         elevationGraphProducer: ViewProducer<SatelliteElevationGraphContext, SatelliteElevationGraph>,
-        skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
+        skyChartProducer: ViewProducer<SkyChartContext, SkyChart>,
+        passAlarmSettingsProducer: ViewProducer<PassAlarmSettingsModalViewContext, PassAlarmSettingsModalView>
     ) {
         self.viewModel = viewModel
         self.context = context
         self.elevationGraphProducer = elevationGraphProducer
         self.skyChartProducer = skyChartProducer
+        self.passAlarmSettingsProducer = passAlarmSettingsProducer
     }
 
     public var body: some View {
@@ -59,10 +71,10 @@ public struct PassView: View {
                 skyChartProducer.view(
                     SkyChartContext(
                         satelliteInfo: context.satelliteInfo,
-                        snapshots: context.snapshots,
+                        snapshots: context.passSnapshots.snapshots,
                         observer: context.observer,
-                        pass: context.pass,
-                        notableSnapshots: context.notableSnapshots,
+                        pass: context.passSnapshots.pass,
+                        notableSnapshots: context.passSnapshots.notableSnapshots,
                         configs: .preset,
                         quality: .full,
                         julianDateProvider: context.julianDateProvider,
@@ -73,16 +85,16 @@ public struct PassView: View {
                 Spacer(minLength: 10)
             }
             .clipShape(Rectangle())
-            .navigationTitle(Date(julianDate: context.pass.rise.julianDate).formatted(date: .abbreviated, time: .shortened))
+            .navigationTitle(Date(julianDate: context.passSnapshots.pass.rise.julianDate).formatted(date: .abbreviated, time: .shortened))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     VStack(alignment: .center, spacing: 4) {
-                        Text(Date(julianDate: context.pass.rise.julianDate).formatted(date: .abbreviated, time: .shortened))
+                        Text(Date(julianDate: context.passSnapshots.pass.rise.julianDate).formatted(date: .abbreviated, time: .shortened))
                             .font(.headline)
                             .frame(alignment: .center)
                             .multilineTextAlignment(.center)
-                        Text(PassView.descriptionToolbarText(for: context.pass))
+                        Text(PassView.descriptionToolbarText(for: context.passSnapshots.pass))
                             .lineLimit(2)
                             .font(.caption)
                             .frame(alignment: .center)
@@ -90,28 +102,54 @@ public struct PassView: View {
                         Color.clear
                     }
                 }
+
+                ToolbarItem(
+                    placement: .primaryAction
+                ) {
+                    Button {
+                        viewModel.dispatch(.showAlarmConfiguration(true)
+                        )
+                    } label: {
+                        Image(systemName: "bell")
+                    }
+                }
             }
+            .sheet(
+                isPresented: $viewModel.state.showAlarmConfigurationModal,
+                onDismiss: {
+                    viewModel.dispatch(.showAlarmConfiguration(false)
+                    )
+                },
+                content: {
+                    passAlarmSettingsProducer.view(
+                        PassAlarmSettingsModalViewContext(
+                            satelliteName: context.satelliteInfo.ucsSat?.officialName ??  context.satelliteInfo.elements.commonName,
+                            category: context.category,
+                            passSnapshots: context.passSnapshots,
+                            observer: context.observer
+                        )
+                    )
+                }
+            )
         }
     }
 }
 
 public struct PassViewContext {
     public let satelliteInfo: SatelliteInfo
+    public let category: SatelliteCategory?
     public let julianDateRange: ClosedRange<Double>
     public let observer: LatLonAlt
-    public let snapshots: [SatelliteSnapshot]
-    public let pass: Pass
-    public let notableSnapshots: NotableSnapshots
+    public let passSnapshots: PassSnapshots
     public let julianDateProvider: () -> Double
     public let deviceMotion: Loadable<CMDeviceMotion, Error>
 
-    public init(satelliteInfo: SatelliteInfo, julianDateRange: ClosedRange<Double>, observer: LatLonAlt, snapshots: [SatelliteSnapshot], pass: Pass, notableSnapshots: NotableSnapshots, julianDateProvider: @escaping () -> Double, deviceMotion: Loadable<CMDeviceMotion, Error> = .notLoaded) {
+    public init(satelliteInfo: SatelliteInfo, category: SatelliteCategory?, julianDateRange: ClosedRange<Double>, observer: LatLonAlt, passSnapshots: PassSnapshots, julianDateProvider: @escaping () -> Double, deviceMotion: Loadable<CMDeviceMotion, Error> = .notLoaded) {
         self.satelliteInfo = satelliteInfo
+        self.category = category
         self.julianDateRange = julianDateRange
         self.observer = observer
-        self.snapshots = snapshots
-        self.pass = pass
-        self.notableSnapshots = notableSnapshots
+        self.passSnapshots = passSnapshots
         self.julianDateProvider = julianDateProvider
         self.deviceMotion = deviceMotion
     }
@@ -195,11 +233,10 @@ struct PassView_Previews: PreviewProvider {
         )
         let context = PassViewContext(
             satelliteInfo: SatelliteInfo(elements: elements),
+            category: nil,
             julianDateRange: julianDateRange,
             observer: observer,
-            snapshots: passSnapshots[0].snapshots,
-            pass: passSnapshots[0].pass,
-            notableSnapshots: passSnapshots[0].notableSnapshots,
+            passSnapshots: passSnapshots[0],
             julianDateProvider: { Date().julianDate }
         )
         let elevationGraphContext = SatelliteElevationGraphContext(
@@ -242,7 +279,8 @@ struct PassView_Previews: PreviewProvider {
                         )
                     )
                 )
-            )
+            ),
+            passAlarmSettingsProducer: .crash
         )
         .environment(\.julianDateRangeKey, julianDateRange)
         .environment(\.backgroundSkyJulianDateKey, passSnapshots[0].pass.rise.julianDate.roundJulianDate(.toMins(1)))

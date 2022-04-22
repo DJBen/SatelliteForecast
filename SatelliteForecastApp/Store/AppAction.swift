@@ -38,6 +38,7 @@ enum AppAction {
     case alarmSettingsView(AlarmSettingsViewAction)
     case realtimeSky(RealtimeSkyViewAction)
     case realtimeSkyOutput(RealtimeSkyViewOutput)
+    case passAlarmSettings(PassAlarmSettingsModalViewAction)
 }
 
 extension AppAction {
@@ -335,6 +336,17 @@ extension AppAction {
         set {
             guard case .realtimeSkyOutput = self, let newValue = newValue else { return }
             self = .realtimeSkyOutput(newValue)
+        }
+    }
+
+    public var passAlarmSettings: PassAlarmSettingsModalViewAction? {
+        get {
+            guard case let .passAlarmSettings(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .passAlarmSettings = self, let newValue = newValue else { return }
+            self = .passAlarmSettings(newValue)
         }
     }
 }

@@ -28,6 +28,10 @@
 		EF16817127D5DC03001BA9C3 /* SatelliteOverviewReducer+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF16817027D5DC03001BA9C3 /* SatelliteOverviewReducer+Wiring.swift */; };
 		EF26C32D2810A7E100235E0B /* LocationMiddleware+ElementsPropagator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF26C32C2810A7E100235E0B /* LocationMiddleware+ElementsPropagator.swift */; };
 		EF26C3322810AB0600235E0B /* LocationMiddleware+RealtimeSky.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF26C3312810AB0600235E0B /* LocationMiddleware+RealtimeSky.swift */; };
+		EF26C33A281151BA00235E0B /* PassViewReducer+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF26C339281151BA00235E0B /* PassViewReducer+Wiring.swift */; };
+		EF26C33C2812214C00235E0B /* PassAlarmSettingsModalView+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF26C33B2812214C00235E0B /* PassAlarmSettingsModalView+Wiring.swift */; };
+		EF26C34428128C8400235E0B /* PassAlarmSettingsModalViewReducer+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF26C34328128C8400235E0B /* PassAlarmSettingsModalViewReducer+Wiring.swift */; };
+		EF26C34628128E7900235E0B /* PassAlarmSettingsMiddleware+Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF26C34528128E7900235E0B /* PassAlarmSettingsMiddleware+Notification.swift */; };
 		EF2EF4DA27B252EA000D5EC8 /* AppStateMappable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF2EF4D927B252EA000D5EC8 /* AppStateMappable.swift */; };
 		EF2EF4DD27B42661000D5EC8 /* LoggerMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF2EF4DC27B42661000D5EC8 /* LoggerMiddleware.swift */; };
 		EF325F3B27F9794600FDE42E /* ElementsPropagatorReducer+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF325F3A27F9794600FDE42E /* ElementsPropagatorReducer+Wiring.swift */; };
@@ -140,6 +144,10 @@
 		EF16817027D5DC03001BA9C3 /* SatelliteOverviewReducer+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SatelliteOverviewReducer+Wiring.swift"; sourceTree = "<group>"; };
 		EF26C32C2810A7E100235E0B /* LocationMiddleware+ElementsPropagator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocationMiddleware+ElementsPropagator.swift"; sourceTree = "<group>"; };
 		EF26C3312810AB0600235E0B /* LocationMiddleware+RealtimeSky.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocationMiddleware+RealtimeSky.swift"; sourceTree = "<group>"; };
+		EF26C339281151BA00235E0B /* PassViewReducer+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PassViewReducer+Wiring.swift"; sourceTree = "<group>"; };
+		EF26C33B2812214C00235E0B /* PassAlarmSettingsModalView+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PassAlarmSettingsModalView+Wiring.swift"; sourceTree = "<group>"; };
+		EF26C34328128C8400235E0B /* PassAlarmSettingsModalViewReducer+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PassAlarmSettingsModalViewReducer+Wiring.swift"; sourceTree = "<group>"; };
+		EF26C34528128E7900235E0B /* PassAlarmSettingsMiddleware+Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PassAlarmSettingsMiddleware+Notification.swift"; sourceTree = "<group>"; };
 		EF2EF4D727B11C0A000D5EC8 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		EF2EF4D927B252EA000D5EC8 /* AppStateMappable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateMappable.swift; sourceTree = "<group>"; };
 		EF2EF4DC27B42661000D5EC8 /* LoggerMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggerMiddleware.swift; sourceTree = "<group>"; };
@@ -335,6 +343,7 @@
 			isa = PBXGroup;
 			children = (
 				EFB6112227F4F779003557E5 /* PassView+Wiring.swift */,
+				EF26C339281151BA00235E0B /* PassViewReducer+Wiring.swift */,
 			);
 			path = PassView;
 			sourceTree = "<group>";
@@ -474,6 +483,9 @@
 			children = (
 				EF74263127FFDBD000DAF469 /* AlarmSettingsViewMiddleware+Notification.swift */,
 				EF74263327FFDBD900DAF469 /* AlarmSettingsView+Wiring.swift */,
+				EF26C33B2812214C00235E0B /* PassAlarmSettingsModalView+Wiring.swift */,
+				EF26C34328128C8400235E0B /* PassAlarmSettingsModalViewReducer+Wiring.swift */,
+				EF26C34528128E7900235E0B /* PassAlarmSettingsMiddleware+Notification.swift */,
 			);
 			path = AlarmSettingsView;
 			sourceTree = "<group>";
@@ -796,6 +808,7 @@
 				EF16816127D4226C001BA9C3 /* RootView+Wiring.swift in Sources */,
 				EF74263927FFE5AC00DAF469 /* SatelliteListView+Wiring.swift in Sources */,
 				EF325F3D27F979D400FDE42E /* ElementsPropagatorResources+Wiring.swift in Sources */,
+				EF26C34628128E7900235E0B /* PassAlarmSettingsMiddleware+Notification.swift in Sources */,
 				EF7C6658269AA0D00017A007 /* SingleSatelliteWrappingViewMiddleware+ElementsLoader.swift in Sources */,
 				EF3D09A5268875B100B84232 /* NavigationState.swift in Sources */,
 				EF66ED4827FBE44300CD3136 /* LocationState+Wiring.swift in Sources */,
@@ -806,11 +819,13 @@
 				EF16815427D2B59D001BA9C3 /* BackgroundSkyViewReducer+Wiring.swift in Sources */,
 				EFB6112A27F50EAC003557E5 /* SkyChartReducer+Wiring.swift in Sources */,
 				EF847BF826CF2AB40004806F /* NotificationReducer.swift in Sources */,
+				EF26C33A281151BA00235E0B /* PassViewReducer+Wiring.swift in Sources */,
 				EFB6112827F50E1E003557E5 /* SkyChartMiddleware+Wiring.swift in Sources */,
 				EF16815B27D2D8E2001BA9C3 /* RealtimeSkyViewMiddleware+Wiring.swift in Sources */,
 				EFED97BD27D6D6C3003FC289 /* RootViewMiddleware+Wiring.swift in Sources */,
 				EF465653267BE7680040B762 /* AppDelegate.swift in Sources */,
 				EF16815927D2D6CF001BA9C3 /* RealtimeSkyViewReducer+Wiring.swift in Sources */,
+				EF26C33C2812214C00235E0B /* PassAlarmSettingsModalView+Wiring.swift in Sources */,
 				EFB6112627F509A9003557E5 /* AllPassesView+Wiring.swift in Sources */,
 				EFED97B727D62053003FC289 /* LocalElementsLoader.swift in Sources */,
 				EF7A3192266B6AFC00CC33C0 /* AppState.swift in Sources */,
@@ -831,6 +846,7 @@
 				EF16816527D42F6B001BA9C3 /* DynamicTabBarItemView.swift in Sources */,
 				EF2EF4DD27B42661000D5EC8 /* LoggerMiddleware.swift in Sources */,
 				EF74263B2800E2FA00DAF469 /* SatelliteListViewMiddlware+ElementsPropagator.swift in Sources */,
+				EF26C34428128C8400235E0B /* PassAlarmSettingsModalViewReducer+Wiring.swift in Sources */,
 				EF16815227D2B557001BA9C3 /* BackgroundSkyViewMiddleware+Wiring.swift in Sources */,
 				EF833AFA26AD6068003EEBB6 /* ShakeMotion+Notification.swift in Sources */,
 				EFB6111D27F4EA47003557E5 /* SettingsOverviewReducer+Wiring.swift in Sources */,

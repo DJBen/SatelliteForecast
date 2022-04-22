@@ -25,6 +25,7 @@ Pod::Spec.new do |s|
   }
 
   s.dependency 'BTree', "~> 4.1.0"
+  s.dependency 'SwiftRex', '0.8.9'
   s.dependency 'CombineRex', "0.8.9"
   s.dependency 'CombineRextensions'
   s.dependency 'SatelliteKit', '1.0.0.LOCAL'

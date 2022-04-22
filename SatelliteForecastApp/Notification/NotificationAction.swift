@@ -17,12 +17,14 @@ enum NotificationAction {
     // Persistence
     case loadNotificationsFromPersistenceStorage
     case saveNotificationsToPersistenceStorage(Set<ScheduledPassNotification>)
-    
+
     // Notification center
     case registerNotifications
     case requestNotificationAuthorization(pendingNotification: PassNotification? = nil)
     case fetchPendingNotificationRequests
     case fetchDeliveredNotifications
+    case generatePreviewAndScheduleNotification(PassNotification, passSnapshots: PassSnapshots)
+    case removePreviewAndUnscheduleNotification(Pass)
     case scheduleNotification(PassNotification)
     case cancelNotifications(ids: Set<String>)
     
