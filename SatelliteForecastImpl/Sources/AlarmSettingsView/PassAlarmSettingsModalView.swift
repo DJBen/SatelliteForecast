@@ -13,6 +13,7 @@ import SatelliteKit
 public enum PassAlarmSettingsModalViewAction {
     case dismissModal
     case scheduleAlarm(PassNotification, passSnapshots: PassSnapshots)
+    case unscheduleAlarm(Pass)
 }
 
 extension PassAlarmSettingsModalViewAction: Equatable {}
@@ -65,6 +66,18 @@ public struct PassAlarmSettingsModalView: View {
     ) {
         self.viewModel = viewModel
         self.context = context
+
+        if let scheduledPassNotification = viewModel.state.scheduledPassNotifications.first(where: { $0.id == context.passSnapshots.pass.notificationIdentifier }) {
+            _selectedTiming = State(initialValue: scheduledPassNotification.notification.timing)
+            _offsetDuration = State(initialValue: -scheduledPassNotification.notification.timeOffset)
+        } else {
+            _selectedTiming = State(initialValue: .rise)
+            _offsetDuration = State(initialValue: 0)
+        }
+    }
+
+    private var isNotificationScheduled: Bool {
+        return viewModel.state.scheduledPassNotifications.contains(where: { $0.id == context.passSnapshots.pass.notificationIdentifier })
     }
 
     private func description(for timing: PassNotification.Timing) -> String {
@@ -109,7 +122,12 @@ public struct PassAlarmSettingsModalView: View {
             selectedTiming = timing
         } label: {
             HStack {
-                Text(description(for: timing))
+                Text(
+                    description(for: timing)
+                )
+                .if(isNotificationScheduled) { text in
+                    text.foregroundColor(.secondary)
+                }
 
                 Spacer()
 
@@ -140,6 +158,7 @@ public struct PassAlarmSettingsModalView: View {
             }
         }
         .buttonStyle(AlarmTimingButtonStyle())
+        .disabled(isNotificationScheduled)
     }
 
     public var body: some View {
@@ -175,7 +194,8 @@ public struct PassAlarmSettingsModalView: View {
                 .padding(.top, 16)
 
                 TimeDurationPicker(
-                    duration: $offsetDuration
+                    duration: $offsetDuration,
+                    isDisabled: isNotificationScheduled
                 )
 
                 Spacer()
@@ -203,32 +223,50 @@ public struct PassAlarmSettingsModalView: View {
                 .padding(.horizontal, 16)
                 .padding(.bottom, 16)
 
-                Button {
-                    let passNotification = PassNotification(
-                        pass: context.passSnapshots.pass,
-                        satelliteName: context.satelliteName,
-                        category: context.category,
-                        observer: context.observer,
-                        timing: selectedTiming,
-                        timeOffset: -offsetDuration
-                    )
-                    viewModel.dispatch(
-                        .scheduleAlarm(
-                            passNotification,
-                            passSnapshots: context.passSnapshots
+                if isNotificationScheduled {
+                    Button(role: .destructive) {
+                        viewModel.dispatch(
+                            .unscheduleAlarm(
+                                context.passSnapshots.pass
+                            )
                         )
-                    )
-                } label: {
-                    Text(
-                        ConfirmButton.title
-                    )
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .font(.headline.weight(.bold))
+                    } label: {
+                        Text(
+                            DeleteButton.title
+                        )
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .font(.headline.weight(.bold))
+                    }
+                    .buttonStyle(.borderedProminent)
+                } else {
+                    Button {
+                        let passNotification = PassNotification(
+                            pass: context.passSnapshots.pass,
+                            satelliteName: context.satelliteName,
+                            category: context.category,
+                            observer: context.observer,
+                            timing: selectedTiming,
+                            timeOffset: -offsetDuration
+                        )
+                        viewModel.dispatch(
+                            .scheduleAlarm(
+                                passNotification,
+                                passSnapshots: context.passSnapshots
+                            )
+                        )
+                    } label: {
+                        Text(
+                            ConfirmButton.title
+                        )
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .font(.headline.weight(.bold))
+                    }
+                    .buttonStyle(.borderedProminent)
                 }
-                .buttonStyle(.borderedProminent)
             }
-            .navigationTitle(Text(NavigationBar.title))
+            .navigationTitle(Text(isNotificationScheduled ? NavigationBar.viewAlarmTitle : NavigationBar.title))
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(
@@ -245,8 +283,11 @@ public struct PassAlarmSettingsModalView: View {
 
 struct AlarmTimingButtonStyle: ButtonStyle {
     func makeBody(configuration: Self.Configuration) -> some View {
-        configuration.label
-            .background(configuration.isPressed ? Color(UIColor.tertiarySystemGroupedBackground) : Color(UIColor.secondarySystemGroupedBackground))
+        if configuration.isPressed {
+            return configuration.label.background(Color(UIColor.tertiarySystemGroupedBackground))
+        } else {
+            return configuration.label.background(Color(UIColor.secondarySystemGroupedBackground))
+        }
     }
 }
 
@@ -258,6 +299,14 @@ extension PassAlarmSettingsModalView {
             bundle: .main,
             value: "Schedule alarm",
             comment: "Navigation title of pass alarm settings."
+        )
+
+        static let viewAlarmTitle = NSLocalizedString(
+            "PassAlarmSettingsModalView.navigationBar.title",
+            tableName: nil,
+            bundle: .main,
+            value: "View alarm",
+            comment: "Navigation title of pass alarm settings, view alarm"
         )
 
         static let dismiss = NSLocalizedString(
@@ -291,6 +340,16 @@ extension PassAlarmSettingsModalView {
             bundle: .main,
             value: "Schedule alarm",
             comment: "Title of confirm button of pass alarm settings."
+        )
+    }
+
+    enum DeleteButton {
+        static let title = NSLocalizedString(
+            "PassAlarmSettingsModalView.deleteButton.title",
+            tableName: nil,
+            bundle: .main,
+            value: "Delete alarm",
+            comment: "Title of delete button of pass alarm settings."
         )
     }
 

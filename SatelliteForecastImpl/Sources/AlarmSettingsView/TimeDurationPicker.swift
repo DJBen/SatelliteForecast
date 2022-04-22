@@ -11,6 +11,7 @@ struct TimeDurationPicker: UIViewRepresentable {
     typealias UIViewType = UIPickerView
 
     @Binding var duration: TimeInterval
+    var isDisabled: Bool = false
 
     func makeUIView(context: Context) -> UIPickerView {
         let timeDurationPicker = UIPickerView()
@@ -21,6 +22,7 @@ struct TimeDurationPicker: UIViewRepresentable {
         timeDurationPicker.selectRow(index0, inComponent: 0, animated: false)
         timeDurationPicker.selectRow(index1, inComponent: 1, animated: false)
         timeDurationPicker.selectRow(index2, inComponent: 2, animated: false)
+        timeDurationPicker.isUserInteractionEnabled = !isDisabled
 
         // Add fixed labels to highlight view
         let hourLabel = UILabel()
@@ -55,7 +57,7 @@ struct TimeDurationPicker: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: UIPickerView, context: Context) {
-
+        uiView.isUserInteractionEnabled = !isDisabled
     }
 
     func makeCoordinator() -> TimeDurationPicker.Coordinator {

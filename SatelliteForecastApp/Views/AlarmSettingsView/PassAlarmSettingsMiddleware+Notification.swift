@@ -18,6 +18,10 @@ extension EffectMiddleware where InputActionType == PassAlarmSettingsModalViewAc
                 return .just(
                     .generatePreviewAndScheduleNotification(passNotification, passSnapshots: passSnapshots)
                 )
+            case .unscheduleAlarm(let pass):
+                return .just(
+                    .removePreviewAndUnscheduleNotification(pass)
+                )
             }
         }
     }

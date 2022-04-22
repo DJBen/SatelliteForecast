@@ -18,11 +18,14 @@ public enum PassViewAction {
 }
 
 public struct PassViewState {
+    public var scheduledPassNotifications: Set<ScheduledPassNotification>
     public var showAlarmConfigurationModal: Bool
 
     public init(
+        scheduledPassNotifications: Set<ScheduledPassNotification> = [],
         showAlarmConfigurationModal: Bool = false
     ) {
+        self.scheduledPassNotifications = scheduledPassNotifications
         self.showAlarmConfigurationModal = showAlarmConfigurationModal
     }
 }
@@ -110,7 +113,11 @@ public struct PassView: View {
                         viewModel.dispatch(.showAlarmConfiguration(true)
                         )
                     } label: {
-                        Image(systemName: "bell")
+                        if viewModel.state.scheduledPassNotifications.contains(where: { $0.id == context.passSnapshots.pass.notificationIdentifier }) {
+                            Image(systemName: "bell.fill")
+                        } else {
+                            Image(systemName: "bell")
+                        }
                     }
                 }
             }

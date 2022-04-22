@@ -12,7 +12,9 @@ extension Reducer where ActionType == PassAlarmSettingsModalViewAction, StateTyp
         switch action {
         case .dismissModal:
             state.showAlarmConfigurationModal = false
-        case .scheduleAlarm(_):
+        case .scheduleAlarm(_, _):
+            state.showAlarmConfigurationModal = false
+        case .unscheduleAlarm(_):
             state.showAlarmConfigurationModal = false
         }
     }

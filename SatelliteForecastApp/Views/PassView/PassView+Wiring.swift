@@ -13,6 +13,7 @@ import SatelliteForecastImpl
 extension PassViewState: AppStateMappable {
     static func project(appState: AppState) -> PassViewState {
         return PassViewState(
+            scheduledPassNotifications: appState.notificationResources.scheduledPassNotifications,
             showAlarmConfigurationModal: appState.navigationState.listNavigation.showAlarmConfigurationModal
         )
     }
