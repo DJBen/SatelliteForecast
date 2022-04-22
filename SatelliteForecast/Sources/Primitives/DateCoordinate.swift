@@ -17,4 +17,4 @@ public struct DateCoordinate {
     }
 }
 
-extension DateCoordinate: Equatable {}
+extension DateCoordinate: Equatable, Hashable {}

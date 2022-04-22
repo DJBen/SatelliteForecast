@@ -45,6 +45,7 @@ public struct AllPassesViewState {
     public var location: CLLocation?
     public var placemark: CLPlacemark?
     public var selectedPassIndex: Int?
+    public var showsPassAlarmSettingsModal: Bool
     public var satelliteCategory: SatelliteCategory?
     public var satelliteTrails: [UInt: SatelliteTrails] = [:]
 
@@ -56,6 +57,7 @@ public struct AllPassesViewState {
         location: CLLocation? = nil,
         placemark: CLPlacemark? = nil,
         selectedPassIndex: Int? = nil,
+        showsPassAlarmSettingsModal: Bool = false,
         satelliteCategory: SatelliteCategory? = nil,
         satelliteTrails: [UInt : SatelliteTrails] = [:]
     ) {
@@ -66,6 +68,7 @@ public struct AllPassesViewState {
         self.location = location
         self.placemark = placemark
         self.selectedPassIndex = selectedPassIndex
+        self.showsPassAlarmSettingsModal = showsPassAlarmSettingsModal
         self.satelliteCategory = satelliteCategory
         self.satelliteTrails = satelliteTrails
     }
@@ -115,12 +118,21 @@ public struct AllPassesView: View {
     .autoconnect()
     .map(\.julianDate)
 
-    struct MissionControlState {
+    let coordinateRefreshTimer = Timer.publish(
+        every: 1,
+        on: .main,
+        in: .common
+    )
+    .autoconnect()
+    .map(\.julianDate)
+
+    struct MissionControlState: Equatable, Hashable {
         var dateCoordinate: DateCoordinate
         var groundTrack: [DateCoordinate]
     }
 
     @State var missionControlState: MissionControlState?
+    @State var missionControlStateForCoordinate: MissionControlState?
 
     public init(
         viewModel: ObservableViewModel<AllPassesViewAction, AllPassesViewState>,
@@ -190,7 +202,8 @@ public struct AllPassesView: View {
         MotionManagerView(
             isActive: Binding<Bool>(
                 get: {
-                    viewModel.state.selectedPassIndex == item.index
+                    // Disables the motion when modal is up, because it seems to interfere with picker view
+                    viewModel.state.selectedPassIndex == item.index && !viewModel.state.showsPassAlarmSettingsModal
                 },
                 set: { _ in }
             )
@@ -314,15 +327,19 @@ public struct AllPassesView: View {
     }
     
     @ViewBuilder private func mapHeader() -> some View {
-        if let missionControlState = missionControlState {
-            VStack {
+        VStack {
+            if let missionControlState = missionControlState {
                 MissionControlView(
                     currentDateCoordinate: missionControlState.dateCoordinate,
                     satelliteGroundTrack: missionControlState.groundTrack
                 )
                 .aspectRatio(1.33, contentMode: .fill)
                 .padding([.leading, .trailing], -16)
+            } else {
+                Color.clear
+            }
 
+            if let missionControlState = missionControlStateForCoordinate {
                 Text(
                     CLLocationCoordinate2D(missionControlState.dateCoordinate.coordinate).formattedString
                 )
@@ -331,15 +348,14 @@ public struct AllPassesView: View {
                 .foregroundColor(.secondary)
 
                 Text(
-                    Self.MissionControlHeader.altitudeString(missionControlState.dateCoordinate.coordinate.alt)
+                    Self.MissionControlHeader.altitudeString(
+                        missionControlState.dateCoordinate.coordinate.alt
+                    )
                 )
                 .textCase(nil)
                 .font(.caption)
                 .foregroundColor(.secondary)
             }
-
-        } else {
-            Color.clear
         }
     }
 
@@ -429,14 +445,17 @@ public struct AllPassesView: View {
             }
         }
         .onReceive(refreshTimer) { timerJulianDate in
-            self.propagateMissionControl(julianDate: timerJulianDate + viewModel.state.julianDateOffset)
+            missionControlState = missionControlState(julianDate: timerJulianDate + viewModel.state.julianDateOffset)
+        }
+        .onReceive(coordinateRefreshTimer) { timerJulianDate in
+            missionControlStateForCoordinate = missionControlState(julianDate: timerJulianDate + viewModel.state.julianDateOffset)
         }
         .onLoad {
-            self.propagateMissionControl(julianDate: context.julianDateProvider() + viewModel.state.julianDateOffset)
+            missionControlState = missionControlState(julianDate: context.julianDateProvider() + viewModel.state.julianDateOffset)
         }
     }
 
-    private func propagateMissionControl(julianDate: Double) {
+    private func missionControlState(julianDate: Double) -> MissionControlState? {
         let jd = julianDate + viewModel.state.julianDateOffset
         do {
             let satelliteCoordinate = try Satellite(
@@ -448,12 +467,13 @@ public struct AllPassesView: View {
                 julianDateRange: (jd - TimeConstants.hrs2day)...(jd + TimeConstants.hrs2day),
                 interval: TimeConstants.min2day
             )
-            self.missionControlState = MissionControlState(
+            return MissionControlState(
                 dateCoordinate: DateCoordinate(julianDate: jd, coordinate: satelliteCoordinate),
                 groundTrack: groundTrack
             )
         } catch {
             print("Error generating ground track: \(error)")
+            return nil
         }
     }
 }

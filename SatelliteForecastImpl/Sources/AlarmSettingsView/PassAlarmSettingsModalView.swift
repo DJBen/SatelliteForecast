@@ -267,6 +267,7 @@ public struct PassAlarmSettingsModalView: View {
                 }
             }
             .navigationTitle(Text(isNotificationScheduled ? NavigationBar.viewAlarmTitle : NavigationBar.title))
+            .navigationBarTitleDisplayMode(UIScreen.main.bounds.height > 700 ? .automatic : .inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(
