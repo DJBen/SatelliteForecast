@@ -121,11 +121,10 @@ public struct PassView: View {
                     }
                 }
             }
-            .sheet(
+            .fullScreenCover(
                 isPresented: $viewModel.state.showAlarmConfigurationModal,
                 onDismiss: {
-                    viewModel.dispatch(.showAlarmConfiguration(false)
-                    )
+                    viewModel.dispatch(.showAlarmConfiguration(false))
                 },
                 content: {
                     passAlarmSettingsProducer.view(

@@ -58,9 +58,14 @@ public struct AlarmSettingsView: View {
                 Spacer()
                 
                 if item.notification.timeOffset != 0 {
-                    Text(AlarmSettingsView.alarmOffsetDescription(timeInterval: item.notification.timeOffset))
-                        .font(.caption)
-                        .foregroundColor(Color(UIColor.secondaryLabel))
+                    Text(
+                        AlarmSettingsView.alarmOffsetDescription(
+                            timing: item.notification.timing,
+                            offset: item.notification.timeOffset
+                        )
+                    )
+                    .font(.caption)
+                    .foregroundColor(Color(UIColor.secondaryLabel))
                 }
             }
                         
@@ -137,30 +142,53 @@ public struct AlarmSettingsView: View {
 }
 
 extension AlarmSettingsView {
-    static func alarmOffsetDescription(timeInterval: TimeInterval) -> String {
-        let beforeFormat = NSLocalizedString(
-            "AlarmSettingsView.alarmOffsetDescription.before",
-            tableName: nil,
-            bundle: .main,
-            value: "%@ before rise",
-            comment: "The time interval description for each alarm in the alarm settings view"
-        )
+    static func alarmOffsetDescription(timing: PassNotification.Timing, offset: TimeInterval) -> String {
+        let beforeFormat: String
+        switch timing {
+        case .rise:
+            beforeFormat = NSLocalizedString(
+                "AlarmSettingsView.alarmOffsetDescription.rise",
+                tableName: nil,
+                bundle: .main,
+                value: "%@ before rise",
+                comment: "The timing and offset description for the alarm in the alarm settings view, rise."
+            )
 
-        let afterFormat = NSLocalizedString(
-            "AlarmSettingsView.alarmOffsetDescription.after",
-            tableName: nil,
-            bundle: .main,
-            value: "%@ after rise",
-            comment: "The time interval description for each alarm in the alarm settings view"
-        )
+        case .transit:
+            beforeFormat = NSLocalizedString(
+                "AlarmSettingsView.alarmOffsetDescription.transit",
+                tableName: nil,
+                bundle: .main,
+                value: "%@ before highest point",
+                comment: "The timing and offset description for the alarm in the alarm settings view, transit."
+            )
+
+        case .set:
+            beforeFormat = NSLocalizedString(
+                "AlarmSettingsView.alarmOffsetDescription.set",
+                tableName: nil,
+                bundle: .main,
+                value: "%@ before set",
+                comment: "The timing and offset description for the alarm in the alarm settings view, set."
+            )
+
+        case .highestIlluminated:
+            beforeFormat = NSLocalizedString(
+                "AlarmSettingsView.alarmOffsetDescription.highestIlluminated",
+                tableName: nil,
+                bundle: .main,
+                value: "%@ before highest illuminated",
+                comment: "The timing and offset description for the alarm in the alarm settings view, highest illuminated."
+            )
+        }
 
         let formatter = DateComponentsFormatter()
         formatter.allowedUnits = [.hour, .minute]
         formatter.unitsStyle = .short
 
         return String(
-            format: timeInterval > 0 ? afterFormat : beforeFormat,
-            formatter.string(from: abs(timeInterval))!
+            format: beforeFormat,
+            formatter.string(from: abs(offset))!
         )
     }
 

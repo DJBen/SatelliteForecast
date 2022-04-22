@@ -45,6 +45,7 @@ public struct AllPassesViewState {
     public var location: CLLocation?
     public var placemark: CLPlacemark?
     public var selectedPassIndex: Int?
+    public var showsPassAlarmSettingsModal: Bool
     public var satelliteCategory: SatelliteCategory?
     public var satelliteTrails: [UInt: SatelliteTrails] = [:]
 
@@ -56,6 +57,7 @@ public struct AllPassesViewState {
         location: CLLocation? = nil,
         placemark: CLPlacemark? = nil,
         selectedPassIndex: Int? = nil,
+        showsPassAlarmSettingsModal: Bool = false,
         satelliteCategory: SatelliteCategory? = nil,
         satelliteTrails: [UInt : SatelliteTrails] = [:]
     ) {
@@ -66,6 +68,7 @@ public struct AllPassesViewState {
         self.location = location
         self.placemark = placemark
         self.selectedPassIndex = selectedPassIndex
+        self.showsPassAlarmSettingsModal = showsPassAlarmSettingsModal
         self.satelliteCategory = satelliteCategory
         self.satelliteTrails = satelliteTrails
     }
@@ -190,7 +193,8 @@ public struct AllPassesView: View {
         MotionManagerView(
             isActive: Binding<Bool>(
                 get: {
-                    viewModel.state.selectedPassIndex == item.index
+                    // Disables the motion when modal is up, because it seems to interfere with picker view
+                    viewModel.state.selectedPassIndex == item.index && !viewModel.state.showsPassAlarmSettingsModal
                 },
                 set: { _ in }
             )

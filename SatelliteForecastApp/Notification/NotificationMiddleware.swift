@@ -193,8 +193,8 @@ extension EffectMiddleware where
                 return Effect { context -> AnyPublisher<DispatchedAction<AppAction>, Never> in
                     let subject = PassthroughSubject<DispatchedAction<AppAction>, Never>()
                     let julianDate = context.dependencies.dateProvider().julianDate + getState().debugMenu.effectiveOffset
-                    let julianDateDiff = passNotification.pass.rise.julianDate - julianDate
-                    let timeInterval = getState().debugMenu.rapidNotificationDelivery ? 10 : julianDateDiff * TimeConstants.day2sec
+                    let julianDateDiff = (passNotification.alertJulianDate - julianDate) * TimeConstants.day2sec
+                    let timeInterval = getState().debugMenu.rapidNotificationDelivery ? 10 : julianDateDiff
                     let trigger = UNTimeIntervalNotificationTrigger(
                         timeInterval: timeInterval,
                         repeats: false
