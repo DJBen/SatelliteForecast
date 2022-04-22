@@ -12,13 +12,8 @@ import SatelliteForecastImpl
 extension AlarmSettingsViewState: AppStateMappable {
     static func project(appState: AppState) -> AlarmSettingsViewState {
         AlarmSettingsViewState(
-            notificationItems: appState.notificationResources.scheduledPassNotifications.compactMap { scheduledNotification -> Item? in
-                return Item(
-                    id: scheduledNotification.id,
-                    passNotification: scheduledNotification.notification
-                )
-            }
-            .sorted(by: { $0.passNotification.pass.rise.julianDate < $1.passNotification.pass.rise.julianDate })
+            scheduledPassNotifications: appState.notificationResources.scheduledPassNotifications
+            .sorted(by: { $0.notification.pass.rise.julianDate < $1.notification.pass.rise.julianDate })
         )
     }
 

@@ -79,6 +79,8 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                     print(alarmSettingsCellAction)
                 case .alarmSettingsView(let alarmSettingsViewAction):
                     print(alarmSettingsViewAction)
+                case .passAlarmSettings(let passAlarmSettingsModalViewAction):
+                    print(passAlarmSettingsModalViewAction)
                 case .realtimeSky(let realtimeSkyViewAction):
                     switch realtimeSkyViewAction {
                     case .propagateCurrentEphemerides(_, observer: _, julianDate: _):

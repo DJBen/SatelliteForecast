@@ -12,11 +12,14 @@ import SatelliteForecastImpl
 
 extension PassViewState: AppStateMappable {
     static func project(appState: AppState) -> PassViewState {
-        return PassViewState()
+        return PassViewState(
+            scheduledPassNotifications: appState.notificationResources.scheduledPassNotifications,
+            showAlarmConfigurationModal: appState.navigationState.listNavigation.showAlarmConfigurationModal
+        )
     }
     
     static func apply(appState: inout AppState, state: PassViewState) {
-        
+        appState.navigationState.listNavigation.showAlarmConfigurationModal = state.showAlarmConfigurationModal
     }
 }
 
@@ -34,7 +37,8 @@ extension ViewProducer where Context == PassViewContext, ProducedView == PassVie
                 elevationGraphProducer: ViewProducer<SatelliteElevationGraphContext, SatelliteElevationGraph>
                     .satelliteElevationGraph(viewModel: viewModel),
                 skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
-                    .skyChart(viewModel: viewModel)
+                    .skyChart(viewModel: viewModel),
+                passAlarmSettingsProducer: ViewProducer<PassAlarmSettingsModalViewContext, PassAlarmSettingsModalView>.passAlarmSettings(viewModel: viewModel)
             )
         }
     }

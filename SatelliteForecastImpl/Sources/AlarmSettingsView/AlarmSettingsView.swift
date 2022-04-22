@@ -19,20 +19,10 @@ public enum AlarmSettingsViewAction {
 }
 
 public struct AlarmSettingsViewState: Equatable {
-    public struct Item: Equatable, Identifiable {
-        public let id: String
-        public let passNotification: PassNotification
+    public var scheduledPassNotifications: [ScheduledPassNotification] = []
 
-        public init(id: String, passNotification: PassNotification) {
-            self.id = id
-            self.passNotification = passNotification
-        }
-    }
-    
-    public var notificationItems: [Item] = []
-
-    public init(notificationItems: [AlarmSettingsViewState.Item] = []) {
-        self.notificationItems = notificationItems
+    public init(scheduledPassNotifications: [ScheduledPassNotification] = []) {
+        self.scheduledPassNotifications = scheduledPassNotifications
     }
 }
 
@@ -45,42 +35,47 @@ public struct AlarmSettingsView: View {
         self.viewModel = viewModel
     }
     
-    @ViewBuilder private func itemView(_ item: AlarmSettingsViewState.Item) -> some View {
+    @ViewBuilder private func itemView(_ item: ScheduledPassNotification) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
-                Text(item.passNotification.satelliteName)
+                Text(item.notification.satelliteName)
                     .font(.headline)
                     .foregroundColor(Color(UIColor.label))
                 
                 Spacer()
                 
-                Text(Date(julianDate: item.passNotification.alertJulianDate).formatted())
+                Text(Date(julianDate: item.notification.alertJulianDate).formatted())
                     .font(.subheadline)
                     .foregroundColor(Color(UIColor.secondaryLabel))
             }
 
             HStack {
-                Text(CLLocation(item.passNotification.observer).coordinate.formattedString)
+                Text(CLLocation(item.notification.observer).coordinate.formattedString)
                     .font(.caption)
                     .multilineTextAlignment(.leading)
                     .foregroundColor(.secondary)
                 
                 Spacer()
                 
-                if item.passNotification.timeOffset != 0 {
-                    Text(AlarmSettingsView.alarmOffsetDescription(timeInterval: item.passNotification.timeOffset))
-                        .font(.caption)
-                        .foregroundColor(Color(UIColor.secondaryLabel))
+                if item.notification.timeOffset != 0 {
+                    Text(
+                        AlarmSettingsView.alarmOffsetDescription(
+                            timing: item.notification.timing,
+                            offset: item.notification.timeOffset
+                        )
+                    )
+                    .font(.caption)
+                    .foregroundColor(Color(UIColor.secondaryLabel))
                 }
             }
                         
             VStack(alignment: .leading, spacing: 4) {
-                Text(AlarmSettingsView.passDescription(pass: item.passNotification.pass))
+                Text(AlarmSettingsView.passDescription(pass: item.notification.pass))
                     .font(.caption)
                     .multilineTextAlignment(.leading)
                     .foregroundColor(.primary)
                 
-                Text(AlarmSettingsView.passVisibilityDescription(pass: item.passNotification.pass))
+                Text(AlarmSettingsView.passVisibilityDescription(pass: item.notification.pass))
                     .font(.caption)
                     .multilineTextAlignment(.leading)
                     .foregroundColor(.primary)
@@ -91,14 +86,14 @@ public struct AlarmSettingsView: View {
     
     @ViewBuilder var alarmList: some View {
         List {
-            if viewModel.state.notificationItems.isEmpty {
+            if viewModel.state.scheduledPassNotifications.isEmpty {
                 VStack(spacing: 16) {
                     Image(systemName: "bell.circle")
                         .font(.title)
                         .foregroundColor(Color(UIColor.secondaryLabel))
                     Text(
                     """
-                    Your alarms will appear here. You may swipe on a pass to schedule an alarm.
+                    Your alarms will appear here. Schedule an alarm by tapping the \(Image(systemName: "bell")) inside a pass.
                     """
                     )
                     .foregroundColor(Color(UIColor.secondaryLabel))
@@ -113,14 +108,18 @@ public struct AlarmSettingsView: View {
                     )
                 )
             } else {
-                ForEach(viewModel.state.notificationItems) { item in
+                ForEach(viewModel.state.scheduledPassNotifications) { item in
                     itemView(item)
                 }
                 .onDelete { indexSet in
                     let ids = indexSet.map {
-                        viewModel.state.notificationItems[$0]
+                        viewModel.state.scheduledPassNotifications[$0]
                     }
-                        .reduce(into: Set<String>(), { $0.insert($1.id) })
+                    .reduce(
+                        into: Set<String>(), {
+                            $0.insert($1.id)
+                        }
+                    )
 
                     viewModel.dispatch(.deleteNotifications(ids: ids))
                 }
@@ -129,7 +128,7 @@ public struct AlarmSettingsView: View {
         .listStyle(.insetGrouped)
         .animation(
             .spring(),
-            value: viewModel.state.notificationItems
+            value: viewModel.state.scheduledPassNotifications
         )
     }
     
@@ -143,30 +142,53 @@ public struct AlarmSettingsView: View {
 }
 
 extension AlarmSettingsView {
-    static func alarmOffsetDescription(timeInterval: TimeInterval) -> String {
-        let beforeFormat = NSLocalizedString(
-            "AlarmSettingsView.alarmOffsetDescription.before",
-            tableName: nil,
-            bundle: .main,
-            value: "%@ before rise",
-            comment: "The time interval description for each alarm in the alarm settings view"
-        )
+    static func alarmOffsetDescription(timing: PassNotification.Timing, offset: TimeInterval) -> String {
+        let beforeFormat: String
+        switch timing {
+        case .rise:
+            beforeFormat = NSLocalizedString(
+                "AlarmSettingsView.alarmOffsetDescription.rise",
+                tableName: nil,
+                bundle: .main,
+                value: "%@ before rise",
+                comment: "The timing and offset description for the alarm in the alarm settings view, rise."
+            )
 
-        let afterFormat = NSLocalizedString(
-            "AlarmSettingsView.alarmOffsetDescription.after",
-            tableName: nil,
-            bundle: .main,
-            value: "%@ after rise",
-            comment: "The time interval description for each alarm in the alarm settings view"
-        )
+        case .transit:
+            beforeFormat = NSLocalizedString(
+                "AlarmSettingsView.alarmOffsetDescription.transit",
+                tableName: nil,
+                bundle: .main,
+                value: "%@ before highest point",
+                comment: "The timing and offset description for the alarm in the alarm settings view, transit."
+            )
+
+        case .set:
+            beforeFormat = NSLocalizedString(
+                "AlarmSettingsView.alarmOffsetDescription.set",
+                tableName: nil,
+                bundle: .main,
+                value: "%@ before set",
+                comment: "The timing and offset description for the alarm in the alarm settings view, set."
+            )
+
+        case .highestIlluminated:
+            beforeFormat = NSLocalizedString(
+                "AlarmSettingsView.alarmOffsetDescription.highestIlluminated",
+                tableName: nil,
+                bundle: .main,
+                value: "%@ before highest illuminated",
+                comment: "The timing and offset description for the alarm in the alarm settings view, highest illuminated."
+            )
+        }
 
         let formatter = DateComponentsFormatter()
         formatter.allowedUnits = [.hour, .minute]
         formatter.unitsStyle = .short
 
         return String(
-            format: timeInterval > 0 ? afterFormat : beforeFormat,
-            formatter.string(from: abs(timeInterval))!
+            format: beforeFormat,
+            formatter.string(from: abs(offset))!
         )
     }
 
@@ -215,7 +237,7 @@ extension AlarmSettingsView {
         case .visible:
             return String(
                 format: visibleFormat,
-                pass.highestIlluminatedElevation
+                pass.highestIlluminated?.elev ?? 0
             )
         case .daylight:
             return String(
@@ -258,13 +280,14 @@ struct AlarmSettingsView_Previews: PreviewProvider {
         )
         
         let items = passSnapshotsList.enumerated().map { index, passSnapshots in
-            AlarmSettingsViewState.Item(
+            ScheduledPassNotification(
                 id: "id_\(index)",
-                passNotification: PassNotification(
+                notification: PassNotification(
                     pass: passSnapshots.pass,
                     satelliteName: "ISS (Zarya)",
                     category: nil,
                     observer: observer,
+                    timing: .rise,
                     timeOffset: Double.random(in: -7200...600)
                 )
             )
@@ -273,7 +296,7 @@ struct AlarmSettingsView_Previews: PreviewProvider {
         AlarmSettingsView(
             viewModel: .mock(
                 state: AlarmSettingsViewState(
-                    notificationItems: items
+                    scheduledPassNotifications: items
                 )
             )
         )

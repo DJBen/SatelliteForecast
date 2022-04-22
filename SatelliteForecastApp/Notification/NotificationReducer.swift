@@ -55,6 +55,12 @@ extension Reducer where ActionType == NotificationAction, StateType == AppState 
 
         case let .loadedNotifications(scheduledPassNotifications):
             state.notificationResources.scheduledPassNotifications = scheduledPassNotifications
+
+        case .generatePreviewAndScheduleNotification(_, passSnapshots: _):
+            break
+
+        case .removePreviewAndUnscheduleNotification(_):
+            break
             
         case let .deepLink(satelliteCategory, noradIndex, observer: _, passIdentifier: _):
             state.navigationState = .init()

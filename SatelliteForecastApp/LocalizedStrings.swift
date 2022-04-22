@@ -43,7 +43,7 @@ enum LocalizedStrings {
                 return String(
                     format: futureFormat,
                     passNotification.satelliteName.trimmingCharacters(in: .whitespacesAndNewlines),
-                    formatter.string(from: passNotification.timeOffset)!
+                    formatter.string(from: -passNotification.timeOffset)!
                 )
             }
         }
@@ -84,7 +84,7 @@ enum LocalizedStrings {
                 
                 riseSetString = String(
                     format: futureFormat,
-                    formatter.string(from: passNotification.timeOffset)!,
+                    formatter.string(from: -passNotification.timeOffset)!,
                     riseDirection,
                     setDirection
                 )
@@ -137,12 +137,12 @@ enum LocalizedStrings {
                 if pass.illumination.changes.isEmpty {
                     visibilityString = String(
                         format: entirelyVisibleFormat,
-                        pass.highestIlluminatedElevation
+                        pass.highestIlluminated?.elev ?? 0
                     )
                 } else {
                     visibilityString = String(
                         format: partiallyVisibleFormat,
-                        pass.highestIlluminatedElevation
+                        pass.highestIlluminated?.elev ?? 0
                     )
                 }
             case .daylight:
