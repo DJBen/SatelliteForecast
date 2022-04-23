@@ -69,7 +69,7 @@ public struct PassView: View {
                     )
                 )
                 .environment(\.julianDateRangeKey, context.julianDateRange)
-                .frame(minHeight: 180, idealHeight: 240, maxHeight: 275, alignment: .leading)
+                .frame(minHeight: 150, idealHeight: 240, maxHeight: 275, alignment: .leading)
 
                 skyChartProducer.view(
                     SkyChartContext(

@@ -225,6 +225,7 @@ class MissionControlViewController: UIViewController {
         dateCoordinates: [DateCoordinate],
         zoomLevel: MissionControlView.ZoomLevel
     ) {
+        // Rezoom camera if zoom level has changed
         if mapView.camera.centerCoordinateDistance != 0 && abs(mapView.camera.centerCoordinateDistance - centerCoordinateDistance(for: zoomLevel)) > 1 {
             let camera = MKMapCamera(
                 lookingAtCenter: CLLocationCoordinate2D(currentDateCoordinate.coordinate),
