@@ -50,17 +50,21 @@ public struct Constellation: Hashable {
     }()
 
     public static var all: Set<Constellation> {
-        var constellations = Set<Constellation>()
-        for row in try! StarryNight.db.prepare(StarryNight.Constellations.table) {
-            let iau = try! row.get(StarryNight.Constellations.dbIAUName)
-            let con = Constellation(
-                name: try! row.get(StarryNight.Constellations.dbName),
-                iAUName: iau,
-                genitive: try! row.get(StarryNight.Constellations.dbGenitive)
-            )
-            constellations.insert(con)
+        do {
+            var constellations = Set<Constellation>()
+            for row in try StarryNight.db.prepare(StarryNight.Constellations.table) {
+                let iau = try row.get(StarryNight.Constellations.dbIAUName)
+                let con = Constellation(
+                    name: try row.get(StarryNight.Constellations.dbName),
+                    iAUName: iau,
+                    genitive: try row.get(StarryNight.Constellations.dbGenitive)
+                )
+                constellations.insert(con)
+            }
+            return constellations
+        } catch {
+            return []
         }
-        return constellations
     }
 
     private var lines: [(Int, Int)] {
@@ -87,14 +91,19 @@ public struct Constellation: Hashable {
     }
 
     private static func queryConstellation(_ query: Table) -> Constellation? {
-        if let row = try! StarryNight.db.pluck(query) {
-            return Constellation(
-                name: try! row.get(StarryNight.Constellations.dbName),
-                iAUName: try! row.get(StarryNight.Constellations.dbIAUName),
-                genitive: try! row.get(StarryNight.Constellations.dbGenitive)
-            )
+        do {
+            if let row = try StarryNight.db.pluck(query) {
+                return Constellation(
+                    name: try row.get(StarryNight.Constellations.dbName),
+                    iAUName: try row.get(StarryNight.Constellations.dbIAUName),
+                    genitive: try row.get(StarryNight.Constellations.dbGenitive)
+                )
+            } else {
+                return nil
+            }
+        } catch {
+            return nil
         }
-        return nil
     }
 
     public static func named(_ name: String) -> Constellation? {
