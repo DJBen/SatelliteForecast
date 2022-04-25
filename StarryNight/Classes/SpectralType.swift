@@ -31,18 +31,23 @@ public struct SpectralType: CustomStringConvertible {
 
     /// The effective temperature
     public var temperature: Double {
-        let fractionSubtype = "\(type)\(subType != nil ? String(format: "%.1f", subType!) : String())%"
-        let integerSubtype = "\(type)\(subType != nil ? String(Int(subType!)) : String())%"
-        if let row = try! StarryNight.db.pluck(
+        guard let subType = subType else {
+            return 0
+        }
+
+        let fractionSubtype = "\(type)\(subType != nil ? String(format: "%.1f", subType) : String())%"
+        let integerSubtype = "\(type)\(subType != nil ? String(Int(subType)) : String())%"
+        if let row = try? StarryNight.db.pluck(
             StarryNight.Spectral.table.select(StarryNight.Spectral.temp).where(StarryNight.Spectral.spectralType.like(fractionSubtype))
         ) {
             return row[StarryNight.Spectral.temp] + 273.15
-        } else if let row = try! StarryNight.db.pluck(
+        } else if let row = try? StarryNight.db.pluck(
             StarryNight.Spectral.table.select(StarryNight.Spectral.temp).where(StarryNight.Spectral.spectralType.like(integerSubtype))
         ) {
             return row[StarryNight.Spectral.temp] + 273.15
         }
-        fatalError()
+        // This is rare but may happen
+        return 0
     }
 
     public init?(_ str: String) {
@@ -55,13 +60,13 @@ public struct SpectralType: CustomStringConvertible {
         let unambiguousType = String(str.prefix(while: { $0 != "/" }))
         switch unambiguousType {
         case Regex("^(\\w)(\\d(?:\\.\\d)?)?((?:IV|Iab|Ia\\+?|Ib|I+|V)(?:-(?:IV|Iab|Ia\\+?|Ib|I+|V))?)?(.*)"):
-            let match = Regex.lastMatch!
-            type = match.captures[0]!
-            subType = doubleOrEmpty(match.captures[1])
-            luminosityClass = match.captures[2]
-            peculiarities = nilIfEmpty(match.captures[3])
             // do not recognize extended spectral types
-            if ["O", "B", "A", "F", "G", "K", "M"].contains(type) == false {
+            if let match = Regex.lastMatch, let type = match.captures[0], ["O", "B", "A", "F", "G", "K", "M"].contains(type) {
+                self.type = type
+                subType = doubleOrEmpty(match.captures[1])
+                luminosityClass = match.captures[2]
+                peculiarities = nilIfEmpty(match.captures[3])
+            } else {
                 return nil
             }
         default:
