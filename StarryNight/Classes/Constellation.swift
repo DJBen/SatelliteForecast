@@ -116,7 +116,6 @@ public struct Constellation: Hashable {
     }
 
     public static func iau(_ iau: String) -> Constellation? {
-
         let query = StarryNight.Constellations.table.select(
             StarryNight.Constellations.dbName,
             StarryNight.Constellations.dbIAUName,

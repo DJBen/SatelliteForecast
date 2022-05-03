@@ -92,7 +92,7 @@ public struct Star: Hashable, Equatable {
 
         init(spect: String?, apparentMagnitude: Double, absoluteMagnitude: Double, luminosity: Double, distance: Double, coordinate: Vector, motion: Vector) {
             self.rawSpectralType = spect
-            self.spectralType = (spect != nil ? SpectralType(spect!) : nil)
+            self.spectralType = spect.flatMap(SpectralType.init)
             self.apparentMagnitude = apparentMagnitude
             self.absoluteMagnitude = absoluteMagnitude
             self.distance = distance
@@ -130,8 +130,12 @@ public struct Star: Hashable, Equatable {
         let query = StarryNight.Stars.table
             .filter(StarryNight.Stars.dbMag < magCutoff && StarryNight.Stars.dbInternalId > 0)
             .order(StarryNight.Stars.dbMag.asc)
-        let rows = try! StarryNight.db.prepare(query)
-        return rows.map { Star(row: $0) }
+        do {
+            let rows = try StarryNight.db.prepare(query)
+            return rows.map { Star(row: $0) }
+        } catch {
+            return []
+        }
     }
 
     /// Find the closest star to a given cartesian coordinate.
@@ -153,7 +157,7 @@ public struct Star: Hashable, Equatable {
             query = query.where(distanceSqr < maxDistSqr)
         }
         query = query.order(distanceSqr).limit(1)
-        if let row = try! StarryNight.db.pluck(query) {
+        if let row = try? StarryNight.db.pluck(query) {
             return Star(row: row)
         } else {
             return nil
@@ -161,8 +165,7 @@ public struct Star: Hashable, Equatable {
     }
 
     private static func queryStar(_ query: Table) -> Star? {
-        if let row = try! StarryNight.db.pluck(query) {
-            let id = try! row.get(StarryNight.Stars.dbInternalId)
+        if let row = try? StarryNight.db.pluck(query) {
             return Star(row: row)
         } else {
             return nil
@@ -191,7 +194,7 @@ public struct Star: Hashable, Equatable {
         default:
             query = StarryNight.Stars.table.filter(StarryNight.Stars.dbProperName.like("%\(name)%") && nonSolar)
         }
-        return try! StarryNight.db.prepare(query).map { Star(row: $0) }
+        return (try? StarryNight.db.prepare(query).map { Star(row: $0) }) ?? []
     }
 
     public static func hip(_ hip: Int) -> Star? {
@@ -206,7 +209,7 @@ public struct Star: Hashable, Equatable {
 
     public static func id(_ id: Int) -> Star? {
         let query = StarryNight.Stars.table.filter(StarryNight.Stars.dbInternalId == id)
-        if let row = try! StarryNight.db.pluck(query) {
+        if let row = try? StarryNight.db.pluck(query) {
             return Star(row: row)
         }
         return nil
