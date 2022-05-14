@@ -20,6 +20,13 @@ extension Reducer where ActionType == BackgroundSkyViewOutput, StateType == Back
             key: let key
         ):
             switch quality {
+            case .detailed:
+                if var existingSkies = state.detailedBackgroundSkies[key] {
+                    existingSkies[julianDate] = image
+                    state.detailedBackgroundSkies[key] = existingSkies
+                } else {
+                    state.detailedBackgroundSkies[key] = [julianDate: image]
+                }
             case .full:
                 if var existingSkies = state.rasterizedBackgroundSky[key] {
                     existingSkies[julianDate] = image

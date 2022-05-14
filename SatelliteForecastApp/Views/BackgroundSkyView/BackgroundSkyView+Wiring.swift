@@ -9,6 +9,7 @@ import CombineRex
 import CombineRextensions
 import SatelliteForecast
 import SatelliteForecastImpl
+import SwiftUI
 
 extension BackgroundSkyViewState: AppStateMappable {
     static func project(appState: AppState) -> BackgroundSkyViewState {
@@ -32,14 +33,36 @@ extension BackgroundSkyResources: AppStateMappable {
     }
 }
 
-extension ViewProducer where Context == BackgroundSkyViewContext, ProducedView == BackgroundSkyView {
+extension ViewProducer where Context == BackgroundSkyViewContext<EmptyView>, ProducedView == BackgroundSkyView<EmptyView> {
     static func backgroundSky<S: StoreType>(
         viewModel: S
     ) -> ViewProducer where
     S.ActionType == AppAction,
     S.StateType == AppState {
         ViewProducer<Context, ProducedView> { context in
-            BackgroundSkyView(
+            BackgroundSkyView<EmptyView>(
+                viewModel: viewModel.projection(
+                    action: AppAction.backgroundSky,
+                    state: BackgroundSkyViewState.project(appState:)
+                )
+                .asObservableViewModel(
+                    initialState: .init(),
+                    emitsValue: .whenDifferent
+                ),
+                context: context
+            )
+        }
+    }
+}
+
+extension ViewProducer where Context == BackgroundSkyViewContext<ConstellationLabel>, ProducedView == BackgroundSkyView<ConstellationLabel> {
+    static func backgroundSkyWithConstellationLabel<S: StoreType>(
+        viewModel: S
+    ) -> ViewProducer where
+    S.ActionType == AppAction,
+    S.StateType == AppState {
+        ViewProducer<Context, ProducedView> { context in
+            BackgroundSkyView<ConstellationLabel>(
                 viewModel: viewModel.projection(
                     action: AppAction.backgroundSky,
                     state: BackgroundSkyViewState.project(appState:)

@@ -19,7 +19,7 @@ struct PassPreviewCell: View {
     var observer: LatLonAlt
     var pass: Pass
     var hasScheduledAlert: Bool
-    var skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
+    var skyChartProducer: ViewProducer<SkyChartContext<EmptyView>, SkyChart<EmptyView>>
     var julianDateOffset: Double
     var julianDateProvider: () -> Double
 
@@ -68,12 +68,15 @@ struct PassPreviewCell: View {
                         VStack(alignment: .leading) {
                             Text(PassPreviewCell.titleForPassVisibility(pass.visibility))
                                 .font(.headline)
+                                .foregroundColor(Color(UIColor.label))
                             Text("∠\(Self.numberFormatter.string(from: NSNumber(value: pass.transit.elev))!)°")
                                 .font(.body)
+                                .foregroundColor(Color(UIColor.label))
                             if hasScheduledAlert {
                                 Spacer(minLength: 8)
                                 Image(systemName: "bell.fill")
                                     .font(.title3)
+                                    .foregroundColor(Color(UIColor.label))
                             }
                         }
                         .frame(width: 72)
@@ -83,6 +86,7 @@ struct PassPreviewCell: View {
                         Text(Self.dateFormatter.string(from: Date(julianDate: pass.rise.julianDate)))
                             .font(.headline)
                             .padding([.bottom], 1)
+                            .foregroundColor(Color(UIColor.label))
 
                         HStack(spacing: 0) {
                             Image(systemName: "arrow.up")
@@ -291,7 +295,9 @@ struct PassPreviewCell_Previews: PreviewProvider {
                                     observer: observer,
                                     basicChartConfigs: .init(),
                                     configs: .preset,
-                                    quality: .full
+                                    quality: .full,
+                                    constellationLabel: { _ in EmptyView() },
+                                    julianDateProvider: { passSnapshot.pass.rise.julianDate }
                                 )
                             )
                         )

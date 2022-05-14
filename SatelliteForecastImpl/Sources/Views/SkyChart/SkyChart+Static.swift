@@ -11,18 +11,18 @@ import SatelliteKit
 import StarryNight
 import SolarSystem
 
-extension SkyChart {
-    public static let labelDateFormatter: DateFormatter = {
+public enum SkyChartUtils {
+    public static var labelDateFormatter: DateFormatter {
         let formatter = DateFormatter()
         formatter.setLocalizedDateFormatFromTemplate("H:mm:ss")
         return formatter
-    }()
+    }
 
-    public static let labelAngleFormatter: NumberFormatter = {
+    public static var labelAngleFormatter: NumberFormatter {
         let formatter = NumberFormatter()
         formatter.maximumFractionDigits = 0
         return formatter
-    }()
+    }
 
     public static func radius(fromRect rect: CGRect) -> CGFloat {
         return min(rect.width, rect.height) / 2
@@ -311,7 +311,7 @@ struct ImageRenderer_Previews: PreviewProvider {
                         
                         return renderer.image { ctx in
                             UITraitCollection(userInterfaceStyle: colorScheme == .light ? .light : .dark).performAsCurrent {
-                                SkyChart.addRasterizedBackgroundSkyPath(
+                                SkyChartUtils.addRasterizedBackgroundSkyPath(
                                     to: ctx,
                                     params: BackgroundSkyRenderParams(
                                         rect: rect,
@@ -342,7 +342,7 @@ struct ImageRenderer_Previews: PreviewProvider {
                                     )
                                 )
                                 
-                                SkyChart.addRasterizedSatellitePassPath(
+                                SkyChartUtils.addRasterizedSatellitePassPath(
                                     to: ctx,
                                     params: SatellitePassPathRenderParams(
                                         rect: rect,
@@ -358,7 +358,7 @@ struct ImageRenderer_Previews: PreviewProvider {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .overlay(
-                    SkyChart.PassLabel(
+                    SkyChartPassLabel(
                         snapshotPair: notableSnapshots.rise,
                         rect: rect,
                         modifierFactory: PassLabelModifier.init(rotationAngle:)
@@ -367,7 +367,7 @@ struct ImageRenderer_Previews: PreviewProvider {
                     }
                 )
                 .overlay(
-                    SkyChart.PassLabel(
+                    SkyChartPassLabel(
                         snapshotPair: notableSnapshots.transit,
                         rect: rect,
                         modifierFactory: PassLabelModifier.init(rotationAngle:)
@@ -376,7 +376,7 @@ struct ImageRenderer_Previews: PreviewProvider {
                     }
                 )
                 .overlay(
-                    SkyChart.PassLabel(
+                    SkyChartPassLabel(
                         snapshotPair: notableSnapshots.set,
                         rect: rect,
                         modifierFactory: PassLabelModifier.init(rotationAngle:)
@@ -385,7 +385,7 @@ struct ImageRenderer_Previews: PreviewProvider {
                     }
                 )
                 .overlay(
-                    SkyChart.PassLabel(
+                    SkyChartPassLabel(
                         snapshotPair: SnapshotsAroundPass(
                             first: snapshots[snapshots.index(snapshots.startIndex, offsetBy: snapshots.count / 3)],
                             second: snapshots[snapshots.index(snapshots.startIndex, offsetBy: snapshots.count / 3 + 1)]

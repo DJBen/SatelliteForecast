@@ -28,10 +28,10 @@ extension SkyChartViewState: AppStateMappable {
     }
 }
 
-extension ViewProducer where Context == SkyChartContext, ProducedView == SkyChart {
+extension ViewProducer where Context == SkyChartContext<EmptyView>, ProducedView == SkyChart<EmptyView> {
     static func skyChart<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
         ViewProducer<Context, ProducedView> { context in
-            return SkyChart(
+            return SkyChart<EmptyView>(
                 viewModel: viewModel
                     .projection(
                         action: { AppAction.skyChart($0) },
@@ -42,6 +42,25 @@ extension ViewProducer where Context == SkyChartContext, ProducedView == SkyChar
                     ),
                 context: context,
                 backgroundSkyViewProducer: .backgroundSky(viewModel: viewModel)
+            )
+        }
+    }
+}
+
+extension ViewProducer where Context == SkyChartContext<ConstellationLabel>, ProducedView == SkyChart<ConstellationLabel> {
+    static func skyChartForDetailedView<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
+        ViewProducer<Context, ProducedView> { context in
+            return SkyChart<ConstellationLabel>(
+                viewModel: viewModel
+                    .projection(
+                        action: { AppAction.skyChart($0) },
+                        state: SkyChartViewState.project(appState:)
+                    )
+                    .asObservableViewModel(
+                        initialState: SkyChartViewState()
+                    ),
+                context: context,
+                backgroundSkyViewProducer: .backgroundSkyWithConstellationLabel(viewModel: viewModel)
             )
         }
     }

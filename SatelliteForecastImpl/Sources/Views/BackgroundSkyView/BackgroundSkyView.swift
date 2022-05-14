@@ -9,6 +9,7 @@ import CombineRex
 import SatelliteForecast
 import SatelliteKit
 import SolarSystem
+import StarryNight
 import SwiftRex
 import SwiftUI
 
@@ -45,24 +46,28 @@ public struct BackgroundSkyViewState {
 
 extension BackgroundSkyViewState: Equatable {}
 
-public struct BackgroundSkyViewContext {
+public struct BackgroundSkyViewContext<ConstellationLabel: View> {
     public let observer: LatLonAlt
     public let basicChartConfigs: BasicChartConfigs
     public let configs: BackgroundSkyConfigs
     public let quality: ChartQuality
+    public let constellationLabel: (String) -> ConstellationLabel
+    public let julianDateProvider: () -> Double
 
-    public init(observer: LatLonAlt, basicChartConfigs: BasicChartConfigs, configs: BackgroundSkyConfigs, quality: ChartQuality) {
+    public init(observer: LatLonAlt, basicChartConfigs: BasicChartConfigs, configs: BackgroundSkyConfigs, quality: ChartQuality, @ViewBuilder constellationLabel: @escaping (String) -> ConstellationLabel, julianDateProvider: @escaping () -> Double) {
         self.observer = observer
         self.basicChartConfigs = basicChartConfigs
         self.configs = configs
         self.quality = quality
+        self.constellationLabel = constellationLabel
+        self.julianDateProvider = julianDateProvider
     }
 }
 
 /// A view that renders a alt-alz projection of background sky.
-public struct BackgroundSkyView: View {
+public struct BackgroundSkyView<ConstellationLabel: View>: View {
     @ObservedObject var viewModel: ObservableViewModel<BackgroundSkyViewAction, BackgroundSkyViewState>
-    let context: BackgroundSkyViewContext
+    let context: BackgroundSkyViewContext<ConstellationLabel>
 
     @State private var contentSize: CGSize = .zero
 
@@ -71,7 +76,7 @@ public struct BackgroundSkyView: View {
 
     public init(
         viewModel: ObservableViewModel<BackgroundSkyViewAction, BackgroundSkyViewState>,
-        context: BackgroundSkyViewContext
+        context: BackgroundSkyViewContext<ConstellationLabel>
     ) {
         self.viewModel = viewModel
         self.context = context
@@ -82,13 +87,7 @@ public struct BackgroundSkyView: View {
             return nil
         }
 
-        let imageCache: [BackgroundSkyKey: [Double: UIImage]] = (
-            context.quality == .full ?
-            viewModel.state.resources.rasterizedBackgroundSky
-            : viewModel.state.resources.previewBackgroundSkies
-        )
-
-        let images = imageCache[
+        let images = viewModel.state.resources.dataSource(for: context.quality)[
             BackgroundSkyKey(
                 observer: context.observer,
                 configs: context.configs
@@ -164,6 +163,35 @@ public struct BackgroundSkyView: View {
         }
     }
 
+    @ViewBuilder var constellationLabelView: some View {
+        GeometryReader { geometry in
+            let rect = geometry.frame(in: .local)
+
+            ZStack {
+                ForEach(Array(Constellation.all), id: \.self) { constellation in
+                    if let displayCenter = constellation.displayCenter {
+                        let raDec = RADec(vector: displayCenter)
+                        let coordinate = azel(
+                            julianDate: context.julianDateProvider(),
+                            site: (context.observer.lat, context.observer.lon),
+                            cele: raDec
+                        )
+
+                        context.constellationLabel(
+                            constellation.name
+                        )
+                        .position(
+                            SkyChartUtils.point(
+                                at: coordinate,
+                                rect: rect
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     public var body: some View {
         Group {
             if let backgroundSkyJulianDateKey = backgroundSkyJulianDateKey {
@@ -179,6 +207,7 @@ public struct BackgroundSkyView: View {
                     .overlay(
                         planetaryBodiesView(julianDate: backgroundSkyJulianDateKey)
                     )
+                    .overlay(constellationLabelView)
                     .clipShape(Circle())
                 )
             } else {
@@ -225,7 +254,9 @@ struct BackgroundSkyView_Previews: PreviewProvider {
                 observer: LatLonAlt(lat: 0, lon: 0, alt: 0),
                 basicChartConfigs: .init(),
                 configs: .preset,
-                quality: .full
+                quality: .full,
+                constellationLabel: { _ in EmptyView() },
+                julianDateProvider: { Date().julianDate }
             )
         )
         .environment(\.backgroundSkyJulianDateKey, 0)

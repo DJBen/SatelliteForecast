@@ -28,7 +28,7 @@ extension EffectMiddleware where
                 return .promise(token: "") { context, sink in
                     DispatchQueue.global(qos: .userInitiated).async {
                         let state = getState()
-                        let dataSource = quality == .full ? state.resources.rasterizedSatellitePaths : state.resources.previewSatellitePaths
+                        let dataSource = state.resources.dataSource(for: quality)
                         // Skip if image already generated.
                         if let _ = dataSource[pass] {
 //                            logger.debug("\(pass.noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate) already rasterized, skipping.")
@@ -44,7 +44,7 @@ extension EffectMiddleware where
 
                         traitCollection.performAsCurrent {
                             // Rasterize satellite paths in sky charts
-                            let image = SkyChart.rasterizedSatellitePassPath(
+                            let image = SkyChartUtils.rasterizedSatellitePassPath(
                                 params: SatellitePassPathRenderParams(
                                     rect: CGRect(origin: .zero, size: size),
                                     snapshotsDuringPass: passSnapshots.snapshots,

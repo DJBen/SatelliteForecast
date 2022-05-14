@@ -51,7 +51,7 @@ extension EffectMiddleware where
                             let imageRect = rect.insetBy(dx: 5, dy: 5)
                             let renderer = UIGraphicsImageRenderer(size: rect.size)
                             let image = renderer.image { ctx in
-                                SkyChart.addRasterizedBackgroundSkyPath(
+                                SkyChartUtils.addRasterizedBackgroundSkyPath(
                                     to: ctx,
                                     params: BackgroundSkyRenderParams(
                                         rect: imageRect,
@@ -76,7 +76,7 @@ extension EffectMiddleware where
                                     )
                                 )
 
-                                SkyChart.addRasterizedSatellitePassPath(
+                                SkyChartUtils.addRasterizedSatellitePassPath(
                                     to: ctx,
                                     params: SatellitePassPathRenderParams(
                                         rect: imageRect,

@@ -44,7 +44,7 @@ struct PlanetaryBodyView: View {
                         rect: rect
                     )
                     .position(
-                        SkyChart.point(
+                        SkyChartUtils.point(
                             at: coordinate,
                             rect: rect
                         )

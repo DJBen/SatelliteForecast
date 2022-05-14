@@ -49,10 +49,10 @@ public struct SkyChartViewState: Equatable {
     }
 }
 
-public struct SkyChart: View {
+public struct SkyChart<ConstellationLabel: View>: View {
     @ObservedObject var viewModel: ObservableViewModel<SkyChartAction, SkyChartViewState>
-    let context: SkyChartContext
-    let backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext, BackgroundSkyView>
+    let context: SkyChartContext<ConstellationLabel>
+    let backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext<ConstellationLabel>, BackgroundSkyView<ConstellationLabel>>
 
     @State private var contentSize: CGSize = .zero
 
@@ -76,8 +76,8 @@ public struct SkyChart: View {
     }
     public init(
         viewModel: ObservableViewModel<SkyChartAction, SkyChartViewState>,
-        context: SkyChartContext,
-        backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext, BackgroundSkyView>
+        context: SkyChartContext<ConstellationLabel>,
+        backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext<ConstellationLabel>, BackgroundSkyView<ConstellationLabel>>
     ) {
         self.viewModel = viewModel
         self.context = context
@@ -90,53 +90,53 @@ public struct SkyChart: View {
                 let rect = geometry.frame(in: .local)
 
                 ZStack {
-                    PassLabel(
+                    SkyChartPassLabel(
                         snapshotPair: context.notableSnapshots.rise,
                         rect: rect,
                         modifierFactory: PassLabelModifier.init(rotationAngle:)
                     ) {
                         Text(
                             """
-                            ↑ \(Self.labelDateFormatter.string(from: Date(julianDate: context.pass.rise.julianDate)))
+                            ↑ \(SkyChartUtils.labelDateFormatter.string(from: Date(julianDate: context.pass.rise.julianDate)))
                             """
                         )
                     }
 
-                    PassLabel(
+                    SkyChartPassLabel(
                         snapshotPair: context.notableSnapshots.set,
                         rect: rect,
                         modifierFactory: PassLabelModifier.init(rotationAngle:)
                     ) {
                         Text(
                             """
-                            ↓ \(Self.labelDateFormatter.string(from: Date(julianDate: context.pass.set.julianDate)))
+                            ↓ \(SkyChartUtils.labelDateFormatter.string(from: Date(julianDate: context.pass.set.julianDate)))
                             """
                         )
                     }
 
-                    PassLabel(
+                    SkyChartPassLabel(
                         snapshotPair: context.notableSnapshots.transit,
                         rect: rect,
                         modifierFactory: PassLabelModifier.init(rotationAngle:)
                     ) {
                         Text(
                             """
-                            ∠\(Self.labelAngleFormatter.string(from: NSNumber(value: context.pass.transit.elev))!)° \(Self.labelDateFormatter.string(from: Date(julianDate: context.pass.transit.julianDate)))
+                            ∠\(SkyChartUtils.labelAngleFormatter.string(from: NSNumber(value: context.pass.transit.elev))!)° \(SkyChartUtils.labelDateFormatter.string(from: Date(julianDate: context.pass.transit.julianDate)))
                             """
                         )
                     }
 
                     ForEach(context.pass.illumination.changes, id: \.datePosition) { change in
                         if let illuminationChangeAndSnapshots = context.notableSnapshots.illuminationChanges.value(of: change.datePosition.julianDate) {
-                            PassLabel(
+                            SkyChartPassLabel(
                                 snapshotPair: illuminationChangeAndSnapshots.snapshots,
                                 rect: rect,
                                 modifierFactory: PassLabelModifier.init(rotationAngle:)
                             ) {
                                 Text(
-                                    SkyChart.PassLabel<PassLabelModifier, Text>.textForIlluminationChange(
+                                    SkyChartPassLabel<PassLabelModifier, Text>.textForIlluminationChange(
                                         change,
-                                        dateFormatter: Self.labelDateFormatter
+                                        dateFormatter: SkyChartUtils.labelDateFormatter
                                     )
                                 )
                             }
@@ -151,6 +151,8 @@ public struct SkyChart: View {
 
     private var rasterizedSatellitePath: UIImage? {
         switch context.quality {
+        case .detailed:
+            return viewModel.state.resources.detailedSatellitePaths[context.pass]
         case .full:
             return viewModel.state.resources.rasterizedSatellitePaths[context.pass]
         case .preview:
@@ -214,11 +216,12 @@ public struct SkyChart: View {
                 observer: context.observer,
                 basicChartConfigs: context.configs.basicChartConfigs,
                 configs: context.configs.backgroundSkyConfigs,
-                quality: context.quality
+                quality: context.quality,
+                constellationLabel: context.constellationLabel,
+                julianDateProvider: context.julianDateProvider
             )
         )
         .environment(\.backgroundSkyJulianDateKey, backgroundSkyJulianDateKey)
-        .overlay(passInfoLabels)
         .overlay(
             SkyChartDynamicIndicator(
                 state: SkyChartDynamicIndicatorState(
@@ -235,11 +238,14 @@ public struct SkyChart: View {
             .clipShape(Circle())
         )
         .modifier(
-            SkyChartGestureModifier(
-                isGestureEnabled: context.configs.showMoreInfoOnTap,
-                contentRect: CGRect(origin: .zero, size: contentSize)
-            )
+            TapGestureDetectionModifier(
+                isEnabled: context.configs.showMoreInfoOnTap
+            ) { (point, rect) in
+                let aziEle = SkyChartUtils.aziEle(at: point, in: rect)
+                context.tappedCoordinate(aziEle)
+            }
         )
+        .overlay(passInfoLabels)
         .onLoad {
             propagateBackgroundSkyJulianDateKey(context.julianDateProvider() + viewModel.state.julianDateOffset)
         }
@@ -249,7 +255,7 @@ public struct SkyChart: View {
     }
 }
 
-public struct SkyChartContext {
+public struct SkyChartContext<ConstellationLabel: View> {
     public let satelliteInfo: SatelliteInfo
     public let snapshots: [SatelliteSnapshot]
     public let observer: LatLonAlt
@@ -259,8 +265,10 @@ public struct SkyChartContext {
     public let quality: ChartQuality
     public let julianDateProvider: () -> Double
     public let deviceMotion: Loadable<CMDeviceMotion, Error>
+    @ViewBuilder public let constellationLabel: (String) -> ConstellationLabel
+    public let tappedCoordinate: (AziEle) -> Void
 
-    public init(satelliteInfo: SatelliteInfo, snapshots: [SatelliteSnapshot], observer: LatLonAlt, pass: Pass, notableSnapshots: NotableSnapshots, configs: SkyChartConfigs, quality: ChartQuality, julianDateProvider: @escaping () -> Double, deviceMotion: Loadable<CMDeviceMotion, Error> = .notLoaded) {
+    public init(satelliteInfo: SatelliteInfo, snapshots: [SatelliteSnapshot], observer: LatLonAlt, pass: Pass, notableSnapshots: NotableSnapshots, configs: SkyChartConfigs, quality: ChartQuality, julianDateProvider: @escaping () -> Double, deviceMotion: Loadable<CMDeviceMotion, Error> = .notLoaded, @ViewBuilder constellationLabel: @escaping (String) -> ConstellationLabel, tappedCoordinate: @escaping (AziEle) -> Void = { _ in }) {
         self.satelliteInfo = satelliteInfo
         self.snapshots = snapshots
         self.observer = observer
@@ -270,10 +278,28 @@ public struct SkyChartContext {
         self.quality = quality
         self.julianDateProvider = julianDateProvider
         self.deviceMotion = deviceMotion
+        self.constellationLabel = constellationLabel
+        self.tappedCoordinate = tappedCoordinate
     }
 }
 
-extension SkyChart.PassLabel {
+extension SkyChartContext where ConstellationLabel == EmptyView {
+    public init(satelliteInfo: SatelliteInfo, snapshots: [SatelliteSnapshot], observer: LatLonAlt, pass: Pass, notableSnapshots: NotableSnapshots, configs: SkyChartConfigs, quality: ChartQuality, julianDateProvider: @escaping () -> Double, deviceMotion: Loadable<CMDeviceMotion, Error> = .notLoaded, tappedCoordinate: @escaping (AziEle) -> Void = { _ in }) {
+        self.satelliteInfo = satelliteInfo
+        self.snapshots = snapshots
+        self.observer = observer
+        self.pass = pass
+        self.notableSnapshots = notableSnapshots
+        self.configs = configs
+        self.quality = quality
+        self.julianDateProvider = julianDateProvider
+        self.deviceMotion = deviceMotion
+        self.constellationLabel = { _ in EmptyView() }
+        self.tappedCoordinate = tappedCoordinate
+    }
+}
+
+extension SkyChartPassLabel {
     static func textForIlluminationChange(
         _ change: Pass.Illumination.Change,
         dateFormatter: DateFormatter
@@ -281,7 +307,7 @@ extension SkyChart.PassLabel {
         switch change {
         case let .entersShadow(datePosition):
             let format = NSLocalizedString(
-                "SkyChart.PassLabel.text.illuminationChange.entersShadow",
+                "SkyChartPassLabel.text.illuminationChange.entersShadow",
                 tableName: nil,
                 bundle: .main,
                 value: """
@@ -293,7 +319,7 @@ extension SkyChart.PassLabel {
             return String(format: format, dateFormatter.string(from: Date(julianDate: datePosition.julianDate)))
         case let .exitsShadow(datePosition):
             let format = NSLocalizedString(
-                "SkyChart.PassLabel.text.illuminationChange.exitsShadow",
+                "SkyChartPassLabel.text.illuminationChange.exitsShadow",
                 tableName: nil,
                 bundle: .main,
                 value: """
@@ -367,12 +393,12 @@ struct SkyChart_Previews: PreviewProvider {
         ForEach(ColorScheme.allCases, id: \.self) { colorScheme in
             let traitCollection = UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
             let referenceDate = passSnapshots.pass.transit.julianDate.advanced(by: 20 * TimeConstants.sec2day)
-            SkyChart(
+            SkyChart<EmptyView>(
                 viewModel: .mock(
                     state: SkyChartViewState(
                         resources: SkyChartResources(
                             rasterizedSatellitePaths: [
-                                passSnapshots.pass: SkyChart.rasterizedSatellitePassPath(
+                                passSnapshots.pass: SkyChartUtils.rasterizedSatellitePassPath(
                                     params: SatellitePassPathRenderParams(
                                         rect: CGRect(origin: .zero, size: CGSize(width: 388, height: 805)),
                                         snapshotsDuringPass: passSnapshots.snapshots,
@@ -412,7 +438,9 @@ struct SkyChart_Previews: PreviewProvider {
                             observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
                             basicChartConfigs: .init(),
                             configs: .init(),
-                            quality: .full
+                            quality: .full,
+                            constellationLabel: { _ in EmptyView() },
+                            julianDateProvider: { referenceDate }
                         )
                     )
                 )
@@ -424,12 +452,12 @@ struct SkyChart_Previews: PreviewProvider {
 
         let (elements2, passSnapshots2) = tianHePass
 
-        SkyChart(
+        SkyChart<EmptyView>(
             viewModel: .mock(
                 state: SkyChartViewState(
                     resources: SkyChartResources(
                         rasterizedSatellitePaths: [
-                            passSnapshots2.pass: SkyChart.rasterizedSatellitePassPath(
+                            passSnapshots2.pass: SkyChartUtils.rasterizedSatellitePassPath(
                                 params: SatellitePassPathRenderParams(
                                     rect: CGRect(origin: .zero, size: CGSize(width: 388, height: 805)),
                                     snapshotsDuringPass: passSnapshots2.snapshots,
@@ -461,7 +489,9 @@ struct SkyChart_Previews: PreviewProvider {
                         observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
                         basicChartConfigs: .init(),
                         configs: .preset,
-                        quality: .full
+                        quality: .full,
+                        constellationLabel: { _ in EmptyView() },
+                        julianDateProvider: { passSnapshots2.pass.rise.julianDate }
                     )
                 )
             )
@@ -469,7 +499,7 @@ struct SkyChart_Previews: PreviewProvider {
         .padding(20)
         .environment(\.backgroundSkyJulianDateKey, passSnapshots2.pass.rise.julianDate.roundJulianDate(.toMins(1)))
 
-        SkyChart(
+        SkyChart<EmptyView>(
             viewModel: .mock(state: .init()),
             context: SkyChartContext(
                 satelliteInfo: SatelliteInfo(elements: elements2),
@@ -490,7 +520,9 @@ struct SkyChart_Previews: PreviewProvider {
                         observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
                         basicChartConfigs: .init(),
                         configs: .preset,
-                        quality: .full
+                        quality: .full,
+                        constellationLabel: { _ in EmptyView() },
+                        julianDateProvider: { passSnapshots2.pass.rise.julianDate }
                     )
                 )
             )

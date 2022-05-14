@@ -14,12 +14,14 @@ extension PassViewState: AppStateMappable {
     static func project(appState: AppState) -> PassViewState {
         return PassViewState(
             scheduledPassNotifications: appState.notificationResources.scheduledPassNotifications,
-            showAlarmConfigurationModal: appState.navigationState.listNavigation.showAlarmConfigurationModal
+            showAlarmConfigurationModal: appState.navigationState.listNavigation.showAlarmConfigurationModal,
+            showsDetailPassView: appState.navigationState.listNavigation.showsDetailPassView
         )
     }
     
     static func apply(appState: inout AppState, state: PassViewState) {
         appState.navigationState.listNavigation.showAlarmConfigurationModal = state.showAlarmConfigurationModal
+        appState.navigationState.listNavigation.showsDetailPassView = state.showsDetailPassView
     }
 }
 
@@ -38,7 +40,8 @@ extension ViewProducer where Context == PassViewContext, ProducedView == PassVie
                     .satelliteElevationGraph(viewModel: viewModel),
                 skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
                     .skyChart(viewModel: viewModel),
-                passAlarmSettingsProducer: ViewProducer<PassAlarmSettingsModalViewContext, PassAlarmSettingsModalView>.passAlarmSettings(viewModel: viewModel)
+                passAlarmSettingsProducer: ViewProducer<PassAlarmSettingsModalViewContext, PassAlarmSettingsModalView>.passAlarmSettings(viewModel: viewModel),
+                detailedPassViewProducer: ViewProducer<DetailPassViewContext, DetailedPassView>.detailedPassView(viewModel: viewModel)
             )
         }
     }

@@ -24,7 +24,7 @@ struct SkyChartLegend: View, Equatable {
             Path { path in
                 path.addArc(
                     center: CGPoint(x: rect.midX, y: rect.midY),
-                    radius: SkyChart.radius(fromRect: rect),
+                    radius: SkyChartUtils.radius(fromRect: rect),
                     startAngle: Angle(degrees: 0),
                     endAngle: Angle(degrees: 360),
                     clockwise: false
@@ -46,7 +46,7 @@ struct SkyChartLegend: View, Equatable {
             let rect = geometry.frame(in: .local)
             Path { path in
                 stride(from: 0, to: 360, by: configs.azimuthMarkInterval).forEach { azimuth in
-                    let (point1, point2) = SkyChart.azimuthMarkPoints(
+                    let (point1, point2) = SkyChartUtils.azimuthMarkPoints(
                         azimuth: Double(azimuth),
                         length: configs.azimuthMarkLength,
                         rect: rect
@@ -62,7 +62,7 @@ struct SkyChartLegend: View, Equatable {
     @ViewBuilder var azimuthMarkTexts: some View {
         GeometryReader { geometry in
             let rect = geometry.frame(in: .local)
-            let radius = SkyChart.radius(fromRect: rect)
+            let radius = SkyChartUtils.radius(fromRect: rect)
             ZStack {
                 if configs.showAzimuthTexts {
                     ForEach(

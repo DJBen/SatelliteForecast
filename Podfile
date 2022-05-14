@@ -5,11 +5,12 @@ target 'SatelliteForecastApp' do
   use_frameworks!
 
   pod "BTree", "~> 4.1.0"
-  pod "CombineRex", "0.8.9"
+  pod "CombineRex", "~> 0.8.12"
   pod "CombineRextensions"
   pod "FlagKit"
   pod 'QSMag', :path => './QSMag'
-  pod "SwiftRex", "0.8.9"
+  pod "SwiftRex", "~> 0.8.12"
+  pod "ActivityView", :path => './ActivityView/Public'
   pod "CombineUtils", :path => './CombineUtils'
   pod "CombineRexUtils", :path => './CombineRexUtils'
   pod "SatelliteKit", :path => './SatelliteKit'

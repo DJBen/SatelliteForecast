@@ -40,11 +40,13 @@ public struct RealtimeSkyViewContext {
     public let basicChartConfigs: BasicChartConfigs
     public let backgroundSkyConfigs: BackgroundSkyConfigs
     public let satelliteMagToRadiusFunction: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction
+    public let julianDateProvider: () -> Double
 
-    public init(basicChartConfigs: BasicChartConfigs, backgroundSkyConfigs: BackgroundSkyConfigs, satelliteMagToRadiusFunction: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction) {
+    public init(basicChartConfigs: BasicChartConfigs, backgroundSkyConfigs: BackgroundSkyConfigs, satelliteMagToRadiusFunction: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction, julianDateProvider: @escaping () -> Double) {
         self.basicChartConfigs = basicChartConfigs
         self.backgroundSkyConfigs = backgroundSkyConfigs
         self.satelliteMagToRadiusFunction = satelliteMagToRadiusFunction
+        self.julianDateProvider = julianDateProvider
     }
 }
 
@@ -54,12 +56,12 @@ public protocol RealtimeSkyView: View {}
 public struct RealtimeSkyViewImpl: RealtimeSkyView {
     @ObservedObject var viewModel: ObservableViewModel<RealtimeSkyViewAction, RealtimeSkyViewState>
     let context: RealtimeSkyViewContext
-    let backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext, BackgroundSkyView>
+    let backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext<EmptyView>, BackgroundSkyView<EmptyView>>
 
     public init(
         viewModel: ObservableViewModel<RealtimeSkyViewAction, RealtimeSkyViewState>,
         context: RealtimeSkyViewContext,
-        backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext, BackgroundSkyView>
+        backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext<EmptyView>, BackgroundSkyView<EmptyView>>
     ) {
         self.viewModel = viewModel
         self.context = context
@@ -129,7 +131,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
                         .offset(y: 8)
                         .frame(alignment: .leading)
                         .position(
-                            SkyChart.point(
+                            SkyChartUtils.point(
                                 at: result.snapshot.position,
                                 rect: rect
                             )
@@ -148,7 +150,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
                         .offset(y: 12)
                         .frame(alignment: .leading)
                         .position(
-                            SkyChart.point(
+                            SkyChartUtils.point(
                                 at: result.snapshot.position,
                                 rect: rect
                             )
@@ -164,7 +166,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
     private func paths(from results: [RealtimePropagationResult], rect: CGRect) -> Path {
         Path { path in
             for result in results {
-                let point = SkyChart.point(
+                let point = SkyChartUtils.point(
                     at: result.snapshot.position,
                     rect: rect
                 )
@@ -200,7 +202,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
 
                 Path { path in
                     for result in visiblePropagationResults {
-                        let point = SkyChart.point(
+                        let point = SkyChartUtils.point(
                             at: result.snapshot.position,
                             rect: rect
                         )
@@ -236,7 +238,9 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
                 observer: observer,
                 basicChartConfigs: context.basicChartConfigs,
                 configs: context.backgroundSkyConfigs,
-                quality: .full
+                quality: .full,
+                constellationLabel: { _ in EmptyView() },
+                julianDateProvider: context.julianDateProvider
             )
         )
         .environment(
@@ -364,7 +368,7 @@ extension RealtimeSkyViewImpl {
             NSLocalizedString(
                 "realtimeSkyView.navigation.title",
                 tableName: nil,
-                bundle: .main,
+                bundle: .satelliteForecastImplResourcesBundle,
                 value: "Sky now",
                 comment: "The navigation title of the realtime sky view"
             )
@@ -376,8 +380,8 @@ extension RealtimeSkyViewImpl {
             NSLocalizedString(
                 "realtimeSkyView.satelliteList.loadingText",
                 tableName: nil,
-                bundle: .main,
-                value: "Searching for satellites...",
+                bundle: .satelliteForecastImplResourcesBundle,
+                value: "Loading satellite catalog...",
                 comment: "The loading text for the satellite list"
             )
         }
@@ -386,7 +390,7 @@ extension RealtimeSkyViewImpl {
             NSLocalizedString(
                 "realtimeSkyView.satelliteList.emptyText",
                 tableName: nil,
-                bundle: .main,
+                bundle: .satelliteForecastImplResourcesBundle,
                 value: "No satellite currently visible",
                 comment: "The empty text for the satellite list"
             )
@@ -409,7 +413,8 @@ struct RealtimeSkyView_Previews: PreviewProvider {
             context: RealtimeSkyViewContext(
                 basicChartConfigs: .init(),
                 backgroundSkyConfigs: .init(),
-                satelliteMagToRadiusFunction: .init()
+                satelliteMagToRadiusFunction: .init(),
+                julianDateProvider: { Date().julianDate }
             ),
             backgroundSkyViewProducer: .pure(
                 BackgroundSkyView(
@@ -420,7 +425,9 @@ struct RealtimeSkyView_Previews: PreviewProvider {
                         observer: LatLonAlt(lat: 0, lon: 0, alt: 0),
                         basicChartConfigs: .init(),
                         configs: .init(),
-                        quality: .full
+                        quality: .full,
+                        constellationLabel: { _ in EmptyView() },
+                        julianDateProvider: { Date().julianDate }
                     )
                 )
             )
