@@ -10,6 +10,7 @@ import SwiftRex
 import CombineRex
 import CombineRextensions
 import SatelliteForecast
+import SatelliteKit
 
 enum DebugMenuAction {
     case toggleDebugMenu(_ isVisible: Bool)
@@ -64,7 +65,18 @@ struct DebugMenuState: Equatable {
 
 struct DebugMenu: View {
     @ObservedObject var viewModel: ObservableViewModel<DebugMenuAction, DebugMenuState?>
-    @State var dateWithinPicker: Date = Date()
+    @State var dateWithinPicker: Date
+
+    init(
+        viewModel: ObservableViewModel<DebugMenuAction, DebugMenuState?>
+    ) {
+        self.viewModel = viewModel
+        if let offset = viewModel.state?.config.mockedOffset {
+            self._dateWithinPicker = State(initialValue: Date().addingTimeInterval(offset * TimeConstants.day2sec))
+        } else {
+            self._dateWithinPicker = State(initialValue: Date())
+        }
+    }
 
     @ViewBuilder private func unwrapState<Content: View>(@ViewBuilder content: (DebugMenuState) -> Content) -> some View {
         if let state = viewModel.state {

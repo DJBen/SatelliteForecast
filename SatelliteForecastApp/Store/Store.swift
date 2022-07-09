@@ -39,7 +39,8 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         Reducer.realtimeSkyReducer.lift(),
         Reducer.realtimeSkyOutputReducer.lift(),
         Reducer.rootViewReducer.lift(),
-        Reducer.passAlarmSettingsModalReducer.lift()
+        Reducer.passAlarmSettingsModalReducer.lift(),
+        Reducer.detailedPassViewReducer.lift()
     ]
     .reduce(Reducer<AppAction, AppState>.identity, <>)
 
@@ -94,7 +95,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             EffectMiddleware.backgroundSky.lift(),
             EffectMiddleware.realtimeSky.lift(),
             EffectMiddleware.realtimeSkyToElementsLoader.lift(),
-            EffectMiddleware.passAlarmSettingsToNotification.lift()
+            EffectMiddleware.passAlarmSettingsToNotification.lift(),
         ]
 
         return middlewares.reduce(

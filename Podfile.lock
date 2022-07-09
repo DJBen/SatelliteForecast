@@ -1,11 +1,12 @@
 PODS:
+  - ActivityView (1.0.0.LOCAL)
   - BTree (4.1.0)
-  - CombineRex (0.8.9):
-    - SwiftRex (~> 0.8.9)
+  - CombineRex (0.8.12):
+    - SwiftRex (~> 0.8.12)
   - CombineRextensions (0.1.7):
     - CombineRex (~> 0.8.6)
   - CombineRexUtils (1.0.0.LOCAL):
-    - CombineRex (= 0.8.9)
+    - CombineRex (~> 0.8.12)
   - CombineUtils (1.0.0.LOCAL)
   - FlagKit (2.2)
   - QSMag (1.0.0.LOCAL)
@@ -21,8 +22,9 @@ PODS:
     - SatelliteKit (= 1.0.0.LOCAL)
     - StarryNight (= 1.0.0.LOCAL)
   - SatelliteForecastImpl (1.0.0.LOCAL):
+    - ActivityView (= 1.0.0.LOCAL)
     - BTree (~> 4.1.0)
-    - CombineRex (= 0.8.9)
+    - CombineRex (= 0.8.12)
     - CombineRextensions
     - SatelliteCatalog (= 1.0.0.LOCAL)
     - SatelliteCatalogImpl_SQLite (= 1.0.0.LOCAL)
@@ -30,7 +32,7 @@ PODS:
     - SatelliteKit (= 1.0.0.LOCAL)
     - SolarSystem (= 1.0.0.LOCAL)
     - StarryNight (= 1.0.0.LOCAL)
-    - SwiftRex (= 0.8.9)
+    - SwiftRex (= 0.8.12)
     - SwiftUIVisualEffects
   - SatelliteKit (1.0.0.LOCAL)
   - SecondaryTabView (1.0.0.LOCAL)
@@ -45,16 +47,17 @@ PODS:
     - SQLite.swift (~> 0.12.2)
     - STRegex (~> 2.1)
   - STRegex (2.1.1)
-  - SwiftRex (0.8.9)
+  - SwiftRex (0.8.12)
   - SwiftUIVisualEffects (1.0.0.LOCAL)
-  - TestingExtensions (0.2.11):
-    - CombineRex (~> 0.8.9)
+  - TestingExtensions (0.2.12):
+    - CombineRex (~> 0.8.12)
     - SnapshotTesting (~> 1.8.2)
-    - SwiftRex (~> 0.8.9)
+    - SwiftRex (~> 0.8.12)
 
 DEPENDENCIES:
+  - ActivityView (from `./ActivityView/Public`)
   - BTree (~> 4.1.0)
-  - CombineRex (= 0.8.9)
+  - CombineRex (~> 0.8.12)
   - CombineRextensions
   - CombineRexUtils (from `./CombineRexUtils`)
   - CombineUtils (from `./CombineUtils`)
@@ -68,7 +71,7 @@ DEPENDENCIES:
   - SecondaryTabView (from `./SecondaryTabView`)
   - SolarSystem (from `./SolarSystem`)
   - StarryNight (from `./StarryNight`)
-  - SwiftRex (= 0.8.9)
+  - SwiftRex (~> 0.8.12)
   - SwiftUIVisualEffects (from `./SwiftUIVisualEffects`)
   - TestingExtensions (~> 0.2.11)
 
@@ -85,6 +88,8 @@ SPEC REPOS:
     - TestingExtensions
 
 EXTERNAL SOURCES:
+  ActivityView:
+    :path: "./ActivityView/Public"
   CombineRexUtils:
     :path: "./CombineRexUtils"
   CombineUtils:
@@ -111,17 +116,18 @@ EXTERNAL SOURCES:
     :path: "./SwiftUIVisualEffects"
 
 SPEC CHECKSUMS:
+  ActivityView: 39ecc1b4824051660f9cf63f03d051d780c0fee5
   BTree: 99b99930790b88dc5e8bafbf666a5dfb8d7808b4
-  CombineRex: 204e28417c27fef95dd917ee1ca37ed91549a2a2
+  CombineRex: eca784a8f3fe791bb153e7401a2a272c005d9881
   CombineRextensions: f334525cda6b04493782e80491b1aa45c4429f13
-  CombineRexUtils: ef9338d04b4047baa695436c8e1cefe9c3e358cd
+  CombineRexUtils: 731ee3e4dbb416279664b6876449ed7964099a90
   CombineUtils: c9607fcf2487e18c19d4e023f86a018d4f8b7807
   FlagKit: eca7dc89064b0c986302ba9acefad1bf80a435b1
   QSMag: 5a944b9b2392dac7ba1626a70a94be337db49732
   SatelliteCatalog: 132031627b4f096d1f2a16d169286faae121c0cc
   SatelliteCatalogImpl_SQLite: 33b833c3dc7482f1acdcb167e7cb203137c940d3
   SatelliteForecast: 7c37fa5ed3552cfe64ea0cf999e5f64c3be40b1f
-  SatelliteForecastImpl: 2fd7955332a72d8dca375e1594b8daf2b4e0c248
+  SatelliteForecastImpl: b1829e7de6ae33983b654e99cf28dafa83cc3ef9
   SatelliteKit: 53e267558b0bd35f1be23f4dfa022b4503aa0226
   SecondaryTabView: 6b413852af90f4e37cf6dab79c38cfeb20a53dd9
   SnapshotTesting: 38947050d13960d57a4a9c166fcf51bca7d56970
@@ -129,10 +135,10 @@ SPEC CHECKSUMS:
   SQLite.swift: d2b4642190917051ce6bd1d49aab565fe794eea3
   StarryNight: 4cecdd344ee93f3a82aff6e0a52ff5c045bb4207
   STRegex: d49e88d0fe58538d3175fdd989bc1243b9be2a07
-  SwiftRex: 77cb0bd1953a81e3b4ce92fb563a91ba9c297078
+  SwiftRex: 427d06d912bf208c55d54d3fcc5a003d420630c6
   SwiftUIVisualEffects: 4b341110ba61926c0287feef7b09b49fc0e7fac3
-  TestingExtensions: 75654c5acd46d63c09317cfa0c84f402882a29b0
+  TestingExtensions: b1b5ab833b29dad598b1450aec84a36bbe0da326
 
-PODFILE CHECKSUM: 429bbb5bd6b833c55b81f2b246d47d73d0e4abed
+PODFILE CHECKSUM: c36b3e06799f8b357616942aae9728b38399e54a
 
 COCOAPODS: 1.11.3

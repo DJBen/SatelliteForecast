@@ -14,6 +14,8 @@ extension Reducer where ActionType == SkyChartOutput, StateType == SkyChartViewS
         switch action {
         case let .rasterizedSatellitePath(image, quality, pass):
             switch quality {
+            case .detailed:
+                state.resources.detailedSatellitePaths[pass] = image
             case .full:
                 state.resources.rasterizedSatellitePaths[pass] = image
             case .preview:

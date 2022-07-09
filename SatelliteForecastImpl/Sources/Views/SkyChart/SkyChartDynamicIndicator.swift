@@ -61,7 +61,7 @@ struct SkyChartDynamicIndicator: View {
             GeometryReader { geometry in
                 let rect = geometry.frame(in: .local)
 
-                SkyChart.PassLabel(
+                SkyChartPassLabel(
                     snapshotPair: snapshotPair,
                     rect: rect,
                     modifierFactory: HighlightedPassLabelModifier.curry(shouldHighlight: snapshotPair.first.isIlluminated)

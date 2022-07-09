@@ -10,48 +10,47 @@ import SwiftUIVisualEffects
 import SatelliteKit
 import SatelliteForecast
 
-extension SkyChart {
-    struct PassLabel<BackgroundModifier: ViewModifier, Content: View>: View {
-        let snapshotPair: SnapshotsAroundPass
-        let rect: CGRect
-        let modifierFactory: (Angle) -> BackgroundModifier
-        let content: () -> Content
+struct SkyChartPassLabel<BackgroundModifier: ViewModifier, Content: View>: View {
+    let snapshotPair: SnapshotsAroundPass
+    let rect: CGRect
+    let modifierFactory: (Angle) -> BackgroundModifier
+    let content: () -> Content
 
-        public init(
-            snapshotPair: SnapshotsAroundPass,
-            rect: CGRect,
-            modifierFactory: @escaping (Angle) -> BackgroundModifier,
-            @ViewBuilder content: @escaping () -> Content
-        ) {
-            self.snapshotPair = snapshotPair
-            self.rect = rect
-            self.modifierFactory = modifierFactory
-            self.content = content
-        }
-        
-        var body: some View {
-            let (rot, textRotation) = SkyChart.rotationAndTextRotation(snapshotPair: snapshotPair, rect: rect)
-            let textPosition = AziEleDst(azim: snapshotPair.first.position.azim, elev: snapshotPair.first.position.elev, dist: 0)
-            return HStack(spacing: 2) {
-                Path { path in
-                    path.move(to: CGPoint(x: rect.midX, y: rect.midY))
-                    path.addLine(to: CGPoint(x: rect.midX + 20, y: rect.midY))
-                }
-                .stroke(Color.gray)
-                .frame(alignment: .leading)
+    public init(
+        snapshotPair: SnapshotsAroundPass,
+        rect: CGRect,
+        modifierFactory: @escaping (Angle) -> BackgroundModifier,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.snapshotPair = snapshotPair
+        self.rect = rect
+        self.modifierFactory = modifierFactory
+        self.content = content
+    }
 
-                content(
-                )
-                .modifier(modifierFactory(.radians(textRotation)))
-                .rotationEffect(.radians(textRotation))
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .offset(x: 20, y: 0)
+    var body: some View {
+        let (rot, textRotation) = SkyChartUtils.rotationAndTextRotation(snapshotPair: snapshotPair, rect: rect)
+        let textPosition = AziEleDst(azim: snapshotPair.first.position.azim, elev: snapshotPair.first.position.elev, dist: 0)
+        return HStack(spacing: 2) {
+            Path { path in
+                path.move(to: CGPoint(x: rect.midX, y: rect.midY))
+                path.addLine(to: CGPoint(x: rect.midX + 20, y: rect.midY))
             }
-            .rotationEffect(.radians(rot))
-            .position(SkyChart.point(at: textPosition, rect: rect))
+            .stroke(Color.gray)
+            .frame(alignment: .leading)
+
+            content(
+            )
+            .modifier(modifierFactory(.radians(textRotation)))
+            .rotationEffect(.radians(textRotation))
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .offset(x: 20, y: 0)
         }
+        .rotationEffect(.radians(rot))
+        .position(SkyChartUtils.point(at: textPosition, rect: rect))
     }
 }
+
 
 struct PassLabelModifier: ViewModifier {
     var rotationAngle: Angle = .zero

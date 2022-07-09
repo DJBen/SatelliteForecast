@@ -22,12 +22,12 @@ public struct AuxiliaryCompassView<AziEleProvider: AziEleProviding>: View {
                     height: min(frame.width, frame.height)
                 )
             )
-            let targetPoint = SkyChart.point(at: aziEleProvider, rect: squareFrame)
-            let rimPoint = SkyChart.point(
+            let targetPoint = SkyChartUtils.point(at: aziEleProvider, rect: squareFrame)
+            let rimPoint = SkyChartUtils.point(
                 at: AziEle(azim: aziEleProvider.azim, elev: 0),
                 rect: squareFrame
             )
-            let rimPointInsetted = SkyChart.point(
+            let rimPointInsetted = SkyChartUtils.point(
                 at: AziEle(azim: aziEleProvider.azim, elev: 0),
                 rect: squareFrame.inset(by: .init(top: 5, left: 5, bottom: 5, right: 5))
             )

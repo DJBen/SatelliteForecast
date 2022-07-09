@@ -25,13 +25,13 @@ extension EffectMiddleware where InputActionType == BackgroundSkyViewAction, Out
                 return .promise(token: "") { context, sink in
                     DispatchQueue.global(qos: .userInitiated).async {
                         let state = getState()
-                        let dataSource = quality == .full ? state.rasterizedBackgroundSky : state.previewBackgroundSkies
+                        let dataSource = state.dataSource(for: quality)
                         // Skip if image already generated.
                         if let _ = dataSource[key]?[julianDate] {
                             return
                         }
 
-                        let image = SkyChart.rasterizedBackgroundSkyPath(
+                        let image = SkyChartUtils.rasterizedBackgroundSkyPath(
                             params: BackgroundSkyRenderParams(
                                 rect: CGRect(origin: .zero, size: size),
                                 stars: {

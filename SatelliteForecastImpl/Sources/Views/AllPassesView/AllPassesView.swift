@@ -107,7 +107,7 @@ public struct AllPassesView: View {
     @ObservedObject var viewModel: ObservableViewModel<AllPassesViewAction, AllPassesViewState>
 
     let context: AllPassesViewContext
-    let skyChartProducer: ViewProducer<SkyChartContext, SkyChart>
+    let skyChartProducer: ViewProducer<SkyChartContext<EmptyView>, SkyChart<EmptyView>>
     let passViewProducer: ViewProducer<PassViewContext, PassView>
 
     let refreshTimer = Timer.publish(
@@ -119,7 +119,7 @@ public struct AllPassesView: View {
     .map(\.julianDate)
 
     let coordinateRefreshTimer = Timer.publish(
-        every: 1,
+        every: 5,
         on: .main,
         in: .common
     )
@@ -137,7 +137,7 @@ public struct AllPassesView: View {
     public init(
         viewModel: ObservableViewModel<AllPassesViewAction, AllPassesViewState>,
         context: AllPassesViewContext,
-        skyChartProducer: ViewProducer<SkyChartContext, SkyChart>,
+        skyChartProducer: ViewProducer<SkyChartContext<EmptyView>, SkyChart<EmptyView>>,
         passViewProducer: ViewProducer<PassViewContext, PassView>
     ) {
         self.viewModel = viewModel
@@ -212,6 +212,7 @@ public struct AllPassesView: View {
                 destination: LazyView {
                     passViewProducer.view(
                         PassViewContext(
+                            passIndex: item.index,
                             satelliteInfo: context.satelliteInfo,
                             category: viewModel.state.satelliteCategory,
                             julianDateRange: context.julianDateRange,
@@ -270,35 +271,87 @@ public struct AllPassesView: View {
     }
 
     @ViewBuilder private func passesList(_ items: [Item]?, observer: LatLonAlt) -> some View {
-        if let items = items {
-            if items.isEmpty {
-                Text("No passes found")
-            } else {
-                ForEach(items) { item in
-                    navigationLink(item: item, observer: observer) {
-                        PassPreviewCell(
-                            satelliteInfo: context.satelliteInfo,
-                            snapshots: item.passSnapshots.snapshots,
-                            notableSnapshots: item.passSnapshots.notableSnapshots,
-                            observer: observer,
-                            pass: item.passSnapshots.pass,
-                            hasScheduledAlert: item.hasScheduledAlert,
-                            skyChartProducer: skyChartProducer,
-                            julianDateOffset: viewModel.state.julianDateOffset,
-                            julianDateProvider: context.julianDateProvider
-                        )
-                    }
-                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10))
-                    .frame(height: 135)
-                    .swipeActions(
-                        edge: .leading
-                    ) {
-                        swipeActionLeftButtons(item: item)
+        Group {
+            if let items = items {
+                if items.isEmpty {
+                    Text("No passes found")
+                } else {
+                    ForEach(items) { item in
+                        Button {
+                            viewModel.dispatch(.selectPass(index: item.index))
+                        } label: {
+                            PassPreviewCell(
+                                satelliteInfo: context.satelliteInfo,
+                                snapshots: item.passSnapshots.snapshots,
+                                notableSnapshots: item.passSnapshots.notableSnapshots,
+                                observer: observer,
+                                pass: item.passSnapshots.pass,
+                                hasScheduledAlert: item.hasScheduledAlert,
+                                skyChartProducer: skyChartProducer,
+                                julianDateOffset: viewModel.state.julianDateOffset,
+                                julianDateProvider: context.julianDateProvider
+                            )
+
+                        }
+                        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10))
+                        .frame(height: 135)
+                        .swipeActions(
+                            edge: .leading
+                        ) {
+                            swipeActionLeftButtons(item: item)
+                        }
                     }
                 }
+            } else {
+                ProgressView("Calculating...")
             }
-        } else {
-            ProgressView("Calculating...")
+        }
+        .background {
+            NavigationLink(
+                isActive: Binding<Bool>(
+                    get: {
+                        viewModel.state.selectedPassIndex != nil
+                    },
+                    set: { isActive in
+                        if !isActive {
+                            viewModel.dispatch(.selectPass(index: nil))
+                        }
+                    }
+                ),
+                destination: {
+                    LazyView {
+                        if let selectedPassIndex = viewModel.state.selectedPassIndex, let items = items, let selectedItem = items.first(where: { $0.index == selectedPassIndex }) {
+                            MotionManagerView(
+                                isActive: Binding<Bool>(
+                                    get: {
+                                        // Disables the motion when modal is up, because it seems to interfere with picker view
+                                        viewModel.state.selectedPassIndex != nil && !viewModel.state.showsPassAlarmSettingsModal
+                                    },
+                                    set: { _ in }
+                                )
+                            ) { deviceMotionResult in
+                                passViewProducer.view(
+                                    PassViewContext(
+                                        passIndex: selectedPassIndex,
+                                        satelliteInfo: context.satelliteInfo,
+                                        category: viewModel.state.satelliteCategory,
+                                        julianDateRange: context.julianDateRange,
+                                        observer: observer,
+                                        passSnapshots: selectedItem.passSnapshots,
+                                        julianDateProvider: context.julianDateProvider,
+                                        deviceMotion: deviceMotionResult
+                                    )
+                                )
+                            }
+                        } else {
+                            Color.clear
+                        }
+                    }
+                },
+                label: {
+                    EmptyView()
+                }
+            )
         }
     }
 
@@ -647,12 +700,12 @@ struct AllPassesView_Previews: PreviewProvider {
                         )
                     ),
                     context: context,
-                    skyChartProducer: ViewProducer<SkyChartContext, SkyChart> { context in
+                    skyChartProducer: ViewProducer<SkyChartContext<EmptyView>, SkyChart<EmptyView>> { context in
                         return SkyChart(
                             viewModel: .mock(
                                 state: SkyChartViewState()
                             ),
-                            context: SkyChartContext(
+                            context: SkyChartContext<EmptyView>(
                                 satelliteInfo: SatelliteInfo(elements: tianHe),
                                 snapshots: passSnapshots.snapshots,
                                 observer: observer,
@@ -690,7 +743,9 @@ struct AllPassesView_Previews: PreviewProvider {
                                         observer: observer,
                                         basicChartConfigs: .init(),
                                         configs: .preset,
-                                        quality: .full
+                                        quality: .full,
+                                        constellationLabel: { _ in EmptyView() },
+                                        julianDateProvider: { passSnapshots.pass.rise.julianDate }
                                     )
                                 )
                             )

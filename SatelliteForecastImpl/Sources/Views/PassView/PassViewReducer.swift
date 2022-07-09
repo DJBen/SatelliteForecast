@@ -13,6 +13,8 @@ extension Reducer where ActionType == PassViewAction, StateType == PassViewState
         switch action {
         case .showAlarmConfiguration(let isShowing):
             state.showAlarmConfigurationModal = isShowing
+        case .showDetailPassView(let showsDetailPassView):
+            state.showsDetailPassView = showsDetailPassView
         }
     }
 }

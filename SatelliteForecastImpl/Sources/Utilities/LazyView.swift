@@ -11,7 +11,7 @@ import SwiftUI
 /// This is especially useful in NavigationLink's destination.
 /// - seealso: https://stackoverflow.com/q/57594159/1085698
 public struct LazyView<Content: View>: View {
-    let build: () -> Content
+    @ViewBuilder let build: () -> Content
 
     public init(@ViewBuilder _ build: @escaping () -> Content) {
         self.build = build

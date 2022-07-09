@@ -49,17 +49,20 @@ struct ListNavigation {
     var noradIndex: UInt?
     var selectedPassIndex: Int?
     var showAlarmConfigurationModal: Bool
+    var showsDetailPassView: Bool
 
     init(
         category: SatelliteCategory? = nil,
         noradIndex: UInt? = nil,
         selectedPassIndex: Int? = nil,
-        showAlarmConfigurationModal: Bool = false
+        showAlarmConfigurationModal: Bool = false,
+        showsDetailPassView: Bool = false
     ) {
         self.category = category
         self.noradIndex = noradIndex
         self.selectedPassIndex = selectedPassIndex
         self.showAlarmConfigurationModal = showAlarmConfigurationModal
+        self.showsDetailPassView = showsDetailPassView
     }
 }
 

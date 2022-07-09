@@ -48,7 +48,7 @@ struct SkyChartSatelliteIndicator: View {
                 }
             }
             .position(
-                SkyChart.point(
+                SkyChartUtils.point(
                     at: AziEleDst(azim: state.coordinate.azim, elev: state.coordinate.elev, dist: 0),
                     rect: rect
                 )

@@ -102,6 +102,8 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                     case .failedToPropagateCurrentEphemerides(let error, let observer, let julianDate):
                         print("failedToPropagatedCurrentEphemerides(error: \(error), observer: \(observer), julianDate: \(julianDate))")
                     }
+                case .detailedPassView(let detailedPassAction):
+                    print(detailedPassAction)
                 }
             }
         }
