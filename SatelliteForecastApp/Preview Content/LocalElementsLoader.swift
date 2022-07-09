@@ -15,12 +15,25 @@ import SatelliteCatalog
 
 /// A testing implementation that loads fixed Elements from local files.
 class LocalElementsLoader: ElementsLoader {
-    func loadElementsPublisher(category: SatelliteCategory) -> AnyPublisher<Map<UInt, SatelliteInfo>, ElementsLoaderError> {
+    let delay: TimeInterval
+    let hasConnectivity: Bool
+
+    init(
+        delay: TimeInterval = 1,
+        hasConnectivity: Bool = true
+    ) {
+        self.delay = delay
+        self.hasConnectivity = hasConnectivity
+    }
+
+    func loadElementsPublisher(
+        category: SatelliteCategory
+    ) -> AnyPublisher<Map<UInt, SatelliteInfo>, ElementsLoaderError> {
         Future<Map<UInt, SatelliteInfo>, ElementsLoaderError> { promise in
             DispatchQueue.global(qos: .userInitiated).async {
                 do {
-                    let elementss = try Elements.loadLocalData(category: category)
-                    let info = elementss
+                    let elements = try Elements.loadLocalData(category: category)
+                    let info = elements
                         .map(SatelliteInfo.init(elements:))
                         .reduce(into: Map<UInt, SatelliteInfo>(), { $0[$1.noradIndex] = $1 })
                     promise(.success(info))
@@ -29,6 +42,7 @@ class LocalElementsLoader: ElementsLoader {
                 }
             }
         }
+        .delay(for: .seconds(delay), scheduler: RunLoop.main)
         .eraseToAnyPublisher()
     }
 }

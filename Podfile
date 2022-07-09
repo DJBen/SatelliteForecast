@@ -8,20 +8,20 @@ target 'SatelliteForecastApp' do
   pod "CombineRex", "~> 0.8.12"
   pod "CombineRextensions"
   pod "FlagKit"
-  pod 'QSMag', :path => './QSMag'
   pod "SwiftRex", "~> 0.8.12"
-  pod "ActivityView", :path => './ActivityView/Public'
-  pod "CombineUtils", :path => './CombineUtils'
-  pod "CombineRexUtils", :path => './CombineRexUtils'
-  pod "SatelliteKit", :path => './SatelliteKit'
-  pod "StarryNight", :path => './StarryNight'
-  pod "SatelliteCatalog", :path => './SatelliteCatalog'
-  pod "SatelliteCatalogImpl_SQLite", :path => './SatelliteCatalogImpl_SQLite'
-  pod "SatelliteForecast", :path => './SatelliteForecast'
-  pod "SatelliteForecastImpl", :path => './SatelliteForecastImpl'
-  pod 'SecondaryTabView', :path => './SecondaryTabView'
-  pod "SolarSystem", :path => './SolarSystem'
-  pod "SwiftUIVisualEffects", :path => './SwiftUIVisualEffects'
+  pod "ActivityView", :path => 'Frameworks/ActivityView/Public'
+  pod "CombineUtils", :path => 'Frameworks/CombineUtils'
+  pod "CombineRexUtils", :path => 'Frameworks/CombineRexUtils'
+  pod 'QSMag', :path => 'Frameworks/QSMag'
+  pod "SatelliteKit", :path => 'Frameworks/SatelliteKit'
+  pod "StarryNight", :path => 'Frameworks/StarryNight'
+  pod "SatelliteCatalog", :path => 'Frameworks/SatelliteCatalog/Public'
+  pod "SatelliteCatalogImpl_SQLite", :path => 'Frameworks/SatelliteCatalog/Impl_SQLite'
+  pod "SatelliteForecast", :path => 'Frameworks/SatelliteForecast/Public'
+  pod "SatelliteForecastImpl", :path => 'Frameworks/SatelliteForecast/Impl'
+  pod 'SecondaryTabView', :path => 'Frameworks/SecondaryTabView'
+  pod "SolarSystem", :path => 'Frameworks/SolarSystem'
+  pod "SwiftUIVisualEffects", :path => 'Frameworks/SwiftUIVisualEffects'
 
   target 'SatelliteForecastTests' do
     inherit! :complete

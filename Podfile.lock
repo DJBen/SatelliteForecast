@@ -55,24 +55,24 @@ PODS:
     - SwiftRex (~> 0.8.12)
 
 DEPENDENCIES:
-  - ActivityView (from `./ActivityView/Public`)
+  - ActivityView (from `Frameworks/ActivityView/Public`)
   - BTree (~> 4.1.0)
   - CombineRex (~> 0.8.12)
   - CombineRextensions
-  - CombineRexUtils (from `./CombineRexUtils`)
-  - CombineUtils (from `./CombineUtils`)
+  - CombineRexUtils (from `Frameworks/CombineRexUtils`)
+  - CombineUtils (from `Frameworks/CombineUtils`)
   - FlagKit
-  - QSMag (from `./QSMag`)
-  - SatelliteCatalog (from `./SatelliteCatalog`)
-  - SatelliteCatalogImpl_SQLite (from `./SatelliteCatalogImpl_SQLite`)
-  - SatelliteForecast (from `./SatelliteForecast`)
-  - SatelliteForecastImpl (from `./SatelliteForecastImpl`)
-  - SatelliteKit (from `./SatelliteKit`)
-  - SecondaryTabView (from `./SecondaryTabView`)
-  - SolarSystem (from `./SolarSystem`)
-  - StarryNight (from `./StarryNight`)
+  - QSMag (from `Frameworks/QSMag`)
+  - SatelliteCatalog (from `Frameworks/SatelliteCatalog/Public`)
+  - SatelliteCatalogImpl_SQLite (from `Frameworks/SatelliteCatalog/Impl_SQLite`)
+  - SatelliteForecast (from `Frameworks/SatelliteForecast/Public`)
+  - SatelliteForecastImpl (from `Frameworks/SatelliteForecast/Impl`)
+  - SatelliteKit (from `Frameworks/SatelliteKit`)
+  - SecondaryTabView (from `Frameworks/SecondaryTabView`)
+  - SolarSystem (from `Frameworks/SolarSystem`)
+  - StarryNight (from `Frameworks/StarryNight`)
   - SwiftRex (~> 0.8.12)
-  - SwiftUIVisualEffects (from `./SwiftUIVisualEffects`)
+  - SwiftUIVisualEffects (from `Frameworks/SwiftUIVisualEffects`)
   - TestingExtensions (~> 0.2.11)
 
 SPEC REPOS:
@@ -89,31 +89,31 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   ActivityView:
-    :path: "./ActivityView/Public"
+    :path: Frameworks/ActivityView/Public
   CombineRexUtils:
-    :path: "./CombineRexUtils"
+    :path: Frameworks/CombineRexUtils
   CombineUtils:
-    :path: "./CombineUtils"
+    :path: Frameworks/CombineUtils
   QSMag:
-    :path: "./QSMag"
+    :path: Frameworks/QSMag
   SatelliteCatalog:
-    :path: "./SatelliteCatalog"
+    :path: Frameworks/SatelliteCatalog/Public
   SatelliteCatalogImpl_SQLite:
-    :path: "./SatelliteCatalogImpl_SQLite"
+    :path: Frameworks/SatelliteCatalog/Impl_SQLite
   SatelliteForecast:
-    :path: "./SatelliteForecast"
+    :path: Frameworks/SatelliteForecast/Public
   SatelliteForecastImpl:
-    :path: "./SatelliteForecastImpl"
+    :path: Frameworks/SatelliteForecast/Impl
   SatelliteKit:
-    :path: "./SatelliteKit"
+    :path: Frameworks/SatelliteKit
   SecondaryTabView:
-    :path: "./SecondaryTabView"
+    :path: Frameworks/SecondaryTabView
   SolarSystem:
-    :path: "./SolarSystem"
+    :path: Frameworks/SolarSystem
   StarryNight:
-    :path: "./StarryNight"
+    :path: Frameworks/StarryNight
   SwiftUIVisualEffects:
-    :path: "./SwiftUIVisualEffects"
+    :path: Frameworks/SwiftUIVisualEffects
 
 SPEC CHECKSUMS:
   ActivityView: 39ecc1b4824051660f9cf63f03d051d780c0fee5
@@ -139,6 +139,6 @@ SPEC CHECKSUMS:
   SwiftUIVisualEffects: 4b341110ba61926c0287feef7b09b49fc0e7fac3
   TestingExtensions: b1b5ab833b29dad598b1450aec84a36bbe0da326
 
-PODFILE CHECKSUM: c36b3e06799f8b357616942aae9728b38399e54a
+PODFILE CHECKSUM: f0f63720359bcedcd674fcaf3723c93558339ac8
 
 COCOAPODS: 1.11.3
