@@ -352,9 +352,6 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
         .navigationViewStyle(.stack)
         .onAppear {
             viewModel.dispatch(.setRealtimeSkyViewActive(true))
-            if case .notLoaded = viewModel.state.satellites {
-                viewModel.dispatch(.loadElements)
-            }
         }
         .onDisappear {
             viewModel.dispatch(.setRealtimeSkyViewActive(false))

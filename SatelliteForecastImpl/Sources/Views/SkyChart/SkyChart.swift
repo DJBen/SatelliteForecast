@@ -90,6 +90,7 @@ public struct SkyChart<ConstellationLabel: View>: View {
                 let rect = geometry.frame(in: .local)
 
                 ZStack {
+                    // Rise label
                     SkyChartPassLabel(
                         snapshotPair: context.notableSnapshots.rise,
                         rect: rect,
@@ -102,6 +103,7 @@ public struct SkyChart<ConstellationLabel: View>: View {
                         )
                     }
 
+                    // Set label
                     SkyChartPassLabel(
                         snapshotPair: context.notableSnapshots.set,
                         rect: rect,
@@ -114,6 +116,7 @@ public struct SkyChart<ConstellationLabel: View>: View {
                         )
                     }
 
+                    // Transit label
                     SkyChartPassLabel(
                         snapshotPair: context.notableSnapshots.transit,
                         rect: rect,
@@ -126,6 +129,7 @@ public struct SkyChart<ConstellationLabel: View>: View {
                         )
                     }
 
+                    // Illumination change labels
                     ForEach(context.pass.illumination.changes, id: \.datePosition) { change in
                         if let illuminationChangeAndSnapshots = context.notableSnapshots.illuminationChanges.value(of: change.datePosition.julianDate) {
                             SkyChartPassLabel(
@@ -222,17 +226,6 @@ public struct SkyChart<ConstellationLabel: View>: View {
             )
         )
         .environment(\.backgroundSkyJulianDateKey, backgroundSkyJulianDateKey)
-        .overlay(
-            SkyChartDynamicIndicator(
-                state: SkyChartDynamicIndicatorState(
-                    satelliteInfo: context.satelliteInfo,
-                    pass: context.pass,
-                    observer: context.observer,
-                    julianDateOffset: viewModel.state.julianDateOffset
-                )
-            ).clipShape(Circle())
-        )
-        .overlay(attitudeIndicator)
         .background(
             satellitePath.overlay(loadingIndicator)
             .clipShape(Circle())
@@ -246,6 +239,17 @@ public struct SkyChart<ConstellationLabel: View>: View {
             }
         )
         .overlay(passInfoLabels)
+        .overlay(
+            SkyChartDynamicIndicator(
+                state: SkyChartDynamicIndicatorState(
+                    satelliteInfo: context.satelliteInfo,
+                    pass: context.pass,
+                    observer: context.observer,
+                    julianDateOffset: viewModel.state.julianDateOffset
+                )
+            ).clipShape(Circle())
+        )
+        .overlay(attitudeIndicator)
         .onLoad {
             propagateBackgroundSkyJulianDateKey(context.julianDateProvider() + viewModel.state.julianDateOffset)
         }

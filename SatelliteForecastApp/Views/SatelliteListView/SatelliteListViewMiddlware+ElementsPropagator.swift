@@ -1,5 +1,5 @@
 //
-//  SatelliteListViewMiddlware+ElementsPropagator.swift
+//  SatelliteListViewMiddleware+ElementsPropagator.swift
 //  SatelliteForecastApp
 //
 //  Created by Ben Lu on 4/8/22.

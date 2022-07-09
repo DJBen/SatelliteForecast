@@ -17,7 +17,7 @@ struct SkyChartDynamicIndicatorState: Equatable {
     let julianDateOffset: Double
 }
 
-/// A dynamic indicator of the position of the passing satellite.
+/// A dynamic label describing the position of the passing satellite.
 /// It is only visible when the satellite is currently above horizon.
 struct SkyChartDynamicIndicator: View {
     var state: SkyChartDynamicIndicatorState
