@@ -73,7 +73,7 @@
 		EF847BF826CF2AB40004806F /* NotificationReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF847BF726CF2AB40004806F /* NotificationReducer.swift */; };
 		EF847BFA26CF624B0004806F /* NotificationAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF847BF926CF624B0004806F /* NotificationAction.swift */; };
 		EF847C0726D0AA230004806F /* NotificationResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF847C0626D0AA230004806F /* NotificationResources.swift */; };
-		EF991A8C2800E7400090C7F6 /* SatelliteListViewMiddlware+ElementsLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF991A8B2800E7400090C7F6 /* SatelliteListViewMiddlware+ElementsLoader.swift */; };
+		EF991A8C2800E7400090C7F6 /* SatelliteListViewMiddleware+ElementsLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF991A8B2800E7400090C7F6 /* SatelliteListViewMiddleware+ElementsLoader.swift */; };
 		EF991A8E2800EE940090C7F6 /* SatelliteListViewReducer+Wiring.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF991A8D2800EE940090C7F6 /* SatelliteListViewReducer+Wiring.swift */; };
 		EF991A9028016D3B0090C7F6 /* SatelliteOverviewMiddleware+ElementsLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF991A8F28016D3B0090C7F6 /* SatelliteOverviewMiddleware+ElementsLoader.swift */; };
 		EF991A96280196F90090C7F6 /* RootViewMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF991A95280196F90090C7F6 /* RootViewMiddleware.swift */; };
@@ -194,7 +194,7 @@
 		EF847BF926CF624B0004806F /* NotificationAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationAction.swift; sourceTree = "<group>"; };
 		EF847C0626D0AA230004806F /* NotificationResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationResources.swift; sourceTree = "<group>"; };
 		EF864272266DFFE9004F0AFA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		EF991A8B2800E7400090C7F6 /* SatelliteListViewMiddlware+ElementsLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SatelliteListViewMiddlware+ElementsLoader.swift"; sourceTree = "<group>"; };
+		EF991A8B2800E7400090C7F6 /* SatelliteListViewMiddleware+ElementsLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SatelliteListViewMiddleware+ElementsLoader.swift"; sourceTree = "<group>"; };
 		EF991A8D2800EE940090C7F6 /* SatelliteListViewReducer+Wiring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SatelliteListViewReducer+Wiring.swift"; sourceTree = "<group>"; };
 		EF991A8F28016D3B0090C7F6 /* SatelliteOverviewMiddleware+ElementsLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SatelliteOverviewMiddleware+ElementsLoader.swift"; sourceTree = "<group>"; };
 		EF991A95280196F90090C7F6 /* RootViewMiddleware.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootViewMiddleware.swift; sourceTree = "<group>"; };
@@ -339,7 +339,7 @@
 			children = (
 				EF74263827FFE5AC00DAF469 /* SatelliteListView+Wiring.swift */,
 				EF74263A2800E2FA00DAF469 /* SatelliteListViewMiddlware+ElementsPropagator.swift */,
-				EF991A8B2800E7400090C7F6 /* SatelliteListViewMiddlware+ElementsLoader.swift */,
+				EF991A8B2800E7400090C7F6 /* SatelliteListViewMiddleware+ElementsLoader.swift */,
 				EF991A8D2800EE940090C7F6 /* SatelliteListViewReducer+Wiring.swift */,
 			);
 			path = SatelliteListView;
@@ -859,7 +859,7 @@
 				EF16816C27D5D599001BA9C3 /* Elements+Preview.swift in Sources */,
 				EFCF20F226AD4E7E00D87E8B /* DebugMenuReducer.swift in Sources */,
 				EF847BF026CE33650004806F /* AppDelegateMiddleware.swift in Sources */,
-				EF991A8C2800E7400090C7F6 /* SatelliteListViewMiddlware+ElementsLoader.swift in Sources */,
+				EF991A8C2800E7400090C7F6 /* SatelliteListViewMiddleware+ElementsLoader.swift in Sources */,
 				EF847BF226CE49FA0004806F /* BackgroundTaskMiddleware.swift in Sources */,
 				EF991A98280197FA0090C7F6 /* RealtimeSkyViewMiddleware+ElementsLoader.swift in Sources */,
 				EF16816527D42F6B001BA9C3 /* DynamicTabBarItemView.swift in Sources */,

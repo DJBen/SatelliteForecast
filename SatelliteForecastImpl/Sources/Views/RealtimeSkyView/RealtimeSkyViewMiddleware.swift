@@ -16,6 +16,7 @@ extension EffectMiddleware where InputActionType == RealtimeSkyViewAction, Outpu
         EffectMiddleware.onAction { action, dispatcher, getState in
             switch action {
             case .loadElements:
+                // See `RealtimeSkyViewMiddleware+ElementsLoader` that redirects this action.
                 return .doNothing
             case .purgeElements:
                 return .doNothing
