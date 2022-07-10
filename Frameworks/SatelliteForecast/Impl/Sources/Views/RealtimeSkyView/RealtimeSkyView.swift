@@ -42,7 +42,12 @@ public struct RealtimeSkyViewContext {
     public let satelliteMagToRadiusFunction: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction
     public let julianDateProvider: () -> Double
 
-    public init(basicChartConfigs: BasicChartConfigs, backgroundSkyConfigs: BackgroundSkyConfigs, satelliteMagToRadiusFunction: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction, julianDateProvider: @escaping () -> Double) {
+    public init(
+        basicChartConfigs: BasicChartConfigs,
+        backgroundSkyConfigs: BackgroundSkyConfigs,
+        satelliteMagToRadiusFunction: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction,
+        julianDateProvider: @escaping () -> Double
+    ) {
         self.basicChartConfigs = basicChartConfigs
         self.backgroundSkyConfigs = backgroundSkyConfigs
         self.satelliteMagToRadiusFunction = satelliteMagToRadiusFunction
@@ -297,8 +302,21 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
             Color.clear
         case .loading:
             satelliteLoadingView
-        case .failed(_):
-            Color.clear
+        case .failed(let error):
+            VStack(spacing: 16) {
+                Text(error.localizedDescription)
+
+                Button(
+                    "Retry",
+                    action: {
+                        viewModel.dispatch(
+                            .loadElements
+                        )
+                    }
+                )
+                .font(Font.headline)
+                .foregroundColor(Color(UIColor.systemBlue))
+            }
         case .loaded(_):
             if visiblePropagationResults.isEmpty {
                 Text(

@@ -15,8 +15,8 @@ public struct ElementsLoaderState {
     public var julianDateOffset: Double
 
     public init(
-        resources: ElementsLoaderResources,
-        julianDateOffset: Double
+        resources: ElementsLoaderResources = .init(),
+        julianDateOffset: Double = 0
     ) {
         self.resources = resources
         self.julianDateOffset = julianDateOffset

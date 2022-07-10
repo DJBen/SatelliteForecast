@@ -19,6 +19,10 @@ class ElementsLoaderTests: XCTestCase {
         case elementsLoaderOutput(ElementsLoaderOutput)
     }
 
+    struct MockError: Error, Equatable {
+
+    }
+
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
@@ -27,7 +31,7 @@ class ElementsLoaderTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testElementsLoader() throws {
+    func testElementsLoader_loadElements() throws {
         assert(
             initialValue: ElementsLoaderState(),
             reducer: .identity,
@@ -35,9 +39,11 @@ class ElementsLoaderTests: XCTestCase {
                 ElementsLoaderDependencies(
                     elementsLoader: FakeElementsLoader(
                         result: .success([:])
-                    )
+                    ),
+                    dateProvider: { Date(timeIntervalSince1950: 0) }
                 )
-            ).lift(
+            )
+            .lift(
                 inputAction: {
                     guard case let .elementsLoaderAction(value) = $0 else { return nil }
                     return value
@@ -63,6 +69,46 @@ class ElementsLoaderTests: XCTestCase {
                             selectSpecialNoradIndex: nil,
                             selectNoradIndex: nil,
                             calculatePass: nil
+                        )
+                    )
+                )
+            }
+        )
+
+        assert(
+            initialValue: ElementsLoaderState(),
+            reducer: .identity,
+            middleware: EffectMiddleware.elementsLoader.inject(
+                ElementsLoaderDependencies(
+                    elementsLoader: FakeElementsLoader(
+                        result: .failure(.other(MockError()))
+                    ),
+                    dateProvider: { Date(timeIntervalSince1950: 0) }
+                )
+            )
+            .lift(
+                inputAction: {
+                    guard case let .elementsLoaderAction(value) = $0 else { return nil }
+                    return value
+                },
+                outputAction: Action.elementsLoaderOutput
+            ),
+            steps: {
+                Send(
+                    action: .elementsLoaderAction(
+                        .loadElements(
+                            category: .active,
+                            selectSpecialNoradIndex: nil,
+                            selectNoradIndex: nil,
+                            calculatePass: nil
+                        )
+                    )
+                )
+                Receive(
+                    action: Action.elementsLoaderOutput(
+                        .failedLoadingElements(
+                            category: .active,
+                            error: .other(MockError())
                         )
                     )
                 )
