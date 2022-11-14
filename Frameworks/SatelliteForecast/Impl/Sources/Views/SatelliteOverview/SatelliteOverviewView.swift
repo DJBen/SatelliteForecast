@@ -15,24 +15,33 @@ import CombineRextensions
 import CoreLocation
 
 public enum SatelliteOverviewViewAction {
-    case selectNavigationItem(
-        SatelliteOverviewItem?,
+    case selectSatelliteOfSpecialInterest(
+        SatellitesOfSpecialInterest?,
+        julianDateRange: ClosedRange<Double>,
+        observer: LatLonAlt?
+    )
+
+    case selectCategory(
+        SatelliteCategory?,
         julianDateRange: ClosedRange<Double>,
         observer: LatLonAlt?
     )
 }
 
 public struct SatelliteOverviewViewState: Equatable {
-    public var selectedSatelliteOverviewItem: SatelliteOverviewItem?
+    public var satellite: SatellitesOfSpecialInterest?
+    public var category: SatelliteCategory?
     public var observer: LatLonAlt?
     public var julianDateOffset: Double = 0
 
     public init(
-        selectedSatelliteOverviewItem: SatelliteOverviewItem? = nil,
+        satellite: SatellitesOfSpecialInterest? = nil,
+        category: SatelliteCategory? = nil,
         observer: LatLonAlt? = nil,
         julianDateOffset: Double = 0
     ) {
-        self.selectedSatelliteOverviewItem = selectedSatelliteOverviewItem
+        self.satellite = satellite
+        self.category = category
         self.observer = observer
         self.julianDateOffset = julianDateOffset
     }
@@ -66,56 +75,28 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
         self.singleSatelliteWrappingViewProducer = singleSatelliteWrappingViewProducer
     }
 
-    let sections: [SatelliteOverviewSection] = [
-        .satellitesOfSpecialInterest([
-            .specialSatellite(.iss),
-            .specialSatellite(.tianhe)
-        ]),
-        .categories([
-            .category(.brightest100),
-            .category(.active),
-            .category(.last30DayLaunches)
-        ])
-    ]
-
-    @ViewBuilder private func destination(for item: SatelliteOverviewItem) -> some View {
-        switch item {
-        case let .specialSatellite(satellite):
-            singleSatelliteWrappingViewProducer.view(
-                SingleSatelliteWrappingViewContext(
-                    selectedNoradIndex: satellite.rawValue,
-                    julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
-                    observer: viewModel.state.observer,
-                    julianDateProvider: context.julianDateProvider
-                )
-            )
-        case let .category(category):
-            listViewProducer.view(
-                SatelliteListViewContext(
-                    category: category,
-                    julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
-                    observer: viewModel.state.observer,
-                    julianDateProvider: context.julianDateProvider
-                )
-            )
-        }
-    }
-
     @ViewBuilder private func navigationLink(
-        for item: SatelliteOverviewItem
+        satelliteOfSpecialInterest satellite: SatellitesOfSpecialInterest
     ) -> some View {
         NavigationLink(
             destination: LazyView {
-                destination(for: item)
+                singleSatelliteWrappingViewProducer.view(
+                    SingleSatelliteWrappingViewContext(
+                        selectedNoradIndex: satellite.noradIndex,
+                        julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
+                        observer: viewModel.state.observer,
+                        julianDateProvider: context.julianDateProvider
+                    )
+                )
             },
-            tag: item,
-            selection: Binding<SatelliteOverviewItem?>(
+            tag: satellite,
+            selection: Binding<SatellitesOfSpecialInterest?>(
                 get: {
-                    viewModel.state.selectedSatelliteOverviewItem
+                    viewModel.state.satellite
                 },
                 set: {
                     viewModel.dispatch(
-                        .selectNavigationItem(
+                        .selectSatelliteOfSpecialInterest(
                             $0,
                             julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
                             observer: viewModel.state.observer
@@ -124,54 +105,93 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                 }
             ),
             label: {
-                SatelliteOverviewCell(
-                    model: SatelliteOverviewCellModel(
-                        item: item
-                    )
-                )
+                SatelliteOverviewSpecialSatelliteCell(satellite: satellite)
             }
         )
     }
 
-    @ViewBuilder private func sectionView(_ section: SatelliteOverviewSection) -> some View {
-        switch section {
-        case .categories(_):
-            LazyVGrid(
-                columns: [
-                    GridItem(.flexible()),
-                    GridItem(.flexible())
-                ],
-                alignment: .leading,
-                spacing: 10
-            ) {
-                ForEach(section.items, id: \.self) { item in
-                    navigationLink(for: item)
-                        .id(item)
+    @ViewBuilder private func navigationLink(
+        category: SatelliteCategory
+    ) -> some View {
+        NavigationLink(
+            destination: LazyView {
+                listViewProducer.view(
+                    SatelliteListViewContext(
+                        category: category,
+                        julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
+                        observer: viewModel.state.observer,
+                        julianDateProvider: context.julianDateProvider
+                    )
+                )
+            },
+            tag: category,
+            selection: Binding<SatelliteCategory?>(
+                get: {
+                    viewModel.state.category
+                },
+                set: {
+                    viewModel.dispatch(
+                        .selectCategory(
+                            $0,
+                            julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
+                            observer: viewModel.state.observer
+                        )
+                    )
                 }
+            ),
+            label: {
+                SatelliteOverviewCategoryCell(category: category)
             }
-        case .satellitesOfSpecialInterest(_):
-            ForEach(section.items, id: \.self) { item in
-                navigationLink(for: item)
-                    .id(item)
-            }
-        }
+        )
     }
 
     public var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 LazyVStack(
                     alignment: .leading,
                     spacing: 10,
                     pinnedViews: []
                 ) {
-                    ForEach(sections, id: \.self) { section in
-                        Section(
-                            header: Text(SatelliteOverviewViewImpl.sectionTitle(section))
-                                .font(.headline.lowercaseSmallCaps().weight(.semibold))
-                                .foregroundColor(Color(UIColor.secondaryLabel))
+                    Section(
+                        header: Text(SatelliteOverviewViewImpl.satelliteOfSpecialInterestSectionTitle)
+                            .font(.headline.lowercaseSmallCaps().weight(.semibold))
+                            .foregroundColor(Color(UIColor.secondaryLabel))
+                    ) {
+                        ForEach(
+                            [
+                                SatellitesOfSpecialInterest.iss,
+                                SatellitesOfSpecialInterest.tianhe
+                            ],
+                            id: \.self
+                        ) { satellite in
+                            navigationLink(satelliteOfSpecialInterest: satellite)
+                        }
+                    }
+
+                    Section(
+                        header: Text(SatelliteOverviewViewImpl.categoriesSectionTitle)
+                            .font(.headline.lowercaseSmallCaps().weight(.semibold))
+                            .foregroundColor(Color(UIColor.secondaryLabel))
+                    ) {
+                        LazyVGrid(
+                            columns: [
+                                GridItem(.flexible()),
+                                GridItem(.flexible())
+                            ],
+                            alignment: .leading,
+                            spacing: 10
                         ) {
-                            sectionView(section)
+                            ForEach(
+                                [
+                                    SatelliteCategory.brightest100,
+                                    SatelliteCategory.active,
+                                    SatelliteCategory.last30DayLaunches
+                                ],
+                                id: \.self
+                            ) { category in
+                                navigationLink(category: category).id(category)
+                            }
                         }
                     }
                 }
@@ -180,32 +200,25 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
             .navigationBarTitle("Overview", displayMode: .inline)
             .navigationBarHidden(true)
         }
-        .navigationViewStyle(.stack)
     }
 }
 
 extension SatelliteOverviewViewImpl {
-    static func sectionTitle(_ section: SatelliteOverviewSection) -> String {
-        switch section {
-        case .satellitesOfSpecialInterest(_):
-            return NSLocalizedString(
-                "SatelliteListView.sectionOverviewView.section.satellitesOfSpecialInterest",
-                tableName: nil,
-                bundle: .main,
-                value: "Satellites of special interest",
-                comment: "The section title for satellites of special interest"
-            )
-        case .categories(_):
-            return NSLocalizedString(
-                "SatelliteListView.sectionOverviewView.section.satellitesByCategories",
-                tableName: nil,
-                bundle: .main,
-                value: "Satellites by categories",
-                comment: "The section title for satellites grouped by categories"
-            )
-        }
-    }
+    static let satelliteOfSpecialInterestSectionTitle = NSLocalizedString(
+        "SatelliteListView.sectionOverviewView.section.satellitesOfSpecialInterest",
+        tableName: nil,
+        bundle: .main,
+        value: "Satellites of special interest",
+        comment: "The section title for satellites of special interest"
+    )
 
+    static let categoriesSectionTitle = NSLocalizedString(
+        "SatelliteListView.sectionOverviewView.section.satellitesByCategories",
+        tableName: nil,
+        bundle: .main,
+        value: "Satellites by categories",
+        comment: "The section title for satellites grouped by categories"
+    )
 }
 
 #if DEBUG

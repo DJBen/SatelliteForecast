@@ -11,41 +11,15 @@ import SatelliteForecast
 import SwiftUI
 import SwiftUIVisualEffects
 
-struct SatelliteOverviewCellModel {
-    let item: SatelliteOverviewItem
-}
-
-/// An overview cell contains a category of satellites.
-struct SatelliteOverviewCell: View {
-    let model: SatelliteOverviewCellModel
-
-    @ViewBuilder var body: some View {
-        switch model.item {
-        case let .specialSatellite(satellite):
-            SatelliteOverviewSpecialSatelliteCell(satellite: satellite)
-        case let .category(category):
-            SatelliteOverviewCategoryCell(category: category)
-        }
-    }
-}
-
 struct SatelliteOverviewSpecialSatelliteCell: View {
-    let satellite: SatelliteOverviewItem.SatellitesOfSpecialInterest
+    let satellite: SatellitesOfSpecialInterest
 
     @Environment(\.colorScheme) private var colorScheme
 
-    @ViewBuilder private func background(satellite: SatelliteOverviewItem.SatellitesOfSpecialInterest) -> some View {
-        switch satellite {
-        case .iss:
-            Image("25544", bundle: .satelliteForecastImplResourcesBundle)
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-            
-        case .tianhe:
-            Image("48274", bundle: .satelliteForecastImplResourcesBundle)
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-        }
+    @ViewBuilder private func background(satellite: SatellitesOfSpecialInterest) -> some View {
+        Image(String(satellite.noradIndex), bundle: .satelliteForecastImplResourcesBundle)
+            .resizable()
+            .aspectRatio(contentMode: .fill)
     }
 
     var body: some View {
@@ -59,13 +33,13 @@ struct SatelliteOverviewSpecialSatelliteCell: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
-                        Text(SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedTitle(satellite))
+                        Text(SatelliteOverviewSpecialSatelliteCell.satelliteOfSpecialInterestLocalizedTitle(satellite))
                             .font(.headline)
                             .foregroundColor(Color(UIColor.label))
                         Spacer()
                     }
 
-                    Text(SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedDescription(satellite))
+                    Text(SatelliteOverviewSpecialSatelliteCell.satelliteOfSpecialInterestLocalizedDescription(satellite))
                         .font(.caption)
                         .multilineTextAlignment(.leading)
                         .foregroundColor(colorScheme == .light ? Color(UIColor.systemGray2) : Color(UIColor.systemGray4))
@@ -119,7 +93,7 @@ struct SatelliteOverviewCategoryCell: View {
 
     var body: some View {
         Text(
-            SatelliteOverviewCell.categoryLocalizedString(category)
+            SatelliteOverviewCategoryCell.categoryLocalizedString(category)
         )
         .font(.headline)
         .foregroundColor(Color(UIColor.label))
@@ -137,8 +111,8 @@ struct SatelliteOverviewCategoryCell: View {
     }
 }
 
-extension SatelliteOverviewCell {
-    static func satelliteOfSpecialInterestLocalizedTitle(_ satellite: SatelliteOverviewItem.SatellitesOfSpecialInterest) -> String {
+extension SatelliteOverviewSpecialSatelliteCell {
+    static func satelliteOfSpecialInterestLocalizedTitle(_ satellite: SatellitesOfSpecialInterest) -> String {
         switch satellite {
         case .iss:
             return NSLocalizedString(
@@ -156,10 +130,12 @@ extension SatelliteOverviewCell {
                 value: "Tianhe (CSS Core Module)",
                 comment: "The title of Tianhe, displayed in the 'Satellite of special interest' section."
             )
+        default:
+            fatalError("Unsupported satellite")
         }
     }
 
-    static func satelliteOfSpecialInterestLocalizedDescription(_ satellite: SatelliteOverviewItem.SatellitesOfSpecialInterest) -> String {
+    static func satelliteOfSpecialInterestLocalizedDescription(_ satellite: SatellitesOfSpecialInterest) -> String {
         switch satellite {
         case .iss:
             return NSLocalizedString(
@@ -179,9 +155,13 @@ extension SatelliteOverviewCell {
                 value: "The first module of China's Tiangong space station.",
                 comment: "The description of Tianhe in overview page."
             )
+        default:
+            fatalError("Unsupported satellite")
         }
     }
+}
 
+extension SatelliteOverviewCategoryCell {
     static func categoryLocalizedString(_ category: SatelliteCategory) -> String {
         switch category {
         case .brightest100:
@@ -226,31 +206,15 @@ struct SatelliteOverviewCell_Previews: PreviewProvider {
                         alignment: .leading,
                         spacing: 10,
                         content: {
-                            SatelliteOverviewCell(
-                                model: SatelliteOverviewCellModel(
-                                    item: .specialSatellite(.iss)
-                                )
-                            )
-                            SatelliteOverviewCell(
-                                model: SatelliteOverviewCellModel(
-                                    item: .specialSatellite(.tianhe)
-                                )
-                            )
-                            SatelliteOverviewCell(
-                                model: SatelliteOverviewCellModel(
-                                    item: .category(.brightest100)
-                                )
-                            )
-                            SatelliteOverviewCell(
-                                model: SatelliteOverviewCellModel(
-                                    item: .category(.active)
-                                )
-                            )
-                            SatelliteOverviewCell(
-                                model: SatelliteOverviewCellModel(
-                                    item: .category(.last30DayLaunches)
-                                )
-                            )
+                            SatelliteOverviewSpecialSatelliteCell(satellite: .iss)
+
+                            SatelliteOverviewSpecialSatelliteCell(satellite: .tianhe)
+
+                            SatelliteOverviewCategoryCell(category: .brightest100)
+
+                            SatelliteOverviewCategoryCell(category: .active)
+
+                            SatelliteOverviewCategoryCell(category: .last30DayLaunches)
                         }
                     )
                 }

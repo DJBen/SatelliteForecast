@@ -13,14 +13,16 @@ import SatelliteForecastImpl
 extension SatelliteOverviewViewState: AppStateMappable {
     static func project(appState: AppState) -> SatelliteOverviewViewState {
         SatelliteOverviewViewState(
-            selectedSatelliteOverviewItem: appState.navigationState.selectedSatelliteOverviewItem,
+            satellite: appState.navigationState.specialSatelliteNavigation.noradIndex.map(SatellitesOfSpecialInterest.init(noradIndex:)),
+            category: appState.navigationState.listNavigation.category,
             observer: appState.locationResources.location.map(LatLonAlt.init),
             julianDateOffset: appState.debugMenu.effectiveOffset
         )
     }
 
     static func apply(appState: inout AppState, state: SatelliteOverviewViewState) {
-        appState.navigationState.selectedSatelliteOverviewItem = state.selectedSatelliteOverviewItem
+        appState.navigationState.specialSatelliteNavigation = SpecialSatelliteNavigation(noradIndex: state.satellite?.noradIndex)
+        appState.navigationState.listNavigation.category = state.category
     }
 }
 
@@ -38,34 +40,6 @@ extension ViewProducer where Context == SatelliteOverviewViewContext, ProducedVi
                     .satelliteListView(viewModel: viewModel),
                 singleSatelliteWrappingViewProducer: ViewProducer<SingleSatelliteWrappingViewContext, SingleSatelliteWrappingView>.singleSatelliteWrappingView(viewModel: viewModel)
             )
-        }
-    }
-}
-
-extension NavigationState {
-    fileprivate var selectedSatelliteOverviewItem: SatelliteOverviewItem? {
-        get {
-            if let specialNoradIndex = specialSatelliteNavigation.noradIndex {
-                return .specialSatellite(SatelliteOverviewItem.SatellitesOfSpecialInterest(rawValue: specialNoradIndex)!)
-            } else if let category = listNavigation.category {
-                return .category(category)
-            } else {
-                return nil
-            }
-        }
-
-        set {
-            switch newValue {
-            case .specialSatellite(let specialSatellite):
-                self.listNavigation = .init()
-                self.specialSatelliteNavigation.noradIndex = specialSatellite.rawValue
-            case .category(let category):
-                self.listNavigation = .init(category: category, noradIndex: nil, selectedPassIndex: nil)
-                self.specialSatelliteNavigation = .init()
-            case .none:
-                self.listNavigation = .init()
-                self.specialSatelliteNavigation = .init()
-            }
         }
     }
 }

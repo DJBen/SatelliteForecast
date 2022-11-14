@@ -401,8 +401,8 @@ extension EffectMiddleware where
                             subject.send(
                                 DispatchedAction(
                                     .satelliteOverview(
-                                        .selectNavigationItem(
-                                            .specialSatellite(.init(rawValue: noradIndex)!),
+                                        .selectSatelliteOfSpecialInterest(
+                                            .init(noradIndex: noradIndex),
                                             julianDateRange: JulianDateUtil.createJulianDateRange(now: julianDate),
                                             observer: observer
                                         )

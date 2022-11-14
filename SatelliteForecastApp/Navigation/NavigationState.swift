@@ -8,9 +8,11 @@
 import Foundation
 import SatelliteKit
 import SatelliteForecast
+import SwiftUI
 
 struct NavigationState {
     var tab: Tab = .forecast
+    var path: NavigationPath = .init()
     var specialSatelliteNavigation: SpecialSatelliteNavigation = .init()
     var listNavigation: ListNavigation = .init()
     var observerNavigation: ObserverNavigationState = .init()

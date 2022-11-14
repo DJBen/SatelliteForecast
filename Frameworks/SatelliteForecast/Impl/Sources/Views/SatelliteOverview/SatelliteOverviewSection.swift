@@ -9,24 +9,23 @@ import Foundation
 import SatelliteForecast
 
 public enum SatelliteOverviewSection: Equatable, Hashable {
-    case satellitesOfSpecialInterest([SatelliteOverviewItem])
-    case categories([SatelliteOverviewItem])
-
-    public var items: [SatelliteOverviewItem] {
-        switch self {
-        case let .satellitesOfSpecialInterest(items),
-            let .categories(items):
-            return items
-        }
-    }
+    case satellitesOfSpecialInterest([SatellitesOfSpecialInterest])
+    case categories([SatelliteCategory])
 }
 
-public enum SatelliteOverviewItem: Equatable, Hashable {
-    public enum SatellitesOfSpecialInterest: UInt, Equatable, Hashable {
-        case iss = 25544
-        case tianhe = 48274
-    }
-    case specialSatellite(SatellitesOfSpecialInterest)
-    case category(SatelliteCategory)
-}
+public struct SatellitesOfSpecialInterest: ExpressibleByIntegerLiteral, Equatable, Hashable {
+    public typealias IntegerLiteralType = Int
 
+    static let iss: SatellitesOfSpecialInterest = 25544
+    static let tianhe: SatellitesOfSpecialInterest = 48274
+
+    public let noradIndex: UInt
+
+    public init(noradIndex: UInt) {
+        self.noradIndex = noradIndex
+    }
+
+    public init(integerLiteral value: Int) {
+        self.noradIndex = UInt(value)
+    }
+}
