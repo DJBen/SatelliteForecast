@@ -19,28 +19,29 @@ Dependencies == Void {
     static var satelliteOverviewToElementLoader: EffectMiddleware<SatelliteOverviewViewAction, ElementsLoaderAction, Void, Void> {
         EffectMiddleware<SatelliteOverviewViewAction, ElementsLoaderAction, Void, Void>.onAction { action, _, getState in
             switch action {
-            case .selectNavigationItem(let item, let julianDateRange, let observer):
-                switch item {
-                case .specialSatellite(let satelliteOption):
-                    return .just(
-                        .loadElements(
-                            category: .brightest100,
-                            calculatePass: observer.map { observer in
-                                ElementsLoaderCalculatePassParam(
-                                    noradIndex: satelliteOption.rawValue,
-                                    dateRange: julianDateRange,
-                                    observer: observer
-                                )
-                            }
-                        )
-                    )
-                case .category(let category):
-                    return .just(
-                        .loadElements(category: category)
-                    )
-                default:
+            case .selectSatelliteOfSpecialInterest(let satellite, julianDateRange: let julianDateRange, observer: let observer):
+                guard let satellite = satellite else {
                     return .doNothing
                 }
+                return .just(
+                    .loadElements(
+                        category: .brightest100,
+                        calculatePass: observer.map { observer in
+                            ElementsLoaderCalculatePassParam(
+                                noradIndex: satellite.noradIndex,
+                                dateRange: julianDateRange,
+                                observer: observer
+                            )
+                        }
+                    )
+                )
+            case .selectCategory(let category, julianDateRange: _, observer: _):
+                guard let category = category else {
+                    return .doNothing
+                }
+                return .just(
+                    .loadElements(category: category)
+                )
             }
         }
     }

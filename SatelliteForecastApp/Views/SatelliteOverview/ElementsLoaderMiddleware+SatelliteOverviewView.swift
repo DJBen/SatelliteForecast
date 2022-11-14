@@ -20,10 +20,8 @@ extension EffectMiddleware where InputActionType == ElementsLoaderOutput, Output
                 }
 
                 return .just(
-                    .selectNavigationItem(
-                        .specialSatellite(
-                            .init(rawValue: selectSpecialNoradIndex.noradIndex)!
-                        ),
+                    .selectSatelliteOfSpecialInterest(
+                        .init(noradIndex: selectSpecialNoradIndex.noradIndex),
                         julianDateRange: selectSpecialNoradIndex.dateRange,
                         observer: selectSpecialNoradIndex.observer
                     ),
