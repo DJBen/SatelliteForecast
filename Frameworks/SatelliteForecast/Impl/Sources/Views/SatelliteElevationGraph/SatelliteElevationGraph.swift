@@ -36,6 +36,7 @@ public enum SatelliteElevationGraphAction {
 
 public struct SatelliteElevationGraphContext {
     public let satelliteInfo: SatelliteInfo
+    public let selectedPassIndex: Int
     public let julianDateRange: ClosedRange<Double>
     public let observer: LatLonAlt
     public let configs: SatelliteElevationGraphConfigs
@@ -45,8 +46,20 @@ public struct SatelliteElevationGraphContext {
     public let elevationGraphTolerance: Double = TimeConstants.min2day
     public let julianDateProvider: () -> Double
 
-    public init(satelliteInfo: SatelliteInfo, julianDateRange: ClosedRange<Double>, observer: LatLonAlt, configs: SatelliteElevationGraphConfigs, julianDateProvider: @escaping () -> Double) {
+    public var noradIndex: UInt {
+        return satelliteInfo.noradIndex
+    }
+
+    public init(
+        satelliteInfo: SatelliteInfo,
+        selectedPassIndex: Int,
+        julianDateRange: ClosedRange<Double>,
+        observer: LatLonAlt,
+        configs: SatelliteElevationGraphConfigs,
+        julianDateProvider: @escaping () -> Double
+    ) {
         self.satelliteInfo = satelliteInfo
+        self.selectedPassIndex = selectedPassIndex
         self.julianDateRange = julianDateRange
         self.observer = observer
         self.configs = configs
@@ -57,21 +70,15 @@ public struct SatelliteElevationGraphContext {
 public struct SatelliteElevationGraphState: Equatable {
     public var satelliteElevationGraphResources: SatelliteElevationGraphResources = .init()
     public var elementsPropagatorResources: ElementsPropagatorResources = .init()
-    public var selectedNoradIndex: UInt?
-    public var highlightedDateRange: ClosedRange<Double>?
     public var julianDateOffset: Double = 0
 
     public init(
         satelliteElevationGraphResources: SatelliteElevationGraphResources = .init(),
         elementsPropagatorResources: ElementsPropagatorResources = .init(),
-        selectedNoradIndex: UInt? = nil,
-        highlightedDateRange: ClosedRange<Double>? = nil,
         julianDateOffset: Double = 0
     ) {
         self.satelliteElevationGraphResources = satelliteElevationGraphResources
         self.elementsPropagatorResources = elementsPropagatorResources
-        self.selectedNoradIndex = selectedNoradIndex
-        self.highlightedDateRange = highlightedDateRange
         self.julianDateOffset = julianDateOffset
     }
 }
@@ -131,6 +138,16 @@ public struct SatelliteElevationGraph: View {
             julianDate: currentJulianDate,
             observer: context.observer
         )
+    }
+
+    private var selectedSatellitePass: Pass? {
+        return viewModel.state.elementsPropagatorResources.satelliteTrails[context.noradIndex]?.passSnapshots?[context.selectedPassIndex].pass
+    }
+
+    private var highlightedDateRange: ClosedRange<Double>? {
+        return selectedSatellitePass.map { pass -> ClosedRange<Double> in
+            return pass.rise.julianDate...pass.set.julianDate
+        }
     }
 
     private var elevationText: some View {
@@ -220,7 +237,7 @@ public struct SatelliteElevationGraph: View {
         julianDateRangePresent { julianDateRange in
             GeometryReader { geometry in
                 let rect = geometry.frame(in: .local)
-                if let highlightedDateRange = viewModel.state.highlightedDateRange {
+                if let highlightedDateRange = highlightedDateRange {
                     let fromX = CGFloat((highlightedDateRange.lowerBound - julianDateRange.lowerBound) / (julianDateRange.upperBound - julianDateRange.lowerBound)) * rect.width
                     let toX = CGFloat((highlightedDateRange.upperBound - julianDateRange.lowerBound) / (julianDateRange.upperBound - julianDateRange.lowerBound)) * rect.width
                     HStack(spacing: 0) {
@@ -374,12 +391,12 @@ public struct SatelliteElevationGraph: View {
                                         rect: rect
                                     )
                                     .onAppear {
-                                        if let _ = viewModel.state.highlightedDateRange {
+                                        if let _ = highlightedDateRange {
                                             scrollViewProxy.scrollTo("centerAtDate", anchor: .center)
                                         }
                                     }
                                     .onChange(
-                                        of: viewModel.state.highlightedDateRange,
+                                        of: highlightedDateRange,
                                         perform: { _ in
                                             scrollViewProxy.scrollTo("centerAtDate", anchor: .center)
                                         }
@@ -414,6 +431,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         let satelliteInfo = SatelliteInfo(elements: elements)
         let context = SatelliteElevationGraphContext(
             satelliteInfo: satelliteInfo,
+            selectedPassIndex: 0,
             julianDateRange: julianDateRange,
             observer: observer,
             configs: .init(),
@@ -432,9 +450,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                         )
                     )
                 ]
-            ),
-            selectedNoradIndex: elements.noradIndex,
-            highlightedDateRange: nil
+            )
         )
         
         SatelliteElevationGraph(
@@ -455,6 +471,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         let satelliteInfo2 = SatelliteInfo(elements: elements2)
         let context2 = SatelliteElevationGraphContext(
             satelliteInfo: satelliteInfo2,
+            selectedPassIndex: 0,
             julianDateRange: julianDateRange,
             observer: observer,
             configs: .init(),
@@ -473,9 +490,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                         )
                     )
                 ]
-            ),
-            selectedNoradIndex: elements2.noradIndex,
-            highlightedDateRange: nil
+            )
         )
 
         SatelliteElevationGraph(viewModel: .mock(state: viewModel2), context: context2)
@@ -493,6 +508,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         let satelliteInfo3 = SatelliteInfo(elements: elements3)
         let context3 = SatelliteElevationGraphContext(
             satelliteInfo: satelliteInfo3,
+            selectedPassIndex: 0,
             julianDateRange: julianDateRange,
             observer: observer,
             configs: .init(),
@@ -511,9 +527,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
                         )
                     )
                 ]
-            ),
-            selectedNoradIndex: elements3.noradIndex,
-            highlightedDateRange: nil
+            )
         )
 
         SatelliteElevationGraph(viewModel: .mock(state: viewModel3), context: context3)

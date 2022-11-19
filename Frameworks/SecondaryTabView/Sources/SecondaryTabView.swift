@@ -204,7 +204,7 @@ struct SecondaryTabView_Previews: PreviewProvider {
         @State private var selection: Item = .first
 
         var body: some View {
-            NavigationView {
+            NavigationStack {
                 SecondaryTabView(
                     selection: $selection,
                     content: {
@@ -233,7 +233,6 @@ struct SecondaryTabView_Previews: PreviewProvider {
                     barViewModifier: ShadowModifier()
                 )
                 .navigationTitle("Top navigation")
-                .navigationViewStyle(.stack)
             }
         }
     }

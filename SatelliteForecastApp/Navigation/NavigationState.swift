@@ -12,15 +12,15 @@ import SwiftUI
 
 struct NavigationState {
     var tab: Tab = .forecast
-    var path: NavigationPath = .init()
-    var specialSatelliteNavigation: SpecialSatelliteNavigation = .init()
+    /// The navigation path for the navigation stack within pass prediction.
+    /// - Pass forecast:
+    ///   Root / (Special satellite | (category / satellite)) / pass
+    var passPredictionNavigationPath: NavigationPath = .init()
+    /// The navigation path for the navigation stack within settings.
+    /// - Settings:
+    ///   Root / (Location | Alarm)
+    var settingsNavigationPath: NavigationPath = .init()
     var listNavigation: ListNavigation = .init()
-    var observerNavigation: ObserverNavigationState = .init()
-    var alarmNavigation: AlarmNavigationState = .init()
-
-    var selectedNoradIndex: UInt? {
-        return specialSatelliteNavigation.noradIndex ?? listNavigation.noradIndex
-    }
 }
 
 extension NavigationState: Equatable {}
@@ -33,35 +33,20 @@ enum Tab {
 
 extension Tab: Equatable, Hashable {}
 
-struct SpecialSatelliteNavigation {
-    var noradIndex: UInt?
-
-    init(
-        noradIndex: UInt? = nil
-    ) {
-        self.noradIndex = noradIndex
-    }
-}
-
-extension SpecialSatelliteNavigation: Equatable {}
-
 struct ListNavigation {
     var satelliteSearchText: String = ""
     var category: SatelliteCategory?
-    var noradIndex: UInt?
     var selectedPassIndex: Int?
     var showAlarmConfigurationModal: Bool
     var showsDetailPassView: Bool
 
     init(
         category: SatelliteCategory? = nil,
-        noradIndex: UInt? = nil,
         selectedPassIndex: Int? = nil,
         showAlarmConfigurationModal: Bool = false,
         showsDetailPassView: Bool = false
     ) {
         self.category = category
-        self.noradIndex = noradIndex
         self.selectedPassIndex = selectedPassIndex
         self.showAlarmConfigurationModal = showAlarmConfigurationModal
         self.showsDetailPassView = showsDetailPassView

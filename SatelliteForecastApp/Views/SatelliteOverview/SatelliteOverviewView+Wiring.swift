@@ -13,16 +13,14 @@ import SatelliteForecastImpl
 extension SatelliteOverviewViewState: AppStateMappable {
     static func project(appState: AppState) -> SatelliteOverviewViewState {
         SatelliteOverviewViewState(
-            satellite: appState.navigationState.specialSatelliteNavigation.noradIndex.map(SatellitesOfSpecialInterest.init(noradIndex:)),
-            category: appState.navigationState.listNavigation.category,
+            navigationPath: appState.navigationState.passPredictionNavigationPath,
             observer: appState.locationResources.location.map(LatLonAlt.init),
             julianDateOffset: appState.debugMenu.effectiveOffset
         )
     }
 
     static func apply(appState: inout AppState, state: SatelliteOverviewViewState) {
-        appState.navigationState.specialSatelliteNavigation = SpecialSatelliteNavigation(noradIndex: state.satellite?.noradIndex)
-        appState.navigationState.listNavigation.category = state.category
+        appState.navigationState.passPredictionNavigationPath = state.navigationPath
     }
 }
 

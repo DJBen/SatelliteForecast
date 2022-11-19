@@ -189,7 +189,7 @@ struct DebugMenu: View {
 
     var body: some View {
         unwrapState { state in
-            NavigationView {
+            NavigationStack {
                 Form {
                     Section {
                         timeSectionContent

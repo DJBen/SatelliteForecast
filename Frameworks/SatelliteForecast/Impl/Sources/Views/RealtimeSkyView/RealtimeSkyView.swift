@@ -339,7 +339,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
     }
 
     public var body: some View {
-        NavigationView {
+        NavigationStack {
             locationView { observer in
                 GeometryReader { geometry in
                     let rect = geometry.frame(in: .local)
@@ -367,7 +367,6 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
             .navigationTitle(Self.Navigation.title)
             .navigationBarTitleDisplayMode(.inline)
         }
-        .navigationViewStyle(.stack)
         .onAppear {
             viewModel.dispatch(.setRealtimeSkyViewActive(true))
         }

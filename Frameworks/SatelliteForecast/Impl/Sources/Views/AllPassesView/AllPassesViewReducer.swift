@@ -12,8 +12,6 @@ import SatelliteKit
 extension Reducer where ActionType == AllPassesViewAction, StateType == AllPassesViewState {
     public static let allPassesViewReducer = Reducer.reduce { action, state in
         switch action {
-        case let .selectPass(index):
-            state.selectedPassIndex = index
         case .calculatePasses:
             break
         case .recalculatePasses:

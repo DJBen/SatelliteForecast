@@ -14,22 +14,9 @@ extension SatelliteElevationGraphState: AppStateMappable {
     static func project(
         appState: AppState
     ) -> SatelliteElevationGraphState {
-        let selectedSatellitePass: Pass? = {
-            guard let noradIndex = appState.navigationState.selectedNoradIndex,
-                  let selectedPassIndex = appState.navigationState.listNavigation.selectedPassIndex else {
-                return nil
-            }
-
-            return appState.elementsPropagatorResources.satelliteTrails[noradIndex]?.passSnapshots?[selectedPassIndex].pass
-        }()
-
         return SatelliteElevationGraphState(
             satelliteElevationGraphResources: appState.satelliteElevationGraphResources,
             elementsPropagatorResources: appState.elementsPropagatorResources,
-            selectedNoradIndex: appState.navigationState.selectedNoradIndex,
-            highlightedDateRange: selectedSatellitePass.map { pass -> ClosedRange<Double> in
-                return pass.rise.julianDate...pass.set.julianDate
-            },
             julianDateOffset: appState.debugMenu.effectiveOffset
         )
     }

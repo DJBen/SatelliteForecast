@@ -14,7 +14,6 @@ import SatelliteKit
 import SwiftUI
 
 public enum AllPassesViewAction {
-    case selectPass(index: Int?)
     /// Calculate the passes.
     case calculatePasses(CalculatePassesParams)
     /// Recaculate passes using the latest location.
@@ -29,7 +28,12 @@ public struct AllPassesViewContext {
     public let observer: LatLonAlt?
     public let julianDateProvider: () -> Double
 
-    public init(satelliteInfo: SatelliteInfo, julianDateRange: ClosedRange<Double>, observer: LatLonAlt?, julianDateProvider: @escaping () -> Double) {
+    public init(
+        satelliteInfo: SatelliteInfo,
+        julianDateRange: ClosedRange<Double>,
+        observer: LatLonAlt?,
+        julianDateProvider: @escaping () -> Double
+    ) {
         self.satelliteInfo = satelliteInfo
         self.julianDateRange = julianDateRange
         self.observer = observer
@@ -75,6 +79,17 @@ public struct AllPassesViewState {
 }
 
 extension AllPassesViewState: Equatable {}
+
+struct AllPassViewNavigation {
+    let passIndex: Int
+    let passSnapshots: PassSnapshots
+}
+
+extension AllPassViewNavigation: Equatable, Hashable, Codable {
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(passIndex)
+    }
+}
 
 public struct AllPassesView: View {
     struct Item: Equatable, Identifiable {
@@ -193,49 +208,6 @@ public struct AllPassesView: View {
             return nil
         }
     }
-
-    @ViewBuilder private func navigationLink<Label: View>(
-        item: Item,
-        observer: LatLonAlt,
-        @ViewBuilder label: @escaping () -> Label
-    ) -> some View {
-        MotionManagerView(
-            isActive: Binding<Bool>(
-                get: {
-                    // Disables the motion when modal is up, because it seems to interfere with picker view
-                    viewModel.state.selectedPassIndex == item.index && !viewModel.state.showsPassAlarmSettingsModal
-                },
-                set: { _ in }
-            )
-        ) { deviceMotionResult in
-            NavigationLink(
-                destination: LazyView {
-                    passViewProducer.view(
-                        PassViewContext(
-                            passIndex: item.index,
-                            satelliteInfo: context.satelliteInfo,
-                            category: viewModel.state.satelliteCategory,
-                            julianDateRange: context.julianDateRange,
-                            observer: observer,
-                            passSnapshots: item.passSnapshots,
-                            julianDateProvider: context.julianDateProvider,
-                            deviceMotion: deviceMotionResult
-                        )
-                    )
-                },
-                tag: item.index,
-                selection: Binding<Int?>(
-                    get: {
-                        viewModel.state.selectedPassIndex
-                    },
-                    set: {
-                        viewModel.dispatch(.selectPass(index: $0))
-                    }
-                ),
-                label: label
-            )
-        }
-    }
     
     @ViewBuilder private func swipeActionLeftButtons(item: Item) -> some View {
         if item.hasScheduledAlert {
@@ -271,87 +243,39 @@ public struct AllPassesView: View {
     }
 
     @ViewBuilder private func passesList(_ items: [Item]?, observer: LatLonAlt) -> some View {
-        Group {
-            if let items = items {
-                if items.isEmpty {
-                    Text("No passes found")
-                } else {
-                    ForEach(items) { item in
-                        Button {
-                            viewModel.dispatch(.selectPass(index: item.index))
-                        } label: {
-                            PassPreviewCell(
-                                satelliteInfo: context.satelliteInfo,
-                                snapshots: item.passSnapshots.snapshots,
-                                notableSnapshots: item.passSnapshots.notableSnapshots,
-                                observer: observer,
-                                pass: item.passSnapshots.pass,
-                                hasScheduledAlert: item.hasScheduledAlert,
-                                skyChartProducer: skyChartProducer,
-                                julianDateOffset: viewModel.state.julianDateOffset,
-                                julianDateProvider: context.julianDateProvider
-                            )
-
-                        }
-                        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10))
-                        .frame(height: 135)
-                        .swipeActions(
-                            edge: .leading
-                        ) {
-                            swipeActionLeftButtons(item: item)
-                        }
-                    }
-                }
+        if let items = items {
+            if items.isEmpty {
+                Text("No passes found")
             } else {
-                ProgressView("Calculating...")
-            }
-        }
-        .background {
-            NavigationLink(
-                isActive: Binding<Bool>(
-                    get: {
-                        viewModel.state.selectedPassIndex != nil
-                    },
-                    set: { isActive in
-                        if !isActive {
-                            viewModel.dispatch(.selectPass(index: nil))
-                        }
+                ForEach(items) { item in
+                    NavigationLink(
+                        value: AllPassViewNavigation(
+                            passIndex: item.index,
+                            passSnapshots: item.passSnapshots
+                        )
+                    ) {
+                        PassPreviewCell(
+                            satelliteInfo: context.satelliteInfo,
+                            snapshots: item.passSnapshots.snapshots,
+                            notableSnapshots: item.passSnapshots.notableSnapshots,
+                            observer: observer,
+                            pass: item.passSnapshots.pass,
+                            hasScheduledAlert: item.hasScheduledAlert,
+                            skyChartProducer: skyChartProducer,
+                            julianDateOffset: viewModel.state.julianDateOffset,
+                            julianDateProvider: context.julianDateProvider
+                        )
                     }
-                ),
-                destination: {
-                    LazyView {
-                        if let selectedPassIndex = viewModel.state.selectedPassIndex, let items = items, let selectedItem = items.first(where: { $0.index == selectedPassIndex }) {
-                            MotionManagerView(
-                                isActive: Binding<Bool>(
-                                    get: {
-                                        // Disables the motion when modal is up, because it seems to interfere with picker view
-                                        viewModel.state.selectedPassIndex != nil && !viewModel.state.showsPassAlarmSettingsModal
-                                    },
-                                    set: { _ in }
-                                )
-                            ) { deviceMotionResult in
-                                passViewProducer.view(
-                                    PassViewContext(
-                                        passIndex: selectedPassIndex,
-                                        satelliteInfo: context.satelliteInfo,
-                                        category: viewModel.state.satelliteCategory,
-                                        julianDateRange: context.julianDateRange,
-                                        observer: observer,
-                                        passSnapshots: selectedItem.passSnapshots,
-                                        julianDateProvider: context.julianDateProvider,
-                                        deviceMotion: deviceMotionResult
-                                    )
-                                )
-                            }
-                        } else {
-                            Color.clear
-                        }
+                    .frame(height: 135)
+                    .swipeActions(
+                        edge: .leading
+                    ) {
+                        swipeActionLeftButtons(item: item)
                     }
-                },
-                label: {
-                    EmptyView()
                 }
-            )
+            }
+        } else {
+            ProgressView("Calculating...")
         }
     }
 
@@ -443,14 +367,36 @@ public struct AllPassesView: View {
                     }
 
                     SwiftUI.Section(header: visiblePassHeader) {
-                        Group {
-                            passesList(visiblePasses, observer: observer)
-                        }
+                        passesList(visiblePasses, observer: observer)
                     }
 
                     SwiftUI.Section(header: invisiblePassHeader) {
-                        Group {
-                            passesList(invisiblePasses, observer: observer)
+                        passesList(invisiblePasses, observer: observer)
+                    }
+                }
+                .navigationDestination(for: AllPassViewNavigation.self) { allPassViewNavigation in
+                    LazyView {
+                        MotionManagerView(
+                            isActive: Binding<Bool>(
+                                get: {
+                                    // Disables the motion when modal is up, because it seems to interfere with picker view
+                                    !viewModel.state.showsPassAlarmSettingsModal
+                                },
+                                set: { _ in }
+                            )
+                        ) { deviceMotionResult in
+                            passViewProducer.view(
+                                PassViewContext(
+                                    passIndex: allPassViewNavigation.passIndex,
+                                    satelliteInfo: context.satelliteInfo,
+                                    category: viewModel.state.satelliteCategory,
+                                    julianDateRange: context.julianDateRange,
+                                    observer: observer,
+                                    passSnapshots: allPassViewNavigation.passSnapshots,
+                                    julianDateProvider: context.julianDateProvider,
+                                    deviceMotion: deviceMotionResult
+                                )
+                            )
                         }
                     }
                 }
@@ -685,7 +631,7 @@ struct AllPassesView_Previews: PreviewProvider {
         let passSnapshots = tianHePasses[0]
 
         ForEach(["iPhone SE (2nd generation)", "iPhone 13 Pro Max"], id: \.self) { previewDevice in
-            NavigationView {
+            NavigationStack {
                 AllPassesView(
                     viewModel: .mock(
                         state: AllPassesViewState(

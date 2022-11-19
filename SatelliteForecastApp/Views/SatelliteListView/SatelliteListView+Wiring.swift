@@ -13,14 +13,12 @@ extension SatelliteListViewState: AppStateMappable {
     static func project(appState: AppState) -> SatelliteListViewState {
         return SatelliteListViewState(
             satelliteInfo: appState.elementsLoader.info,
-            satelliteSearchText: appState.navigationState.listNavigation.satelliteSearchText,
-            selectedNoradIndex: appState.navigationState.listNavigation.noradIndex
+            satelliteSearchText: appState.navigationState.listNavigation.satelliteSearchText
         )
     }
 
     static func apply(appState: inout AppState, state: SatelliteListViewState) {
         appState.navigationState.listNavigation.satelliteSearchText = state.satelliteSearchText
-        appState.navigationState.listNavigation.noradIndex = state.selectedNoradIndex
     }
 }
 

@@ -14,7 +14,7 @@ extension EffectMiddleware where InputActionType == SatelliteListViewAction, Out
     static var satelliteListToElementLoader: EffectMiddleware<SatelliteListViewAction, ElementsLoaderAction, Void, Void> {
         EffectMiddleware.onAction { action, dispatcher, getState in
             switch action {
-            case .selectSatellite(_):
+            case .selectSatellite(_), .loadSatellite(_):
                 return .doNothing
             case .satelliteSearchTextChanged(_):
                 return .doNothing

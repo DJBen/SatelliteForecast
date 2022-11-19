@@ -6,15 +6,15 @@
 //
 
 import SatelliteForecast
+import SwiftUI
 
 public struct LocationState {
     public var resources: LocationResources
-    /// A boolean indicating whether location settings is currently being showned by the view hierachy.
-    public var showLocationSettings: Bool
+    public var navigationPath: NavigationPath
 
-    public init(resources: LocationResources, showLocationSettings: Bool) {
+    public init(resources: LocationResources, navigationPath: NavigationPath) {
         self.resources = resources
-        self.showLocationSettings = showLocationSettings
+        self.navigationPath = navigationPath
     }
 }
 
