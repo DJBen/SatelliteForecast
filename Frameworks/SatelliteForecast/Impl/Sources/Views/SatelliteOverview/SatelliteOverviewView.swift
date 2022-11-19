@@ -16,9 +16,7 @@ import CoreLocation
 
 public enum SatelliteOverviewViewAction {
     case navigate(
-        NavigationPath,
-        julianDateRange: ClosedRange<Double>,
-        observer: LatLonAlt?
+        NavigationPath
     )
 
     case selectSatelliteOfSpecialInterest(
@@ -89,13 +87,7 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
             path: Binding<NavigationPath>.store(
                 viewModel,
                 state: \.path,
-                onChange: {
-                    SatelliteOverviewViewAction.navigate(
-                        $0,
-                        julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
-                        observer: viewModel.state.observer
-                    )
-                }
+                onChange: SatelliteOverviewViewAction.navigate
             )
         ) {
             ScrollView {

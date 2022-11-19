@@ -136,6 +136,7 @@ public struct PassView: View {
                 elevationGraphProducer.view(
                     SatelliteElevationGraphContext(
                         satelliteInfo: context.satelliteInfo,
+                        selectedPassIndex: context.passIndex,
                         julianDateRange: context.julianDateRange,
                         observer: context.observer,
                         configs: .init(),
@@ -288,9 +289,7 @@ struct PassView_Previews: PreviewProvider {
         )
         let satelliteGraphState = SatelliteElevationGraphState(
             satelliteElevationGraphResources: SatelliteElevationGraphResources(),
-            elementsPropagatorResources: elementPropagatorResources,
-            selectedNoradIndex: elements.noradIndex,
-            highlightedDateRange: nil
+            elementsPropagatorResources: elementPropagatorResources
         )
         let skyChartState = SkyChartViewState(
             julianDateOffset: 0,
@@ -312,6 +311,7 @@ struct PassView_Previews: PreviewProvider {
         )
         let elevationGraphContext = SatelliteElevationGraphContext(
             satelliteInfo: SatelliteInfo(elements: elements),
+            selectedPassIndex: 0,
             julianDateRange: julianDateRange,
             observer: observer,
             configs: .init(),

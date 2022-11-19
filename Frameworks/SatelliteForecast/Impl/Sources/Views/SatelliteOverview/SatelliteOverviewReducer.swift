@@ -11,7 +11,7 @@ import SwiftRex
 extension Reducer where ActionType == SatelliteOverviewViewAction, StateType == SatelliteOverviewViewState {
     public static let satelliteOverviewReducer = Reducer.reduce { action, state in
         switch action {
-        case .navigate(let navigationPath, julianDateRange: _, observer: _):
+        case .navigate(let navigationPath):
             state.path = navigationPath
         case .selectSatelliteOfSpecialInterest(let satellite, julianDateRange: _, observer: _):
             state.path.append(satellite)

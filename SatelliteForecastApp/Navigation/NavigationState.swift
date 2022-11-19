@@ -18,14 +18,9 @@ struct NavigationState {
     /// - Settings:
     ///   Root / (Location | Alarm)
     var path: NavigationPath = .init()
-    var specialSatelliteNavigation: SpecialSatelliteNavigation = .init()
     var listNavigation: ListNavigation = .init()
     var observerNavigation: ObserverNavigationState = .init()
     var alarmNavigation: AlarmNavigationState = .init()
-
-    var selectedNoradIndex: UInt? {
-        return specialSatelliteNavigation.noradIndex ?? listNavigation.noradIndex
-    }
 }
 
 extension NavigationState: Equatable {}
@@ -37,18 +32,6 @@ enum Tab {
 }
 
 extension Tab: Equatable, Hashable {}
-
-struct SpecialSatelliteNavigation {
-    var noradIndex: UInt?
-
-    init(
-        noradIndex: UInt? = nil
-    ) {
-        self.noradIndex = noradIndex
-    }
-}
-
-extension SpecialSatelliteNavigation: Equatable {}
 
 struct ListNavigation {
     var satelliteSearchText: String = ""
