@@ -23,6 +23,8 @@ struct PassPreviewCell: View {
     var julianDateOffset: Double
     var julianDateProvider: () -> Double
 
+    @Environment(\.colorScheme) var colorScheme
+
     static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
@@ -45,9 +47,13 @@ struct PassPreviewCell: View {
     var visiblityColor: Color {
         switch pass.visibility {
         case .visible:
-            return .green
+            return Color(UIColor.systemGreen)
         case .unlit:
-            return Color(.sRGB, red: 0 / 255, green: 3 / 255, blue: 61 / 255, opacity: 1)
+            if colorScheme == .light {
+                return Color(.sRGB, red: 0 / 255, green: 3 / 255, blue: 61 / 255, opacity: 1)
+            } else {
+                return Color(.sRGB, red: 22 / 255, green: 45 / 255, blue: 152 / 255, opacity: 1)
+            }
         case .daylight:
             return Color(.sRGB, red: 255 / 255, green: 196 / 255, blue: 137 / 255, opacity: 1)
         }
@@ -58,9 +64,11 @@ struct PassPreviewCell: View {
             let shortEdge = min(geometry.size.width, geometry.size.height)
             
             HStack(alignment: .center) {
-                Rectangle()
-                    .foregroundColor(visiblityColor)
-                    .frame(width: 12, alignment: .leading)
+                Capsule(
+                    style: .continuous
+                )
+                .foregroundColor(visiblityColor)
+                .frame(width: 6, alignment: .leading)
 
                 HStack(alignment: .top, spacing: 0) {
                     // Column 1: Day light and elevation
@@ -138,7 +146,6 @@ struct PassPreviewCell: View {
                         julianDateProvider: julianDateProvider
                     )
                 )
-                .padding(5)
                 .frame(width: shortEdge, height: shortEdge)
             }
         }

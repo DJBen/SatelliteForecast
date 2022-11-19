@@ -17,8 +17,6 @@ extension EffectMiddleware where InputActionType == AllPassesViewAction, OutputA
                 return .just(.calculatePasses(calculatePassesParams))
             case .recalculatePasses(let calculatePassesParams):
                 return .just(.recalculatePasses(calculatePassesParams))
-            case .selectPass(_):
-                return .doNothing
             case .scheduleNotification(_, _):
                 return .doNothing
             case .unscheduleNotification(_):

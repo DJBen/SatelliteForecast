@@ -22,8 +22,6 @@ extension EffectMiddleware where InputActionType == AllPassesViewAction, OutputA
                 return .doNothing
             case .recalculatePasses(_):
                 return .doNothing
-            case .selectPass(_):
-                return .doNothing
             case .scheduleNotification(let passNotification, let passSnapshots):
                 return .just(.generatePreviewAndScheduleNotification(passNotification, passSnapshots: passSnapshots))
             case .unscheduleNotification(let pass):
