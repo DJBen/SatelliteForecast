@@ -13,25 +13,26 @@ import SwiftRex
 import SwiftUI
 
 public enum SettingsOverviewViewAction {
-    case selectSettingItem(SettingsOverviewItem?)
+    case navigate(NavigationPath)
 }
 
 extension SettingsOverviewViewAction: Equatable {}
 
 public struct SettingsOverviewViewState {
-    public var observerNavigation: ObserverNavigationState = .init()
-    public var alarmNavigation: AlarmNavigationState = .init()
+    public var navigationPath: NavigationPath = .init()
 
     public init(
-        observerNavigation: ObserverNavigationState = .init(),
-        alarmNavigation: AlarmNavigationState = .init()
+        navigationPath: NavigationPath = .init()
     ) {
-        self.observerNavigation = observerNavigation
-        self.alarmNavigation = alarmNavigation
+        self.navigationPath = navigationPath
     }
 }
 
 extension SettingsOverviewViewState: Equatable {}
+
+struct SettingsOverviewAlarmNavigation: Equatable, Hashable, Codable {}
+
+struct SettingsOverviewObserverNavigation: Equatable, Hashable, Codable {}
 
 public protocol SettingsOverviewView: View {}
 
@@ -99,43 +100,16 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
         }
     }
 
-    @ViewBuilder private func navigationLink(for item: SettingsOverviewItem) -> some View {
-        Section {
-            NavigationLink(
-                destination: LazyView {
-                    destination(for: item)
-                },
-                tag: item,
-                selection: Binding<SettingsOverviewItem?>(
-                    get: {
-                        if viewModel.state.alarmNavigation.enabled {
-                            return .alarms
-                        } else if viewModel.state.observerNavigation.enabled {
-                            return .observer
-                        } else {
-                            return nil
-                        }
-                    },
-                    set: { item, _ in
-                        viewModel.dispatch(.selectSettingItem(item))
-                    }
-                ),
-                label: {
-                    switch item {
-                    case .observer:
-                        observerCellViewProducer.view()
-                    case .alarms:
-                        alarmSettingsCellProducer.view()
-                    }
+    public var body: some View {
+        NavigationStack(
+            path: Binding<NavigationPath>(
+                get: {
+                    viewModel.state.navigationPath
+                }, set: { navigationPath in
+                    viewModel.dispatch(.navigate(navigationPath))
                 }
             )
-        } header: {
-            sectionHeader(for: item)
-        }
-    }
-
-    public var body: some View {
-        NavigationView {
+        ) {
             ScrollView {
                 LazyVStack(
                     alignment: .leading,
@@ -143,15 +117,41 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                     pinnedViews: []
                 ) {
                     ForEach(items, id: \.self) { item in
-                        navigationLink(for: item)
+                        switch item {
+                        case .observer:
+                            Section {
+                                NavigationLink(value: SettingsOverviewObserverNavigation()) {
+                                    observerCellViewProducer.view()
+                                }
+                            } header: {
+                                sectionHeader(for: item)
+                            }
+                        case .alarms:
+                            Section {
+                                NavigationLink(value: SettingsOverviewAlarmNavigation()) {
+                                    alarmSettingsCellProducer.view()
+                                }
+                            } header: {
+                                sectionHeader(for: item)
+                            }
+                        }
                     }
                 }
                 .padding()
+                .navigationDestination(for: SettingsOverviewObserverNavigation.self) { _ in
+                    LazyView {
+                        locationSettingsViewProducer.view()
+                    }
+                }
+                .navigationDestination(for: SettingsOverviewAlarmNavigation.self) { _ in
+                    LazyView {
+                        alarmSettingsViewProducer.view()
+                    }
+                }
             }
             .navigationBarTitle("Settings", displayMode: .inline)
             .navigationBarHidden(true)
         }
-        .navigationViewStyle(.stack)
     }
 }
 

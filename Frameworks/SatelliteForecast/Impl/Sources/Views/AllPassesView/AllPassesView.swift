@@ -631,7 +631,7 @@ struct AllPassesView_Previews: PreviewProvider {
         let passSnapshots = tianHePasses[0]
 
         ForEach(["iPhone SE (2nd generation)", "iPhone 13 Pro Max"], id: \.self) { previewDevice in
-            NavigationView {
+            NavigationStack {
                 AllPassesView(
                     viewModel: .mock(
                         state: AllPassesViewState(

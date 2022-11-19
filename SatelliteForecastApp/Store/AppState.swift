@@ -41,19 +41,4 @@ struct AppState: Equatable {
     static var empty: AppState {
         return AppState()
     }
-
-    // MARK: - Derived properties
-
-//    var selectedSatelliteInfo: SatelliteInfo? {
-//        navigationState.selectedNoradIndex.flatMap { elementsLoader[$0] }
-//    }
-//
-//    var selectedSatellitePass: Pass? {
-//        guard let noradIndex = navigationState.selectedNoradIndex,
-//              let selectedPassIndex = navigationState.listNavigation.selectedPassIndex else {
-//            return nil
-//        }
-//
-//        return elementsPropagatorResources.satelliteTrails[noradIndex]?.passSnapshots?[selectedPassIndex].pass
-//    }
 }

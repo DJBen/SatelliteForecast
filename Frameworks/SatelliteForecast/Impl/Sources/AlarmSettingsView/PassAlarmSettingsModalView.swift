@@ -162,7 +162,7 @@ public struct PassAlarmSettingsModalView: View {
     }
 
     public var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(alignment: .center) {
                 VStack(spacing: 0) {
                     ForEach(enumerated: sortedTimings, id: \.self) { index, timing in

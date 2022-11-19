@@ -23,9 +23,9 @@ extension Reducer where ActionType == LocationAction, StateType == LocationState
                 break
             }
             state.resources.selection = selection
-            if state.showLocationSettings {
-                state.showLocationSettings = false
-            }
+
+            // Dismiss location selector after completing the selection
+            state.navigationPath.removeLast()
         }
     }
 

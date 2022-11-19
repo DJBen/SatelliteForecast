@@ -13,14 +13,12 @@ import SatelliteForecastImpl
 extension SettingsOverviewViewState: AppStateMappable {
     static func project(appState: AppState) -> SettingsOverviewViewState {
         SettingsOverviewViewState(
-            observerNavigation: appState.navigationState.observerNavigation,
-            alarmNavigation: appState.navigationState.alarmNavigation
+            navigationPath: appState.navigationState.settingsNavigationPath
         )
     }
 
     static func apply(appState: inout AppState, state: SettingsOverviewViewState) {
-        appState.navigationState.observerNavigation = state.observerNavigation
-        appState.navigationState.alarmNavigation = state.alarmNavigation
+        appState.navigationState.settingsNavigationPath = state.navigationPath
     }
 }
 

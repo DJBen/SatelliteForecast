@@ -47,7 +47,7 @@ public struct DetailedPassView: View {
     }
 
     public var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView(
                 [.horizontal, .vertical],
                 showsIndicators: true

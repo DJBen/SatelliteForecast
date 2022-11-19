@@ -11,12 +11,12 @@ extension LocationState: AppStateMappable {
     static func project(appState: AppState) -> LocationState {
         LocationState(
             resources: appState.locationResources,
-            showLocationSettings: appState.navigationState.observerNavigation.enabled
+            navigationPath: appState.navigationState.settingsNavigationPath
         )
     }
 
     static func apply(appState: inout AppState, state: LocationState) {
         appState.locationResources = state.resources
-        appState.navigationState.observerNavigation.enabled = state.showLocationSettings
+        appState.navigationState.settingsNavigationPath = state.navigationPath
     }
 }
