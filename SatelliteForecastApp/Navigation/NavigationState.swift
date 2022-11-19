@@ -12,6 +12,11 @@ import SwiftUI
 
 struct NavigationState {
     var tab: Tab = .forecast
+    /// The navigation path for the navigation stack.
+    /// - Pass forecast:
+    ///   Root / (Special satellite | category) / pass
+    /// - Settings:
+    ///   Root / (Location | Alarm)
     var path: NavigationPath = .init()
     var specialSatelliteNavigation: SpecialSatelliteNavigation = .init()
     var listNavigation: ListNavigation = .init()

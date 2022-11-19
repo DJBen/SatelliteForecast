@@ -19,10 +19,10 @@ Dependencies == Void {
     static var satelliteOverviewToElementLoader: EffectMiddleware<SatelliteOverviewViewAction, ElementsLoaderAction, Void, Void> {
         EffectMiddleware<SatelliteOverviewViewAction, ElementsLoaderAction, Void, Void>.onAction { action, _, getState in
             switch action {
-            case .selectSatelliteOfSpecialInterest(let satellite, julianDateRange: let julianDateRange, observer: let observer):
-                guard let satellite = satellite else {
-                    return .doNothing
-                }
+            case .navigate(_, julianDateRange: _, observer: _):
+                return .doNothing
+            case .loadSatelliteOfSpecialInterest(let satellite, julianDateRange: let julianDateRange, observer: let observer),
+                    .selectSatelliteOfSpecialInterest(let satellite, julianDateRange: let julianDateRange, observer: let observer):
                 return .just(
                     .loadElements(
                         category: .brightest100,
@@ -35,10 +35,7 @@ Dependencies == Void {
                         }
                     )
                 )
-            case .selectCategory(let category, julianDateRange: _, observer: _):
-                guard let category = category else {
-                    return .doNothing
-                }
+            case .loadCategory(let category, julianDateRange: _, observer: _):
                 return .just(
                     .loadElements(category: category)
                 )
