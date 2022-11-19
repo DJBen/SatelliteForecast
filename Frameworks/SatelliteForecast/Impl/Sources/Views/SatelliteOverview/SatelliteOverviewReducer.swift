@@ -12,9 +12,9 @@ extension Reducer where ActionType == SatelliteOverviewViewAction, StateType == 
     public static let satelliteOverviewReducer = Reducer.reduce { action, state in
         switch action {
         case .navigate(let navigationPath):
-            state.path = navigationPath
+            state.navigationPath = navigationPath
         case .selectSatelliteOfSpecialInterest(let satellite, julianDateRange: _, observer: _):
-            state.path.append(satellite)
+            state.navigationPath.append(satellite)
         case .loadCategory(_, julianDateRange: _, observer: _):
             break
         case .loadSatelliteOfSpecialInterest(_, julianDateRange: _, observer: _):

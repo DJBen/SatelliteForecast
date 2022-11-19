@@ -39,16 +39,16 @@ public enum SatelliteOverviewViewAction {
 }
 
 public struct SatelliteOverviewViewState: Equatable {
-    public var path: NavigationPath
+    public var navigationPath: NavigationPath
     public var observer: LatLonAlt?
     public var julianDateOffset: Double = 0
 
     public init(
-        path: NavigationPath = .init(),
+        navigationPath: NavigationPath = .init(),
         observer: LatLonAlt? = nil,
         julianDateOffset: Double = 0
     ) {
-        self.path = path
+        self.navigationPath = navigationPath
         self.observer = observer
         self.julianDateOffset = julianDateOffset
     }
@@ -83,11 +83,13 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
     }
 
     public var body: some View {
-        NavigationStack(
-            path: Binding<NavigationPath>.store(
-                viewModel,
-                state: \.path,
-                onChange: SatelliteOverviewViewAction.navigate
+        return NavigationStack(
+            path: Binding<NavigationPath>(
+                get: {
+                    viewModel.state.navigationPath
+                }, set: { navigationPath in
+                    viewModel.dispatch(.navigate(navigationPath))
+                }
             )
         ) {
             ScrollView {
@@ -111,7 +113,6 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                             NavigationLink(value: satellite) {
                                 SatelliteOverviewSpecialSatelliteCell(satellite: satellite)
                             }
-                            .id(satellite)
                         }
                     }
 
@@ -139,7 +140,6 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                                 NavigationLink(value: category) {
                                     SatelliteOverviewCategoryCell(category: category)
                                 }
-                                .id(category)
                             }
                         }
                     }
@@ -149,41 +149,45 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
             .navigationBarTitle("Overview", displayMode: .inline)
             .navigationBarHidden(true)
             .navigationDestination(for: SatellitesOfSpecialInterest.self) { satelliteOfSpecialInterest in
-                singleSatelliteWrappingViewProducer.view(
-                    SingleSatelliteWrappingViewContext(
-                        selectedNoradIndex: satelliteOfSpecialInterest.noradIndex,
-                        julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
-                        observer: viewModel.state.observer,
-                        julianDateProvider: context.julianDateProvider
-                    )
-                )
-                .onAppear {
-                    viewModel.dispatch(
-                        .loadSatelliteOfSpecialInterest(
-                            satelliteOfSpecialInterest,
+                LazyView {
+                    singleSatelliteWrappingViewProducer.view(
+                        SingleSatelliteWrappingViewContext(
+                            selectedNoradIndex: satelliteOfSpecialInterest.noradIndex,
                             julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
-                            observer: viewModel.state.observer
+                            observer: viewModel.state.observer,
+                            julianDateProvider: context.julianDateProvider
                         )
                     )
+                    .onAppear {
+                        viewModel.dispatch(
+                            .loadSatelliteOfSpecialInterest(
+                                satelliteOfSpecialInterest,
+                                julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
+                                observer: viewModel.state.observer
+                            )
+                        )
+                    }
                 }
             }
             .navigationDestination(for: SatelliteCategory.self) { category in
-                listViewProducer.view(
-                    SatelliteListViewContext(
-                        category: category,
-                        julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
-                        observer: viewModel.state.observer,
-                        julianDateProvider: context.julianDateProvider
-                    )
-                )
-                .onAppear {
-                    viewModel.dispatch(
-                        .loadCategory(
-                            category,
+                LazyView {
+                    listViewProducer.view(
+                        SatelliteListViewContext(
+                            category: category,
                             julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
-                            observer: viewModel.state.observer
+                            observer: viewModel.state.observer,
+                            julianDateProvider: context.julianDateProvider
                         )
                     )
+                    .onAppear {
+                        viewModel.dispatch(
+                            .loadCategory(
+                                category,
+                                julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
+                                observer: viewModel.state.observer
+                            )
+                        )
+                    }
                 }
             }
         }

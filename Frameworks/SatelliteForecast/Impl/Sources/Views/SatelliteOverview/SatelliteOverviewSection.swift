@@ -13,7 +13,7 @@ public enum SatelliteOverviewSection: Equatable, Hashable {
     case categories([SatelliteCategory])
 }
 
-public struct SatellitesOfSpecialInterest: ExpressibleByIntegerLiteral, Equatable, Hashable {
+public struct SatellitesOfSpecialInterest: ExpressibleByIntegerLiteral, Equatable, Hashable, Codable {
     public typealias IntegerLiteralType = Int
 
     static let iss: SatellitesOfSpecialInterest = 25544
