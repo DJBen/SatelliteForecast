@@ -180,7 +180,6 @@ public struct SatelliteElevationGraph: View {
                     uiImage: image
                 )
                 .resizable()
-                .aspectRatio(contentMode: .fit)
                 .frame(width: rect.width, height: rect.height, alignment: .center)
             }
         }

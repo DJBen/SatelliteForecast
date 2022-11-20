@@ -55,7 +55,14 @@ extension EffectMiddleware where
 
                         logger.debug("Rasterized elevation graph for \(noradIndex) with range \(julianDateRange), size \(String(describing: size)).")
 
-                        sink(.rasterizedElevationGraph(image, size: size, noradIndex: noradIndex, julianDateRange: julianDateRange))
+                        sink(
+                            .rasterizedElevationGraph(
+                                image,
+                                size: size,
+                                noradIndex: noradIndex,
+                                julianDateRange: julianDateRange
+                            )
+                        )
                     }
                 }
             case .rasterizedElevationGraph(_, size: _, noradIndex: _, julianDateRange: _):

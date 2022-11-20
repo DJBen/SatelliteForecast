@@ -32,7 +32,8 @@ public struct SatelliteElevationGraphResources: Equatable {
         tolerance: Double = 1e-8
     ) -> RangeImage? {
         rasterizedElevationGraphs[noradIndex]?.first {
-            $0.image.size.height == size.height
+            // #39: the image size is mlutiples of 1/3, so their size may get rounded slightly.
+            abs($0.image.size.height - size.height) < 0.5
             && $0.julianDateRange.roughlyEqualTo(
                 julianDateRange,
                 tolerance: tolerance
