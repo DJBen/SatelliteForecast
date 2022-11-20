@@ -12,12 +12,13 @@ import SwiftRex
 import CombineRex
 import CombineRextensions
 import CoreMotion
+import SatelliteForecastImplWiring
 
 @main
 struct SatelliteForecastApp: App {
     @UIApplicationDelegateAdaptor private var appDelegate: AppDelegate
     @StateObject var store = Store.shared.asObservableViewModel(
-        initialState: .empty,
+        initialState: .init(),
         emitsValue: .whenDifferent
     )
     @Environment(\.scenePhase) private var scenePhase
