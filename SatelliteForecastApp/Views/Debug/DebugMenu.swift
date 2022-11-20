@@ -189,63 +189,61 @@ struct DebugMenu: View {
 
     var body: some View {
         unwrapState { state in
-            NavigationStack {
-                Form {
-                    Section {
-                        timeSectionContent
-                    } header: {
-                        Text("Time control")
-                    } footer: {
-                        if let frozenAt = state.config.frozenAt {
-                            Text("Time frozen at \(Date(julianDate: frozenAt).formatted(date: .long, time: .standard))")
-                        } else if state.config.mockedOffsetOn {
-                            Text("Mock time \(Date(julianDate: state.trueJulianDate + state.config.mockedOffset).formatted(date: .long, time: .standard))\nOffset \(state.config.mockedOffset.formatted()) JD")
-                        } else {
-                            Text("Real time \(Date(julianDate: state.trueJulianDate).formatted(date: .long, time: .standard))")
-                        }
-                    }
-                    
-                    Section {
-                        Toggle(
-                            isOn: Binding<Bool>(
-                                get: {
-                                    state.config.rapidNotificationDelivery
-                                },
-                                set: { newValue in
-                                    viewModel.dispatch(.toggleRapidNotificationDelivery(newValue))
-                                }
-                            )
-                            .animation()
-                        ) {
-                            Text("Deliver notifications 10 seconds after scheduled")
-                        }
-                    }
-                    
-                    Section {
-                        Button("Deep link to ISS (special)") {
-                            viewModel.dispatch(.triggerPassDeepLink(category: nil, noradIndex: 25544))
-                        }
-                        Button("Deep link to Hubble (brightest 100)") {
-                            viewModel.dispatch(.triggerPassDeepLink(category: .brightest100, noradIndex: 20580))
-                        }
-                    } header: {
-                        Text("Test deep link")
-                    }
-
-                    Section {
-                        pendingNotificationsContent
-                    } header: {
-                        Text("Pending notifications")
-                    }
-                    
-                    Section {
-                        deliveredNotificationsContent
-                    } header: {
-                        Text("Delivered notifications")
+            Form {
+                Section {
+                    timeSectionContent
+                } header: {
+                    Text("Time control")
+                } footer: {
+                    if let frozenAt = state.config.frozenAt {
+                        Text("Time frozen at \(Date(julianDate: frozenAt).formatted(date: .long, time: .standard))")
+                    } else if state.config.mockedOffsetOn {
+                        Text("Mock time \(Date(julianDate: state.trueJulianDate + state.config.mockedOffset).formatted(date: .long, time: .standard))\nOffset \(state.config.mockedOffset.formatted()) JD")
+                    } else {
+                        Text("Real time \(Date(julianDate: state.trueJulianDate).formatted(date: .long, time: .standard))")
                     }
                 }
-                .navigationTitle("Debug Menu")
+
+                Section {
+                    Toggle(
+                        isOn: Binding<Bool>(
+                            get: {
+                                state.config.rapidNotificationDelivery
+                            },
+                            set: { newValue in
+                                viewModel.dispatch(.toggleRapidNotificationDelivery(newValue))
+                            }
+                        )
+                        .animation()
+                    ) {
+                        Text("Deliver notifications 10 seconds after scheduled")
+                    }
+                }
+
+                Section {
+                    Button("Deep link to ISS (special)") {
+                        viewModel.dispatch(.triggerPassDeepLink(category: nil, noradIndex: 25544))
+                    }
+                    Button("Deep link to Hubble (brightest 100)") {
+                        viewModel.dispatch(.triggerPassDeepLink(category: .brightest100, noradIndex: 20580))
+                    }
+                } header: {
+                    Text("Test deep link")
+                }
+
+                Section {
+                    pendingNotificationsContent
+                } header: {
+                    Text("Pending notifications")
+                }
+
+                Section {
+                    deliveredNotificationsContent
+                } header: {
+                    Text("Delivered notifications")
+                }
             }
+            .navigationTitle("Debug Menu")
             .onAppear {
                 dateWithinPicker = Date(julianDate: state.trueJulianDate + (state.config.mockedOffsetOn ? state.config.mockedOffset : 0))
                 viewModel.dispatch(.fetchNotifications)
