@@ -28,6 +28,8 @@ public enum SingleSatelliteWrappingViewAction {
     case loadSingleSatellite(LoadSingleSatelliteParams)
 }
 
+extension SingleSatelliteWrappingViewAction: Equatable {}
+
 public struct SingleSatelliteWrappingViewState: Equatable {
     public var elementsLoader: ElementsLoaderResources = .init()
 

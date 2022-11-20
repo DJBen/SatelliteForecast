@@ -19,15 +19,16 @@ target 'SatelliteForecastApp' do
   pod "SatelliteCatalogImpl_SQLite", :path => 'Frameworks/SatelliteCatalog/Impl_SQLite'
   pod "SatelliteForecast", :path => 'Frameworks/SatelliteForecast/Public'
   pod "SatelliteForecastImpl", :path => 'Frameworks/SatelliteForecast/Impl'
+  pod "SatelliteForecastImplWiring", :path => 'Frameworks/SatelliteForecast/ImplWiring'
   pod 'SecondaryTabView', :path => 'Frameworks/SecondaryTabView'
   pod "SolarSystem", :path => 'Frameworks/SolarSystem'
   pod "SwiftUIVisualEffects", :path => 'Frameworks/SwiftUIVisualEffects'
 
-  target 'SatelliteForecastTests' do
-    inherit! :complete
+  # target 'SatelliteForecastTests' do
+  #   inherit! :complete
 
-    pod "TestingExtensions", '~> 0.2.11'
-  end
+  #   pod "TestingExtensions", '~> 0.2.11'
+  # end
 end
 
 post_install do |installer|

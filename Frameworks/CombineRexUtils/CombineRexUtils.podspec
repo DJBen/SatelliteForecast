@@ -16,9 +16,9 @@ Pod::Spec.new do |s|
   s.author           = { 'Sihao Lu' => 'lsh32768@gmail.com' }
   s.source           = { :git => 'Not Published', :tag => s.version.to_s }
 
-  s.ios.deployment_target = '15.0'
+  s.ios.deployment_target = '16.0'
 
-  s.swift_version = ['5.4']
+  s.swift_version = ['5.5']
   s.source_files = 'Sources/**/*.swift'
 
   s.dependency 'CombineRex', '~> 0.8.12'

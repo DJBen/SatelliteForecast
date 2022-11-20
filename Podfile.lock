@@ -34,9 +34,15 @@ PODS:
     - StarryNight (= 1.0.0.LOCAL)
     - SwiftRex (= 0.8.12)
     - SwiftUIVisualEffects
+  - SatelliteForecastImplWiring (1.0.0.LOCAL):
+    - BTree (~> 4.1.0)
+    - CombineRex (= 0.8.12)
+    - CombineRextensions
+    - SatelliteForecast (= 1.0.0.LOCAL)
+    - SatelliteForecastImpl (= 1.0.0.LOCAL)
+    - SwiftRex (= 0.8.12)
   - SatelliteKit (1.0.0.LOCAL)
   - SecondaryTabView (1.0.0.LOCAL)
-  - SnapshotTesting (1.8.2)
   - SolarSystem (1.0.0.LOCAL):
     - SatelliteKit (= 1.0.0.LOCAL)
   - SQLite.swift (0.12.2):
@@ -49,10 +55,6 @@ PODS:
   - STRegex (2.1.1)
   - SwiftRex (0.8.12)
   - SwiftUIVisualEffects (1.0.0.LOCAL)
-  - TestingExtensions (0.2.12):
-    - CombineRex (~> 0.8.12)
-    - SnapshotTesting (~> 1.8.2)
-    - SwiftRex (~> 0.8.12)
 
 DEPENDENCIES:
   - ActivityView (from `Frameworks/ActivityView/Public`)
@@ -67,13 +69,13 @@ DEPENDENCIES:
   - SatelliteCatalogImpl_SQLite (from `Frameworks/SatelliteCatalog/Impl_SQLite`)
   - SatelliteForecast (from `Frameworks/SatelliteForecast/Public`)
   - SatelliteForecastImpl (from `Frameworks/SatelliteForecast/Impl`)
+  - SatelliteForecastImplWiring (from `Frameworks/SatelliteForecast/ImplWiring`)
   - SatelliteKit (from `Frameworks/SatelliteKit`)
   - SecondaryTabView (from `Frameworks/SecondaryTabView`)
   - SolarSystem (from `Frameworks/SolarSystem`)
   - StarryNight (from `Frameworks/StarryNight`)
   - SwiftRex (~> 0.8.12)
   - SwiftUIVisualEffects (from `Frameworks/SwiftUIVisualEffects`)
-  - TestingExtensions (~> 0.2.11)
 
 SPEC REPOS:
   trunk:
@@ -81,11 +83,9 @@ SPEC REPOS:
     - CombineRex
     - CombineRextensions
     - FlagKit
-    - SnapshotTesting
     - SQLite.swift
     - STRegex
     - SwiftRex
-    - TestingExtensions
 
 EXTERNAL SOURCES:
   ActivityView:
@@ -104,6 +104,8 @@ EXTERNAL SOURCES:
     :path: Frameworks/SatelliteForecast/Public
   SatelliteForecastImpl:
     :path: Frameworks/SatelliteForecast/Impl
+  SatelliteForecastImplWiring:
+    :path: Frameworks/SatelliteForecast/ImplWiring
   SatelliteKit:
     :path: Frameworks/SatelliteKit
   SecondaryTabView:
@@ -116,29 +118,28 @@ EXTERNAL SOURCES:
     :path: Frameworks/SwiftUIVisualEffects
 
 SPEC CHECKSUMS:
-  ActivityView: 39ecc1b4824051660f9cf63f03d051d780c0fee5
+  ActivityView: 1fea99f91b3a556794fa3421300ceb0692a77e23
   BTree: 99b99930790b88dc5e8bafbf666a5dfb8d7808b4
   CombineRex: eca784a8f3fe791bb153e7401a2a272c005d9881
   CombineRextensions: f334525cda6b04493782e80491b1aa45c4429f13
-  CombineRexUtils: 731ee3e4dbb416279664b6876449ed7964099a90
-  CombineUtils: c9607fcf2487e18c19d4e023f86a018d4f8b7807
+  CombineRexUtils: 42fcd7c940bdff6d1fc04e967f2aac49c8130345
+  CombineUtils: ec1bdc9ac498e2c10b0c6f608f1993fdac5a7174
   FlagKit: eca7dc89064b0c986302ba9acefad1bf80a435b1
-  QSMag: 5a944b9b2392dac7ba1626a70a94be337db49732
-  SatelliteCatalog: 132031627b4f096d1f2a16d169286faae121c0cc
-  SatelliteCatalogImpl_SQLite: 33b833c3dc7482f1acdcb167e7cb203137c940d3
-  SatelliteForecast: 7c37fa5ed3552cfe64ea0cf999e5f64c3be40b1f
-  SatelliteForecastImpl: b1829e7de6ae33983b654e99cf28dafa83cc3ef9
-  SatelliteKit: 53e267558b0bd35f1be23f4dfa022b4503aa0226
-  SecondaryTabView: 6b413852af90f4e37cf6dab79c38cfeb20a53dd9
-  SnapshotTesting: 38947050d13960d57a4a9c166fcf51bca7d56970
-  SolarSystem: 2357ba7d4cf1073a87368a783c819322eea185e3
+  QSMag: 89e897ae68175fccc74da3e7777b98e13c40ae68
+  SatelliteCatalog: 38e6bac88d020b2e7f79b57a4ba57c287fc2b8f7
+  SatelliteCatalogImpl_SQLite: 1a427b86ebea296c136b07ffdd9c81337207cb4b
+  SatelliteForecast: 3277567fb203baf229a0d9fb128208b6ed9ff5ea
+  SatelliteForecastImpl: d8904d3e7be99bef951ec81ba162c30b37ebe8e8
+  SatelliteForecastImplWiring: 029a1aee91fee99d92e1783bec47da2922d73f06
+  SatelliteKit: 8304c154ea93df1df7554b011f7c024e7c23934a
+  SecondaryTabView: 754b3323f783a6e11cfe984995117233b0182829
+  SolarSystem: 14936ad44e1c3b475c4e3c0b744d7a6fe5960e1c
   SQLite.swift: d2b4642190917051ce6bd1d49aab565fe794eea3
-  StarryNight: 4cecdd344ee93f3a82aff6e0a52ff5c045bb4207
+  StarryNight: 56e9261c8b9397f1973cccd9e1d853adac832fde
   STRegex: d49e88d0fe58538d3175fdd989bc1243b9be2a07
   SwiftRex: 427d06d912bf208c55d54d3fcc5a003d420630c6
-  SwiftUIVisualEffects: 4b341110ba61926c0287feef7b09b49fc0e7fac3
-  TestingExtensions: b1b5ab833b29dad598b1450aec84a36bbe0da326
+  SwiftUIVisualEffects: 3b5949659b8b3dd39dd70a2c7f5a3df57bcd76f8
 
-PODFILE CHECKSUM: 1edcaee01a305825571e16fded3a0c8f18c09aa3
+PODFILE CHECKSUM: 8996dfa8c08df57b271001a4fcecb528132aaf70
 
 COCOAPODS: 1.11.3
