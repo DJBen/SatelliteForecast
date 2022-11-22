@@ -25,7 +25,7 @@ extension EffectMiddleware where
             switch action {
             case let .requestRasterizeElevationGraph(size, noradIndex, julianDateRange, traitCollection):
                 return .promise(token: "") { context, sink in
-                    DispatchQueue.global(qos: .userInitiated).async {
+                    elevationGraphRasterizationQueue.async {
                         let state = getState()
 
                         // Skip if image already generated.

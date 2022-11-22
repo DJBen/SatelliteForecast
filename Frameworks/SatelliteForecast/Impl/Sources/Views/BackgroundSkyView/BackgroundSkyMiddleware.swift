@@ -23,7 +23,7 @@ extension EffectMiddleware where InputActionType == BackgroundSkyViewAction, Out
                 traitCollection: let traitCollection
             ):
                 return .promise(token: "") { context, sink in
-                    DispatchQueue.global(qos: .userInitiated).async {
+                    backgroundSkyRasterizationQueue.async {
                         let state = getState()
                         let dataSource = state.dataSource(for: quality)
                         // Skip if image already generated.

@@ -267,6 +267,7 @@ public struct AllPassesView: View {
                         )
                     }
                     .frame(height: 135)
+                    .id(item.id)
                     .swipeActions(
                         edge: .leading
                     ) {

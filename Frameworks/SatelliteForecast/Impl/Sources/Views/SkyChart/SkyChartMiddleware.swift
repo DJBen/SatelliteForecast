@@ -26,7 +26,7 @@ extension EffectMiddleware where
             switch action {
             case let .requestRasterizedSatellitePath(size, quality, pass, traitCollection):
                 return .promise(token: "") { context, sink in
-                    DispatchQueue.global(qos: .userInitiated).async {
+                    satellitePathRasterizationQueue.async {
                         let state = getState()
                         let dataSource = state.resources.dataSource(for: quality)
                         // Skip if image already generated.
