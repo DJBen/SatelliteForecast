@@ -221,8 +221,7 @@ public struct SkyChart<ConstellationLabel: View>: View {
                 basicChartConfigs: context.configs.basicChartConfigs,
                 configs: context.configs.backgroundSkyConfigs,
                 quality: context.quality,
-                constellationLabel: context.constellationLabel,
-                julianDateProvider: context.julianDateProvider
+                constellationLabel: context.constellationLabel
             )
         )
         .environment(\.backgroundSkyJulianDateKey, backgroundSkyJulianDateKey)
@@ -272,7 +271,19 @@ public struct SkyChartContext<ConstellationLabel: View> {
     @ViewBuilder public let constellationLabel: (String) -> ConstellationLabel
     public let tappedCoordinate: (AziEle) -> Void
 
-    public init(satelliteInfo: SatelliteInfo, snapshots: [SatelliteSnapshot], observer: LatLonAlt, pass: Pass, notableSnapshots: NotableSnapshots, configs: SkyChartConfigs, quality: ChartQuality, julianDateProvider: @escaping () -> Double, deviceMotion: Loadable<CMDeviceMotion, Error> = .notLoaded, @ViewBuilder constellationLabel: @escaping (String) -> ConstellationLabel, tappedCoordinate: @escaping (AziEle) -> Void = { _ in }) {
+    public init(
+        satelliteInfo: SatelliteInfo,
+        snapshots: [SatelliteSnapshot],
+        observer: LatLonAlt,
+        pass: Pass,
+        notableSnapshots: NotableSnapshots,
+        configs: SkyChartConfigs,
+        quality: ChartQuality,
+        julianDateProvider: @escaping () -> Double,
+        deviceMotion: Loadable<CMDeviceMotion, Error> = .notLoaded,
+        @ViewBuilder constellationLabel: @escaping (String) -> ConstellationLabel,
+        tappedCoordinate: @escaping (AziEle) -> Void = { _ in }
+    ) {
         self.satelliteInfo = satelliteInfo
         self.snapshots = snapshots
         self.observer = observer
@@ -443,8 +454,7 @@ struct SkyChart_Previews: PreviewProvider {
                             basicChartConfigs: .init(),
                             configs: .init(),
                             quality: .full,
-                            constellationLabel: { _ in EmptyView() },
-                            julianDateProvider: { referenceDate }
+                            constellationLabel: { _ in EmptyView() }
                         )
                     )
                 )
@@ -494,8 +504,7 @@ struct SkyChart_Previews: PreviewProvider {
                         basicChartConfigs: .init(),
                         configs: .preset,
                         quality: .full,
-                        constellationLabel: { _ in EmptyView() },
-                        julianDateProvider: { passSnapshots2.pass.rise.julianDate }
+                        constellationLabel: { _ in EmptyView() }
                     )
                 )
             )
@@ -525,8 +534,7 @@ struct SkyChart_Previews: PreviewProvider {
                         basicChartConfigs: .init(),
                         configs: .preset,
                         quality: .full,
-                        constellationLabel: { _ in EmptyView() },
-                        julianDateProvider: { passSnapshots2.pass.rise.julianDate }
+                        constellationLabel: { _ in EmptyView() }
                     )
                 )
             )

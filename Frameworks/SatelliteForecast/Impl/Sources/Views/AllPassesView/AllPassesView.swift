@@ -267,6 +267,7 @@ public struct AllPassesView: View {
                         )
                     }
                     .frame(height: 135)
+                    .id(item.id)
                     .swipeActions(
                         edge: .leading
                     ) {
@@ -690,8 +691,7 @@ struct AllPassesView_Previews: PreviewProvider {
                                         basicChartConfigs: .init(),
                                         configs: .preset,
                                         quality: .full,
-                                        constellationLabel: { _ in EmptyView() },
-                                        julianDateProvider: { passSnapshots.pass.rise.julianDate }
+                                        constellationLabel: { _ in EmptyView() }
                                     )
                                 )
                             )

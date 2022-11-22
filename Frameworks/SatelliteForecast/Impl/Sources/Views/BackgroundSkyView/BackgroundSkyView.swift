@@ -52,15 +52,13 @@ public struct BackgroundSkyViewContext<ConstellationLabel: View> {
     public let configs: BackgroundSkyConfigs
     public let quality: ChartQuality
     public let constellationLabel: (String) -> ConstellationLabel
-    public let julianDateProvider: () -> Double
 
-    public init(observer: LatLonAlt, basicChartConfigs: BasicChartConfigs, configs: BackgroundSkyConfigs, quality: ChartQuality, @ViewBuilder constellationLabel: @escaping (String) -> ConstellationLabel, julianDateProvider: @escaping () -> Double) {
+    public init(observer: LatLonAlt, basicChartConfigs: BasicChartConfigs, configs: BackgroundSkyConfigs, quality: ChartQuality, @ViewBuilder constellationLabel: @escaping (String) -> ConstellationLabel) {
         self.observer = observer
         self.basicChartConfigs = basicChartConfigs
         self.configs = configs
         self.quality = quality
         self.constellationLabel = constellationLabel
-        self.julianDateProvider = julianDateProvider
     }
 }
 
@@ -163,7 +161,7 @@ public struct BackgroundSkyView<ConstellationLabel: View>: View {
         }
     }
 
-    @ViewBuilder var constellationLabelView: some View {
+    @ViewBuilder func constellationLabelView(julianDate: Double) -> some View {
         GeometryReader { geometry in
             let rect = geometry.frame(in: .local)
 
@@ -172,7 +170,7 @@ public struct BackgroundSkyView<ConstellationLabel: View>: View {
                     if let displayCenter = constellation.displayCenter {
                         let raDec = RADec(vector: displayCenter)
                         let coordinate = azel(
-                            julianDate: context.julianDateProvider(),
+                            julianDate: julianDate,
                             site: (context.observer.lat, context.observer.lon),
                             cele: raDec
                         )
@@ -207,7 +205,7 @@ public struct BackgroundSkyView<ConstellationLabel: View>: View {
                     .overlay(
                         planetaryBodiesView(julianDate: backgroundSkyJulianDateKey)
                     )
-                    .overlay(constellationLabelView)
+                    .overlay(constellationLabelView(julianDate: backgroundSkyJulianDateKey))
                     .clipShape(Circle())
                 )
             } else {
@@ -255,8 +253,7 @@ struct BackgroundSkyView_Previews: PreviewProvider {
                 basicChartConfigs: .init(),
                 configs: .preset,
                 quality: .full,
-                constellationLabel: { _ in EmptyView() },
-                julianDateProvider: { Date().julianDate }
+                constellationLabel: { _ in EmptyView() }
             )
         )
         .environment(\.backgroundSkyJulianDateKey, 0)

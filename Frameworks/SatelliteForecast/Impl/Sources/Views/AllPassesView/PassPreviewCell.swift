@@ -63,16 +63,16 @@ struct PassPreviewCell: View {
         GeometryReader { geometry in
             let shortEdge = min(geometry.size.width, geometry.size.height)
             
-            HStack(alignment: .center) {
+            HStack(alignment: .top, spacing: 4) {
                 Capsule(
                     style: .continuous
                 )
                 .foregroundColor(visiblityColor)
                 .frame(width: 6, alignment: .leading)
 
-                HStack(alignment: .top, spacing: 0) {
+                HStack(alignment: .top) {
                     // Column 1: Day light and elevation
-                    if geometry.size.width >= 305 {
+                    if geometry.size.width >= 320 {
                         VStack(alignment: .leading) {
                             Text(PassPreviewCell.titleForPassVisibility(pass.visibility))
                                 .font(.headline)
@@ -131,9 +131,9 @@ struct PassPreviewCell: View {
                             .font(.caption)
                             .foregroundColor(Color(UIColor.secondaryLabel))
                     }
+                    .frame(width: 120)
                 }
-                .fixedSize()
-            
+
                 skyChartProducer.view(
                     SkyChartContext(
                         satelliteInfo: satelliteInfo,
@@ -303,8 +303,7 @@ struct PassPreviewCell_Previews: PreviewProvider {
                                     basicChartConfigs: .init(),
                                     configs: .preset,
                                     quality: .full,
-                                    constellationLabel: { _ in EmptyView() },
-                                    julianDateProvider: { passSnapshot.pass.rise.julianDate }
+                                    constellationLabel: { _ in EmptyView() }
                                 )
                             )
                         )
