@@ -9,6 +9,8 @@ import SwiftUI
 import CoreMotion
 import SatelliteForecast
 
+// MARK: - BackgroundSkyJulianDateKeyEnvironmentKey
+
 public struct BackgroundSkyJulianDateKeyEnvironmentKey: EnvironmentKey {
     public static let defaultValue: Double? = nil
 }
@@ -19,6 +21,8 @@ extension EnvironmentValues {
         set { self[BackgroundSkyJulianDateKeyEnvironmentKey.self] = newValue }
     }
 }
+
+// MARK: - JulianDateRangeKey
 
 public struct JulianDateRangeKey: EnvironmentKey {
     public static let defaultValue: ClosedRange<Double>? = nil
@@ -42,6 +46,8 @@ extension EnvironmentValues {
     }
 }
 
+// MARK: - MotionManagerKey
+
 public struct MotionManagerKey: EnvironmentKey {
     public static let defaultValue: CMMotionManager? = nil
 }
@@ -52,6 +58,8 @@ extension EnvironmentValues {
         set { self[MotionManagerKey.self] = newValue }
     }
 }
+
+// MARK: - DeviceMotionKey
 
 public struct DeviceMotionKey: EnvironmentKey {
     public static let defaultValue: Loadable<CMDeviceMotion, Error> = .notLoaded

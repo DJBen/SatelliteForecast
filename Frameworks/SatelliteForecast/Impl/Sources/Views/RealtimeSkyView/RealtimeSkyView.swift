@@ -61,12 +61,12 @@ public protocol RealtimeSkyView: View {}
 public struct RealtimeSkyViewImpl: RealtimeSkyView {
     @ObservedObject var viewModel: ObservableViewModel<RealtimeSkyViewAction, RealtimeSkyViewState>
     let context: RealtimeSkyViewContext
-    let backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext<EmptyView>, BackgroundSkyView<EmptyView>>
+    let backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext<EmptyView, EmptyView>, BackgroundSkyView<EmptyView, EmptyView>>
 
     public init(
         viewModel: ObservableViewModel<RealtimeSkyViewAction, RealtimeSkyViewState>,
         context: RealtimeSkyViewContext,
-        backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext<EmptyView>, BackgroundSkyView<EmptyView>>
+        backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext<EmptyView, EmptyView>, BackgroundSkyView<EmptyView, EmptyView>>
     ) {
         self.viewModel = viewModel
         self.context = context
@@ -244,7 +244,9 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
                 basicChartConfigs: context.basicChartConfigs,
                 configs: context.backgroundSkyConfigs,
                 quality: .full,
-                constellationLabel: { _ in EmptyView() }
+                constellationLabel: { _ in EmptyView() },
+                annotationView: { _ in EmptyView() },
+                starTapped: { _ in }
             )
         )
         .environment(
@@ -439,7 +441,9 @@ struct RealtimeSkyView_Previews: PreviewProvider {
                         basicChartConfigs: .init(),
                         configs: .init(),
                         quality: .full,
-                        constellationLabel: { _ in EmptyView() }
+                        constellationLabel: { _ in EmptyView() },
+                        annotationView: { _ in EmptyView() },
+                        starTapped: { _ in }
                     )
                 )
             )

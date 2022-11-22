@@ -33,13 +33,13 @@ extension DetailedPassViewState: Equatable {}
 
 public struct DetailedPassView: View {
     @ObservedObject var viewModel: ObservableViewModel<DetailedPassViewAction, DetailedPassViewState>
-    let skyChartProducer: ViewProducer<SkyChartContext<ConstellationLabel>, SkyChart<ConstellationLabel>>
+    let skyChartProducer: ViewProducer<SkyChartContext<ConstellationLabel, DetailedPassViewBackgroundAnnotationView>, SkyChart<ConstellationLabel, DetailedPassViewBackgroundAnnotationView>>
     let context: DetailPassViewContext
 
     public init(
         viewModel: ObservableViewModel<DetailedPassViewAction, DetailedPassViewState>,
         context: DetailPassViewContext,
-        skyChartProducer: ViewProducer<SkyChartContext<ConstellationLabel>, SkyChart<ConstellationLabel>>
+        skyChartProducer: ViewProducer<SkyChartContext<ConstellationLabel, DetailedPassViewBackgroundAnnotationView>, SkyChart<ConstellationLabel, DetailedPassViewBackgroundAnnotationView>>
     ) {
         self.viewModel = viewModel
         self.context = context
@@ -53,7 +53,7 @@ public struct DetailedPassView: View {
                 showsIndicators: true
             ) {
                 skyChartProducer.view(
-                    SkyChartContext<ConstellationLabel>(
+                    SkyChartContext<ConstellationLabel, DetailedPassViewBackgroundAnnotationView>(
                         satelliteInfo: context.satelliteInfo,
                         snapshots: context.passSnapshots.snapshots,
                         observer: context.observer,
@@ -71,13 +71,18 @@ public struct DetailedPassView: View {
                                 bodySymbol: .text
                             ),
                             basicChartConfigs: BasicChartConfigs(),
-                            showPassInfoLabels: true,
-                            showMoreInfoOnTap: false
+                            showPassInfoLabels: true
                         ),
                         quality: .detailed,
                         julianDateProvider: context.julianDateProvider,
                         constellationLabel: { text in
                             ConstellationLabel(text: text)
+                        },
+                        backgroundAnnotationView: { raDecToPoint in
+                            DetailedPassViewBackgroundAnnotationView(raDecToPoint: raDecToPoint)
+                        },
+                        backgroundStarTapped: { star in
+                            print(star)
                         }
                     )
                 )

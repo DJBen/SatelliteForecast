@@ -19,7 +19,7 @@ struct PassPreviewCell: View {
     var observer: LatLonAlt
     var pass: Pass
     var hasScheduledAlert: Bool
-    var skyChartProducer: ViewProducer<SkyChartContext<EmptyView>, SkyChart<EmptyView>>
+    var skyChartProducer: ViewProducer<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>
     var julianDateOffset: Double
     var julianDateProvider: () -> Double
 
@@ -303,7 +303,9 @@ struct PassPreviewCell_Previews: PreviewProvider {
                                     basicChartConfigs: .init(),
                                     configs: .preset,
                                     quality: .full,
-                                    constellationLabel: { _ in EmptyView() }
+                                    constellationLabel: { _ in EmptyView() },
+                                    annotationView: { _ in EmptyView() },
+                                    starTapped: { _ in }
                                 )
                             )
                         )

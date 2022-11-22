@@ -122,7 +122,7 @@ public struct AllPassesView: View {
     @ObservedObject var viewModel: ObservableViewModel<AllPassesViewAction, AllPassesViewState>
 
     let context: AllPassesViewContext
-    let skyChartProducer: ViewProducer<SkyChartContext<EmptyView>, SkyChart<EmptyView>>
+    let skyChartProducer: ViewProducer<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>
     let passViewProducer: ViewProducer<PassViewContext, PassView>
 
     let refreshTimer = Timer.publish(
@@ -152,7 +152,7 @@ public struct AllPassesView: View {
     public init(
         viewModel: ObservableViewModel<AllPassesViewAction, AllPassesViewState>,
         context: AllPassesViewContext,
-        skyChartProducer: ViewProducer<SkyChartContext<EmptyView>, SkyChart<EmptyView>>,
+        skyChartProducer: ViewProducer<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>,
         passViewProducer: ViewProducer<PassViewContext, PassView>
     ) {
         self.viewModel = viewModel
@@ -647,12 +647,12 @@ struct AllPassesView_Previews: PreviewProvider {
                         )
                     ),
                     context: context,
-                    skyChartProducer: ViewProducer<SkyChartContext<EmptyView>, SkyChart<EmptyView>> { context in
+                    skyChartProducer: ViewProducer<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>> { context in
                         return SkyChart(
                             viewModel: .mock(
                                 state: SkyChartViewState()
                             ),
-                            context: SkyChartContext<EmptyView>(
+                            context: SkyChartContext<EmptyView, EmptyView>(
                                 satelliteInfo: SatelliteInfo(elements: tianHe),
                                 snapshots: passSnapshots.snapshots,
                                 observer: observer,
@@ -691,7 +691,9 @@ struct AllPassesView_Previews: PreviewProvider {
                                         basicChartConfigs: .init(),
                                         configs: .preset,
                                         quality: .full,
-                                        constellationLabel: { _ in EmptyView() }
+                                        constellationLabel: { _ in EmptyView() },
+                                        annotationView: { _ in EmptyView() },
+                                        starTapped: { _ in }
                                     )
                                 )
                             )

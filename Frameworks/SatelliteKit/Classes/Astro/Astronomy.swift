@@ -35,7 +35,9 @@ public struct AziEleDst: AziEleProviding, Hashable, Codable {
 }
 
 public struct RADec: Equatable, Hashable, Codable {
+    /// Right ascension in degrees
     public let ra: Double
+    /// Declination in degrees
     public let dec: Double
 
     public init(ra: Double, dec: Double) {
@@ -54,7 +56,10 @@ public struct RADec: Equatable, Hashable, Codable {
 }
 
 public protocol AziEleProviding: Equatable {
+    /// Azimuth in degrees
     var azim: Double { get }
+
+    /// Elevation in degrees
     var elev: Double { get }
 }
 
@@ -222,6 +227,19 @@ public func azel(time: Date,
         azim: fmod(azim * rad2deg + 540.0, 360.0),
         elev: fmod(elev * rad2deg, 360.0)
     )
+}
+
+public func azelToRADec(
+    aziEle: any AziEleProviding,
+    julianDate: Double,
+    site: (Double, Double)
+) -> RADec {
+    let dec = asin(sin(deg2rad * aziEle.elev) * sin(deg2rad * site.0) + cos(deg2rad * aziEle.elev) * cos(deg2rad * site.0) * cos(deg2rad * aziEle.azim))
+    let lhsDivisor = -sin(deg2rad * aziEle.azim) * cos(deg2rad * aziEle.elev) / cos(dec)
+    let lhsDividend = (sin(deg2rad * aziEle.elev) - sin(dec) * sin(deg2rad * site.0)) / (cos(dec) * cos(deg2rad * site.0))
+    let lha = atan2pi(lhsDivisor, lhsDividend)
+    let ra = fmod(siteMeanSiderealTime(julianDate: julianDate, site.1) - rad2deg * lha, 360)
+    return RADec(ra: ra, dec: rad2deg * dec)
 }
 
 /*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓

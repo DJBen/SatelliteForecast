@@ -170,14 +170,14 @@ public enum SkyChartUtils {
             let alt = azel(
                 julianDate: params.julianDate,
                 site: (params.observer.lat, params.observer.lon),
-                cele: cartesianToRaDec(center)
+                cele: RADec(vector: center)
             ).elev
             if alt < 0 {
                 continue
             }
             for line in constellation.connectionLines {
-                let aziElev1 = azel(julianDate: params.julianDate, site: (params.observer.lat, params.observer.lon), cele: cartesianToRaDec(line.star1.physicalInfo.coordinate))
-                let aziElev2 = azel(julianDate: params.julianDate, site: (params.observer.lat, params.observer.lon), cele: cartesianToRaDec(line.star2.physicalInfo.coordinate))
+                let aziElev1 = azel(julianDate: params.julianDate, site: (params.observer.lat, params.observer.lon), cele: RADec(vector: line.star1.physicalInfo.coordinate))
+                let aziElev2 = azel(julianDate: params.julianDate, site: (params.observer.lat, params.observer.lon), cele: RADec(vector: line.star2.physicalInfo.coordinate))
                 if aziElev1.elev < 0 || aziElev2.elev < 0 {
                     continue
                 }
@@ -200,7 +200,8 @@ public enum SkyChartUtils {
             let aziElev = azel(
                 julianDate: params.julianDate,
                 site: (params.observer.lat, params.observer.lon),
-                cele: cartesianToRaDec(star.physicalInfo.coordinate))
+                cele: RADec(vector: star.physicalInfo.coordinate)
+            )
             if aziElev.elev < 0 {
                 continue
             }

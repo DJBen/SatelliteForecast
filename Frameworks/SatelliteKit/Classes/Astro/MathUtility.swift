@@ -75,6 +75,12 @@ public struct Vector: Equatable {
         self.z = z
     }
 
+    public init(raDec: RADec) {
+        self.x = cos(raDec.dec * deg2rad) * cos(raDec.ra * deg2rad)
+        self.y = cos(raDec.dec * deg2rad) * sin(raDec.ra * deg2rad)
+        self.z = sin(raDec.dec * deg2rad)
+    }
+
     public static prefix func - (v: Vector) -> Vector {
         return Vector(-v.x, -v.y, -v.z)
     }

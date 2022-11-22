@@ -43,7 +43,7 @@ public struct PassView: View {
 
     var context: PassViewContext
     var elevationGraphProducer: ViewProducer<SatelliteElevationGraphContext, SatelliteElevationGraph>
-    var skyChartProducer: ViewProducer<SkyChartContext<EmptyView>, SkyChart<EmptyView>>
+    var skyChartProducer: ViewProducer<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>
     var passAlarmSettingsProducer: ViewProducer<PassAlarmSettingsModalViewContext, PassAlarmSettingsModalView>
     var detailedPassViewProducer: ViewProducer<DetailPassViewContext, DetailedPassView>
 
@@ -53,7 +53,7 @@ public struct PassView: View {
         viewModel: ObservableViewModel<PassViewAction, PassViewState>,
         context: PassViewContext,
         elevationGraphProducer: ViewProducer<SatelliteElevationGraphContext, SatelliteElevationGraph>,
-        skyChartProducer: ViewProducer<SkyChartContext<EmptyView>, SkyChart<EmptyView>>,
+        skyChartProducer: ViewProducer<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>,
         passAlarmSettingsProducer: ViewProducer<PassAlarmSettingsModalViewContext, PassAlarmSettingsModalView>,
         detailedPassViewProducer: ViewProducer<DetailPassViewContext, DetailedPassView>
     ) {
@@ -331,7 +331,7 @@ struct PassView_Previews: PreviewProvider {
                 )
             ),
             skyChartProducer: .pure(
-                SkyChart(
+                SkyChart<EmptyView, EmptyView>(
                     viewModel: .mock(
                         state: skyChartState
                     ),
@@ -346,7 +346,9 @@ struct PassView_Previews: PreviewProvider {
                                 basicChartConfigs: .init(),
                                 configs: .preset,
                                 quality: .full,
-                                constellationLabel: { _ in EmptyView() }
+                                constellationLabel: { _ in EmptyView() },
+                                annotationView: { _ in EmptyView() },
+                                starTapped: { _ in }
                             )
                         )
                     )
