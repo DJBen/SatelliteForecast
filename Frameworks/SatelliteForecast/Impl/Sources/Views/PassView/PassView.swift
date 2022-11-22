@@ -346,8 +346,7 @@ struct PassView_Previews: PreviewProvider {
                                 basicChartConfigs: .init(),
                                 configs: .preset,
                                 quality: .full,
-                                constellationLabel: { _ in EmptyView() },
-                                julianDateProvider: { Date().julianDate }
+                                constellationLabel: { _ in EmptyView() }
                             )
                         )
                     )

@@ -114,6 +114,7 @@ public struct SkyChartConfigs: Equatable, Hashable {
 
     public var basicChartConfigs: BasicChartConfigs = .init()
 
+    /// Show labels about the important event during a pass.
     public var showPassInfoLabels: Bool = true
 
     /// Whether to show more information when the user taps / drags on the passing trajectory, or taps on the label.

@@ -244,8 +244,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
                 basicChartConfigs: context.basicChartConfigs,
                 configs: context.backgroundSkyConfigs,
                 quality: .full,
-                constellationLabel: { _ in EmptyView() },
-                julianDateProvider: context.julianDateProvider
+                constellationLabel: { _ in EmptyView() }
             )
         )
         .environment(
@@ -440,8 +439,7 @@ struct RealtimeSkyView_Previews: PreviewProvider {
                         basicChartConfigs: .init(),
                         configs: .init(),
                         quality: .full,
-                        constellationLabel: { _ in EmptyView() },
-                        julianDateProvider: { Date().julianDate }
+                        constellationLabel: { _ in EmptyView() }
                     )
                 )
             )

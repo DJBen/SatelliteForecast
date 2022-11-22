@@ -691,8 +691,7 @@ struct AllPassesView_Previews: PreviewProvider {
                                         basicChartConfigs: .init(),
                                         configs: .preset,
                                         quality: .full,
-                                        constellationLabel: { _ in EmptyView() },
-                                        julianDateProvider: { passSnapshots.pass.rise.julianDate }
+                                        constellationLabel: { _ in EmptyView() }
                                     )
                                 )
                             )
