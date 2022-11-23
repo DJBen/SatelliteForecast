@@ -91,25 +91,16 @@ extension AlarmSettingsCell {
     }
 
     static func description(numberOfAlerts: Int) -> String {
-        if numberOfAlerts == 0 {
-            return NSLocalizedString(
-                "SatelliteOverview.alarmSettingsCell.description.zero",
+        return String(
+            format: NSLocalizedString(
+                "SatelliteOverview.alarmSettingsCell.description",
                 tableName: nil,
                 bundle: .satelliteForecastImplResourcesBundle,
-                value: "You currently haven't set up any alarms.",
-                comment: "The description for alarm settings cell when the seller hasn't set up any alarms"
-            )
-        } else {
-            let format = NSLocalizedString(
-                "SatelliteOverview.alarmSettingsCell.description.nonZero",
-                tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
-                value: "You have %d pending alarm(s)",
-                comment: "The description for alarm settings cell when the seller has set up some alarms"
-            )
-
-            return String(format: format, numberOfAlerts)
-        }
+                value: "%#@alarmCount@",
+                comment: "The description for alarm settings cell when the seller has a number of alarms"
+            ),
+            numberOfAlerts
+        )
     }
 }
 

@@ -34,6 +34,8 @@ struct SettingsOverviewAlarmNavigation: Equatable, Hashable, Codable {}
 
 struct SettingsOverviewObserverNavigation: Equatable, Hashable, Codable {}
 
+struct EphemeridesManagerNavigation: Equatable, Hashable, Codable {}
+
 public protocol SettingsOverviewView: View {}
 
 public struct SettingsOverviewViewImpl: SettingsOverviewView {
@@ -59,7 +61,8 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
 
     let items: [SettingsOverviewItem] = [
         .observer,
-        .alarms
+        .alarms,
+        .ephemeridesManager
     ]
 
     @ViewBuilder private func destination(for item: SettingsOverviewItem) -> some View {
@@ -68,6 +71,8 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
             locationSettingsViewProducer.view()
         case .alarms:
             alarmSettingsViewProducer.view()
+        case .ephemeridesManager:
+            EphemeridesManagementView()
         }
     }
 
@@ -93,6 +98,18 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                     bundle: .satelliteForecastImplResourcesBundle,
                     value: "Location settings",
                     comment: "The section header of the observer section in settings"
+                )
+            )
+            .font(.headline.lowercaseSmallCaps().weight(.semibold))
+            .foregroundColor(Color(UIColor.secondaryLabel))
+        case .ephemeridesManager:
+            Text(
+                NSLocalizedString(
+                    "SettingsOverviewView.ephemeridesManager.header",
+                    tableName: nil,
+                    bundle: .satelliteForecastImplResourcesBundle,
+                    value: "Downloaded ephemerides",
+                    comment: "The section header of the ephemerides manager section in settings"
                 )
             )
             .font(.headline.lowercaseSmallCaps().weight(.semibold))
@@ -134,6 +151,14 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                             } header: {
                                 sectionHeader(for: item)
                             }
+                        case .ephemeridesManager:
+                            Section {
+                                NavigationLink(value: EphemeridesManagerNavigation()) {
+                                    EphemeridesManagerCell()
+                                }
+                            } header: {
+                                sectionHeader(for: item)
+                            }
                         }
                     }
                 }
@@ -146,6 +171,11 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                 .navigationDestination(for: SettingsOverviewAlarmNavigation.self) { _ in
                     LazyView {
                         alarmSettingsViewProducer.view()
+                    }
+                }
+                .navigationDestination(for: EphemeridesManagerNavigation.self) { _ in
+                    LazyView {
+                        EphemeridesManagementView()
                     }
                 }
             }

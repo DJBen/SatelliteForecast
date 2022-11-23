@@ -32,6 +32,7 @@ public struct DetailedPassViewState {
 
 extension DetailedPassViewState: Equatable {}
 
+/// An enlarged pass view with ability to display details of stars upon tapping.
 public struct DetailedPassView: View {
     @ObservedObject var viewModel: ObservableViewModel<DetailedPassViewAction, DetailedPassViewState>
     let skyChartProducer: ViewProducer<SkyChartContext<ConstellationLabel, DetailedPassViewBackgroundAnnotationView>, SkyChart<ConstellationLabel, DetailedPassViewBackgroundAnnotationView>>
