@@ -39,6 +39,7 @@ public struct EphemeridesManagerCell: View {
         return zip(fileNames, attributes).map { (fileName, attributes) in
             EphemerideResource(
                 fileName: fileName,
+                fullPath: (temporaryDirectory.path() as NSString).appendingPathComponent(fileName),
                 size: attributes[.size] as? UInt64,
                 creationDate: attributes[.creationDate] as? Date
             )

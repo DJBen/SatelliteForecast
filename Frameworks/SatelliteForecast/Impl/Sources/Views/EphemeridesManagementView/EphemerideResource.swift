@@ -7,8 +7,9 @@
 
 import SatelliteForecast
 
-struct EphemerideResource {
+struct EphemerideResource: Equatable, Hashable, Codable {
     let fileName: String
+    let fullPath: String
     let size: UInt64?
     let creationDate: Date?
 

@@ -14,39 +14,41 @@ struct EphemeridesManagementView: View {
     init() {}
 
     @ViewBuilder private func cell(resource: EphemerideResource) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Text(
-                    resource.fileName
-                )
-                .font(.headline)
-                .foregroundColor(Color(UIColor.label))
-
-                Spacer()
-
-                if let formattedCreationDate = resource.formattedCreationDate {
+        NavigationLink(value: resource) {
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
                     Text(
-                        formattedCreationDate
+                        resource.fileName
+                    )
+                    .font(.headline)
+                    .foregroundColor(Color(UIColor.label))
+
+                    Spacer()
+
+                    if let formattedCreationDate = resource.formattedCreationDate {
+                        Text(
+                            formattedCreationDate
+                        )
+                        .font(.subheadline)
+                        .foregroundColor(Color(UIColor.secondaryLabel))
+                    }
+                }
+
+                if let formattedSize = resource.formattedSize {
+                    Text(
+                        formattedSize
                     )
                     .font(.subheadline)
                     .foregroundColor(Color(UIColor.secondaryLabel))
                 }
-            }
 
-            if let formattedSize = resource.formattedSize {
-                Text(
-                    formattedSize
-                )
-                .font(.subheadline)
-                .foregroundColor(Color(UIColor.secondaryLabel))
-            }
-
-            if let comment = resource.comment {
-                Text(
-                    comment
-                )
-                .font(.caption)
-                .foregroundColor(Color(UIColor.tertiaryLabel))
+                if let comment = resource.comment {
+                    Text(
+                        comment
+                    )
+                    .font(.caption)
+                    .foregroundColor(Color(UIColor.tertiaryLabel))
+                }
             }
         }
     }
@@ -60,6 +62,7 @@ struct EphemeridesManagementView: View {
         return zip(fileNames, attributes).map { (fileName, attributes) in
             EphemerideResource(
                 fileName: fileName,
+                fullPath: (temporaryDirectory.path() as NSString).appendingPathComponent(fileName),
                 size: attributes[.size] as? UInt64,
                 creationDate: attributes[.creationDate] as? Date
             )
@@ -96,6 +99,9 @@ struct EphemeridesManagementView: View {
                         }
                         self.resources = (try? fetchEphemerideResources()) ?? []
                     }
+                }
+                .navigationDestination(for: EphemerideResource.self) { resource in
+                    EphemerideTextBrowserView(resource: resource)
                 }
             }
         }
