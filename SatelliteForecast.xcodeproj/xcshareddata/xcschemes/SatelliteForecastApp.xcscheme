@@ -33,18 +33,6 @@
             default = "YES">
          </TestPlanReference>
       </TestPlans>
-      <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "EFB1B4CF27BCDFC40025974C"
-               BuildableName = "SatelliteForecastTests.xctest"
-               BlueprintName = "SatelliteForecastTests"
-               ReferencedContainer = "container:SatelliteForecast.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-      </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
