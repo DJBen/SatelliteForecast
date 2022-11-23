@@ -24,6 +24,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         Reducer.satelliteOverviewReducer.lift(),
         Reducer.settingsOverviewReducer.lift(),
         Reducer.satelliteListViewReducer.lift(),
+        Reducer.satelliteListOutputReducer.lift(),
         Reducer.allPassesViewReducer.lift(),
         Reducer<SatelliteElevationGraphAction, SatelliteElevationGraphResources>.satelliteElevationGraphReducer
         .lift(
@@ -80,6 +81,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             EffectMiddleware.selectSpecialSatelliteAfterElementsLoader.lift(),
             EffectMiddleware.rootViewElementsLoader.lift(),
             EffectMiddleware.satelliteOverviewToElementLoader.lift(),
+            EffectMiddleware.satelliteList.lift(),
             EffectMiddleware.satelliteListViewToElementPropagator.lift(),
             EffectMiddleware.satelliteListToElementLoader.lift(),
             EffectMiddleware.singleSatelliteWrappingViewToElementsLoader.lift(),

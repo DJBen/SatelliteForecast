@@ -14,10 +14,19 @@ extension Reducer where ActionType == SatelliteListViewAction, StateType == Sate
             break
         case .loadSatellite(let params):
             break
-        case let .satelliteSearchTextChanged(searchText):
-            state.satelliteSearchText = searchText
         case .retryLoadingSatelliteList:
             break
+        case .searchSatellites(_, category: _):
+            break
+        }
+    }
+}
+
+extension Reducer where ActionType == SatelliteListViewOutput, StateType == SatelliteListViewState {
+    public static let satelliteListOutputReducer = Reducer.reduce { action, state in
+        switch action {
+        case .filteredSatellites(let filteredSatellites, searchText: let searchText, category: let category):
+            state.filteredSatellites = filteredSatellites
         }
     }
 }

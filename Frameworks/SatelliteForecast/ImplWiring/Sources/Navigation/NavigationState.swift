@@ -34,7 +34,6 @@ public enum Tab {
 extension Tab: Equatable, Hashable {}
 
 public struct ListNavigation {
-    var satelliteSearchText: String = ""
     var category: SatelliteCategory?
     var selectedPassIndex: Int?
     var showAlarmConfigurationModal: Bool

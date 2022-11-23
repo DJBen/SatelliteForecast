@@ -38,6 +38,15 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                     print(satelliteOverviewViewAction)
                 case .satelliteListView(let satelliteListViewAction):
                     print(satelliteListViewAction)
+                case .satelliteListOutput(let satelliteListViewOutput):
+                    switch satelliteListViewOutput {
+                    case .filteredSatellites(let map, searchText: let searchText, category: let category):
+                        if let map = map {
+                            print("filteredSatellites(\(map.count), searchText: \(searchText), category: \(category))")
+                        } else {
+                            print("filteredSatellites(nil, searchText: \(searchText), category: \(category))")
+                        }
+                    }
                 case .settingsOverview(let settingsOverviewAction):
                     print(settingsOverviewAction)
                 case .singleSatelliteWrappingView(let singleSatelliteWrappingViewAction):

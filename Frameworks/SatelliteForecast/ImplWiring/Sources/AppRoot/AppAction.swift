@@ -24,6 +24,7 @@ public enum AppAction {
     case satelliteOverview(SatelliteOverviewViewAction)
     case settingsOverview(SettingsOverviewViewAction)
     case satelliteListView(SatelliteListViewAction)
+    case satelliteListOutput(SatelliteListViewOutput)
     case singleSatelliteWrappingView(SingleSatelliteWrappingViewAction)
     case allPassesView(AllPassesViewAction)
     case passView(PassViewAction)
@@ -172,6 +173,17 @@ extension AppAction {
         set {
             guard case .satelliteListView = self, let newValue = newValue else { return }
             self = .satelliteListView(newValue)
+        }
+    }
+
+    public var satelliteListOutput: SatelliteListViewOutput? {
+        get {
+            guard case let .satelliteListOutput(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .satelliteListOutput = self, let newValue = newValue else { return }
+            self = .satelliteListOutput(newValue)
         }
     }
 
