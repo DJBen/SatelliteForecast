@@ -53,7 +53,7 @@ public struct BackgroundSkyViewContext<ConstellationLabel: View, AnnotationView:
     public let quality: ChartQuality
     public let constellationLabel: (String) -> ConstellationLabel
     public let annotationView: (@escaping (RADec) -> CGPoint) -> AnnotationView
-    public let starTapped: (Star) -> Void
+    public let starTapped: (Star?) -> Void
 
     public init(
         observer: LatLonAlt,
@@ -62,7 +62,7 @@ public struct BackgroundSkyViewContext<ConstellationLabel: View, AnnotationView:
         quality: ChartQuality,
         @ViewBuilder constellationLabel: @escaping (String) -> ConstellationLabel,
         @ViewBuilder annotationView: @escaping (@escaping (RADec) -> CGPoint) -> AnnotationView,
-        starTapped: @escaping (Star) -> Void
+        starTapped: @escaping (Star?) -> Void
     ) {
         self.observer = observer
         self.basicChartConfigs = basicChartConfigs
@@ -81,7 +81,8 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
 
     @State private var contentSize: CGSize = .zero
 
-    @Environment(\.backgroundSkyJulianDateKey) var backgroundSkyJulianDateKey
+    @Environment(\.backgroundSkyJulianDateKey) var backgroundSkyJulianDate
+    @Environment(\.selectedBackgroundStarKey) var selectedBackgroundStar
     @Environment(\.colorScheme) var colorScheme
 
     public init(
@@ -93,7 +94,7 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
     }
 
     private var rasterizedBackgroundSky: UIImage? {
-        guard let backgroundSkyJulianDateKey = backgroundSkyJulianDateKey else {
+        guard let backgroundSkyJulianDateKey = backgroundSkyJulianDate else {
             return nil
         }
 
@@ -248,7 +249,7 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
 
     public var body: some View {
         Group {
-            if let backgroundSkyJulianDateKey = backgroundSkyJulianDateKey {
+            if let backgroundSkyJulianDate = backgroundSkyJulianDate {
                 SkyChartLegend(
                     state: SkyChartLegendState(observer: context.observer),
                     configs: context.basicChartConfigs
@@ -256,12 +257,14 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
                 .equatable()
                 .background(
                     backgroundSky(
-                        julianDate: backgroundSkyJulianDateKey
+                        julianDate: backgroundSkyJulianDate
                     )
                     .overlay(
-                        planetaryBodiesView(julianDate: backgroundSkyJulianDateKey)
+                        planetaryBodiesView(julianDate: backgroundSkyJulianDate)
                     )
-                    .overlay(constellationLabelView(julianDate: backgroundSkyJulianDateKey))
+                    .overlay(
+                        constellationLabelView(julianDate: backgroundSkyJulianDate)
+                    )
                     .clipShape(Circle())
                 )
             } else {
@@ -271,7 +274,7 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
                 )
             }
         }
-        .onChange(of: backgroundSkyJulianDateKey) { backgroundSkyJulianDateKey in
+        .onChange(of: backgroundSkyJulianDate) { backgroundSkyJulianDateKey in
             guard !contentSize.width.isZero && !contentSize.height.isZero else {
                 return
             }

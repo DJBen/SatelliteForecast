@@ -84,7 +84,7 @@ extension AlarmSettingsCell {
         NSLocalizedString(
             "SatelliteOverview.alarmSettingsCell.title",
             tableName: nil,
-            bundle: .main,
+            bundle: .satelliteForecastImplResourcesBundle,
             value: "Manage alarms",
             comment: "The title for alarm settings cell"
         )
@@ -95,7 +95,7 @@ extension AlarmSettingsCell {
             return NSLocalizedString(
                 "SatelliteOverview.alarmSettingsCell.description.zero",
                 tableName: nil,
-                bundle: .main,
+                bundle: .satelliteForecastImplResourcesBundle,
                 value: "You currently haven't set up any alarms.",
                 comment: "The description for alarm settings cell when the seller hasn't set up any alarms"
             )
@@ -103,7 +103,7 @@ extension AlarmSettingsCell {
             let format = NSLocalizedString(
                 "SatelliteOverview.alarmSettingsCell.description.nonZero",
                 tableName: nil,
-                bundle: .main,
+                bundle: .satelliteForecastImplResourcesBundle,
                 value: "You have %d pending alarm(s)",
                 comment: "The description for alarm settings cell when the seller has set up some alarms"
             )

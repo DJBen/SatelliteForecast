@@ -48,15 +48,15 @@ public struct Star: Hashable, Equatable {
             return lhs.id == rhs.id
         }
 
-        private var hrIdString: String? {
+        public var hrIdString: String? {
             return hrId != nil ? "HR \(hrId!)" : nil
         }
 
-        private var hipIdString: String? {
+        public var hipIdString: String? {
             return hipId != nil ? "HIP \(hipId!)" : nil
         }
 
-        private var hdIdString: String? {
+        public var hdIdString: String? {
             return hdId != nil ? "HD \(hdId!)" : nil
         }
 

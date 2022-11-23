@@ -233,7 +233,7 @@ extension PassView {
         let format = NSLocalizedString(
             "PassView.descriptionToolbar.text",
             tableName: nil,
-            bundle: .main,
+            bundle: .satelliteForecastImplResourcesBundle,
             value: "Rises from %1$@ and sets into %2$@",
             comment: "The toolbar of the pass view describing the direction of the pass. The first and second arguments correspond to the directions of rising and setting."
         )

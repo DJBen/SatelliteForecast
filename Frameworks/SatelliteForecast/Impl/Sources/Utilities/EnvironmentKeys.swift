@@ -8,6 +8,7 @@
 import SwiftUI
 import CoreMotion
 import SatelliteForecast
+import StarryNight
 
 // MARK: - BackgroundSkyJulianDateKeyEnvironmentKey
 
@@ -69,5 +70,19 @@ extension EnvironmentValues {
     public var deviceMotionKey: Loadable<CMDeviceMotion, Error> {
         get { self[DeviceMotionKey.self] }
         set { self[DeviceMotionKey.self] = newValue }
+    }
+}
+
+// MARK: - SelectedBackgroundStarKey
+
+/// This is used to pass the selected star to `BackgroundSkyView` that is embedded inside the `SkyChart`.
+public struct SelectedBackgroundStarKey: EnvironmentKey {
+    public static let defaultValue: Star? = nil
+}
+
+extension EnvironmentValues {
+    public var selectedBackgroundStarKey: Star? {
+        get { self[SelectedBackgroundStarKey.self] }
+        set { self[SelectedBackgroundStarKey.self] = newValue }
     }
 }

@@ -264,7 +264,7 @@ public struct SkyChartContext<ConstellationLabel: View, BackgroundAnnotationView
     public let deviceMotion: Loadable<CMDeviceMotion, Error>
     @ViewBuilder public let constellationLabel: (String) -> ConstellationLabel
     @ViewBuilder public let backgroundAnnotationView: (@escaping (RADec) -> CGPoint) -> BackgroundAnnotationView
-    public let backgroundStarTapped: (Star) -> Void
+    public let backgroundStarTapped: (Star?) -> Void
 
     public init(
         satelliteInfo: SatelliteInfo,
@@ -278,7 +278,7 @@ public struct SkyChartContext<ConstellationLabel: View, BackgroundAnnotationView
         deviceMotion: Loadable<CMDeviceMotion, Error> = .notLoaded,
         @ViewBuilder constellationLabel: @escaping (String) -> ConstellationLabel,
         @ViewBuilder backgroundAnnotationView: @escaping (@escaping (RADec) -> CGPoint) -> BackgroundAnnotationView,
-        backgroundStarTapped: @escaping (Star) -> Void = { _ in }
+        backgroundStarTapped: @escaping (Star?) -> Void = { _ in }
     ) {
         self.satelliteInfo = satelliteInfo
         self.snapshots = snapshots
@@ -296,7 +296,7 @@ public struct SkyChartContext<ConstellationLabel: View, BackgroundAnnotationView
 }
 
 extension SkyChartContext where ConstellationLabel == EmptyView, BackgroundAnnotationView == EmptyView {
-    public init(satelliteInfo: SatelliteInfo, snapshots: [SatelliteSnapshot], observer: LatLonAlt, pass: Pass, notableSnapshots: NotableSnapshots, configs: SkyChartConfigs, quality: ChartQuality, julianDateProvider: @escaping () -> Double, deviceMotion: Loadable<CMDeviceMotion, Error> = .notLoaded, backgroundStarTapped: @escaping (Star) -> Void = { _ in }) {
+    public init(satelliteInfo: SatelliteInfo, snapshots: [SatelliteSnapshot], observer: LatLonAlt, pass: Pass, notableSnapshots: NotableSnapshots, configs: SkyChartConfigs, quality: ChartQuality, julianDateProvider: @escaping () -> Double, deviceMotion: Loadable<CMDeviceMotion, Error> = .notLoaded, backgroundStarTapped: @escaping (Star?) -> Void = { _ in }) {
         self.satelliteInfo = satelliteInfo
         self.snapshots = snapshots
         self.observer = observer
@@ -322,7 +322,7 @@ extension SkyChartPassLabel {
             let format = NSLocalizedString(
                 "SkyChartPassLabel.text.illuminationChange.entersShadow",
                 tableName: nil,
-                bundle: .main,
+                bundle: .satelliteForecastImplResourcesBundle,
                 value: """
                     Enters shadow
                     %@
@@ -334,7 +334,7 @@ extension SkyChartPassLabel {
             let format = NSLocalizedString(
                 "SkyChartPassLabel.text.illuminationChange.exitsShadow",
                 tableName: nil,
-                bundle: .main,
+                bundle: .satelliteForecastImplResourcesBundle,
                 value: """
                     Exits shadow
                     %@

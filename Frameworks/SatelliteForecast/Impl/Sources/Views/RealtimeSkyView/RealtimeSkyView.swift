@@ -168,7 +168,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
         }
     }
 
-    private func paths(from results: [RealtimePropagationResult], rect: CGRect) -> Path {
+    private func satellitePaths(from results: [RealtimePropagationResult], rect: CGRect) -> Path {
         Path { path in
             for result in results {
                 let point = SkyChartUtils.point(
@@ -193,13 +193,13 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
             GeometryReader { geometry in
                 let rect = geometry.frame(in: .local)
 
-                paths(
+                satellitePaths(
                     from: viewModel.state.resources.displayResults,
                     rect: rect
                 )
                 .fill(.blue)
 
-                paths(
+                satellitePaths(
                     from: visiblePropagationResults,
                     rect: rect
                 )

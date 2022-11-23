@@ -76,7 +76,7 @@ struct MissionControlView: View {
                         NSLocalizedString(
                             "MissionControlView.resetButton.title",
                             tableName: nil,
-                            bundle: .main,
+                            bundle: .satelliteForecastImplResourcesBundle,
                             value: "Recenter",
                             comment: """
                             The title for the reset button within mission control view to restore the

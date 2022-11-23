@@ -10,6 +10,7 @@ import CombineRex
 import CombineRextensions
 import SatelliteForecast
 import SatelliteKit
+import StarryNight
 import SwiftRex
 import SwiftUI
 
@@ -36,6 +37,9 @@ public struct DetailedPassView: View {
     let skyChartProducer: ViewProducer<SkyChartContext<ConstellationLabel, DetailedPassViewBackgroundAnnotationView>, SkyChart<ConstellationLabel, DetailedPassViewBackgroundAnnotationView>>
     let context: DetailPassViewContext
 
+    /// If a star is selected in the background, we expect to show indicator and star information.
+    @State var selectedBackgroundStar: Star?
+
     public init(
         viewModel: ObservableViewModel<DetailedPassViewAction, DetailedPassViewState>,
         context: DetailPassViewContext,
@@ -48,45 +52,66 @@ public struct DetailedPassView: View {
 
     public var body: some View {
         NavigationStack {
-            ScrollView(
-                [.horizontal, .vertical],
-                showsIndicators: true
-            ) {
-                skyChartProducer.view(
-                    SkyChartContext<ConstellationLabel, DetailedPassViewBackgroundAnnotationView>(
-                        satelliteInfo: context.satelliteInfo,
-                        snapshots: context.passSnapshots.snapshots,
-                        observer: context.observer,
-                        pass: context.passSnapshots.pass,
-                        notableSnapshots: context.passSnapshots.notableSnapshots,
-                        configs: SkyChartConfigs(
-                            backgroundSkyConfigs: BackgroundSkyConfigs(
-                                stars: .limitedMagnitude(5.5),
-                                starMagToDisplayRadiusMappingFunction: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction(
-                                    multipler: 6,
-                                    exponent: -0.4
+            VStack {
+                ScrollView(
+                    [.horizontal, .vertical],
+                    showsIndicators: true
+                ) {
+                    skyChartProducer.view(
+                        SkyChartContext<ConstellationLabel, DetailedPassViewBackgroundAnnotationView>(
+                            satelliteInfo: context.satelliteInfo,
+                            snapshots: context.passSnapshots.snapshots,
+                            observer: context.observer,
+                            pass: context.passSnapshots.pass,
+                            notableSnapshots: context.passSnapshots.notableSnapshots,
+                            configs: SkyChartConfigs(
+                                backgroundSkyConfigs: BackgroundSkyConfigs(
+                                    stars: .limitedMagnitude(5.5),
+                                    starMagToDisplayRadiusMappingFunction: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction(
+                                        multipler: 6,
+                                        exponent: -0.4
+                                    ),
+                                    hidesStarsDuringDay: true,
+                                    showConstellationLines: true,
+                                    bodySymbol: .text
                                 ),
-                                hidesStarsDuringDay: true,
-                                showConstellationLines: true,
-                                bodySymbol: .text
+                                basicChartConfigs: BasicChartConfigs(),
+                                showPassInfoLabels: true
                             ),
-                            basicChartConfigs: BasicChartConfigs(),
-                            showPassInfoLabels: true
-                        ),
-                        quality: .detailed,
-                        julianDateProvider: context.julianDateProvider,
-                        constellationLabel: { text in
-                            ConstellationLabel(text: text)
-                        },
-                        backgroundAnnotationView: { raDecToPoint in
-                            DetailedPassViewBackgroundAnnotationView(raDecToPoint: raDecToPoint)
-                        },
-                        backgroundStarTapped: { star in
-                            print(star)
-                        }
+                            quality: .detailed,
+                            julianDateProvider: context.julianDateProvider,
+                            constellationLabel: { text in
+                                ConstellationLabel(text: text)
+                            },
+                            backgroundAnnotationView: { raDecToPoint in
+                                DetailedPassViewBackgroundAnnotationView(
+                                    selectedBackgroundStar: selectedBackgroundStar,
+                                    mappingFunction: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction(
+                                        multipler: 6,
+                                        exponent: -0.4
+                                    ),
+                                    raDecToPoint: raDecToPoint
+                                )
+                            },
+                            backgroundStarTapped: { star in
+                                if let selectedBackgroundStar = selectedBackgroundStar, selectedBackgroundStar == star {
+                                    self.selectedBackgroundStar = nil
+                                } else {
+                                    self.selectedBackgroundStar = star
+                                }
+                            }
+                        )
                     )
-                )
-                .frame(width: 1000, height: 1000)
+                    .environment(\.selectedBackgroundStarKey, selectedBackgroundStar)
+                    .frame(width: 1000, height: 1000)
+                }
+
+                if let selectedBackgroundStar = selectedBackgroundStar {
+                    SelectedStarLabel(
+                        star: selectedBackgroundStar
+                    )
+                    .padding(.horizontal, 16)
+                }
             }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -107,7 +132,7 @@ extension DetailedPassView {
         static let title = NSLocalizedString(
             "DetailedPassView.navigationBar.title",
             tableName: nil,
-            bundle: .main,
+            bundle: .satelliteForecastImplResourcesBundle,
             value: "Schedule alarm",
             comment: "Navigation title of detailed pass view."
         )
@@ -115,7 +140,7 @@ extension DetailedPassView {
         static let dismiss = NSLocalizedString(
             "DetailedPassView.navigationBar.discard",
             tableName: nil,
-            bundle: .main,
+            bundle: .satelliteForecastImplResourcesBundle,
             value: "Dismiss",
             comment: "Title of dismiss button of detailed pass view."
         )

@@ -8,11 +8,18 @@
 import CoreLocation
 
 extension BinaryFloatingPoint {
-    fileprivate var dms: (degrees: Int, minutes: Int, seconds: Int) {
+    var dms: (degrees: Int, minutes: Int, seconds: Int) {
         var seconds = Int(self * 3600)
         let degrees = seconds / 3600
         seconds = abs(seconds % 3600)
         return (degrees, seconds / 60, seconds % 60)
+    }
+
+    var hms: (hours: Int, minutes: Int, seconds: Int) {
+        var seconds = Int(self / 15 * 3600)
+        let hours = seconds / 3600
+        seconds = abs(seconds % 3600)
+        return (hours, seconds / 60, seconds % 60)
     }
 }
 

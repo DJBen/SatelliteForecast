@@ -225,7 +225,7 @@ extension LocationSettingsView {
             return NSLocalizedString(
                 "SatelliteListView.locationSettingsView.alert.message.currentLocation",
                 tableName: nil,
-                bundle: .main,
+                bundle: .satelliteForecastImplResourcesBundle,
                 value: "Please confirm to change location to your current location. This will affect all the satellite predictions.",
                 comment: "The alert message to confirm that the user is changing into his/her current location."
             )
@@ -233,7 +233,7 @@ extension LocationSettingsView {
             let format = NSLocalizedString(
                 "SatelliteListView.locationSettingsView.alert.message.custom",
                 tableName: nil,
-                bundle: .main,
+                bundle: .satelliteForecastImplResourcesBundle,
                 value: "Please confirm to change location to %@. This will affect all the satellite predictions.",
                 comment: "The alert message to confirm that the user is changing into a custom location."
             )
