@@ -49,7 +49,7 @@ extension SatelliteSnapshot {
         let sunElev = azel(
             julianDate: julianDate,
             site: (observer.lat, observer.lon),
-            cele: cartesianToRaDec(solarCel)
+            cele: RADec(vector: solarCel)
         ).elev
         let visualMagnitude: Double?
         if let crossSectionArea = satelliteInfo.satCat?.rcs {

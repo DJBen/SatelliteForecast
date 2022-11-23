@@ -149,7 +149,7 @@ extension AlarmSettingsView {
             beforeFormat = NSLocalizedString(
                 "AlarmSettingsView.alarmOffsetDescription.rise",
                 tableName: nil,
-                bundle: .main,
+                bundle: .satelliteForecastImplResourcesBundle,
                 value: "%@ before rise",
                 comment: "The timing and offset description for the alarm in the alarm settings view, rise."
             )
@@ -158,7 +158,7 @@ extension AlarmSettingsView {
             beforeFormat = NSLocalizedString(
                 "AlarmSettingsView.alarmOffsetDescription.transit",
                 tableName: nil,
-                bundle: .main,
+                bundle: .satelliteForecastImplResourcesBundle,
                 value: "%@ before highest point",
                 comment: "The timing and offset description for the alarm in the alarm settings view, transit."
             )
@@ -167,7 +167,7 @@ extension AlarmSettingsView {
             beforeFormat = NSLocalizedString(
                 "AlarmSettingsView.alarmOffsetDescription.set",
                 tableName: nil,
-                bundle: .main,
+                bundle: .satelliteForecastImplResourcesBundle,
                 value: "%@ before set",
                 comment: "The timing and offset description for the alarm in the alarm settings view, set."
             )
@@ -176,7 +176,7 @@ extension AlarmSettingsView {
             beforeFormat = NSLocalizedString(
                 "AlarmSettingsView.alarmOffsetDescription.highestIlluminated",
                 tableName: nil,
-                bundle: .main,
+                bundle: .satelliteForecastImplResourcesBundle,
                 value: "%@ before highest illuminated",
                 comment: "The timing and offset description for the alarm in the alarm settings view, highest illuminated."
             )
@@ -196,7 +196,7 @@ extension AlarmSettingsView {
         let format = NSLocalizedString(
             "AlarmSettingsView.passDescription",
             tableName: nil,
-            bundle: .main,
+            bundle: .satelliteForecastImplResourcesBundle,
             value: "Rises at %@ and sets at %@.",
             comment: "The pass description for each alarm in the alarm settings view"
         )
@@ -212,7 +212,7 @@ extension AlarmSettingsView {
         let visibleFormat = NSLocalizedString(
             "AlarmSettingsView.passVisibilityDescription.visible",
             tableName: nil,
-            bundle: .main,
+            bundle: .satelliteForecastImplResourcesBundle,
             value: "Max visible elevation %.1f degrees.",
             comment: "The pass description for each alarm in the alarm settings view"
         )
@@ -220,7 +220,7 @@ extension AlarmSettingsView {
         let daytimeFormat = NSLocalizedString(
             "AlarmSettingsView.passVisibilityDescription.daytime",
             tableName: nil,
-            bundle: .main,
+            bundle: .satelliteForecastImplResourcesBundle,
             value: "The pass occurs during daylight with a max elevation of %.1f degrees.",
             comment: "The pass description for each alarm in the alarm settings view"
         )
@@ -228,7 +228,7 @@ extension AlarmSettingsView {
         let unlitFormat = NSLocalizedString(
             "AlarmSettingsView.passVisibilityDescription.unlit",
             tableName: nil,
-            bundle: .main,
+            bundle: .satelliteForecastImplResourcesBundle,
             value: "The pass is not illuminated with a max elevation of %.1f degrees.",
             comment: "The pass description for each alarm in the alarm settings view"
         )

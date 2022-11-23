@@ -49,10 +49,10 @@ public struct SkyChartViewState: Equatable {
     }
 }
 
-public struct SkyChart<ConstellationLabel: View>: View {
+public struct SkyChart<ConstellationLabel: View, BackgroundAnnotationView: View>: View {
     @ObservedObject var viewModel: ObservableViewModel<SkyChartAction, SkyChartViewState>
-    let context: SkyChartContext<ConstellationLabel>
-    let backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext<ConstellationLabel>, BackgroundSkyView<ConstellationLabel>>
+    let context: SkyChartContext<ConstellationLabel, BackgroundAnnotationView>
+    let backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext<ConstellationLabel, BackgroundAnnotationView>, BackgroundSkyView<ConstellationLabel, BackgroundAnnotationView>>
 
     @State private var contentSize: CGSize = .zero
 
@@ -76,8 +76,8 @@ public struct SkyChart<ConstellationLabel: View>: View {
     }
     public init(
         viewModel: ObservableViewModel<SkyChartAction, SkyChartViewState>,
-        context: SkyChartContext<ConstellationLabel>,
-        backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext<ConstellationLabel>, BackgroundSkyView<ConstellationLabel>>
+        context: SkyChartContext<ConstellationLabel, BackgroundAnnotationView>,
+        backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext<ConstellationLabel, BackgroundAnnotationView>, BackgroundSkyView<ConstellationLabel, BackgroundAnnotationView>>
     ) {
         self.viewModel = viewModel
         self.context = context
@@ -221,21 +221,15 @@ public struct SkyChart<ConstellationLabel: View>: View {
                 basicChartConfigs: context.configs.basicChartConfigs,
                 configs: context.configs.backgroundSkyConfigs,
                 quality: context.quality,
-                constellationLabel: context.constellationLabel
+                constellationLabel: context.constellationLabel,
+                annotationView: context.backgroundAnnotationView,
+                starTapped: context.backgroundStarTapped
             )
         )
         .environment(\.backgroundSkyJulianDateKey, backgroundSkyJulianDateKey)
         .background(
             satellitePath.overlay(loadingIndicator)
             .clipShape(Circle())
-        )
-        .modifier(
-            TapGestureDetectionModifier(
-                isEnabled: context.configs.showMoreInfoOnTap
-            ) { (point, rect) in
-                let aziEle = SkyChartUtils.aziEle(at: point, in: rect)
-                context.tappedCoordinate(aziEle)
-            }
         )
         .overlay(passInfoLabels)
         .overlay(
@@ -258,7 +252,7 @@ public struct SkyChart<ConstellationLabel: View>: View {
     }
 }
 
-public struct SkyChartContext<ConstellationLabel: View> {
+public struct SkyChartContext<ConstellationLabel: View, BackgroundAnnotationView: View> {
     public let satelliteInfo: SatelliteInfo
     public let snapshots: [SatelliteSnapshot]
     public let observer: LatLonAlt
@@ -269,7 +263,8 @@ public struct SkyChartContext<ConstellationLabel: View> {
     public let julianDateProvider: () -> Double
     public let deviceMotion: Loadable<CMDeviceMotion, Error>
     @ViewBuilder public let constellationLabel: (String) -> ConstellationLabel
-    public let tappedCoordinate: (AziEle) -> Void
+    @ViewBuilder public let backgroundAnnotationView: (@escaping (RADec) -> CGPoint) -> BackgroundAnnotationView
+    public let backgroundStarTapped: (Star?) -> Void
 
     public init(
         satelliteInfo: SatelliteInfo,
@@ -282,7 +277,8 @@ public struct SkyChartContext<ConstellationLabel: View> {
         julianDateProvider: @escaping () -> Double,
         deviceMotion: Loadable<CMDeviceMotion, Error> = .notLoaded,
         @ViewBuilder constellationLabel: @escaping (String) -> ConstellationLabel,
-        tappedCoordinate: @escaping (AziEle) -> Void = { _ in }
+        @ViewBuilder backgroundAnnotationView: @escaping (@escaping (RADec) -> CGPoint) -> BackgroundAnnotationView,
+        backgroundStarTapped: @escaping (Star?) -> Void = { _ in }
     ) {
         self.satelliteInfo = satelliteInfo
         self.snapshots = snapshots
@@ -294,12 +290,13 @@ public struct SkyChartContext<ConstellationLabel: View> {
         self.julianDateProvider = julianDateProvider
         self.deviceMotion = deviceMotion
         self.constellationLabel = constellationLabel
-        self.tappedCoordinate = tappedCoordinate
+        self.backgroundAnnotationView = backgroundAnnotationView
+        self.backgroundStarTapped = backgroundStarTapped
     }
 }
 
-extension SkyChartContext where ConstellationLabel == EmptyView {
-    public init(satelliteInfo: SatelliteInfo, snapshots: [SatelliteSnapshot], observer: LatLonAlt, pass: Pass, notableSnapshots: NotableSnapshots, configs: SkyChartConfigs, quality: ChartQuality, julianDateProvider: @escaping () -> Double, deviceMotion: Loadable<CMDeviceMotion, Error> = .notLoaded, tappedCoordinate: @escaping (AziEle) -> Void = { _ in }) {
+extension SkyChartContext where ConstellationLabel == EmptyView, BackgroundAnnotationView == EmptyView {
+    public init(satelliteInfo: SatelliteInfo, snapshots: [SatelliteSnapshot], observer: LatLonAlt, pass: Pass, notableSnapshots: NotableSnapshots, configs: SkyChartConfigs, quality: ChartQuality, julianDateProvider: @escaping () -> Double, deviceMotion: Loadable<CMDeviceMotion, Error> = .notLoaded, backgroundStarTapped: @escaping (Star?) -> Void = { _ in }) {
         self.satelliteInfo = satelliteInfo
         self.snapshots = snapshots
         self.observer = observer
@@ -310,7 +307,8 @@ extension SkyChartContext where ConstellationLabel == EmptyView {
         self.julianDateProvider = julianDateProvider
         self.deviceMotion = deviceMotion
         self.constellationLabel = { _ in EmptyView() }
-        self.tappedCoordinate = tappedCoordinate
+        self.backgroundAnnotationView = { _ in EmptyView() }
+        self.backgroundStarTapped = backgroundStarTapped
     }
 }
 
@@ -324,7 +322,7 @@ extension SkyChartPassLabel {
             let format = NSLocalizedString(
                 "SkyChartPassLabel.text.illuminationChange.entersShadow",
                 tableName: nil,
-                bundle: .main,
+                bundle: .satelliteForecastImplResourcesBundle,
                 value: """
                     Enters shadow
                     %@
@@ -336,7 +334,7 @@ extension SkyChartPassLabel {
             let format = NSLocalizedString(
                 "SkyChartPassLabel.text.illuminationChange.exitsShadow",
                 tableName: nil,
-                bundle: .main,
+                bundle: .satelliteForecastImplResourcesBundle,
                 value: """
                     Exits shadow
                     %@
@@ -408,7 +406,7 @@ struct SkyChart_Previews: PreviewProvider {
         ForEach(ColorScheme.allCases, id: \.self) { colorScheme in
             let traitCollection = UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
             let referenceDate = passSnapshots.pass.transit.julianDate.advanced(by: 20 * TimeConstants.sec2day)
-            SkyChart<EmptyView>(
+            SkyChart<EmptyView, EmptyView>(
                 viewModel: .mock(
                     state: SkyChartViewState(
                         resources: SkyChartResources(
@@ -454,7 +452,9 @@ struct SkyChart_Previews: PreviewProvider {
                             basicChartConfigs: .init(),
                             configs: .init(),
                             quality: .full,
-                            constellationLabel: { _ in EmptyView() }
+                            constellationLabel: { _ in EmptyView() },
+                            annotationView: { _ in EmptyView() },
+                            starTapped: { _ in }
                         )
                     )
                 )
@@ -466,7 +466,7 @@ struct SkyChart_Previews: PreviewProvider {
 
         let (elements2, passSnapshots2) = tianHePass
 
-        SkyChart<EmptyView>(
+        SkyChart<EmptyView, EmptyView>(
             viewModel: .mock(
                 state: SkyChartViewState(
                     resources: SkyChartResources(
@@ -504,7 +504,9 @@ struct SkyChart_Previews: PreviewProvider {
                         basicChartConfigs: .init(),
                         configs: .preset,
                         quality: .full,
-                        constellationLabel: { _ in EmptyView() }
+                        constellationLabel: { _ in EmptyView() },
+                        annotationView: { _ in EmptyView() },
+                        starTapped: { _ in }
                     )
                 )
             )
@@ -512,7 +514,7 @@ struct SkyChart_Previews: PreviewProvider {
         .padding(20)
         .environment(\.backgroundSkyJulianDateKey, passSnapshots2.pass.rise.julianDate.roundJulianDate(.toMins(1)))
 
-        SkyChart<EmptyView>(
+        SkyChart<EmptyView, EmptyView>(
             viewModel: .mock(state: .init()),
             context: SkyChartContext(
                 satelliteInfo: SatelliteInfo(elements: elements2),
@@ -534,7 +536,9 @@ struct SkyChart_Previews: PreviewProvider {
                         basicChartConfigs: .init(),
                         configs: .preset,
                         quality: .full,
-                        constellationLabel: { _ in EmptyView() }
+                        constellationLabel: { _ in EmptyView() },
+                        annotationView: { _ in EmptyView() },
+                        starTapped: { _ in }
                     )
                 )
             )

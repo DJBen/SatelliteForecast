@@ -236,7 +236,7 @@ extension ObserverCell {
         static let currentLocation: String = NSLocalizedString(
             "SatelliteListView.observerCell.title.currentLocation",
             tableName: nil,
-            bundle: .main,
+            bundle: .satelliteForecastImplResourcesBundle,
             value: "Current location",
             comment: "The current location text, indicating that the observer location is the current location."
         )
@@ -244,7 +244,7 @@ extension ObserverCell {
         static let requiresLocationSelection: String = NSLocalizedString(
             "SatelliteListView.observerCell.title.requiresLocationSelection",
             tableName: nil,
-            bundle: .main,
+            bundle: .satelliteForecastImplResourcesBundle,
             value: "Requires location selection",
             comment: "The text indicating that location service is not available, nor has the user selecetd a location manually."
         )

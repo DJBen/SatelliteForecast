@@ -234,7 +234,7 @@ extension SatelliteCell {
         let format = NSLocalizedString(
             "SatelliteCell.operatorAndCountry",
             tableName: nil,
-            bundle: .main,
+            bundle: .satelliteForecastImplResourcesBundle,
             value: "%@, %@",
             comment: "The cacatenated operator and country strings."
         )
@@ -248,7 +248,7 @@ extension SatelliteCell {
             let string = NSLocalizedString(
                 "SatelliteCell.operationalStatusLocalizedString.operational",
                 tableName: nil,
-                bundle: .main,
+                bundle: .satelliteForecastImplResourcesBundle,
                 value: "Operational",
                 comment: "The localized string for the status of an operational satellite"
             )
@@ -257,7 +257,7 @@ extension SatelliteCell {
             let string = NSLocalizedString(
                 "SatelliteCell.operationalStatusLocalizedString.partiallyOperational",
                 tableName: nil,
-                bundle: .main,
+                bundle: .satelliteForecastImplResourcesBundle,
                 value: "Partially operational",
                 comment: "The localized string for the status of a partially operational satellite"
             )
@@ -266,7 +266,7 @@ extension SatelliteCell {
             let string = NSLocalizedString(
                 "SatelliteCell.operationalStatusLocalizedString.extendedMission",
                 tableName: nil,
-                bundle: .main,
+                bundle: .satelliteForecastImplResourcesBundle,
                 value: "On extended mission",
                 comment: "The localized string for the status of a satellite on extended mission"
             )
@@ -275,7 +275,7 @@ extension SatelliteCell {
             let string = NSLocalizedString(
                 "SatelliteCell.operationalStatusLocalizedString.backup",
                 tableName: nil,
-                bundle: .main,
+                bundle: .satelliteForecastImplResourcesBundle,
                 value: "Backup",
                 comment: "The localized string for the status of a backup satellite"
             )
@@ -284,7 +284,7 @@ extension SatelliteCell {
             let string = NSLocalizedString(
                 "SatelliteCell.operationalStatusLocalizedString.backup",
                 tableName: nil,
-                bundle: .main,
+                bundle: .satelliteForecastImplResourcesBundle,
                 value: "Spare",
                 comment: "The localized string for the status of a spare satellite"
             )
@@ -293,7 +293,7 @@ extension SatelliteCell {
             let string = NSLocalizedString(
                 "SatelliteCell.operationalStatusLocalizedString.nonoperational",
                 tableName: nil,
-                bundle: .main,
+                bundle: .satelliteForecastImplResourcesBundle,
                 value: "Nonoperational",
                 comment: "The localized string for the status of a nonoperational satellite"
             )
@@ -302,7 +302,7 @@ extension SatelliteCell {
             let string = NSLocalizedString(
                 "SatelliteCell.operationalStatusLocalizedString.decayed",
                 tableName: nil,
-                bundle: .main,
+                bundle: .satelliteForecastImplResourcesBundle,
                 value: "Decayed",
                 comment: "The localized string for the status of a decayed satellite"
             )
@@ -311,7 +311,7 @@ extension SatelliteCell {
             let string = NSLocalizedString(
                 "SatelliteCell.operationalStatusLocalizedString.unknown",
                 tableName: nil,
-                bundle: .main,
+                bundle: .satelliteForecastImplResourcesBundle,
                 value: "Unknown status",
                 comment: "The localized string for the unknown status of satellite"
             )

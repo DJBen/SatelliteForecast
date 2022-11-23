@@ -61,12 +61,12 @@ public protocol RealtimeSkyView: View {}
 public struct RealtimeSkyViewImpl: RealtimeSkyView {
     @ObservedObject var viewModel: ObservableViewModel<RealtimeSkyViewAction, RealtimeSkyViewState>
     let context: RealtimeSkyViewContext
-    let backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext<EmptyView>, BackgroundSkyView<EmptyView>>
+    let backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext<EmptyView, EmptyView>, BackgroundSkyView<EmptyView, EmptyView>>
 
     public init(
         viewModel: ObservableViewModel<RealtimeSkyViewAction, RealtimeSkyViewState>,
         context: RealtimeSkyViewContext,
-        backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext<EmptyView>, BackgroundSkyView<EmptyView>>
+        backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext<EmptyView, EmptyView>, BackgroundSkyView<EmptyView, EmptyView>>
     ) {
         self.viewModel = viewModel
         self.context = context
@@ -168,7 +168,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
         }
     }
 
-    private func paths(from results: [RealtimePropagationResult], rect: CGRect) -> Path {
+    private func satellitePaths(from results: [RealtimePropagationResult], rect: CGRect) -> Path {
         Path { path in
             for result in results {
                 let point = SkyChartUtils.point(
@@ -193,13 +193,13 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
             GeometryReader { geometry in
                 let rect = geometry.frame(in: .local)
 
-                paths(
+                satellitePaths(
                     from: viewModel.state.resources.displayResults,
                     rect: rect
                 )
                 .fill(.blue)
 
-                paths(
+                satellitePaths(
                     from: visiblePropagationResults,
                     rect: rect
                 )
@@ -244,7 +244,9 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
                 basicChartConfigs: context.basicChartConfigs,
                 configs: context.backgroundSkyConfigs,
                 quality: .full,
-                constellationLabel: { _ in EmptyView() }
+                constellationLabel: { _ in EmptyView() },
+                annotationView: { _ in EmptyView() },
+                starTapped: { _ in }
             )
         )
         .environment(
@@ -439,7 +441,9 @@ struct RealtimeSkyView_Previews: PreviewProvider {
                         basicChartConfigs: .init(),
                         configs: .init(),
                         quality: .full,
-                        constellationLabel: { _ in EmptyView() }
+                        constellationLabel: { _ in EmptyView() },
+                        annotationView: { _ in EmptyView() },
+                        starTapped: { _ in }
                     )
                 )
             )

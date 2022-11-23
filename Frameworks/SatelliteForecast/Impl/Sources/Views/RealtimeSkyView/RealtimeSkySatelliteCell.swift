@@ -22,7 +22,7 @@ struct RealtimeSkySatelliteCell: View {
             return NSLocalizedString(
                 "RealtimeSkySatelliteCell.magnitudeText.notIlluminated",
                 tableName: nil,
-                bundle: .main,
+                bundle: .satelliteForecastImplResourcesBundle,
                 value: "Not illuminated",
                 comment: """
                 The text indicating the satellite is not illuminated.
@@ -35,7 +35,7 @@ struct RealtimeSkySatelliteCell: View {
         let format = NSLocalizedString(
             "RealtimeSkySatelliteCell.distanceText",
             tableName: nil,
-            bundle: .main,
+            bundle: .satelliteForecastImplResourcesBundle,
             value: "Distance %@ km",
             comment: """
                 The format text showing the distance betweent the satellite to the observer

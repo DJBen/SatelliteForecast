@@ -122,7 +122,7 @@ public struct AllPassesView: View {
     @ObservedObject var viewModel: ObservableViewModel<AllPassesViewAction, AllPassesViewState>
 
     let context: AllPassesViewContext
-    let skyChartProducer: ViewProducer<SkyChartContext<EmptyView>, SkyChart<EmptyView>>
+    let skyChartProducer: ViewProducer<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>
     let passViewProducer: ViewProducer<PassViewContext, PassView>
 
     let refreshTimer = Timer.publish(
@@ -152,7 +152,7 @@ public struct AllPassesView: View {
     public init(
         viewModel: ObservableViewModel<AllPassesViewAction, AllPassesViewState>,
         context: AllPassesViewContext,
-        skyChartProducer: ViewProducer<SkyChartContext<EmptyView>, SkyChart<EmptyView>>,
+        skyChartProducer: ViewProducer<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>,
         passViewProducer: ViewProducer<PassViewContext, PassView>
     ) {
         self.viewModel = viewModel
@@ -490,7 +490,7 @@ extension AllPassesView {
         let format = NSLocalizedString(
             "AllPassesView.searchPassRangeToolbar.text",
             tableName: nil,
-            bundle: .main,
+            bundle: .satelliteForecastImplResourcesBundle,
             value: "Showing passes up to %1$@",
             comment: "The auxiliary text under the navigation title detailing the search date range of the passes."
         )
@@ -506,7 +506,7 @@ extension AllPassesView {
             let altitudeFormat = NSLocalizedString(
                 "AllPassesView.missionControlHeader.altitudeFormat",
                 tableName: nil,
-                bundle: .main,
+                bundle: .satelliteForecastImplResourcesBundle,
                 value: "%@ km above ground",
                 comment: "The altitude format of mission control header"
             )
@@ -523,7 +523,7 @@ extension AllPassesView {
                 let format = NSLocalizedString(
                     "AllPassesView.section.observer.body",
                     tableName: nil,
-                    bundle: .main,
+                    bundle: .satelliteForecastImplResourcesBundle,
                     value: "You are observing from %@.",
                     comment: "The body of observer info"
                 )
@@ -542,7 +542,7 @@ extension AllPassesView {
                 NSLocalizedString(
                     "AllPassesView.section.visible.header",
                     tableName: nil,
-                    bundle: .main,
+                    bundle: .satelliteForecastImplResourcesBundle,
                     value: "Visible Passes",
                     comment: "The header of visible passes"
                 )
@@ -552,7 +552,7 @@ extension AllPassesView {
                 NSLocalizedString(
                     "AllPassesView.section.visible.headerCaption",
                     tableName: nil,
-                    bundle: .main,
+                    bundle: .satelliteForecastImplResourcesBundle,
                     value: """
                     Satellites can be seen when the sky is dark enough while still being \
                     illuminated by the sun. Viewing condition is best short after sunset and \
@@ -568,7 +568,7 @@ extension AllPassesView {
                 NSLocalizedString(
                     "AllPassesView.section.invisible.header",
                     tableName: nil,
-                    bundle: .main,
+                    bundle: .satelliteForecastImplResourcesBundle,
                     value: "Invisible Passes",
                     comment: "The header of invisible passes"
                 )
@@ -578,7 +578,7 @@ extension AllPassesView {
                 NSLocalizedString(
                     "AllPassesView.section.invisible.headerCaption",
                     tableName: nil,
-                    bundle: .main,
+                    bundle: .satelliteForecastImplResourcesBundle,
                     value: """
                     Satellites faded into earth's shadow cannot be seen; \
                     like stars, they cannot be seen in broad daylight either.
@@ -647,12 +647,12 @@ struct AllPassesView_Previews: PreviewProvider {
                         )
                     ),
                     context: context,
-                    skyChartProducer: ViewProducer<SkyChartContext<EmptyView>, SkyChart<EmptyView>> { context in
+                    skyChartProducer: ViewProducer<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>> { context in
                         return SkyChart(
                             viewModel: .mock(
                                 state: SkyChartViewState()
                             ),
-                            context: SkyChartContext<EmptyView>(
+                            context: SkyChartContext<EmptyView, EmptyView>(
                                 satelliteInfo: SatelliteInfo(elements: tianHe),
                                 snapshots: passSnapshots.snapshots,
                                 observer: observer,
@@ -691,7 +691,9 @@ struct AllPassesView_Previews: PreviewProvider {
                                         basicChartConfigs: .init(),
                                         configs: .preset,
                                         quality: .full,
-                                        constellationLabel: { _ in EmptyView() }
+                                        constellationLabel: { _ in EmptyView() },
+                                        annotationView: { _ in EmptyView() },
+                                        starTapped: { _ in }
                                     )
                                 )
                             )

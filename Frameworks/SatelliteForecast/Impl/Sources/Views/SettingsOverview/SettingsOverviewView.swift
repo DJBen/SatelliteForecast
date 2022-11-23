@@ -78,7 +78,7 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                 NSLocalizedString(
                     "SettingsOverviewView.alarms.header",
                     tableName: nil,
-                    bundle: .main,
+                    bundle: .satelliteForecastImplResourcesBundle,
                     value: "Alarms",
                     comment: "The section header of the alarms section in settings"
                 )
@@ -90,7 +90,7 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                 NSLocalizedString(
                     "SettingsOverviewView.observer.header",
                     tableName: nil,
-                    bundle: .main,
+                    bundle: .satelliteForecastImplResourcesBundle,
                     value: "Location settings",
                     comment: "The section header of the observer section in settings"
                 )

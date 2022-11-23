@@ -46,42 +46,55 @@ public struct BackgroundSkyViewState {
 
 extension BackgroundSkyViewState: Equatable {}
 
-public struct BackgroundSkyViewContext<ConstellationLabel: View> {
+public struct BackgroundSkyViewContext<ConstellationLabel: View, AnnotationView: View> {
     public let observer: LatLonAlt
     public let basicChartConfigs: BasicChartConfigs
     public let configs: BackgroundSkyConfigs
     public let quality: ChartQuality
     public let constellationLabel: (String) -> ConstellationLabel
+    public let annotationView: (@escaping (RADec) -> CGPoint) -> AnnotationView
+    public let starTapped: (Star?) -> Void
 
-    public init(observer: LatLonAlt, basicChartConfigs: BasicChartConfigs, configs: BackgroundSkyConfigs, quality: ChartQuality, @ViewBuilder constellationLabel: @escaping (String) -> ConstellationLabel) {
+    public init(
+        observer: LatLonAlt,
+        basicChartConfigs: BasicChartConfigs,
+        configs: BackgroundSkyConfigs,
+        quality: ChartQuality,
+        @ViewBuilder constellationLabel: @escaping (String) -> ConstellationLabel,
+        @ViewBuilder annotationView: @escaping (@escaping (RADec) -> CGPoint) -> AnnotationView,
+        starTapped: @escaping (Star?) -> Void
+    ) {
         self.observer = observer
         self.basicChartConfigs = basicChartConfigs
         self.configs = configs
         self.quality = quality
         self.constellationLabel = constellationLabel
+        self.annotationView = annotationView
+        self.starTapped = starTapped
     }
 }
 
 /// A view that renders a alt-alz projection of background sky.
-public struct BackgroundSkyView<ConstellationLabel: View>: View {
+public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>: View {
     @ObservedObject var viewModel: ObservableViewModel<BackgroundSkyViewAction, BackgroundSkyViewState>
-    let context: BackgroundSkyViewContext<ConstellationLabel>
+    let context: BackgroundSkyViewContext<ConstellationLabel, AnnotationView>
 
     @State private var contentSize: CGSize = .zero
 
-    @Environment(\.backgroundSkyJulianDateKey) var backgroundSkyJulianDateKey
+    @Environment(\.backgroundSkyJulianDateKey) var backgroundSkyJulianDate
+    @Environment(\.selectedBackgroundStarKey) var selectedBackgroundStar
     @Environment(\.colorScheme) var colorScheme
 
     public init(
         viewModel: ObservableViewModel<BackgroundSkyViewAction, BackgroundSkyViewState>,
-        context: BackgroundSkyViewContext<ConstellationLabel>
+        context: BackgroundSkyViewContext<ConstellationLabel, AnnotationView>
     ) {
         self.viewModel = viewModel
         self.context = context
     }
 
     private var rasterizedBackgroundSky: UIImage? {
-        guard let backgroundSkyJulianDateKey = backgroundSkyJulianDateKey else {
+        guard let backgroundSkyJulianDateKey = backgroundSkyJulianDate else {
             return nil
         }
 
@@ -102,6 +115,29 @@ public struct BackgroundSkyView<ConstellationLabel: View>: View {
             return backupImage
         } else {
             return nil
+        }
+    }
+
+    private func starDisplayPoint(_ star: Star, julianDate: Double, rect: CGRect) -> CGPoint {
+        return getStarCoordinateConverter(
+            julianDate: julianDate, rect: rect
+        )(
+            RADec(vector: star.physicalInfo.coordinate)
+        )
+    }
+
+    private func getStarCoordinateConverter(julianDate: Double, rect: CGRect) -> (RADec) -> CGPoint {
+        return { raDec in
+            let starAziEle = azel(
+                julianDate: julianDate,
+                site: (context.observer.lat, context.observer.lon),
+                cele: raDec
+            )
+
+            return SkyChartUtils.point(
+                at: starAziEle,
+                rect: rect
+            )
         }
     }
 
@@ -144,6 +180,23 @@ public struct BackgroundSkyView<ConstellationLabel: View>: View {
                     )
                 )
             }
+            .modifier(
+                TapGestureDetectionModifier(
+                    isEnabled: true
+                ) { (point, rect) in
+                    switch context.configs.stars {
+                    case .none:
+                        break
+                    case .limitedMagnitude(let magnitude):
+                        let aziEle = SkyChartUtils.aziEle(at: point, in: rect)
+                        let raDec = azelToRADec(aziEle: aziEle, julianDate: julianDate, site: (context.observer.lat, context.observer.lon))
+                        let vec = Vector(raDec: raDec)
+                        if let star = Star.closest(to: vec, maximumMagnitude: magnitude) {
+                            context.starTapped(star)
+                        }
+                    }
+                }
+            )
         }
     }
 
@@ -186,13 +239,17 @@ public struct BackgroundSkyView<ConstellationLabel: View>: View {
                         )
                     }
                 }
+
+                context.annotationView(
+                    getStarCoordinateConverter(julianDate: julianDate, rect: rect)
+                )
             }
         }
     }
 
     public var body: some View {
         Group {
-            if let backgroundSkyJulianDateKey = backgroundSkyJulianDateKey {
+            if let backgroundSkyJulianDate = backgroundSkyJulianDate {
                 SkyChartLegend(
                     state: SkyChartLegendState(observer: context.observer),
                     configs: context.basicChartConfigs
@@ -200,12 +257,14 @@ public struct BackgroundSkyView<ConstellationLabel: View>: View {
                 .equatable()
                 .background(
                     backgroundSky(
-                        julianDate: backgroundSkyJulianDateKey
+                        julianDate: backgroundSkyJulianDate
                     )
                     .overlay(
-                        planetaryBodiesView(julianDate: backgroundSkyJulianDateKey)
+                        planetaryBodiesView(julianDate: backgroundSkyJulianDate)
                     )
-                    .overlay(constellationLabelView(julianDate: backgroundSkyJulianDateKey))
+                    .overlay(
+                        constellationLabelView(julianDate: backgroundSkyJulianDate)
+                    )
                     .clipShape(Circle())
                 )
             } else {
@@ -215,7 +274,7 @@ public struct BackgroundSkyView<ConstellationLabel: View>: View {
                 )
             }
         }
-        .onChange(of: backgroundSkyJulianDateKey) { backgroundSkyJulianDateKey in
+        .onChange(of: backgroundSkyJulianDate) { backgroundSkyJulianDateKey in
             guard !contentSize.width.isZero && !contentSize.height.isZero else {
                 return
             }
@@ -253,7 +312,9 @@ struct BackgroundSkyView_Previews: PreviewProvider {
                 basicChartConfigs: .init(),
                 configs: .preset,
                 quality: .full,
-                constellationLabel: { _ in EmptyView() }
+                constellationLabel: { _ in EmptyView() },
+                annotationView: { _ in EmptyView() },
+                starTapped: { _ in }
             )
         )
         .environment(\.backgroundSkyJulianDateKey, 0)

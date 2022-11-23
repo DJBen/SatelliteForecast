@@ -11,7 +11,7 @@ public enum Directions {
     public static let north = NSLocalizedString(
         "Directions.north",
         tableName: nil,
-        bundle: .main,
+        bundle: .satelliteForecastImplResourcesBundle,
         value: "north",
         comment: ""
     )
@@ -19,7 +19,7 @@ public enum Directions {
     public static let northEast = NSLocalizedString(
         "Directions.northeast",
         tableName: nil,
-        bundle: .main,
+        bundle: .satelliteForecastImplResourcesBundle,
         value: "northeast",
         comment: ""
     )
@@ -27,7 +27,7 @@ public enum Directions {
     public static let east = NSLocalizedString(
         "Directions.east",
         tableName: nil,
-        bundle: .main,
+        bundle: .satelliteForecastImplResourcesBundle,
         value: "east",
         comment: ""
     )
@@ -35,7 +35,7 @@ public enum Directions {
     public static let southeast = NSLocalizedString(
         "Directions.southeast",
         tableName: nil,
-        bundle: .main,
+        bundle: .satelliteForecastImplResourcesBundle,
         value: "southeast",
         comment: ""
     )
@@ -43,7 +43,7 @@ public enum Directions {
     public static let south = NSLocalizedString(
         "Directions.south",
         tableName: nil,
-        bundle: .main,
+        bundle: .satelliteForecastImplResourcesBundle,
         value: "south",
         comment: ""
     )
@@ -51,7 +51,7 @@ public enum Directions {
     public static let southwest = NSLocalizedString(
         "Directions.southwest",
         tableName: nil,
-        bundle: .main,
+        bundle: .satelliteForecastImplResourcesBundle,
         value: "southwest",
         comment: ""
     )
@@ -59,7 +59,7 @@ public enum Directions {
     public static let west = NSLocalizedString(
         "Directions.west",
         tableName: nil,
-        bundle: .main,
+        bundle: .satelliteForecastImplResourcesBundle,
         value: "west",
         comment: ""
     )
@@ -67,7 +67,7 @@ public enum Directions {
     public static let northwest = NSLocalizedString(
         "Directions.northwest",
         tableName: nil,
-        bundle: .main,
+        bundle: .satelliteForecastImplResourcesBundle,
         value: "northwest",
         comment: ""
     )

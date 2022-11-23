@@ -33,14 +33,14 @@ extension BackgroundSkyResources: AppStateMappable {
     }
 }
 
-extension ViewProducer where Context == BackgroundSkyViewContext<EmptyView>, ProducedView == BackgroundSkyView<EmptyView> {
+extension ViewProducer where Context == BackgroundSkyViewContext<EmptyView, EmptyView>, ProducedView == BackgroundSkyView<EmptyView, EmptyView> {
     static func backgroundSky<S: StoreType>(
         viewModel: S
     ) -> ViewProducer where
     S.ActionType == AppAction,
     S.StateType == AppState {
         ViewProducer<Context, ProducedView> { context in
-            BackgroundSkyView<EmptyView>(
+            BackgroundSkyView<EmptyView, EmptyView>(
                 viewModel: viewModel.projection(
                     action: AppAction.backgroundSky,
                     state: BackgroundSkyViewState.project(appState:)
@@ -55,14 +55,14 @@ extension ViewProducer where Context == BackgroundSkyViewContext<EmptyView>, Pro
     }
 }
 
-extension ViewProducer where Context == BackgroundSkyViewContext<ConstellationLabel>, ProducedView == BackgroundSkyView<ConstellationLabel> {
+extension ViewProducer where Context == BackgroundSkyViewContext<ConstellationLabel, DetailedPassViewBackgroundAnnotationView>, ProducedView == BackgroundSkyView<ConstellationLabel, DetailedPassViewBackgroundAnnotationView> {
     static func backgroundSkyWithConstellationLabel<S: StoreType>(
         viewModel: S
     ) -> ViewProducer where
     S.ActionType == AppAction,
     S.StateType == AppState {
         ViewProducer<Context, ProducedView> { context in
-            BackgroundSkyView<ConstellationLabel>(
+            BackgroundSkyView<ConstellationLabel, DetailedPassViewBackgroundAnnotationView>(
                 viewModel: viewModel.projection(
                     action: AppAction.backgroundSky,
                     state: BackgroundSkyViewState.project(appState:)
