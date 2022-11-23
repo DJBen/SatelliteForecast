@@ -37,53 +37,28 @@ public enum SatelliteListViewAction {
 
     case loadSatellite(SelectSatelliteParams?)
     case selectSatellite(SelectSatelliteParams?)
-    case satelliteSearchTextChanged(String)
+    case searchSatellites(String, category: SatelliteCategory)
     case retryLoadingSatelliteList(category: SatelliteCategory)
 }
 
-private let yearFormatter: DateFormatter = {
-    let dateFormatter = DateFormatter()
-    dateFormatter.dateFormat = "yyyy"
-    return dateFormatter
-}()
-
-fileprivate extension SatelliteInfo {
-    func fitsSearchText(_ searchText: String) -> Bool {
-        guard !searchText.isEmpty else {
-            return true
-        }
-
-        let searchText = searchText.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-
-        if String(noradIndex).contains(searchText) {
-            return true
-        } else if elements.commonName.lowercased().contains(searchText) {
-            return true
-        } else if satCat?.cosparID.lowercased().contains(searchText) ?? false {
-            return true
-        } else if satCat?.launchSite.code.lowercased().contains(searchText) ?? false {
-            return true
-        } else if let date = satCat?.launchDate, yearFormatter.string(from: date) == searchText {
-            return true
-        } else if let ucsSat = ucsSat {
-            return ucsSat.name.lowercased().contains(searchText)
-            || ucsSat.countryOfOperatorOrOwner.lowercased().contains(searchText)
-        }
-
-        return false
-    }
+public enum SatelliteListViewOutput {
+    case filteredSatellites(
+        Map<UInt, SatelliteInfo>?,
+        searchText: String,
+        category: SatelliteCategory
+    )
 }
 
 public struct SatelliteListViewState {
     public var satelliteInfo: [SatelliteCategory: Loadable<Map<UInt, SatelliteInfo>, ElementsLoaderError>] = [:]
-    public var satelliteSearchText: String = ""
+    public var filteredSatellites: Map<UInt, SatelliteInfo>?
 
     public init(
         satelliteInfo: [SatelliteCategory : Loadable<Map<UInt, SatelliteInfo>, ElementsLoaderError>] = [:],
-        satelliteSearchText: String = ""
+        filteredSatellites: Map<UInt, SatelliteInfo>? = nil
     ) {
         self.satelliteInfo = satelliteInfo
-        self.satelliteSearchText = satelliteSearchText
+        self.filteredSatellites = filteredSatellites
     }
 }
 
@@ -108,7 +83,12 @@ public struct SatelliteListViewContext {
     public let observer: LatLonAlt?
     public let julianDateProvider: () -> Double
 
-    public init(category: SatelliteCategory, julianDateRange: ClosedRange<Double>, observer: LatLonAlt?, julianDateProvider: @escaping () -> Double) {
+    public init(
+        category: SatelliteCategory,
+        julianDateRange: ClosedRange<Double>,
+        observer: LatLonAlt?,
+        julianDateProvider: @escaping () -> Double
+    ) {
         self.category = category
         self.julianDateRange = julianDateRange
         self.observer = observer
@@ -116,10 +96,23 @@ public struct SatelliteListViewContext {
     }
 }
 
+class TextFieldObserver : ObservableObject {
+    @Published var debouncedText = ""
+    @Published var searchText = ""
+
+    init(delay: DispatchQueue.SchedulerTimeType.Stride) {
+        $searchText
+            .debounce(for: delay, scheduler: DispatchQueue.main)
+            .assign(to: &$debouncedText)
+    }
+}
+
 public struct SatelliteListView: View {
     @ObservedObject var viewModel: ObservableViewModel<SatelliteListViewAction, SatelliteListViewState>
     let context: SatelliteListViewContext
     let allPassesViewProducer: ViewProducer<AllPassesViewContext, AllPassesView>
+
+    @StateObject var textObserver = TextFieldObserver(delay: 0.5)
 
     public init(
         viewModel: ObservableViewModel<SatelliteListViewAction, SatelliteListViewState>,
@@ -131,30 +124,14 @@ public struct SatelliteListView: View {
         self.allPassesViewProducer = allPassesViewProducer
     }
 
-    private var satellites: Loadable<Map<UInt, SatelliteInfo>, ElementsLoaderError> {
-        viewModel.state.satelliteInfo[context.category]?.map { info in
-            let searchText = viewModel.state.satelliteSearchText
-            if searchText.isEmpty {
-                return info
-            } else {
-                var map = Map<UInt, SatelliteInfo>()
-                info.forEach { (noradIndex, value) in
-                    if value.fitsSearchText(searchText) {
-                        map[noradIndex] = value
-                    }
-                }
-                return map
-            }
-        } ?? .notLoaded
-    }
-
     @ViewBuilder func satelliteContent<Content: View, FailedContent: View>(
         @ViewBuilder contentBuilder: (Map<UInt, SatelliteInfo>) -> Content,
         @ViewBuilder failedContentBuilder: (ElementsLoaderError) -> FailedContent
     ) -> some View {
-        ZStack {
-            let satellites = viewModel.state.satelliteInfo[context.category] ?? .notLoaded
-            switch satellites {
+        if let filteredSatellites = viewModel.state.filteredSatellites {
+            contentBuilder(filteredSatellites)
+        } else {
+            switch (viewModel.state.satelliteInfo[context.category] ?? .notLoaded) {
             case .notLoaded:
                 Text(verbatim: "The satellites are not loaded.")
             case .loading:
@@ -200,19 +177,7 @@ public struct SatelliteListView: View {
                 }
             }
         }
-        .searchable(
-            text: Binding<String>(
-                get: {
-                    viewModel.state.satelliteSearchText
-                }, set: {
-                    viewModel.dispatch(.satelliteSearchTextChanged($0))
-                }
-            ),
-            placement: .navigationBarDrawer(displayMode: .always),
-            prompt: "Filter by name, ID, country, year..."
-        )
         .listStyle(.insetGrouped)
-        .navigationTitle("Satellites")
     }
 
     private func failureView(_ error: Error) -> some View {
@@ -243,6 +208,19 @@ public struct SatelliteListView: View {
             },
             failedContentBuilder: failureView
         )
+        .navigationTitle("Satellites")
+        .searchable(
+            text: $textObserver.searchText,
+            placement: .navigationBarDrawer(displayMode: .always),
+            prompt: "Filter by name, ID, country, year..."
+        )
+        .onChange(of: textObserver.debouncedText) { searchText in
+            viewModel.dispatch(.searchSatellites(searchText, category: context.category))
+        }
+        .onDisappear {
+            // Clear the search text across different satellite lists
+            viewModel.dispatch(.searchSatellites("", category: context.category))
+        }
     }
 }
 

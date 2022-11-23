@@ -12,13 +12,16 @@ import SatelliteKit
 
 public struct ElementsLoaderResources {
     public var info: [SatelliteCategory: Loadable<Map<UInt, SatelliteInfo>, ElementsLoaderError>]
+    public var filteredSatellites: Map<UInt, SatelliteInfo>?
     public var visibleCandidates: Loadable<[SatelliteInfo], ElementsLoaderError>
 
     public init(
         info: [SatelliteCategory: Loadable<Map<UInt, SatelliteInfo>, ElementsLoaderError>] = [:],
+        filteredSatellites: Map<UInt, SatelliteInfo>? = nil,
         visibleCandidates: Loadable<[SatelliteInfo], ElementsLoaderError> = .notLoaded
     ) {
         self.info = info
+        self.filteredSatellites = filteredSatellites
         self.visibleCandidates = visibleCandidates
     }
 

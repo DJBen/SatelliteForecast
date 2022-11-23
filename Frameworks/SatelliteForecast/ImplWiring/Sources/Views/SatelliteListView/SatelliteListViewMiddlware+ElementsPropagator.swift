@@ -36,7 +36,7 @@ extension EffectMiddleware where InputActionType == SatelliteListViewAction, Out
                 )
             case .retryLoadingSatelliteList:
                 return .doNothing
-            case .satelliteSearchTextChanged(_):
+            case .searchSatellites(_, category: _):
                 return .doNothing
             }
         }

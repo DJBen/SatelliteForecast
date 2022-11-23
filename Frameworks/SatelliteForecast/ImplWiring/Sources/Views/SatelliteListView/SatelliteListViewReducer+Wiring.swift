@@ -17,3 +17,13 @@ extension Reducer where ActionType == SatelliteListViewAction, StateType == Sate
         )
     }
 }
+
+extension Reducer where ActionType == SatelliteListViewOutput, StateType == SatelliteListViewState {
+    public func lift() -> Reducer<AppAction, AppState> {
+        lift(
+            actionGetter: \.satelliteListOutput,
+            stateGetter: SatelliteListViewState.project(appState:),
+            stateSetter: SatelliteListViewState.apply(appState:state:)
+        )
+    }
+}
