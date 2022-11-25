@@ -89,6 +89,7 @@ extension ElementsLoaderImpl: ElementsLoader {
     }
 
     /// An elements publisher that loads from local source first, if local file exists and the modified date is within the fresh duration.
+    /// If an expired local file exists, and the fallback internet connection has failed, it will still use the old ephemerides.
     /// - Parameters:
     ///   - category: The category of satellite.
     ///   - freshDuration: If the difference between the current date and the last modified date of the file is greater than this
@@ -111,6 +112,10 @@ extension ElementsLoaderImpl: ElementsLoader {
                     saveLocalSatelliteData(category: category, data: data)
 
                     return data
+                }
+                .tryCatch { error in
+                    // Try to load local file if exists when network failed.
+                    loadLocalSatelliteDataFallbackPublisher(category: category, upstreamError: error)
                 }
             } else {
                 throw error
