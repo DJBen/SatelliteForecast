@@ -36,7 +36,7 @@ public enum SatelliteListViewAction {
     }
 
     case loadSatellite(SelectSatelliteParams?)
-    case selectSatellite(SelectSatelliteParams?)
+    case selectSatellite(SelectSatelliteParams, category: SatelliteCategory)
     case searchSatellites(String, category: SatelliteCategory)
     case retryLoadingSatelliteList(category: SatelliteCategory)
 }
@@ -50,13 +50,16 @@ public enum SatelliteListViewOutput {
 }
 
 public struct SatelliteListViewState {
+    public var navigationPath: NavigationPath = .init()
     public var satelliteInfo: [SatelliteCategory: Loadable<Map<UInt, SatelliteInfo>, ElementsLoaderError>] = [:]
     public var filteredSatellites: Map<UInt, SatelliteInfo>?
 
     public init(
+        navigationPath: NavigationPath = .init(),
         satelliteInfo: [SatelliteCategory : Loadable<Map<UInt, SatelliteInfo>, ElementsLoaderError>] = [:],
         filteredSatellites: Map<UInt, SatelliteInfo>? = nil
     ) {
+        self.navigationPath = navigationPath
         self.satelliteInfo = satelliteInfo
         self.filteredSatellites = filteredSatellites
     }

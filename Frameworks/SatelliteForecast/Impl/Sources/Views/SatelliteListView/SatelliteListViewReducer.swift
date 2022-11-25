@@ -10,8 +10,9 @@ import SwiftRex
 extension Reducer where ActionType == SatelliteListViewAction, StateType == SatelliteListViewState {
     public static let satelliteListViewReducer = Reducer.reduce { action, state in
         switch action {
-        case .selectSatellite(let params):
-            break
+        case .selectSatellite(let params, let category):
+            state.navigationPath.append(category)
+            state.navigationPath.append(SatelliteListSelectedSatellite(noradIndex: params.noradIndex))
         case .loadSatellite(let params):
             break
         case .retryLoadingSatelliteList:

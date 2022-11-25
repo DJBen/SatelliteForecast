@@ -12,6 +12,8 @@ public enum ElementsLoaderError: Error, LocalizedError {
     case elements(SatKitError)
     case unexpectedMimeType(String?)
     case expired(Date, freshDuration: TimeInterval)
+    case fileManager(Error)
+    case data(Error)
     case other(Error)
 
     public static func wrapError(_ error: Error) -> ElementsLoaderError {
@@ -46,7 +48,7 @@ public enum ElementsLoaderError: Error, LocalizedError {
                 comment: "Description for ElementsLoaderError.expired"
             )
             return String(format: format, modifiedDate.formatted(), freshDuration)
-        case let .other(error):
+        case .fileManager(let error), .data(let error), .other(let error):
             let nsError = error as NSError
             return nsError.localizedDescription
         }
