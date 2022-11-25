@@ -12,12 +12,14 @@ import SatelliteForecastImpl
 extension SatelliteListViewState: AppStateMappable {
     public static func project(appState: AppState) -> SatelliteListViewState {
         return SatelliteListViewState(
+            navigationPath: appState.navigationState.passPredictionNavigationPath,
             satelliteInfo: appState.elementsLoader.info,
             filteredSatellites: appState.elementsLoader.filteredSatellites
         )
     }
 
     public static func apply(appState: inout AppState, state: SatelliteListViewState) {
+        appState.navigationState.passPredictionNavigationPath = state.navigationPath
         appState.elementsLoader.filteredSatellites = state.filteredSatellites
     }
 }

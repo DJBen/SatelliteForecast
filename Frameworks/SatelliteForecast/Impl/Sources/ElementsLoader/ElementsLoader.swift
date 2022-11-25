@@ -29,6 +29,8 @@ public struct ElementsLoaderImpl {
     }
 }
 
+private let fileAccessQueue = DispatchQueue(label: "file_access")
+
 extension ElementsLoaderImpl: ElementsLoader {
     /// Load satellite data of a selected category from local file.
     /// - Parameters:
@@ -40,21 +42,27 @@ extension ElementsLoaderImpl: ElementsLoader {
         freshDuration: TimeInterval
     ) -> AnyPublisher<Data, Error> {
         Future<Data, Error> { promise in
-            DispatchQueue.global().async {
+            fileAccessQueue.async {
                 let url = fileManager.temporaryDirectory.appendingPathComponent(
                     category.localFilename,
                     conformingTo: .plainText
                 )
 
                 do {
-                    if let modificationDate = try fileManager.attributesOfItem(atPath: url.path())[.modificationDate] as? Date, currentDateProvider().timeIntervalSince(modificationDate) > freshDuration {
+                    let attributes = try fileManager.attributesOfItem(atPath: url.path())
+
+                    if let modificationDate = attributes[.modificationDate] as? Date, currentDateProvider().timeIntervalSince(modificationDate) > freshDuration {
                         promise(.failure(ElementsLoaderError.expired(modificationDate, freshDuration: freshDuration)))
                     } else {
-                        let data = try Data(contentsOf: url)
-                        promise(.success(data))
+                        do {
+                            let data = try Data(contentsOf: url)
+                            promise(.success(data))
+                        } catch {
+                            promise(.failure(ElementsLoaderError.data(error)))
+                        }
                     }
                 } catch {
-                    promise(.failure(error))
+                    promise(.failure(ElementsLoaderError.fileManager(error)))
                 }
             }
         }
@@ -90,6 +98,18 @@ extension ElementsLoaderImpl: ElementsLoader {
         }
     }
 
+    private func shouldAttemptNetworking(from error: Error) -> Bool {
+        if case ElementsLoaderError.expired = error {
+            return true
+        } else if case ElementsLoaderError.fileManager = error {
+            return true
+        } else if case ElementsLoaderError.data = error {
+            return true
+        } else {
+            return false
+        }
+    }
+
     /// An elements publisher that loads from local source first, if local file exists and the modified date is within the fresh duration.
     /// If an expired local file exists, and the fallback internet connection has failed, it will still use the old ephemerides.
     /// - Parameters:
@@ -106,7 +126,7 @@ extension ElementsLoaderImpl: ElementsLoader {
             freshDuration: freshDuration
         )
         .tryCatch { error in
-            if case ElementsLoaderError.expired = error {
+            if shouldAttemptNetworking(from: error) {
                 return session.dataTaskPublisher(
                     for: URLRequest(url: category.url)
                 )

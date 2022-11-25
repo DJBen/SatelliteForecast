@@ -15,7 +15,7 @@ extension EffectMiddleware where InputActionType == SatelliteListViewAction, Out
     public static var satelliteListViewToElementPropagator: EffectMiddleware<SatelliteListViewAction, ElementsPropagatorAction, Void, Void> {
         EffectMiddleware.onAction { action, dispatcher, getState in
             switch action {
-            case .selectSatellite(let params), .loadSatellite(let params):
+            case .loadSatellite(let params):
                 guard let params = params else {
                     return .doNothing
                 }
@@ -34,6 +34,8 @@ extension EffectMiddleware where InputActionType == SatelliteListViewAction, Out
                         )
                     )
                 )
+            case .selectSatellite(_, category: _):
+                return .doNothing
             case .retryLoadingSatelliteList:
                 return .doNothing
             case .searchSatellites(_, category: _):

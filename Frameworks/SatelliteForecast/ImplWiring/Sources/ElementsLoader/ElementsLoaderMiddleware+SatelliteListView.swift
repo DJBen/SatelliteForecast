@@ -14,7 +14,7 @@ extension EffectMiddleware where InputActionType == ElementsLoaderOutput, Output
     public static var elementsLoaderToSatelliteList: EffectMiddleware<ElementsLoaderOutput, SatelliteListViewAction, Void, Void> {
         EffectMiddleware.onAction { action, dispatcher, getState in
             switch action {
-            case .loadedSatelliteElements(_, let satelliteInfoMap, _, let selectNoradIndex, _):
+            case .loadedSatelliteElements(let category, let satelliteInfoMap, _, let selectNoradIndex, _):
                 guard let selectNoradIndex = selectNoradIndex, let satelliteInfo = satelliteInfoMap[selectNoradIndex.noradIndex] else {
                     return .doNothing
                 }
@@ -26,7 +26,8 @@ extension EffectMiddleware where InputActionType == ElementsLoaderOutput, Output
                             satelliteInfo: satelliteInfo,
                             julianDateRange: selectNoradIndex.dateRange,
                             observer: selectNoradIndex.observer
-                        )
+                        ),
+                        category: category
                     ),
                     from: dispatcher
                 )
