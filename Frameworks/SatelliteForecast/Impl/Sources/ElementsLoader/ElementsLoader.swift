@@ -40,20 +40,22 @@ extension ElementsLoaderImpl: ElementsLoader {
         freshDuration: TimeInterval
     ) -> AnyPublisher<Data, Error> {
         Future<Data, Error> { promise in
-            let url = fileManager.temporaryDirectory.appendingPathComponent(
-                category.localFilename,
-                conformingTo: .plainText
-            )
+            DispatchQueue.global().async {
+                let url = fileManager.temporaryDirectory.appendingPathComponent(
+                    category.localFilename,
+                    conformingTo: .plainText
+                )
 
-            do {
-                if let modificationDate = try fileManager.attributesOfItem(atPath: url.path())[.modificationDate] as? Date, currentDateProvider().timeIntervalSince(modificationDate) > freshDuration {
-                    promise(.failure(ElementsLoaderError.expired(modificationDate, freshDuration: freshDuration)))
-                } else {
-                    let data = try Data(contentsOf: url)
-                    promise(.success(data))
+                do {
+                    if let modificationDate = try fileManager.attributesOfItem(atPath: url.path())[.modificationDate] as? Date, currentDateProvider().timeIntervalSince(modificationDate) > freshDuration {
+                        promise(.failure(ElementsLoaderError.expired(modificationDate, freshDuration: freshDuration)))
+                    } else {
+                        let data = try Data(contentsOf: url)
+                        promise(.success(data))
+                    }
+                } catch {
+                    promise(.failure(error))
                 }
-            } catch {
-                promise(.failure(error))
             }
         }
         .eraseToAnyPublisher()
