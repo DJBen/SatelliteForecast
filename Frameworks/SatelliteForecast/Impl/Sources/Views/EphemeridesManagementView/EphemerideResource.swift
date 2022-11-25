@@ -11,7 +11,7 @@ struct EphemerideResource: Equatable, Hashable, Codable {
     let fileName: String
     let fullPath: String
     let size: UInt64?
-    let creationDate: Date?
+    let modificationDate: Date?
 
     var fileNameWithoutExtension: String {
         (fileName as NSString).deletingPathExtension
@@ -64,11 +64,11 @@ struct EphemerideResource: Equatable, Hashable, Codable {
         return formatter
     }()
 
-    var formattedCreationDate: String? {
-        guard let creationDate = creationDate else {
+    var formattedModificationDate: String? {
+        guard let modificationDate = modificationDate else {
             return nil
         }
 
-        return Self.durationFormatter.string(for: creationDate)
+        return Self.durationFormatter.string(for: modificationDate)
     }
 }

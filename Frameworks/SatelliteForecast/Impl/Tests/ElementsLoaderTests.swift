@@ -31,7 +31,7 @@ class ElementsLoaderTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testElementsLoader_loadElements() throws {
+    func testElementsLoaderMiddleware_loadElements() throws {
         assert(
             initialValue: ElementsLoaderState(),
             reducer: .identity,
@@ -55,6 +55,7 @@ class ElementsLoaderTests: XCTestCase {
                     action: .elementsLoaderAction(
                         .loadElements(
                             category: .active,
+                            fetchStrategy: .onlineFirst,
                             selectSpecialNoradIndex: nil,
                             selectNoradIndex: nil,
                             calculatePass: nil
@@ -98,6 +99,7 @@ class ElementsLoaderTests: XCTestCase {
                     action: .elementsLoaderAction(
                         .loadElements(
                             category: .active,
+                            fetchStrategy: .onlineFirst,
                             selectSpecialNoradIndex: nil,
                             selectNoradIndex: nil,
                             calculatePass: nil
@@ -124,7 +126,10 @@ class FakeElementsLoader: ElementsLoader {
         self.result = result
     }
 
-    func loadElementsPublisher(category: SatelliteCategory) -> AnyPublisher<Map<UInt, SatelliteInfo>, ElementsLoaderError> {
+    func loadElementsPublisher(
+        category: SatelliteCategory,
+        fetchStrategy: FetchStrategy
+    ) -> AnyPublisher<Map<UInt, SatelliteInfo>, ElementsLoaderError> {
         result.publisher.eraseToAnyPublisher()
     }
 }

@@ -11,7 +11,18 @@ import SatelliteKit
 public enum ElementsLoaderError: Error, LocalizedError {
     case elements(SatKitError)
     case unexpectedMimeType(String?)
+    case expired(Date, freshDuration: TimeInterval)
     case other(Error)
+
+    public static func wrapError(_ error: Error) -> ElementsLoaderError {
+        if let elementsLoaderError = error as? ElementsLoaderError {
+            return elementsLoaderError
+        } else if let satKitError = error as? SatKitError {
+            return .elements(satKitError)
+        } else {
+            return .other(error)
+        }
+    }
 
     public var errorDescription: String? {
         switch self {
@@ -26,6 +37,15 @@ public enum ElementsLoaderError: Error, LocalizedError {
                 comment: "Description for ElementsLoaderError.unexpectedMimeType"
             )
             return String(format: format, mimeType ?? "none")
+        case .expired(let modifiedDate, freshDuration: let freshDuration):
+            let format = NSLocalizedString(
+                "ElementsLoaderError.expired.format",
+                tableName: nil,
+                bundle: .main,
+                value: "Ephemerides last modified at %@ has expired. Max duration is %d seconds.",
+                comment: "Description for ElementsLoaderError.expired"
+            )
+            return String(format: format, modifiedDate.formatted(), freshDuration)
         case let .other(error):
             let nsError = error as NSError
             return nsError.localizedDescription

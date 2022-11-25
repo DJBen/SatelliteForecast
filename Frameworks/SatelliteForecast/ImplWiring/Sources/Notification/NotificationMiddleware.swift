@@ -382,6 +382,7 @@ extension EffectMiddleware where
                                     .elementsLoader(
                                         .loadElements(
                                             category: category,
+                                            fetchStrategy: .localWithin(7200),
                                             selectNoradIndex: SelectNoradIndexParam(
                                                 noradIndex: noradIndex,
                                                 dateRange: JulianDateUtil.createJulianDateRange(now: julianDate),

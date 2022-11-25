@@ -46,7 +46,8 @@ class Store: ReduxStoreBase<AppAction, AppState> {
     .reduce(Reducer<AppAction, AppState>.identity, <>)
 
     static func buildMiddleware(
-        elementsLoader: ElementsLoader
+        elementsLoader: ElementsLoader,
+        currentDateProvider: @escaping () -> Date
     ) -> AnyMiddleware<AppAction, AppAction, AppState> {
         let middlewares: [AnyMiddleware<AppAction, AppAction, AppState>] = [
             LocationMiddleware().lift(),
@@ -61,7 +62,9 @@ class Store: ReduxStoreBase<AppAction, AppState> {
                 inputAction: \.notification
             )
             .inject(
-                NotificationMiddlewareDependencies(dateProvider: Date.init)
+                NotificationMiddlewareDependencies(
+                    dateProvider: currentDateProvider
+                )
             )
             .eraseToAnyMiddleware(),
             EffectMiddleware.locationChainer.lift(),
@@ -71,7 +74,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             EffectMiddleware.elementsLoader.lift(
                 dependencies: ElementsLoaderDependencies(
                     elementsLoader: elementsLoader,
-                    dateProvider: Date.init
+                    dateProvider: currentDateProvider
                 )
             ),
             EffectMiddleware.elementsPropagator.lift(),
@@ -91,7 +94,9 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             EffectMiddleware.satelliteElevationGraph.lift(),
             EffectMiddleware.alarmSettingsViewToNotification.lift(),
             EffectMiddleware.debugMenu.lift(
-                dependencies: DebugMenuMiddlewareDependencies(dateProvider: Date.init)
+                dependencies: DebugMenuMiddlewareDependencies(
+                    dateProvider: currentDateProvider
+                )
             ),
             EffectMiddleware.loggerMiddleware.eraseToAnyMiddleware(),
             EffectMiddleware.backgroundSky.lift(),
@@ -109,21 +114,33 @@ class Store: ReduxStoreBase<AppAction, AppState> {
 
     private init() {
         let elementsLoader: ElementsLoader
+        let currentDateProvider: () -> Date = Date.init
         if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
             print("[Elements Loader] Using local Elements loader for previews")
             #if DEBUG
             elementsLoader = LocalElementsLoader()
             #else
-            elementsLoader = ElementsLoaderImpl(session: URLSession.shared)
+            elementsLoader = ElementsLoaderImpl(
+                session: URLSession.shared,
+                fileManager: FileManager.default,
+                currentDateProvider: currentDateProvider
+            )
             #endif
         } else {
-            elementsLoader = ElementsLoaderImpl(session: URLSession.shared)
+            elementsLoader = ElementsLoaderImpl(
+                session: URLSession.shared,
+                fileManager: FileManager.default,
+                currentDateProvider: currentDateProvider
+            )
         }
 
         super.init(
             subject: .combine(initialValue: .init()),
             reducer: Store.reducer,
-            middleware: Store.buildMiddleware(elementsLoader: elementsLoader),
+            middleware: Store.buildMiddleware(
+                elementsLoader: elementsLoader,
+                currentDateProvider: currentDateProvider
+            ),
             emitsValue: .whenDifferent
         )
     }
