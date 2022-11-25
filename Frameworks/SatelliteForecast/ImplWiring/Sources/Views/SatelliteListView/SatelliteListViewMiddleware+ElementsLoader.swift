@@ -19,7 +19,8 @@ extension EffectMiddleware where InputActionType == SatelliteListViewAction, Out
             case .retryLoadingSatelliteList(let category):
                 return .just(
                     .loadElements(
-                        category: category
+                        category: category,
+                        fetchStrategy: .localWithin(7200)
                     )
                 )
             }

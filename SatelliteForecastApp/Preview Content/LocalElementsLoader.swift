@@ -27,7 +27,8 @@ class LocalElementsLoader: ElementsLoader {
     }
 
     func loadElementsPublisher(
-        category: SatelliteCategory
+        category: SatelliteCategory,
+        fetchStrategy: FetchStrategy
     ) -> AnyPublisher<Map<UInt, SatelliteInfo>, ElementsLoaderError> {
         Future<Map<UInt, SatelliteInfo>, ElementsLoaderError> { promise in
             DispatchQueue.global(qos: .userInitiated).async {

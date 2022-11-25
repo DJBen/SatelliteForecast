@@ -26,6 +26,7 @@ Dependencies == Void {
                 return .just(
                     .loadElements(
                         category: .brightest100,
+                        fetchStrategy: .localWithin(7200),
                         calculatePass: observer.map { observer in
                             ElementsLoaderCalculatePassParam(
                                 noradIndex: satellite.noradIndex,
@@ -37,7 +38,10 @@ Dependencies == Void {
                 )
             case .loadCategory(let category, julianDateRange: _, observer: _):
                 return .just(
-                    .loadElements(category: category)
+                    .loadElements(
+                        category: category,
+                        fetchStrategy: .localWithin(7200)
+                    )
                 )
             }
         }

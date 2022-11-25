@@ -18,7 +18,8 @@ extension EffectMiddleware where InputActionType == RootViewAction, OutputAction
                 case .realtimeSky:
                     return .just(
                         .loadElements(
-                            category: .active
+                            category: .active,
+                            fetchStrategy: .localWithin(7200)
                         )
                     )
                 case .forecast, .settings:

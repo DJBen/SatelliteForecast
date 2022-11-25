@@ -44,11 +44,12 @@ extension EffectMiddleware where
     public static var elementsLoader: MiddlewareReader<ElementsLoaderDependencies, ElementsLoaderEffectMiddleware> {
         ElementsLoaderEffectMiddleware.onAction { (inputAction, dispatcher, getState) -> Effect<ElementsLoaderDependencies, ElementsLoaderOutput> in
             switch inputAction {
-            case let .loadElements(category, selectSpecialNoradIndex, selectNoradIndex, calculatePass):
+            case let .loadElements(category, fetchStrategy,  selectSpecialNoradIndex, selectNoradIndex, calculatePass):
                 return Effect(token: category) { context -> AnyPublisher<DispatchedAction<ElementsLoaderOutput>, Never> in
                     func loadSatellitePublisher() -> AnyPublisher<DispatchedAction<ElementsLoaderOutput>, Never> {
                         context.dependencies.elementLoader.loadElementsPublisher(
-                            category: category
+                            category: category,
+                            fetchStrategy: fetchStrategy
                         )
                         .map { map -> DispatchedAction<ElementsLoaderOutput> in
                             DispatchedAction(

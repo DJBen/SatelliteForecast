@@ -50,6 +50,7 @@ public enum ElementsLoaderAction {
     /// Load a category of satellite elements
     case loadElements(
         category: SatelliteCategory,
+        fetchStrategy: FetchStrategy,
         selectSpecialNoradIndex: SelectNoradIndexParam? = nil,
         selectNoradIndex: SelectNoradIndexParam? = nil,
         calculatePass: ElementsLoaderCalculatePassParam? = nil

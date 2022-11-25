@@ -25,9 +25,9 @@ struct EphemeridesManagementView: View {
 
                     Spacer()
 
-                    if let formattedCreationDate = resource.formattedCreationDate {
+                    if let formattedModificationDate = resource.formattedModificationDate {
                         Text(
-                            formattedCreationDate
+                            formattedModificationDate
                         )
                         .font(.subheadline)
                         .foregroundColor(Color(UIColor.secondaryLabel))
@@ -64,7 +64,7 @@ struct EphemeridesManagementView: View {
                 fileName: fileName,
                 fullPath: (temporaryDirectory.path() as NSString).appendingPathComponent(fileName),
                 size: attributes[.size] as? UInt64,
-                creationDate: attributes[.creationDate] as? Date
+                modificationDate: attributes[.modificationDate] as? Date
             )
         }
     }

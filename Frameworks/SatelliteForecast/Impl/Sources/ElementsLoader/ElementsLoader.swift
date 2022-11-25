@@ -15,19 +15,56 @@ import SatelliteKit
 
 public struct ElementsLoaderImpl {
     public let session: URLSession
+    public let fileManager: FileManager
+    public let currentDateProvider: () -> Date
 
-    public init(session: URLSession) {
+    public init(
+        session: URLSession,
+        fileManager: FileManager,
+        currentDateProvider: @escaping () -> Date
+    ) {
         self.session = session
+        self.fileManager = fileManager
+        self.currentDateProvider = currentDateProvider
     }
 }
 
 extension ElementsLoaderImpl: ElementsLoader {
+    /// Load satellite data of a selected category from local file.
+    /// - Parameters:
+    ///   - category: The selected category of satellite data to load.
+    ///   - freshDuration: The maximum time between now and the
+    /// - Returns: A publisher of local satellite data, or any error that occurred while it attempts to read the file.
+    private func loadLocalSatelliteDataPublisher(
+        category: SatelliteCategory,
+        freshDuration: TimeInterval
+    ) -> AnyPublisher<Data, Error> {
+        Future<Data, Error> { promise in
+            let url = fileManager.temporaryDirectory.appendingPathComponent(
+                category.localFilename,
+                conformingTo: .plainText
+            )
+
+            do {
+                if let modificationDate = try fileManager.attributesOfItem(atPath: url.path())[.modificationDate] as? Date, currentDateProvider().timeIntervalSince(modificationDate) > freshDuration {
+                    promise(.failure(ElementsLoaderError.expired(modificationDate, freshDuration: freshDuration)))
+                } else {
+                    let data = try Data(contentsOf: url)
+                    promise(.success(data))
+                }
+            } catch {
+                promise(.failure(error))
+            }
+        }
+        .eraseToAnyPublisher()
+    }
+
     /// Load satellite data of a selected category from local file. If not exist, it will throw the upstream error provided in the argument.
     /// - Parameters:
     ///   - category: The selected category of satellite data to load.
     ///   - upstreamError: The upstream error. If the local file does not exist, this upstream error will be thrown.
     /// - Returns: A publisher of local satellite data.
-    private func loadLocalSatelliteDataPublisher(category: SatelliteCategory, upstreamError: Error) -> AnyPublisher<Data, Error> {
+    private func loadLocalSatelliteDataFallbackPublisher(category: SatelliteCategory, upstreamError: Error) -> AnyPublisher<Data, Error> {
         Future<Data, Error> { promise in
             let url = URL(fileURLWithPath: category.localFilename, relativeTo: FileManager.default.temporaryDirectory)
                 .appendingPathExtension("txt")
@@ -51,39 +88,95 @@ extension ElementsLoaderImpl: ElementsLoader {
         }
     }
 
-    public func loadElementsPublisher(category: SatelliteCategory) -> AnyPublisher<Map<UInt, SatelliteInfo>, ElementsLoaderError> {
-        session
-            .dataTaskPublisher(for: URLRequest(url: category.url))
+    /// An elements publisher that loads from local source first, if local file exists and the modified date is within the fresh duration.
+    /// - Parameters:
+    ///   - category: The category of satellite.
+    ///   - freshDuration: If the difference between the current date and the last modified date of the file is greater than this
+    ///   duration, the local file is considered stale and a re-fetch will be attempted. Otherwise the local file will be used.
+    /// - Returns: A publisher that loads satellite info.
+    private func localFirstElementsPublisher(
+        category: SatelliteCategory,
+        freshDuration: TimeInterval
+    ) -> AnyPublisher<Map<UInt, SatelliteInfo>, ElementsLoaderError> {
+        return loadLocalSatelliteDataPublisher(
+            category: category,
+            freshDuration: freshDuration
+        )
+        .tryCatch { error in
+            if case ElementsLoaderError.expired = error {
+                return session.dataTaskPublisher(
+                    for: URLRequest(url: category.url)
+                )
+                .tryMap { (data, response) in
+                    saveLocalSatelliteData(category: category, data: data)
+
+                    return data
+                }
+            } else {
+                throw error
+            }
+        }
+        .tryMap { data -> Map<UInt, SatelliteInfo> in
+            precondition(!Thread.isMainThread)
+            let elements = try Elements.load(chunk: String(data: data, encoding: .utf8)!)
+            let info = elements.map(
+                SatelliteInfo.init(elements:)
+            )
+            // Sort the satellite list in reverse chronological order of the freshness of Elements.
+                .sorted(by: { $0.elements.t₀ > $1.elements.t₀ })
+                .reduce(into: Map<UInt, SatelliteInfo>(), { $0[$1.noradIndex] = $1 })
+
+            return info
+        }
+        .mapError(ElementsLoaderError.wrapError)
+        .eraseToAnyPublisher()
+    }
+
+    public func loadElementsPublisher(
+        category: SatelliteCategory,
+        fetchStrategy: FetchStrategy
+    ) -> AnyPublisher<Map<UInt, SatelliteInfo>, ElementsLoaderError> {
+        switch fetchStrategy {
+        case .onlineFirst:
+            return session.dataTaskPublisher(
+                for: URLRequest(url: category.url)
+            )
             .tryMap { (data, response) in
+                saveLocalSatelliteData(category: category, data: data)
                 return data
             }
             .tryCatch { error in
                 // Try to load local file if exists when network failed.
-                loadLocalSatelliteDataPublisher(category: category, upstreamError: error)
+                loadLocalSatelliteDataFallbackPublisher(category: category, upstreamError: error)
             }
-            .mapError { ElementsLoaderError.other($0) }
             .tryMap { data -> Map<UInt, SatelliteInfo> in
                 precondition(!Thread.isMainThread)
-                let elementss = try Elements.load(chunk: String(data: data, encoding: .utf8)!)
-                let info = elementss
-                    .map(SatelliteInfo.init(elements:))
-                    // Sort the satellite list in reverse chronological order of the freshness of Elements.
-                    .sorted(by: { $0.elements.t₀ > $1.elements.t₀ })
-                    .reduce(into: Map<UInt, SatelliteInfo>(), { $0[$1.noradIndex] = $1 })
+                let elements = try Elements.load(chunk: String(data: data, encoding: .utf8)!)
+                let info = elements.map(
+                    SatelliteInfo.init(elements:)
+                )
+                // Sort the satellite list in reverse chronological order of the freshness of Elements.
+                .sorted(by: { $0.elements.t₀ > $1.elements.t₀ })
+                .reduce(into: Map<UInt, SatelliteInfo>(), { $0[$1.noradIndex] = $1 })
 
-                saveLocalSatelliteData(category: category, data: data)
-                
                 return info
 
             }
-            .mapError { error in
-                if let satKitError = error as? SatKitError {
-                    return .elements(satKitError)
-                } else {
-                    return .other(error)
-                }
-            }
+            .mapError(ElementsLoaderError.wrapError)
             .eraseToAnyPublisher()
+
+        case .localWithin(let duration):
+            return localFirstElementsPublisher(
+                category: category,
+                freshDuration: duration
+            )
+
+        case .localFirst:
+            return localFirstElementsPublisher(
+                category: category,
+                freshDuration: .greatestFiniteMagnitude
+            )
+        }
     }
 }
 
