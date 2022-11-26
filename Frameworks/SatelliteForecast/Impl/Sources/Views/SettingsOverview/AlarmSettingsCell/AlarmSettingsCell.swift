@@ -34,7 +34,7 @@ public struct AlarmSettingsCell: View {
     @Environment(\.colorScheme) private var colorScheme
 
     private var background: some View {
-        var colors = [UIColor.systemYellow, UIColor.systemOrange]
+        var colors = [UIColor.systemMint, UIColor.systemGreen]
         
         if colorScheme == .dark {
             colors = colors.map { $0.darken(by: 0.3) }
@@ -63,10 +63,12 @@ public struct AlarmSettingsCell: View {
                 Spacer()
             }
 
-            Text(AlarmSettingsCell.description(numberOfAlerts: viewModel.state.scheduledPassNotifications.count))
-                .font(.caption)
-                .multilineTextAlignment(.leading)
-                .foregroundColor(Color(UIColor.label))
+            Text(
+                AlarmSettingsCell.description(numberOfAlerts: viewModel.state.scheduledPassNotifications.count)
+            )
+            .font(.caption)
+            .multilineTextAlignment(.leading)
+            .foregroundColor(Color(UIColor.secondaryLabel))
         }
         .padding()
         .background(background)

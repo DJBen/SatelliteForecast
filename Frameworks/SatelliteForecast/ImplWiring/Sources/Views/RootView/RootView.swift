@@ -110,6 +110,7 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
                 )
             )
         }
+        .tint(Color(uiColor: .label))
     }
 }
 

@@ -13,7 +13,7 @@ struct SkyChartSatelliteIndicatorState: Equatable {
     let coordinate: AziEleDst
 }
 
-/// A round dot indicator to mark the satellite position
+/// A round dot indicator to mark the satellite position.
 struct SkyChartSatelliteIndicator: View {
     let state: SkyChartSatelliteIndicatorState
 

@@ -13,6 +13,8 @@ extension Reducer where ActionType == SettingsOverviewViewAction, StateType == S
         switch action {
         case .navigate(let navigationPath):
             state.navigationPath = navigationPath
+        case .setNightMode(let isOn):
+            state.isNightModeOn = isOn
         }
     }
 }

@@ -14,17 +14,21 @@ import SwiftUI
 
 public enum SettingsOverviewViewAction {
     case navigate(NavigationPath)
+    case setNightMode(Bool)
 }
 
 extension SettingsOverviewViewAction: Equatable {}
 
 public struct SettingsOverviewViewState {
     public var navigationPath: NavigationPath = .init()
+    public var isNightModeOn: Bool = false
 
     public init(
-        navigationPath: NavigationPath = .init()
+        navigationPath: NavigationPath = .init(),
+        isNightModeOn: Bool = false
     ) {
         self.navigationPath = navigationPath
+        self.isNightModeOn = isNightModeOn
     }
 }
 
@@ -96,7 +100,7 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                     "SettingsOverviewView.observer.header",
                     tableName: nil,
                     bundle: .satelliteForecastImplResourcesBundle,
-                    value: "Location settings",
+                    value: "Observer location",
                     comment: "The section header of the observer section in settings"
                 )
             )
@@ -114,6 +118,63 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
             )
             .font(.headline.lowercaseSmallCaps().weight(.semibold))
             .foregroundColor(Color(UIColor.secondaryLabel))
+        }
+    }
+
+    private var nightModeCell: some View {
+        Button(
+            store: viewModel,
+            action: .setNightMode(!viewModel.state.isNightModeOn)
+        ) { viewModel in
+            HStack {
+                Image(systemName: viewModel.state.isNightModeOn ? "moon.stars.fill" : "moon.stars")
+                    .font(.headline)
+                    .foregroundColor(Color(UIColor.label))
+
+                let text: String = {
+                    if viewModel.state.isNightModeOn {
+                        return NSLocalizedString(
+                            "SettingsOverviewView.nightModeCell.off.title",
+                            tableName: nil,
+                            bundle: .satelliteForecastImplResourcesBundle,
+                            value: "Turn off night mode",
+                            comment: "The title of the toggle that toggles night mode off in the settings view."
+                        )
+                    } else {
+                        return NSLocalizedString(
+                            "SettingsOverviewView.nightModeCell.on.title",
+                            tableName: nil,
+                            bundle: .satelliteForecastImplResourcesBundle,
+                            value: "Turn on night mode",
+                            comment: "The title of the toggle that toggles night mode on in the settings view."
+                        )
+                    }
+                }()
+
+                Text(
+                    text
+                )
+                .font(.headline)
+                .foregroundColor(Color(UIColor.label))
+
+                Spacer()
+            }
+            .padding()
+            .background {
+                var colors = [UIColor.systemGray4, UIColor.systemGray5]
+
+                LinearGradient(
+                    gradient: Gradient(colors: colors.map(Color.init)),
+                    startPoint: UnitPoint(x: 0, y: 0),
+                    endPoint: UnitPoint(x: 1, y: 1)
+                )
+            }
+            .clipShape(
+                RoundedRectangle(
+                    cornerRadius: 8,
+                    style: .continuous
+                )
+            )
         }
     }
 
@@ -160,6 +221,12 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                                 sectionHeader(for: item)
                             }
                         }
+                    }
+
+                    Section {
+                        nightModeCell
+                    } header: {
+                        EmptyView()
                     }
                 }
                 .padding()

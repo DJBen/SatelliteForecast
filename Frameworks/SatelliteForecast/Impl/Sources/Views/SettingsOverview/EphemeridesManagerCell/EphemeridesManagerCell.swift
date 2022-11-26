@@ -59,6 +59,13 @@ public struct EphemeridesManagerCell: View {
 
                 Spacer()
             }
+
+            Text(
+                EphemeridesManagerCell.description
+            )
+            .font(.caption)
+            .multilineTextAlignment(.leading)
+            .foregroundColor(Color(UIColor.secondaryLabel))
         }
         .padding()
         .background(background)
@@ -89,6 +96,16 @@ extension EphemeridesManagerCell {
                 comment: "The title for ephemerides manager cell"
             ),
             fileCount
+        )
+    }
+
+    static var description: String {
+        NSLocalizedString(
+            "SatelliteOverview.ephemeridesManagerCell.description",
+            tableName: nil,
+            bundle: .satelliteForecastImplResourcesBundle,
+            value: "View and manage downloaded raw satellite ephemerides.",
+            comment: "The description for ephemerides manager cell"
         )
     }
 }

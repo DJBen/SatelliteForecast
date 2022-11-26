@@ -16,6 +16,9 @@ public enum ElementsLoaderError: Error, LocalizedError {
     case data(Error)
     case other(Error)
 
+    /// Wrap an error with `ElementsLoaderError`. If the error is an `ElementsLoaderError`, return it directly.
+    /// - Parameter error: An error to be wrapped.
+    /// - Returns: A wrapped error within `ElementsLoaderError`.
     public static func wrapError(_ error: Error) -> ElementsLoaderError {
         if let elementsLoaderError = error as? ElementsLoaderError {
             return elementsLoaderError
