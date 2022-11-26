@@ -146,6 +146,8 @@ struct PassPreviewCell: View {
                         julianDateProvider: julianDateProvider
                     )
                 )
+                // Prevent consuming the tap events
+                .allowsHitTesting(false)
                 .frame(width: shortEdge, height: shortEdge)
             }
         }

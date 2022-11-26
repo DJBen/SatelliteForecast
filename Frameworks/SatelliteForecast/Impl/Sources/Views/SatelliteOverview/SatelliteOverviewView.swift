@@ -83,7 +83,7 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
     }
 
     public var body: some View {
-        return NavigationStack(
+        NavigationStack(
             path: Binding<NavigationPath>(
                 get: {
                     viewModel.state.navigationPath
@@ -191,6 +191,7 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                 }
             }
         }
+        .tint(Color(uiColor: .label))
     }
 }
 

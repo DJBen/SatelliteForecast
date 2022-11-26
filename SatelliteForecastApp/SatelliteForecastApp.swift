@@ -61,6 +61,17 @@ struct SatelliteForecastApp: App {
                 #endif
             }
             .environment(\.motionManagerKey, motionManager)
+            .overlay {
+                if store.state.isNightModeOn {
+                    Color(
+                        uiColor: UIColor.red
+                    )
+                    .blendMode(.plusDarker)
+                    .allowsHitTesting(false)
+                } else {
+                    EmptyView()
+                }
+            }
         }
     }
 }
