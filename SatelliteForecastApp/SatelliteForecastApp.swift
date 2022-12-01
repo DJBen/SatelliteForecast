@@ -40,13 +40,17 @@ struct SatelliteForecastApp: App {
                         store.state.debugMenu.isDebugMenuVisible
                     },
                     set: { newValue in
-                        store.dispatch(.debugMenu(.toggleDebugMenu(newValue)))
+                        store.dispatch(
+                            .debugMenu(.toggleDebugMenu(newValue))
+                        )
                     }
                 ),
                 onDismiss: nil,
                 content: {
-                    ViewProducer<Void, DebugMenu>.debugMenu(viewModel: store)
-                        .view()
+                    ViewProducer<Void, DebugMenu>.debugMenu(
+                        viewModel: store
+                    )
+                    .view()
                 }
             )
             .onAppear {

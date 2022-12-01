@@ -234,6 +234,8 @@ public struct PassAlarmSettingsModalView: View {
                         Text(
                             DeleteButton.title
                         )
+                        // Inverse the foreground color because bordered prominent will be entirely white
+                        .foregroundColor(Color(uiColor: .label.inversed()))
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
                         .font(.headline.weight(.bold))
