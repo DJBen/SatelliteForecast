@@ -58,7 +58,7 @@ struct EphemerideTextBrowserView: View {
                                 format: NSLocalizedString(
                                     "EphemerideTextBrowserView.shareLink.message",
                                     tableName: nil,
-                                    bundle: .satelliteForecastImplResourcesBundle,
+                                    bundle: .module,
                                     value: "Share %@ satellite ephemerides",
                                     comment: "The message of the share link in ephemeride text browser view"
                                 ),

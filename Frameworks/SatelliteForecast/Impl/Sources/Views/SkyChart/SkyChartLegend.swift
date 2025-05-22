@@ -34,7 +34,7 @@ struct SkyChartLegend: View, Equatable {
             .stroke(
                 Color(
                     "skyChartStroke",
-                    bundle: .satelliteForecastImplResourcesBundle
+                    bundle: .module
                 ),
                 lineWidth: 1
             )
@@ -55,7 +55,7 @@ struct SkyChartLegend: View, Equatable {
                     path.addLine(to: point2)
                 }
             }
-            .stroke(Color("skyChartStroke", bundle: .satelliteForecastImplResourcesBundle), lineWidth: 1)
+            .stroke(Color("skyChartStroke", bundle: .module), lineWidth: 1)
         }
     }
 

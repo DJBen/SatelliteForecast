@@ -28,7 +28,7 @@ public struct MotionManagerView<Content: View>: View {
 
     init(
         isActive: Binding<Bool>,
-        @ViewBuilder var content: @escaping (Loadable<CMDeviceMotion, Error>) -> Content
+        @ViewBuilder content: @escaping (Loadable<CMDeviceMotion, Error>) -> Content
     ) {
         self._isActive = isActive
         self.content = content

@@ -1,5 +1,4 @@
 # SatelliteForecast
 
 ## Installation
-Run `pod install` and then open with `xed .` in the directory.
-
+This project uses Swift Package Manager as its dependency management. Simply open the `.xcodeproj`

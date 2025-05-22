@@ -91,7 +91,7 @@ extension EphemeridesManagerCell {
             format: NSLocalizedString(
                 "SatelliteOverview.ephemeridesManagerCell.title",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "%#@ephemerideFileCount@",
                 comment: "The title for ephemerides manager cell"
             ),
@@ -103,7 +103,7 @@ extension EphemeridesManagerCell {
         NSLocalizedString(
             "SatelliteOverview.ephemeridesManagerCell.description",
             tableName: nil,
-            bundle: .satelliteForecastImplResourcesBundle,
+            bundle: .module,
             value: "View and manage downloaded raw satellite ephemerides.",
             comment: "The description for ephemerides manager cell"
         )

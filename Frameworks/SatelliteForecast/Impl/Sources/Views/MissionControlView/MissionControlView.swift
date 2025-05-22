@@ -76,7 +76,7 @@ struct MissionControlView: View {
                         NSLocalizedString(
                             "MissionControlView.resetButton.title",
                             tableName: nil,
-                            bundle: .satelliteForecastImplResourcesBundle,
+                            bundle: .module,
                             value: "Recenter",
                             comment: """
                             The title for the reset button within mission control view to restore the
@@ -311,27 +311,19 @@ extension MissionControlViewController: MKMapViewDelegate {
     }
 
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        if let annotation = annotation as? CurrentPositionAnnotation {
-            let identifier = "currentPosition"
-            guard var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKMarkerAnnotationView else {
-                return nil
-            }
-
-            if annotationView == nil {
-                annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
-            }
-            annotationView.canShowCallout = false
-            annotationView.glyphImage = UIImage(
-                named: "glyph_satellite",
-                in: .satelliteForecastImplResourcesBundle,
-                compatibleWith: nil
-            )
-            annotationView.markerTintColor = .systemOrange
-            annotationView.glyphTintColor = .white
-            return annotationView
-        } else {
+        let identifier = "currentPosition"
+        guard let annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKMarkerAnnotationView else {
             return nil
         }
+        annotationView.canShowCallout = false
+        annotationView.glyphImage = UIImage(
+            named: "glyph_satellite",
+            in: .module,
+            compatibleWith: nil
+        )
+        annotationView.markerTintColor = .systemOrange
+        annotationView.glyphTintColor = .white
+        return annotationView
     }
 
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {

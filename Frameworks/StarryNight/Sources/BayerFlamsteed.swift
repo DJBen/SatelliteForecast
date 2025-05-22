@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Regex
 
 // superscripts from 1 to 9
 private let superscripts = ["", "\u{00b9}", "\u{00b2}", "\u{00b3}", "\u{2074}", "\u{2075}", "\u{2076}", "\u{2077}", "\u{2078}", "\u{2079}"]
@@ -45,33 +44,36 @@ struct BayerFlamsteed: CustomStringConvertible {
     let constellation: Constellation
 
     init?(_ str: String) {
-        switch str {
-        case Regex("(\\d+)?\\s*(\\w{2,3})?\\s*(\\d)?(\\w{2,3})"):
-            let match = Regex.lastMatch!
-            if let flamsteedNumber = match.captures[0] {
-                flamsteed = Int(flamsteedNumber)!
-                if let bayerGreek = match.captures[1] {
+        // Define the regex pattern
+        let pattern = #/(\d+)?\s*(\w{2,3})?\s*(\d)?(\w{2,3})/#
+        
+        if let match = str.firstMatch(of: pattern) {
+            if let flamsteedCapture = match.1, let flamsteedNumber = Int(flamsteedCapture) {
+                flamsteed = flamsteedNumber
+                if let bayerGreek = match.2 {
                     type = .bayerFlamsteed
-                    greekLetter = GreekLetter(shortEnglish: bayerGreek)!
+                    greekLetter = GreekLetter(shortEnglish: String(bayerGreek))!
                 } else {
                     type = .flamsteed
                     greekLetter = nil
                 }
-            } else if let bayerGreek = match.captures[1] {
+            } else if let bayerGreek = match.2 {
                 type = .bayer
-                greekLetter = GreekLetter(shortEnglish: bayerGreek)!
+                greekLetter = GreekLetter(shortEnglish: String(bayerGreek))!
                 flamsteed = nil
             } else {
                 fatalError()
             }
-            let con = match.captures[3]!
-            constellation = Constellation.iau(con)!
-            if let bnStr = match.captures[2], let bnInt = Int(bnStr) {
+            
+            let con = match.4
+            constellation = Constellation.iau(String(con))!
+            
+            if let bnStr = match.3, let bnInt = Int(bnStr) {
                 binaryNumber = bnInt
             } else {
                 binaryNumber = nil
             }
-        default:
+        } else {
             return nil
         }
     }

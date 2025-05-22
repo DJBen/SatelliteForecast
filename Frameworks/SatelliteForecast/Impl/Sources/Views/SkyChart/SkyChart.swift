@@ -322,7 +322,7 @@ extension SkyChartPassLabel {
             let format = NSLocalizedString(
                 "SkyChartPassLabel.text.illuminationChange.entersShadow",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: """
                     Enters shadow
                     %@
@@ -334,7 +334,7 @@ extension SkyChartPassLabel {
             let format = NSLocalizedString(
                 "SkyChartPassLabel.text.illuminationChange.exitsShadow",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: """
                     Exits shadow
                     %@
@@ -417,12 +417,12 @@ struct SkyChart_Previews: PreviewProvider {
                                         snapshotsDuringPass: passSnapshots.snapshots,
                                         illuminatedColor: UIColor(
                                             named: "satellitePath_illuminated",
-                                            in: .satelliteForecastImplResourcesBundle,
+                                            in: .module,
                                             compatibleWith: traitCollection
                                         )!,
                                         unlitColor: UIColor(
                                             named: "satellitePath_notIlluminated",
-                                            in: .satelliteForecastImplResourcesBundle,
+                                            in: .module,
                                             compatibleWith: traitCollection
                                         )!
                                     )
@@ -475,8 +475,8 @@ struct SkyChart_Previews: PreviewProvider {
                                 params: SatellitePassPathRenderParams(
                                     rect: CGRect(origin: .zero, size: CGSize(width: 388, height: 805)),
                                     snapshotsDuringPass: passSnapshots2.snapshots,
-                                    illuminatedColor: UIColor(Color("satellitePath_illuminated", bundle: .satelliteForecastImplResourcesBundle)),
-                                    unlitColor: UIColor(Color("satellitePath_notIlluminated", bundle: .satelliteForecastImplResourcesBundle))
+                                    illuminatedColor: UIColor(Color("satellitePath_illuminated", bundle: .module)),
+                                    unlitColor: UIColor(Color("satellitePath_notIlluminated", bundle: .module))
                                 )
                             )
                         ],

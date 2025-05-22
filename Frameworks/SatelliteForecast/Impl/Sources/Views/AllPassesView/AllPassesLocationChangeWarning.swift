@@ -38,7 +38,7 @@ struct AllPassesLocationChangeWarning: View {
         let formatString = NSLocalizedString(
             "AllPassesLocationChangeWarning.text",
             tableName: nil,
-            bundle: .satelliteForecastImplResourcesBundle,
+            bundle: .module,
             value: "The new location %1$@ is %2$@ away from the location that was used to calculate the passes. The results may no longer be accurate.",
             comment: "The text for a warning label upon significant deviation of the location used to calculate passes from the current location."
         )

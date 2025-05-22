@@ -9,7 +9,6 @@ import SwiftUI
 import SatelliteCatalog
 import SatelliteKit
 import SatelliteForecast
-import Regex
 
 struct SatelliteCell: View {
     let info: SatelliteInfo
@@ -25,10 +24,10 @@ struct SatelliteCell: View {
     }
 
     static func image(cat: SatCat) -> UIImage? {
-        if let image = UIImage(named: "\(cat.noradID)", in: .satelliteForecastImplResourcesBundle, compatibleWith: nil) {
+        if let image = UIImage(named: "\(cat.noradID)", in: .module, compatibleWith: nil) {
             return image
         } else if cat.name.contains("STARLINK") {
-            return UIImage(named: "starlink", in: .satelliteForecastImplResourcesBundle, compatibleWith: nil)
+            return UIImage(named: "starlink", in: .module, compatibleWith: nil)
         }
         return nil
     }
@@ -234,7 +233,7 @@ extension SatelliteCell {
         let format = NSLocalizedString(
             "SatelliteCell.operatorAndCountry",
             tableName: nil,
-            bundle: .satelliteForecastImplResourcesBundle,
+            bundle: .module,
             value: "%@, %@",
             comment: "The cacatenated operator and country strings."
         )
@@ -248,7 +247,7 @@ extension SatelliteCell {
             let string = NSLocalizedString(
                 "SatelliteCell.operationalStatusLocalizedString.operational",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "Operational",
                 comment: "The localized string for the status of an operational satellite"
             )
@@ -257,7 +256,7 @@ extension SatelliteCell {
             let string = NSLocalizedString(
                 "SatelliteCell.operationalStatusLocalizedString.partiallyOperational",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "Partially operational",
                 comment: "The localized string for the status of a partially operational satellite"
             )
@@ -266,7 +265,7 @@ extension SatelliteCell {
             let string = NSLocalizedString(
                 "SatelliteCell.operationalStatusLocalizedString.extendedMission",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "On extended mission",
                 comment: "The localized string for the status of a satellite on extended mission"
             )
@@ -275,7 +274,7 @@ extension SatelliteCell {
             let string = NSLocalizedString(
                 "SatelliteCell.operationalStatusLocalizedString.backup",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "Backup",
                 comment: "The localized string for the status of a backup satellite"
             )
@@ -284,7 +283,7 @@ extension SatelliteCell {
             let string = NSLocalizedString(
                 "SatelliteCell.operationalStatusLocalizedString.backup",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "Spare",
                 comment: "The localized string for the status of a spare satellite"
             )
@@ -293,7 +292,7 @@ extension SatelliteCell {
             let string = NSLocalizedString(
                 "SatelliteCell.operationalStatusLocalizedString.nonoperational",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "Nonoperational",
                 comment: "The localized string for the status of a nonoperational satellite"
             )
@@ -302,7 +301,7 @@ extension SatelliteCell {
             let string = NSLocalizedString(
                 "SatelliteCell.operationalStatusLocalizedString.decayed",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "Decayed",
                 comment: "The localized string for the status of a decayed satellite"
             )
@@ -311,7 +310,7 @@ extension SatelliteCell {
             let string = NSLocalizedString(
                 "SatelliteCell.operationalStatusLocalizedString.unknown",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "Unknown status",
                 comment: "The localized string for the unknown status of satellite"
             )

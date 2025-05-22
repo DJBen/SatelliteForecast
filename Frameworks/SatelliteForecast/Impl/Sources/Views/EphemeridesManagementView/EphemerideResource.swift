@@ -5,6 +5,7 @@
 //  Created by Ben Lu on 11/22/22.
 //
 
+import Foundation
 import SatelliteForecast
 
 struct EphemerideResource: Equatable, Hashable, Codable {
@@ -22,7 +23,7 @@ struct EphemerideResource: Equatable, Hashable, Codable {
             return NSLocalizedString(
                 "EphemeridesManagementView.comment.visual",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "Ephemerides for the brightest 100 satellites.",
                 comment: "The comment text for the visual (brightest 100) satellites file"
             )
@@ -30,7 +31,7 @@ struct EphemerideResource: Equatable, Hashable, Codable {
             return NSLocalizedString(
                 "EphemeridesManagementView.comment.last30Days",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "Ephemerides for the new launches within last 30 days.",
                 comment: "The comment text for the last 30 days satellites file"
             )
@@ -38,7 +39,7 @@ struct EphemerideResource: Equatable, Hashable, Codable {
             return NSLocalizedString(
                 "EphemeridesManagementView.comment.active",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "Ephemerides for all active satellites.",
                 comment: "The comment text for the last 30 days satellites file"
             )

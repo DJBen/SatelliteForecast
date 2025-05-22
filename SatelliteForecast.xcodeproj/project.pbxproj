@@ -3,11 +3,10 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9D5F2E9FA1BC31892A719C75 /* Pods_SatelliteForecastApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9945F4772B6B668C069E6F6 /* Pods_SatelliteForecastApp.framework */; };
 		EF16811E27D00E28001BA9C3 /* Icons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EF9D827C2661BBF000616C97 /* Icons.xcassets */; };
 		EF81747A292A355700A2F225 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF817479292A355700A2F225 /* Store.swift */; };
 		EF81747F292A360500A2F225 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF81747D292A360500A2F225 /* AppDelegate.swift */; };
@@ -17,6 +16,12 @@
 		EF817489292A362B00A2F225 /* Elements+Preview.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF817484292A362B00A2F225 /* Elements+Preview.swift */; };
 		EF81748A292A362B00A2F225 /* visual.txt in Resources */ = {isa = PBXBuildFile; fileRef = EF817485292A362B00A2F225 /* visual.txt */; };
 		EF9D82A32661BBF100616C97 /* SatelliteForecastApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9D827A2661BBF000616C97 /* SatelliteForecastApp.swift */; };
+		FC7A7E242DDEF1040026A8B9 /* SatelliteForecast in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E232DDEF1040026A8B9 /* SatelliteForecast */; };
+		FC7A7E262DDEF1040026A8B9 /* SatelliteForecastImpl in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E252DDEF1040026A8B9 /* SatelliteForecastImpl */; };
+		FC7A7E282DDEF1040026A8B9 /* SatelliteForecastImplWiring in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E272DDEF1040026A8B9 /* SatelliteForecastImplWiring */; };
+		FC7A7E2B2DDF0E9A0026A8B9 /* SatelliteForecast in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E2A2DDF0E9A0026A8B9 /* SatelliteForecast */; };
+		FC7A7E2D2DDF0E9A0026A8B9 /* SatelliteForecastImpl in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E2C2DDF0E9A0026A8B9 /* SatelliteForecastImpl */; };
+		FC7A7E2F2DDF0E9A0026A8B9 /* SatelliteForecastImplWiring in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E2E2DDF0E9A0026A8B9 /* SatelliteForecastImplWiring */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -33,11 +38,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		3932167AA31CE53CA54BAEE3 /* Pods-SatelliteForecastApp-SatelliteForecastTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecastApp-SatelliteForecastTests.release.xcconfig"; path = "Target Support Files/Pods-SatelliteForecastApp-SatelliteForecastTests/Pods-SatelliteForecastApp-SatelliteForecastTests.release.xcconfig"; sourceTree = "<group>"; };
-		AC142A702A08126D7FE9A76D /* Pods-SatelliteForecastApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecastApp.debug.xcconfig"; path = "Target Support Files/Pods-SatelliteForecastApp/Pods-SatelliteForecastApp.debug.xcconfig"; sourceTree = "<group>"; };
-		C29A9D5D55929796BC8D229F /* Pods-SatelliteForecastApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecastApp.release.xcconfig"; path = "Target Support Files/Pods-SatelliteForecastApp/Pods-SatelliteForecastApp.release.xcconfig"; sourceTree = "<group>"; };
-		D9945F4772B6B668C069E6F6 /* Pods_SatelliteForecastApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SatelliteForecastApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EF16811A27CF0248001BA9C3 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		EF2EF4D727B11C0A000D5EC8 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		EF817479292A355700A2F225 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		EF81747D292A360500A2F225 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -50,8 +50,6 @@
 		EF9D827A2661BBF000616C97 /* SatelliteForecastApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteForecastApp.swift; sourceTree = "<group>"; };
 		EF9D827C2661BBF000616C97 /* Icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Icons.xcassets; sourceTree = "<group>"; };
 		EF9D82812661BBF000616C97 /* SatelliteForecastApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SatelliteForecastApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		F2DA9CED75267C2A76268E02 /* Pods_SatelliteForecastApp_SatelliteForecastTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SatelliteForecastApp_SatelliteForecastTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		F504DDA258D8B037E084EA3D /* Pods-SatelliteForecastApp-SatelliteForecastTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SatelliteForecastApp-SatelliteForecastTests.debug.xcconfig"; path = "Target Support Files/Pods-SatelliteForecastApp-SatelliteForecastTests/Pods-SatelliteForecastApp-SatelliteForecastTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,24 +57,18 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9D5F2E9FA1BC31892A719C75 /* Pods_SatelliteForecastApp.framework in Frameworks */,
+				FC7A7E282DDEF1040026A8B9 /* SatelliteForecastImplWiring in Frameworks */,
+				FC7A7E242DDEF1040026A8B9 /* SatelliteForecast in Frameworks */,
+				FC7A7E2D2DDF0E9A0026A8B9 /* SatelliteForecastImpl in Frameworks */,
+				FC7A7E2F2DDF0E9A0026A8B9 /* SatelliteForecastImplWiring in Frameworks */,
+				FC7A7E262DDEF1040026A8B9 /* SatelliteForecastImpl in Frameworks */,
+				FC7A7E2B2DDF0E9A0026A8B9 /* SatelliteForecast in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		38032A026A794DBA01ED4368 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				AC142A702A08126D7FE9A76D /* Pods-SatelliteForecastApp.debug.xcconfig */,
-				C29A9D5D55929796BC8D229F /* Pods-SatelliteForecastApp.release.xcconfig */,
-				F504DDA258D8B037E084EA3D /* Pods-SatelliteForecastApp-SatelliteForecastTests.debug.xcconfig */,
-				3932167AA31CE53CA54BAEE3 /* Pods-SatelliteForecastApp-SatelliteForecastTests.release.xcconfig */,
-			);
-			path = Pods;
-			sourceTree = "<group>";
-		};
 		EF81747B292A360500A2F225 /* AppDelegate */ = {
 			isa = PBXGroup;
 			children = (
@@ -103,8 +95,6 @@
 				EF2EF4D727B11C0A000D5EC8 /* README.md */,
 				EF9D82792661BBEF00616C97 /* SatelliteForecastApp */,
 				EF9D82822661BBF000616C97 /* Products */,
-				38032A026A794DBA01ED4368 /* Pods */,
-				F1B85217DF19E2F00F017103 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -129,16 +119,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		F1B85217DF19E2F00F017103 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				EF16811A27CF0248001BA9C3 /* XCTest.framework */,
-				D9945F4772B6B668C069E6F6 /* Pods_SatelliteForecastApp.framework */,
-				F2DA9CED75267C2A76268E02 /* Pods_SatelliteForecastApp_SatelliteForecastTests.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -146,12 +126,10 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = EF9D82AB2661BBF100616C97 /* Build configuration list for PBXNativeTarget "SatelliteForecastApp" */;
 			buildPhases = (
-				9DF68ECCE5B7F58322ECC7C6 /* [CP] Check Pods Manifest.lock */,
 				EF9D827D2661BBF000616C97 /* Sources */,
 				EF9D827E2661BBF000616C97 /* Frameworks */,
 				EFAE1EF5266862B500A18A42 /* Embed Frameworks */,
 				EF5A907F269FA50400EADA2D /* Resources */,
-				89B01093B5E460FBB0F17F29 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -168,8 +146,9 @@
 		EF9D82752661BBEF00616C97 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1320;
-				LastUpgradeCheck = 1250;
+				LastUpgradeCheck = 1630;
 				TargetAttributes = {
 					EF9D82802661BBF000616C97 = {
 						CreatedOnToolsVersion = 12.4;
@@ -185,6 +164,9 @@
 				Base,
 			);
 			mainGroup = EF9D82742661BBEF00616C97;
+			packageReferences = (
+				FC7A7E292DDF0E9A0026A8B9 /* XCLocalSwiftPackageReference "Frameworks/SatelliteForecast" */,
+			);
 			productRefGroup = EF9D82822661BBF000616C97 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -208,48 +190,6 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		89B01093B5E460FBB0F17F29 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SatelliteForecastApp/Pods-SatelliteForecastApp-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SatelliteForecastApp/Pods-SatelliteForecastApp-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SatelliteForecastApp/Pods-SatelliteForecastApp-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		9DF68ECCE5B7F58322ECC7C6 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SatelliteForecastApp-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		EF9D827D2661BBF000616C97 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -270,6 +210,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -301,8 +242,11 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 52RD2GH5DP;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_TESTING_SEARCH_PATHS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -333,6 +277,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -364,8 +309,11 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 52RD2GH5DP;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTING_SEARCH_PATHS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -387,7 +335,6 @@
 		};
 		EF9D82AC2661BBF100616C97 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AC142A702A08126D7FE9A76D /* Pods-SatelliteForecastApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -395,7 +342,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "SatelliteForecastApp/Preview\\ Content";
-				DEVELOPMENT_TEAM = 52RD2GH5DP;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/SatelliteForecastApp/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
@@ -414,7 +360,6 @@
 		};
 		EF9D82AD2661BBF100616C97 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C29A9D5D55929796BC8D229F /* Pods-SatelliteForecastApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -422,7 +367,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "SatelliteForecastApp/Preview\\ Content";
-				DEVELOPMENT_TEAM = 52RD2GH5DP;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/SatelliteForecastApp/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
@@ -462,6 +406,40 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		FC7A7E292DDF0E9A0026A8B9 /* XCLocalSwiftPackageReference "Frameworks/SatelliteForecast" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Frameworks/SatelliteForecast;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		FC7A7E232DDEF1040026A8B9 /* SatelliteForecast */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SatelliteForecast;
+		};
+		FC7A7E252DDEF1040026A8B9 /* SatelliteForecastImpl */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SatelliteForecastImpl;
+		};
+		FC7A7E272DDEF1040026A8B9 /* SatelliteForecastImplWiring */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SatelliteForecastImplWiring;
+		};
+		FC7A7E2A2DDF0E9A0026A8B9 /* SatelliteForecast */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SatelliteForecast;
+		};
+		FC7A7E2C2DDF0E9A0026A8B9 /* SatelliteForecastImpl */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SatelliteForecastImpl;
+		};
+		FC7A7E2E2DDF0E9A0026A8B9 /* SatelliteForecastImplWiring */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SatelliteForecastImplWiring;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = EF9D82752661BBEF00616C97 /* Project object */;
 }

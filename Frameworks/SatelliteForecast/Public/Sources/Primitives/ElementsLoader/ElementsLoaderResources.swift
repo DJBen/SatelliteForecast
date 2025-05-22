@@ -7,7 +7,6 @@
 
 import BTree
 import Foundation
-import SatelliteForecast
 import SatelliteKit
 
 public struct ElementsLoaderResources {

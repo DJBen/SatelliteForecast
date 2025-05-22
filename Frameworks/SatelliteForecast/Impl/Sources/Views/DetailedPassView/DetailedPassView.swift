@@ -133,7 +133,7 @@ extension DetailedPassView {
         static let title = NSLocalizedString(
             "DetailedPassView.navigationBar.title",
             tableName: nil,
-            bundle: .satelliteForecastImplResourcesBundle,
+            bundle: .module,
             value: "Schedule alarm",
             comment: "Navigation title of detailed pass view."
         )
@@ -141,7 +141,7 @@ extension DetailedPassView {
         static let dismiss = NSLocalizedString(
             "DetailedPassView.navigationBar.discard",
             tableName: nil,
-            bundle: .satelliteForecastImplResourcesBundle,
+            bundle: .module,
             value: "Dismiss",
             comment: "Title of dismiss button of detailed pass view."
         )

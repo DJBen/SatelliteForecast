@@ -96,7 +96,7 @@ extension SelectedStarLabel {
                 format: NSLocalizedString(
                     "SelectedStarLabel.magnitudeText.format",
                     tableName: nil,
-                    bundle: .satelliteForecastImplResourcesBundle,
+                    bundle: .module,
                     value: "Magnitude %.1f star",
                     comment: "Description of the star magnitude in SelectedStarLabel."
                 ),
@@ -109,7 +109,7 @@ extension SelectedStarLabel {
                 format: NSLocalizedString(
                     "SelectedStarLabel.rightAscensionText.format",
                     tableName: nil,
-                    bundle: .satelliteForecastImplResourcesBundle,
+                    bundle: .module,
                     value: "RA: %@",
                     comment: "Description of the right ascension in SelectedStarLabel."
                 ),
@@ -122,7 +122,7 @@ extension SelectedStarLabel {
                 format: NSLocalizedString(
                     "SelectedStarLabel.declinationText.format",
                     tableName: nil,
-                    bundle: .satelliteForecastImplResourcesBundle,
+                    bundle: .module,
                     value: "DEC: %@",
                     comment: "Description of the declination in SelectedStarLabel."
                 ),

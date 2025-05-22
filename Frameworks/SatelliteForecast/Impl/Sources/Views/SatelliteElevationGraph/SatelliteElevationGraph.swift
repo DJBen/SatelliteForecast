@@ -266,7 +266,7 @@ public struct SatelliteElevationGraph: View {
 
     @ViewBuilder private var currentIndicator: some View {
         julianDateRangePresent { julianDateRange in
-            let state = viewModel.state
+            let _ = viewModel.state
             let x = (currentJulianDate - julianDateRange.lowerBound) / (julianDateRange.upperBound - julianDateRange.lowerBound)
             let y = 1 - (currentSnapshot.position.elev + 90) / 180
 

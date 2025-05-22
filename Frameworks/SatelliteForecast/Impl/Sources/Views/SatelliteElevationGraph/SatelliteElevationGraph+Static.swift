@@ -10,6 +10,7 @@ import Foundation
 import CoreGraphics
 import SatelliteForecast
 import SatelliteKit
+import UIKit
 
 extension SatelliteElevationGraph {
     private static func snapshotPoint(_ snapshot: SatelliteSnapshot, xPercent: CGFloat, rect: CGRect) -> CGPoint {

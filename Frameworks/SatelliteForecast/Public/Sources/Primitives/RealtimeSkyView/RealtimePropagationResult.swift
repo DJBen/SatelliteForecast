@@ -5,7 +5,7 @@
 //  Created by Ben Lu on 3/3/22.
 //
 
-import SatelliteForecast
+import Foundation
 import SatelliteKit
 
 public struct RealtimePropagationResult {

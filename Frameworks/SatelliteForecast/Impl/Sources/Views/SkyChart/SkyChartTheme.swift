@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 public enum SkyChartTheme {
     public static func starColor(
@@ -13,7 +14,7 @@ public enum SkyChartTheme {
     ) -> UIColor {
         UIColor(
             named: "star",
-            in: .satelliteForecastImplResourcesBundle,
+            in: .module,
             compatibleWith: traitCollection
         )!
     }
@@ -23,7 +24,7 @@ public enum SkyChartTheme {
     ) -> UIColor {
         UIColor(
             named: "constellationLine",
-            in: .satelliteForecastImplResourcesBundle,
+            in: .module,
             compatibleWith: traitCollection
         )!
     }
@@ -33,7 +34,7 @@ public enum SkyChartTheme {
     ) -> UIColor {
         UIColor(
             named: "skyChartStroke",
-            in: .satelliteForecastImplResourcesBundle,
+            in: .module,
             compatibleWith: traitCollection
         )!
     }
@@ -44,7 +45,7 @@ public enum SkyChartTheme {
     ) -> UIColor {
         UIColor(
             named: illuminated ? "satellitePath_illuminated" : "satellitePath_notIlluminated",
-            in: .satelliteForecastImplResourcesBundle,
+            in: .module,
             compatibleWith: traitCollection
         )!
     }

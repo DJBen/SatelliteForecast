@@ -10,6 +10,7 @@ import CombineRex
 import StarryNight
 import SatelliteKit
 import SatelliteForecast
+import UIKit
 
 extension EffectMiddleware where InputActionType == BackgroundSkyViewAction, OutputActionType == BackgroundSkyViewOutput, StateType == BackgroundSkyResources, Dependencies == Void {
     public static var backgroundSky: EffectMiddleware<BackgroundSkyViewAction, BackgroundSkyViewOutput, BackgroundSkyResources, Void> {
@@ -47,12 +48,12 @@ extension EffectMiddleware where InputActionType == BackgroundSkyViewAction, Out
                                 julianDate: julianDate,
                                 starColor: UIColor(
                                     named: "star",
-                                    in: .satelliteForecastImplResourcesBundle,
+                                    in: .module,
                                     compatibleWith: traitCollection
                                 )!,
                                 constellationLineColor: UIColor(
                                     named: "constellationLine",
-                                    in: .satelliteForecastImplResourcesBundle,
+                                    in: .module,
                                     compatibleWith: traitCollection
                                 )!,
                                 magToRadius: key.configs.starMagToDisplayRadiusMappingFunction.apply

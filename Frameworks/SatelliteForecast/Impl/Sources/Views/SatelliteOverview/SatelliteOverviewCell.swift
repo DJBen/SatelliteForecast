@@ -17,7 +17,7 @@ struct SatelliteOverviewSpecialSatelliteCell: View {
     @Environment(\.colorScheme) private var colorScheme
 
     @ViewBuilder private func background(satellite: SatellitesOfSpecialInterest) -> some View {
-        Image(String(satellite.noradIndex), bundle: .satelliteForecastImplResourcesBundle)
+        Image(String(satellite.noradIndex), bundle: .module)
             .resizable()
             .aspectRatio(contentMode: .fill)
     }
@@ -118,7 +118,7 @@ extension SatelliteOverviewSpecialSatelliteCell {
             return NSLocalizedString(
                 "SatelliteOverview.sectionOverviewCell.title.satellite.iss",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "International Space Station",
                 comment: "The title of ISS, displayed in the 'Satellite of special interest' section."
             )
@@ -126,7 +126,7 @@ extension SatelliteOverviewSpecialSatelliteCell {
             return NSLocalizedString(
                 "SatelliteOverview.sectionOverviewCell.title.satellite.tianhe",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "Tianhe (CSS Core Module)",
                 comment: "The title of Tianhe, displayed in the 'Satellite of special interest' section."
             )
@@ -141,7 +141,7 @@ extension SatelliteOverviewSpecialSatelliteCell {
             return NSLocalizedString(
                 "SatelliteOverview.sectionOverviewCell.description.satellite.iss",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: """
                     A multinational collaborative project featuring the largest spacecraft in orbit since 1998.
                     """,
@@ -151,7 +151,7 @@ extension SatelliteOverviewSpecialSatelliteCell {
             return NSLocalizedString(
                 "SatelliteOverview.sectionOverviewCell.description.satellite.tianhe",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "The first module of China's Tiangong space station.",
                 comment: "The description of Tianhe in overview page."
             )
@@ -168,7 +168,7 @@ extension SatelliteOverviewCategoryCell {
             return NSLocalizedString(
                 "SatelliteOverview.sectionOverviewCell.category.brightest100",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "Brightest 100 satellites",
                 comment: "The section header for the brightest 100 satellites"
             )
@@ -176,7 +176,7 @@ extension SatelliteOverviewCategoryCell {
             return NSLocalizedString(
                 "SatelliteOverview.sectionOverviewCell.category.last30DayLaunches",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "Launches in the past 30 days",
                 comment: "The section header for launches in the past 30 days"
             )
@@ -184,7 +184,7 @@ extension SatelliteOverviewCategoryCell {
             return NSLocalizedString(
                 "SatelliteOverview.sectionOverviewCell.category.active",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "All active satellites",
                 comment: "The section header for all active satellites"
             )

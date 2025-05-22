@@ -7,7 +7,7 @@
 
 import BTree
 import SatelliteKit
-import SatelliteForecast
+import UIKit
 
 /// A key uniquely determining the rendering of a sky chart's background. Same key is guaranteed to render the same background.
 public struct BackgroundSkyKey: Equatable, Hashable {

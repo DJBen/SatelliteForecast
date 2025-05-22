@@ -6,7 +6,6 @@
 //
 
 import SatelliteForecast
-import SatelliteForecastImpl
 import SatelliteKit
 import SwiftUI
 import SwiftRex
@@ -199,7 +198,7 @@ extension SatelliteOverviewViewImpl {
     static let satelliteOfSpecialInterestSectionTitle = NSLocalizedString(
         "SatelliteListView.sectionOverviewView.section.satellitesOfSpecialInterest",
         tableName: nil,
-        bundle: .satelliteForecastImplResourcesBundle,
+        bundle: .module,
         value: "Satellites of special interest",
         comment: "The section title for satellites of special interest"
     )
@@ -207,7 +206,7 @@ extension SatelliteOverviewViewImpl {
     static let categoriesSectionTitle = NSLocalizedString(
         "SatelliteListView.sectionOverviewView.section.satellitesByCategories",
         tableName: nil,
-        bundle: .satelliteForecastImplResourcesBundle,
+        bundle: .module,
         value: "Satellites by categories",
         comment: "The section title for satellites grouped by categories"
     )

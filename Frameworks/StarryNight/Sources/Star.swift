@@ -9,7 +9,6 @@
 import Foundation
 import SatelliteKit
 import SQLite
-import Regex
 
 public struct Star: Hashable, Equatable {
 
@@ -178,22 +177,20 @@ public struct Star: Hashable, Equatable {
         }
         let query: Table
         let nonSolar = StarryNight.Stars.dbInternalId > 0
-        switch name {
-        case Regex("hr\\s*(\\d+)", options: [.ignoreCase]):
-            let match = Regex.lastMatch!
-            let hr = Int(match.captures[0]!)!
-            query = StarryNight.Stars.table.filter(StarryNight.Stars.dbHr == hr && nonSolar)
-        case Regex("hd\\s*(\\d+)", options: [.ignoreCase]):
-            let match = Regex.lastMatch!
-            let hd = Int(match.captures[0]!)!
-            query = StarryNight.Stars.table.filter(StarryNight.Stars.dbHd == hd && nonSolar)
-        case Regex("hip\\s*(\\d+)", options: [.ignoreCase]):
-            let match = Regex.lastMatch!
-            let hip = Int(match.captures[0]!)!
-            query = StarryNight.Stars.table.filter(StarryNight.Stars.dbHip == hip && nonSolar)
-        default:
+        
+        if let hrMatch = try? #/hr\s*(\d+)/#.ignoresCase().firstMatch(in: name),
+           let hrNumber = Int(hrMatch.1) {
+            query = StarryNight.Stars.table.filter(StarryNight.Stars.dbHr == hrNumber && nonSolar)
+        } else if let hdMatch = try? #/hd\s*(\d+)/#.ignoresCase().firstMatch(in: name),
+                  let hdNumber = Int(hdMatch.1) {
+            query = StarryNight.Stars.table.filter(StarryNight.Stars.dbHd == hdNumber && nonSolar)
+        } else if let hipMatch = try? #/hip\s*(\d+)/#.ignoresCase().firstMatch(in: name),
+                   let hipNumber = Int(hipMatch.1) {
+            query = StarryNight.Stars.table.filter(StarryNight.Stars.dbHip == hipNumber && nonSolar)
+        } else {
             query = StarryNight.Stars.table.filter(StarryNight.Stars.dbProperName.like("%\(name)%") && nonSolar)
         }
+        
         return (try? StarryNight.db.prepare(query).map { Star(row: $0) }) ?? []
     }
 

@@ -5,11 +5,12 @@
 //  Created by Ben Lu on 6/23/21.
 //
 
+import Foundation
 import SatelliteCatalog
 import SQLite
 
 extension SatelliteCatalog {
-    static let DB = try! Connection(Bundle.SatelliteCatalogImpl_SQLiteResourcesBundle.path(forResource: "satellites", ofType: "sqlite")!)
+    static let DB = try! Connection(Bundle.module.path(forResource: "satellites", ofType: "sqlite")!)
 
     enum SatCatTable {
         static let tableName = Table("SatCat")

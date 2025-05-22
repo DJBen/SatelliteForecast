@@ -83,7 +83,7 @@ extension EffectMiddleware where InputActionType == ElementsPropagatorAction, Ou
                     return subject
                         .eraseToAnyPublisher()
                 }
-            case .recalculatePasses(let params):
+            case .recalculatePasses(/*let params*/_):
                 return .doNothing
             case .purgePassesAndSnapshots:
                 return .doNothing
