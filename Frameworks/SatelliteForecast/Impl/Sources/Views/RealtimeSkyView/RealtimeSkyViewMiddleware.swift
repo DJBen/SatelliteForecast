@@ -8,6 +8,7 @@
 import BTree
 import Combine
 import CombineRex
+import Foundation
 import SatelliteForecast
 import SatelliteKit
 

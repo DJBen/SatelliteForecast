@@ -322,12 +322,12 @@ struct ImageRenderer_Previews: PreviewProvider {
                                         julianDate: pass.rise.julianDate,
                                         starColor: UIColor(
                                             named: "star",
-                                            in: .satelliteForecastImplResourcesBundle,
+                                            in: .module,
                                             compatibleWith: nil
                                         )!,
                                         constellationLineColor: UIColor(
                                             named: "constellationLine",
-                                            in: .satelliteForecastImplResourcesBundle,
+                                            in: .module,
                                             compatibleWith: nil
                                         )!,
                                         drawPlanaryBodies: true,
@@ -335,7 +335,7 @@ struct ImageRenderer_Previews: PreviewProvider {
                                         border: BackgroundSkyRenderParams.Border(
                                             borderColor: UIColor(
                                                 named: "skyChartStroke",
-                                                in: .satelliteForecastImplResourcesBundle,
+                                                in: .module,
                                                 compatibleWith: nil
                                             )!
                                         ),

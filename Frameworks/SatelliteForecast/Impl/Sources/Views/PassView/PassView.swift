@@ -233,7 +233,7 @@ extension PassView {
         let format = NSLocalizedString(
             "PassView.descriptionToolbar.text",
             tableName: nil,
-            bundle: .satelliteForecastImplResourcesBundle,
+            bundle: .module,
             value: "Rises from %1$@ and sets into %2$@",
             comment: "The toolbar of the pass view describing the direction of the pass. The first and second arguments correspond to the directions of rising and setting."
         )
@@ -275,9 +275,6 @@ struct PassView_Previews: PreviewProvider {
             quality: .preview,
             julianDateProvider: { Date().julianDate }
         )
-        let brightest100: Map<UInt, SatelliteInfo> = [
-            elements.noradIndex: satelliteInfo
-        ]
         let elementPropagatorResources = ElementsPropagatorResources(
             satelliteTrails: [
                 elements.noradIndex: SatelliteTrails(

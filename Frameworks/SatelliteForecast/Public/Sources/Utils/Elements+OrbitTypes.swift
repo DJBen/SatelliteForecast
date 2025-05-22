@@ -5,6 +5,7 @@
 //  Created by Ben Lu on 3/8/22.
 //
 
+import Foundation
 import SatelliteKit
 
 public enum OrbitTypeByAltitude {
@@ -21,7 +22,7 @@ public enum OrbitTypeByAltitude {
 extension Elements {
     public var orbitTypeByAltitude: OrbitTypeByAltitude {
         let semimajorAxis = (a₀ - 1) * EarthConstants.Rₑ
-        let period = M_PI * 2 / n₀
+        let period = .pi * 2 / n₀
         if period <= 128 && e₀ < 0.25 {
             return .leo
         } else if e₀ < 0.1 && abs(35786 - semimajorAxis) < 1000 {

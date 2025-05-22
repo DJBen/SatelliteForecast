@@ -7,10 +7,10 @@
 
 import BTree
 
-extension BTree: Equatable where Key: Equatable, Value: Equatable {
+extension BTree: @retroactive Equatable where Key: Equatable, Value: Equatable {
 
 }
 
-extension Map: Equatable where Key: Equatable, Value: Equatable {
+extension Map: @retroactive Equatable where Key: Equatable, Value: Equatable {
 
 }

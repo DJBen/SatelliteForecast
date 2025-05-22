@@ -5,6 +5,7 @@
 //  Created by Ben Lu on 3/6/22.
 //
 
+import Foundation
 import SatelliteKit
 import SatelliteForecast
 

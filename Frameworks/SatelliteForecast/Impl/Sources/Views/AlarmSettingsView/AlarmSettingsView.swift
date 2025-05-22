@@ -12,7 +12,6 @@ import CombineRextensions
 import CoreLocation
 import SatelliteKit
 import SatelliteForecast
-import SatelliteForecastImpl
 
 public enum AlarmSettingsViewAction {
     case deleteNotifications(ids: Set<String>)
@@ -149,7 +148,7 @@ extension AlarmSettingsView {
             beforeFormat = NSLocalizedString(
                 "AlarmSettingsView.alarmOffsetDescription.rise",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "%@ before rise",
                 comment: "The timing and offset description for the alarm in the alarm settings view, rise."
             )
@@ -158,7 +157,7 @@ extension AlarmSettingsView {
             beforeFormat = NSLocalizedString(
                 "AlarmSettingsView.alarmOffsetDescription.transit",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "%@ before highest point",
                 comment: "The timing and offset description for the alarm in the alarm settings view, transit."
             )
@@ -167,7 +166,7 @@ extension AlarmSettingsView {
             beforeFormat = NSLocalizedString(
                 "AlarmSettingsView.alarmOffsetDescription.set",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "%@ before set",
                 comment: "The timing and offset description for the alarm in the alarm settings view, set."
             )
@@ -176,7 +175,7 @@ extension AlarmSettingsView {
             beforeFormat = NSLocalizedString(
                 "AlarmSettingsView.alarmOffsetDescription.highestIlluminated",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "%@ before highest illuminated",
                 comment: "The timing and offset description for the alarm in the alarm settings view, highest illuminated."
             )
@@ -196,7 +195,7 @@ extension AlarmSettingsView {
         let format = NSLocalizedString(
             "AlarmSettingsView.passDescription",
             tableName: nil,
-            bundle: .satelliteForecastImplResourcesBundle,
+            bundle: .module,
             value: "Rises at %@ and sets at %@.",
             comment: "The pass description for each alarm in the alarm settings view"
         )
@@ -212,7 +211,7 @@ extension AlarmSettingsView {
         let visibleFormat = NSLocalizedString(
             "AlarmSettingsView.passVisibilityDescription.visible",
             tableName: nil,
-            bundle: .satelliteForecastImplResourcesBundle,
+            bundle: .module,
             value: "Max visible elevation %.1f degrees.",
             comment: "The pass description for each alarm in the alarm settings view"
         )
@@ -220,7 +219,7 @@ extension AlarmSettingsView {
         let daytimeFormat = NSLocalizedString(
             "AlarmSettingsView.passVisibilityDescription.daytime",
             tableName: nil,
-            bundle: .satelliteForecastImplResourcesBundle,
+            bundle: .module,
             value: "The pass occurs during daylight with a max elevation of %.1f degrees.",
             comment: "The pass description for each alarm in the alarm settings view"
         )
@@ -228,7 +227,7 @@ extension AlarmSettingsView {
         let unlitFormat = NSLocalizedString(
             "AlarmSettingsView.passVisibilityDescription.unlit",
             tableName: nil,
-            bundle: .satelliteForecastImplResourcesBundle,
+            bundle: .module,
             value: "The pass is not illuminated with a max elevation of %.1f degrees.",
             comment: "The pass description for each alarm in the alarm settings view"
         )

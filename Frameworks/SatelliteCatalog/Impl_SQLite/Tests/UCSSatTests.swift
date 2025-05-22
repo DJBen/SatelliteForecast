@@ -12,7 +12,7 @@ import SQLite
 
 class UCSSatTests: XCTestCase {
     func testReadingUSCSat() throws {
-        let DB = try! Connection(Bundle.SatelliteCatalogImpl_SQLiteResourcesBundle.path(forResource: "satellites", ofType: "sqlite")!)
+        let DB = try! Connection(Bundle.module.path(forResource: "satellites", ofType: "sqlite")!)
 
         let rows = try DB.prepare(UCSSat.Table.tableName)
         for row in rows {

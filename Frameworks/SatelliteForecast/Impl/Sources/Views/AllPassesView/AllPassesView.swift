@@ -490,7 +490,7 @@ extension AllPassesView {
         let format = NSLocalizedString(
             "AllPassesView.searchPassRangeToolbar.text",
             tableName: nil,
-            bundle: .satelliteForecastImplResourcesBundle,
+            bundle: .module,
             value: "Showing passes up to %1$@",
             comment: "The auxiliary text under the navigation title detailing the search date range of the passes."
         )
@@ -506,7 +506,7 @@ extension AllPassesView {
             let altitudeFormat = NSLocalizedString(
                 "AllPassesView.missionControlHeader.altitudeFormat",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "%@ km above ground",
                 comment: "The altitude format of mission control header"
             )
@@ -523,7 +523,7 @@ extension AllPassesView {
                 let format = NSLocalizedString(
                     "AllPassesView.section.observer.body",
                     tableName: nil,
-                    bundle: .satelliteForecastImplResourcesBundle,
+                    bundle: .module,
                     value: "You are observing from %@.",
                     comment: "The body of observer info"
                 )
@@ -542,7 +542,7 @@ extension AllPassesView {
                 NSLocalizedString(
                     "AllPassesView.section.visible.header",
                     tableName: nil,
-                    bundle: .satelliteForecastImplResourcesBundle,
+                    bundle: .module,
                     value: "Visible Passes",
                     comment: "The header of visible passes"
                 )
@@ -552,7 +552,7 @@ extension AllPassesView {
                 NSLocalizedString(
                     "AllPassesView.section.visible.headerCaption",
                     tableName: nil,
-                    bundle: .satelliteForecastImplResourcesBundle,
+                    bundle: .module,
                     value: """
                     Satellites can be seen when the sky is dark enough while still being \
                     illuminated by the sun. Viewing condition is best short after sunset and \
@@ -568,7 +568,7 @@ extension AllPassesView {
                 NSLocalizedString(
                     "AllPassesView.section.invisible.header",
                     tableName: nil,
-                    bundle: .satelliteForecastImplResourcesBundle,
+                    bundle: .module,
                     value: "Invisible Passes",
                     comment: "The header of invisible passes"
                 )
@@ -578,7 +578,7 @@ extension AllPassesView {
                 NSLocalizedString(
                     "AllPassesView.section.invisible.headerCaption",
                     tableName: nil,
-                    bundle: .satelliteForecastImplResourcesBundle,
+                    bundle: .module,
                     value: """
                     Satellites faded into earth's shadow cannot be seen; \
                     like stars, they cannot be seen in broad daylight either.

@@ -161,7 +161,7 @@ extension PassPreviewCell {
             return NSLocalizedString(
                 "PassPreviewCell.visibilityText.visible",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "Visible",
                 comment: "The pass is visible"
             )
@@ -169,7 +169,7 @@ extension PassPreviewCell {
             return NSLocalizedString(
                 "PassPreviewCell.visibilityText.daylight",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "Daylight",
                 comment: "The pass happens during daylight"
             )
@@ -177,7 +177,7 @@ extension PassPreviewCell {
             return NSLocalizedString(
                 "PassPreviewCell.visibilityText.unlit",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "Unlit",
                 comment: "The pass happens entirely unlit"
             )
@@ -196,7 +196,7 @@ extension PassPreviewCell {
             let format = NSLocalizedString(
                 "PassPreviewCell.relativeDate.riseInTheFuture",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "%@",
                 comment: "A string describing that the satellite rises in a specific time in the future"
             )
@@ -209,7 +209,7 @@ extension PassPreviewCell {
             let format = NSLocalizedString(
                 "PassPreviewCell.relativeDate.alreadyPassed",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "%@",
                 comment: "A string describing that the satellite has already set in a specific time in the past"
             )
@@ -222,7 +222,7 @@ extension PassPreviewCell {
             return NSLocalizedString(
                 "PassPreviewCell.relativeDate.passing",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "Passing now",
                 comment: "A string describing that the satellite is currently passing"
             )

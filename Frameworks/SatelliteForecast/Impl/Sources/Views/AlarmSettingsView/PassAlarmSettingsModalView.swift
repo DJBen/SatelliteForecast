@@ -301,7 +301,7 @@ extension PassAlarmSettingsModalView {
         static let title = NSLocalizedString(
             "PassAlarmSettingsModalView.navigationBar.title",
             tableName: nil,
-            bundle: .satelliteForecastImplResourcesBundle,
+            bundle: .module,
             value: "Schedule alarm",
             comment: "Navigation title of pass alarm settings."
         )
@@ -309,7 +309,7 @@ extension PassAlarmSettingsModalView {
         static let viewAlarmTitle = NSLocalizedString(
             "PassAlarmSettingsModalView.navigationBar.title",
             tableName: nil,
-            bundle: .satelliteForecastImplResourcesBundle,
+            bundle: .module,
             value: "View alarm",
             comment: "Navigation title of pass alarm settings, view alarm"
         )
@@ -317,7 +317,7 @@ extension PassAlarmSettingsModalView {
         static let dismiss = NSLocalizedString(
             "PassAlarmSettingsModalView.navigationBar.discard",
             tableName: nil,
-            bundle: .satelliteForecastImplResourcesBundle,
+            bundle: .module,
             value: "Dismiss",
             comment: "Title of discard button of pass alarm settings."
         )
@@ -326,7 +326,7 @@ extension PassAlarmSettingsModalView {
     static let leadTimeLabel = NSLocalizedString(
         "PassAlarmSettingsModalView.leadTimeLabel.title",
         tableName: nil,
-        bundle: .satelliteForecastImplResourcesBundle,
+        bundle: .module,
         value: "Remind me ahead of time...",
         comment: "Title of lead time label of pass alarm settings."
     )
@@ -342,7 +342,7 @@ extension PassAlarmSettingsModalView {
         static let title = NSLocalizedString(
             "PassAlarmSettingsModalView.confirmButton.title",
             tableName: nil,
-            bundle: .satelliteForecastImplResourcesBundle,
+            bundle: .module,
             value: "Schedule alarm",
             comment: "Title of confirm button of pass alarm settings."
         )
@@ -352,7 +352,7 @@ extension PassAlarmSettingsModalView {
         static let title = NSLocalizedString(
             "PassAlarmSettingsModalView.deleteButton.title",
             tableName: nil,
-            bundle: .satelliteForecastImplResourcesBundle,
+            bundle: .module,
             value: "Delete alarm",
             comment: "Title of delete button of pass alarm settings."
         )
@@ -371,7 +371,7 @@ extension PassAlarmSettingsModalView {
         static let rise = NSLocalizedString(
             "PassAlarmSettingsModalView.timingCell.rise",
             tableName: nil,
-            bundle: .satelliteForecastImplResourcesBundle,
+            bundle: .module,
             value: "Upon rising",
             comment: "Description of the alarm timing, rise."
         )
@@ -379,7 +379,7 @@ extension PassAlarmSettingsModalView {
         static let transit = NSLocalizedString(
             "PassAlarmSettingsModalView.timingCell.transit",
             tableName: nil,
-            bundle: .satelliteForecastImplResourcesBundle,
+            bundle: .module,
             value: "Highest point",
             comment: "Description of the alarm timing, transit."
         )
@@ -387,7 +387,7 @@ extension PassAlarmSettingsModalView {
         static let set = NSLocalizedString(
             "PassAlarmSettingsModalView.timingCell.set",
             tableName: nil,
-            bundle: .satelliteForecastImplResourcesBundle,
+            bundle: .module,
             value: "Upon setting",
             comment: "Description of the alarm timing, set."
         )
@@ -395,7 +395,7 @@ extension PassAlarmSettingsModalView {
         static let highestIlluminated = NSLocalizedString(
             "PassAlarmSettingsModalView.timingCell.highestIlluminated",
             tableName: nil,
-            bundle: .satelliteForecastImplResourcesBundle,
+            bundle: .module,
             value: "Highest illuminated",
             comment: "Description of the alarm timing, highest illuminated."
         )

@@ -11,7 +11,6 @@ import MapKit
 import SwiftUI
 import SatelliteKit
 import SatelliteForecast
-import SatelliteForecastImpl
 import SwiftUIVisualEffects
 
 public enum ObserverCellAction {
@@ -236,7 +235,7 @@ extension ObserverCell {
         static let currentLocation: String = NSLocalizedString(
             "SatelliteListView.observerCell.title.currentLocation",
             tableName: nil,
-            bundle: .satelliteForecastImplResourcesBundle,
+            bundle: .module,
             value: "Current location",
             comment: "The current location text, indicating that the observer location is the current location."
         )
@@ -244,7 +243,7 @@ extension ObserverCell {
         static let requiresLocationSelection: String = NSLocalizedString(
             "SatelliteListView.observerCell.title.requiresLocationSelection",
             tableName: nil,
-            bundle: .satelliteForecastImplResourcesBundle,
+            bundle: .module,
             value: "Requires location selection",
             comment: "The text indicating that location service is not available, nor has the user selecetd a location manually."
         )

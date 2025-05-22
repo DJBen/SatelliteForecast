@@ -7,7 +7,6 @@ target 'SatelliteForecastApp' do
   pod "BTree", "~> 4.1.0"
   pod "CombineRex", "~> 0.8.12"
   pod "CombineRextensions"
-  pod "FlagKit"
   pod "SwiftRex", "~> 0.8.12"
   pod "ActivityView", :path => 'Frameworks/ActivityView/Public'
   pod "CombineUtils", :path => 'Frameworks/CombineUtils'
@@ -24,11 +23,6 @@ target 'SatelliteForecastApp' do
   pod "SolarSystem", :path => 'Frameworks/SolarSystem'
   pod "SwiftUIVisualEffects", :path => 'Frameworks/SwiftUIVisualEffects'
 
-  # target 'SatelliteForecastTests' do
-  #   inherit! :complete
-
-  #   pod "TestingExtensions", '~> 0.2.11'
-  # end
 end
 
 post_install do |installer|

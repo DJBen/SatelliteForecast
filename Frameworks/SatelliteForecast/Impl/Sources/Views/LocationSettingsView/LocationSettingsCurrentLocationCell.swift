@@ -8,7 +8,6 @@
 import SwiftUI
 import CoreLocation
 import Contacts
-import SatelliteForecastImpl
 
 public struct LocationSettingsCurrentLocationCell: View {
     var currentLocation: CLLocation?

@@ -18,7 +18,7 @@ public struct QSMag {
     public static var localData: [UInt: QSMag] = loadLocalData()
 
     public static func loadLocalData() -> [UInt: QSMag] {
-        guard let filePath = Bundle.qsMagResourcesBundle.path(forResource: "qs", ofType: "mag") else {
+        guard let filePath = Bundle.module.path(forResource: "qs", ofType: "mag") else {
             fatalError("qs.mag file not found")
         }
         let contents = try! String(contentsOfFile: filePath)
@@ -30,8 +30,8 @@ public struct QSMag {
         let rcsRange = 51..<54
         var results: [UInt: QSMag] = [:]
 
-        for (index, line) in lines.enumerated() {
-            var trimmedLine = line.trimmingCharacters(in: .whitespacesAndNewlines)
+        for line in lines {
+            let trimmedLine = line.trimmingCharacters(in: .whitespacesAndNewlines)
             if trimmedLine.isEmpty {
                 continue
             }

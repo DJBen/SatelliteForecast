@@ -116,7 +116,7 @@ extension EphemeridesManagementView {
     static let emptyText: String = NSLocalizedString(
         "EphemeridesManagementView.emptyText",
         tableName: nil,
-        bundle: .satelliteForecastImplResourcesBundle,
+        bundle: .module,
         value: "No downloaded satellite ephemerides",
         comment: "The empty text for the satellite ephemerides"
     )

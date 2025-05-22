@@ -1,0 +1,59 @@
+{
+  "pins" : [
+    {
+      "identity" : "btree",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/attaswift/BTree",
+      "state" : {
+        "revision" : "83435371ef3c6d98107f5b562a5870a3dfca6243",
+        "version" : "4.1.0"
+      }
+    },
+    {
+      "identity" : "combinerextensions",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SwiftRex/CombineRextensions",
+      "state" : {
+        "branch" : "master",
+        "revision" : "0517b8d371c7496af056951ae519ac75f08ae4a3"
+      }
+    },
+    {
+      "identity" : "reactiveswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ReactiveCocoa/ReactiveSwift.git",
+      "state" : {
+        "revision" : "c5eecb5374ac342e22d46abd333e4c8c698c93cc",
+        "version" : "7.2.0"
+      }
+    },
+    {
+      "identity" : "rxswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ReactiveX/RxSwift.git",
+      "state" : {
+        "revision" : "5dd1907d64f0d36f158f61a466bab75067224893",
+        "version" : "6.9.0"
+      }
+    },
+    {
+      "identity" : "sqlite.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/stephencelis/SQLite.swift.git",
+      "state" : {
+        "revision" : "a95fc6df17d108bd99210db5e8a9bac90fe984b8",
+        "version" : "0.15.3"
+      }
+    },
+    {
+      "identity" : "swiftrex",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SwiftRex/SwiftRex",
+      "state" : {
+        "revision" : "b5b5409c221c5b69bd6b074e84988f90b098e347",
+        "version" : "0.8.12"
+      }
+    }
+  ],
+  "version" : 2
+}

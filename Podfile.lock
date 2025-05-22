@@ -8,7 +8,6 @@ PODS:
   - CombineRexUtils (1.0.0.LOCAL):
     - CombineRex (~> 0.8.12)
   - CombineUtils (1.0.0.LOCAL)
-  - FlagKit (2.2)
   - QSMag (1.0.0.LOCAL)
   - SatelliteCatalog (1.0.0.LOCAL):
     - SatelliteKit (= 1.0.0.LOCAL)
@@ -63,7 +62,6 @@ DEPENDENCIES:
   - CombineRextensions
   - CombineRexUtils (from `Frameworks/CombineRexUtils`)
   - CombineUtils (from `Frameworks/CombineUtils`)
-  - FlagKit
   - QSMag (from `Frameworks/QSMag`)
   - SatelliteCatalog (from `Frameworks/SatelliteCatalog/Public`)
   - SatelliteCatalogImpl_SQLite (from `Frameworks/SatelliteCatalog/Impl_SQLite`)
@@ -82,7 +80,6 @@ SPEC REPOS:
     - BTree
     - CombineRex
     - CombineRextensions
-    - FlagKit
     - SQLite.swift
     - STRegex
     - SwiftRex
@@ -124,13 +121,12 @@ SPEC CHECKSUMS:
   CombineRextensions: f334525cda6b04493782e80491b1aa45c4429f13
   CombineRexUtils: 42fcd7c940bdff6d1fc04e967f2aac49c8130345
   CombineUtils: ec1bdc9ac498e2c10b0c6f608f1993fdac5a7174
-  FlagKit: eca7dc89064b0c986302ba9acefad1bf80a435b1
   QSMag: 89e897ae68175fccc74da3e7777b98e13c40ae68
   SatelliteCatalog: 38e6bac88d020b2e7f79b57a4ba57c287fc2b8f7
   SatelliteCatalogImpl_SQLite: 1a427b86ebea296c136b07ffdd9c81337207cb4b
   SatelliteForecast: 3277567fb203baf229a0d9fb128208b6ed9ff5ea
-  SatelliteForecastImpl: d8904d3e7be99bef951ec81ba162c30b37ebe8e8
-  SatelliteForecastImplWiring: 029a1aee91fee99d92e1783bec47da2922d73f06
+  SatelliteForecastImpl: cf614ee68cd151cfd4df264a10f7bdf8afb3899d
+  SatelliteForecastImplWiring: 36a845fe1eee0d5f49a12af07f43aefaa2e03164
   SatelliteKit: 8304c154ea93df1df7554b011f7c024e7c23934a
   SecondaryTabView: 754b3323f783a6e11cfe984995117233b0182829
   SolarSystem: 14936ad44e1c3b475c4e3c0b744d7a6fe5960e1c
@@ -140,6 +136,6 @@ SPEC CHECKSUMS:
   SwiftRex: 427d06d912bf208c55d54d3fcc5a003d420630c6
   SwiftUIVisualEffects: 3b5949659b8b3dd39dd70a2c7f5a3df57bcd76f8
 
-PODFILE CHECKSUM: 8996dfa8c08df57b271001a4fcecb528132aaf70
+PODFILE CHECKSUM: 3bdb3b9aafd1cfde0e4634cc607a6a20d3c04be3
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.16.2

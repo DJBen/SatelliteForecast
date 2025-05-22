@@ -12,6 +12,7 @@ import SatelliteCatalog
 import SatelliteCatalogImpl_SQLite
 import SatelliteForecast
 import SatelliteKit
+import Foundation
 
 public struct ElementsLoaderImpl {
     public let session: URLSession

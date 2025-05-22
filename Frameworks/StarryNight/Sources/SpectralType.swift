@@ -8,7 +8,6 @@
 
 import Foundation
 import SQLite
-import Regex
 
 public struct SpectralType: CustomStringConvertible {
     public let rawType: String
@@ -35,8 +34,8 @@ public struct SpectralType: CustomStringConvertible {
             return 0
         }
 
-        let fractionSubtype = "\(type)\(subType != nil ? String(format: "%.1f", subType) : String())%"
-        let integerSubtype = "\(type)\(subType != nil ? String(Int(subType)) : String())%"
+        let fractionSubtype = "\(type)\(String(format: "%.1f", subType))%"
+        let integerSubtype = "\(type)\(String(Int(subType)))%"
         if let row = try? StarryNight.db.pluck(
             StarryNight.Spectral.table.select(StarryNight.Spectral.temp).where(StarryNight.Spectral.spectralType.like(fractionSubtype))
         ) {
@@ -58,24 +57,22 @@ public struct SpectralType: CustomStringConvertible {
         // some spectral type may have ambiguity e.g. G8III/IV
         // will remove anything after /
         let unambiguousType = String(str.prefix(while: { $0 != "/" }))
-        switch unambiguousType {
-        case Regex("^(\\w)(\\d(?:\\.\\d)?)?((?:IV|Iab|Ia\\+?|Ib|I+|V)(?:-(?:IV|Iab|Ia\\+?|Ib|I+|V))?)?(.*)"):
-            // do not recognize extended spectral types
-            if let match = Regex.lastMatch, let type = match.captures[0], ["O", "B", "A", "F", "G", "K", "M"].contains(type) {
-                self.type = type
-                subType = doubleOrEmpty(match.captures[1])
-                luminosityClass = match.captures[2]
-                peculiarities = nilIfEmpty(match.captures[3])
-            } else {
-                return nil
-            }
-        default:
+        
+        let pattern = #/^(\w)(\d(?:\.\d)?)?((?:IV|Iab|Ia\+?|Ib|I+|V)(?:-(?:IV|Iab|Ia\+?|Ib|I+|V))?)(.*)/#
+        
+        if let match = try? pattern.firstMatch(in: unambiguousType),
+           ["O", "B", "A", "F", "G", "K", "M"].contains(String(match.1)) {
+            self.type = String(match.1)
+            subType = doubleOrEmpty(match.2)
+            luminosityClass = String(match.3)
+            peculiarities = nilIfEmpty(String(match.4))
+        } else {
             return nil
         }
     }
 }
 
-private func doubleOrEmpty(_ str: String?) -> Double? {
+private func doubleOrEmpty(_ str: (any StringProtocol)?) -> Double? {
     if let str = str, let dblValue = Double(str) {
         return dblValue
     }

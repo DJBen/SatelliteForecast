@@ -5,6 +5,7 @@
 //  Created by Ben Lu on 11/23/22.
 //
 
+import Foundation
 import BTree
 import Combine
 import CombineRex
@@ -42,7 +43,7 @@ extension EffectMiddleware where InputActionType == SatelliteListViewAction, Out
                         )
                     }
                 }
-            case .loadSatellite(_), .retryLoadingSatelliteList(category: _), .selectSatellite(_):
+            case .loadSatellite(_), .retryLoadingSatelliteList(category: _), .selectSatellite(_, category: _):
                 return .doNothing
             }
         }

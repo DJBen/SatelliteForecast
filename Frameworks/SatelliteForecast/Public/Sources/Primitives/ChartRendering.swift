@@ -7,6 +7,8 @@
 
 import SatelliteKit
 import StarryNight
+import CoreGraphics
+import UIKit
 
 public struct SatellitePassPathRenderParams: Equatable {
     public var rect: CGRect

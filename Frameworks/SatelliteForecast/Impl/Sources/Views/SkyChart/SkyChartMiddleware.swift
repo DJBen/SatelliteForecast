@@ -12,6 +12,7 @@ import CombineRex
 import SatelliteForecast
 import SatelliteKit
 import StarryNight
+import UIKit
 
 fileprivate let logger = Logger(subsystem: "io.djben.skyChart", category: "middleware")
 
@@ -50,12 +51,12 @@ extension EffectMiddleware where
                                     snapshotsDuringPass: passSnapshots.snapshots,
                                     illuminatedColor: UIColor(
                                         named: "satellitePath_illuminated",
-                                        in: .satelliteForecastImplResourcesBundle,
+                                        in: .module,
                                         compatibleWith: nil
                                     )!,
                                     unlitColor: UIColor(
                                         named: "satellitePath_notIlluminated",
-                                        in: .satelliteForecastImplResourcesBundle,
+                                        in: .module,
                                         compatibleWith: nil
                                     )!,
                                     arrowSize: quality == .preview ? 8 : 16

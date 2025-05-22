@@ -7,21 +7,21 @@
 
 import CoreGraphics
 
-extension CGPoint: Hashable {
+extension CGPoint: @retroactive Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(x)
         hasher.combine(y)
     }
 }
 
-extension CGSize: Hashable {
+extension CGSize: @retroactive Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(width)
         hasher.combine(height)
     }
 }
 
-extension CGRect: Hashable {
+extension CGRect: @retroactive Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(origin)
         hasher.combine(size)

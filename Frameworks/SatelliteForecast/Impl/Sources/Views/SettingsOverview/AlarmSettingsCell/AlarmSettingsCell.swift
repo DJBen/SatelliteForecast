@@ -8,7 +8,6 @@
 import SwiftUI
 import CombineRex
 import CombineRextensions
-import SatelliteForecastImpl
 
 public enum AlarmSettingsCellAction {
 
@@ -86,7 +85,7 @@ extension AlarmSettingsCell {
         NSLocalizedString(
             "SatelliteOverview.alarmSettingsCell.title",
             tableName: nil,
-            bundle: .satelliteForecastImplResourcesBundle,
+            bundle: .module,
             value: "Manage alarms",
             comment: "The title for alarm settings cell"
         )
@@ -97,7 +96,7 @@ extension AlarmSettingsCell {
             format: NSLocalizedString(
                 "SatelliteOverview.alarmSettingsCell.description",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "%#@alarmCount@",
                 comment: "The description for alarm settings cell when the seller has a number of alarms"
             ),

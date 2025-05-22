@@ -16,6 +16,7 @@ import SatelliteKit
 import SatelliteCatalog
 import StarryNight
 import UserNotifications
+import UIKit
 
 fileprivate let logger = Logger(subsystem: "io.djben.notification", category: "middleware")
 

@@ -8,7 +8,6 @@
 import CombineRex
 import CombineRextensions
 import SatelliteForecast
-import SatelliteForecastImpl
 import SwiftRex
 import SwiftUI
 
@@ -87,7 +86,7 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                 NSLocalizedString(
                     "SettingsOverviewView.alarms.header",
                     tableName: nil,
-                    bundle: .satelliteForecastImplResourcesBundle,
+                    bundle: .module,
                     value: "Alarms",
                     comment: "The section header of the alarms section in settings"
                 )
@@ -99,7 +98,7 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                 NSLocalizedString(
                     "SettingsOverviewView.observer.header",
                     tableName: nil,
-                    bundle: .satelliteForecastImplResourcesBundle,
+                    bundle: .module,
                     value: "Observer location",
                     comment: "The section header of the observer section in settings"
                 )
@@ -111,7 +110,7 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                 NSLocalizedString(
                     "SettingsOverviewView.ephemeridesManager.header",
                     tableName: nil,
-                    bundle: .satelliteForecastImplResourcesBundle,
+                    bundle: .module,
                     value: "Downloaded ephemerides",
                     comment: "The section header of the ephemerides manager section in settings"
                 )
@@ -136,7 +135,7 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                         return NSLocalizedString(
                             "SettingsOverviewView.nightModeCell.off.title",
                             tableName: nil,
-                            bundle: .satelliteForecastImplResourcesBundle,
+                            bundle: .module,
                             value: "Turn off night mode",
                             comment: "The title of the toggle that toggles night mode off in the settings view."
                         )
@@ -144,7 +143,7 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                         return NSLocalizedString(
                             "SettingsOverviewView.nightModeCell.on.title",
                             tableName: nil,
-                            bundle: .satelliteForecastImplResourcesBundle,
+                            bundle: .module,
                             value: "Turn on night mode",
                             comment: "The title of the toggle that toggles night mode on in the settings view."
                         )
@@ -161,7 +160,7 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
             }
             .padding()
             .background {
-                var colors = [UIColor.systemGray4, UIColor.systemGray5]
+                let colors = [UIColor.systemGray4, UIColor.systemGray5]
 
                 LinearGradient(
                     gradient: Gradient(colors: colors.map(Color.init)),

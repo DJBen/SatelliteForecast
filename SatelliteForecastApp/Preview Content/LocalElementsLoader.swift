@@ -7,6 +7,7 @@
 
 import BTree
 import Combine
+import Foundation
 import SatelliteForecast
 import SatelliteKit
 import SatelliteCatalog

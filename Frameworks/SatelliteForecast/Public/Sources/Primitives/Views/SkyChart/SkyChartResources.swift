@@ -6,7 +6,7 @@
 //
 
 import BTree
-import SatelliteForecast
+import UIKit
 
 /// The root state of sky charts.
 public struct SkyChartResources: Equatable {

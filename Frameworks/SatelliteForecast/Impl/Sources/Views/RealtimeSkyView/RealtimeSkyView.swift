@@ -9,7 +9,6 @@ import BTree
 import CombineRex
 import CombineRextensions
 import SatelliteForecast
-import SatelliteForecastImpl
 import SatelliteKit
 import SwiftRex
 import SwiftUI
@@ -383,7 +382,7 @@ extension RealtimeSkyViewImpl {
             NSLocalizedString(
                 "realtimeSkyView.navigation.title",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "Sky now",
                 comment: "The navigation title of the realtime sky view"
             )
@@ -395,7 +394,7 @@ extension RealtimeSkyViewImpl {
             NSLocalizedString(
                 "realtimeSkyView.satelliteList.loadingText",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "Loading satellite catalog...",
                 comment: "The loading text for the satellite list"
             )
@@ -405,7 +404,7 @@ extension RealtimeSkyViewImpl {
             NSLocalizedString(
                 "realtimeSkyView.satelliteList.emptyText",
                 tableName: nil,
-                bundle: .satelliteForecastImplResourcesBundle,
+                bundle: .module,
                 value: "No satellite currently visible",
                 comment: "The empty text for the satellite list"
             )

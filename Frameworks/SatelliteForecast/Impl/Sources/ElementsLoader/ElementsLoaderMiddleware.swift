@@ -12,7 +12,6 @@ import Combine
 import CombineRex
 import SatelliteKit
 import SatelliteForecast
-import SatelliteForecastImpl
 import SatelliteCatalog
 
 fileprivate let logger = Logger(subsystem: "io.djben.elementsLoader", category: "middleware")
