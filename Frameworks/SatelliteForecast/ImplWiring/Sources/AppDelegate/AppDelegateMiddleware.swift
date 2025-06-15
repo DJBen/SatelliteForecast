@@ -14,7 +14,7 @@ import SatelliteKit
 import SatelliteForecast
 import SatelliteForecastImpl
 import FirebaseFirestore
-import UIKit // Added import for UIDevice
+import UIKit
 
 fileprivate let logger = Logger(subsystem: "io.djben.appDelegate", category: "middleware")
 
@@ -50,12 +50,27 @@ extension EffectMiddleware where
                     return .doNothing
                 case .didReceiveFCMToken(let fcmToken):
                     return .fireAndForget {
+                        let appVariant: String
+                        #if DEBUG
+                        appVariant = "debug"
+                        #else
+                        appVariant = "release"
+                        #endif
+                    
                         let device = UIDevice.current
-                        let data: [String: Any] = [
+                        var data: [String: Any] = [
                             "deviceModel": device.machineName,
                             "osVersion": device.systemVersion,
+                            "appVariant": appVariant,
                             "lastAppLaunch": Timestamp(date: Date())
                         ]
+                        if let location = getState().locationResources.currentLocation {
+                            data.merge([
+                                "lat": location.coordinate.latitude,
+                                "lon": location.coordinate.longitude,
+                                "alt": location.altitude
+                            ], uniquingKeysWith: { $1 })
+                        }
                         let db = Firestore.firestore()
                         db.collection("users").document(fcmToken).setData(data, merge: true)
                     }

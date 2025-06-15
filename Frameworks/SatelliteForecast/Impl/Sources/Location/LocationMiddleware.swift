@@ -12,6 +12,7 @@ import MapKit
 import SatelliteForecast
 import SatelliteKit
 import SwiftRex
+import FirebaseFirestore
 
 public class LocationMiddleware: NSObject, MiddlewareProtocol {
     public typealias InputActionType = LocationAction
@@ -152,7 +153,18 @@ extension EffectMiddleware where InputActionType == LocationOutput, OutputAction
                 if getState().resources.selection == .currentLocation {
                     LocationMiddleware.persistLocation(location)
                 }
-                return .just(.requestReverseGeocoding(location))
+                return .promise(token: "update_location") { context, sink in
+                    if let fcmToken = getState().fcmToken {
+                        let data: [String: Any] = [
+                            "lat": location.coordinate.latitude,
+                            "lon": location.coordinate.longitude,
+                            "alt": location.altitude
+                        ]
+                        let db = Firestore.firestore()
+                        db.collection("users").document(fcmToken).setData(data, merge: true)
+                    }
+                    sink(.requestReverseGeocoding(location))
+                }
             default:
                 return .doNothing
             }

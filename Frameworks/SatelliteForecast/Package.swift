@@ -54,7 +54,8 @@ let package = Package(
                 .product(name: "StarryNight", package: "StarryNight"),
                 .product(name: "QSMag", package: "QSMag"),
                 .product(name: "SolarSystem", package: "SolarSystem"),
-                .product(name: "SatelliteCatalog", package: "SatelliteCatalogPackage")
+                .product(name: "SatelliteCatalog", package: "SatelliteCatalogPackage"),
+                .product(name: "FirebaseFirestore", package: "firebase-ios-sdk"),
             ],
             path: "Impl/Sources",
             resources: [.process("Resources")]
