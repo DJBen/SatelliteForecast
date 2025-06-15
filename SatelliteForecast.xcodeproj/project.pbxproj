@@ -16,12 +16,19 @@
 		EF817489292A362B00A2F225 /* Elements+Preview.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF817484292A362B00A2F225 /* Elements+Preview.swift */; };
 		EF81748A292A362B00A2F225 /* visual.txt in Resources */ = {isa = PBXBuildFile; fileRef = EF817485292A362B00A2F225 /* visual.txt */; };
 		EF9D82A32661BBF100616C97 /* SatelliteForecastApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9D827A2661BBF000616C97 /* SatelliteForecastApp.swift */; };
+		FC19EC752DFEA459007C9731 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = FC19EC742DFEA459007C9731 /* FirebaseCore */; };
+		FC19EC772DFEA459007C9731 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = FC19EC762DFEA459007C9731 /* FirebaseFirestore */; };
+		FC19EC792DFEA459007C9731 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = FC19EC782DFEA459007C9731 /* FirebaseMessaging */; };
 		FC7A7E242DDEF1040026A8B9 /* SatelliteForecast in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E232DDEF1040026A8B9 /* SatelliteForecast */; };
 		FC7A7E262DDEF1040026A8B9 /* SatelliteForecastImpl in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E252DDEF1040026A8B9 /* SatelliteForecastImpl */; };
 		FC7A7E282DDEF1040026A8B9 /* SatelliteForecastImplWiring in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E272DDEF1040026A8B9 /* SatelliteForecastImplWiring */; };
 		FC7A7E2B2DDF0E9A0026A8B9 /* SatelliteForecast in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E2A2DDF0E9A0026A8B9 /* SatelliteForecast */; };
 		FC7A7E2D2DDF0E9A0026A8B9 /* SatelliteForecastImpl in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E2C2DDF0E9A0026A8B9 /* SatelliteForecastImpl */; };
 		FC7A7E2F2DDF0E9A0026A8B9 /* SatelliteForecastImplWiring in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E2E2DDF0E9A0026A8B9 /* SatelliteForecastImplWiring */; };
+		FC7A7E382DDFC8190026A8B9 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FC7A7E372DDFC8190026A8B9 /* GoogleService-Info.plist */; };
+		FC7A7E3C2DDFC9A80026A8B9 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E3B2DDFC9A80026A8B9 /* FirebaseAnalyticsWithoutAdIdSupport */; };
+		FC7A7E402DDFDCE40026A8B9 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E3F2DDFDCE40026A8B9 /* FirebaseCore */; };
+		FC7A7E422DDFDCE40026A8B9 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E412DDFDCE40026A8B9 /* FirebaseMessaging */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -50,6 +57,8 @@
 		EF9D827A2661BBF000616C97 /* SatelliteForecastApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteForecastApp.swift; sourceTree = "<group>"; };
 		EF9D827C2661BBF000616C97 /* Icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Icons.xcassets; sourceTree = "<group>"; };
 		EF9D82812661BBF000616C97 /* SatelliteForecastApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SatelliteForecastApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FC7A7E372DDFC8190026A8B9 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		FC7A7E3D2DDFD4EE0026A8B9 /* SatelliteForecastApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SatelliteForecastApp.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,11 +66,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC19EC792DFEA459007C9731 /* FirebaseMessaging in Frameworks */,
+				FC7A7E422DDFDCE40026A8B9 /* FirebaseMessaging in Frameworks */,
 				FC7A7E282DDEF1040026A8B9 /* SatelliteForecastImplWiring in Frameworks */,
 				FC7A7E242DDEF1040026A8B9 /* SatelliteForecast in Frameworks */,
 				FC7A7E2D2DDF0E9A0026A8B9 /* SatelliteForecastImpl in Frameworks */,
 				FC7A7E2F2DDF0E9A0026A8B9 /* SatelliteForecastImplWiring in Frameworks */,
+				FC7A7E3C2DDFC9A80026A8B9 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
+				FC19EC752DFEA459007C9731 /* FirebaseCore in Frameworks */,
 				FC7A7E262DDEF1040026A8B9 /* SatelliteForecastImpl in Frameworks */,
+				FC7A7E402DDFDCE40026A8B9 /* FirebaseCore in Frameworks */,
+				FC19EC772DFEA459007C9731 /* FirebaseFirestore in Frameworks */,
 				FC7A7E2B2DDF0E9A0026A8B9 /* SatelliteForecast in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -101,11 +116,13 @@
 		EF9D82792661BBEF00616C97 /* SatelliteForecastApp */ = {
 			isa = PBXGroup;
 			children = (
+				FC7A7E3D2DDFD4EE0026A8B9 /* SatelliteForecastApp.entitlements */,
 				EF9D827A2661BBF000616C97 /* SatelliteForecastApp.swift */,
 				EF817479292A355700A2F225 /* Store.swift */,
 				EF817480292A362B00A2F225 /* Preview Content */,
 				EF81747B292A360500A2F225 /* AppDelegate */,
 				EF864272266DFFE9004F0AFA /* Info.plist */,
+				FC7A7E372DDFC8190026A8B9 /* GoogleService-Info.plist */,
 				EF9D827C2661BBF000616C97 /* Icons.xcassets */,
 			);
 			path = SatelliteForecastApp;
@@ -166,6 +183,7 @@
 			mainGroup = EF9D82742661BBEF00616C97;
 			packageReferences = (
 				FC7A7E292DDF0E9A0026A8B9 /* XCLocalSwiftPackageReference "Frameworks/SatelliteForecast" */,
+				FC19EC732DFEA459007C9731 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = EF9D82822661BBF000616C97 /* Products */;
 			projectDirPath = "";
@@ -183,6 +201,7 @@
 			files = (
 				EF81748A292A362B00A2F225 /* visual.txt in Resources */,
 				EF16811E27D00E28001BA9C3 /* Icons.xcassets in Resources */,
+				FC7A7E382DDFC8190026A8B9 /* GoogleService-Info.plist in Resources */,
 				EF817488292A362B00A2F225 /* active.txt in Resources */,
 				EF817487292A362B00A2F225 /* tle-new.txt in Resources */,
 			);
@@ -339,9 +358,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_ENTITLEMENTS = SatelliteForecastApp/SatelliteForecastApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "SatelliteForecastApp/Preview\\ Content";
+				DEVELOPMENT_TEAM = 52RD2GH5DP;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/SatelliteForecastApp/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
@@ -364,9 +385,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_ENTITLEMENTS = SatelliteForecastApp/SatelliteForecastApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "SatelliteForecastApp/Preview\\ Content";
+				DEVELOPMENT_TEAM = 52RD2GH5DP;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/SatelliteForecastApp/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
@@ -414,7 +437,49 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		FC19EC732DFEA459007C9731 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.14.0;
+			};
+		};
+		FC7A7E3A2DDFC9A80026A8B9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.13.0;
+			};
+		};
+		FC7A7E3E2DDFDCE40026A8B9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.13.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		FC19EC742DFEA459007C9731 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FC19EC732DFEA459007C9731 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		FC19EC762DFEA459007C9731 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FC19EC732DFEA459007C9731 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		FC19EC782DFEA459007C9731 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FC19EC732DFEA459007C9731 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
 		FC7A7E232DDEF1040026A8B9 /* SatelliteForecast */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SatelliteForecast;
@@ -438,6 +503,21 @@
 		FC7A7E2E2DDF0E9A0026A8B9 /* SatelliteForecastImplWiring */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SatelliteForecastImplWiring;
+		};
+		FC7A7E3B2DDFC9A80026A8B9 /* FirebaseAnalyticsWithoutAdIdSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FC7A7E3A2DDFC9A80026A8B9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalyticsWithoutAdIdSupport;
+		};
+		FC7A7E3F2DDFDCE40026A8B9 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FC7A7E3E2DDFDCE40026A8B9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		FC7A7E412DDFDCE40026A8B9 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FC7A7E3E2DDFDCE40026A8B9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

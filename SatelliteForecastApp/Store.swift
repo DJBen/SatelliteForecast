@@ -17,6 +17,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
     static let shared = Store()
 
     static let reducer: Reducer<AppAction, AppState> = [
+        Reducer<AppDelegateAction, AppState>.appDelegateReducer.lift(action: \.appDelegate),
         Reducer.locationReducer.lift(),
         Reducer.locationOutputReducer.lift(),
         Reducer<NotificationAction, AppState>.notificationReducer.lift(action: \.notification),

@@ -13,8 +13,22 @@ import os
 import SatelliteKit
 import SatelliteForecast
 import SatelliteForecastImpl
+import FirebaseFirestore
+import UIKit // Added import for UIDevice
 
 fileprivate let logger = Logger(subsystem: "io.djben.appDelegate", category: "middleware")
+
+extension UIDevice {
+  var machineName: String {
+    var info = utsname()
+    return withUnsafeMutablePointer(to: &info) { info in
+      guard uname(info) == 0 else { return model }
+      let offset = MemoryLayout.offset(of: \utsname.machine)!
+      let machine = UnsafeRawPointer(info).advanced(by: offset).assumingMemoryBound(to: CChar.self)
+      return String(cString: machine)
+    }
+  }
+}
 
 extension EffectMiddleware where
     InputActionType == AppDelegateAction,
@@ -34,6 +48,17 @@ extension EffectMiddleware where
                     ])
                 case .didRegisterForRemoteNotificationsWithDeviceToken(_):
                     return .doNothing
+                case .didReceiveFCMToken(let fcmToken):
+                    return .fireAndForget {
+                        let device = UIDevice.current
+                        let data: [String: Any] = [
+                            "deviceModel": device.machineName,
+                            "osVersion": device.systemVersion,
+                            "lastAppLaunch": Timestamp(date: Date())
+                        ]
+                        let db = Firestore.firestore()
+                        db.collection("users").document(fcmToken).setData(data, merge: true)
+                    }
                 case let .scenePhaseDidChange(phase):
                     switch phase {
                     case .active:

@@ -11,18 +11,56 @@ import CombineRex
 import SwiftUI
 import SatelliteKit
 import SatelliteForecast
+import FirebaseCore
+import FirebaseMessaging
+import FirebaseFirestore
 
 fileprivate let logger = Logger(subsystem: "io.djben.appDelegate", category: "class")
+fileprivate let gcmMessageIDKey = "gcm.message_id"
 
 public class AppDelegate: NSObject, UIApplicationDelegate {
+    public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        UNUserNotificationCenter.current().delegate = self
+        FirebaseApp.configure()
+        Messaging.messaging().delegate = self
+        // Initializes Firestore; creates shared instance once
+        let _ = Firestore.firestore()
+        
+        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+        UNUserNotificationCenter.current().requestAuthorization(
+          options: authOptions,
+          completionHandler: { _, _ in }
+        )
+
+        application.registerForRemoteNotifications()
+        Store.shared.dispatch(.appDelegate(.didFinishLaunchingWithOptions(launchOptions)))
+        return true
+    }
+    
+    public func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        if let messageID = userInfo[gcmMessageIDKey] {
+            print("Message ID: \(messageID)")
+        }
+        print(userInfo)
+    }
+    
+    public func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("Unable to register for remote notifications: \(error.localizedDescription)")
+    }
+    
     public func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         Store.shared.dispatch(.appDelegate(.didRegisterForRemoteNotificationsWithDeviceToken(deviceToken)))
+        print("APNs token retrieved: \(deviceToken)")
     }
+}
 
-    public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        Store.shared.dispatch(.appDelegate(.didFinishLaunchingWithOptions(launchOptions)))
-        UNUserNotificationCenter.current().delegate = self
-        return true
+extension AppDelegate: MessagingDelegate {
+    public func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        print("Firebase registration token: \(String(describing: fcmToken))")
+        guard let fcmToken else {
+            return
+        }
+        Store.shared.dispatch(.appDelegate(.didReceiveFCMToken(fcmToken)))
     }
 }
 
