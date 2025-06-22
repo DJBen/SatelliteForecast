@@ -59,6 +59,10 @@ extension EffectMiddleware where
                         #endif
                     
                         let device = UIDevice.current
+                        guard !(appVariant == "debug" && device.machineName == "arm64") else {
+                            // Do not write to firebase for simulators
+                            return
+                        }
                         var data: [String: Any] = [
                             "deviceModel": device.machineName,
                             "osVersion": device.systemVersion,

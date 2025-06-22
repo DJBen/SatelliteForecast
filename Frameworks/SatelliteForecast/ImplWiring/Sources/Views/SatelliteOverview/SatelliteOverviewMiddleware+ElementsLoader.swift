@@ -28,7 +28,7 @@ Dependencies == Void {
                 return .just(
                     .loadElements(
                         category: category,
-                        fetchStrategy: .localWithin(7200),
+                        fetchStrategy: .localWithin(21600 /* 6 hours */),
                         calculatePass: observer.map { observer in
                             ElementsLoaderCalculatePassParam(
                                 noradIndex: satellite.noradIndex,
@@ -42,7 +42,7 @@ Dependencies == Void {
                 return .just(
                     .loadElements(
                         category: category,
-                        fetchStrategy: .localWithin(7200)
+                        fetchStrategy: .localWithin(21600 /* 6 hours */)
                     )
                 )
             }

@@ -117,6 +117,10 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                 }
             }
         }
+        #else
+        EffectMiddleware.onAction { _, _, _ in
+            return .doNothing
+        }
         #endif
     }
 }

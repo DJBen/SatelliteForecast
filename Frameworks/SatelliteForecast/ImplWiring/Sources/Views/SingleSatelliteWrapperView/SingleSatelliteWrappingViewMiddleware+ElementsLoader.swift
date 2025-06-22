@@ -27,7 +27,7 @@ extension EffectMiddleware where InputActionType == SingleSatelliteWrappingViewA
                 return .just(
                     .loadElements(
                         category: category,
-                        fetchStrategy: .localWithin(7200),
+                        fetchStrategy: .localWithin(21600 /* 6 hours */),
                         calculatePass: params.observer.map { observer in
                             ElementsLoaderCalculatePassParam(
                                 noradIndex: params.selectedNoradIndex,

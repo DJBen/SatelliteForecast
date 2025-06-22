@@ -21,7 +21,7 @@ extension EffectMiddleware where InputActionType == RealtimeSkyViewAction, Outpu
                 return .just(
                     .loadElements(
                         category: .active,
-                        fetchStrategy: .localWithin(7200)
+                        fetchStrategy: .localWithin(21600 /* 6 hours */)
                     )
                 )
             case .purgeElements:
