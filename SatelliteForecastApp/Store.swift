@@ -100,11 +100,11 @@ class Store: ReduxStoreBase<AppAction, AppState> {
                     dateProvider: currentDateProvider
                 )
             ),
-            EffectMiddleware.loggerMiddleware.eraseToAnyMiddleware(),
             EffectMiddleware.backgroundSky.lift(),
             EffectMiddleware.realtimeSky.lift(),
             EffectMiddleware.realtimeSkyToElementsLoader.lift(),
             EffectMiddleware.passAlarmSettingsToNotification.lift(),
+            EffectMiddleware.loggerMiddleware.eraseToAnyMiddleware(),
         ]
 
         return middlewares.reduce(

@@ -74,6 +74,8 @@ struct SatelliteOverviewCategoryCell: View {
             colors = [UIColor.systemTeal, UIColor.systemPurple]
         case .last30DayLaunches:
             colors = [UIColor.systemGreen, UIColor.systemTeal]
+        default:
+            fatalError("Unexpected category")
         }
 
         if colorScheme == .dark {
@@ -188,6 +190,8 @@ extension SatelliteOverviewCategoryCell {
                 value: "All active satellites",
                 comment: "The section header for all active satellites"
             )
+        default:
+            fatalError()
         }
     }
 

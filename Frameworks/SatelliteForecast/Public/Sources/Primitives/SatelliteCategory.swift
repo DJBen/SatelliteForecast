@@ -8,6 +8,12 @@
 import Foundation
 
 public enum SatelliteCategory: Equatable, Hashable, Codable {
+    /// International Space Station: 25544
+    case iss
+    
+    /// Tianhe: 48724
+    case tianhe
+    
     /// The brighest 100 (or so) satellites.
     case brightest100
 

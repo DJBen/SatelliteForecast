@@ -19,9 +19,14 @@ extension EffectMiddleware where InputActionType == SingleSatelliteWrappingViewA
         EffectMiddleware<SingleSatelliteWrappingViewAction, ElementsLoaderAction, Void, Void>.onAction { action, _, getState in
             switch action {
                 case let .loadSingleSatellite(params):
+                let category: SatelliteCategory = if params.selectedNoradIndex == 25544 {
+                    .iss
+                } else {
+                    .tianhe
+                }
                 return .just(
                     .loadElements(
-                        category: .brightest100,
+                        category: category,
                         fetchStrategy: .localWithin(7200),
                         calculatePass: params.observer.map { observer in
                             ElementsLoaderCalculatePassParam(

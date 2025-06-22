@@ -9,6 +9,7 @@ import BackgroundTasks
 import Foundation
 import Combine
 import CombineRex
+import Geohash
 import os
 import SatelliteKit
 import SatelliteForecast
@@ -62,13 +63,21 @@ extension EffectMiddleware where
                             "deviceModel": device.machineName,
                             "osVersion": device.systemVersion,
                             "appVariant": appVariant,
-                            "lastAppLaunch": Timestamp(date: Date())
+                            "lastAppLaunch": Timestamp(date: Date()),
+                            "tzOffset": TimeZone.current.secondsFromGMT(),
+                            "locale": Locale.current.identifier
                         ]
                         if let location = getState().locationResources.currentLocation {
+                            let geoHash = Geohash.encode(
+                                latitude: location.coordinate.latitude,
+                                longitude: location.coordinate.longitude,
+                                length: 5 // ±2.4km precision
+                            )
                             data.merge([
                                 "lat": location.coordinate.latitude,
                                 "lon": location.coordinate.longitude,
-                                "alt": location.altitude
+                                "alt": location.altitude,
+                                "geoHash5": geoHash
                             ], uniquingKeysWith: { $1 })
                         }
                         let db = Firestore.firestore()

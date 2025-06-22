@@ -25,6 +25,7 @@ let package = Package(
             url: "https://github.com/firebase/firebase-ios-sdk.git",
             .upToNextMajor(from: "11.14.0")
         ),
+        .package(url: "https://github.com/nh7a/Geohash.git", branch: "main"),
         .package(path: "../ActivityView"),
         .package(path: "../SatelliteKit"),
         .package(path: "../StarryNight"),
@@ -65,6 +66,7 @@ let package = Package(
             dependencies: [
                 "SatelliteForecast",
                 "SatelliteForecastImpl",
+                "Geohash",
                 .product(name: "SatelliteCatalog", package: "SatelliteCatalogPackage"),
                 .product(name: "SatelliteCatalogImpl_SQLite", package: "SatelliteCatalogPackage"),
                 .product(name: "FirebaseFirestore", package: "firebase-ios-sdk"),

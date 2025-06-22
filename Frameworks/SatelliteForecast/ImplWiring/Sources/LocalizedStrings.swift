@@ -198,6 +198,8 @@ enum LocalizedStrings {
                     value: "All active satellites",
                     comment: "The section header for all active satellites"
                 )
+            default:
+                fatalError()
             }
         }
     }

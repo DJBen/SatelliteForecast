@@ -27,7 +27,7 @@ struct SatelliteCell: View {
         if let image = UIImage(named: "\(cat.noradID)", in: .module, compatibleWith: nil) {
             return image
         } else if cat.name.contains("STARLINK") {
-            return UIImage(named: "starlink", in: .module, compatibleWith: nil)
+            return UIImage(named: "starlink", in: .module, compatibleWith: nil)?.withTintColor(.white)
         }
         return nil
     }

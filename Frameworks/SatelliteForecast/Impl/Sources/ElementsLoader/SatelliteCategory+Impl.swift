@@ -11,6 +11,10 @@ import SatelliteForecast
 extension SatelliteCategory {
     public var url: URL {
         switch self {
+        case .iss:
+            return URL(string: "https://celestrak.org/NORAD/elements/gp.php?CATNR=25544&FORMAT=TLE")!
+        case .tianhe:
+            return URL(string: "https://celestrak.org/NORAD/elements/gp.php?CATNR=48274&FORMAT=TLE")!
         case .brightest100:
             return URL(string: "https://celestrak.com/NORAD/elements/gp.php?GROUP=visual&FORMAT=tle")!
         case .last30DayLaunches:
@@ -22,6 +26,10 @@ extension SatelliteCategory {
 
     public var localFilename: String {
         switch self {
+        case .iss:
+            return "25544"
+        case .tianhe:
+            return "48274"
         case .brightest100:
             return "visual"
         case .last30DayLaunches:
