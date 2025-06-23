@@ -6,7 +6,7 @@
 //
 
 import BTree
-import SatelliteKit
+@preconcurrency import SatelliteKit
 
 public enum RealtimeSkyViewAction {
     case propagateCurrentEphemerides([SatelliteInfo], observer: LatLonAlt, julianDate: Double)

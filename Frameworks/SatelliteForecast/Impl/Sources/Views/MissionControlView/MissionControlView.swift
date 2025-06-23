@@ -9,7 +9,7 @@ import Combine
 import SwiftUI
 import MapKit
 import SatelliteForecast
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import SwiftUIVisualEffects
 
 /// A world map showing the satellite ground tracks akin to that of mission control room of space agencies.
@@ -157,7 +157,7 @@ struct MissionControlViewControllerWrapperView: UIViewControllerRepresentable {
 // Subclassing `MKGeodesicPolyline` leads to a strange crash.
 // Instead we use the good old `objc_getAssociatedObject`.
 extension MKGeodesicPolyline {
-    static private var sf_identifierAssociationKey: UInt8 = 0
+    static nonisolated(unsafe) private var sf_identifierAssociationKey: UInt8 = 0
 
     var sf_identifier: String! {
         get {

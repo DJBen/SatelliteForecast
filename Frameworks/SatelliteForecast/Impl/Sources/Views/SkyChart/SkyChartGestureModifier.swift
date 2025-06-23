@@ -78,10 +78,12 @@ struct TapGestureDetectionOverlay: UIViewRepresentable {
 
     class Coordinator: NSObject {
         var tappedCallback: ((CGPoint) -> Void)
+        
         init(tappedCallback: @escaping ((CGPoint) -> Void)) {
             self.tappedCallback = tappedCallback
         }
-        @objc func tapped(gesture: UITapGestureRecognizer) {
+        
+        @MainActor @objc func tapped(gesture: UITapGestureRecognizer) {
             let point = gesture.location(in: gesture.view)
             self.tappedCallback(point)
         }

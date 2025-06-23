@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import BTree
 
 /// A snapshot of the satellite of a specific date, coordinate, velocity and whether

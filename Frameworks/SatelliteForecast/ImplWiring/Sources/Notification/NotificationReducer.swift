@@ -7,7 +7,7 @@
 
 import Foundation
 import os
-import SwiftRex
+@preconcurrency import SwiftRex
 
 fileprivate let logger = Logger(subsystem: "io.djben.notification", category: "reducer")
 

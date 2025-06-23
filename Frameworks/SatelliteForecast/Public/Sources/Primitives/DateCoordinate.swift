@@ -5,7 +5,7 @@
 //  Created by Ben Lu on 4/3/22.
 //
 
-import SatelliteKit
+@preconcurrency import SatelliteKit
 
 public struct DateCoordinate {
     public let julianDate: Double

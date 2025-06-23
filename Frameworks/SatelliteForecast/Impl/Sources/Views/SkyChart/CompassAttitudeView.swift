@@ -6,7 +6,7 @@
 //
 
 import CoreMotion
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import SatelliteForecast
 import SwiftUI
 

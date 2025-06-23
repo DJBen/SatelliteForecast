@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SatelliteKit
+@preconcurrency import SatelliteKit
 
 public enum ElementsLoaderError: Error, LocalizedError {
     case elements(SatKitError)

@@ -9,6 +9,7 @@ import Foundation
 import Contacts
 import CoreLocation
 
+@MainActor
 private let addressFormatter: CNPostalAddressFormatter = {
     let formatter = CNPostalAddressFormatter()
     formatter.style = .mailingAddress
@@ -16,6 +17,7 @@ private let addressFormatter: CNPostalAddressFormatter = {
 }()
 
 extension CLPlacemark {
+    @MainActor
     public var formattedString: String? {
         guard let postalAddress = postalAddress else { return nil }
         let formatterString = addressFormatter.string(from: postalAddress)

@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SwiftRex
+@preconcurrency import SwiftRex
 
 extension Reducer where ActionType == DebugMenuAction, StateType == DebugMenuState {
     public static let debugMenuReducer = Reducer.reduce { action, state in

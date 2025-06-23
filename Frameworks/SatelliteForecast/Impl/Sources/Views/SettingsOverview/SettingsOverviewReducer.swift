@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SwiftRex
+@preconcurrency import SwiftRex
 
 extension Reducer where ActionType == SettingsOverviewViewAction, StateType == SettingsOverviewViewState {
     public static let settingsOverviewReducer = Reducer.reduce { action, state in

@@ -7,7 +7,7 @@
 
 import Foundation
 import CoreLocation
-import SatelliteKit
+@preconcurrency import SatelliteKit
 
 extension CLLocation {
     public convenience init(_ latLonAlt: LatLonAlt) {

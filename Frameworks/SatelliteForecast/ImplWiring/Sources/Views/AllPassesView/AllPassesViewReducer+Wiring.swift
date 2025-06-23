@@ -5,7 +5,7 @@
 //  Created by Ben Lu on 4/3/22.
 //
 
-import SwiftRex
+@preconcurrency import SwiftRex
 import SatelliteForecastImpl
 
 extension Reducer where ActionType == AllPassesViewAction, StateType == AllPassesViewState {

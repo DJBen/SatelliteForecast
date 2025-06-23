@@ -6,7 +6,7 @@
 //
 
 import Combine
-import CombineRex
+@preconcurrency import CombineRex
 import SatelliteForecast
 import SatelliteForecastImpl
 

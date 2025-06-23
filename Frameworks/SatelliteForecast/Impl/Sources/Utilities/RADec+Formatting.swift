@@ -5,7 +5,7 @@
 //  Created by Ben Lu on 11/22/22.
 //
 
-import SatelliteKit
+@preconcurrency import SatelliteKit
 
 extension RADec {
     public var formattedRA: String {

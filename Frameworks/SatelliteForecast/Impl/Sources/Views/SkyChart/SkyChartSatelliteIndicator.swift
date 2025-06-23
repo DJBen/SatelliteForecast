@@ -7,7 +7,7 @@
 
 import SwiftUI
 import SatelliteForecast
-import SatelliteKit
+@preconcurrency import SatelliteKit
 
 struct SkyChartSatelliteIndicatorState: Equatable {
     let coordinate: AziEleDst

@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import SwiftRex
-import SatelliteKit
+@preconcurrency import SwiftRex
+@preconcurrency import SatelliteKit
 
 extension Reducer where ActionType == AllPassesViewAction, StateType == AllPassesViewState {
     public static let allPassesViewReducer = Reducer.reduce { action, state in

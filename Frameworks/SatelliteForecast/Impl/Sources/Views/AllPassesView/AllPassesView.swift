@@ -7,10 +7,10 @@
 
 import BTree
 import CoreLocation
-import CombineRex
-import CombineRextensions
+@preconcurrency import CombineRex
+@preconcurrency import CombineRextensions
 import SatelliteForecast
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import SwiftUI
 
 public enum AllPassesViewAction {

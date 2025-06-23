@@ -8,9 +8,9 @@
 import BTree
 import SwiftUI
 import SatelliteForecast
-import SatelliteKit
-import CombineRex
-import CombineRextensions
+@preconcurrency import SatelliteKit
+@preconcurrency import CombineRex
+@preconcurrency import CombineRextensions
 
 struct PassPreviewCell: View {
     var satelliteInfo: SatelliteInfo

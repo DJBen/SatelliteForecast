@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import SatelliteKit
+@preconcurrency import SatelliteKit
 
 extension SolarSystemBody {
     // TODO: implement planet brightness calculation

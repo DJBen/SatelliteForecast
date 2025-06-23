@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import SatelliteForecast
 import BTree
 

@@ -9,8 +9,8 @@ import Foundation
 import os
 import BTree
 import Combine
-import CombineRex
-import SatelliteKit
+@preconcurrency import CombineRex
+@preconcurrency import SatelliteKit
 import SatelliteForecast
 import SatelliteCatalog
 

@@ -8,7 +8,7 @@
 import Combine
 import SwiftUI
 import SatelliteForecast
-import SatelliteKit
+@preconcurrency import SatelliteKit
 
 struct SkyChartDynamicIndicatorState: Equatable {
     let satelliteInfo: SatelliteInfo

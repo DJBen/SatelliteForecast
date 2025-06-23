@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import SQLite
 
 public struct Star: Hashable, Equatable {

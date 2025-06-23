@@ -6,11 +6,11 @@
 //
 
 import SatelliteForecast
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import SwiftUI
-import SwiftRex
-import CombineRex
-import CombineRextensions
+@preconcurrency import SwiftRex
+@preconcurrency import CombineRex
+@preconcurrency import CombineRextensions
 import CoreLocation
 
 public enum SatelliteOverviewViewAction {
@@ -97,11 +97,7 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                     spacing: 10,
                     pinnedViews: []
                 ) {
-                    Section(
-                        header: Text(SatelliteOverviewViewImpl.satelliteOfSpecialInterestSectionTitle)
-                            .font(.headline.lowercaseSmallCaps().weight(.semibold))
-                            .foregroundColor(Color(UIColor.secondaryLabel))
-                    ) {
+                    Section {
                         ForEach(
                             [
                                 SatellitesOfSpecialInterest.iss,
@@ -195,14 +191,6 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
 }
 
 extension SatelliteOverviewViewImpl {
-    static let satelliteOfSpecialInterestSectionTitle = NSLocalizedString(
-        "SatelliteListView.sectionOverviewView.section.satellitesOfSpecialInterest",
-        tableName: nil,
-        bundle: .module,
-        value: "Satellites of special interest",
-        comment: "The section title for satellites of special interest"
-    )
-
     static let categoriesSectionTitle = NSLocalizedString(
         "SatelliteListView.sectionOverviewView.section.satellitesByCategories",
         tableName: nil,

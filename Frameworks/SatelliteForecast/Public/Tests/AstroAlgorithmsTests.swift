@@ -7,7 +7,7 @@
 
 import XCTest
 @testable import SatelliteForecast
-import SatelliteKit
+@preconcurrency import SatelliteKit
 
 class AstroAlgorithmsTests: XCTestCase {
     func testLineOfSight() {

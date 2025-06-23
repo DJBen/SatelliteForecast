@@ -7,7 +7,7 @@
 
 import Foundation
 import QSMag
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import SatelliteCatalog
 
 public struct SatelliteInfo {

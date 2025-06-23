@@ -6,11 +6,11 @@
 //
 
 import SwiftUI
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import SatelliteForecast
-import SwiftRex
-import CombineRex
-import CombineRextensions
+@preconcurrency import SwiftRex
+@preconcurrency import CombineRex
+@preconcurrency import CombineRextensions
 import CoreMotion
 import SatelliteForecastImplWiring
 
@@ -56,7 +56,7 @@ struct SatelliteForecastApp: App {
             .onAppear {
                 store.dispatch(.location(.requestAuthorization))
             }
-            .onChange(of: scenePhase) { phase in
+            .onChange(of: scenePhase) { _, phase in
                 store.dispatch(.appDelegate(.scenePhaseDidChange(phase)))
             }
             .onReceive(NotificationCenter.default.publisher(for: .deviceDidShakeNotification)) { _ in

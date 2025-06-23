@@ -1,10 +1,10 @@
-// swift-tools-version:5.9
+// swift-tools-version:6.1
 import PackageDescription
 
 let package = Package(
     name: "SwiftUIVisualEffects",
     platforms: [
-        .iOS(.v16)
+        .iOS(.v18)
     ],
     products: [
         .library(

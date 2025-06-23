@@ -7,7 +7,7 @@
 
 import SwiftUI
 import SwiftUIVisualEffects
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import SatelliteForecast
 
 struct SkyChartPassLabel<BackgroundModifier: ViewModifier, Content: View>: View {

@@ -8,7 +8,7 @@
 import XCTest
 import BTree
 import Combine
-import CombineRex
+@preconcurrency import CombineRex
 import TestingExtensions
 import SatelliteForecast
 @testable import SatelliteForecastImpl

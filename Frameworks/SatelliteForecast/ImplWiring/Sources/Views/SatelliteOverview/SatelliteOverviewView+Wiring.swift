@@ -5,9 +5,9 @@
 //  Created by Ben Lu on 3/6/22.
 //
 
-import CombineRex
-import CombineRextensions
-import SatelliteKit
+@preconcurrency import CombineRex
+@preconcurrency import CombineRextensions
+@preconcurrency import SatelliteKit
 import SatelliteForecastImpl
 
 extension SatelliteOverviewViewState: AppStateMappable {

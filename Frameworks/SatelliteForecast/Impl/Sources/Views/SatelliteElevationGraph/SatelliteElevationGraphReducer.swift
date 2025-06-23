@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SwiftRex
+@preconcurrency import SwiftRex
 import SatelliteForecast
 
 extension Reducer where ActionType == SatelliteElevationGraphAction, StateType == SatelliteElevationGraphResources {

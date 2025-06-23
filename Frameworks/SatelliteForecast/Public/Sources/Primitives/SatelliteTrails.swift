@@ -7,7 +7,7 @@
 
 import Foundation
 import BTree
-import SatelliteKit
+@preconcurrency import SatelliteKit
 
 /// Everything needed to calculate a satellite's ephemeris and display passes, including the following
 /// - An sorted map (B-tree) of existing calculated ephemerides of the satellite. It is coarse and should not be used to render specific

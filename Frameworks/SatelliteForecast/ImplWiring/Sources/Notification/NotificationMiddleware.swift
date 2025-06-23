@@ -7,12 +7,12 @@
 
 import BTree
 import Combine
-import CombineRex
+@preconcurrency import CombineRex
 import Foundation
 import os
 import SatelliteForecast
 import SatelliteForecastImpl
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import SatelliteCatalog
 import StarryNight
 import UserNotifications

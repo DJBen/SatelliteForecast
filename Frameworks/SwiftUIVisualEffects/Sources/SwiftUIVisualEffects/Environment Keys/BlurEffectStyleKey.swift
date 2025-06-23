@@ -4,6 +4,7 @@
 
 import SwiftUI
 
-struct BlurEffectStyleKey: EnvironmentKey {
-	static var defaultValue: UIBlurEffect.Style = .systemMaterial // (Per the human-interface guidelines.)
+@MainActor
+struct BlurEffectStyleKey: @preconcurrency EnvironmentKey {
+    static var defaultValue: UIBlurEffect.Style = .systemMaterial // (Per the human-interface guidelines.)
 }

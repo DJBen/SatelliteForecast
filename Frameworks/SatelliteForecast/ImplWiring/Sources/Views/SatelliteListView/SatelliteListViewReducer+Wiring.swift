@@ -6,7 +6,7 @@
 //
 
 import SatelliteForecastImpl
-import SwiftRex
+@preconcurrency import SwiftRex
 
 extension Reducer where ActionType == SatelliteListViewAction, StateType == SatelliteListViewState {
     public func lift() -> Reducer<AppAction, AppState> {

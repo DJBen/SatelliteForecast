@@ -6,10 +6,10 @@
 //
 
 import BTree
-import CombineRex
-import CombineRextensions
+@preconcurrency import CombineRex
+@preconcurrency import CombineRextensions
 import SatelliteForecast
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import SwiftUI
 import SwiftUIVisualEffects
 import CoreMotion

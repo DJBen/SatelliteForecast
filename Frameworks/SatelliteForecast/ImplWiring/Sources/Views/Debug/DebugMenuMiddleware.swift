@@ -7,8 +7,8 @@
 
 import Foundation
 import Combine
-import CombineRex
-import SatelliteKit
+@preconcurrency import CombineRex
+@preconcurrency import SatelliteKit
 
 public struct DebugMenuMiddlewareDependencies {
     public let dateProvider: () -> Date

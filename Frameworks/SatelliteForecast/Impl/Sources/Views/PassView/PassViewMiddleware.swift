@@ -6,7 +6,7 @@
 //
 
 import Combine
-import CombineRex
+@preconcurrency import CombineRex
 
 extension EffectMiddleware where InputActionType == PassViewAction, OutputActionType == PassViewAction, StateType == PassViewState, Dependencies == Void {
     static var passView: EffectMiddleware<PassViewAction, PassViewAction, PassViewState, Void> {

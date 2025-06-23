@@ -5,9 +5,9 @@
 //  Created by Ben Lu on 3/3/22.
 //
 
-import CombineRex
+@preconcurrency import CombineRex
 import SatelliteForecast
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import SolarSystem
 import StarryNight
 import SwiftRex

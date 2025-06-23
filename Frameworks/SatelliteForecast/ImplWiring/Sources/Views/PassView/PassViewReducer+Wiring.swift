@@ -5,7 +5,7 @@
 //  Created by Ben Lu on 4/21/22.
 //
 
-import CombineRex
+@preconcurrency import CombineRex
 import SatelliteForecastImpl
 
 extension Reducer where ActionType == PassViewAction, StateType == PassViewState {

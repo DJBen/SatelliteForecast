@@ -6,7 +6,7 @@
 //
 
 import Combine
-import CombineRex
+@preconcurrency import CombineRex
 import os
 import StarryNight
 import SatelliteForecast

@@ -11,7 +11,7 @@ import QSMag
 import SatelliteCatalog
 import SatelliteCatalogImpl_SQLite
 import SatelliteForecast
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import Foundation
 
 public struct ElementsLoaderImpl {

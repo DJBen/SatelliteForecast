@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import SQLite
+@preconcurrency import SQLite
 
 public struct Constellation: Hashable {
     public struct Line: CustomStringConvertible {
@@ -27,7 +27,7 @@ public struct Constellation: Hashable {
         return lhs.iAUName == rhs.iAUName
     }
 
-    private static var lineMappings: [String: [(Int, Int)]] = {
+    nonisolated(unsafe) private static var lineMappings: [String: [(Int, Int)]] = {
         let content = try! String(contentsOfFile: StarryNight.Constellations.constellationLinePath)
         let lines = content.components(separatedBy: "\n").filter { (str) -> Bool in
             return str.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).isEmpty == false

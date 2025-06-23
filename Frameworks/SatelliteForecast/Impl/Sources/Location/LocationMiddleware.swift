@@ -6,15 +6,15 @@
 //
 
 import os
-import CombineRex
+@preconcurrency import CombineRex
 import CoreLocation
 import MapKit
 import SatelliteForecast
-import SatelliteKit
-import SwiftRex
+@preconcurrency import SatelliteKit
+@preconcurrency import SwiftRex
 import FirebaseFirestore
 
-public class LocationMiddleware: NSObject, MiddlewareProtocol {
+public class LocationMiddleware: NSObject, @preconcurrency MiddlewareProtocol {
     public typealias InputActionType = LocationAction
     public typealias OutputActionType = LocationOutput
     public typealias StateType = LocationResources
@@ -45,6 +45,7 @@ public class LocationMiddleware: NSObject, MiddlewareProtocol {
         output.dispatch(.authorizationDidChange(locationManager.authorizationStatus))
     }
 
+    @MainActor
     public func handle(action: InputActionType, from dispatcher: ActionSource, state: @escaping GetState<StateType>) -> IO<OutputActionType> {
         return .init { [weak self] output in
             switch action {

@@ -5,7 +5,7 @@
 //  Created by Ben Lu on 3/7/22.
 //
 
-import CombineRex
+@preconcurrency import CombineRex
 import SatelliteForecastImpl
 
 extension EffectMiddleware where InputActionType == RootViewAction, OutputActionType == ElementsLoaderAction, StateType == RootViewState, Dependencies == Void {

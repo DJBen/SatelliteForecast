@@ -9,7 +9,7 @@ import Foundation
 import CoreLocation
 import MapKit
 
-public struct LocationResources: Equatable {
+public struct LocationResources: Equatable, @unchecked Sendable {
     public var authorizationStatus: CLAuthorizationStatus = .notDetermined
     /// The current user's location. Note that it may not be the actual location in use.
     public var currentLocation: CLLocation?
@@ -18,7 +18,7 @@ public struct LocationResources: Equatable {
     /// The autocompletion result containing a list of autocompletion candidates.
     public var autocompletionResult: Result<[MKLocalSearchCompletion], Error>?
 
-    public enum Selection: Equatable {
+    public enum Selection: Equatable, @unchecked Sendable {
         case currentLocation
         case custom(MKLocalSearchCompletion, MKPlacemark)
     }

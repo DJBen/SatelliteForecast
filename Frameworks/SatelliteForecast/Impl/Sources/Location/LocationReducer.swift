@@ -7,7 +7,7 @@
 
 import Foundation
 import SatelliteForecast
-import SwiftRex
+@preconcurrency import SwiftRex
 
 extension Reducer where ActionType == LocationAction, StateType == LocationState {
     public static let locationReducer = Reducer.reduce { action, state in

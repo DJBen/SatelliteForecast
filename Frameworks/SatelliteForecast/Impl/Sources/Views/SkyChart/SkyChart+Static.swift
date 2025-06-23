@@ -7,7 +7,7 @@
 
 import BTree
 import SatelliteForecast
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import StarryNight
 import SolarSystem
 

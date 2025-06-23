@@ -8,12 +8,12 @@
 import Foundation
 import SatelliteForecast
 
-public enum SatelliteOverviewSection: Equatable, Hashable {
+public enum SatelliteOverviewSection: Equatable, Hashable, Sendable {
     case satellitesOfSpecialInterest([SatellitesOfSpecialInterest])
     case categories([SatelliteCategory])
 }
 
-public struct SatellitesOfSpecialInterest: ExpressibleByIntegerLiteral, Equatable, Hashable, Codable {
+public struct SatellitesOfSpecialInterest: ExpressibleByIntegerLiteral, Equatable, Hashable, Codable, Sendable {
     public typealias IntegerLiteralType = Int
 
     static let iss: SatellitesOfSpecialInterest = 25544

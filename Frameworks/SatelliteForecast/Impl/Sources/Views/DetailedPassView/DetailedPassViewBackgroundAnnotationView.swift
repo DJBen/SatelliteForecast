@@ -7,7 +7,7 @@
 
 import SwiftUI
 import SatelliteForecast
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import StarryNight
 
 public struct DetailedPassViewBackgroundAnnotationView: View {

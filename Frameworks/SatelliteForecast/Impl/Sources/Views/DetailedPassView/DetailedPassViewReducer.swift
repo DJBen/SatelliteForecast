@@ -6,7 +6,7 @@
 //
 
 import SatelliteForecast
-import SwiftRex
+@preconcurrency import SwiftRex
 
 extension Reducer where ActionType == DetailedPassViewAction, StateType == DetailedPassViewState {
     public static let detailedPassViewReducer = Reducer.reduce { action, state in

@@ -8,7 +8,7 @@
 import Foundation
 import SatelliteForecast
 
-struct EphemerideResource: Equatable, Hashable, Codable {
+struct EphemerideResource: Equatable, Hashable, Codable, Sendable {
     let fileName: String
     let fullPath: String
     let size: UInt64?
@@ -58,13 +58,14 @@ struct EphemerideResource: Equatable, Hashable, Codable {
         return formatter.string(fromByteCount: Int64(size))
     }
 
-    private static let durationFormatter: RelativeDateTimeFormatter = {
+    @MainActor private static let durationFormatter: RelativeDateTimeFormatter = {
         let formatter = RelativeDateTimeFormatter()
         formatter.dateTimeStyle = .named
         formatter.formattingContext = .beginningOfSentence
         return formatter
     }()
 
+    @MainActor
     var formattedModificationDate: String? {
         guard let modificationDate = modificationDate else {
             return nil

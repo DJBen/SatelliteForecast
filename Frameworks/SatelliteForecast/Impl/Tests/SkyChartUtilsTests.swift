@@ -6,7 +6,7 @@
 //
 
 import XCTest
-import SatelliteKit
+@preconcurrency import SatelliteKit
 @testable import SatelliteForecastImpl
 
 final class SkyChartUtilsTests: XCTestCase {

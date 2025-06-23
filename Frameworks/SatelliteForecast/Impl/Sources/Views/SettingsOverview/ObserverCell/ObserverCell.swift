@@ -6,10 +6,10 @@
 //
 
 import Contacts
-import CombineRex
+@preconcurrency import CombineRex
 import MapKit
 import SwiftUI
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import SatelliteForecast
 import SwiftUIVisualEffects
 

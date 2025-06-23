@@ -7,7 +7,7 @@
 
 import SwiftUI
 import StarryNight
-import SatelliteKit
+@preconcurrency import SatelliteKit
 
 struct SelectedStarLabel: View {
     @Environment(\.colorScheme) var colorScheme

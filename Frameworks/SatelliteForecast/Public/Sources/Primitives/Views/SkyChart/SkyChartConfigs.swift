@@ -8,15 +8,15 @@
 import Foundation
 import CoreGraphics
 
-public struct BackgroundSkyConfigs: Equatable, Hashable {
-    public enum Stars: Equatable, Hashable {
+public struct BackgroundSkyConfigs: Equatable, Hashable, Sendable {
+    public enum Stars: Equatable, Hashable, Sendable {
         case none
         case limitedMagnitude(Double)
     }
     public var stars: Stars = .limitedMagnitude(4.5)
 
     /// A mapping function between the star's magitude to the display radius
-    public struct StarMagToDisplayRadiusMappingFunction: Equatable, Hashable {
+    public struct StarMagToDisplayRadiusMappingFunction: Equatable, Hashable, Sendable {
         public let multiplier: Double
         public let exponent: Double
         public let minimum: Double
@@ -36,7 +36,7 @@ public struct BackgroundSkyConfigs: Equatable, Hashable {
     public var hidesStarsDuringDay: Bool = true
     public var showConstellationLines: Bool = true
 
-    public enum PlantaryBody: Equatable, CaseIterable, Hashable {
+    public enum PlantaryBody: Equatable, CaseIterable, Hashable, Sendable {
         case sun
         case moon
         case mercury
@@ -48,7 +48,7 @@ public struct BackgroundSkyConfigs: Equatable, Hashable {
 
     public var visibleBodies: [PlantaryBody] = PlantaryBody.allCases
 
-    public enum PlantaryBodyLabel: Equatable, Hashable {
+    public enum PlantaryBodyLabel: Equatable, Hashable, Sendable {
         case text
         case symbol
     }
@@ -76,7 +76,7 @@ public struct BackgroundSkyConfigs: Equatable, Hashable {
     }
 }
 
-public struct BasicChartConfigs: Equatable, Hashable {
+public struct BasicChartConfigs: Equatable, Hashable, Sendable {
     public var showAzimuthTexts: Bool = true
 
     /// The degree interval between each pair of azimuth marks
@@ -108,7 +108,7 @@ public struct BasicChartConfigs: Equatable, Hashable {
     }
 }
 
-public struct SkyChartConfigs: Equatable, Hashable {
+public struct SkyChartConfigs: Equatable, Hashable, Sendable {
     /// The background sky configuration
     public var backgroundSkyConfigs: BackgroundSkyConfigs = .preset
 

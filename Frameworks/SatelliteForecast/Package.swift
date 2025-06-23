@@ -1,10 +1,10 @@
-// swift-tools-version:5.9
+// swift-tools-version:6.1
 import PackageDescription
 
 let package = Package(
     name: "SatelliteForecastPackage", // Renamed to avoid conflict with target names
     platforms: [
-        .iOS(.v16)
+        .iOS(.v18)
     ],
     products: [
         .library(
@@ -41,7 +41,10 @@ let package = Package(
                 "BTree",
                 "StarryNight"
             ],
-            path: "Public/Sources"
+            path: "Public/Sources",
+            swiftSettings: [
+                .swiftLanguageMode(.v5)
+            ]
         ),
         .target(
             name: "SatelliteForecastImpl",
@@ -59,7 +62,10 @@ let package = Package(
                 .product(name: "FirebaseFirestore", package: "firebase-ios-sdk"),
             ],
             path: "Impl/Sources",
-            resources: [.process("Resources")]
+            resources: [.process("Resources")],
+            swiftSettings: [
+                .swiftLanguageMode(.v5)
+            ]
         ),
         .target(
             name: "SatelliteForecastImplWiring",
@@ -71,7 +77,10 @@ let package = Package(
                 .product(name: "SatelliteCatalogImpl_SQLite", package: "SatelliteCatalogPackage"),
                 .product(name: "FirebaseFirestore", package: "firebase-ios-sdk"),
             ],
-            path: "ImplWiring/Sources"
+            path: "ImplWiring/Sources",
+            swiftSettings: [
+                .swiftLanguageMode(.v5)
+            ]
         )
-    ]
+    ],
 )

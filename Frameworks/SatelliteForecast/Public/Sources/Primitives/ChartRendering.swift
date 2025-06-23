@@ -5,7 +5,7 @@
 //  Created by Ben Lu on 4/9/22.
 //
 
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import StarryNight
 import CoreGraphics
 import UIKit

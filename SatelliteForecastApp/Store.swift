@@ -6,12 +6,12 @@
 //
 
 import Foundation
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import SatelliteForecast
 import SatelliteForecastImpl
 import SatelliteForecastImplWiring
-import SwiftRex
-import CombineRex
+@preconcurrency import SwiftRex
+@preconcurrency import CombineRex
 
 class Store: ReduxStoreBase<AppAction, AppState> {
     static let shared = Store()

@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import SatelliteForecast
 
 extension Elements {
@@ -16,7 +16,7 @@ extension Elements {
         guard let filepath = Bundle.main.path(forResource: category.localFilename, ofType: "txt") else {
             fatalError("No local file available")
         }
-        let contents = try String(contentsOfFile: filepath)
+        let contents = try String(contentsOfFile: filepath, encoding: .utf8)
         return try Elements.load(chunk: contents)
     }
 

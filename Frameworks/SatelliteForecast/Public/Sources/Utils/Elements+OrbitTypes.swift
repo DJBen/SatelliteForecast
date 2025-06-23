@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SatelliteKit
+@preconcurrency import SatelliteKit
 
 public enum OrbitTypeByAltitude {
     /// A low Earth orbit (LEO) is an Earth-centered orbit near the planet, often specified as having a period of 128 minutes or less (making at least 11.25 orbits per day) and an eccentricity less than 0.25.

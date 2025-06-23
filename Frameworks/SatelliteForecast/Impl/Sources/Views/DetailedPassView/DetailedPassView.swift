@@ -6,10 +6,10 @@
 //
 
 import ActivityView
-import CombineRex
-import CombineRextensions
+@preconcurrency import CombineRex
+@preconcurrency import CombineRextensions
 import SatelliteForecast
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import StarryNight
 import SwiftRex
 import SwiftUI

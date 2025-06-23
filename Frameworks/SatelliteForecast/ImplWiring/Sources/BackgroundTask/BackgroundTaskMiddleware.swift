@@ -7,7 +7,7 @@
 
 import BackgroundTasks
 import Combine
-import CombineRex
+@preconcurrency import CombineRex
 import Foundation
 import os
 

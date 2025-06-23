@@ -6,10 +6,10 @@
 //
 
 import SwiftUI
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import SatelliteForecast
 
-struct SkyChartLegendState: Equatable {
+struct SkyChartLegendState: Equatable, Sendable {
     var observer: LatLonAlt
 }
 

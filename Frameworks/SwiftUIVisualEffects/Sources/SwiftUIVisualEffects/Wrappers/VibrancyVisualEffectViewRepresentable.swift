@@ -28,6 +28,7 @@ struct _VibrancyVisualEffectViewRepresentable<Content: View>: UIViewRepresentabl
 }
 
 extension _VibrancyVisualEffectViewRepresentable {
+    @MainActor
 	final class Coordinator {
 		let visualEffectView = UIVisualEffectView()
 		

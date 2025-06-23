@@ -9,16 +9,11 @@ import BTree
 import Foundation
 import CoreGraphics
 import SatelliteForecast
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import UIKit
 
 extension SatelliteElevationGraph {
-    private static func snapshotPoint(_ snapshot: SatelliteSnapshot, xPercent: CGFloat, rect: CGRect) -> CGPoint {
-        let x = rect.width * xPercent
-        let y = CGFloat(snapshot.position.elev + 90) / 180 * -rect.height + rect.height
-        return CGPoint(x: x, y: y)
-    }
-
+    @MainActor
     static func xPercentDatePair(julianDateRange: ClosedRange<Double>, configs: SatelliteElevationGraphConfigs) -> [PercentDate] {
         let calendar = Calendar(identifier: .gregorian)
         let components = calendar.dateComponents([.year, .month, .day, .hour], from: Date(julianDate: julianDateRange.lowerBound))
@@ -39,8 +34,14 @@ extension SatelliteElevationGraph {
         }
         return results
     }
+    
+    nonisolated private static func snapshotPoint(_ snapshot: SatelliteSnapshot, xPercent: CGFloat, rect: CGRect) -> CGPoint {
+        let x = rect.width * xPercent
+        let y = CGFloat(snapshot.position.elev + 90) / 180 * -rect.height + rect.height
+        return CGPoint(x: x, y: y)
+    }
 
-    static func rasterizedSatelliteElevationPath(
+    nonisolated static func rasterizedSatelliteElevationPath(
         rect: CGRect,
         snapshotsSplitByIllumination: [(illuminated: Bool, snapshots: [SatelliteSnapshot])],
         julianDateRange: ClosedRange<Double>,

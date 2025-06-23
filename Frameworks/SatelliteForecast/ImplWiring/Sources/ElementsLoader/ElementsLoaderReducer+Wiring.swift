@@ -5,7 +5,7 @@
 //  Created by Ben Lu on 3/7/22.
 //
 
-import SwiftRex
+@preconcurrency import SwiftRex
 import SatelliteForecastImpl
 
 extension Reducer where ActionType == ElementsLoaderAction, StateType == ElementsLoaderState {

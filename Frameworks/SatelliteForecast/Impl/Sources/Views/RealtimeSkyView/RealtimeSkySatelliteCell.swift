@@ -6,7 +6,7 @@
 //
 
 import SatelliteForecast
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import SwiftUI
 import QSMag
 
