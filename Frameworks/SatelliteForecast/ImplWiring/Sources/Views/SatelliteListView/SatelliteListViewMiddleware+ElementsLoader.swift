@@ -20,7 +20,7 @@ extension EffectMiddleware where InputActionType == SatelliteListViewAction, Out
                 return .just(
                     .loadElements(
                         category: category,
-                        fetchStrategy: .localWithin(7200)
+                        fetchStrategy: .localWithin(21600 /* 6 hours */)
                     )
                 )
             }

@@ -67,7 +67,12 @@ public struct SingleSatelliteWrappingView: View {
     }
 
     private var satellite: Loadable<SatelliteInfo, ElementsLoaderError> {
-        viewModel.state.elementsLoader.info[.brightest100]?.flatMap { satellites in
+        let category: SatelliteCategory = if context.selectedNoradIndex == 25544 {
+            .iss
+        } else {
+            .tianhe
+        }
+        return viewModel.state.elementsLoader.info[category]?.flatMap { satellites in
             satellites[context.selectedNoradIndex]
         } ?? .notLoaded
     }

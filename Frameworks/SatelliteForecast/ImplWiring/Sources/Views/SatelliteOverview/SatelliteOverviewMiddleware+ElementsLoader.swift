@@ -8,6 +8,7 @@
 import Combine
 import CombineRex
 import SatelliteKit
+import SatelliteForecast
 import SatelliteForecastImpl
 
 extension EffectMiddleware where
@@ -23,10 +24,11 @@ Dependencies == Void {
                 return .doNothing
             case .loadSatelliteOfSpecialInterest(let satellite, julianDateRange: let julianDateRange, observer: let observer),
                     .selectSatelliteOfSpecialInterest(let satellite, julianDateRange: let julianDateRange, observer: let observer):
+                let category = satellite.noradIndex == 25544 ? SatelliteCategory.iss : .tianhe
                 return .just(
                     .loadElements(
-                        category: .brightest100,
-                        fetchStrategy: .localWithin(7200),
+                        category: category,
+                        fetchStrategy: .localWithin(21600 /* 6 hours */),
                         calculatePass: observer.map { observer in
                             ElementsLoaderCalculatePassParam(
                                 noradIndex: satellite.noradIndex,
@@ -40,7 +42,7 @@ Dependencies == Void {
                 return .just(
                     .loadElements(
                         category: category,
-                        fetchStrategy: .localWithin(7200)
+                        fetchStrategy: .localWithin(21600 /* 6 hours */)
                     )
                 )
             }

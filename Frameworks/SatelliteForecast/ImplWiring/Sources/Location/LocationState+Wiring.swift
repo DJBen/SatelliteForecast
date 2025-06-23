@@ -11,7 +11,8 @@ extension LocationState: AppStateMappable {
     public static func project(appState: AppState) -> LocationState {
         LocationState(
             resources: appState.locationResources,
-            navigationPath: appState.navigationState.settingsNavigationPath
+            navigationPath: appState.navigationState.settingsNavigationPath,
+            fcmToken: appState.fcmToken,
         )
     }
 

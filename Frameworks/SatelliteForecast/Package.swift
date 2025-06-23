@@ -21,6 +21,11 @@ let package = Package(
         .package(url: "https://github.com/attaswift/BTree", from: "4.1.0"),
         .package(url: "https://github.com/SwiftRex/SwiftRex", from: "0.8.12"),
         .package(url: "https://github.com/SwiftRex/CombineRextensions", branch: "master"),
+        .package(
+            url: "https://github.com/firebase/firebase-ios-sdk.git",
+            .upToNextMajor(from: "11.14.0")
+        ),
+        .package(url: "https://github.com/nh7a/Geohash.git", branch: "main"),
         .package(path: "../ActivityView"),
         .package(path: "../SatelliteKit"),
         .package(path: "../StarryNight"),
@@ -50,7 +55,8 @@ let package = Package(
                 .product(name: "StarryNight", package: "StarryNight"),
                 .product(name: "QSMag", package: "QSMag"),
                 .product(name: "SolarSystem", package: "SolarSystem"),
-                .product(name: "SatelliteCatalog", package: "SatelliteCatalogPackage")
+                .product(name: "SatelliteCatalog", package: "SatelliteCatalogPackage"),
+                .product(name: "FirebaseFirestore", package: "firebase-ios-sdk"),
             ],
             path: "Impl/Sources",
             resources: [.process("Resources")]
@@ -60,8 +66,10 @@ let package = Package(
             dependencies: [
                 "SatelliteForecast",
                 "SatelliteForecastImpl",
+                "Geohash",
                 .product(name: "SatelliteCatalog", package: "SatelliteCatalogPackage"),
-                .product(name: "SatelliteCatalogImpl_SQLite", package: "SatelliteCatalogPackage")
+                .product(name: "SatelliteCatalogImpl_SQLite", package: "SatelliteCatalogPackage"),
+                .product(name: "FirebaseFirestore", package: "firebase-ios-sdk"),
             ],
             path: "ImplWiring/Sources"
         )

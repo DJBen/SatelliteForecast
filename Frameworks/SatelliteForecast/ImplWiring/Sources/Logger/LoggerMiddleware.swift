@@ -10,6 +10,7 @@ import CombineRex
 
 extension EffectMiddleware where InputActionType == AppAction, OutputActionType == AppAction, StateType == AppState, Dependencies == Void {
     public static var loggerMiddleware: EffectMiddleware<AppAction, AppAction, AppState, Void> {
+        #if DEBUG
         EffectMiddleware.onAction { action, _, getState in
             return .fireAndForget {
                 switch action {
@@ -116,5 +117,10 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                 }
             }
         }
+        #else
+        EffectMiddleware.onAction { _, _, _ in
+            return .doNothing
+        }
+        #endif
     }
 }

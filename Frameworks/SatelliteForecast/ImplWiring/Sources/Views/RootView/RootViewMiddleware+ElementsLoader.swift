@@ -19,7 +19,7 @@ extension EffectMiddleware where InputActionType == RootViewAction, OutputAction
                     return .just(
                         .loadElements(
                             category: .active,
-                            fetchStrategy: .localWithin(7200)
+                            fetchStrategy: .localWithin(21600 /* 6 hours */)
                         )
                     )
                 case .forecast, .settings:

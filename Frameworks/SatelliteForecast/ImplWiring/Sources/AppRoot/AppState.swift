@@ -11,6 +11,9 @@ import SatelliteForecast
 import BTree
 
 public struct AppState: Equatable {
+    public var deviceToken: Data?
+    public var fcmToken: String?
+    
     public var navigationState: NavigationState = .init() {
         willSet {
             print("[Navigation] \(navigationState)")

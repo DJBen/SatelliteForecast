@@ -9,12 +9,27 @@ import BackgroundTasks
 import Foundation
 import Combine
 import CombineRex
+import Geohash
 import os
 import SatelliteKit
 import SatelliteForecast
 import SatelliteForecastImpl
+import FirebaseFirestore
+import UIKit
 
 fileprivate let logger = Logger(subsystem: "io.djben.appDelegate", category: "middleware")
+
+extension UIDevice {
+  var machineName: String {
+    var info = utsname()
+    return withUnsafeMutablePointer(to: &info) { info in
+      guard uname(info) == 0 else { return model }
+      let offset = MemoryLayout.offset(of: \utsname.machine)!
+      let machine = UnsafeRawPointer(info).advanced(by: offset).assumingMemoryBound(to: CChar.self)
+      return String(cString: machine)
+    }
+  }
+}
 
 extension EffectMiddleware where
     InputActionType == AppDelegateAction,
@@ -34,6 +49,44 @@ extension EffectMiddleware where
                     ])
                 case .didRegisterForRemoteNotificationsWithDeviceToken(_):
                     return .doNothing
+                case .didReceiveFCMToken(let fcmToken):
+                    return .fireAndForget {
+                        let appVariant: String
+                        #if DEBUG
+                        appVariant = "debug"
+                        #else
+                        appVariant = "release"
+                        #endif
+                    
+                        let device = UIDevice.current
+                        guard !(appVariant == "debug" && device.machineName == "arm64") else {
+                            // Do not write to firebase for simulators
+                            return
+                        }
+                        var data: [String: Any] = [
+                            "deviceModel": device.machineName,
+                            "osVersion": device.systemVersion,
+                            "appVariant": appVariant,
+                            "lastAppLaunch": Timestamp(date: Date()),
+                            "tzOffset": TimeZone.current.secondsFromGMT(),
+                            "locale": Locale.current.identifier
+                        ]
+                        if let location = getState().locationResources.currentLocation {
+                            let geoHash = Geohash.encode(
+                                latitude: location.coordinate.latitude,
+                                longitude: location.coordinate.longitude,
+                                length: 5 // ±2.4km precision
+                            )
+                            data.merge([
+                                "lat": location.coordinate.latitude,
+                                "lon": location.coordinate.longitude,
+                                "alt": location.altitude,
+                                "geoHash5": geoHash
+                            ], uniquingKeysWith: { $1 })
+                        }
+                        let db = Firestore.firestore()
+                        db.collection("users").document(fcmToken).setData(data, merge: true)
+                    }
                 case let .scenePhaseDidChange(phase):
                     switch phase {
                     case .active:
