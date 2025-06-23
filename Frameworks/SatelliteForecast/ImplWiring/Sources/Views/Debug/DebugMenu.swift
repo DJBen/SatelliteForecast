@@ -6,11 +6,11 @@
 //
 
 import SwiftUI
-import SwiftRex
-import CombineRex
-import CombineRextensions
+@preconcurrency import SwiftRex
+@preconcurrency import CombineRex
+@preconcurrency import CombineRextensions
 import SatelliteForecast
-import SatelliteKit
+@preconcurrency import SatelliteKit
 
 public enum DebugMenuAction {
     case toggleDebugMenu(_ isVisible: Bool)

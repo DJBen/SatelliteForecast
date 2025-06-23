@@ -7,6 +7,6 @@
 
 import Accelerate
 import Foundation
-import SatelliteKit
+@preconcurrency import SatelliteKit
 
 public let au2Km: Double = 149_598_073

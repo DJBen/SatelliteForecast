@@ -7,10 +7,10 @@
 
 import BTree
 import Combine
-import CombineRex
+@preconcurrency import CombineRex
 import Foundation
 import SatelliteForecast
-import SatelliteKit
+@preconcurrency import SatelliteKit
 
 extension EffectMiddleware where InputActionType == RealtimeSkyViewAction, OutputActionType == RealtimeSkyViewOutput, StateType == RealtimeSkyViewResources, Dependencies == Void {
     public static var realtimeSky: EffectMiddleware<RealtimeSkyViewAction, RealtimeSkyViewOutput, RealtimeSkyViewResources, Void> {

@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SatelliteKit
+@preconcurrency import SatelliteKit
 
 public struct RealtimePropagationResult {
     public let noradIndex: UInt

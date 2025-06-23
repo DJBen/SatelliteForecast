@@ -5,7 +5,7 @@
 //  Created by Ben Lu on 6/2/21.
 //
 
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import Darwin
 
 public enum AstroAlgorithms {

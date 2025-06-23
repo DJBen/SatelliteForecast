@@ -7,7 +7,7 @@
 
 import SwiftUI
 import SatelliteCatalog
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import SatelliteForecast
 
 struct SatelliteCell: View {

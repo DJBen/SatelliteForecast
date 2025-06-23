@@ -5,14 +5,14 @@
 //  Created by Ben Lu on 5/30/21.
 //
 
-import CombineRex
-import CombineRextensions
+@preconcurrency import CombineRex
+@preconcurrency import CombineRextensions
 import SwiftUI
 import SwiftUIVisualEffects
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import SatelliteForecast
 import StarryNight
-import CombineRextensions
+@preconcurrency import CombineRextensions
 import BTree
 import CoreMotion
 

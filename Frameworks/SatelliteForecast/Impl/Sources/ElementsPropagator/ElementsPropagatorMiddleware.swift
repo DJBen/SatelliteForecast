@@ -6,10 +6,10 @@
 //
 
 import Combine
-import CombineRex
+@preconcurrency import CombineRex
 import os
 import SatelliteForecast
-import SatelliteKit
+@preconcurrency import SatelliteKit
 
 fileprivate let logger = Logger(subsystem: "io.djben.elementsPropagator", category: "middleware")
 

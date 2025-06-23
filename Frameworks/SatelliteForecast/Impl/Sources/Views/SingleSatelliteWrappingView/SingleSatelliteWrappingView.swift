@@ -7,10 +7,10 @@
 
 import BTree
 import SwiftUI
-import CombineRex
-import CombineRextensions
+@preconcurrency import CombineRex
+@preconcurrency import CombineRextensions
 import SatelliteForecast
-import SatelliteKit
+@preconcurrency import SatelliteKit
 
 public enum SingleSatelliteWrappingViewAction {
     public struct LoadSingleSatelliteParams: Equatable {

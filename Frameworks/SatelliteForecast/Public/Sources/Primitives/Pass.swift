@@ -11,10 +11,10 @@ import BTree
 /// `Pass` is a summary of the physical characteristics about a satellite pass, including the times of rise, set, transit
 /// (point of higest elevation), any changes in illumination, and the elevation of the sun at transit.
 /// We can derive the visibility of the pass by combining these attributes together.
-public struct Pass {
+public struct Pass: Sendable {
     public let noradIndex: UInt
     
-    public struct DatePosition: Comparable {
+    public struct DatePosition: Comparable, Sendable {
         public let julianDate: Double
         public let azim: Double
         public let elev: Double
@@ -56,8 +56,8 @@ public struct Pass {
         return illuminatedDatePositions.max(by: { $0.elev < $1.elev })
     }
     
-    public struct Illumination {
-        public enum Change {
+    public struct Illumination: Sendable {
+        public enum Change: Sendable {
             case entersShadow(DatePosition)
             case exitsShadow(DatePosition)
 

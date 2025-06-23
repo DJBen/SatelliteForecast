@@ -6,9 +6,9 @@
 //
 
 import Combine
-import CombineRex
+@preconcurrency import CombineRex
 import StarryNight
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import SatelliteForecast
 import UIKit
 

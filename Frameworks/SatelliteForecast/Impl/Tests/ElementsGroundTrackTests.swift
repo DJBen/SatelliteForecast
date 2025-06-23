@@ -6,7 +6,7 @@
 //
 
 import XCTest
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import SatelliteForecast
 @testable import SatelliteForecastImpl
 

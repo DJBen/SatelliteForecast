@@ -7,10 +7,10 @@
 
 import SwiftUI
 import Combine
-import CombineRex
-import CombineRextensions
+@preconcurrency import CombineRex
+@preconcurrency import CombineRextensions
 import CoreLocation
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import SatelliteForecast
 
 public enum AlarmSettingsViewAction {

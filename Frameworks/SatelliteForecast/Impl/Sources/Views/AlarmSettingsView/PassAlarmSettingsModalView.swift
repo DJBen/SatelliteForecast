@@ -6,9 +6,9 @@
 //
 
 import SwiftUI
-import CombineRex
+@preconcurrency import CombineRex
 import SatelliteForecast
-import SatelliteKit
+@preconcurrency import SatelliteKit
 
 public enum PassAlarmSettingsModalViewAction {
     case dismissModal

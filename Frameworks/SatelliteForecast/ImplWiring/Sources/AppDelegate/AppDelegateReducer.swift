@@ -7,7 +7,7 @@
 
 import Foundation
 import os
-import SwiftRex
+@preconcurrency import SwiftRex
 import SatelliteForecast
 
 fileprivate let logger = Logger(subsystem: "io.djben.appDelegate", category: "reducer")

@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SatelliteKit
+@preconcurrency import SatelliteKit
 
 public enum JulianDateUtil {
     public static func createJulianDateRange(

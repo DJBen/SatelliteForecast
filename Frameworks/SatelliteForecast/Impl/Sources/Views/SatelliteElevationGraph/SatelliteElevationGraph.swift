@@ -6,13 +6,13 @@
 //
 
 import BTree
-import CombineRex
+@preconcurrency import CombineRex
 import SwiftUI
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import SatelliteForecast
 import CoreLocation
 
-public struct SatelliteElevationGraphConfigs: Equatable {
+public struct SatelliteElevationGraphConfigs: Equatable, Sendable {
     public var timeGridLineInterval: TimeInterval = 30 * 60
     public var elevationGridLineInterval: Double = 30
     public var minimumHorizonalResolution: CGFloat = 3 / 60

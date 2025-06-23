@@ -7,7 +7,7 @@
 
 import BTree
 import SatelliteForecast
-import SwiftRex
+@preconcurrency import SwiftRex
 
 extension Reducer where ActionType == RealtimeSkyViewAction, StateType == RealtimeSkyViewResources {
     public static let realtimeSkyReducer = Reducer.reduce { action, state in

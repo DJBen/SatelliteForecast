@@ -5,8 +5,8 @@
 //  Created by Ben Lu on 3/5/22.
 //
 
-import CombineRex
-import CombineRextensions
+@preconcurrency import CombineRex
+@preconcurrency import CombineRextensions
 import SwiftRex
 import SwiftUI
 import SatelliteForecast
@@ -33,6 +33,24 @@ public struct RootViewContext {
         self.julianDateProvider = julianDateProvider
     }
 }
+
+private let realtimeSkyTabText = NSLocalizedString(
+    "tabs.realtimeSky.text",
+    value: "Sky now",
+    comment: "The title of the 'Realtime sky' tab of the root view."
+)
+
+private let forecastTabText = NSLocalizedString(
+    "tabs.forecast.text",
+    value: "Pass forecast",
+    comment: "The title of the 'Forecast' tab of the root view."
+)
+
+private let settingsTabText = NSLocalizedString(
+    "tabs.settings.text",
+    value: "Settings",
+    comment: "The title of the 'Settings' tab of the root view."
+)
 
 public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewViewType: SatelliteOverviewView, SettingsOverViewViewType: SettingsOverviewView>: View {
     @ObservedObject var viewModel: ObservableViewModel<RootViewAction, RootViewState>
@@ -65,6 +83,17 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
         UITabBar.appearance().backgroundColor = UIColor.systemBackground
         UITabBar.appearance().unselectedItemTintColor = UIColor.systemGray2
     }
+    
+    private func isSelectedBinding(for tab: SatelliteForecastImplWiring.Tab) -> Binding<Bool> {
+        Binding<Bool>(
+            get: {
+                viewModel.state.selectedTab == tab
+            },
+            set: { _ in
+
+            }
+        )
+    }
 
     public var body: some View {
         TabView(
@@ -74,41 +103,64 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
                 onChange: RootViewAction.selectTab
             )
         ) {
-            satelliteOverviewViewProducer.view(
-                SatelliteOverviewViewContext(
-                    julianDateProvider: context.julianDateProvider
+            SwiftUI.Tab(value: .forecast, role: nil) {
+                satelliteOverviewViewProducer.view(
+                    SatelliteOverviewViewContext(
+                        julianDateProvider: context.julianDateProvider
+                    )
                 )
-            )
-            .modifier(
-                TabBarItemModifier(
-                    tab: .forecast,
-                    selectedTab: viewModel.state.selectedTab
+            } label: {
+                DynamicTabBarItemView(
+                    isSelected: isSelectedBinding(for: .forecast),
+                    content: {
+                        Image("glyph_pass")
+                        Text(forecastTabText)
+                    },
+                    selectedContent: {
+                        Image("glyph_pass")
+                        Text(forecastTabText)
+                    }
                 )
-            )
+            }
 
-            realtimeSkyViewProducer.view(
-                RealtimeSkyViewContext(
-                    basicChartConfigs: .init(),
-                    backgroundSkyConfigs: .preset,
-                    satelliteMagToRadiusFunction: .init(multipler: 3.2, exponent: -0.32, minimum: 1),
-                    julianDateProvider: context.julianDateProvider
+            SwiftUI.Tab(value: .realtimeSky, role: nil) {
+                realtimeSkyViewProducer.view(
+                    RealtimeSkyViewContext(
+                        basicChartConfigs: .init(),
+                        backgroundSkyConfigs: .preset,
+                        satelliteMagToRadiusFunction: .init(multipler: 3.2, exponent: -0.32, minimum: 1),
+                        julianDateProvider: context.julianDateProvider
+                    )
                 )
-            )
-            .modifier(
-                TabBarItemModifier(
-                    tab: .realtimeSky,
-                    selectedTab: viewModel.state.selectedTab
+            } label: {
+                DynamicTabBarItemView(
+                    isSelected: isSelectedBinding(for: .realtimeSky),
+                    content: {
+                        Image("glyph_satellite")
+                        Text(realtimeSkyTabText)
+                    },
+                    selectedContent: {
+                        Image("glyph_satellite.fill")
+                        Text(realtimeSkyTabText)
+                    }
                 )
-            )
+            }
 
-            settingsOverviewProducer.view(
-            )
-            .modifier(
-                TabBarItemModifier(
-                    tab: .settings,
-                    selectedTab: viewModel.state.selectedTab
+            SwiftUI.Tab(value: .settings, role: nil) {
+                settingsOverviewProducer.view()
+            } label: {
+                DynamicTabBarItemView(
+                    isSelected: isSelectedBinding(for: .settings),
+                    content: {
+                        Image(systemName: "gear")
+                        Text(settingsTabText)
+                    },
+                    selectedContent: {
+                        Image(systemName: "gear")
+                        Text(settingsTabText)
+                    }
                 )
-            )
+            }
         }
         .tint(Color(uiColor: .label))
     }

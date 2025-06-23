@@ -6,7 +6,7 @@
 //
 
 import Combine
-import CombineRex
+@preconcurrency import CombineRex
 import SatelliteForecastImpl
 
 extension EffectMiddleware where InputActionType == PassViewAction, OutputActionType == PassViewAction, StateType == PassViewState, Dependencies == Void {

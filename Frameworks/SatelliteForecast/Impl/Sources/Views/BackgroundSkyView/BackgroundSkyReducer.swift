@@ -7,7 +7,7 @@
 
 import Foundation
 import BTree
-import SwiftRex
+@preconcurrency import SwiftRex
 import SatelliteForecast
 
 extension Reducer where ActionType == BackgroundSkyViewOutput, StateType == BackgroundSkyResources {

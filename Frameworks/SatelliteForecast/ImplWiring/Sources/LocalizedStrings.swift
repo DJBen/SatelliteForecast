@@ -9,7 +9,7 @@ import Foundation
 import SatelliteCatalog
 import SatelliteForecast
 import SatelliteForecastImpl
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import CoreLocation
 
 enum LocalizedStrings {    

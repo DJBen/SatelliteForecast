@@ -7,7 +7,7 @@
 
 import BTree
 import Foundation
-import SatelliteKit
+@preconcurrency import SatelliteKit
 
 public struct ElementsLoaderResources {
     public var info: [SatelliteCategory: Loadable<Map<UInt, SatelliteInfo>, ElementsLoaderError>]

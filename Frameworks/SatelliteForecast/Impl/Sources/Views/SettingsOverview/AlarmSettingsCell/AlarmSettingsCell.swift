@@ -6,8 +6,8 @@
 //
 
 import SwiftUI
-import CombineRex
-import CombineRextensions
+@preconcurrency import CombineRex
+@preconcurrency import CombineRextensions
 
 public enum AlarmSettingsCellAction {
 

@@ -8,8 +8,8 @@
 import Foundation
 import os
 import Combine
-import CombineRex
-import SatelliteKit
+@preconcurrency import CombineRex
+@preconcurrency import SatelliteKit
 import SatelliteForecast
 
 fileprivate let logger = Logger(subsystem: "io.djben.satelliteElevationGraph", category: "middleware")

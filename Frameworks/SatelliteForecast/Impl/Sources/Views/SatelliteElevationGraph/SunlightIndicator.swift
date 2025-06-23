@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import SatelliteForecast
 import BTree
 import SolarSystem

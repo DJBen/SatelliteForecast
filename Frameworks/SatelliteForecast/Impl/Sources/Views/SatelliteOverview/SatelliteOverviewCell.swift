@@ -5,8 +5,8 @@
 //  Created by Ben Lu on 6/25/21.
 //
 
-import CombineRex
-import CombineRextensions
+@preconcurrency import CombineRex
+@preconcurrency import CombineRextensions
 import SatelliteForecast
 import SwiftUI
 import SwiftUIVisualEffects
@@ -129,7 +129,7 @@ extension SatelliteOverviewSpecialSatelliteCell {
                 "SatelliteOverview.sectionOverviewCell.title.satellite.tianhe",
                 tableName: nil,
                 bundle: .module,
-                value: "Tianhe (CSS Core Module)",
+                value: "Tiangong Space Station",
                 comment: "The title of Tianhe, displayed in the 'Satellite of special interest' section."
             )
         default:
@@ -154,7 +154,7 @@ extension SatelliteOverviewSpecialSatelliteCell {
                 "SatelliteOverview.sectionOverviewCell.description.satellite.tianhe",
                 tableName: nil,
                 bundle: .module,
-                value: "The first module of China's Tiangong space station.",
+                value: "China's first long-term space station featuring three modules, fully assembled in 2022.",
                 comment: "The description of Tianhe in overview page."
             )
         default:

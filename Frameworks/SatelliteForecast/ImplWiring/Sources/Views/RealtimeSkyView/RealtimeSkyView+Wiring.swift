@@ -6,11 +6,11 @@
 //
 
 import BTree
-import CombineRex
-import CombineRextensions
+@preconcurrency import CombineRex
+@preconcurrency import CombineRextensions
 import SatelliteForecast
 import SatelliteForecastImpl
-import SatelliteKit
+@preconcurrency import SatelliteKit
 
 extension RealtimeSkyViewState: AppStateMappable {
     public static func project(appState: AppState) -> RealtimeSkyViewState {

@@ -6,11 +6,11 @@
 //
 
 import BTree
-import CombineRex
+@preconcurrency import CombineRex
 import SwiftUI
 import SwiftRex
-import CombineRextensions
-import SatelliteKit
+@preconcurrency import CombineRextensions
+@preconcurrency import SatelliteKit
 import SatelliteForecast
 import SatelliteCatalog
 

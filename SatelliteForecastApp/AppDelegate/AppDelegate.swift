@@ -7,9 +7,9 @@
 
 import Foundation
 import os
-import CombineRex
+@preconcurrency import CombineRex
 import SwiftUI
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import SatelliteForecast
 import FirebaseCore
 import FirebaseMessaging

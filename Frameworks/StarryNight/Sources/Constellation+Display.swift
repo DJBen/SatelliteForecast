@@ -9,7 +9,7 @@
 import Foundation
 import CoreGraphics
 import SQLite
-import SatelliteKit
+@preconcurrency import SatelliteKit
 
 private let constellationCenter: [String: Vector] = [
     "Peg": Vector(0.86804042300030027, -0.26298778535788447, 0.33323259346164735),

@@ -8,7 +8,7 @@
 import Foundation
 import BTree
 import Combine
-import CombineRex
+@preconcurrency import CombineRex
 import SatelliteForecast
 
 private let satelliteTextSearchQueue = DispatchQueue(label: "satellite_text_search")

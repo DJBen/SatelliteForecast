@@ -8,12 +8,13 @@
 import SwiftUI
 
 extension SatelliteElevationGraph {
-    struct DateFooterState: Equatable {
+    struct DateFooterState: Equatable, Sendable {
         let julianDateRange: ClosedRange<Double>
         let configs: SatelliteElevationGraphConfigs
         // Derived data
         let xPercentDatePair: [PercentDate]
 
+        @MainActor
         init(julianDateRange: ClosedRange<Double>, configs: SatelliteElevationGraphConfigs) {
             self.julianDateRange = julianDateRange
             self.configs = configs

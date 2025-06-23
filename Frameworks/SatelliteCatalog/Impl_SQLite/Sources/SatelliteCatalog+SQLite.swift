@@ -7,7 +7,7 @@
 
 import Foundation
 import SatelliteCatalog
-import SQLite
+@preconcurrency import SQLite
 
 extension SatelliteCatalog {
     static let DB = try! Connection(Bundle.module.path(forResource: "satellites", ofType: "sqlite")!)

@@ -7,8 +7,8 @@
 
 import Foundation
 import os
-import SwiftRex
-import SatelliteKit
+@preconcurrency import SwiftRex
+@preconcurrency import SatelliteKit
 import SatelliteForecast
 import BTree
 

@@ -8,9 +8,9 @@
 import Foundation
 import os
 import Combine
-import CombineRex
+@preconcurrency import CombineRex
 import SatelliteForecast
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import StarryNight
 import UIKit
 

@@ -7,7 +7,7 @@
 
 import XCTest
 @testable import SolarSystem
-import SatelliteKit
+@preconcurrency import SatelliteKit
 
 class SolarSystemTests: XCTestCase {
     func testSunCoordinate() throws {

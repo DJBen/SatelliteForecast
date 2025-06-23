@@ -9,7 +9,7 @@ import BTree
 import Combine
 import Foundation
 import SatelliteForecast
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import SatelliteCatalog
 
 #if DEBUG

@@ -5,6 +5,7 @@
 //  Created by Ben Lu on 7/25/21.
 //
 
+import Foundation
 import SwiftUI
 
 struct SatelliteElevationGraphBackgroundState: Equatable {
@@ -13,6 +14,7 @@ struct SatelliteElevationGraphBackgroundState: Equatable {
     // Derived data
     let xPercentDatePair: [SatelliteElevationGraph.PercentDate]
 
+    @MainActor
     init(julianDateRange: ClosedRange<Double>, configs: SatelliteElevationGraphConfigs) {
         self.julianDateRange = julianDateRange
         self.configs = configs
@@ -20,7 +22,8 @@ struct SatelliteElevationGraphBackgroundState: Equatable {
     }
 }
 
-struct SatelliteElevationGraphBackground: View, Equatable {
+@MainActor
+struct SatelliteElevationGraphBackground: View, @preconcurrency Equatable {
     static func == (lhs: SatelliteElevationGraphBackground, rhs: SatelliteElevationGraphBackground) -> Bool {
         return lhs.state == rhs.state && lhs.graphingRegionSize == rhs.graphingRegionSize
     }

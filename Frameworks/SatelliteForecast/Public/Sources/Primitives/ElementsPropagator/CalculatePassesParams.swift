@@ -5,7 +5,7 @@
 //  Created by Ben Lu on 4/4/22.
 //
 
-import SatelliteKit
+@preconcurrency import SatelliteKit
 
 public struct CalculatePassesParams: CustomDebugStringConvertible {
     public let selectedNoradIndex: UInt

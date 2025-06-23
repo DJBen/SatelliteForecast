@@ -8,10 +8,10 @@
 import BTree
 import Foundation
 import Combine
-import CombineRex
+@preconcurrency import CombineRex
 import SatelliteForecast
 import SatelliteForecastImpl
-import SatelliteKit
+@preconcurrency import SatelliteKit
 
 extension EffectMiddleware where InputActionType == SingleSatelliteWrappingViewAction, OutputActionType == ElementsLoaderAction, StateType == Void, Dependencies == Void {
 

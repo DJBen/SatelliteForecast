@@ -8,7 +8,7 @@
 import BTree
 import Foundation
 import SatelliteForecast
-import SatelliteKit
+@preconcurrency import SatelliteKit
 
 public struct ElementsLoaderState {
     public var resources: ElementsLoaderResources

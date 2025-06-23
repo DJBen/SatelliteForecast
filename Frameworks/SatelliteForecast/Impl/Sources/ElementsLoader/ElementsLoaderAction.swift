@@ -8,7 +8,7 @@
 import BTree
 import Foundation
 import SatelliteForecast
-import SatelliteKit
+@preconcurrency import SatelliteKit
 
 public struct SelectNoradIndexParam {
     public let noradIndex: UInt

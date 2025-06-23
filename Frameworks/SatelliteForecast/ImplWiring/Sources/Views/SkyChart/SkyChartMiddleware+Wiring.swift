@@ -5,7 +5,7 @@
 //  Created by Ben Lu on 3/30/22.
 //
 
-import CombineRex
+@preconcurrency import CombineRex
 import SatelliteForecast
 import SatelliteForecastImpl
 

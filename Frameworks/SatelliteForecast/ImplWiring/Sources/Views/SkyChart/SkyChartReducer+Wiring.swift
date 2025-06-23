@@ -7,7 +7,7 @@
 
 import SatelliteForecast
 import SatelliteForecastImpl
-import SwiftRex
+@preconcurrency import SwiftRex
 
 extension Reducer where ActionType == SkyChartOutput, StateType == SkyChartViewState {
     public func lift() -> Reducer<AppAction, AppState> {

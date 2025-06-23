@@ -7,7 +7,7 @@
 
 import MapKit
 import SwiftUI
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import SatelliteForecast
 
 public struct AllPassesLocationChangeWarningState: Equatable {

@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import SQLite
+@preconcurrency import SQLite
 
 enum StarryNight {
     static let db = try! Connection(Bundle.module.path(forResource: "stars", ofType: "sqlite3")!)

@@ -8,7 +8,7 @@
 import BTree
 import Foundation
 import QSMag
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import SatelliteForecast
 import SolarSystem
 

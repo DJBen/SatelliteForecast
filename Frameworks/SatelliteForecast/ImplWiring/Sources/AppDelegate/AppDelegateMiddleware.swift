@@ -8,10 +8,10 @@
 import BackgroundTasks
 import Foundation
 import Combine
-import CombineRex
+@preconcurrency import CombineRex
 import Geohash
 import os
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import SatelliteForecast
 import SatelliteForecastImpl
 import FirebaseFirestore

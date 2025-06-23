@@ -5,8 +5,8 @@
 //  Created by Ben Lu on 4/4/22.
 //
 
-import CombineRex
-import CombineRextensions
+@preconcurrency import CombineRex
+@preconcurrency import CombineRextensions
 import SatelliteForecast
 import SatelliteForecastImpl
 

@@ -6,7 +6,7 @@
 //
 
 import XCTest
-import CombineRex
+@preconcurrency import CombineRex
 import TestingExtensions
 import SatelliteForecast
 import SatelliteForecastImpl

@@ -5,8 +5,8 @@
 //  Created by Ben Lu on 3/30/22.
 //
 
-import CombineRex
-import CombineRextensions
+@preconcurrency import CombineRex
+@preconcurrency import CombineRextensions
 import SatelliteForecastImpl
 
 extension AllPassesViewState: AppStateMappable {

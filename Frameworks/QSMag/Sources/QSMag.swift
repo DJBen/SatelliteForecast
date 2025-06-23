@@ -8,14 +8,14 @@
 import Foundation
 
 /// https://www.prismnet.com/~mmccants/
-public struct QSMag {
+public struct QSMag : Sendable {
     public let noradIndex: UInt
     public let designation: String
     public let name: String
     public let magnitude: Double?
     public let rcs: Double?
 
-    public static var localData: [UInt: QSMag] = loadLocalData()
+    public static let localData: [UInt: QSMag] = loadLocalData()
 
     public static func loadLocalData() -> [UInt: QSMag] {
         guard let filePath = Bundle.module.path(forResource: "qs", ofType: "mag") else {
@@ -54,7 +54,7 @@ public struct QSMag {
     }
 
     public static func with(noradIndex: UInt) -> QSMag? {
-        localData[noradIndex]
+        return localData[noradIndex]
     }
 }
 

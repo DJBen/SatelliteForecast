@@ -7,7 +7,7 @@
 
 import SwiftUI
 import SatelliteForecast
-import SatelliteKit
+@preconcurrency import SatelliteKit
 
 public struct AuxiliaryCompassView<AziEleProvider: AziEleProviding>: View {
     var aziEleProvider: AziEleProvider

@@ -8,7 +8,7 @@
 import Foundation
 import SatelliteForecast
 import SatelliteForecastImpl
-import SatelliteKit
+@preconcurrency import SatelliteKit
 import UserNotifications
 
 public enum NotificationAction {
