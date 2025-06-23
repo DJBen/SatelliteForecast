@@ -15,6 +15,8 @@ extension Reducer where ActionType == SettingsOverviewViewAction, StateType == S
             state.navigationPath = navigationPath
         case .setNightMode(let isOn):
             state.isNightModeOn = isOn
+        case .setExperimentalSkyNow(let isOn):
+            state.showExperimentalSkyNow = isOn
         }
     }
 }

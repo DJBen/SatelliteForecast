@@ -13,7 +13,8 @@ import SatelliteForecastImpl
 extension RootViewState: AppStateMappable {
     public static func project(appState: AppState) -> RootViewState {
         RootViewState(
-            selectedTab: appState.navigationState.tab
+            selectedTab: appState.navigationState.tab,
+            showExperimentalSkyNow: appState.showExperimentalSkyNow,
         )
     }
 

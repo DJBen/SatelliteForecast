@@ -14,6 +14,7 @@ import SwiftUI
 public enum SettingsOverviewViewAction {
     case navigate(NavigationPath)
     case setNightMode(Bool)
+    case setExperimentalSkyNow(Bool)
 }
 
 extension SettingsOverviewViewAction: Equatable {}
@@ -21,13 +22,16 @@ extension SettingsOverviewViewAction: Equatable {}
 public struct SettingsOverviewViewState {
     public var navigationPath: NavigationPath = .init()
     public var isNightModeOn: Bool = false
+    public var showExperimentalSkyNow: Bool = false
 
     public init(
         navigationPath: NavigationPath = .init(),
-        isNightModeOn: Bool = false
+        isNightModeOn: Bool = false,
+        showExperimentalSkyNow: Bool = false
     ) {
         self.navigationPath = navigationPath
         self.isNightModeOn = isNightModeOn
+        self.showExperimentalSkyNow = showExperimentalSkyNow
     }
 }
 
@@ -120,7 +124,7 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
         }
     }
 
-    private var nightModeCell: some View {
+    @ViewBuilder private var nightModeCell: some View {
         Button(
             store: viewModel,
             action: .setNightMode(!viewModel.state.isNightModeOn)
@@ -161,6 +165,63 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
             .padding()
             .background {
                 let colors = [UIColor.systemGray4, UIColor.systemGray5]
+
+                LinearGradient(
+                    gradient: Gradient(colors: colors.map(Color.init)),
+                    startPoint: UnitPoint(x: 0, y: 0),
+                    endPoint: UnitPoint(x: 1, y: 1)
+                )
+            }
+            .clipShape(
+                RoundedRectangle(
+                    cornerRadius: 8,
+                    style: .continuous
+                )
+            )
+        }
+    }
+
+    @ViewBuilder private var experimentalSkyNowCell: some View {
+        Button(
+            store: viewModel,
+            action: .setExperimentalSkyNow(!viewModel.state.showExperimentalSkyNow)
+        ) { viewModel in
+            HStack {
+                Image(systemName: viewModel.state.showExperimentalSkyNow ? "star.fill" : "star")
+                    .font(.headline)
+                    .foregroundColor(Color(UIColor.label))
+
+                let text: String = {
+                    if viewModel.state.showExperimentalSkyNow {
+                        return NSLocalizedString(
+                            "SettingsOverviewView.experimentalSkyNowCell.off.title",
+                            tableName: nil,
+                            bundle: .module,
+                            value: "Hide experimental Sky Now tab",
+                            comment: "The title of the toggle that hides the experimental Sky Now tab in the settings view."
+                        )
+                    } else {
+                        return NSLocalizedString(
+                            "SettingsOverviewView.experimentalSkyNowCell.on.title",
+                            tableName: nil,
+                            bundle: .module,
+                            value: "Show experimental Sky Now tab",
+                            comment: "The title of the toggle that shows the experimental Sky Now tab in the settings view."
+                        )
+                    }
+                }()
+
+                Text(
+                    text
+                )
+                .font(.headline)
+                .foregroundColor(Color(UIColor.label))
+
+                Spacer()
+            }
+            .padding()
+            .background {
+                let colors = [UIColor.systemPurple, UIColor.systemBlue]
 
                 LinearGradient(
                     gradient: Gradient(colors: colors.map(Color.init)),
@@ -223,6 +284,7 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                     }
 
                     Section {
+                        experimentalSkyNowCell
                         nightModeCell
                     } header: {
                         EmptyView()

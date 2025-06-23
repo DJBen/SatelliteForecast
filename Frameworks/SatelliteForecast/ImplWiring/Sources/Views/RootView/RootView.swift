@@ -20,6 +20,7 @@ extension RootViewAction: Equatable {}
 
 public struct RootViewState {
     public var selectedTab: Tab = .forecast
+    public var showExperimentalSkyNow: Bool = false
 }
 
 extension RootViewState: Equatable {}
@@ -122,28 +123,30 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
                     }
                 )
             }
-
-            SwiftUI.Tab(value: .realtimeSky, role: nil) {
-                realtimeSkyViewProducer.view(
-                    RealtimeSkyViewContext(
-                        basicChartConfigs: .init(),
-                        backgroundSkyConfigs: .preset,
-                        satelliteMagToRadiusFunction: .init(multipler: 3.2, exponent: -0.32, minimum: 1),
-                        julianDateProvider: context.julianDateProvider
+            
+            if viewModel.state.showExperimentalSkyNow {
+                SwiftUI.Tab(value: .realtimeSky, role: nil) {
+                    realtimeSkyViewProducer.view(
+                        RealtimeSkyViewContext(
+                            basicChartConfigs: .init(),
+                            backgroundSkyConfigs: .preset,
+                            satelliteMagToRadiusFunction: .init(multipler: 3.2, exponent: -0.32, minimum: 1),
+                            julianDateProvider: context.julianDateProvider
+                        )
                     )
-                )
-            } label: {
-                DynamicTabBarItemView(
-                    isSelected: isSelectedBinding(for: .realtimeSky),
-                    content: {
-                        Image("glyph_satellite")
-                        Text(realtimeSkyTabText)
-                    },
-                    selectedContent: {
-                        Image("glyph_satellite.fill")
-                        Text(realtimeSkyTabText)
-                    }
-                )
+                } label: {
+                    DynamicTabBarItemView(
+                        isSelected: isSelectedBinding(for: .realtimeSky),
+                        content: {
+                            Image("glyph_satellite")
+                            Text(realtimeSkyTabText)
+                        },
+                        selectedContent: {
+                            Image("glyph_satellite.fill")
+                            Text(realtimeSkyTabText)
+                        }
+                    )
+                }
             }
 
             SwiftUI.Tab(value: .settings, role: nil) {

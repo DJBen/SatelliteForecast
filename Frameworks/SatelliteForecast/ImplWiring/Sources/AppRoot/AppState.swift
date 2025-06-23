@@ -49,6 +49,9 @@ public struct AppState: Equatable {
 
     /// If turned on, the entire view will be
     public var isNightModeOn: Bool = false
+    
+    /// Shows Sky Now tab.
+    public var showExperimentalSkyNow: Bool = false
 
     public init() {}
 }
