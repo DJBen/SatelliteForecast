@@ -7,6 +7,7 @@
 
 import Combine
 @preconcurrency import CombineRex
+import SatelliteForecastImpl
 
 extension EffectMiddleware where InputActionType == AppAction, OutputActionType == AppAction, StateType == AppState, Dependencies == Void {
     public static var loggerMiddleware: EffectMiddleware<AppAction, AppAction, AppState, Void> {

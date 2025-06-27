@@ -28,7 +28,7 @@ extension ScheduledPassNotification: Hashable {
 extension ScheduledPassNotification: Equatable {}
 extension ScheduledPassNotification: Codable {}
 
-public struct PassNotification {
+public struct PassNotification: Sendable {
     public let pass: Pass
     public let satelliteName: String
     public let category: SatelliteCategory
@@ -36,7 +36,7 @@ public struct PassNotification {
     public let timing: Timing
     public let timeOffset: TimeInterval
 
-    public enum Timing: Equatable, Codable, CaseIterable {
+    public enum Timing: Equatable, Codable, CaseIterable, Sendable {
         case rise
         case set
         case transit

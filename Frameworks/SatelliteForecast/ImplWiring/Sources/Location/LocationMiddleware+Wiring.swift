@@ -44,3 +44,25 @@ extension EffectMiddleware where InputActionType == LocationOutput, OutputAction
         .eraseToAnyMiddleware()
     }
 }
+
+extension EffectMiddleware where InputActionType == LocationAction, OutputActionType == RealtimeSkyViewAction, StateType == Void, Dependencies == Void {
+    public func lift() -> AnyMiddleware<AppAction, AppAction, AppState> {
+        return lift(
+            inputAction: \.location,
+            outputAction: AppAction.realtimeSky,
+            state: { _ in }
+        )
+        .eraseToAnyMiddleware()
+    }
+}
+
+extension EffectMiddleware where InputActionType == LocationAction, OutputActionType == ElementsPropagatorAction, StateType == Void, Dependencies == Void {
+    public func lift() -> AnyMiddleware<AppAction, AppAction, AppState> {
+        return lift(
+            inputAction: \.location,
+            outputAction: AppAction.elementsPropagator,
+            state: { _ in }
+        )
+        .eraseToAnyMiddleware()
+    }
+}

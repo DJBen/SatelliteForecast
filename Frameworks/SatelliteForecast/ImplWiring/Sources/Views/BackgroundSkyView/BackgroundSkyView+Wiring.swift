@@ -12,23 +12,23 @@ import SatelliteForecastImpl
 import SwiftUI
 
 extension BackgroundSkyViewState: AppStateMappable {
-    static func project(appState: AppState) -> BackgroundSkyViewState {
+    public static func project(appState: AppState) -> BackgroundSkyViewState {
         BackgroundSkyViewState(
             resources: appState.backgroundSkyResources
         )
     }
 
-    static func apply(appState: inout AppState, state: BackgroundSkyViewState) {
+    public static func apply(appState: inout AppState, state: BackgroundSkyViewState) {
         appState.backgroundSkyResources = state.resources
     }
 }
 
 extension BackgroundSkyResources: AppStateMappable {
-    static func project(appState: AppState) -> BackgroundSkyResources {
+    public static func project(appState: AppState) -> BackgroundSkyResources {
         appState.backgroundSkyResources
     }
 
-    static func apply(appState: inout AppState, state: BackgroundSkyResources) {
+    public static func apply(appState: inout AppState, state: BackgroundSkyResources) {
         appState.backgroundSkyResources = state
     }
 }

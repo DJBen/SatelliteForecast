@@ -7,11 +7,11 @@
 
 import Foundation
 @preconcurrency import SatelliteKit
-import BTree
+@preconcurrency import BTree
 
 /// A snapshot of the satellite of a specific date, coordinate, velocity and whether
 /// if it is illuminated by sunlight.
-public struct SatelliteSnapshot {
+public struct SatelliteSnapshot: Sendable {
     public let julianDate: Double
     public let position: AziEleDst
     /// Distance between the observer and the satellite, in km.
@@ -50,7 +50,7 @@ extension SatelliteSnapshot: Hashable {}
 
 extension SatelliteSnapshot: Codable {}
 
-public struct SnapshotsAroundPass: Equatable {
+public struct SnapshotsAroundPass: Equatable, Sendable {
     public let first: SatelliteSnapshot
     public let second: SatelliteSnapshot
 
@@ -65,12 +65,12 @@ public struct SnapshotsAroundPass: Equatable {
 
 extension SnapshotsAroundPass: Codable {}
 
-public struct NotableSnapshots: Equatable {
+public struct NotableSnapshots: Equatable, Sendable {
     public let rise: SnapshotsAroundPass
     public let transit: SnapshotsAroundPass
     public let set: SnapshotsAroundPass
 
-    public struct IlluminationChangeAndSnapshots: Equatable, Codable {
+    public struct IlluminationChangeAndSnapshots: Equatable, Codable, Sendable {
         public let change: Pass.Illumination.Change
         public let snapshots: SnapshotsAroundPass
 
@@ -138,7 +138,7 @@ extension NotableSnapshots: Codable {
     }
 }
 
-public struct PassSnapshots: Equatable, Codable {
+public struct PassSnapshots: Equatable, Codable, Sendable {
     public let pass: Pass
     public let snapshots: [SatelliteSnapshot]
     public let notableSnapshots: NotableSnapshots

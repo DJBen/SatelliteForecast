@@ -21,7 +21,7 @@ public struct LatLonAlt: Equatable, Hashable, Codable, Sendable {
 
 }
 
-public struct AziEleDst: AziEleProviding, Hashable, Codable {
+public struct AziEleDst: AziEleProviding, Hashable, Codable, Sendable {
     public init(azim: Double, elev: Double, dist: Double) {
         self.azim = azim
         self.elev = elev

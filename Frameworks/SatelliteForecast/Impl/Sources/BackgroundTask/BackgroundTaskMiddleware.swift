@@ -1,0 +1,59 @@
+//
+//  BackgroundTaskMiddleware.swift
+//  BackgroundTaskMiddleware
+//
+//  Created by Ben Lu on 8/19/21.
+//
+
+import BackgroundTasks
+import Combine
+@preconcurrency import CombineRex
+import SatelliteForecast
+import Foundation
+import os
+
+fileprivate let logger = Logger(subsystem: "io.djben.backgroundTasks", category: "middleware")
+
+fileprivate let calculateUpcomingPassesTaskID = "calculateUpcomingPasses"
+
+private func handleCalculatingUpcomingPasses(task: BGTask) {
+    logger.info("Task \(task.identifier) handled at \(Date())")
+    task.setTaskCompleted(success: true)
+}
+
+extension EffectMiddleware where
+    InputActionType == BackgroundTask,
+    OutputActionType == AppAction,
+    StateType == AppState,
+    Dependencies == Void {
+
+    public static var backgroundTask: EffectMiddleware<BackgroundTask, AppAction, AppState, Void> {
+        EffectMiddleware<BackgroundTask, AppAction, AppState, Void>.onAction { action, _, getState in
+            switch action {
+            case .registerHandleCalculatingUpcomingPasses:
+                return .fireAndForget {
+                    precondition(
+                        BGTaskScheduler.shared.register(
+                            forTaskWithIdentifier: calculateUpcomingPassesTaskID,
+                            using: nil,
+                            launchHandler: handleCalculatingUpcomingPasses(task:)
+                        )
+                    )
+                }
+            case .submitHandleCalculatingUpcomingPasses:
+                return .fireAndForget {
+                    // For some reason, `BGAppRefreshTaskRequest` refuses to be scheduled
+                    let request = BGProcessingTaskRequest(identifier: calculateUpcomingPassesTaskID)
+                    request.earliestBeginDate = Date(timeIntervalSinceNow: 60)
+                    request.requiresNetworkConnectivity = true
+                    
+                    do {
+                        try BGTaskScheduler.shared.submit(request)
+                    } catch {
+                        logger.warning("Unable to schedule background tasks: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
+    }
+}

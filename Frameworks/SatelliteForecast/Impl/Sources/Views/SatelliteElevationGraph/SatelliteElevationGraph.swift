@@ -284,7 +284,7 @@ public struct SatelliteElevationGraph: View {
                 graphingRegionSize: $graphingRegionSize
             )
             .equatable()
-            .onChange(of: graphingRegionSize) { size in
+            .onChange(of: graphingRegionSize) { _, size in
                 if size.width == 0 || size.height == 0 {
                     return
                 }
@@ -300,7 +300,7 @@ public struct SatelliteElevationGraph: View {
                     )
                 )
             }
-            .onChange(of: julianDateRange) { newJulianDateRange in
+            .onChange(of: julianDateRange) { _, newJulianDateRange in
                 if graphingRegionSize.width == 0 || graphingRegionSize.height == 0 {
                     return
                 }
@@ -395,11 +395,10 @@ public struct SatelliteElevationGraph: View {
                                         }
                                     }
                                     .onChange(
-                                        of: highlightedDateRange,
-                                        perform: { _ in
-                                            scrollViewProxy.scrollTo("centerAtDate", anchor: .center)
-                                        }
-                                    )
+                                        of: highlightedDateRange
+                                    ) {
+                                        scrollViewProxy.scrollTo("centerAtDate", anchor: .center)
+                                    }
                                 }
                             }
                         }

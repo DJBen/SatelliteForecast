@@ -274,7 +274,7 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
                 )
             }
         }
-        .onChange(of: backgroundSkyJulianDate) { backgroundSkyJulianDateKey in
+        .onChange(of: backgroundSkyJulianDate) { _, backgroundSkyJulianDateKey in
             guard !contentSize.width.isZero && !contentSize.height.isZero else {
                 return
             }

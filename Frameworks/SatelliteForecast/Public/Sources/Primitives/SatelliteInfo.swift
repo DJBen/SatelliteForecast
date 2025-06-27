@@ -10,7 +10,7 @@ import QSMag
 @preconcurrency import SatelliteKit
 import SatelliteCatalog
 
-public struct SatelliteInfo {
+public struct SatelliteInfo: Sendable {
     public let elements: Elements
     public let satCat: SatCat?
     public let ucsSat: UCSSat?

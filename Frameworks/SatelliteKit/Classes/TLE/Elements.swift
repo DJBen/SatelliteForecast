@@ -26,7 +26,7 @@ public enum SatKitError: Error, Equatable {
   ┃ Information derived directly from the Two Line Elements ..                                       ┃
   ┃                                          .. then un'Kozai'd for mean motion and semi major axis. ┃
   ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛*/
-public struct Elements: Equatable, Hashable, Codable {
+public struct Elements: Equatable, Hashable, Codable, Sendable {
 
     public let commonName: String                       // line zero name (if any) [eg: ISS (ZARYA)]
     public let noradIndex: UInt                         // The satellite number [eg: 25544]

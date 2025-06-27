@@ -216,7 +216,7 @@ public struct SatelliteListView: View {
             placement: .navigationBarDrawer(displayMode: .always),
             prompt: "Filter by name, ID, country, year..."
         )
-        .onChange(of: textObserver.debouncedText) { searchText in
+        .onChange(of: textObserver.debouncedText) { _, searchText in
             viewModel.dispatch(.searchSatellites(searchText, category: context.category))
         }
         .onDisappear {

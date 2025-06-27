@@ -6,6 +6,7 @@
 //
 
 @preconcurrency import CombineRex
+import SatelliteForecast
 import SatelliteForecastImpl
 
 extension MiddlewareReader where MiddlewareType == ElementsLoaderEffectMiddleware, Dependencies == ElementsLoaderDependencies {
@@ -50,6 +51,28 @@ extension EffectMiddleware where InputActionType == ElementsLoaderOutput, Output
             inputAction: \.elementsLoaderOutput,
             outputAction: AppAction.allPassesView,
             state: ElementsLoaderState.project(appState:)
+        )
+        .eraseToAnyMiddleware()
+    }
+}
+
+extension EffectMiddleware where InputActionType == ElementsLoaderOutput, OutputActionType == ElementsPropagatorAction, StateType == ElementsLoaderState, Dependencies == Void {
+    public func lift() -> AnyMiddleware<AppAction, AppAction, AppState> {
+        lift(
+            inputAction: \.elementsLoaderOutput,
+            outputAction: AppAction.elementsPropagator,
+            state: ElementsLoaderState.project(appState:)
+        )
+        .eraseToAnyMiddleware()
+    }
+}
+
+extension EffectMiddleware where InputActionType == ElementsLoaderOutput, OutputActionType == SatelliteListViewAction, StateType == Void, Dependencies == Void {
+    public func lift() -> AnyMiddleware<AppAction, AppAction, AppState> {
+        lift(
+            inputAction: \.elementsLoaderOutput,
+            outputAction: AppAction.satelliteListView,
+            state: { _ in }
         )
         .eraseToAnyMiddleware()
     }
