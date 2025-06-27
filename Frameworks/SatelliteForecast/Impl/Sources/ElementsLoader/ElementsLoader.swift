@@ -145,7 +145,6 @@ extension ElementsLoaderImpl: ElementsLoader {
             }
         }
         .tryMap { data -> Map<UInt, SatelliteInfo> in
-            precondition(!Thread.isMainThread)
             let elements = try Elements.load(chunk: String(data: data, encoding: .utf8)!)
             let info = elements.map(
                 SatelliteInfo.init(elements:)
@@ -178,7 +177,6 @@ extension ElementsLoaderImpl: ElementsLoader {
                 loadLocalSatelliteDataFallbackPublisher(category: category, upstreamError: error)
             }
             .tryMap { data -> Map<UInt, SatelliteInfo> in
-                precondition(!Thread.isMainThread)
                 let elements = try Elements.load(chunk: String(data: data, encoding: .utf8)!)
                 let info = elements.map(
                     SatelliteInfo.init(elements:)
