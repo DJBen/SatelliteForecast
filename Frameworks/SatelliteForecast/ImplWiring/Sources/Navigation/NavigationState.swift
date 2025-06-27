@@ -14,8 +14,11 @@ public struct NavigationState {
     public var tab: Tab = .forecast
     /// The navigation path for the navigation stack within pass prediction.
     /// - Pass forecast:
-    ///   Root / (Special satellite | (category / satellite)) / pass
+    ///   Root / Special satellite / passes
     public var passPredictionNavigationPath: NavigationPath = .init()
+    /// - Satellite categories
+    /// Root / category / satellite /passes
+    public var satelliteCategoryNavigationPath = NavigationPath()
     /// The navigation path for the navigation stack within settings.
     /// - Settings:
     ///   Root / (Location | Alarm)
@@ -28,6 +31,7 @@ extension NavigationState: Equatable {}
 public enum Tab {
     case realtimeSky
     case forecast
+    case satellites
     case settings
 }
 

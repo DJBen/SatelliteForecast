@@ -22,7 +22,7 @@ extension EffectMiddleware where InputActionType == RootViewAction, OutputAction
                             fetchStrategy: .localWithin(21600 /* 6 hours */)
                         )
                     )
-                case .forecast, .settings:
+                case .forecast, .satellites, .settings:
                     return .doNothing
                 }
             }

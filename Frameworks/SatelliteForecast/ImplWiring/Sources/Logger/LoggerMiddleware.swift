@@ -37,6 +37,8 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                     print(rootViewAction)
                 case .satelliteOverview(let satelliteOverviewViewAction):
                     print(satelliteOverviewViewAction)
+                case .satelliteCategory(let satelliteCateogryViewAction):
+                    print(satelliteCateogryViewAction)
                 case .satelliteListView(let satelliteListViewAction):
                     print(satelliteListViewAction)
                 case .satelliteListOutput(let satelliteListViewOutput):

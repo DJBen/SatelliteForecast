@@ -34,8 +34,6 @@ extension ViewProducer where Context == SatelliteOverviewViewContext, ProducedVi
                 )
                 .asObservableViewModel(initialState: .init(), emitsValue: .whenDifferent),
                 context: context,
-                listViewProducer: ViewProducer<SatelliteListViewContext, SatelliteListView>
-                    .satelliteListView(viewModel: viewModel),
                 singleSatelliteWrappingViewProducer: ViewProducer<SingleSatelliteWrappingViewContext, SingleSatelliteWrappingView>.singleSatelliteWrappingView(viewModel: viewModel)
             )
         }

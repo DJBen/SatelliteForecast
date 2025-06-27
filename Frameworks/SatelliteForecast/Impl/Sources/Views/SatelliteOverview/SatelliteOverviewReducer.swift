@@ -15,8 +15,6 @@ extension Reducer where ActionType == SatelliteOverviewViewAction, StateType == 
             state.navigationPath = navigationPath
         case .selectSatelliteOfSpecialInterest(let satellite, julianDateRange: _, observer: _):
             state.navigationPath.append(satellite)
-        case .loadCategory(_, julianDateRange: _, observer: _):
-            break
         case .loadSatelliteOfSpecialInterest(_, julianDateRange: _, observer: _):
             break
         }

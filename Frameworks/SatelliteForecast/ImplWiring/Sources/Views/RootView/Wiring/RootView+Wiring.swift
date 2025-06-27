@@ -23,7 +23,7 @@ extension RootViewState: AppStateMappable {
     }
 }
 
-extension ViewProducer where Context == RootViewContext, ProducedView == RootView<RealtimeSkyViewImpl, SatelliteOverviewViewImpl, SettingsOverviewViewImpl> {
+extension ViewProducer where Context == RootViewContext, ProducedView == RootView<RealtimeSkyViewImpl, SatelliteOverviewViewImpl, SettingsOverviewViewImpl, SatelliteCategoryViewImpl> {
     public static func root<S: StoreType>(
         viewModel: S
     ) -> ViewProducer where
@@ -42,6 +42,7 @@ extension ViewProducer where Context == RootViewContext, ProducedView == RootVie
                 context: context,
                 realtimeSkyViewProducer: .realtimeSky(viewModel: viewModel),
                 satelliteOverviewViewProducer: .satelliteOverview(viewModel: viewModel),
+                satelliteCategoryViewProducer: .satelliteCategory(viewModel: viewModel),
                 settingsOverviewProducer: .settingsOverview(viewModel: viewModel)
             )
         }

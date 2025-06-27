@@ -35,6 +35,12 @@ public struct RootViewContext {
     }
 }
 
+private let satelliteCategoryText = NSLocalizedString(
+    "tabs.satelliteCategory.text",
+    value: "Satellites",
+    comment: "The title of the 'Satellites' tab of the root view."
+)
+
 private let realtimeSkyTabText = NSLocalizedString(
     "tabs.realtimeSky.text",
     value: "Sky now",
@@ -53,11 +59,12 @@ private let settingsTabText = NSLocalizedString(
     comment: "The title of the 'Settings' tab of the root view."
 )
 
-public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewViewType: SatelliteOverviewView, SettingsOverViewViewType: SettingsOverviewView>: View {
+public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewViewType: SatelliteOverviewView, SettingsOverViewViewType: SettingsOverviewView, SatelliteCategoryViewType: SatelliteCategoryView>: View {
     @ObservedObject var viewModel: ObservableViewModel<RootViewAction, RootViewState>
     let context: RootViewContext
     let realtimeSkyViewProducer: ViewProducer<RealtimeSkyViewContext, RealtimeSkyViewType>
     let satelliteOverviewViewProducer: ViewProducer<SatelliteOverviewViewContext, SatelliteOverviewViewType>
+    let satelliteCategoryViewProducer: ViewProducer<SatelliteCategoryViewContext, SatelliteCategoryViewType>
     let settingsOverviewProducer: ViewProducer<Void, SettingsOverViewViewType>
 
     init(
@@ -65,12 +72,14 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
         context: RootViewContext,
         realtimeSkyViewProducer: ViewProducer<RealtimeSkyViewContext, RealtimeSkyViewType>,
         satelliteOverviewViewProducer: ViewProducer<SatelliteOverviewViewContext, SatelliteOverviewViewType>,
+        satelliteCategoryViewProducer: ViewProducer<SatelliteCategoryViewContext, SatelliteCategoryViewType>,
         settingsOverviewProducer: ViewProducer<Void, SettingsOverViewViewType>
     ) {
         self.viewModel = viewModel
         self.context = context
         self.realtimeSkyViewProducer = realtimeSkyViewProducer
         self.satelliteOverviewViewProducer = satelliteOverviewViewProducer
+        self.satelliteCategoryViewProducer = satelliteCategoryViewProducer
         self.settingsOverviewProducer = settingsOverviewProducer
 
         let navBarAppearance = UINavigationBarAppearance()
@@ -124,6 +133,26 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
                 )
             }
             
+            SwiftUI.Tab(value: .satellites, role: nil) {
+                satelliteCategoryViewProducer.view(
+                    SatelliteCategoryViewContext(
+                        julianDateProvider: context.julianDateProvider
+                    )
+                )
+            } label: {
+                DynamicTabBarItemView(
+                    isSelected: isSelectedBinding(for: .satellites),
+                    content: {
+                        Image("glyph_satellite")
+                        Text(satelliteCategoryText)
+                    },
+                    selectedContent: {
+                        Image("glyph_satellite.fill")
+                        Text(satelliteCategoryText)
+                    }
+                )
+            }
+            
             if viewModel.state.showExperimentalSkyNow {
                 SwiftUI.Tab(value: .realtimeSky, role: nil) {
                     realtimeSkyViewProducer.view(
@@ -138,11 +167,11 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
                     DynamicTabBarItemView(
                         isSelected: isSelectedBinding(for: .realtimeSky),
                         content: {
-                            Image("glyph_satellite")
+                            Image(systemName: "moon.stars")
                             Text(realtimeSkyTabText)
                         },
                         selectedContent: {
-                            Image("glyph_satellite.fill")
+                            Image(systemName: "moon.stars.fill")
                             Text(realtimeSkyTabText)
                         }
                     )
@@ -177,6 +206,12 @@ struct RootView_Previews: PreviewProvider {
             Color.green
         }
     }
+    
+    struct MockSatelliteCategoryView: SatelliteCategoryView {
+        var body: some View {
+            Color.yellow
+        }
+    }
 
     struct MockRealtimeSkyView: RealtimeSkyView {
         var body: some View {
@@ -204,6 +239,7 @@ struct RootView_Previews: PreviewProvider {
             context: RootViewContext(julianDateProvider: { Date().julianDate }),
             realtimeSkyViewProducer: .pure(MockRealtimeSkyView()),
             satelliteOverviewViewProducer: .pure(MockSatelliteOverviewView()),
+            satelliteCategoryViewProducer: .pure(MockSatelliteCategoryView()),
             settingsOverviewProducer: .pure(MockSettingsView())
         )
     }

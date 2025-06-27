@@ -38,13 +38,6 @@ Dependencies == Void {
                         }
                     )
                 )
-            case .loadCategory(let category, julianDateRange: _, observer: _):
-                return .just(
-                    .loadElements(
-                        category: category,
-                        fetchStrategy: .localWithin(21600 /* 6 hours */)
-                    )
-                )
             }
         }
     }
