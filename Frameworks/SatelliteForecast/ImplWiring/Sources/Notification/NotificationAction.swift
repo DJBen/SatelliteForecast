@@ -30,7 +30,7 @@ public enum NotificationAction {
     
     // Deep link
     case deepLink(
-        category: SatelliteCategory?,
+        category: SatelliteCategory,
         noradIndex: UInt,
         observer: LatLonAlt,
         passIdentifier: String

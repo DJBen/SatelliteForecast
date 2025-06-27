@@ -64,7 +64,14 @@ extension Reducer where ActionType == NotificationAction, StateType == AppState 
             
         case let .deepLink(satelliteCategory, noradIndex, observer: _, passIdentifier: _):
             state.navigationState = .init()
-            if let satelliteCategory = satelliteCategory {
+            switch satelliteCategory {
+            case .iss, .tianhe:
+                state.navigationState.tab = .forecast
+                // Navigation already handled by sending event `selectSatelliteOfSpecialInterest`
+                state.navigationState.listNavigation.category = satelliteCategory
+            default:
+                state.navigationState.tab = .satellites
+                state.navigationState.satelliteCategoryNavigationPath.append(satelliteCategory)
                 state.navigationState.listNavigation.category = satelliteCategory
             }
         }

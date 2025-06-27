@@ -207,14 +207,14 @@ public struct PassView: View {
 public struct PassViewContext {
     public let passIndex: Int
     public let satelliteInfo: SatelliteInfo
-    public let category: SatelliteCategory?
+    public let category: SatelliteCategory
     public let julianDateRange: ClosedRange<Double>
     public let observer: LatLonAlt
     public let passSnapshots: PassSnapshots
     public let julianDateProvider: () -> Double
     public let deviceMotion: Loadable<CMDeviceMotion, Error>
 
-    public init(passIndex: Int, satelliteInfo: SatelliteInfo, category: SatelliteCategory?, julianDateRange: ClosedRange<Double>, observer: LatLonAlt, passSnapshots: PassSnapshots, julianDateProvider: @escaping () -> Double, deviceMotion: Loadable<CMDeviceMotion, Error> = .notLoaded) {
+    public init(passIndex: Int, satelliteInfo: SatelliteInfo, category: SatelliteCategory, julianDateRange: ClosedRange<Double>, observer: LatLonAlt, passSnapshots: PassSnapshots, julianDateProvider: @escaping () -> Double, deviceMotion: Loadable<CMDeviceMotion, Error> = .notLoaded) {
         self.passIndex = passIndex
         self.satelliteInfo = satelliteInfo
         self.category = category
@@ -300,7 +300,7 @@ struct PassView_Previews: PreviewProvider {
         let context = PassViewContext(
             passIndex: 0,
             satelliteInfo: SatelliteInfo(elements: elements),
-            category: nil,
+            category: .tianhe,
             julianDateRange: julianDateRange,
             observer: observer,
             passSnapshots: passSnapshots[0],

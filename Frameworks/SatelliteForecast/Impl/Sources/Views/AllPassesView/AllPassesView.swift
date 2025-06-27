@@ -50,7 +50,7 @@ public struct AllPassesViewState {
     public var placemark: CLPlacemark?
     public var selectedPassIndex: Int?
     public var showsPassAlarmSettingsModal: Bool
-    public var satelliteCategory: SatelliteCategory?
+    public var satelliteCategory: SatelliteCategory
     public var satelliteTrails: [UInt: SatelliteTrails] = [:]
 
     public init(
@@ -62,7 +62,7 @@ public struct AllPassesViewState {
         placemark: CLPlacemark? = nil,
         selectedPassIndex: Int? = nil,
         showsPassAlarmSettingsModal: Bool = false,
-        satelliteCategory: SatelliteCategory? = nil,
+        satelliteCategory: SatelliteCategory = .iss,
         satelliteTrails: [UInt : SatelliteTrails] = [:]
     ) {
         self.julianDateOffset = julianDateOffset
@@ -642,7 +642,7 @@ struct AllPassesView_Previews: PreviewProvider {
                             location: location,
                             placemark: nil,
                             selectedPassIndex: nil,
-                            satelliteCategory: nil,
+                            satelliteCategory: .tianhe,
                             satelliteTrails: [48274: SatelliteTrails(observer: observer, passSnapshots: tianHePasses)]
                         )
                     ),

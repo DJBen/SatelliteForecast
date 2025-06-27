@@ -22,7 +22,7 @@ public enum DebugMenuAction {
     
     case fetchNotifications
     
-    case triggerPassDeepLink(category: SatelliteCategory?, noradIndex: UInt)
+    case triggerPassDeepLink(category: SatelliteCategory, noradIndex: UInt)
 }
 
 public struct DebugMenuConfig: Equatable {
@@ -224,7 +224,7 @@ public struct DebugMenu: View {
 
                 Section {
                     Button("Deep link to ISS (special)") {
-                        viewModel.dispatch(.triggerPassDeepLink(category: nil, noradIndex: 25544))
+                        viewModel.dispatch(.triggerPassDeepLink(category: .iss, noradIndex: 25544))
                     }
                     Button("Deep link to Hubble (brightest 100)") {
                         viewModel.dispatch(.triggerPassDeepLink(category: .brightest100, noradIndex: 20580))

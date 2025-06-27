@@ -377,12 +377,26 @@ extension EffectMiddleware where
                     DispatchQueue.global().async {
                         let julianDate = context.dependencies.dateProvider().julianDate + getState().debugMenu.effectiveOffset
 
-                        if let category = satelliteCategory {
+                        switch satelliteCategory {
+                        case .iss, .tianhe:
+                            subject.send(
+                                DispatchedAction(
+                                    .satelliteOverview(
+                                        .selectSatelliteOfSpecialInterest(
+                                            .init(noradIndex: noradIndex),
+                                            julianDateRange: JulianDateUtil.createJulianDateRange(now: julianDate),
+                                            observer: observer
+                                        )
+                                    ),
+                                    dispatcher: dispatcher
+                                )
+                            )
+                        default:
                             subject.send(
                                 DispatchedAction(
                                     .elementsLoader(
                                         .loadElements(
-                                            category: category,
+                                            category: satelliteCategory,
                                             fetchStrategy: .localWithin(21600 /* 6 hours */),
                                             selectNoradIndex: SelectNoradIndexParam(
                                                 noradIndex: noradIndex,
@@ -394,19 +408,6 @@ extension EffectMiddleware where
                                                 dateRange: JulianDateUtil.createJulianDateRange(now: julianDate),
                                                 observer: observer
                                             )
-                                        )
-                                    ),
-                                    dispatcher: dispatcher
-                                )
-                            )
-                        } else {
-                            subject.send(
-                                DispatchedAction(
-                                    .satelliteOverview(
-                                        .selectSatelliteOfSpecialInterest(
-                                            .init(noradIndex: noradIndex),
-                                            julianDateRange: JulianDateUtil.createJulianDateRange(now: julianDate),
-                                            observer: observer
                                         )
                                     ),
                                     dispatcher: dispatcher

@@ -38,13 +38,13 @@ public enum Tab {
 extension Tab: Equatable, Hashable {}
 
 public struct ListNavigation {
-    var category: SatelliteCategory?
+    var category: SatelliteCategory
     var selectedPassIndex: Int?
     var showAlarmConfigurationModal: Bool
     var showsDetailPassView: Bool
 
     init(
-        category: SatelliteCategory? = nil,
+        category: SatelliteCategory = .iss,
         selectedPassIndex: Int? = nil,
         showAlarmConfigurationModal: Bool = false,
         showsDetailPassView: Bool = false

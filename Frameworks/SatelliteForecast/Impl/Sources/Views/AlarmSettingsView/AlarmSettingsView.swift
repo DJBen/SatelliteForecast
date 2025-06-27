@@ -284,7 +284,7 @@ struct AlarmSettingsView_Previews: PreviewProvider {
                 notification: PassNotification(
                     pass: passSnapshots.pass,
                     satelliteName: "ISS (Zarya)",
-                    category: nil,
+                    category: .iss,
                     observer: observer,
                     timing: .rise,
                     timeOffset: Double.random(in: -7200...600)
