@@ -15,13 +15,13 @@ extension EffectMiddleware where InputActionType == ElementsLoaderOutput, Output
         EffectMiddleware.onAction { action, dispatcher, getState in
             switch action {
             case .loadedSatelliteElements(_, _, let selectNoradIndex, _):
-                guard let selectNoradIndex = selectNoradIndex, [25544, 48274].contains(selectNoradIndex.noradIndex), let category = SatelliteCategory(noradIndex: selectNoradIndex.noradIndex) else {
+                guard let selectNoradIndex = selectNoradIndex, let category = SatelliteCategory(noradIndex: selectNoradIndex.noradIndex), let specialSatellite = SpecialSatellite(category) else {
                     return .doNothing
                 }
 
                 return .just(
                     .selectSatellite(
-                        category: category,
+                        specialSatellite: specialSatellite,
                         julianDateRange: selectNoradIndex.dateRange,
                         observer: selectNoradIndex.observer
                     ),

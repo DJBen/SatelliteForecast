@@ -24,7 +24,7 @@ public enum SatelliteOverviewViewAction {
     )
 
     case selectSatellite(
-        category: SatelliteCategory,
+        specialSatellite: SpecialSatellite,
         julianDateRange: ClosedRange<Double>,
         observer: LatLonAlt?
     )
@@ -95,7 +95,7 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                             ],
                             id: \.self
                         ) { satellite in
-                            NavigationLink(value: satellite) {
+                            NavigationLink(value: SpecialSatellite(satellite)) {
                                 SatelliteOverviewSpecialSatelliteCell(satellite: satellite)
                             }
                         }
@@ -105,11 +105,11 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
             }
             .navigationBarTitle("Overview", displayMode: .inline)
             .navigationBarHidden(true)
-            .navigationDestination(for: SatelliteCategory.self) { satelliteCategory in
+            .navigationDestination(for: SpecialSatellite.self) { specialSatellite in
                 LazyView {
                     singleSatelliteWrappingViewProducer.view(
                         SingleSatelliteWrappingViewContext(
-                            selectedNoradIndex: satelliteCategory.noradIndex!,
+                            selectedNoradIndex: specialSatellite.rawValue,
                             julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
                             observer: viewModel.state.observer,
                             julianDateProvider: context.julianDateProvider

@@ -67,7 +67,7 @@ extension Reducer where ActionType == NotificationAction, StateType == AppState 
             switch satelliteCategory {
             case .iss, .tianhe:
                 state.navigationState.tab = .forecast
-                // Navigation already handled by sending event `selectSatelliteOfSpecialInterest`
+                // Navigation already handled by sending event `selectSatellite`
                 state.navigationState.listNavigation.category = satelliteCategory
             default:
                 state.navigationState.tab = .satellites

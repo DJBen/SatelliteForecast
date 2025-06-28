@@ -35,14 +35,14 @@ Dependencies == Void {
                         }
                     )
                 })
-            case .selectSatellite(let category, let julianDateRange, let observer):
+            case .selectSatellite(let specialSatellite, let julianDateRange, let observer):
                 return .just(
                     .loadElements(
-                        category: category,
+                        category: specialSatellite.category,
                         fetchStrategy: .localWithin(21600 /* 6 hours */),
                         calculatePass: observer.map { observer in
                             ElementsLoaderCalculatePassParam(
-                                noradIndex: category.noradIndex!,
+                                noradIndex: specialSatellite.category.noradIndex!,
                                 dateRange: julianDateRange,
                                 observer: observer
                             )

@@ -11,7 +11,7 @@ public enum SatelliteCategory: Equatable, Hashable, Codable, Sendable {
     /// International Space Station: 25544
     case iss
     
-    /// Tianhe: 48724
+    /// Tianhe: 48274
     case tianhe
     
     /// The brighest 100 (or so) satellites.
