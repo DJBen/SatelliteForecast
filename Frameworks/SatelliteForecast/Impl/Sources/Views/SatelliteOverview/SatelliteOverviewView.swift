@@ -17,15 +17,14 @@ public enum SatelliteOverviewViewAction {
     case navigate(
         NavigationPath
     )
-
-    case selectSatelliteOfSpecialInterest(
-        SatellitesOfSpecialInterest,
+    
+    case onAppear(
         julianDateRange: ClosedRange<Double>,
         observer: LatLonAlt?
     )
 
-    case loadSatelliteOfSpecialInterest(
-        SatellitesOfSpecialInterest,
+    case selectSatellite(
+        category: SatelliteCategory,
         julianDateRange: ClosedRange<Double>,
         observer: LatLonAlt?
     )
@@ -85,14 +84,14 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
             ScrollView {
                 LazyVStack(
                     alignment: .leading,
-                    spacing: 10,
+                    spacing: 24,
                     pinnedViews: []
                 ) {
                     Section {
                         ForEach(
                             [
-                                SatellitesOfSpecialInterest.iss,
-                                SatellitesOfSpecialInterest.tianhe
+                                SatelliteCategory.iss,
+                                SatelliteCategory.tianhe
                             ],
                             id: \.self
                         ) { satellite in
@@ -106,29 +105,28 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
             }
             .navigationBarTitle("Overview", displayMode: .inline)
             .navigationBarHidden(true)
-            .navigationDestination(for: SatellitesOfSpecialInterest.self) { satelliteOfSpecialInterest in
+            .navigationDestination(for: SatelliteCategory.self) { satelliteCategory in
                 LazyView {
                     singleSatelliteWrappingViewProducer.view(
                         SingleSatelliteWrappingViewContext(
-                            selectedNoradIndex: satelliteOfSpecialInterest.noradIndex,
+                            selectedNoradIndex: satelliteCategory.noradIndex!,
                             julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
                             observer: viewModel.state.observer,
                             julianDateProvider: context.julianDateProvider
                         )
                     )
-                    .onAppear {
-                        viewModel.dispatch(
-                            .loadSatelliteOfSpecialInterest(
-                                satelliteOfSpecialInterest,
-                                julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
-                                observer: viewModel.state.observer
-                            )
-                        )
-                    }
                 }
             }
         }
         .tint(Color(uiColor: .label))
+        .onAppear {
+            viewModel.dispatch(
+                .onAppear(
+                    julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
+                    observer: viewModel.state.observer
+                )
+            )
+        }
     }
 }
 

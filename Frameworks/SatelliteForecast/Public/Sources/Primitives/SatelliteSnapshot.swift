@@ -138,7 +138,7 @@ extension NotableSnapshots: Codable {
     }
 }
 
-public struct PassSnapshots: Equatable, Codable, Sendable {
+public struct PassSnapshots: Equatable, Codable, Sendable, CustomDebugStringConvertible {
     public let pass: Pass
     public let snapshots: [SatelliteSnapshot]
     public let notableSnapshots: NotableSnapshots
@@ -151,5 +151,9 @@ public struct PassSnapshots: Equatable, Codable, Sendable {
         self.pass = pass
         self.snapshots = snapshots
         self.notableSnapshots = notableSnapshots
+    }
+    
+    public var debugDescription: String {
+        "PassSnapshots(pass: \(pass))"
     }
 }

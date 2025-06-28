@@ -98,13 +98,10 @@ public struct PassView: View {
                     get: {
                         viewModel.state.showsDetailPassView
                     },
-                    set: { isPresented in
-                        viewModel.dispatch(.showDetailPassView(isPresented))
+                    set: { newValue in
+                        viewModel.dispatch(.showDetailPassView(newValue))
                     }
                 ),
-                onDismiss: {
-                    viewModel.dispatch(.showDetailPassView(false))
-                },
                 content: {
                     detailedPassViewProducer.view(
                         DetailPassViewContext(

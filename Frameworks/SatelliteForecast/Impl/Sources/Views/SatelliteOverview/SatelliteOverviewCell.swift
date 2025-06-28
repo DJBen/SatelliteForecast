@@ -12,25 +12,27 @@ import SwiftUI
 import SwiftUIVisualEffects
 
 struct SatelliteOverviewSpecialSatelliteCell: View {
-    let satellite: SatellitesOfSpecialInterest
+    let satellite: SatelliteCategory
 
     @Environment(\.colorScheme) private var colorScheme
 
-    @ViewBuilder private func background(satellite: SatellitesOfSpecialInterest) -> some View {
-        Image(String(satellite.noradIndex), bundle: .module)
-            .resizable()
-            .aspectRatio(contentMode: .fill)
+    @ViewBuilder private func background(satellite: SatelliteCategory) -> some View {
+        if let noradIndex = satellite.noradIndex {
+            Image(String(noradIndex), bundle: .module)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+        }
     }
 
     var body: some View {
         VStack(alignment: .leading) {
             Spacer()
-                .frame(height: 120)
-
+                .frame(height: 180)
+            
             ZStack {
                 Color.clear
                     .blurEffect()
-
+                
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
                         Text(SatelliteOverviewSpecialSatelliteCell.satelliteOfSpecialInterestLocalizedTitle(satellite))
@@ -38,7 +40,7 @@ struct SatelliteOverviewSpecialSatelliteCell: View {
                             .foregroundColor(Color(UIColor.label))
                         Spacer()
                     }
-
+                    
                     Text(SatelliteOverviewSpecialSatelliteCell.satelliteOfSpecialInterestLocalizedDescription(satellite))
                         .font(.caption)
                         .multilineTextAlignment(.leading)
@@ -61,7 +63,7 @@ struct SatelliteOverviewSpecialSatelliteCell: View {
 }
 
 extension SatelliteOverviewSpecialSatelliteCell {
-    static func satelliteOfSpecialInterestLocalizedTitle(_ satellite: SatellitesOfSpecialInterest) -> String {
+    static func satelliteOfSpecialInterestLocalizedTitle(_ satellite: SatelliteCategory) -> String {
         switch satellite {
         case .iss:
             return NSLocalizedString(
@@ -84,7 +86,7 @@ extension SatelliteOverviewSpecialSatelliteCell {
         }
     }
 
-    static func satelliteOfSpecialInterestLocalizedDescription(_ satellite: SatellitesOfSpecialInterest) -> String {
+    static func satelliteOfSpecialInterestLocalizedDescription(_ satellite: SatelliteCategory) -> String {
         switch satellite {
         case .iss:
             return NSLocalizedString(

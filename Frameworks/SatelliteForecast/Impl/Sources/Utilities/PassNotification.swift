@@ -9,7 +9,7 @@ import Foundation
 import SatelliteForecast
 @preconcurrency import SatelliteKit
 
-public struct ScheduledPassNotification {
+public struct ScheduledPassNotification: Sendable {
     public let id: String
     public let notification: PassNotification
 

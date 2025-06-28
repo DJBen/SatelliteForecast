@@ -22,4 +22,25 @@ public enum SatelliteCategory: Equatable, Hashable, Codable, Sendable {
 
     /// All active satellites
     case active
+    
+    public init?(noradIndex: UInt) {
+        if noradIndex == 25544 {
+            self = .iss
+        } else if noradIndex == 48274 {
+            self = .tianhe
+        } else {
+            return nil
+        }
+    }
+    
+    public var noradIndex: UInt? {
+        switch self {
+        case .iss:
+            return 25544
+        case .tianhe:
+            return 48274
+        default:
+            return nil
+        }
+    }
 }

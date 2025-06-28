@@ -114,6 +114,7 @@ public struct DetailedPassView: View {
                     .padding(.horizontal, 16)
                 }
             }
+            .background(Color.black)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(

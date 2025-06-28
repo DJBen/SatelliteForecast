@@ -21,16 +21,28 @@ Dependencies == Void {
             switch action {
             case .navigate(_):
                 return .doNothing
-            case .loadSatelliteOfSpecialInterest(let satellite, julianDateRange: let julianDateRange, observer: let observer),
-                    .selectSatelliteOfSpecialInterest(let satellite, julianDateRange: let julianDateRange, observer: let observer):
-                let category = satellite.noradIndex == 25544 ? SatelliteCategory.iss : .tianhe
+            case .onAppear(let julianDateRange, let observer):
+                return .sequence([SatelliteCategory.iss, .tianhe].map { category in
+                    .loadElements(
+                        category: category,
+                        fetchStrategy: .localWithin(21600 /* 6 hours */),
+                        calculatePass: observer.map { observer in
+                            ElementsLoaderCalculatePassParam(
+                                noradIndex: category.noradIndex!,
+                                dateRange: julianDateRange,
+                                observer: observer
+                            )
+                        }
+                    )
+                })
+            case .selectSatellite(let category, let julianDateRange, let observer):
                 return .just(
                     .loadElements(
                         category: category,
                         fetchStrategy: .localWithin(21600 /* 6 hours */),
                         calculatePass: observer.map { observer in
                             ElementsLoaderCalculatePassParam(
-                                noradIndex: satellite.noradIndex,
+                                noradIndex: category.noradIndex!,
                                 dateRange: julianDateRange,
                                 observer: observer
                             )

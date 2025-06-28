@@ -70,6 +70,10 @@ class Store: ReduxStoreBase<AppAction, AppState> {
                 )
             )
             .eraseToAnyMiddleware(),
+            EffectMiddleware.loadAfterLocationUpdate.lift(
+                outputAction: AppAction.elementsLoader
+            )
+            .eraseToAnyMiddleware(),
             EffectMiddleware.locationChainer.lift(),
             EffectMiddleware.locationToElementsPropagator.lift(),
             EffectMiddleware.locationToRealtimeSky.lift(),

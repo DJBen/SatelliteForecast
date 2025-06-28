@@ -14,16 +14,16 @@ extension EffectMiddleware where InputActionType == ElementsLoaderOutput, Output
     public static var selectSpecialSatelliteAfterElementsLoader: EffectMiddleware<ElementsLoaderOutput, SatelliteOverviewViewAction, ElementsLoaderState, Void> {
         EffectMiddleware.onAction { action, dispatcher, getState in
             switch action {
-            case .loadedSatelliteElements(_, _, let selectSpecialNoradIndex, _, _):
-                guard let selectSpecialNoradIndex = selectSpecialNoradIndex else {
+            case .loadedSatelliteElements(_, _, let selectNoradIndex, _):
+                guard let selectNoradIndex = selectNoradIndex, [25544, 48274].contains(selectNoradIndex.noradIndex), let category = SatelliteCategory(noradIndex: selectNoradIndex.noradIndex) else {
                     return .doNothing
                 }
 
                 return .just(
-                    .selectSatelliteOfSpecialInterest(
-                        .init(noradIndex: selectSpecialNoradIndex.noradIndex),
-                        julianDateRange: selectSpecialNoradIndex.dateRange,
-                        observer: selectSpecialNoradIndex.observer
+                    .selectSatellite(
+                        category: category,
+                        julianDateRange: selectNoradIndex.dateRange,
+                        observer: selectNoradIndex.observer
                     ),
                     from: dispatcher
                 )

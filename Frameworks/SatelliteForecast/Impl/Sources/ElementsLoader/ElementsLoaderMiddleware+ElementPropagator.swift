@@ -14,7 +14,7 @@ extension EffectMiddleware where InputActionType == ElementsLoaderOutput, Output
     public static var elementsLoaderToElementsPropagator: EffectMiddleware<ElementsLoaderOutput, ElementsPropagatorAction, ElementsLoaderState, Void> {
         EffectMiddleware.onAction { action, dispatcher, getState in
             switch action {
-            case .loadedSatelliteElements(_, let satelliteInfoMap, _, _, let calculatePass):
+            case .loadedSatelliteElements(_, let satelliteInfoMap, _, let calculatePass):
                 guard let calculatePass = calculatePass, let satelliteInfo = satelliteInfoMap[calculatePass.noradIndex] else {
                     return .doNothing
                 }

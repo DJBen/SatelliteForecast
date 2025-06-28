@@ -29,8 +29,8 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                     print(elementsLoaderAction)
                 case .elementsLoaderOutput(let elementsLoaderOutput):
                     switch elementsLoaderOutput {
-                    case .loadedSatelliteElements(let satelliteCategory, _, let selectSpecialNoradIndex, let selectNoradIndex, let calculatePass):
-                        print("loadedSatelliteElements(\(satelliteCategory), selectSpecialNoradIndex: \(String(describing: selectSpecialNoradIndex)), selectNoradIndex: \(String(describing: selectNoradIndex)), calculatePass: \(calculatePass != nil))")
+                    case .loadedSatelliteElements(let satelliteCategory, _, let selectNoradIndex, let calculatePass):
+                        print("loadedSatelliteElements(\(satelliteCategory), selectNoradIndex: \(String(describing: selectNoradIndex)), calculatePass: \(calculatePass != nil))")
                     case .failedLoadingElements(_, _):
                         print(elementsLoaderOutput)
                     }
