@@ -67,7 +67,7 @@ public struct PassNotification: Sendable {
         case .set:
             baseJulianDate = pass.set.julianDate
         case .transit:
-            baseJulianDate = pass.transit.julianDate
+            baseJulianDate = pass.culmination.julianDate
         case .highestIlluminated:
             baseJulianDate = pass.highestIlluminated?.julianDate ?? 0
         }

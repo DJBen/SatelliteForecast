@@ -8,12 +8,15 @@
 @preconcurrency import CombineRex
 @preconcurrency import CombineRextensions
 import SatelliteForecast
+@preconcurrency import SatelliteKit
 import SwiftUI
 import SwiftUIVisualEffects
 
-struct SatelliteOverviewSpecialSatelliteCell: View {
+struct SatelliteOverviewCell: View {
     let satellite: SatelliteCategory
-
+    let nextPassLoadingState: Loadable<NextPass, Error>
+    let julianDateOffset: Double
+    
     @Environment(\.colorScheme) private var colorScheme
 
     @ViewBuilder private func background(satellite: SatelliteCategory) -> some View {
@@ -33,19 +36,63 @@ struct SatelliteOverviewSpecialSatelliteCell: View {
                 Color.clear
                     .blurEffect()
                 
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack {
-                        Text(SatelliteOverviewSpecialSatelliteCell.satelliteOfSpecialInterestLocalizedTitle(satellite))
-                            .font(.headline)
-                            .foregroundColor(Color(UIColor.label))
-                        Spacer()
+                Group {
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Text(SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedTitle(satellite))
+                                .font(.title2)
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(UIColor.label))
+                            Spacer()
+                        }
+                        
+                        switch nextPassLoadingState {
+                        case .failed(_):
+                            Text("Unable to load pass information")
+                                .font(.body)
+                                .foregroundColor(.red)
+                            .multilineTextAlignment(.leading)
+                            .vibrancyEffect()
+                        case .loaded(let nextPass):
+                            VStack(alignment: .leading, spacing: 4) {
+                                if let nextVisiblePass = nextPass.nextVisiblePass, let highestIlluminated = nextVisiblePass.highestIlluminated {
+                                    SatelliteOverviewCell.PassCountdownView(
+                                        pass: nextVisiblePass,
+                                        title: Text("Visible pass \(Image(systemName: "angle"))\(Int(highestIlluminated.elev.rounded()))°"),
+                                        julianDateOffset: julianDateOffset,
+                                    )
+                                }
+                                if let nextProminentPass = nextPass.nextProminentPass, let highestIlluminated = nextProminentPass.highestIlluminated {
+                                    SatelliteOverviewCell.PassCountdownView(
+                                        pass: nextProminentPass,
+                                        title: Text("Prominent pass \(Image(systemName: "angle"))\(Int(highestIlluminated.elev.rounded()))°"),
+                                        julianDateOffset: julianDateOffset,
+                                    )
+                                }
+                                if nextPass.nextVisiblePass == nil && nextPass.nextProminentPass == nil {
+                                    Text("No upcoming visible passes")
+                                        .font(.subheadline)
+                                        .foregroundColor(colorScheme == .light ? Color(UIColor.systemGray2) : Color(UIColor.systemGray4))
+                                        .vibrancyEffect()
+                                }
+                            }
+                        case .loading:
+                            HStack(spacing: 8) {
+                                ProgressView()
+                                    .scaleEffect(0.8)
+                                Text("Loading pass information...")
+                                    .font(.subheadline)
+                                    .foregroundColor(colorScheme == .light ? Color(UIColor.systemGray2) : Color(UIColor.systemGray4))
+                            }
+                            .vibrancyEffect()
+                        case .notLoaded:
+                            Text(SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedDescription(satellite))
+                                .font(.subheadline)
+                                .multilineTextAlignment(.leading)
+                                .foregroundColor(colorScheme == .light ? Color(UIColor.systemGray2) : Color(UIColor.systemGray4))
+                                .vibrancyEffect()
+                        }
                     }
-                    
-                    Text(SatelliteOverviewSpecialSatelliteCell.satelliteOfSpecialInterestLocalizedDescription(satellite))
-                        .font(.caption)
-                        .multilineTextAlignment(.leading)
-                        .foregroundColor(colorScheme == .light ? Color(UIColor.systemGray2) : Color(UIColor.systemGray4))
-                        .vibrancyEffect()
                 }
                 .padding()
             }
@@ -62,7 +109,7 @@ struct SatelliteOverviewSpecialSatelliteCell: View {
     }
 }
 
-extension SatelliteOverviewSpecialSatelliteCell {
+extension SatelliteOverviewCell {
     static func satelliteOfSpecialInterestLocalizedTitle(_ satellite: SatelliteCategory) -> String {
         switch satellite {
         case .iss:
@@ -110,6 +157,81 @@ extension SatelliteOverviewSpecialSatelliteCell {
             fatalError("Unsupported satellite")
         }
     }
+    
+    /// A reusable view component for displaying pass countdown information
+    struct PassCountdownView: View {
+        let pass: Pass
+        let title: Text
+        let julianDateOffset: Double
+        
+        @Environment(\.colorScheme) private var colorScheme
+        @State private var isFlashing = false
+
+        private static let durationFormatter: RelativeDateTimeFormatter = {
+            let formatter = RelativeDateTimeFormatter()
+            formatter.dateTimeStyle = .named
+            formatter.formattingContext = .middleOfSentence
+            return formatter
+        }()
+        
+        @ViewBuilder private var countdownText: some View {
+            let currentJulianDate = Date().julianDate + julianDateOffset
+            let timeUntilRise = (pass.rise.julianDate - currentJulianDate) * TimeConstants.day2sec
+            
+            if currentJulianDate >= pass.rise.julianDate && currentJulianDate <= pass.set.julianDate {
+                Text("Passing now!")
+                    .font(.subheadline)
+                    .fontWeight(.bold)
+                    .foregroundColor(isFlashing ? .pink : .orange)
+                    .onAppear {
+                        withAnimation(Animation.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) {
+                            isFlashing = true
+                        }
+                    }
+            } else {
+                let calendar = Calendar.current
+                let hour = calendar.component(.hour, from: Date(julianDate: pass.culmination.julianDate))
+                let amOrPmText = if hour < 12 {
+                    Text("Morning ")
+                        .font(.subheadline)
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [.blue, .purple],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                } else {
+                    Text("Afternoon ")
+                        .font(.subheadline)
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [Color(red: 0.5, green: 0.2, blue: 0.8), Color(red: 0.8, green: 0.2, blue: 0.5)],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                }
+                let countdownText = Text(Self.durationFormatter.localizedString(fromTimeInterval: timeUntilRise))
+                    .font(.subheadline)
+                    .foregroundColor(.primary)
+                amOrPmText + countdownText
+            }
+        }
+        
+        var body: some View {
+            HStack(alignment: .center, spacing: 4) {
+                title
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .foregroundColor(.primary)
+                
+                Spacer()
+                
+                countdownText
+            }
+        }
+    }
 }
 
 #if DEBUG
@@ -125,9 +247,53 @@ struct SatelliteOverviewCell_Previews: PreviewProvider {
                         alignment: .leading,
                         spacing: 10,
                         content: {
-                            SatelliteOverviewSpecialSatelliteCell(satellite: .iss)
+                            // Default state with no passes loaded
+                            SatelliteOverviewCell(
+                                satellite: .iss,
+                                nextPassLoadingState: .notLoaded,
+                                julianDateOffset: 0
+                            )
 
-                            SatelliteOverviewSpecialSatelliteCell(satellite: .tianhe)
+                            // Loading state
+                            SatelliteOverviewCell(satellite: .iss, nextPassLoadingState: .loading, julianDateOffset: 0)
+                            
+                            // Error state
+                            SatelliteOverviewCell(satellite: .iss, nextPassLoadingState: .failed(URLError(.notConnectedToInternet)), julianDateOffset: 0)
+                            
+                            // Loaded state with both visible and prominent passes
+                            SatelliteOverviewCell(
+                                satellite: .iss, 
+                                nextPassLoadingState: .loaded(
+                                    NextPass(
+                                        nextVisiblePass: Pass(
+                                            noradIndex: 25544,
+                                            rise: Pass.DatePosition(julianDate: Date().addingTimeInterval(7200).julianDate, azim: 45, elev: 10),
+                                            set: Pass.DatePosition(julianDate: Date().addingTimeInterval(8100).julianDate, azim: 225, elev: 10),
+                                            culmination: Pass.DatePosition(julianDate: Date().addingTimeInterval(7650).julianDate, azim: 135, elev: 35),
+                                            illumination: Pass.Illumination(initiallyIlluminated: true, changes: []),
+                                            sunElevationAtTransit: -20
+                                        ),
+                                        nextProminentPass: Pass(
+                                            noradIndex: 25544,
+                                            rise: Pass.DatePosition(julianDate: Date().addingTimeInterval(86400).julianDate, azim: 90, elev: 10),
+                                            set: Pass.DatePosition(julianDate: Date().addingTimeInterval(87300).julianDate, azim: 270, elev: 10),
+                                            culmination: Pass.DatePosition(julianDate: Date().addingTimeInterval(86850).julianDate, azim: 180, elev: 65),
+                                            illumination: Pass.Illumination(initiallyIlluminated: true, changes: []),
+                                            sunElevationAtTransit: -18
+                                        )
+                                    )
+                                ),
+                                julianDateOffset: 0
+                            )
+                            
+                            // Loaded state with no upcoming passes
+                            SatelliteOverviewCell(
+                                satellite: .tianhe, 
+                                nextPassLoadingState: .loaded(
+                                    NextPass(nextVisiblePass: nil, nextProminentPass: nil)
+                                ),
+                                julianDateOffset: 0
+                            )
                         }
                     )
                 }

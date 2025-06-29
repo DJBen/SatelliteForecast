@@ -30,19 +30,35 @@ public enum SatelliteOverviewViewAction {
     )
 }
 
+public struct NextPass: Equatable {
+    let nextVisiblePass: Pass?
+    let nextProminentPass: Pass?
+    
+    public init(nextVisiblePass: Pass?, nextProminentPass: Pass?) {
+        self.nextVisiblePass = nextVisiblePass
+        self.nextProminentPass = nextProminentPass
+    }
+}
+
 public struct SatelliteOverviewViewState: Equatable {
     public var navigationPath: NavigationPath
     public var observer: LatLonAlt?
     public var julianDateOffset: Double = 0
-
+    public var issNextPass: Loadable<NextPass, Error> = .loading
+    public var tianheNextPass: Loadable<NextPass, Error> = .loading
+    
     public init(
         navigationPath: NavigationPath = .init(),
         observer: LatLonAlt? = nil,
-        julianDateOffset: Double = 0
+        julianDateOffset: Double = 0,
+        issNextPass: Loadable<NextPass, Error> = .loading,
+        tianheNextPass: Loadable<NextPass, Error> = .loading
     ) {
         self.navigationPath = navigationPath
         self.observer = observer
         self.julianDateOffset = julianDateOffset
+        self.issNextPass = issNextPass
+        self.tianheNextPass = tianheNextPass
     }
 }
 
@@ -96,7 +112,11 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                             id: \.self
                         ) { satellite in
                             NavigationLink(value: SpecialSatellite(satellite)) {
-                                SatelliteOverviewSpecialSatelliteCell(satellite: satellite)
+                                SatelliteOverviewCell(
+                                    satellite: satellite,
+                                    nextPassLoadingState: satellite == .iss ? viewModel.state.issNextPass : viewModel.state.tianheNextPass,
+                                    julianDateOffset: viewModel.state.julianDateOffset
+                                )
                             }
                         }
                     }

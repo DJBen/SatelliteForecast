@@ -19,7 +19,7 @@ extension Pass {
             (value * 1000).rounded() / 1000
         }
         
-        return "\(noradIndex)-r@\(roundToThird(rise.julianDate))-t@\(roundToThird(transit.julianDate))-s@\(roundToThird(`set`.julianDate))"
+        return "\(noradIndex)-r@\(roundToThird(rise.julianDate))-t@\(roundToThird(culmination.julianDate))-s@\(roundToThird(`set`.julianDate))"
     }
     
     /// The URL for attachment image for the pass' notification.

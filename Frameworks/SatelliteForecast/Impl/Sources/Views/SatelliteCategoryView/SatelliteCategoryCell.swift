@@ -41,7 +41,8 @@ struct SatelliteCategoryCell: View {
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
                         Text(SatelliteCategoryCell.categoryLocalizedString(category))
-                            .font(.headline)
+                            .font(.title2)
+                            .fontWeight(.semibold)
                             .foregroundColor(Color(UIColor.label))
                         Spacer()
                     }

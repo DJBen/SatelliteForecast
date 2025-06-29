@@ -155,11 +155,11 @@ extension AlarmSettingsView {
 
         case .transit:
             beforeFormat = NSLocalizedString(
-                "AlarmSettingsView.alarmOffsetDescription.transit",
+                "AlarmSettingsView.alarmOffsetDescription.culmination",
                 tableName: nil,
                 bundle: .module,
                 value: "%@ before highest point",
-                comment: "The timing and offset description for the alarm in the alarm settings view, transit."
+                comment: "The timing and offset description for the alarm in the alarm settings view, culmination."
             )
 
         case .set:
@@ -241,12 +241,12 @@ extension AlarmSettingsView {
         case .daylight:
             return String(
                 format: daytimeFormat,
-                pass.transit.elev
+                pass.culmination.elev
             )
         case .unlit:
             return String(
                 format: unlitFormat,
-                pass.transit.elev
+                pass.culmination.elev
             )
         }
     }

@@ -124,7 +124,7 @@ public struct SkyChart<ConstellationLabel: View, BackgroundAnnotationView: View>
                     ) {
                         Text(
                             """
-                            ∠\(SkyChartUtils.labelAngleFormatter.string(from: NSNumber(value: context.pass.transit.elev))!)° \(SkyChartUtils.labelDateFormatter.string(from: Date(julianDate: context.pass.transit.julianDate)))
+                            ∠\(SkyChartUtils.labelAngleFormatter.string(from: NSNumber(value: context.pass.culmination.elev))!)° \(SkyChartUtils.labelDateFormatter.string(from: Date(julianDate: context.pass.culmination.julianDate)))
                             """
                         )
                     }
@@ -405,7 +405,7 @@ struct SkyChart_Previews: PreviewProvider {
 
         ForEach(ColorScheme.allCases, id: \.self) { colorScheme in
             let traitCollection = UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
-            let referenceDate = passSnapshots.pass.transit.julianDate.advanced(by: 20 * TimeConstants.sec2day)
+            let referenceDate = passSnapshots.pass.culmination.julianDate.advanced(by: 20 * TimeConstants.sec2day)
             SkyChart<EmptyView, EmptyView>(
                 viewModel: .mock(
                     state: SkyChartViewState(

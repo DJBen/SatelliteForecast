@@ -147,12 +147,12 @@ enum LocalizedStrings {
             case .daylight:
                 visibilityString = String(
                     format: daytimeFormat,
-                    pass.transit.elev
+                    pass.culmination.elev
                 )
             case .unlit:
                 visibilityString = String(
                     format: unlitFormat,
-                    pass.transit.elev
+                    pass.culmination.elev
                 )
             }
             

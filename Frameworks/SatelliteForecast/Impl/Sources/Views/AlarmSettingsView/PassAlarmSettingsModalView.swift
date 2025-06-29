@@ -98,7 +98,7 @@ public struct PassAlarmSettingsModalView: View {
         case .rise:
             return context.passSnapshots.pass.rise
         case .transit:
-            return context.passSnapshots.pass.transit
+            return context.passSnapshots.pass.culmination
         case .highestIlluminated:
             return context.passSnapshots.pass.highestIlluminated
         case .set:
