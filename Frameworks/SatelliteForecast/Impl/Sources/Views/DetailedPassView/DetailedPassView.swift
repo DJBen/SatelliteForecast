@@ -179,7 +179,7 @@ struct DetailedPassView_Previews: PreviewProvider {
             """
         )
         let julianDateRange = Date().advanced(by: -60 * 60 * 2).julianDate...Date().advanced(by: 60 * 60 * 22).julianDate
-        let satelliteInfo = SatelliteInfo(elements: elements)
+        let satelliteInfo = try! SatelliteInfo(elements: elements)
         // 2000 Broadway, Redwood City, CA 94063
         let observer = LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0)
         let snapshots = try! satelliteInfo.generateSnapshots(
@@ -194,7 +194,7 @@ struct DetailedPassView_Previews: PreviewProvider {
         DetailedPassView(
             viewModel: .mock(state: .init()),
             context: DetailPassViewContext(
-                satelliteInfo: SatelliteInfo(elements: elements),
+                satelliteInfo: try! SatelliteInfo(elements: elements),
                 category: nil,
                 julianDateRange: julianDateRange,
                 observer: observer,

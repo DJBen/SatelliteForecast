@@ -274,7 +274,7 @@ struct ImageRenderer_Previews: PreviewProvider {
 
         let formatter = ISO8601DateFormatter()
         let date = formatter.date(from: "2021-06-02T06:29:00-0600")!
-        let satelliteInfo = SatelliteInfo(elements: elements)
+        let satelliteInfo = try! SatelliteInfo(elements: elements)
         let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
         let snapshots = try! satelliteInfo.generateSnapshots(
             observer: observer,

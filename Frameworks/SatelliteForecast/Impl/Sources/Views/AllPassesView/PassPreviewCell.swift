@@ -246,7 +246,7 @@ struct PassPreviewCell_Previews: PreviewProvider {
         // Date range
         let startDate = Date(timeIntervalSinceReferenceDate: 20 * 365 * 86400)
         let julianDateRange = startDate.advanced(by: -60 * 60 * 2).julianDate...startDate.advanced(by: 60 * 60 * 30).julianDate
-        let satelliteInfo = SatelliteInfo(elements: elements)
+        let satelliteInfo = try! SatelliteInfo(elements: elements)
         let coarseSnapshots = try! satelliteInfo.generateSnapshots(
             observer: observer,
             julianDateRange: julianDateRange,
@@ -260,7 +260,7 @@ struct PassPreviewCell_Previews: PreviewProvider {
         func viewAtPassIndex(_ index: Int) -> some View {
             let passSnapshot = passSnapshots[index]
             return PassPreviewCell(
-                satelliteInfo: SatelliteInfo(elements: elements),
+                satelliteInfo: try! SatelliteInfo(elements: elements),
                 snapshots: passSnapshot.snapshots,
                 notableSnapshots: passSnapshot.notableSnapshots,
                 observer: observer,

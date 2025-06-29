@@ -146,7 +146,7 @@ extension ElementsLoaderImpl: ElementsLoader {
         }
         .tryMap { data -> Map<UInt, SatelliteInfo> in
             let elements = try Elements.load(chunk: String(data: data, encoding: .utf8)!)
-            let info = elements.map(
+            let info = try elements.map(
                 SatelliteInfo.init(elements:)
             )
             // Sort the satellite list in reverse chronological order of the freshness of Elements.
@@ -178,7 +178,7 @@ extension ElementsLoaderImpl: ElementsLoader {
             }
             .tryMap { data -> Map<UInt, SatelliteInfo> in
                 let elements = try Elements.load(chunk: String(data: data, encoding: .utf8)!)
-                let info = elements.map(
+                let info = try elements.map(
                     SatelliteInfo.init(elements:)
                 )
                 // Sort the satellite list in reverse chronological order of the freshness of Elements.
@@ -207,9 +207,9 @@ extension ElementsLoaderImpl: ElementsLoader {
 }
 
 extension SatelliteInfo {
-    public init(elements: Elements) {
-        let satCat = SatCat.with(noradCatID: Int(elements.noradIndex))
-        let ucsSat = UCSSat.with(noradCatID: Int(elements.noradIndex))
+    public init(elements: Elements) throws {
+        let satCat = try SatCat.with(noradCatID: Int(elements.noradIndex))
+        let ucsSat = try UCSSat.with(noradCatID: Int(elements.noradIndex))
         let qsMag = QSMag.with(noradIndex: elements.noradIndex)
         self.init(
             elements: elements,

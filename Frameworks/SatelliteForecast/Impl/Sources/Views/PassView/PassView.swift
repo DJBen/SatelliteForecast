@@ -251,7 +251,7 @@ struct PassView_Previews: PreviewProvider {
             """
         )
         let julianDateRange = Date().advanced(by: -60 * 60 * 2).julianDate...Date().advanced(by: 60 * 60 * 22).julianDate
-        let satelliteInfo = SatelliteInfo(elements: elements)
+        let satelliteInfo = try! SatelliteInfo(elements: elements)
         // 2000 Broadway, Redwood City, CA 94063
         let observer = LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0)
         let snapshots = try! satelliteInfo.generateSnapshots(
@@ -296,7 +296,7 @@ struct PassView_Previews: PreviewProvider {
         )
         let context = PassViewContext(
             passIndex: 0,
-            satelliteInfo: SatelliteInfo(elements: elements),
+            satelliteInfo: try! SatelliteInfo(elements: elements),
             category: .tianhe,
             julianDateRange: julianDateRange,
             observer: observer,
@@ -304,7 +304,7 @@ struct PassView_Previews: PreviewProvider {
             julianDateProvider: { Date().julianDate }
         )
         let elevationGraphContext = SatelliteElevationGraphContext(
-            satelliteInfo: SatelliteInfo(elements: elements),
+            satelliteInfo: try! SatelliteInfo(elements: elements),
             selectedPassIndex: 0,
             julianDateRange: julianDateRange,
             observer: observer,

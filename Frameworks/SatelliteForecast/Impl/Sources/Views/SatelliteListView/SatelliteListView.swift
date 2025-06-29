@@ -248,8 +248,8 @@ struct SatelliteListView_Previews: PreviewProvider {
         .map {
             SatelliteInfo(
                 elements: $0,
-                satCat: SatCat.with(noradCatID: Int($0.noradIndex)),
-                ucsSat: UCSSat.with(noradCatID: Int($0.noradIndex))
+                satCat: try! SatCat.with(noradCatID: Int($0.noradIndex)),
+                ucsSat: try! UCSSat.with(noradCatID: Int($0.noradIndex))
             )
         }
         .reduce(into: Map<UInt, SatelliteInfo>(), { $0[$1.noradIndex] = $1 })

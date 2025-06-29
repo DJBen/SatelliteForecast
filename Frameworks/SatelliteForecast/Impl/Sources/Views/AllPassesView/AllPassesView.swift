@@ -624,7 +624,7 @@ struct AllPassesView_Previews: PreviewProvider {
         let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
         let location = CLLocation(observer)
         let context = AllPassesViewContext(
-            satelliteInfo: SatelliteInfo(elements: tianHe),
+            satelliteInfo: try! SatelliteInfo(elements: tianHe),
             julianDateRange: Date().julianDate...Date().julianDate + 1,
             observer: observer,
             julianDateProvider: { Date().julianDate }
@@ -653,7 +653,7 @@ struct AllPassesView_Previews: PreviewProvider {
                                 state: SkyChartViewState()
                             ),
                             context: SkyChartContext<EmptyView, EmptyView>(
-                                satelliteInfo: SatelliteInfo(elements: tianHe),
+                                satelliteInfo: try! SatelliteInfo(elements: tianHe),
                                 snapshots: passSnapshots.snapshots,
                                 observer: observer,
                                 pass: passSnapshots.pass,

@@ -112,7 +112,7 @@ struct RealtimeSkySatelliteCell_Previews: PreviewProvider {
         let observer = LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0)
         // Date range
         let startDate = Date(timeIntervalSinceReferenceDate: 20 * 365 * 86400)
-        let satelliteInfo = SatelliteInfo(elements: elements)
+        let satelliteInfo = try! SatelliteInfo(elements: elements)
         RealtimeSkySatelliteCell(
             isFocused: container.$isFocused,
             satelliteInfo: satelliteInfo,
