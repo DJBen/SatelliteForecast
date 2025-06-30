@@ -17,39 +17,48 @@ public enum SatelliteOverviewViewAction {
     case navigate(
         NavigationPath
     )
-
-    case selectSatelliteOfSpecialInterest(
-        SatellitesOfSpecialInterest,
+    
+    case onAppear(
         julianDateRange: ClosedRange<Double>,
         observer: LatLonAlt?
     )
 
-    case loadSatelliteOfSpecialInterest(
-        SatellitesOfSpecialInterest,
+    case selectSatellite(
+        specialSatellite: SpecialSatellite,
         julianDateRange: ClosedRange<Double>,
         observer: LatLonAlt?
     )
+}
 
-    case loadCategory(
-        SatelliteCategory,
-        julianDateRange: ClosedRange<Double>,
-        observer: LatLonAlt?
-    )
+public struct NextPass: Equatable {
+    let nextVisiblePass: Pass?
+    let nextProminentPass: Pass?
+    
+    public init(nextVisiblePass: Pass?, nextProminentPass: Pass?) {
+        self.nextVisiblePass = nextVisiblePass
+        self.nextProminentPass = nextProminentPass
+    }
 }
 
 public struct SatelliteOverviewViewState: Equatable {
     public var navigationPath: NavigationPath
     public var observer: LatLonAlt?
     public var julianDateOffset: Double = 0
-
+    public var issNextPass: Loadable<NextPass, Error> = .loading
+    public var tianheNextPass: Loadable<NextPass, Error> = .loading
+    
     public init(
         navigationPath: NavigationPath = .init(),
         observer: LatLonAlt? = nil,
-        julianDateOffset: Double = 0
+        julianDateOffset: Double = 0,
+        issNextPass: Loadable<NextPass, Error> = .loading,
+        tianheNextPass: Loadable<NextPass, Error> = .loading
     ) {
         self.navigationPath = navigationPath
         self.observer = observer
         self.julianDateOffset = julianDateOffset
+        self.issNextPass = issNextPass
+        self.tianheNextPass = tianheNextPass
     }
 }
 
@@ -66,18 +75,15 @@ public struct SatelliteOverviewViewContext {
 public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
     @ObservedObject var viewModel: ObservableViewModel<SatelliteOverviewViewAction, SatelliteOverviewViewState>
     let context: SatelliteOverviewViewContext
-    let listViewProducer: ViewProducer<SatelliteListViewContext, SatelliteListView>
     let singleSatelliteWrappingViewProducer: ViewProducer<SingleSatelliteWrappingViewContext, SingleSatelliteWrappingView>
 
     public init(
         viewModel: ObservableViewModel<SatelliteOverviewViewAction, SatelliteOverviewViewState>,
         context: SatelliteOverviewViewContext,
-        listViewProducer: ViewProducer<SatelliteListViewContext, SatelliteListView>,
         singleSatelliteWrappingViewProducer: ViewProducer<SingleSatelliteWrappingViewContext, SingleSatelliteWrappingView>
     ) {
         self.viewModel = viewModel
         self.context = context
-        self.listViewProducer = listViewProducer
         self.singleSatelliteWrappingViewProducer = singleSatelliteWrappingViewProducer
     }
 
@@ -94,47 +100,23 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
             ScrollView {
                 LazyVStack(
                     alignment: .leading,
-                    spacing: 10,
+                    spacing: 24,
                     pinnedViews: []
                 ) {
                     Section {
                         ForEach(
                             [
-                                SatellitesOfSpecialInterest.iss,
-                                SatellitesOfSpecialInterest.tianhe
+                                SatelliteCategory.iss,
+                                SatelliteCategory.tianhe
                             ],
                             id: \.self
                         ) { satellite in
-                            NavigationLink(value: satellite) {
-                                SatelliteOverviewSpecialSatelliteCell(satellite: satellite)
-                            }
-                        }
-                    }
-
-                    Section(
-                        header: Text(SatelliteOverviewViewImpl.categoriesSectionTitle)
-                            .font(.headline.lowercaseSmallCaps().weight(.semibold))
-                            .foregroundColor(Color(UIColor.secondaryLabel))
-                    ) {
-                        LazyVGrid(
-                            columns: [
-                                GridItem(.flexible()),
-                                GridItem(.flexible())
-                            ],
-                            alignment: .leading,
-                            spacing: 10
-                        ) {
-                            ForEach(
-                                [
-                                    SatelliteCategory.brightest100,
-                                    SatelliteCategory.active,
-                                    SatelliteCategory.last30DayLaunches
-                                ],
-                                id: \.self
-                            ) { category in
-                                NavigationLink(value: category) {
-                                    SatelliteOverviewCategoryCell(category: category)
-                                }
+                            NavigationLink(value: SpecialSatellite(satellite)) {
+                                SatelliteOverviewCell(
+                                    satellite: satellite,
+                                    nextPassLoadingState: satellite == .iss ? viewModel.state.issNextPass : viewModel.state.tianheNextPass,
+                                    julianDateOffset: viewModel.state.julianDateOffset
+                                )
                             }
                         }
                     }
@@ -143,61 +125,29 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
             }
             .navigationBarTitle("Overview", displayMode: .inline)
             .navigationBarHidden(true)
-            .navigationDestination(for: SatellitesOfSpecialInterest.self) { satelliteOfSpecialInterest in
+            .navigationDestination(for: SpecialSatellite.self) { specialSatellite in
                 LazyView {
                     singleSatelliteWrappingViewProducer.view(
                         SingleSatelliteWrappingViewContext(
-                            selectedNoradIndex: satelliteOfSpecialInterest.noradIndex,
+                            selectedNoradIndex: specialSatellite.rawValue,
                             julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
                             observer: viewModel.state.observer,
                             julianDateProvider: context.julianDateProvider
                         )
                     )
-                    .onAppear {
-                        viewModel.dispatch(
-                            .loadSatelliteOfSpecialInterest(
-                                satelliteOfSpecialInterest,
-                                julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
-                                observer: viewModel.state.observer
-                            )
-                        )
-                    }
-                }
-            }
-            .navigationDestination(for: SatelliteCategory.self) { category in
-                LazyView {
-                    listViewProducer.view(
-                        SatelliteListViewContext(
-                            category: category,
-                            julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
-                            observer: viewModel.state.observer,
-                            julianDateProvider: context.julianDateProvider
-                        )
-                    )
-                    .onAppear {
-                        viewModel.dispatch(
-                            .loadCategory(
-                                category,
-                                julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
-                                observer: viewModel.state.observer
-                            )
-                        )
-                    }
                 }
             }
         }
         .tint(Color(uiColor: .label))
+        .onAppear {
+            viewModel.dispatch(
+                .onAppear(
+                    julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
+                    observer: viewModel.state.observer
+                )
+            )
+        }
     }
-}
-
-extension SatelliteOverviewViewImpl {
-    static let categoriesSectionTitle = NSLocalizedString(
-        "SatelliteListView.sectionOverviewView.section.satellitesByCategories",
-        tableName: nil,
-        bundle: .module,
-        value: "Satellites by categories",
-        comment: "The section title for satellites grouped by categories"
-    )
 }
 
 #if DEBUG
@@ -210,7 +160,6 @@ struct SatelliteOverviewView_Previews: PreviewProvider {
             context: SatelliteOverviewViewContext(
                 julianDateProvider: { Date().julianDate }
             ),
-            listViewProducer: .crash,
             singleSatelliteWrappingViewProducer: .crash
         )
     }

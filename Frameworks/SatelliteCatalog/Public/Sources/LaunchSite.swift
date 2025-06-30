@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct LaunchSite {
+public struct LaunchSite: Sendable {
     public init(code: String) {
         self.code = code
     }

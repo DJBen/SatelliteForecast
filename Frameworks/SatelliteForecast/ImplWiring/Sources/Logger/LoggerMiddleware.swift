@@ -7,6 +7,7 @@
 
 import Combine
 @preconcurrency import CombineRex
+import SatelliteForecastImpl
 
 extension EffectMiddleware where InputActionType == AppAction, OutputActionType == AppAction, StateType == AppState, Dependencies == Void {
     public static var loggerMiddleware: EffectMiddleware<AppAction, AppAction, AppState, Void> {
@@ -28,8 +29,8 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                     print(elementsLoaderAction)
                 case .elementsLoaderOutput(let elementsLoaderOutput):
                     switch elementsLoaderOutput {
-                    case .loadedSatelliteElements(let satelliteCategory, _, let selectSpecialNoradIndex, let selectNoradIndex, let calculatePass):
-                        print("loadedSatelliteElements(\(satelliteCategory), selectSpecialNoradIndex: \(String(describing: selectSpecialNoradIndex)), selectNoradIndex: \(String(describing: selectNoradIndex)), calculatePass: \(calculatePass != nil))")
+                    case .loadedSatelliteElements(let satelliteCategory, _, let selectNoradIndex, let calculatePass):
+                        print("loadedSatelliteElements(\(satelliteCategory), selectNoradIndex: \(String(describing: selectNoradIndex)), calculatePass: \(calculatePass != nil))")
                     case .failedLoadingElements(_, _):
                         print(elementsLoaderOutput)
                     }
@@ -37,6 +38,8 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                     print(rootViewAction)
                 case .satelliteOverview(let satelliteOverviewViewAction):
                     print(satelliteOverviewViewAction)
+                case .satelliteCategory(let satelliteCateogryViewAction):
+                    print(satelliteCateogryViewAction)
                 case .satelliteListView(let satelliteListViewAction):
                     print(satelliteListViewAction)
                 case .satelliteListOutput(let satelliteListViewOutput):

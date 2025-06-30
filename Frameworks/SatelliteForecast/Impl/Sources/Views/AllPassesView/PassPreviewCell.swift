@@ -77,7 +77,7 @@ struct PassPreviewCell: View {
                             Text(PassPreviewCell.titleForPassVisibility(pass.visibility))
                                 .font(.headline)
                                 .foregroundColor(Color(UIColor.label))
-                            Text("∠\(Self.numberFormatter.string(from: NSNumber(value: pass.transit.elev))!)°")
+                            Text("∠\(Self.numberFormatter.string(from: NSNumber(value: pass.culmination.elev))!)°")
                                 .font(.body)
                                 .foregroundColor(Color(UIColor.label))
                             if hasScheduledAlert {
@@ -110,7 +110,7 @@ struct PassPreviewCell: View {
                                 .font(.subheadline)
                                 .foregroundColor(Color(UIColor.secondaryLabel))
 
-                            Text(Self.timeFormatter.string(from: Date(julianDate: pass.transit.julianDate)))
+                            Text(Self.timeFormatter.string(from: Date(julianDate: pass.culmination.julianDate)))
                                 .font(.subheadline)
                                 .foregroundColor(Color(UIColor.secondaryLabel))
                         }
@@ -246,7 +246,7 @@ struct PassPreviewCell_Previews: PreviewProvider {
         // Date range
         let startDate = Date(timeIntervalSinceReferenceDate: 20 * 365 * 86400)
         let julianDateRange = startDate.advanced(by: -60 * 60 * 2).julianDate...startDate.advanced(by: 60 * 60 * 30).julianDate
-        let satelliteInfo = SatelliteInfo(elements: elements)
+        let satelliteInfo = try! SatelliteInfo(elements: elements)
         let coarseSnapshots = try! satelliteInfo.generateSnapshots(
             observer: observer,
             julianDateRange: julianDateRange,
@@ -260,7 +260,7 @@ struct PassPreviewCell_Previews: PreviewProvider {
         func viewAtPassIndex(_ index: Int) -> some View {
             let passSnapshot = passSnapshots[index]
             return PassPreviewCell(
-                satelliteInfo: SatelliteInfo(elements: elements),
+                satelliteInfo: try! SatelliteInfo(elements: elements),
                 snapshots: passSnapshot.snapshots,
                 notableSnapshots: passSnapshot.notableSnapshots,
                 observer: observer,

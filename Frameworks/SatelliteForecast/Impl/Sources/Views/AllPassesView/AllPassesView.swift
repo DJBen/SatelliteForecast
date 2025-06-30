@@ -50,7 +50,7 @@ public struct AllPassesViewState {
     public var placemark: CLPlacemark?
     public var selectedPassIndex: Int?
     public var showsPassAlarmSettingsModal: Bool
-    public var satelliteCategory: SatelliteCategory?
+    public var satelliteCategory: SatelliteCategory
     public var satelliteTrails: [UInt: SatelliteTrails] = [:]
 
     public init(
@@ -62,7 +62,7 @@ public struct AllPassesViewState {
         placemark: CLPlacemark? = nil,
         selectedPassIndex: Int? = nil,
         showsPassAlarmSettingsModal: Bool = false,
-        satelliteCategory: SatelliteCategory? = nil,
+        satelliteCategory: SatelliteCategory = .iss,
         satelliteTrails: [UInt : SatelliteTrails] = [:]
     ) {
         self.julianDateOffset = julianDateOffset
@@ -624,7 +624,7 @@ struct AllPassesView_Previews: PreviewProvider {
         let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
         let location = CLLocation(observer)
         let context = AllPassesViewContext(
-            satelliteInfo: SatelliteInfo(elements: tianHe),
+            satelliteInfo: try! SatelliteInfo(elements: tianHe),
             julianDateRange: Date().julianDate...Date().julianDate + 1,
             observer: observer,
             julianDateProvider: { Date().julianDate }
@@ -642,7 +642,7 @@ struct AllPassesView_Previews: PreviewProvider {
                             location: location,
                             placemark: nil,
                             selectedPassIndex: nil,
-                            satelliteCategory: nil,
+                            satelliteCategory: .tianhe,
                             satelliteTrails: [48274: SatelliteTrails(observer: observer, passSnapshots: tianHePasses)]
                         )
                     ),
@@ -653,7 +653,7 @@ struct AllPassesView_Previews: PreviewProvider {
                                 state: SkyChartViewState()
                             ),
                             context: SkyChartContext<EmptyView, EmptyView>(
-                                satelliteInfo: SatelliteInfo(elements: tianHe),
+                                satelliteInfo: try! SatelliteInfo(elements: tianHe),
                                 snapshots: passSnapshots.snapshots,
                                 observer: observer,
                                 pass: passSnapshots.pass,

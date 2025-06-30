@@ -24,7 +24,7 @@ public struct ElementsLoaderDependencies {
     public init(
         elementsLoader: ElementsLoader,
         dateProvider: @escaping () -> Date,
-        updateInterval: TimeInterval = 4 * 60 * 60
+        updateInterval: TimeInterval = 6 * 60 * 60
     ) {
         self.elementLoader = elementsLoader
         self.dateProvider = dateProvider
@@ -43,7 +43,7 @@ extension EffectMiddleware where
     public static var elementsLoader: MiddlewareReader<ElementsLoaderDependencies, ElementsLoaderEffectMiddleware> {
         ElementsLoaderEffectMiddleware.onAction { (inputAction, dispatcher, getState) -> Effect<ElementsLoaderDependencies, ElementsLoaderOutput> in
             switch inputAction {
-            case let .loadElements(category, fetchStrategy,  selectSpecialNoradIndex, selectNoradIndex, calculatePass):
+            case let .loadElements(category, fetchStrategy, selectNoradIndex, calculatePass):
                 return Effect(token: category) { context -> AnyPublisher<DispatchedAction<ElementsLoaderOutput>, Never> in
                     func loadSatellitePublisher() -> AnyPublisher<DispatchedAction<ElementsLoaderOutput>, Never> {
                         context.dependencies.elementLoader.loadElementsPublisher(
@@ -55,7 +55,6 @@ extension EffectMiddleware where
                                 .loadedSatelliteElements(
                                     category: category,
                                     satelliteInfo: map,
-                                    selectSpecialNoradIndex: selectSpecialNoradIndex,
                                     selectNoradIndex: selectNoradIndex,
                                     calculatePass: calculatePass
                                 )
@@ -92,7 +91,6 @@ extension EffectMiddleware where
                                 .loadedSatelliteElements(
                                     category: category,
                                     satelliteInfo: infoMap,
-                                    selectSpecialNoradIndex: selectSpecialNoradIndex,
                                     selectNoradIndex: selectNoradIndex,
                                     calculatePass: calculatePass
                                 )

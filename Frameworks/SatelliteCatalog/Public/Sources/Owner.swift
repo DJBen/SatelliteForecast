@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Owner {
+public struct Owner: Sendable {
     public init(code: String) {
         self.code = code
     }

@@ -35,13 +35,13 @@ extension PassAlarmSettingsModalViewState: Equatable {}
 
 public struct PassAlarmSettingsModalViewContext {
     public let satelliteName: String
-    public let category: SatelliteCategory?
+    public let category: SatelliteCategory
     public let passSnapshots: PassSnapshots
     public let observer: LatLonAlt
 
     public init(
         satelliteName: String,
-        category: SatelliteCategory?,
+        category: SatelliteCategory,
         passSnapshots: PassSnapshots,
         observer: LatLonAlt
     ) {
@@ -98,7 +98,7 @@ public struct PassAlarmSettingsModalView: View {
         case .rise:
             return context.passSnapshots.pass.rise
         case .transit:
-            return context.passSnapshots.pass.transit
+            return context.passSnapshots.pass.culmination
         case .highestIlluminated:
             return context.passSnapshots.pass.highestIlluminated
         case .set:
@@ -434,7 +434,7 @@ struct PassAlarmSettingsModalView_Previews: PreviewProvider {
             ),
             context: PassAlarmSettingsModalViewContext(
                 satelliteName: "ISS (ZARYA)",
-                category: nil,
+                category: .iss,
                 passSnapshots: passSnapshotsList[0],
                 observer: LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0)
             )

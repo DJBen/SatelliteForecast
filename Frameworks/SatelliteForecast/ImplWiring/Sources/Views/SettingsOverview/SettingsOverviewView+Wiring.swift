@@ -14,13 +14,15 @@ extension SettingsOverviewViewState: AppStateMappable {
     public static func project(appState: AppState) -> SettingsOverviewViewState {
         SettingsOverviewViewState(
             navigationPath: appState.navigationState.settingsNavigationPath,
-            isNightModeOn: appState.isNightModeOn
+            isNightModeOn: appState.isNightModeOn,
+            showExperimentalSkyNow: appState.showExperimentalSkyNow
         )
     }
 
     public static func apply(appState: inout AppState, state: SettingsOverviewViewState) {
         appState.navigationState.settingsNavigationPath = state.navigationPath
         appState.isNightModeOn = state.isNightModeOn
+        appState.showExperimentalSkyNow = state.showExperimentalSkyNow
     }
 }
 

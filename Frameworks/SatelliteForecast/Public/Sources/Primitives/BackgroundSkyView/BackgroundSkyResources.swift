@@ -10,7 +10,7 @@ import BTree
 import UIKit
 
 /// A key uniquely determining the rendering of a sky chart's background. Same key is guaranteed to render the same background.
-public struct BackgroundSkyKey: Equatable, Hashable {
+public struct BackgroundSkyKey: Equatable, Hashable, Sendable {
     public let observer: LatLonAlt
     public let configs: BackgroundSkyConfigs
 

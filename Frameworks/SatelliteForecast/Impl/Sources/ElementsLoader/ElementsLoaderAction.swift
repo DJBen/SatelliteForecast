@@ -51,7 +51,6 @@ public enum ElementsLoaderAction {
     case loadElements(
         category: SatelliteCategory,
         fetchStrategy: FetchStrategy,
-        selectSpecialNoradIndex: SelectNoradIndexParam? = nil,
         selectNoradIndex: SelectNoradIndexParam? = nil,
         calculatePass: ElementsLoaderCalculatePassParam? = nil
     )
@@ -64,7 +63,6 @@ public enum ElementsLoaderOutput {
     case loadedSatelliteElements(
         category: SatelliteCategory,
         satelliteInfo: Map<UInt, SatelliteInfo>,
-        selectSpecialNoradIndex: SelectNoradIndexParam? = nil,
         selectNoradIndex: SelectNoradIndexParam? = nil,
         calculatePass: ElementsLoaderCalculatePassParam? = nil
     )

@@ -14,7 +14,7 @@ fileprivate let logger = Logger(subsystem: "io.djben.elementsLoader", category: 
 extension Reducer where ActionType == ElementsLoaderAction, StateType == ElementsLoaderState {
     public static let elementsLoaderReducer = Reducer.reduce { action, state in
         switch action {
-        case .loadElements(let category, _, _, _, _):
+        case .loadElements(let category, _, _, _):
             guard case .notLoaded = state.resources.info[category] ?? .notLoaded else {
                 return
             }
@@ -31,7 +31,7 @@ extension Reducer where ActionType == ElementsLoaderAction, StateType == Element
 extension Reducer where ActionType == ElementsLoaderOutput, StateType == ElementsLoaderState {
     public static let elementsLoaderOutputReducer = Reducer.reduce { action, state in
         switch action {
-        case let .loadedSatelliteElements(category, info, _, _, _):
+        case let .loadedSatelliteElements(category, info, _, _):
             state.resources.info[category] = .loaded(info)
             if category == .active {
                 state.resources.visibleCandidates = .loaded(Array(info.values.filter { satelliteInfo in

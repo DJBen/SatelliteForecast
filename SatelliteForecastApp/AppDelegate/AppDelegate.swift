@@ -81,14 +81,11 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             case UNNotificationDefaultActionIdentifier:
                 let userInfo = response.notification.request.content.userInfo
                 guard let noradIndex = userInfo["noradIndex"] as? UInt,
+                      let satelliteCategory = (userInfo["satelliteCategory"] as? Data).flatMap({ try? JSONDecoder().decode(SatelliteCategory?.self, from: $0)}),
                       let observer = (userInfo["observer"] as? Data).flatMap({ try? JSONDecoder().decode(LatLonAlt.self, from: $0) }) else {
                     break
                 }
                 
-                let satelliteCategory = (userInfo["satelliteCategory"] as? Data).flatMap {
-                    try? JSONDecoder().decode(SatelliteCategory?.self, from: $0)
-                }
-
                 Store.shared.dispatch(
                     .notification(.deepLink(
                         category: satelliteCategory,

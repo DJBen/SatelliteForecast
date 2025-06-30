@@ -124,7 +124,7 @@ public struct SkyChart<ConstellationLabel: View, BackgroundAnnotationView: View>
                     ) {
                         Text(
                             """
-                            ∠\(SkyChartUtils.labelAngleFormatter.string(from: NSNumber(value: context.pass.transit.elev))!)° \(SkyChartUtils.labelDateFormatter.string(from: Date(julianDate: context.pass.transit.julianDate)))
+                            ∠\(SkyChartUtils.labelAngleFormatter.string(from: NSNumber(value: context.pass.culmination.elev))!)° \(SkyChartUtils.labelDateFormatter.string(from: Date(julianDate: context.pass.culmination.julianDate)))
                             """
                         )
                     }
@@ -359,7 +359,7 @@ struct SkyChart_Previews: PreviewProvider {
 
         let formatter = ISO8601DateFormatter()
         let date = formatter.date(from: "2021-06-02T20:35:30+0800")!
-        let satelliteInfo = SatelliteInfo(elements: elements)
+        let satelliteInfo = try! SatelliteInfo(elements: elements)
         let observer = LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0)
         let snapshots = try! satelliteInfo.generateSnapshots(
             observer: observer,
@@ -385,7 +385,7 @@ struct SkyChart_Previews: PreviewProvider {
 
         let formatter = ISO8601DateFormatter()
         let date = formatter.date(from: "2021-06-02T06:29:00-0600")!
-        let satelliteInfo = SatelliteInfo(elements: elements)
+        let satelliteInfo = try! SatelliteInfo(elements: elements)
         let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
         let snapshots = try! satelliteInfo.generateSnapshots(
             observer: observer,
@@ -405,7 +405,7 @@ struct SkyChart_Previews: PreviewProvider {
 
         ForEach(ColorScheme.allCases, id: \.self) { colorScheme in
             let traitCollection = UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
-            let referenceDate = passSnapshots.pass.transit.julianDate.advanced(by: 20 * TimeConstants.sec2day)
+            let referenceDate = passSnapshots.pass.culmination.julianDate.advanced(by: 20 * TimeConstants.sec2day)
             SkyChart<EmptyView, EmptyView>(
                 viewModel: .mock(
                     state: SkyChartViewState(
@@ -433,7 +433,7 @@ struct SkyChart_Previews: PreviewProvider {
                     )
                 ),
                 context: SkyChartContext(
-                    satelliteInfo: SatelliteInfo(elements: elements),
+                    satelliteInfo: try! SatelliteInfo(elements: elements),
                     snapshots: passSnapshots.snapshots,
                     observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
                     pass: passSnapshots.pass,
@@ -485,7 +485,7 @@ struct SkyChart_Previews: PreviewProvider {
                 )
             ),
             context: SkyChartContext(
-                satelliteInfo: SatelliteInfo(elements: elements2),
+                satelliteInfo: try! SatelliteInfo(elements: elements2),
                 snapshots: passSnapshots2.snapshots,
                 observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
                 pass: passSnapshots2.pass,
@@ -517,7 +517,7 @@ struct SkyChart_Previews: PreviewProvider {
         SkyChart<EmptyView, EmptyView>(
             viewModel: .mock(state: .init()),
             context: SkyChartContext(
-                satelliteInfo: SatelliteInfo(elements: elements2),
+                satelliteInfo: try! SatelliteInfo(elements: elements2),
                 snapshots: passSnapshots2.snapshots,
                 observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
                 pass: passSnapshots2.pass,

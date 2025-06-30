@@ -8,8 +8,8 @@
 import Foundation
 import BTree
 
-/// `Pass` is a summary of the physical characteristics about a satellite pass, including the times of rise, set, transit
-/// (point of higest elevation), any changes in illumination, and the elevation of the sun at transit.
+/// `Pass` is a summary of the physical characteristics about a satellite pass, including the times of rise, set, culmination
+/// (point of higest elevation), any changes in illumination, and the elevation of the sun at culmination.
 /// We can derive the visibility of the pass by combining these attributes together.
 public struct Pass: Sendable {
     public let noradIndex: UInt
@@ -42,15 +42,15 @@ public struct Pass: Sendable {
     
     /// The time and elelvation angle (in degrees) of the highest elevation point during the pass.
     ///
-    /// Note that the transit point is not always illuminated. Use `highestIlluminatedElevation` to get the highest illuminated elevation.
-    public let transit: DatePosition
+    /// Note that the culmination point is not always illuminated. Use `highestIlluminatedElevation` to get the highest illuminated elevation.
+    public let culmination: DatePosition
 
     /// The highest illuminated date and position. If the entire pass is not illuminated, return `nil`.
     public var highestIlluminated: DatePosition? {
         let segments = illuminationSegments
-        // If transit is illuminated, return transit
-        if let _ = segments.first(where: { $0.1 && $0.0.contains(transit) }) {
-            return transit
+        // If culmination is illuminated, return culmination
+        if let _ = segments.first(where: { $0.1 && $0.0.contains(culmination) }) {
+            return culmination
         }
         let illuminatedDatePositions = segments.filter { $0.1 }.flatMap { [$0.0.lowerBound, $0.0.upperBound] }
         return illuminatedDatePositions.max(by: { $0.elev < $1.elev })
@@ -125,7 +125,7 @@ public struct Pass: Sendable {
         return false
     }
 
-    /// The elevation of the sun at transit. A satellite pass can usually only be seen after civil twilight or before civil dawn when sun is
+    /// The elevation of the sun at culmination. A satellite pass can usually only be seen after civil twilight or before civil dawn when sun is
     /// below -6 degrees.
     public let sunElevationAtTransit: Double
 
@@ -160,14 +160,14 @@ public struct Pass: Sendable {
         noradIndex: UInt,
         rise: Pass.DatePosition,
         set: Pass.DatePosition,
-        transit: Pass.DatePosition,
+        culmination: Pass.DatePosition,
         illumination: Pass.Illumination,
         sunElevationAtTransit: Double
     ) {
         self.noradIndex = noradIndex
         self.rise = rise
         self.set = set
-        self.transit = transit
+        self.culmination = culmination
         self.illumination = illumination
         self.sunElevationAtTransit = sunElevationAtTransit
     }

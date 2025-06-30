@@ -8,14 +8,44 @@
 @preconcurrency import CombineRex
 @preconcurrency import CombineRextensions
 @preconcurrency import SatelliteKit
+import Foundation
+import SatelliteForecast
 import SatelliteForecastImpl
+
+private func nextPass(_ satellite: SpecialSatellite, appState: AppState) -> Loadable<NextPass, Error> {
+    let currentJulianDate = Date().julianDate + appState.debugMenu.effectiveOffset
+    if let loadable = appState.elementsLoader.info[satellite.category] {
+        if case .failed(let error) = loadable {
+            return .failed(error)
+        } else if case .loading = loadable {
+            return .loading
+        } else if case .loaded(_) = loadable {
+            if let passSnapshots = appState.elementsPropagatorResources.satelliteTrails[satellite.rawValue] {
+                return .loaded(
+                    NextPass(
+                        nextVisiblePass: passSnapshots.nextVisiblePass(currentJulianDate: currentJulianDate),
+                        nextProminentPass: passSnapshots.nextProminentPass(currentJulianDate: currentJulianDate)
+                    )
+                )
+            } else {
+                return .loading
+            }
+        } else {
+            return .notLoaded
+        }
+    } else {
+        return .notLoaded
+    }
+}
 
 extension SatelliteOverviewViewState: AppStateMappable {
     public static func project(appState: AppState) -> SatelliteOverviewViewState {
         SatelliteOverviewViewState(
             navigationPath: appState.navigationState.passPredictionNavigationPath,
             observer: appState.locationResources.location.map(LatLonAlt.init),
-            julianDateOffset: appState.debugMenu.effectiveOffset
+            julianDateOffset: appState.debugMenu.effectiveOffset,
+            issNextPass: nextPass(.iss, appState: appState),
+            tianheNextPass: nextPass(.tianhe, appState: appState),
         )
     }
 
@@ -34,8 +64,6 @@ extension ViewProducer where Context == SatelliteOverviewViewContext, ProducedVi
                 )
                 .asObservableViewModel(initialState: .init(), emitsValue: .whenDifferent),
                 context: context,
-                listViewProducer: ViewProducer<SatelliteListViewContext, SatelliteListView>
-                    .satelliteListView(viewModel: viewModel),
                 singleSatelliteWrappingViewProducer: ViewProducer<SingleSatelliteWrappingViewContext, SingleSatelliteWrappingView>.singleSatelliteWrappingView(viewModel: viewModel)
             )
         }

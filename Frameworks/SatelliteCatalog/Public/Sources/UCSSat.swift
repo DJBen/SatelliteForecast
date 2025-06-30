@@ -9,7 +9,7 @@ import Foundation
 
 /// The primitive reflecting the data in https://www.ucsusa.org/resources/satellite-database.
 /// This catalog only contains active satellites orbiting the Earth. Note that the data may be not up to date.
-public struct UCSSat {
+public struct UCSSat: Sendable {
     /// Name of the satellite and alternative names
     public let name: String
 
@@ -29,7 +29,7 @@ public struct UCSSat {
 
     public let detailedPurpose: String?
 
-    public enum ClassOfOrbit: String {
+    public enum ClassOfOrbit: String, Sendable {
         case elliptical = "Elliptical"
         case LEO
         case MEO
@@ -58,7 +58,7 @@ public struct UCSSat {
 
     public let power: Double?
 
-    public let dateOfLaunch: Date
+    public let dateOfLaunch: Date?
 
     public let expectedLifetime: Double?
 
@@ -100,7 +100,7 @@ public struct UCSSat {
         launchMass: Double?,
         dryMass: Double?,
         power: Double?,
-        dateOfLaunch: Date,
+        dateOfLaunch: Date?,
         expectedLifetime: Double?,
         contractor: String?,
         countryOfContractor: String?,

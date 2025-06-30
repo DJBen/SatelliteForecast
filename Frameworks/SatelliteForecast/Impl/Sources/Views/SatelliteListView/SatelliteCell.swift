@@ -167,12 +167,14 @@ struct UCSSatCell: View {
                             .secondaryStyle()
                     }
 
-                    HStack(alignment: .firstTextBaseline) {
-                        Image(systemName: "calendar")
-                            .secondaryStyle()
-
-                        Text(dateFormatter.string(from: sat.dateOfLaunch))
-                            .secondaryStyle()
+                    if let dateOfLaunch = sat.dateOfLaunch {
+                        HStack(alignment: .firstTextBaseline) {
+                            Image(systemName: "calendar")
+                                .secondaryStyle()
+                            
+                            Text(dateFormatter.string(from: dateOfLaunch))
+                                .secondaryStyle()
+                        }
                     }
 
                     HStack(alignment: .firstTextBaseline) {
@@ -333,8 +335,8 @@ struct SatelliteCell_Previews: PreviewProvider {
         SatelliteCell(
             info: SatelliteInfo(
                 elements: elements,
-                satCat: SatCat.with(noradCatID: 42758),
-                ucsSat: UCSSat.with(noradCatID: 42758)
+                satCat: try! SatCat.with(noradCatID: 42758),
+                ucsSat: try! UCSSat.with(noradCatID: 42758)
             )
         )
         .previewLayout(.sizeThatFits)
@@ -349,8 +351,8 @@ struct SatelliteCell_Previews: PreviewProvider {
         SatelliteCell(
             info: SatelliteInfo(
                 elements: elements2,
-                satCat: SatCat.with(noradCatID: 45190),
-                ucsSat: UCSSat.with(noradCatID: 45190)
+                satCat: try! SatCat.with(noradCatID: 45190),
+                ucsSat: try! UCSSat.with(noradCatID: 45190)
             )
         )
         .previewLayout(.sizeThatFits)
@@ -365,8 +367,8 @@ struct SatelliteCell_Previews: PreviewProvider {
         SatelliteCell(
             info: SatelliteInfo(
                 elements: elements3,
-                satCat: SatCat.with(noradCatID: 25544),
-                ucsSat: UCSSat.with(noradCatID: 25544)
+                satCat: try! SatCat.with(noradCatID: 25544),
+                ucsSat: try! UCSSat.with(noradCatID: 25544)
             )
         )
         .previewLayout(.sizeThatFits)
@@ -381,8 +383,8 @@ struct SatelliteCell_Previews: PreviewProvider {
         SatelliteCell(
             info: SatelliteInfo(
                 elements: elements4,
-                satCat: SatCat.with(noradCatID: 48274),
-                ucsSat: UCSSat.with(noradCatID: 48274)
+                satCat: try! SatCat.with(noradCatID: 48274),
+                ucsSat: try! UCSSat.with(noradCatID: 48274)
             )
         )
         .previewLayout(.sizeThatFits)
@@ -397,8 +399,8 @@ struct SatelliteCell_Previews: PreviewProvider {
         SatelliteCell(
             info: SatelliteInfo(
                 elements: elements5,
-                satCat: SatCat.with(noradCatID: 46265),
-                ucsSat: UCSSat.with(noradCatID: 46265)
+                satCat: try! SatCat.with(noradCatID: 46265),
+                ucsSat: try! UCSSat.with(noradCatID: 46265)
             )
         )
         .previewLayout(.sizeThatFits)

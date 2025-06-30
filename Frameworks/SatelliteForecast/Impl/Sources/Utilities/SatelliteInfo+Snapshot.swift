@@ -220,7 +220,7 @@ extension SatelliteInfo {
             noradIndex: noradIndex,
             rise: riseDatePos,
             set: setDatePos,
-            transit: maxElevDatePos,
+            culmination: maxElevDatePos,
             illumination: Pass.Illumination(
                 initiallyIlluminated: fineSnapshots.first!.isIlluminated,
                 changes: illuminationChanges
@@ -286,7 +286,7 @@ extension SatelliteInfo {
                     fineInterval: fineInterval
                 )
 
-                if passSnapshots.pass.transit.elev >= minElevation {
+                if passSnapshots.pass.culmination.elev >= minElevation {
                     passSnapshotsList.append(passSnapshots)
                 }
 

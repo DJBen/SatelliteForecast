@@ -42,7 +42,7 @@ public struct MotionManagerView<Content: View>: View {
             .background(
                 Group {
                     if motionManager.isDeviceMotionAvailable {
-                        Color.clear.onChange(of: isActive) { isActive in
+                        Color.clear.onChange(of: isActive) { _, isActive in
                             if isActive {
                                 print("Motion manager: startDeviceMotionUpdates")
                                 motionManager.deviceMotionUpdateInterval = 0.05

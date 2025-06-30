@@ -284,7 +284,7 @@ public struct SatelliteElevationGraph: View {
                 graphingRegionSize: $graphingRegionSize
             )
             .equatable()
-            .onChange(of: graphingRegionSize) { size in
+            .onChange(of: graphingRegionSize) { _, size in
                 if size.width == 0 || size.height == 0 {
                     return
                 }
@@ -300,7 +300,7 @@ public struct SatelliteElevationGraph: View {
                     )
                 )
             }
-            .onChange(of: julianDateRange) { newJulianDateRange in
+            .onChange(of: julianDateRange) { _, newJulianDateRange in
                 if graphingRegionSize.width == 0 || graphingRegionSize.height == 0 {
                     return
                 }
@@ -395,11 +395,10 @@ public struct SatelliteElevationGraph: View {
                                         }
                                     }
                                     .onChange(
-                                        of: highlightedDateRange,
-                                        perform: { _ in
-                                            scrollViewProxy.scrollTo("centerAtDate", anchor: .center)
-                                        }
-                                    )
+                                        of: highlightedDateRange
+                                    ) {
+                                        scrollViewProxy.scrollTo("centerAtDate", anchor: .center)
+                                    }
                                 }
                             }
                         }
@@ -427,7 +426,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         // 2000 Broadway, Redwood City, CA 94063
         let location = CLLocation(latitude: 37.486743000691185, longitude: -122.22655970246515)
         let observer = LatLonAlt(location: location)
-        let satelliteInfo = SatelliteInfo(elements: elements)
+        let satelliteInfo = try! SatelliteInfo(elements: elements)
         let context = SatelliteElevationGraphContext(
             satelliteInfo: satelliteInfo,
             selectedPassIndex: 0,
@@ -467,7 +466,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
             2 04382  68.4187 192.6131 1052892 188.4862 169.7083 13.08082975404634
             """
         )
-        let satelliteInfo2 = SatelliteInfo(elements: elements2)
+        let satelliteInfo2 = try! SatelliteInfo(elements: elements2)
         let context2 = SatelliteElevationGraphContext(
             satelliteInfo: satelliteInfo2,
             selectedPassIndex: 0,
@@ -504,7 +503,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
             2 07276  64.2122 283.1177 6670908 285.3565  14.2908  2.45094844240000
             """
         )
-        let satelliteInfo3 = SatelliteInfo(elements: elements3)
+        let satelliteInfo3 = try! SatelliteInfo(elements: elements3)
         let context3 = SatelliteElevationGraphContext(
             satelliteInfo: satelliteInfo3,
             selectedPassIndex: 0,

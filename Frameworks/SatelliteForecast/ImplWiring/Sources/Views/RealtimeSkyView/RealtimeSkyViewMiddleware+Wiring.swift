@@ -19,3 +19,14 @@ extension EffectMiddleware where InputActionType == RealtimeSkyViewAction, Outpu
         .eraseToAnyMiddleware()
     }
 }
+
+extension EffectMiddleware where InputActionType == RealtimeSkyViewAction, OutputActionType == ElementsLoaderAction, StateType == Void, Dependencies == Void {
+    public func lift() -> AnyMiddleware<AppAction, AppAction, AppState> {
+        lift(
+            inputAction: \.realtimeSky,
+            outputAction: AppAction.elementsLoader,
+            state: { _ in }
+        )
+        .eraseToAnyMiddleware()
+    }
+}

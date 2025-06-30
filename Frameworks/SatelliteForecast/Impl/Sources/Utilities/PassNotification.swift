@@ -9,7 +9,7 @@ import Foundation
 import SatelliteForecast
 @preconcurrency import SatelliteKit
 
-public struct ScheduledPassNotification {
+public struct ScheduledPassNotification: Sendable {
     public let id: String
     public let notification: PassNotification
 
@@ -28,15 +28,15 @@ extension ScheduledPassNotification: Hashable {
 extension ScheduledPassNotification: Equatable {}
 extension ScheduledPassNotification: Codable {}
 
-public struct PassNotification {
+public struct PassNotification: Sendable {
     public let pass: Pass
     public let satelliteName: String
-    public let category: SatelliteCategory?
+    public let category: SatelliteCategory
     public let observer: LatLonAlt
     public let timing: Timing
     public let timeOffset: TimeInterval
 
-    public enum Timing: Equatable, Codable, CaseIterable {
+    public enum Timing: Equatable, Codable, CaseIterable, Sendable {
         case rise
         case set
         case transit
@@ -46,7 +46,7 @@ public struct PassNotification {
     public init(
         pass: Pass,
         satelliteName: String,
-        category: SatelliteCategory?,
+        category: SatelliteCategory,
         observer: LatLonAlt,
         timing: Timing,
         timeOffset: TimeInterval
@@ -67,7 +67,7 @@ public struct PassNotification {
         case .set:
             baseJulianDate = pass.set.julianDate
         case .transit:
-            baseJulianDate = pass.transit.julianDate
+            baseJulianDate = pass.culmination.julianDate
         case .highestIlluminated:
             baseJulianDate = pass.highestIlluminated?.julianDate ?? 0
         }

@@ -73,7 +73,7 @@ struct EphemerideTextBrowserView: View {
         }
         .task {
             do {
-                self.textResult = .success(try String(contentsOfFile: resource.fullPath))
+                self.textResult = .success(try String(contentsOfFile: resource.fullPath, encoding: .utf8))
             } catch {
                 self.textResult = .failure(error)
             }

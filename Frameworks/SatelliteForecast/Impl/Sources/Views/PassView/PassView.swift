@@ -98,13 +98,10 @@ public struct PassView: View {
                     get: {
                         viewModel.state.showsDetailPassView
                     },
-                    set: { isPresented in
-                        viewModel.dispatch(.showDetailPassView(isPresented))
+                    set: { newValue in
+                        viewModel.dispatch(.showDetailPassView(newValue))
                     }
                 ),
-                onDismiss: {
-                    viewModel.dispatch(.showDetailPassView(false))
-                },
                 content: {
                     detailedPassViewProducer.view(
                         DetailPassViewContext(
@@ -207,14 +204,14 @@ public struct PassView: View {
 public struct PassViewContext {
     public let passIndex: Int
     public let satelliteInfo: SatelliteInfo
-    public let category: SatelliteCategory?
+    public let category: SatelliteCategory
     public let julianDateRange: ClosedRange<Double>
     public let observer: LatLonAlt
     public let passSnapshots: PassSnapshots
     public let julianDateProvider: () -> Double
     public let deviceMotion: Loadable<CMDeviceMotion, Error>
 
-    public init(passIndex: Int, satelliteInfo: SatelliteInfo, category: SatelliteCategory?, julianDateRange: ClosedRange<Double>, observer: LatLonAlt, passSnapshots: PassSnapshots, julianDateProvider: @escaping () -> Double, deviceMotion: Loadable<CMDeviceMotion, Error> = .notLoaded) {
+    public init(passIndex: Int, satelliteInfo: SatelliteInfo, category: SatelliteCategory, julianDateRange: ClosedRange<Double>, observer: LatLonAlt, passSnapshots: PassSnapshots, julianDateProvider: @escaping () -> Double, deviceMotion: Loadable<CMDeviceMotion, Error> = .notLoaded) {
         self.passIndex = passIndex
         self.satelliteInfo = satelliteInfo
         self.category = category
@@ -254,7 +251,7 @@ struct PassView_Previews: PreviewProvider {
             """
         )
         let julianDateRange = Date().advanced(by: -60 * 60 * 2).julianDate...Date().advanced(by: 60 * 60 * 22).julianDate
-        let satelliteInfo = SatelliteInfo(elements: elements)
+        let satelliteInfo = try! SatelliteInfo(elements: elements)
         // 2000 Broadway, Redwood City, CA 94063
         let observer = LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0)
         let snapshots = try! satelliteInfo.generateSnapshots(
@@ -299,15 +296,15 @@ struct PassView_Previews: PreviewProvider {
         )
         let context = PassViewContext(
             passIndex: 0,
-            satelliteInfo: SatelliteInfo(elements: elements),
-            category: nil,
+            satelliteInfo: try! SatelliteInfo(elements: elements),
+            category: .tianhe,
             julianDateRange: julianDateRange,
             observer: observer,
             passSnapshots: passSnapshots[0],
             julianDateProvider: { Date().julianDate }
         )
         let elevationGraphContext = SatelliteElevationGraphContext(
-            satelliteInfo: SatelliteInfo(elements: elements),
+            satelliteInfo: try! SatelliteInfo(elements: elements),
             selectedPassIndex: 0,
             julianDateRange: julianDateRange,
             observer: observer,

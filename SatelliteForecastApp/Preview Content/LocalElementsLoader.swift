@@ -35,7 +35,7 @@ class LocalElementsLoader: ElementsLoader {
             DispatchQueue.global(qos: .userInitiated).async {
                 do {
                     let elements = try Elements.loadLocalData(category: category)
-                    let info = elements
+                    let info = try elements
                         .map(SatelliteInfo.init(elements:))
                         .reduce(into: Map<UInt, SatelliteInfo>(), { $0[$1.noradIndex] = $1 })
                     promise(.success(info))

@@ -9,12 +9,12 @@ import Foundation
 
 /// A primitive reflecting the Celestrak satellite catalog https://celestrak.com/satcat/search.php.
 /// It include all objects that has ever been launched, including interplantary ones.
-public struct SatCat {
+public struct SatCat: Sendable {
     public let name: String
     public let cosparID: String
     public let noradID: Int
 
-    public enum ObjectType: String {
+    public enum ObjectType: String, Sendable {
         case payload = "PAY"
         case rocketBody = "R/B"
         case debris = "DEB"
@@ -23,7 +23,7 @@ public struct SatCat {
 
     public let objectType: ObjectType
 
-    public enum OperationalStatus: String {
+    public enum OperationalStatus: String, Sendable {
         case operational = "+"
         case nonoperational = "-"
         /// Partially fulfilling primary mission or secondary mission(s)
@@ -62,7 +62,7 @@ public struct SatCat {
     /// Radar Cross Section [meters2]; blank if no data available
     public let rcs: Double?
 
-    public enum OrbitCenter {
+    public enum OrbitCenter: Sendable {
         case asteroid
         case comet
         case earth
@@ -127,7 +127,7 @@ public struct SatCat {
 
     public let orbitCenter: OrbitCenter
 
-    public enum OrbitType {
+    public enum OrbitType: Sendable {
         case orbit
         case landing
         case impact

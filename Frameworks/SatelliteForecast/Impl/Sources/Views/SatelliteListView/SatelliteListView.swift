@@ -216,7 +216,7 @@ public struct SatelliteListView: View {
             placement: .navigationBarDrawer(displayMode: .always),
             prompt: "Filter by name, ID, country, year..."
         )
-        .onChange(of: textObserver.debouncedText) { searchText in
+        .onChange(of: textObserver.debouncedText) { _, searchText in
             viewModel.dispatch(.searchSatellites(searchText, category: context.category))
         }
         .onDisappear {
@@ -248,8 +248,8 @@ struct SatelliteListView_Previews: PreviewProvider {
         .map {
             SatelliteInfo(
                 elements: $0,
-                satCat: SatCat.with(noradCatID: Int($0.noradIndex)),
-                ucsSat: UCSSat.with(noradCatID: Int($0.noradIndex))
+                satCat: try! SatCat.with(noradCatID: Int($0.noradIndex)),
+                ucsSat: try! UCSSat.with(noradCatID: Int($0.noradIndex))
             )
         }
         .reduce(into: Map<UInt, SatelliteInfo>(), { $0[$1.noradIndex] = $1 })

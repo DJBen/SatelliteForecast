@@ -155,6 +155,17 @@ extension EffectMiddleware where InputActionType == LocationOutput, OutputAction
                     LocationMiddleware.persistLocation(location)
                 }
                 return .promise(token: "update_location") { context, sink in
+                    let appVariant: String
+                    #if DEBUG
+                    appVariant = "debug"
+                    #else
+                    appVariant = "release"
+                    #endif
+                    let device = UIDevice.current
+                    if appVariant == "debug" && device.machineName == "arm64" {
+                        // Do not write to firebase for simulators
+                        return
+                    }
                     if let fcmToken = getState().fcmToken {
                         let data: [String: Any] = [
                             "lat": location.coordinate.latitude,

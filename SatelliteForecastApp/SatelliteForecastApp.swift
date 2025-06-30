@@ -7,11 +7,12 @@
 
 import SwiftUI
 @preconcurrency import SatelliteKit
-import SatelliteForecast
 @preconcurrency import SwiftRex
 @preconcurrency import CombineRex
 @preconcurrency import CombineRextensions
 import CoreMotion
+import SatelliteForecast
+import SatelliteForecastImpl
 import SatelliteForecastImplWiring
 
 @main
