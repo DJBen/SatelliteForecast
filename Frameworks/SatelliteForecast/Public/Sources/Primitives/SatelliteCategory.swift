@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum SatelliteCategory: Equatable, Hashable, Codable, Sendable {
+public enum SatelliteCategory: String, Equatable, Hashable, Codable, Sendable {
     /// International Space Station: 25544
     case iss
     
