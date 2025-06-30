@@ -13,11 +13,11 @@ import SQLite
 extension UCSSat {
     typealias Table = SatelliteCatalog.UCSSatTable
 
-    private static func parseLaunchDate(_ string: String) -> Date {
+    private static func parseLaunchDate(_ string: String) -> Date? {
         let formatter = DateFormatter()
         formatter.dateFormat = "M/d/yy"
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
-        return formatter.date(from: string)!
+        return formatter.date(from: string)
     }
 
     init(row: Row) throws {

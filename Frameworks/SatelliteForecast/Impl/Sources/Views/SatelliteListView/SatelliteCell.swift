@@ -167,12 +167,14 @@ struct UCSSatCell: View {
                             .secondaryStyle()
                     }
 
-                    HStack(alignment: .firstTextBaseline) {
-                        Image(systemName: "calendar")
-                            .secondaryStyle()
-
-                        Text(dateFormatter.string(from: sat.dateOfLaunch))
-                            .secondaryStyle()
+                    if let dateOfLaunch = sat.dateOfLaunch {
+                        HStack(alignment: .firstTextBaseline) {
+                            Image(systemName: "calendar")
+                                .secondaryStyle()
+                            
+                            Text(dateFormatter.string(from: dateOfLaunch))
+                                .secondaryStyle()
+                        }
                     }
 
                     HStack(alignment: .firstTextBaseline) {

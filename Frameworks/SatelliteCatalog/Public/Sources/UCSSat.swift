@@ -58,7 +58,7 @@ public struct UCSSat: Sendable {
 
     public let power: Double?
 
-    public let dateOfLaunch: Date
+    public let dateOfLaunch: Date?
 
     public let expectedLifetime: Double?
 
@@ -100,7 +100,7 @@ public struct UCSSat: Sendable {
         launchMass: Double?,
         dryMass: Double?,
         power: Double?,
-        dateOfLaunch: Date,
+        dateOfLaunch: Date?,
         expectedLifetime: Double?,
         contractor: String?,
         countryOfContractor: String?,
