@@ -16,6 +16,7 @@ struct SatelliteOverviewCell: View {
     let satellite: SatelliteCategory
     let nextPassLoadingState: Loadable<NextPass, Error>
     let julianDateOffset: Double
+    let isMissingLocation: Bool
     
     @Environment(\.colorScheme) private var colorScheme
 
@@ -77,20 +78,20 @@ struct SatelliteOverviewCell: View {
                                 }
                             }
                         case .loading:
-                            HStack(spacing: 8) {
-                                ProgressView()
-                                    .scaleEffect(0.8)
-                                Text("Loading pass information...")
-                                    .font(.subheadline)
-                                    .foregroundColor(colorScheme == .light ? Color(UIColor.systemGray2) : Color(UIColor.systemGray4))
-                            }
-                            .vibrancyEffect()
-                        case .notLoaded:
-                            Text(SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedDescription(satellite))
-                                .font(.subheadline)
-                                .multilineTextAlignment(.leading)
-                                .foregroundColor(colorScheme == .light ? Color(UIColor.systemGray2) : Color(UIColor.systemGray4))
+                            if isMissingLocation {
+                                fallbackText
+                            } else {
+                                HStack(spacing: 8) {
+                                    ProgressView()
+                                        .scaleEffect(0.8)
+                                    Text("Loading pass information...")
+                                        .font(.subheadline)
+                                        .foregroundColor(colorScheme == .light ? Color(UIColor.systemGray2) : Color(UIColor.systemGray4))
+                                }
                                 .vibrancyEffect()
+                            }
+                        case .notLoaded:
+                            fallbackText
                         }
                     }
                 }
@@ -106,6 +107,14 @@ struct SatelliteOverviewCell: View {
                 style: .continuous
             )
         )
+    }
+    
+    @ViewBuilder private var fallbackText: some View {
+        Text(SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedDescription(satellite))
+            .font(.subheadline)
+            .multilineTextAlignment(.leading)
+            .foregroundColor(colorScheme == .light ? Color(UIColor.systemGray2) : Color(UIColor.systemGray4))
+            .vibrancyEffect()
     }
 }
 
@@ -251,14 +260,25 @@ struct SatelliteOverviewCell_Previews: PreviewProvider {
                             SatelliteOverviewCell(
                                 satellite: .iss,
                                 nextPassLoadingState: .notLoaded,
-                                julianDateOffset: 0
+                                julianDateOffset: 0,
+                                isMissingLocation: false
                             )
 
                             // Loading state
-                            SatelliteOverviewCell(satellite: .iss, nextPassLoadingState: .loading, julianDateOffset: 0)
+                            SatelliteOverviewCell(
+                                satellite: .iss,
+                                nextPassLoadingState: .loading,
+                                julianDateOffset: 0,
+                                isMissingLocation: false
+                            )
                             
                             // Error state
-                            SatelliteOverviewCell(satellite: .iss, nextPassLoadingState: .failed(URLError(.notConnectedToInternet)), julianDateOffset: 0)
+                            SatelliteOverviewCell(
+                                satellite: .iss,
+                                nextPassLoadingState: .failed(URLError(.notConnectedToInternet)),
+                                julianDateOffset: 0,
+                                isMissingLocation: false
+                            )
                             
                             // Loaded state with both visible and prominent passes
                             SatelliteOverviewCell(
@@ -283,7 +303,8 @@ struct SatelliteOverviewCell_Previews: PreviewProvider {
                                         )
                                     )
                                 ),
-                                julianDateOffset: 0
+                                julianDateOffset: 0,
+                                isMissingLocation: false
                             )
                             
                             // Loaded state with no upcoming passes
@@ -292,7 +313,8 @@ struct SatelliteOverviewCell_Previews: PreviewProvider {
                                 nextPassLoadingState: .loaded(
                                     NextPass(nextVisiblePass: nil, nextProminentPass: nil)
                                 ),
-                                julianDateOffset: 0
+                                julianDateOffset: 0,
+                                isMissingLocation: false
                             )
                         }
                     )

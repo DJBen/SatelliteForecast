@@ -7,16 +7,21 @@
 
 import Foundation
 @preconcurrency import SwiftRex
+import CoreLocation
 
 extension Reducer where ActionType == SatelliteOverviewViewAction, StateType == SatelliteOverviewViewState {
     public static let satelliteOverviewReducer = Reducer.reduce { action, state in
         switch action {
         case .navigate(let navigationPath):
-            state.navigationPath = navigationPath
+            state.navigationState.passPredictionNavigationPath = navigationPath
         case .onAppear:
             break
         case .selectSatellite(let satellite, julianDateRange: _, observer: _):
-            state.navigationPath.append(satellite)
+            state.navigationState.passPredictionNavigationPath.append(satellite)
+        case .deeplinkToLocationSelection:
+            state.navigationState.tab = .settings
+        case .showLocationSettings:
+            break
         }
     }
 }

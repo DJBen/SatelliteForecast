@@ -28,6 +28,9 @@ public enum SatelliteOverviewViewAction {
         julianDateRange: ClosedRange<Double>,
         observer: LatLonAlt?
     )
+    
+    case deeplinkToLocationSelection
+    case showLocationSettings
 }
 
 public struct NextPass: Equatable {
@@ -41,24 +44,39 @@ public struct NextPass: Equatable {
 }
 
 public struct SatelliteOverviewViewState: Equatable {
-    public var navigationPath: NavigationPath
+    public var navigationState: NavigationState
     public var observer: LatLonAlt?
     public var julianDateOffset: Double = 0
-    public var issNextPass: Loadable<NextPass, Error> = .loading
-    public var tianheNextPass: Loadable<NextPass, Error> = .loading
+    public var issNextPass: Loadable<NextPass, Error> = .notLoaded
+    public var tianheNextPass: Loadable<NextPass, Error> = .notLoaded
+    public var authorizationStatus: CLAuthorizationStatus = .notDetermined
+    
+    public var isMissingLocation: Bool {
+        if observer == nil {
+            switch authorizationStatus {
+            case .notDetermined, .restricted, .denied:
+                return true
+            default:
+                return false
+            }
+        }
+        return false
+    }
     
     public init(
-        navigationPath: NavigationPath = .init(),
+        navigationState: NavigationState = .init(),
         observer: LatLonAlt? = nil,
         julianDateOffset: Double = 0,
         issNextPass: Loadable<NextPass, Error> = .loading,
-        tianheNextPass: Loadable<NextPass, Error> = .loading
+        tianheNextPass: Loadable<NextPass, Error> = .loading,
+        authorizationStatus: CLAuthorizationStatus = .notDetermined
     ) {
-        self.navigationPath = navigationPath
+        self.navigationState = navigationState
         self.observer = observer
         self.julianDateOffset = julianDateOffset
         self.issNextPass = issNextPass
         self.tianheNextPass = tianheNextPass
+        self.authorizationStatus = authorizationStatus
     }
 }
 
@@ -91,7 +109,7 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
         NavigationStack(
             path: Binding<NavigationPath>(
                 get: {
-                    viewModel.state.navigationPath
+                    viewModel.state.navigationState.passPredictionNavigationPath
                 }, set: { navigationPath in
                     viewModel.dispatch(.navigate(navigationPath))
                 }
@@ -115,10 +133,18 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                                 SatelliteOverviewCell(
                                     satellite: satellite,
                                     nextPassLoadingState: satellite == .iss ? viewModel.state.issNextPass : viewModel.state.tianheNextPass,
-                                    julianDateOffset: viewModel.state.julianDateOffset
+                                    julianDateOffset: viewModel.state.julianDateOffset,
+                                    isMissingLocation: viewModel.state.isMissingLocation
                                 )
                             }
                         }
+                    }
+                    
+                    if viewModel.state.isMissingLocation {
+                        Text("\(Image(systemName: "location.slash")) Location needed to calculate satellite passes. Your experience may be degraded.")
+                            .font(.footnote)
+                            .foregroundColor(Color(UIColor.secondaryLabel))
+                            .padding(.horizontal)
                     }
                 }
                 .padding()

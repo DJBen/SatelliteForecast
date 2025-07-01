@@ -35,7 +35,7 @@ public struct LocationSettingsCurrentLocationCell: View {
             if let _ = currentLocation {
                 Image(systemName: "location")
             } else {
-                Image(systemName: "location.slash")
+                Image(systemName: "location.slash").symbolRenderingMode(.hierarchical)
             }
 
             VStack(alignment: .leading, spacing: 2) {
@@ -64,7 +64,7 @@ public struct LocationSettingsCurrentLocationCell: View {
 
             if currentLocation == nil {
                 Spacer()
-                Image(systemName: "square.and.arrow.up")
+                Image(systemName: "rectangle.portrait.and.arrow.right")
             } else if isSelected {
                 Spacer()
                 Image(systemName: "checkmark")

@@ -20,6 +20,8 @@ public enum AllPassesViewAction {
     case recalculatePasses(CalculatePassesParams)
     case scheduleNotification(PassNotification, passSnapshots: PassSnapshots)
     case unscheduleNotification(pass: Pass)
+    case deeplinkToLocationSelection
+    case showLocationSettings
 }
 
 public struct AllPassesViewContext {
@@ -402,17 +404,47 @@ public struct AllPassesView: View {
                     }
                 }
             } else {
-                VStack(spacing: 8) {
-                    Image(systemName: "questionmark.circle")
-                        .font(.title)
-                    Text(
+                VStack(spacing: 32) {
+                    VStack(spacing: 16) {
+                        Image(systemName: "location.slash")
+                            .symbolRenderingMode(.hierarchical)
+                            .font(.title)
+                        
+                        Text(
                         """
-                        We need a location to find satellite passes. You may set one up within location settings.
+                        Need a location to find satellite passes.
                         """
-                    )
-                    .foregroundColor(Color(UIColor.secondaryLabel))
-                    .multilineTextAlignment(.center)
-                    .padding(EdgeInsets(top: 0, leading: 32, bottom: 0, trailing: 32))
+                        )
+                        .foregroundColor(Color(UIColor.label))
+                        .multilineTextAlignment(.leading)
+                        .padding(EdgeInsets(top: 0, leading: 32, bottom: 0, trailing: 32))
+                        
+                        Text(
+                            """
+                            Did you know? Space stations orbits earth 15 times a day, and maybe up to 5-7 times above your location, but most of the time it's either too bright or too dark to be seen.
+                            """
+                        )
+                        .foregroundColor(Color(UIColor.secondaryLabel))
+                        .font(.footnote)
+                        .multilineTextAlignment(.leading)
+                        .padding(EdgeInsets(top: 0, leading: 32, bottom: 0, trailing: 32))
+                    }
+                    
+                    VStack(spacing: 16) {
+                        Button {
+                            viewModel.dispatch(.deeplinkToLocationSelection)
+                        } label: {
+                            Text("\(Image(systemName: "dot.circle.and.hand.point.up.left.fill").symbolRenderingMode(.hierarchical)) Manually select a location")
+                        }
+                        .buttonStyle(.bordered)
+                        
+                        Button {
+                            viewModel.dispatch(.showLocationSettings)
+                        } label: {
+                            Text("\(Image(systemName: "gear").symbolRenderingMode(.hierarchical)) Allow location access")
+                        }
+                        .buttonStyle(.bordered)
+                    }
                 }
             }
         }
