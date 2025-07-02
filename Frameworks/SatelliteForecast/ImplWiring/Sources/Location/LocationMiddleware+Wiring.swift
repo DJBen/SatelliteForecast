@@ -66,3 +66,14 @@ extension EffectMiddleware where InputActionType == LocationAction, OutputAction
         .eraseToAnyMiddleware()
     }
 }
+
+extension EffectMiddleware where InputActionType == LocationOutput, OutputActionType == LocationAction, StateType == Void, Dependencies == Void {
+    public func lift() -> AnyMiddleware<AppAction, AppAction, AppState> {
+        return lift(
+            inputAction: \.locationOutput,
+            outputAction: AppAction.location,
+            state: { _ in }
+        )
+        .eraseToAnyMiddleware()
+    }
+}

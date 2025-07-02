@@ -379,28 +379,17 @@ public struct AllPassesView: View {
                 }
                 .navigationDestination(for: AllPassViewNavigation.self) { allPassViewNavigation in
                     LazyView {
-                        MotionManagerView(
-                            isActive: Binding<Bool>(
-                                get: {
-                                    // Disables the motion when modal is up, because it seems to interfere with picker view
-                                    !viewModel.state.showsPassAlarmSettingsModal
-                                },
-                                set: { _ in }
+                        passViewProducer.view(
+                            PassViewContext(
+                                passIndex: allPassViewNavigation.passIndex,
+                                satelliteInfo: context.satelliteInfo,
+                                category: viewModel.state.satelliteCategory,
+                                julianDateRange: context.julianDateRange,
+                                observer: observer,
+                                passSnapshots: allPassViewNavigation.passSnapshots,
+                                julianDateProvider: context.julianDateProvider,
                             )
-                        ) { deviceMotionResult in
-                            passViewProducer.view(
-                                PassViewContext(
-                                    passIndex: allPassViewNavigation.passIndex,
-                                    satelliteInfo: context.satelliteInfo,
-                                    category: viewModel.state.satelliteCategory,
-                                    julianDateRange: context.julianDateRange,
-                                    observer: observer,
-                                    passSnapshots: allPassViewNavigation.passSnapshots,
-                                    julianDateProvider: context.julianDateProvider,
-                                    deviceMotion: deviceMotionResult
-                                )
-                            )
-                        }
+                        )
                     }
                 }
             } else {

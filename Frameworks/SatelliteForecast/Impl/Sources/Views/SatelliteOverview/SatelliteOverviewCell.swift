@@ -45,6 +45,9 @@ struct SatelliteOverviewCell: View {
                                 .fontWeight(.semibold)
                                 .foregroundColor(Color(UIColor.label))
                             Spacer()
+                            Image(systemName: "chevron.forward")
+                                .font(.title2)
+                                .foregroundColor(Color(UIColor.label))
                         }
                         
                         switch nextPassLoadingState {

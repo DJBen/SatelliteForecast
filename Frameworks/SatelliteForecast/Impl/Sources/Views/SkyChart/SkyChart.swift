@@ -206,14 +206,6 @@ public struct SkyChart<ConstellationLabel: View, BackgroundAnnotationView: View>
         }
     }
 
-    @ViewBuilder private var attitudeIndicator: some View {
-        if context.configs.basicChartConfigs.showsAttitude {
-            CompassAttitudeView(deviceMotion: context.deviceMotion)
-        } else {
-            Color.clear
-        }
-    }
-
     public var body: some View {
         backgroundSkyViewProducer.view(
             BackgroundSkyViewContext(
@@ -242,7 +234,6 @@ public struct SkyChart<ConstellationLabel: View, BackgroundAnnotationView: View>
                 )
             ).clipShape(Circle())
         )
-        .overlay(attitudeIndicator)
         .onLoad {
             propagateBackgroundSkyJulianDateKey(context.julianDateProvider() + viewModel.state.julianDateOffset)
         }

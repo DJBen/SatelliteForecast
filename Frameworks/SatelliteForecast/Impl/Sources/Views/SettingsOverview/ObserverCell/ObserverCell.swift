@@ -201,6 +201,9 @@ public struct ObserverCell: View {
                             .font(.headline)
                             .foregroundColor(Color(UIColor.label))
                         Spacer()
+                        Image(systemName: "chevron.forward")
+                            .font(.headline)
+                            .foregroundColor(Color(UIColor.label))
                     }
 
                     if let secondaryLabelText = secondaryLabelText {

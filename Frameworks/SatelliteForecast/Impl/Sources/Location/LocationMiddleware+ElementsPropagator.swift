@@ -31,7 +31,7 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
             case .locationOutput(.locationChanged(let location)):
                 // If page is at first tab
                 let state = getState()
-                if state.navigationState.tab == .forecast && state.navigationState.passPredictionNavigationPath.isEmpty && state.elementsPropagatorResources.satelliteTrails.isEmpty {
+                if state.navigationState.tab == .forecast && state.elementsPropagatorResources.satelliteTrails.isEmpty {
                     let julianDateRange = JulianDateUtil.createJulianDateRange(now: Date().julianDate + state.debugMenu.effectiveOffset)
                     return .sequence([SatelliteCategory.iss, .tianhe].map { category in
                         .loadElements(
