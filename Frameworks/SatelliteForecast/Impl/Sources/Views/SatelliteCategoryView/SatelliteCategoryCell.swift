@@ -44,6 +44,8 @@ struct SatelliteCategoryCell: View {
                             .font(.title2)
                             .fontWeight(.semibold)
                             .foregroundColor(Color(UIColor.label))
+                            .minimumScaleFactor(0.8)
+                            .lineLimit(1)
                         Spacer()
                         Image(systemName: "chevron.forward")
                             .font(.title2)
