@@ -227,7 +227,7 @@ public struct AllPassesView: View {
                     .scheduleNotification(
                         PassNotification(
                             pass: item.passSnapshots.pass,
-                            satelliteName: context.satelliteInfo.elements.commonName,
+                            satelliteName: satelliteCommonName,
                             category: viewModel.state.satelliteCategory,
                             observer: context.observer!,
                             timing: .rise,
@@ -453,6 +453,16 @@ public struct AllPassesView: View {
         }
     }
     
+    private var satelliteCommonName: String {
+        if context.satelliteInfo.noradIndex == 25544 {
+            return NSLocalizedString("International space station", bundle: .module, comment: "The name of ISS")
+        } else if context.satelliteInfo.noradIndex == 48274 {
+            return NSLocalizedString("Tiangong space station", bundle: .module, comment: "The name of Tiangong space station")
+        } else {
+            return context.satelliteInfo.elements.commonName
+        }
+    }
+    
     public var body: some View {
         allPassesList
         .frame(maxWidth: .infinity)
@@ -461,7 +471,7 @@ public struct AllPassesView: View {
         .toolbar {
             ToolbarItem(placement: .principal) {
                 VStack(alignment: .center, spacing: 4) {
-                    Text(context.satelliteInfo.elements.commonName)
+                    Text(satelliteCommonName)
                         .font(.headline)
                         .frame(alignment: .center)
                         .multilineTextAlignment(.center)

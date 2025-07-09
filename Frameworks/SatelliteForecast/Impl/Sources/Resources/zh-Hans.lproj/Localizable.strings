@@ -52,9 +52,6 @@
 /* No comment provided by engineer. */
 "♄" = "♄";
 
-/* No comment provided by engineer. */
-"Evening " = "傍晚 ";
-
 /* The verb as in alarm clock 'alarms' somebody */
 "Alarm" = "提醒";
 
@@ -200,6 +197,9 @@
 "EphemerideTextBrowserView.shareLink.message" = "分享 %@ 卫星星历";
 
 /* No comment provided by engineer. */
+"Evening " = "傍晚 ";
+
+/* No comment provided by engineer. */
 "Filter by name, ID, country, year..." = "按名称、ID、国家、年份筛选...";
 
 /* No comment provided by engineer. */
@@ -207,6 +207,9 @@
 
 /* No comment provided by engineer. */
 "Hello, World!" = "你好，世界！";
+
+/* The name of ISS */
+"International space station" = "国际空间站";
 
 /* No comment provided by engineer. */
 "Jupiter" = "木星";
@@ -531,6 +534,9 @@ The localized string for the status of a spare satellite */
 
 /* No comment provided by engineer. */
 "The satellites are not loaded." = "卫星数据未加载。";
+
+/* The name of Tiangong space station */
+"Tiangong space station" = "天宫空间站";
 
 /* No comment provided by engineer. */
 "Time control" = "时间控制";
