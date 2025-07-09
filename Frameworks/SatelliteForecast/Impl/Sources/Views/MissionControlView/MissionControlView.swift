@@ -58,7 +58,7 @@ struct MissionControlView: View {
                         .tag(ZoomLevel.close)
                     },
                     label: {
-                        Text(verbatim: "Select zoom level")
+                        Text("Select zoom level", bundle: .module)
                     }
                 )
                 .pickerStyle(.segmented)

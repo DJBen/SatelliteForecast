@@ -35,12 +35,12 @@ public struct LocationSettingsCurrentLocationCell: View {
             if let _ = currentLocation {
                 Image(systemName: "location")
             } else {
-                Image(systemName: "location.slash")
+                Image(systemName: "location.slash").symbolRenderingMode(.hierarchical)
             }
 
             VStack(alignment: .leading, spacing: 2) {
                 if let currentLocation = currentLocation {
-                    Text("Current location")
+                    Text("Current location", bundle: .module)
 
                     if let formattedPlacemark = currentLocationPlacemark?.formattedString {
                         Text(formattedPlacemark)
@@ -53,9 +53,9 @@ public struct LocationSettingsCurrentLocationCell: View {
                         .foregroundColor(Color.secondary)
                         .tint(nil)
                 } else {
-                    Text("Current location not available")
+                    Text("Current location not available", bundle: .module)
 
-                    Text("Open location settings")
+                    Text("Open location settings", bundle: .module)
                         .font(.system(.caption))
                         .foregroundColor(Color.secondary)
                         .tint(nil)
@@ -64,7 +64,7 @@ public struct LocationSettingsCurrentLocationCell: View {
 
             if currentLocation == nil {
                 Spacer()
-                Image(systemName: "square.and.arrow.up")
+                Image(systemName: "rectangle.portrait.and.arrow.right")
             } else if isSelected {
                 Spacer()
                 Image(systemName: "checkmark")

@@ -137,7 +137,7 @@ public struct LocationSettingsView: View {
                     )
                 }
             }, header: {
-                Text("Current location")
+                Text("Current location", bundle: .module)
             })
 
             switch viewModel.state.locationSelection {
@@ -156,7 +156,7 @@ public struct LocationSettingsView: View {
                         Image(systemName: "checkmark")
                     }
                 }, header: {
-                    Text("Custom location")
+                    Text("Custom location", bundle: .module)
                 })
             }
 
@@ -175,7 +175,7 @@ public struct LocationSettingsView: View {
             placement: .navigationBarDrawer(displayMode: .always),
             prompt: "Enter address"
         )
-        .navigationTitle(Text("Select Location"))
+        .navigationTitle(Text("Select Location", bundle: .module))
         .onReceive(
             searchDebouncer.$debouncedSearchTerm
         ) { newSearchTerm in
@@ -191,7 +191,7 @@ public struct LocationSettingsView: View {
             nextLocationSelection = .custom(autoCompletion, placemark)
         }
         .alert(
-            Text("Location change"),
+            Text("Location change", bundle: .module),
             isPresented: Binding<Bool>(
                 get: {
                     nextLocationSelection != nil

@@ -206,8 +206,8 @@ extension EffectMiddleware where
                     content.body = LocalizedStrings.Notification.description(passNotification: passNotification)
                     let encoder = JSONEncoder()
                     content.userInfo = [
-                        "satelliteCategory": try! encoder.encode(passNotification.category),
-                        "noradIndex": passNotification.pass.noradIndex,
+                        "satelliteCategory": passNotification.category.rawValue,
+                        "noradIndex": String(passNotification.pass.noradIndex),
                         "observer": try! encoder.encode(passNotification.observer)
                     ]
                     

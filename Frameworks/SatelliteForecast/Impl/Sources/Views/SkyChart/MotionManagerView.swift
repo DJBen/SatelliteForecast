@@ -27,7 +27,7 @@ public struct MotionManagerView<Content: View>: View {
     @State var julianDate: Double?
 
     init(
-        isActive: Binding<Bool>,
+        isActive: Binding<Bool> = .constant(true),
         @ViewBuilder content: @escaping (Loadable<CMDeviceMotion, Error>) -> Content
     ) {
         self._isActive = isActive
@@ -42,7 +42,7 @@ public struct MotionManagerView<Content: View>: View {
             .background(
                 Group {
                     if motionManager.isDeviceMotionAvailable {
-                        Color.clear.onChange(of: isActive) { _, isActive in
+                        Color.clear.onChange(of: isActive, initial: true) { _, isActive in
                             if isActive {
                                 print("Motion manager: startDeviceMotionUpdates")
                                 motionManager.deviceMotionUpdateInterval = 0.05
@@ -66,7 +66,8 @@ public struct MotionManagerView<Content: View>: View {
                 }
             }
         } else {
-            Text("Motion manager not injected in environment")
+            // Motion manager not injected in environment
+            Text(verbatim: "Motion manager not injected in environment")
         }
     }
 }

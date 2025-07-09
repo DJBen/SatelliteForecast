@@ -14,7 +14,7 @@ import SatelliteForecast
 @preconcurrency import SwiftRex
 import FirebaseFirestore
 
-public class LocationMiddleware: NSObject, @preconcurrency MiddlewareProtocol {
+public class LocationMiddleware: NSObject, MiddlewareProtocol {
     public typealias InputActionType = LocationAction
     public typealias OutputActionType = LocationOutput
     public typealias StateType = LocationResources
@@ -45,7 +45,6 @@ public class LocationMiddleware: NSObject, @preconcurrency MiddlewareProtocol {
         output.dispatch(.authorizationDidChange(locationManager.authorizationStatus))
     }
 
-    @MainActor
     public func handle(action: InputActionType, from dispatcher: ActionSource, state: @escaping GetState<StateType>) -> IO<OutputActionType> {
         return .init { [weak self] output in
             switch action {
@@ -68,7 +67,7 @@ public class LocationMiddleware: NSObject, @preconcurrency MiddlewareProtocol {
                         Self.persistLocation(currentLocation)
                     } else {
                         UIApplication.shared.open(
-                            URL(string: UIApplication.openSettingsURLString)!,
+                            URL(string: UIApplication.unifiedSettingsURLString)!,
                             options: [:],
                             completionHandler: nil
                         )
@@ -114,6 +113,28 @@ extension LocationMiddleware: MKLocalSearchCompleterDelegate {
     }
 }
 
+extension EffectMiddleware where InputActionType == LocationOutput, OutputActionType == LocationAction, StateType == Void, Dependencies == Void {
+    public static var locationAuthChange: EffectMiddleware<LocationOutput, LocationAction, Void, Void> {
+        EffectMiddleware<LocationOutput, LocationAction, Void, Void>
+            .onAction { action, _, getState in
+                switch action {
+                case let .authorizationDidChange(authorizationStatus):
+                    // Happens after re-enabling location access after disabled it
+                    if case .notDetermined = authorizationStatus {
+                        return .just(.requestAuthorization)
+                    }
+                case .locationChanged(_):
+                    break
+                case .reverseGeocodingFinished(_):
+                    break
+                case .autocompletionFinished(_):
+                    break
+                }
+            return .doNothing
+        }
+    }
+}
+
 fileprivate let logger = Logger(subsystem: "io.djben.location", category: "middleware")
 
 extension EffectMiddleware where InputActionType == LocationOutput, OutputActionType == Never, StateType == Void, Dependencies == Void {
@@ -122,7 +143,7 @@ extension EffectMiddleware where InputActionType == LocationOutput, OutputAction
             .onAction { action, _, getState in
                 switch action {
                 case let .authorizationDidChange(authorizationStatus):
-                    logger.info("[Location] authorization changed: \(authorizationStatus.rawValue))")
+                    logger.info("[Location] authorization changed: \(authorizationStatus.rawValue)")
                 case let .locationChanged(location):
                     logger.info("[Location] location changed: \(location)")
                 case let .reverseGeocodingFinished(result):

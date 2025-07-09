@@ -109,7 +109,7 @@ public struct ObserverCell: View {
                         ZStack {
                             Color.gray
                             ProgressView()
-                                .offset(x: 0, y: -(rect.height - 120) / 2)
+                                .offset(x: 0, y: -(rect.height - 140) / 2)
                         }
                     }
                 case .denied, .restricted:
@@ -118,10 +118,10 @@ public struct ObserverCell: View {
                     } else {
                         ZStack {
                             map(coordinate: CLLocationCoordinate2D(), rect: rect, delta: 90)
-                            Text("\(Image(systemName: "nosign")) Location access denied")
-                                .foregroundColor(Color("locationAccessDenied_foreground"))
+                            Text("\(Image(systemName: "dot.circle.and.hand.point.up.left.fill").symbolRenderingMode(.hierarchical)) Select a location")
+                                .foregroundColor(Color("locationAccessDenied_foreground", bundle: .module))
                                 .fontWeight(.semibold)
-                                .offset(x: 0, y: -(rect.height - 120) / 2)
+                                .offset(x: 0, y: -(rect.height - 140) / 2)
                         }
                     }
                 case .notDetermined:
@@ -147,13 +147,13 @@ public struct ObserverCell: View {
             if let placemark = locationResources.placemark {
                 return placemark.formattedString
             } else {
-                return "Tap to manually select a location"
+                return "You have declined sharing the location."
             }
         case .restricted, .notDetermined:
             if let placemark = locationResources.placemark {
                 return placemark.formattedString
             } else {
-                return nil
+                return "Location access is restricted."
             }
         @unknown default:
             return nil
@@ -201,6 +201,9 @@ public struct ObserverCell: View {
                             .font(.headline)
                             .foregroundColor(Color(UIColor.label))
                         Spacer()
+                        Image(systemName: "chevron.forward")
+                            .font(.headline)
+                            .foregroundColor(Color(UIColor.label))
                     }
 
                     if let secondaryLabelText = secondaryLabelText {
@@ -244,7 +247,7 @@ extension ObserverCell {
             "SatelliteListView.observerCell.title.requiresLocationSelection",
             tableName: nil,
             bundle: .module,
-            value: "Requires location selection",
+            value: "Open to select location",
             comment: "The text indicating that location service is not available, nor has the user selecetd a location manually."
         )
     }

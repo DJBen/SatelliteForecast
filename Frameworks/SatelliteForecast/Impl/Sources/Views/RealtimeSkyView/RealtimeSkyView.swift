@@ -228,15 +228,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
         }
     }
 
-    @ViewBuilder private func attitudeIndicator(deviceMotion: Loadable<CMDeviceMotion, Error>) -> some View {
-        if context.basicChartConfigs.showsAttitude {
-            CompassAttitudeView(deviceMotion: deviceMotion)
-        } else {
-            Color.clear
-        }
-    }
-
-    @ViewBuilder private func backgroundSkyView(observer: LatLonAlt, deviceMotion: Loadable<CMDeviceMotion, Error>) -> some View {
+    @ViewBuilder private func backgroundSkyView(observer: LatLonAlt) -> some View {
         backgroundSkyViewProducer.view(
             BackgroundSkyViewContext(
                 observer: observer,
@@ -257,9 +249,6 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
         }
         .overlay(
             satellitePlotLabels
-        )
-        .overlay(
-            attitudeIndicator(deviceMotion: deviceMotion)
         )
         .onReceive(refreshTimer) { timerJulianDate in
             self.julianDate = timerJulianDate + viewModel.state.julianDateOffset
@@ -344,14 +333,9 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
                 GeometryReader { geometry in
                     let rect = geometry.frame(in: .local)
                     VStack(spacing: 16) {
-                        MotionManagerView(
-                            isActive: $viewModel.state.resources.isRealtimeSkyViewActive
-                        ) { deviceMotionResult in
-                            backgroundSkyView(
-                                observer: observer,
-                                deviceMotion: deviceMotionResult
-                            )
-                        }
+                        backgroundSkyView(
+                            observer: observer,
+                        )
                         .frame(
                             width: min(rect.width, rect.height),
                             height: min(rect.width, rect.height)
@@ -362,7 +346,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
                     .padding(.top, 16)
                 }
             } noLocationContentBuilder: {
-                Text(verbatim: "Location not available")
+                Text("Location not available", bundle: .module)
             }
             .navigationTitle(Self.Navigation.title)
             .navigationBarTitleDisplayMode(.inline)

@@ -135,9 +135,11 @@ public struct SatelliteListView: View {
         } else {
             switch (viewModel.state.satelliteInfo[context.category] ?? .notLoaded) {
             case .notLoaded:
-                Text(verbatim: "The satellites are not loaded.")
+                Text("The satellites are not loaded.", bundle: .module)
             case .loading:
-                ProgressView("Loading...")
+                ProgressView {
+                    Text("Loading...", bundle: .module)
+                }
             case let .loaded(satellites):
                 contentBuilder(satellites)
             case let .failed(error):
@@ -210,11 +212,11 @@ public struct SatelliteListView: View {
             },
             failedContentBuilder: failureView
         )
-        .navigationTitle("Satellites")
+        .navigationTitle(Text("Satellites", bundle: .module))
         .searchable(
             text: $textObserver.searchText,
             placement: .navigationBarDrawer(displayMode: .always),
-            prompt: "Filter by name, ID, country, year..."
+            prompt: Text("Filter by name, ID, country, year...", bundle: .module)
         )
         .onChange(of: textObserver.debouncedText) { _, searchText in
             viewModel.dispatch(.searchSatellites(searchText, category: context.category))

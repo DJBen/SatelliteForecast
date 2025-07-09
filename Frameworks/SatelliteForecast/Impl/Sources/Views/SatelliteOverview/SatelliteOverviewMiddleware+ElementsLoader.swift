@@ -9,6 +9,7 @@ import Combine
 @preconcurrency import CombineRex
 @preconcurrency import SatelliteKit
 import SatelliteForecast
+import UIKit
 
 extension EffectMiddleware where
 InputActionType == SatelliteOverviewViewAction,
@@ -49,6 +50,15 @@ Dependencies == Void {
                         }
                     )
                 )
+            case .deeplinkToLocationSelection:
+                return .doNothing
+            case .showLocationSettings:
+                UIApplication.shared.open(
+                    URL(string: UIApplication.openSettingsURLString)!,
+                    options: [:],
+                    completionHandler: nil
+                )
+                return .doNothing
             }
         }
     }

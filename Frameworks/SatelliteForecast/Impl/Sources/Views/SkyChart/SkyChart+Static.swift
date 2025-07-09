@@ -364,7 +364,7 @@ struct ImageRenderer_Previews: PreviewProvider {
                         rect: rect,
                         modifierFactory: PassLabelModifier.init(rotationAngle:)
                     ) {
-                        Text(verbatim: "Rise")
+                        Text("Rise", bundle: .module, comment: "The verb describing something rises above horizon")
                     }
                 )
                 .overlay(
@@ -373,7 +373,7 @@ struct ImageRenderer_Previews: PreviewProvider {
                         rect: rect,
                         modifierFactory: PassLabelModifier.init(rotationAngle:)
                     ) {
-                        Text("Transit")
+                        Text("Transit", bundle: .module, comment: "The verb describing when a satellite rises to the highest position")
                     }
                 )
                 .overlay(
@@ -382,7 +382,7 @@ struct ImageRenderer_Previews: PreviewProvider {
                         rect: rect,
                         modifierFactory: PassLabelModifier.init(rotationAngle:)
                     ) {
-                        Text("Set")
+                        Text("Set", bundle: .module, comment: "The verb 'set' as in 'sunset'")
                     }
                 )
                 .overlay(
@@ -394,7 +394,7 @@ struct ImageRenderer_Previews: PreviewProvider {
                         rect: rect,
                         modifierFactory: HighlightedPassLabelModifier.curry(shouldHighlight: true)
                     ) {
-                        Text("Special")
+                        Text("Special", bundle: .module)
                     }
                 )
             }

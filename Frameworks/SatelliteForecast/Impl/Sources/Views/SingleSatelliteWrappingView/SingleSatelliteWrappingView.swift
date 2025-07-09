@@ -84,9 +84,11 @@ public struct SingleSatelliteWrappingView: View {
         Group {
             switch satellite {
             case .notLoaded:
-                Text(verbatim: "The satellites are not loaded.")
+                Text("The satellites are not loaded.", bundle: .module)
             case .loading:
-                ProgressView("Loading...")
+                ProgressView {
+                    Text("Loading...", bundle: .module)
+                }
             case let .loaded(satellite):
                 contentBuilder(satellite)
             case let .failed(error):

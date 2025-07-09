@@ -20,12 +20,11 @@ extension EffectMiddleware where InputActionType == AllPassesViewAction, OutputA
     }
 }
 
-extension EffectMiddleware where InputActionType == AllPassesViewAction, OutputActionType == NotificationAction, StateType == Void, Dependencies == Void {
+extension EffectMiddleware where InputActionType == AllPassesViewAction, OutputActionType == NotificationAction, StateType == AppState, Dependencies == Void {
     public func lift() -> AnyMiddleware<AppAction, AppAction, AppState> {
         lift(
             inputAction: \.allPassesView,
             outputAction: AppAction.notification,
-            state: { _ in }
         )
         .eraseToAnyMiddleware()
     }

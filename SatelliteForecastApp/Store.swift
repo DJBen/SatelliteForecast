@@ -54,6 +54,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
     ) -> AnyMiddleware<AppAction, AppAction, AppState> {
         let middlewares: [AnyMiddleware<AppAction, AppAction, AppState>] = [
             LocationMiddleware().lift(),
+            EffectMiddleware.locationAuthChange.lift(),
             EffectMiddleware.appDelegate
             .lift(
                 inputAction: \.appDelegate

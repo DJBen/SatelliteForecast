@@ -20,6 +20,8 @@ public enum AllPassesViewAction {
     case recalculatePasses(CalculatePassesParams)
     case scheduleNotification(PassNotification, passSnapshots: PassSnapshots)
     case unscheduleNotification(pass: Pass)
+    case deeplinkToLocationSelection
+    case showLocationSettings
 }
 
 public struct AllPassesViewContext {
@@ -225,7 +227,7 @@ public struct AllPassesView: View {
                     .scheduleNotification(
                         PassNotification(
                             pass: item.passSnapshots.pass,
-                            satelliteName: context.satelliteInfo.elements.commonName,
+                            satelliteName: satelliteCommonName,
                             category: viewModel.state.satelliteCategory,
                             observer: context.observer!,
                             timing: .rise,
@@ -236,7 +238,11 @@ public struct AllPassesView: View {
                 )
                 
             } label: {
-                Label("Alarm", systemImage: "bell.fill")
+                Label {
+                    Text("Alarm", bundle: .module, comment: "The verb as in alarm clock 'alarms' somebody")
+                } icon: {
+                    Image(systemName: "bell.fill")
+                }
             }
             .tint(.orange)
         }
@@ -245,7 +251,11 @@ public struct AllPassesView: View {
     @ViewBuilder private func passesList(_ items: [Item]?, observer: LatLonAlt) -> some View {
         if let items = items {
             if items.isEmpty {
-                Text("No passes found")
+                Text(
+                    "No passes found",
+                    bundle: .module,
+                    comment: "The default text when no satellite passes are found"
+                )
             } else {
                 ForEach(items) { item in
                     NavigationLink(
@@ -276,7 +286,13 @@ public struct AllPassesView: View {
                 }
             }
         } else {
-            ProgressView("Calculating...")
+            ProgressView {
+                Text(
+                    "Calculating...",
+                    bundle: .module,
+                    comment: "The progress text when calculating satellite passes"
+                )
+            }
         }
     }
 
@@ -377,44 +393,73 @@ public struct AllPassesView: View {
                 }
                 .navigationDestination(for: AllPassViewNavigation.self) { allPassViewNavigation in
                     LazyView {
-                        MotionManagerView(
-                            isActive: Binding<Bool>(
-                                get: {
-                                    // Disables the motion when modal is up, because it seems to interfere with picker view
-                                    !viewModel.state.showsPassAlarmSettingsModal
-                                },
-                                set: { _ in }
+                        passViewProducer.view(
+                            PassViewContext(
+                                passIndex: allPassViewNavigation.passIndex,
+                                satelliteInfo: context.satelliteInfo,
+                                category: viewModel.state.satelliteCategory,
+                                julianDateRange: context.julianDateRange,
+                                observer: observer,
+                                passSnapshots: allPassViewNavigation.passSnapshots,
+                                julianDateProvider: context.julianDateProvider,
                             )
-                        ) { deviceMotionResult in
-                            passViewProducer.view(
-                                PassViewContext(
-                                    passIndex: allPassViewNavigation.passIndex,
-                                    satelliteInfo: context.satelliteInfo,
-                                    category: viewModel.state.satelliteCategory,
-                                    julianDateRange: context.julianDateRange,
-                                    observer: observer,
-                                    passSnapshots: allPassViewNavigation.passSnapshots,
-                                    julianDateProvider: context.julianDateProvider,
-                                    deviceMotion: deviceMotionResult
-                                )
-                            )
-                        }
+                        )
                     }
                 }
             } else {
-                VStack(spacing: 8) {
-                    Image(systemName: "questionmark.circle")
-                        .font(.title)
-                    Text(
+                VStack(spacing: 32) {
+                    VStack(spacing: 16) {
+                        Image(systemName: "location.slash")
+                            .symbolRenderingMode(.hierarchical)
+                            .font(.title)
+                        
+                        Text(
                         """
-                        We need a location to find satellite passes. You may set one up within location settings.
+                        Need a location to find satellite passes.
                         """
-                    )
-                    .foregroundColor(Color(UIColor.secondaryLabel))
-                    .multilineTextAlignment(.center)
-                    .padding(EdgeInsets(top: 0, leading: 32, bottom: 0, trailing: 32))
+                        )
+                        .foregroundColor(Color(UIColor.label))
+                        .multilineTextAlignment(.leading)
+                        .padding(EdgeInsets(top: 0, leading: 32, bottom: 0, trailing: 32))
+                        
+                        Text(
+                            """
+                            Did you know? Space stations orbits earth 15 times a day, and maybe up to 5-7 times above your location, but most of the time it's either too bright or too dark to be seen.
+                            """
+                        )
+                        .foregroundColor(Color(UIColor.secondaryLabel))
+                        .font(.footnote)
+                        .multilineTextAlignment(.leading)
+                        .padding(EdgeInsets(top: 0, leading: 32, bottom: 0, trailing: 32))
+                    }
+                    
+                    VStack(spacing: 16) {
+                        Button {
+                            viewModel.dispatch(.deeplinkToLocationSelection)
+                        } label: {
+                            Text("\(Image(systemName: "dot.circle.and.hand.point.up.left.fill").symbolRenderingMode(.hierarchical)) Manually select a location", bundle: .module)
+                        }
+                        .buttonStyle(.bordered)
+                        
+                        Button {
+                            viewModel.dispatch(.showLocationSettings)
+                        } label: {
+                            Text("\(Image(systemName: "gear").symbolRenderingMode(.hierarchical)) Allow location access", bundle: .module)
+                        }
+                        .buttonStyle(.bordered)
+                    }
                 }
             }
+        }
+    }
+    
+    private var satelliteCommonName: String {
+        if context.satelliteInfo.noradIndex == 25544 {
+            return NSLocalizedString("International space station", bundle: .module, comment: "The name of ISS")
+        } else if context.satelliteInfo.noradIndex == 48274 {
+            return NSLocalizedString("Tiangong space station", bundle: .module, comment: "The name of Tiangong space station")
+        } else {
+            return context.satelliteInfo.elements.commonName
         }
     }
     
@@ -426,7 +471,7 @@ public struct AllPassesView: View {
         .toolbar {
             ToolbarItem(placement: .principal) {
                 VStack(alignment: .center, spacing: 4) {
-                    Text(context.satelliteInfo.elements.commonName)
+                    Text(satelliteCommonName)
                         .font(.headline)
                         .frame(alignment: .center)
                         .multilineTextAlignment(.center)

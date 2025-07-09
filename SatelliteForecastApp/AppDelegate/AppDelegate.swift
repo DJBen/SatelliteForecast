@@ -80,9 +80,17 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 completionHandler()
             case UNNotificationDefaultActionIdentifier:
                 let userInfo = response.notification.request.content.userInfo
-                guard let noradIndex = userInfo["noradIndex"] as? UInt,
-                      let satelliteCategory = (userInfo["satelliteCategory"] as? Data).flatMap({ try? JSONDecoder().decode(SatelliteCategory?.self, from: $0)}),
-                      let observer = (userInfo["observer"] as? Data).flatMap({ try? JSONDecoder().decode(LatLonAlt.self, from: $0) }) else {
+                guard let noradIndex = (userInfo["noradIndex"] as? String).flatMap(UInt.init),
+                      let satelliteCategory = (userInfo["satelliteCategory"] as? String).flatMap(SatelliteCategory.init(rawValue:)) else {
+                    break
+                }
+                
+                let observer: LatLonAlt
+                if let anObserver = (userInfo["observer"] as? Data).flatMap({ try? JSONDecoder().decode(LatLonAlt.self, from: $0) }) {
+                    observer = anObserver
+                } else if let lat = (userInfo["lat"] as? String).flatMap(Double.init), let lon = (userInfo["lon"] as? String).flatMap(Double.init), let alt = (userInfo["alt"] as? String).flatMap(Double.init) {
+                    observer = LatLonAlt(lat: lat, lon: lon, alt: alt)
+                } else {
                     break
                 }
                 

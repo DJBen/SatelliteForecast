@@ -40,6 +40,7 @@ extension PassViewState: Equatable {}
 /// The satellite detail view shows satellite passes and the sky chart during the first visible pass (if available).
 public struct PassView: View {
     @ObservedObject var viewModel: ObservableViewModel<PassViewAction, PassViewState>
+    @State var isCompassEnabled: Bool = true
 
     var context: PassViewContext
     var elevationGraphProducer: ViewProducer<SatelliteElevationGraphContext, SatelliteElevationGraph>
@@ -64,58 +65,22 @@ public struct PassView: View {
         self.passAlarmSettingsProducer = passAlarmSettingsProducer
         self.detailedPassViewProducer = detailedPassViewProducer
     }
-
-    @ViewBuilder private func skyChart(in rect: CGRect) -> some View {
-        ZStack(alignment: .topTrailing) {
-            skyChartProducer.view(
-                SkyChartContext(
-                    satelliteInfo: context.satelliteInfo,
-                    snapshots: context.passSnapshots.snapshots,
-                    observer: context.observer,
-                    pass: context.passSnapshots.pass,
-                    notableSnapshots: context.passSnapshots.notableSnapshots,
-                    configs: .preset,
-                    quality: .full,
-                    julianDateProvider: context.julianDateProvider,
-                    deviceMotion: context.deviceMotion
-                )
-
+    
+    @ViewBuilder private var compassButton: some View {
+        Button {
+            isCompassEnabled.toggle()
+        } label: {
+            Image(
+                systemName: isCompassEnabled ? "safari.fill" : "safari"
             )
-            .frame(height: min(rect.width, rect.height))
-
-            Button {
-                viewModel.dispatch(.showDetailPassView(true))
-            } label: {
-                Image(
-                    systemName: "arrow.up.left.and.arrow.down.right"
-                )
-                .renderingMode(.original)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 10)
-            }
-            .fullScreenCover(
-                isPresented: Binding<Bool>(
-                    get: {
-                        viewModel.state.showsDetailPassView
-                    },
-                    set: { newValue in
-                        viewModel.dispatch(.showDetailPassView(newValue))
-                    }
-                ),
-                content: {
-                    detailedPassViewProducer.view(
-                        DetailPassViewContext(
-                            satelliteInfo: context.satelliteInfo,
-                            category: context.category,
-                            julianDateRange: context.julianDateRange,
-                            observer: context.observer,
-                            passSnapshots: context.passSnapshots,
-                            julianDateProvider: context.julianDateProvider
-                        )
-                    )
-                }
-            )
-            .vibrancyEffect()
+            .symbolRenderingMode(.monochrome)
+            .resizable()
+            .frame(width: 24, height: 24)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+        }
+        .if(!isCompassEnabled) { button in
+            button.vibrancyEffect()
             .background(
                 Color.clear.blurEffect()
             )
@@ -123,6 +88,72 @@ public struct PassView: View {
             .blurEffectStyle(colorScheme == .light ? .systemMaterialLight : .systemMaterialDark)
             .vibrancyEffectStyle(.fill)
             .padding(8)
+        }
+        .if(isCompassEnabled) { button in
+            button.vibrancyEffect()
+            .background(
+                Color.clear.blurEffect()
+            )
+            .cornerRadius(8)
+            .blurEffectStyle(colorScheme == .light ? .systemMaterialDark : .systemMaterialLight)
+            .vibrancyEffectStyle(.fill)
+            .padding(8)
+        }
+    }
+
+    @ViewBuilder private func skyChart(in rect: CGRect) -> some View {
+        MotionManagerView { deviceMotionResult in
+            ZStack(alignment: .bottom) {
+                ZStack(alignment: .top) {
+                    skyChartProducer.view(
+                        SkyChartContext(
+                            satelliteInfo: context.satelliteInfo,
+                            snapshots: context.passSnapshots.snapshots,
+                            observer: context.observer,
+                            pass: context.passSnapshots.pass,
+                            notableSnapshots: context.passSnapshots.notableSnapshots,
+                            configs: .preset,
+                            quality: .full,
+                            julianDateProvider: context.julianDateProvider,
+                        )
+                    )
+                    .frame(height: min(rect.width, rect.height))
+                    .if(isCompassEnabled) {
+                        $0.rotationEffect(.degrees(deviceMotionResult.content?.heading ?? 0))
+                    }
+                
+                    HStack {
+                        compassButton
+                        
+                        Spacer()
+                        
+                        Button {
+                            viewModel.dispatch(.showDetailPassView(true))
+                        } label: {
+                            Image(
+                                systemName: "arrow.up.left.and.arrow.down.right"
+                            )
+                            .symbolRenderingMode(.monochrome)
+                            .resizable()
+                            .frame(width: 24, height: 24)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 10)
+                        }
+                        .vibrancyEffect()
+                        .background(
+                            Color.clear.blurEffect()
+                        )
+                        .cornerRadius(8)
+                        .blurEffectStyle(colorScheme == .light ? .systemMaterialLight : .systemMaterialDark)
+                        .vibrancyEffectStyle(.fill)
+                        .padding(8)
+                    }
+                }
+                
+                if isCompassEnabled {
+                    DeviceOrientationGuidanceView(deviceMotionResult: deviceMotionResult, colorScheme: colorScheme)
+                }
+            }
         }
     }
 
@@ -181,23 +212,45 @@ public struct PassView: View {
                     }
                 }
             }
-            .fullScreenCover(
-                isPresented: $viewModel.state.showAlarmConfigurationModal,
-                onDismiss: {
-                    viewModel.dispatch(.showAlarmConfiguration(false))
-                },
-                content: {
-                    passAlarmSettingsProducer.view(
-                        PassAlarmSettingsModalViewContext(
-                            satelliteName: context.satelliteInfo.ucsSat?.officialName ??  context.satelliteInfo.elements.commonName,
-                            category: context.category,
-                            passSnapshots: context.passSnapshots,
-                            observer: context.observer
-                        )
-                    )
-                }
-            )
         }
+        .fullScreenCover(
+            isPresented: $viewModel.state.showAlarmConfigurationModal,
+            onDismiss: {
+                viewModel.dispatch(.showAlarmConfiguration(false))
+            },
+            content: {
+                passAlarmSettingsProducer.view(
+                    PassAlarmSettingsModalViewContext(
+                        satelliteName: context.satelliteInfo.ucsSat?.officialName ??  context.satelliteInfo.elements.commonName,
+                        category: context.category,
+                        passSnapshots: context.passSnapshots,
+                        observer: context.observer
+                    )
+                )
+            }
+        )
+        .fullScreenCover(
+            isPresented: Binding<Bool>(
+                get: {
+                    viewModel.state.showsDetailPassView
+                },
+                set: { newValue in
+                    viewModel.dispatch(.showDetailPassView(newValue))
+                }
+            ),
+            content: {
+                detailedPassViewProducer.view(
+                    DetailPassViewContext(
+                        satelliteInfo: context.satelliteInfo,
+                        category: context.category,
+                        julianDateRange: context.julianDateRange,
+                        observer: context.observer,
+                        passSnapshots: context.passSnapshots,
+                        julianDateProvider: context.julianDateProvider
+                    )
+                )
+            }
+        )
     }
 }
 
@@ -209,9 +262,8 @@ public struct PassViewContext {
     public let observer: LatLonAlt
     public let passSnapshots: PassSnapshots
     public let julianDateProvider: () -> Double
-    public let deviceMotion: Loadable<CMDeviceMotion, Error>
 
-    public init(passIndex: Int, satelliteInfo: SatelliteInfo, category: SatelliteCategory, julianDateRange: ClosedRange<Double>, observer: LatLonAlt, passSnapshots: PassSnapshots, julianDateProvider: @escaping () -> Double, deviceMotion: Loadable<CMDeviceMotion, Error> = .notLoaded) {
+    public init(passIndex: Int, satelliteInfo: SatelliteInfo, category: SatelliteCategory, julianDateRange: ClosedRange<Double>, observer: LatLonAlt, passSnapshots: PassSnapshots, julianDateProvider: @escaping () -> Double) {
         self.passIndex = passIndex
         self.satelliteInfo = satelliteInfo
         self.category = category
@@ -219,7 +271,6 @@ public struct PassViewContext {
         self.observer = observer
         self.passSnapshots = passSnapshots
         self.julianDateProvider = julianDateProvider
-        self.deviceMotion = deviceMotion
     }
 }
 
@@ -235,6 +286,120 @@ extension PassView {
             comment: "The toolbar of the pass view describing the direction of the pass. The first and second arguments correspond to the directions of rising and setting."
         )
         return String(format: format, riseDirection, setDirection)
+    }
+}
+
+/// A view that guides the user to orient their device with the screen pointing down and camera pointing skyward
+private struct DeviceOrientationGuidanceView: View {
+    let deviceMotionResult: Loadable<CMDeviceMotion, Error>
+    let colorScheme: ColorScheme
+    
+    @State private var isCriteriaMet: Bool = false
+    @State private var shouldShow: Bool = true
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            HStack(spacing: 8) {
+                Text("Point camera skyward and screen downward", bundle: .module)
+                    .font(.caption)
+                    .foregroundColor(Color(UIColor.label))
+                
+                if case .loaded(let motion) = deviceMotionResult {
+                    let pitch = motion.attitude.pitch * rad2deg
+                    let roll = motion.attitude.roll * rad2deg
+                    let progress = min(max(0, 1 - (abs(pitch) / 90)), max(0, 1 - (min(abs(roll - 180), abs(roll + 180)) / 30)))
+                    let currentCriteriaMet = abs(pitch) < 30 && min(abs(roll - 180), abs(roll + 180)) < 30
+                    
+                    ZStack {
+                        Circle()
+                            .stroke(Color.secondary.opacity(0.3), lineWidth: 2)
+                            .frame(width: 16, height: 16)
+                        
+                        Circle()
+                            .trim(from: 0, to: progress)
+                            .stroke(
+                                currentCriteriaMet ? Color.green : Color.orange,
+                                style: StrokeStyle(lineWidth: 2, lineCap: .round)
+                            )
+                            .frame(width: 16, height: 16)
+                            .rotationEffect(.degrees(-90))
+                            .animation(.easeInOut(duration: 0.2), value: progress)
+                        
+                        if currentCriteriaMet {
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 8, weight: .bold))
+                                .foregroundColor(.green)
+                        }
+                    }
+                    .onChange(of: currentCriteriaMet, initial: true) { oldValue, newValue in
+                        if newValue != oldValue {
+                            isCriteriaMet = newValue
+                            
+                            if newValue {
+                                withAnimation(.easeOut(duration: 0.25)) {
+                                    shouldShow = false
+                                }
+                            } else {
+                                withAnimation(.easeIn(duration: 0.25)) {
+                                    shouldShow = true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Show detailed progress when device motion is available
+            if case .loaded(let motion) = deviceMotionResult {
+                let pitch = motion.attitude.pitch * rad2deg
+                let roll = motion.attitude.roll * rad2deg
+                
+                HStack(spacing: 16) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        HStack {
+                            Text("Pitch:", bundle: .module, comment: "The attitude noun as in 'roll', 'pitch', 'yaw'")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                            Spacer()
+                            Text("\(Int(pitch))°", bundle: .module)
+                                .font(.caption2.monospacedDigit())
+                                .foregroundColor(abs(pitch) < 30 ? .green : .orange)
+                        }
+                        
+                        ProgressView(value: max(0, 1 - (abs(pitch) / 90)))
+                            .progressViewStyle(LinearProgressViewStyle(tint: abs(pitch) < 30 ? .green : .orange))
+                            .scaleEffect(y: 0.5)
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 2) {
+                        HStack {
+                            Text("Roll:", bundle: .module, comment: "The attitude noun as in 'roll', 'pitch', 'yaw'")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                            Spacer()
+                            Text("\(Int(roll))°", bundle: .module)
+                                .font(.caption2.monospacedDigit())
+                                .foregroundColor(min(abs(roll - 180), abs(roll + 180)) < 30 ? .green : .orange)
+                        }
+                        
+                        ProgressView(value: max(0, 1 - (min(abs(roll - 180), abs(roll + 180)) / 30)))
+                            .progressViewStyle(LinearProgressViewStyle(tint: min(abs(roll - 180), abs(roll + 180)) < 30 ? .green : .orange))
+                            .scaleEffect(y: 0.5)
+                    }
+                }
+                .padding(.top, 4)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(
+            Color.clear.blurEffect()
+                .cornerRadius(8)
+                .blurEffectStyle(colorScheme == .light ? .systemMaterialLight : .systemMaterialDark)
+                .vibrancyEffectStyle(.fill)
+        )
+        .padding(.horizontal, 32)
+        .opacity(shouldShow ? 1.0 : 0.0)
     }
 }
 

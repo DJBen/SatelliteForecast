@@ -24,6 +24,8 @@ public struct NavigationState {
     ///   Root / (Location | Alarm)
     public var settingsNavigationPath: NavigationPath = .init()
     public var listNavigation: ListNavigation = .init()
+    
+    public init() {}
 }
 
 extension NavigationState: Equatable {}

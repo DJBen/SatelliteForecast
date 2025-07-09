@@ -41,16 +41,17 @@ private func nextPass(_ satellite: SpecialSatellite, appState: AppState) -> Load
 extension SatelliteOverviewViewState: AppStateMappable {
     public static func project(appState: AppState) -> SatelliteOverviewViewState {
         SatelliteOverviewViewState(
-            navigationPath: appState.navigationState.passPredictionNavigationPath,
+            navigationState: appState.navigationState,
             observer: appState.locationResources.location.map(LatLonAlt.init),
             julianDateOffset: appState.debugMenu.effectiveOffset,
             issNextPass: nextPass(.iss, appState: appState),
             tianheNextPass: nextPass(.tianhe, appState: appState),
+            authorizationStatus: appState.locationResources.authorizationStatus,
         )
     }
 
     public static func apply(appState: inout AppState, state: SatelliteOverviewViewState) {
-        appState.navigationState.passPredictionNavigationPath = state.navigationPath
+        appState.navigationState = state.navigationState
     }
 }
 

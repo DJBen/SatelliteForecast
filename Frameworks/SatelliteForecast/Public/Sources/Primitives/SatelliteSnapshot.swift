@@ -81,6 +81,43 @@ public struct NotableSnapshots: Equatable, Sendable {
     }
 
     public let illuminationChanges: BTree<Double, IlluminationChangeAndSnapshots>
+    
+    /// The highest elevation at which the satellite is illuminated during the pass.
+    /// If the transit point is illuminated, this is the transit elevation.
+    /// Otherwise, it's the maximum elevation from rise, set, and illumination change points.
+    /// Returns -1 if no illuminated points are found or sun elevation is too high (> -6).
+    public var visibleCulminationElevation: Double {
+        if transit.first.sunElevation > -6 {
+            return -1
+        }
+        
+        // If transit is illuminated, use its elevation
+        if transit.first.isIlluminated || transit.second.isIlluminated {
+            return max(transit.first.position.elev, transit.second.position.elev)
+        }
+        
+        // Start with -1 as default
+        var maxElevation: Double = -1
+        
+        // Check rise elevation if illuminated
+        if rise.first.isIlluminated || rise.second.isIlluminated {
+            maxElevation = max(maxElevation, max(rise.first.position.elev, rise.second.position.elev))
+        }
+        
+        // Check set elevation if illuminated
+        if set.first.isIlluminated || set.second.isIlluminated {
+            maxElevation = max(maxElevation, max(set.first.position.elev, set.second.position.elev))
+        }
+        
+        // Check all illumination changes
+        for (_, change) in illuminationChanges {
+            maxElevation = max(maxElevation, 
+                               max(change.snapshots.first.position.elev,
+                                   change.snapshots.second.position.elev))
+        }
+        
+        return maxElevation
+    }
 
     public init(
         rise: SnapshotsAroundPass,

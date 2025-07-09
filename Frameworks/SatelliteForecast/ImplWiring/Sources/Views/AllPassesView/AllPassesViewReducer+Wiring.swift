@@ -8,12 +8,10 @@
 @preconcurrency import SwiftRex
 import SatelliteForecastImpl
 
-extension Reducer where ActionType == AllPassesViewAction, StateType == AllPassesViewState {
+extension Reducer where ActionType == AllPassesViewAction, StateType == AppState {
     public func lift() -> Reducer<AppAction, AppState> {
         lift(
-            actionGetter: \.allPassesView,
-            stateGetter: AllPassesViewState.project(appState:),
-            stateSetter: AllPassesViewState.apply(appState:state:)
+            action: \.allPassesView,
         )
     }
 }

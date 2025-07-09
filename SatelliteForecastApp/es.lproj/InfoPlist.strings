@@ -1,0 +1,9 @@
+/* Bundle display name */
+"CFBundleDisplayName" = "Estación Espacial";
+
+/* Bundle name */
+"CFBundleName" = "SatelliteForecastApp";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "La ubicación afecta la precisión de los cálculos de pases de satélites. Sus datos de ubicación siempre permanecen en su dispositivo local y no se almacenarán.";
+
