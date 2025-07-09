@@ -43,6 +43,27 @@ struct PassPreviewCell: View {
         formatter.maximumFractionDigits = 1
         return formatter
     }()
+    
+    @ViewBuilder private var starRatingView: some View {
+        HStack(spacing: 0) {
+            Image(systemName: "star.fill")
+                .if(notableSnapshots.visibleCulminationElevation < 30, transform: { $0.hidden() })
+            Image(systemName: "star.fill")
+                .if(notableSnapshots.visibleCulminationElevation < 45, transform: { $0.hidden() })
+            Image(systemName: "star.fill")
+                .if(notableSnapshots.visibleCulminationElevation < 75, transform: { $0.hidden() })
+        }
+        .foregroundStyle(
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(red: 230 / 255, green: 158 / 255, blue: 25 / 255),
+                    Color(red: 239 / 255, green: 193 / 255, blue: 108 / 255)
+                ]),
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+        )
+    }
 
     var body: some View {
         GeometryReader { geometry in
@@ -108,6 +129,8 @@ struct PassPreviewCell: View {
                         }
                         
                         Spacer(minLength: 4)
+                        
+                        starRatingView.padding(.bottom, 4)
                         
                         Text(PassPreviewCell.relativeDate(pass: pass, referenceDate: julianDateProvider() + julianDateOffset))
                             .font(.caption)
