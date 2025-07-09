@@ -141,7 +141,7 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                     }
                     
                     if viewModel.state.isMissingLocation {
-                        Text("\(Image(systemName: "location.slash")) Location needed to calculate satellite passes. Your experience may be degraded.")
+                        Text("\(Image(systemName: "location.slash")) Location needed to calculate satellite passes. Your experience may be degraded.", bundle: .module)
                             .font(.footnote)
                             .foregroundColor(Color(UIColor.secondaryLabel))
                             .padding(.horizontal)

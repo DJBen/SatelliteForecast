@@ -3,6 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "SatelliteForecastPackage", // Renamed to avoid conflict with target names
+    defaultLocalization: "en",
     platforms: [
         .iOS(.v18)
     ],
@@ -62,6 +63,7 @@ let package = Package(
                 .product(name: "SatelliteCatalog", package: "SatelliteCatalogPackage"),
                 .product(name: "SatelliteCatalogImpl_SQLite", package: "SatelliteCatalogPackage"),
                 .product(name: "FirebaseFirestore", package: "firebase-ios-sdk"),
+                .product(name: "FirebaseAnalytics", package: "firebase-ios-sdk"),
             ],
             path: "Impl/Sources",
             resources: [.process("Resources")],

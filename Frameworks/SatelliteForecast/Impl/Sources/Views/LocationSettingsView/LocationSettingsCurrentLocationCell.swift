@@ -40,7 +40,7 @@ public struct LocationSettingsCurrentLocationCell: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 if let currentLocation = currentLocation {
-                    Text("Current location")
+                    Text("Current location", bundle: .module)
 
                     if let formattedPlacemark = currentLocationPlacemark?.formattedString {
                         Text(formattedPlacemark)
@@ -53,9 +53,9 @@ public struct LocationSettingsCurrentLocationCell: View {
                         .foregroundColor(Color.secondary)
                         .tint(nil)
                 } else {
-                    Text("Current location not available")
+                    Text("Current location not available", bundle: .module)
 
-                    Text("Open location settings")
+                    Text("Open location settings", bundle: .module)
                         .font(.system(.caption))
                         .foregroundColor(Color.secondary)
                         .tint(nil)

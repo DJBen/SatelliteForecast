@@ -52,7 +52,7 @@ struct SatelliteOverviewCell: View {
                         
                         switch nextPassLoadingState {
                         case .failed(_):
-                            Text("Unable to load pass information")
+                            Text("Unable to load pass information", bundle: .module)
                                 .font(.body)
                                 .foregroundColor(.red)
                             .multilineTextAlignment(.leading)
@@ -62,19 +62,19 @@ struct SatelliteOverviewCell: View {
                                 if let nextVisiblePass = nextPass.nextVisiblePass, let highestIlluminated = nextVisiblePass.highestIlluminated {
                                     SatelliteOverviewCell.PassCountdownView(
                                         pass: nextVisiblePass,
-                                        title: Text("Visible pass \(Image(systemName: "angle"))\(Int(highestIlluminated.elev.rounded()))°"),
+                                        title: Text("Visible pass \(Image(systemName: "angle"))\(Int(highestIlluminated.elev.rounded()))°", bundle: .module),
                                         julianDateOffset: julianDateOffset,
                                     )
                                 }
                                 if let nextProminentPass = nextPass.nextProminentPass, let highestIlluminated = nextProminentPass.highestIlluminated {
                                     SatelliteOverviewCell.PassCountdownView(
                                         pass: nextProminentPass,
-                                        title: Text("Prominent pass \(Image(systemName: "angle"))\(Int(highestIlluminated.elev.rounded()))°"),
+                                        title: Text("Prominent pass \(Image(systemName: "angle"))\(Int(highestIlluminated.elev.rounded()))°", bundle: .module),
                                         julianDateOffset: julianDateOffset,
                                     )
                                 }
                                 if nextPass.nextVisiblePass == nil && nextPass.nextProminentPass == nil {
-                                    Text("No upcoming visible passes")
+                                    Text("No upcoming visible passes", bundle: .module)
                                         .font(.subheadline)
                                         .foregroundColor(colorScheme == .light ? Color(UIColor.systemGray2) : Color(UIColor.systemGray4))
                                         .vibrancyEffect()
@@ -87,7 +87,7 @@ struct SatelliteOverviewCell: View {
                                 HStack(spacing: 8) {
                                     ProgressView()
                                         .scaleEffect(0.8)
-                                    Text("Loading pass information...")
+                                    Text("Loading pass information...", bundle: .module)
                                         .font(.subheadline)
                                         .foregroundColor(colorScheme == .light ? Color(UIColor.systemGray2) : Color(UIColor.systemGray4))
                                 }
@@ -191,7 +191,7 @@ extension SatelliteOverviewCell {
             let timeUntilRise = (pass.rise.julianDate - currentJulianDate) * TimeConstants.day2sec
             
             if currentJulianDate >= pass.rise.julianDate && currentJulianDate <= pass.set.julianDate {
-                Text("Passing now!")
+                Text("Passing now!", bundle: .module, comment: "A string describing that the satellite is currently passing")
                     .font(.subheadline)
                     .fontWeight(.bold)
                     .foregroundColor(isFlashing ? .pink : .orange)
@@ -204,7 +204,7 @@ extension SatelliteOverviewCell {
                 let calendar = Calendar.current
                 let hour = calendar.component(.hour, from: Date(julianDate: pass.culmination.julianDate))
                 let amOrPmText = if hour < 12 {
-                    Text("Morning ")
+                    Text("Morning ", bundle: .module)
                         .font(.subheadline)
                         .foregroundStyle(
                             LinearGradient(
@@ -214,7 +214,7 @@ extension SatelliteOverviewCell {
                             )
                         )
                 } else {
-                    Text("Afternoon ")
+                    Text("Afternoon ", bundle: .module)
                         .font(.subheadline)
                         .foregroundStyle(
                             LinearGradient(

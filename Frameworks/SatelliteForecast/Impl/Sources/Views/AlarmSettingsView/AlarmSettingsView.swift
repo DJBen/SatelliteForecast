@@ -93,7 +93,8 @@ public struct AlarmSettingsView: View {
                     Text(
                     """
                     Your alarms will appear here. Schedule an alarm by tapping the \(Image(systemName: "bell")) inside a pass.
-                    """
+                    """,
+                    bundle: .module
                     )
                     .foregroundColor(Color(UIColor.secondaryLabel))
                     .multilineTextAlignment(.center)
@@ -132,8 +133,8 @@ public struct AlarmSettingsView: View {
     }
     
     public var body: some View {
-        alarmList
-        .navigationBarTitle("Alarms", displayMode: .inline)
+        alarmList.navigationTitle(Text("Alarms", bundle: .module, comment: "Noun, as in alarm clock."))
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             EditButton()
         }

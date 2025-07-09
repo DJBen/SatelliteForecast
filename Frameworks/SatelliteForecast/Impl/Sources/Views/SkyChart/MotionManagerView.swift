@@ -66,7 +66,8 @@ public struct MotionManagerView<Content: View>: View {
                 }
             }
         } else {
-            Text("Motion manager not injected in environment")
+            // Motion manager not injected in environment
+            Text(verbatim: "Motion manager not injected in environment")
         }
     }
 }

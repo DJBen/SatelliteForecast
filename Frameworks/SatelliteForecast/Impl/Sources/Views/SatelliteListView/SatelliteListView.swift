@@ -135,9 +135,11 @@ public struct SatelliteListView: View {
         } else {
             switch (viewModel.state.satelliteInfo[context.category] ?? .notLoaded) {
             case .notLoaded:
-                Text(verbatim: "The satellites are not loaded.")
+                Text("The satellites are not loaded.", bundle: .module)
             case .loading:
-                ProgressView("Loading...")
+                ProgressView {
+                    Text("Loading...", bundle: .module)
+                }
             case let .loaded(satellites):
                 contentBuilder(satellites)
             case let .failed(error):

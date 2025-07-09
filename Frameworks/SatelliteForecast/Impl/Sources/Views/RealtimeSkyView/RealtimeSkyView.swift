@@ -346,7 +346,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
                     .padding(.top, 16)
                 }
             } noLocationContentBuilder: {
-                Text(verbatim: "Location not available")
+                Text("Location not available", bundle: .module)
             }
             .navigationTitle(Self.Navigation.title)
             .navigationBarTitleDisplayMode(.inline)

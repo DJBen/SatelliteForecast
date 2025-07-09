@@ -300,7 +300,7 @@ private struct DeviceOrientationGuidanceView: View {
     var body: some View {
         VStack(spacing: 8) {
             HStack(spacing: 8) {
-                Text("Point camera skyward and screen downward")
+                Text("Point camera skyward and screen downward", bundle: .module)
                     .font(.caption)
                     .foregroundColor(Color(UIColor.label))
                 
@@ -357,11 +357,11 @@ private struct DeviceOrientationGuidanceView: View {
                 HStack(spacing: 16) {
                     VStack(alignment: .leading, spacing: 2) {
                         HStack {
-                            Text("Tilt:")
+                            Text("Pitch:", bundle: .module, comment: "The attitude noun as in 'roll', 'pitch', 'yaw'")
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
                             Spacer()
-                            Text("\(Int(pitch))°")
+                            Text("\(Int(pitch))°", bundle: .module)
                                 .font(.caption2.monospacedDigit())
                                 .foregroundColor(abs(pitch) < 30 ? .green : .orange)
                         }
@@ -373,11 +373,11 @@ private struct DeviceOrientationGuidanceView: View {
                     
                     VStack(alignment: .leading, spacing: 2) {
                         HStack {
-                            Text("Roll:")
+                            Text("Roll:", bundle: .module, comment: "The attitude noun as in 'roll', 'pitch', 'yaw'")
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
                             Spacer()
-                            Text("\(Int(roll))°")
+                            Text("\(Int(roll))°", bundle: .module)
                                 .font(.caption2.monospacedDigit())
                                 .foregroundColor(min(abs(roll - 180), abs(roll + 180)) < 30 ? .green : .orange)
                         }

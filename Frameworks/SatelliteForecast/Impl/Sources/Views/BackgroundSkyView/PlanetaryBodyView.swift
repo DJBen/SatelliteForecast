@@ -157,12 +157,12 @@ extension BackgroundSkyConfigs.PlantaryBody {
                 radius: 8,
                 shapeModifier: SunShapeModifier(),
                 textLabel: {
-                    Text("Sun")
+                    Text("Sun", bundle: .module)
                         .font(.caption2)
                         .foregroundColor(.orange)
                 },
                 symbol: {
-                    Text("☉")
+                    Text("☉", bundle: .module)
                         .font(.system(size: 12))
                         .foregroundColor(.white)
                 }
@@ -174,12 +174,12 @@ extension BackgroundSkyConfigs.PlantaryBody {
                 radius: 5,
                 shapeModifier: MoonShapeModifier(),
                 textLabel: {
-                    Text("Moon")
+                    Text("Moon", bundle: .module)
                         .font(.caption2)
                         .foregroundColor(.blue)
                 },
                 symbol: {
-                    Text("☾")
+                    Text("☾", bundle: .module)
                         .font(.system(size: 8))
                         .foregroundColor(.white)
                 }
@@ -191,12 +191,12 @@ extension BackgroundSkyConfigs.PlantaryBody {
                 radius: 2,
                 shapeModifier: PlanetsShapeModifier(),
                 textLabel: {
-                    Text("Mercury")
+                    Text("Mercury", bundle: .module)
                         .font(.caption2)
                         .foregroundColor(.yellow)
                 },
                 symbol: {
-                    Text("☿")
+                    Text("☿", bundle: .module)
                         .font(.system(size: 5))
                         .foregroundColor(.white)
                 }
@@ -208,12 +208,12 @@ extension BackgroundSkyConfigs.PlantaryBody {
                 radius: 3.5,
                 shapeModifier: PlanetsShapeModifier(),
                 textLabel: {
-                    Text("Venus")
+                    Text("Venus", bundle: .module)
                         .font(.caption2)
                         .foregroundColor(.orange)
                 },
                 symbol: {
-                    Text("♀")
+                    Text("♀", bundle: .module)
                         .font(.system(size: 7))
                         .foregroundColor(.white)
                 }
@@ -225,12 +225,12 @@ extension BackgroundSkyConfigs.PlantaryBody {
                 radius: 2,
                 shapeModifier: PlanetsShapeModifier(),
                 textLabel: {
-                    Text("Mars")
+                    Text("Mars", bundle: .module)
                         .font(.caption2)
                         .foregroundColor(.red)
                 },
                 symbol: {
-                    Text("♂")
+                    Text("♂", bundle: .module)
                         .font(.system(size: 6))
                         .foregroundColor(.white)
                 }
@@ -242,12 +242,12 @@ extension BackgroundSkyConfigs.PlantaryBody {
                 radius: 3,
                 shapeModifier: PlanetsShapeModifier(),
                 textLabel: {
-                    Text("Jupiter")
+                    Text("Jupiter", bundle: .module)
                         .font(.caption2)
                         .foregroundColor(.pink)
                 },
                 symbol: {
-                    Text("♃")
+                    Text("♃", bundle: .module)
                         .font(.system(size: 6))
                         .foregroundColor(.white)
                 }
@@ -259,12 +259,12 @@ extension BackgroundSkyConfigs.PlantaryBody {
                 radius: 2,
                 shapeModifier: PlanetsShapeModifier(),
                 textLabel: {
-                    Text("Saturn")
+                    Text("Saturn", bundle: .module)
                         .font(.caption2)
                         .foregroundColor(.purple)
                 },
                 symbol: {
-                    Text("♄")
+                    Text("♄", bundle: .module)
                         .font(.system(size: 4))
                         .foregroundColor(.white)
                 }

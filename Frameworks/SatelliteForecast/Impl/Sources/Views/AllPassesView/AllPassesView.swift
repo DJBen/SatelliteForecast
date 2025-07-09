@@ -238,7 +238,11 @@ public struct AllPassesView: View {
                 )
                 
             } label: {
-                Label("Alarm", systemImage: "bell.fill")
+                Label {
+                    Text("Alarm", bundle: .module, comment: "The verb as in alarm clock 'alarms' somebody")
+                } icon: {
+                    Image(systemName: "bell.fill")
+                }
             }
             .tint(.orange)
         }
@@ -247,7 +251,11 @@ public struct AllPassesView: View {
     @ViewBuilder private func passesList(_ items: [Item]?, observer: LatLonAlt) -> some View {
         if let items = items {
             if items.isEmpty {
-                Text("No passes found")
+                Text(
+                    "No passes found",
+                    bundle: .module,
+                    comment: "The default text when no satellite passes are found"
+                )
             } else {
                 ForEach(items) { item in
                     NavigationLink(
@@ -278,7 +286,13 @@ public struct AllPassesView: View {
                 }
             }
         } else {
-            ProgressView("Calculating...")
+            ProgressView {
+                Text(
+                    "Calculating...",
+                    bundle: .module,
+                    comment: "The progress text when calculating satellite passes"
+                )
+            }
         }
     }
 
@@ -423,14 +437,14 @@ public struct AllPassesView: View {
                         Button {
                             viewModel.dispatch(.deeplinkToLocationSelection)
                         } label: {
-                            Text("\(Image(systemName: "dot.circle.and.hand.point.up.left.fill").symbolRenderingMode(.hierarchical)) Manually select a location")
+                            Text("\(Image(systemName: "dot.circle.and.hand.point.up.left.fill").symbolRenderingMode(.hierarchical)) Manually select a location", bundle: .module)
                         }
                         .buttonStyle(.bordered)
                         
                         Button {
                             viewModel.dispatch(.showLocationSettings)
                         } label: {
-                            Text("\(Image(systemName: "gear").symbolRenderingMode(.hierarchical)) Allow location access")
+                            Text("\(Image(systemName: "gear").symbolRenderingMode(.hierarchical)) Allow location access", bundle: .module)
                         }
                         .buttonStyle(.bordered)
                     }
