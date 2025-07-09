@@ -214,7 +214,7 @@ extension SatelliteOverviewCell {
                             )
                         )
                 } else {
-                    Text("Afternoon ", bundle: .module)
+                    Text("Evening ", bundle: .module)
                         .font(.subheadline)
                         .foregroundStyle(
                             LinearGradient(

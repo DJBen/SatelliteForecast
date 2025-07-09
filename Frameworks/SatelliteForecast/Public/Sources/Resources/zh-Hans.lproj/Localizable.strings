@@ -1,0 +1,6 @@
+/* Description for ElementsLoaderError.expired */
+"ElementsLoaderError.expired.format" = "最后修改于 %1$@ 的星历已过期。最大持续时间为 %2$d 秒。";
+
+/* Description for ElementsLoaderError.unexpectedMimeType */
+"ElementsLoaderError.unexpectedMimeType.description" = "为卫星元素发现了意外的 MIME 类型 %@。";
+

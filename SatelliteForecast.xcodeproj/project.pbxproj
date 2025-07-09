@@ -19,6 +19,7 @@
 		FC19EC752DFEA459007C9731 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = FC19EC742DFEA459007C9731 /* FirebaseCore */; };
 		FC19EC772DFEA459007C9731 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = FC19EC762DFEA459007C9731 /* FirebaseFirestore */; };
 		FC19EC792DFEA459007C9731 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = FC19EC782DFEA459007C9731 /* FirebaseMessaging */; };
+		FC69A7782E1E334F002083EC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FC69A7762E1E334F002083EC /* InfoPlist.strings */; };
 		FC7A7E242DDEF1040026A8B9 /* SatelliteForecast in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E232DDEF1040026A8B9 /* SatelliteForecast */; };
 		FC7A7E262DDEF1040026A8B9 /* SatelliteForecastImpl in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E252DDEF1040026A8B9 /* SatelliteForecastImpl */; };
 		FC7A7E282DDEF1040026A8B9 /* SatelliteForecastImplWiring in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E272DDEF1040026A8B9 /* SatelliteForecastImplWiring */; };
@@ -58,6 +59,9 @@
 		EF9D827C2661BBF000616C97 /* Icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Icons.xcassets; sourceTree = "<group>"; };
 		EF9D82812661BBF000616C97 /* SatelliteForecastApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SatelliteForecastApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FC45A13E2E0F1C790009A04A /* SatelliteForecast */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = SatelliteForecast; path = Frameworks/SatelliteForecast; sourceTree = "<group>"; };
+		FC69A7772E1E334F002083EC /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		FC69A7792E1E335D002083EC /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		FC69A77A2E1E336A002083EC /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		FC7A7E372DDFC8190026A8B9 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		FC7A7E3D2DDFD4EE0026A8B9 /* SatelliteForecastApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SatelliteForecastApp.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -124,6 +128,7 @@
 				EF817480292A362B00A2F225 /* Preview Content */,
 				EF81747B292A360500A2F225 /* AppDelegate */,
 				EF864272266DFFE9004F0AFA /* Info.plist */,
+				FC69A7762E1E334F002083EC /* InfoPlist.strings */,
 				FC7A7E372DDFC8190026A8B9 /* GoogleService-Info.plist */,
 				EF9D827C2661BBF000616C97 /* Icons.xcassets */,
 			);
@@ -183,6 +188,7 @@
 				Base,
 				es,
 				fr,
+				"zh-Hans",
 			);
 			mainGroup = EF9D82742661BBEF00616C97;
 			packageReferences = (
@@ -203,6 +209,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EF81748A292A362B00A2F225 /* visual.txt in Resources */,
+				FC69A7782E1E334F002083EC /* InfoPlist.strings in Resources */,
 				EF16811E27D00E28001BA9C3 /* Icons.xcassets in Resources */,
 				FC7A7E382DDFC8190026A8B9 /* GoogleService-Info.plist in Resources */,
 				EF817488292A362B00A2F225 /* active.txt in Resources */,
@@ -226,6 +233,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		FC69A7762E1E334F002083EC /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FC69A7772E1E334F002083EC /* es */,
+				FC69A7792E1E335D002083EC /* fr */,
+				FC69A77A2E1E336A002083EC /* zh-Hans */,
+			);
+			name = InfoPlist.strings;
+			path = SatelliteForecastApp;
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		EF9D82A92661BBF100616C97 /* Debug */ = {

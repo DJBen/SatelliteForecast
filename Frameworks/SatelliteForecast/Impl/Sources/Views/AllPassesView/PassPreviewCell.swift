@@ -44,32 +44,11 @@ struct PassPreviewCell: View {
         return formatter
     }()
 
-    var visiblityColor: Color {
-        switch pass.visibility {
-        case .visible:
-            return Color(UIColor.systemGreen)
-        case .unlit:
-            if colorScheme == .light {
-                return Color(.sRGB, red: 0 / 255, green: 3 / 255, blue: 61 / 255, opacity: 1)
-            } else {
-                return Color(.sRGB, red: 22 / 255, green: 45 / 255, blue: 152 / 255, opacity: 1)
-            }
-        case .daylight:
-            return Color(.sRGB, red: 255 / 255, green: 196 / 255, blue: 137 / 255, opacity: 1)
-        }
-    }
-
     var body: some View {
         GeometryReader { geometry in
             let shortEdge = min(geometry.size.width, geometry.size.height)
             
             HStack(alignment: .top, spacing: 4) {
-                Capsule(
-                    style: .continuous
-                )
-                .foregroundColor(visiblityColor)
-                .frame(width: 6, alignment: .leading)
-
                 HStack(alignment: .top) {
                     // Column 1: Day light and elevation
                     if geometry.size.width >= 320 {
@@ -77,6 +56,7 @@ struct PassPreviewCell: View {
                             Text(PassPreviewCell.titleForPassVisibility(pass.visibility))
                                 .font(.headline)
                                 .foregroundColor(Color(UIColor.label))
+
                             Text("∠\(Self.numberFormatter.string(from: NSNumber(value: pass.culmination.elev))!)°")
                                 .font(.body)
                                 .foregroundColor(Color(UIColor.label))
@@ -87,11 +67,13 @@ struct PassPreviewCell: View {
                                     .foregroundColor(Color(UIColor.label))
                             }
                         }
-                        .frame(width: 72)
+                        .frame(width: 80)
                     }
 
                     VStack(alignment: .leading) {
                         Text(Self.dateFormatter.string(from: Date(julianDate: pass.rise.julianDate)))
+                            .minimumScaleFactor(0.8)
+                            .lineLimit(1)
                             .font(.headline)
                             .padding([.bottom], 1)
                             .foregroundColor(Color(UIColor.label))

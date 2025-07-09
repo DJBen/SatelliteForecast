@@ -1,0 +1,558 @@
+/* No comment provided by engineer. */
+"%@ %@" = "%@ %@";
+
+/* No comment provided by engineer. */
+"%@ Allow location access" = "%@ 允许位置访问";
+
+/* No comment provided by engineer. */
+"%@ kg" = "%@ 公斤";
+
+/* No comment provided by engineer. */
+"%@ Location needed to calculate satellite passes. Your experience may be degraded." = "%@ 需要位置信息来计算卫星过境。您的体验可能会受到影响。";
+
+/* No comment provided by engineer. */
+"%@ Manually select a location" = "%@ 手动选择位置";
+
+/* No comment provided by engineer. */
+"%@ Select a location" = "%@ 选择位置";
+
+/* No comment provided by engineer. */
+"%lld°" = "%lld°";
+
+/* No comment provided by engineer. */
+"↑ %@" = "↑ %@";
+
+/* No comment provided by engineer. */
+"↓ %@" = "↓ %@";
+
+/* No comment provided by engineer. */
+"∠%@°" = "∠%@°";
+
+/* No comment provided by engineer. */
+"∠%@° %@" = "∠%@° %@";
+
+/* No comment provided by engineer. */
+"☉" = "☉";
+
+/* No comment provided by engineer. */
+"☾" = "☾";
+
+/* No comment provided by engineer. */
+"☿" = "☿";
+
+/* No comment provided by engineer. */
+"♀" = "♀";
+
+/* No comment provided by engineer. */
+"♂" = "♂";
+
+/* No comment provided by engineer. */
+"♃" = "♃";
+
+/* No comment provided by engineer. */
+"♄" = "♄";
+
+/* No comment provided by engineer. */
+"Evening " = "傍晚 ";
+
+/* The verb as in alarm clock 'alarms' somebody */
+"Alarm" = "提醒";
+
+/* Noun, as in alarm clock. */
+"Alarms" = "提醒";
+
+/* The timing and offset description for the alarm in the alarm settings view, culmination. */
+"AlarmSettingsView.alarmOffsetDescription.culmination" = "最高点前 %@";
+
+/* The timing and offset description for the alarm in the alarm settings view, highest illuminated. */
+"AlarmSettingsView.alarmOffsetDescription.highestIlluminated" = "最亮时刻前 %@";
+
+/* The timing and offset description for the alarm in the alarm settings view, rise. */
+"AlarmSettingsView.alarmOffsetDescription.rise" = "升起前 %@";
+
+/* The timing and offset description for the alarm in the alarm settings view, set. */
+"AlarmSettingsView.alarmOffsetDescription.set" = "落下前 %@";
+
+/* The pass description for each alarm in the alarm settings view */
+"AlarmSettingsView.passDescription" = "于 %1$@ 升起，于 %2$@ 落下。";
+
+/* The pass description for each alarm in the alarm settings view */
+"AlarmSettingsView.passVisibilityDescription.daytime" = "过境发生在白天，最大仰角为 %.1f 度。";
+
+/* The pass description for each alarm in the alarm settings view */
+"AlarmSettingsView.passVisibilityDescription.unlit" = "过境未被照亮，最大仰角为 %.1f 度。";
+
+/* The pass description for each alarm in the alarm settings view */
+"AlarmSettingsView.passVisibilityDescription.visible" = "最大可见仰角 %.1f 度。";
+
+/* The text for a warning label upon significant deviation of the location used to calculate passes from the current location. */
+"AllPassesLocationChangeWarning.text" = "新位置 %1$@ 距离用于计算过境的位置 %2$@。结果可能不再准确。";
+
+/* The altitude format of mission control header */
+"AllPassesView.missionControlHeader.altitudeFormat" = "距地面 %@ 公里";
+
+/* The auxiliary text under the navigation title detailing the search date range of the passes. */
+"AllPassesView.searchPassRangeToolbar.text" = "显示截至 %1$@ 的过境";
+
+/* The header of invisible passes */
+"AllPassesView.section.invisible.header" = "不可见过境";
+
+/* The caption under the header of invisible passes */
+"AllPassesView.section.invisible.headerCaption" = "进入地球阴影的卫星无法看见；就像恒星一样，它们在白天也无法看见。";
+
+/* The body of observer info */
+"AllPassesView.section.observer.body" = "您正在从 %@ 观测。";
+
+/* The header of visible passes */
+"AllPassesView.section.visible.header" = "可见过境";
+
+/* The caption under the header of visible passes */
+"AllPassesView.section.visible.headerCaption" = "当天空足够暗但卫星仍被太阳照亮时，可以看到卫星。在日落后不久和日出前观测条件最佳。";
+
+/* The progress text when calculating satellite passes */
+"Calculating..." = "计算中...";
+
+/* No comment provided by engineer. */
+"Cancel alarm" = "取消提醒";
+
+/* No comment provided by engineer. */
+"Confirm" = "确认";
+
+/* No comment provided by engineer. */
+"Current location" = "当前位置";
+
+/* No comment provided by engineer. */
+"Current location not available" = "当前位置不可用";
+
+/* No comment provided by engineer. */
+"Custom location" = "自定义位置";
+
+/* No comment provided by engineer. */
+"Debug Menu" = "调试菜单";
+
+/* No comment provided by engineer. */
+"Deep link to Hubble (brightest 100)" = "哈勃深度链接（最亮100个）";
+
+/* No comment provided by engineer. */
+"Deep link to ISS (special)" = "国际空间站深度链接（特殊）";
+
+/* No comment provided by engineer. */
+"Deliver notifications 10 seconds after scheduled" = "在预定时间10秒后发送通知";
+
+/* No comment provided by engineer. */
+"Delivered at %@" = "已于 %@ 发送";
+
+/* No comment provided by engineer. */
+"Delivered notifications" = "已发送通知";
+
+/* Title of dismiss button of detailed pass view. */
+"DetailedPassView.navigationBar.discard" = "关闭";
+
+/* Navigation title of detailed pass view. */
+"DetailedPassView.navigationBar.title" = "设置提醒";
+
+/* No comment provided by engineer. */
+"Did you know? Space stations orbits earth 15 times a day, and maybe up to 5-7 times above your location, but most of the time it's either too bright or too dark to be seen." = "您知道吗？空间站每天绕地球15圈，可能在您的位置上空经过5-7次，但大多数时候天空要么太亮要么太暗而无法看见。";
+
+/* No comment provided by engineer. */
+"Directions.east" = "东";
+
+/* No comment provided by engineer. */
+"Directions.north" = "北";
+
+/* No comment provided by engineer. */
+"Directions.northeast" = "东北";
+
+/* No comment provided by engineer. */
+"Directions.northwest" = "西北";
+
+/* No comment provided by engineer. */
+"Directions.south" = "南";
+
+/* No comment provided by engineer. */
+"Directions.southeast" = "东南";
+
+/* No comment provided by engineer. */
+"Directions.southwest" = "西南";
+
+/* No comment provided by engineer. */
+"Directions.west" = "西";
+
+/* No comment provided by engineer. */
+"Enter address" = "输入地址";
+
+/* No comment provided by engineer. */
+"Ephemerides" = "星历";
+
+/* The comment text for the last 30 days satellites file */
+"EphemeridesManagementView.comment.active" = "所有活跃卫星的星历。";
+
+/* The comment text for the last 30 days satellites file */
+"EphemeridesManagementView.comment.last30Days" = "过去30天内新发射卫星的星历。";
+
+/* The comment text for the visual (brightest 100) satellites file */
+"EphemeridesManagementView.comment.visual" = "最亮100颗卫星的星历。";
+
+/* The empty text for the satellite ephemerides */
+"EphemeridesManagementView.emptyText" = "没有已下载的卫星星历";
+
+/* The message of the share link in ephemeride text browser view */
+"EphemerideTextBrowserView.shareLink.message" = "分享 %@ 卫星星历";
+
+/* No comment provided by engineer. */
+"Filter by name, ID, country, year..." = "按名称、ID、国家、年份筛选...";
+
+/* No comment provided by engineer. */
+"Freeze time" = "冻结时间";
+
+/* No comment provided by engineer. */
+"Hello, World!" = "你好，世界！";
+
+/* No comment provided by engineer. */
+"Jupiter" = "木星";
+
+/* No comment provided by engineer. */
+"Loading pass information..." = "加载过境信息...";
+
+/* No comment provided by engineer. */
+"Loading..." = "加载中...";
+
+/* No comment provided by engineer. */
+"Location change" = "位置变更";
+
+/* No comment provided by engineer. */
+"Location not available" = "位置不可用";
+
+/* No comment provided by engineer. */
+"Mars" = "火星";
+
+/* No comment provided by engineer. */
+"Mercury" = "水星";
+
+/* The title for the reset button within mission control view to restore the
+viewport to its orignal position. */
+"MissionControlView.resetButton.title" = "重新居中";
+
+/* No comment provided by engineer. */
+"Mock date and time" = "模拟日期和时间";
+
+/* No comment provided by engineer. */
+"Mock time %@\nOffset %@ JD" = "模拟时间 %@\n偏移 %@ JD";
+
+/* No comment provided by engineer. */
+"Moon" = "月球";
+
+/* No comment provided by engineer. */
+"Morning " = "凌晨 ";
+
+/* No comment provided by engineer. */
+"Need a location to find satellite passes." = "需要位置信息才能查找卫星过境。";
+
+/* No comment provided by engineer. */
+"No" = "否";
+
+/* The default text when no satellite passes are found */
+"No passes found" = "未找到过境";
+
+/* No comment provided by engineer. */
+"No upcoming visible passes" = "没有即将到来的可见过境";
+
+/* The concatenation format of pass description in the notification. */
+"Notification.upcomingPass.description.format" = "%1$@ %2$@";
+
+/* The description for the satellite pass notification. */
+"Notification.upcomingPass.description.future" = "将在 %1$@ 后从 %2$@ 升起，向 %3$@ 落下。";
+
+/* The description for the satellite pass notification. */
+"Notification.upcomingPass.description.now" = "现在从 %1$@ 升起，向 %2$@ 落下。";
+
+/* The pass description in the notification. */
+"Notification.upcomingPass.description.passVisibilityDescription.daytime" = "过境最高仰角达 %.1f 度。不过，可能太亮而无法看见卫星。";
+
+/* The pass description in the notification. */
+"Notification.upcomingPass.description.passVisibilityDescription.entirelyVisible" = "整个过境都被照亮，最高仰角达 %.1f 度。";
+
+/* The pass description in the notification. */
+"Notification.upcomingPass.description.passVisibilityDescription.partiallyVisible" = "过境部分可见，最高仰角达 %.1f 度。";
+
+/* The pass description in the notification. */
+"Notification.upcomingPass.description.passVisibilityDescription.unlit" = "过境最高仰角达 %.1f 度。在地球阴影下，它将太暗而无法看见。";
+
+/* The title for the satellite pass notification. */
+"Notification.upcomingPass.title.future" = "%1$@ 将在 %2$@ 后升起";
+
+/* The title for the satellite pass notification. */
+"Notification.upcomingPass.title.now" = "%1$@ 正在升起";
+
+/* No comment provided by engineer. */
+"Open location settings" = "打开位置设置";
+
+/* No comment provided by engineer. */
+"Overview" = "概览";
+
+/* Title of confirm button of pass alarm settings. */
+"PassAlarmSettingsModalView.confirmButton.title" = "设置提醒";
+
+/* Title of delete button of pass alarm settings. */
+"PassAlarmSettingsModalView.deleteButton.title" = "删除提醒";
+
+/* Title of lead time label of pass alarm settings. */
+"PassAlarmSettingsModalView.leadTimeLabel.title" = "提前提醒我...";
+
+/* Title of discard button of pass alarm settings. */
+"PassAlarmSettingsModalView.navigationBar.discard" = "关闭";
+
+/* Navigation title of pass alarm settings, view alarm
+Navigation title of pass alarm settings. */
+"PassAlarmSettingsModalView.navigationBar.title" = "设置提醒";
+
+/* Description of the alarm timing, highest illuminated. */
+"PassAlarmSettingsModalView.timingCell.highestIlluminated" = "最亮时刻";
+
+/* Description of the alarm timing, rise. */
+"PassAlarmSettingsModalView.timingCell.rise" = "升起时";
+
+/* Description of the alarm timing, set. */
+"PassAlarmSettingsModalView.timingCell.set" = "落下时";
+
+/* Description of the alarm timing, transit. */
+"PassAlarmSettingsModalView.timingCell.transit" = "最高点";
+
+/* A string describing that the satellite is currently passing */
+"Passing now!" = "正在过境！";
+
+/* A string describing that the satellite has already set in a specific time in the past */
+"PassPreviewCell.relativeDate.alreadyPassed" = "%@";
+
+/* A string describing that the satellite is currently passing */
+"PassPreviewCell.relativeDate.passing" = "正在过境";
+
+/* A string describing that the satellite rises in a specific time in the future */
+"PassPreviewCell.relativeDate.riseInTheFuture" = "%@";
+
+/* The pass happens during daylight */
+"PassPreviewCell.visibilityText.daylight" = "白天";
+
+/* The pass happens entirely unlit */
+"PassPreviewCell.visibilityText.unlit" = "未照亮";
+
+/* The pass is visible */
+"PassPreviewCell.visibilityText.visible" = "可见";
+
+/* The toolbar of the pass view describing the direction of the pass. The first and second arguments correspond to the directions of rising and setting. */
+"PassView.descriptionToolbar.text" = "从 %1$@ 升起，向 %2$@ 落下";
+
+/* No comment provided by engineer. */
+"Pending notifications" = "待发送通知";
+
+/* The attitude noun as in 'roll', 'pitch', 'yaw' */
+"Pitch:" = "俯仰角：";
+
+/* No comment provided by engineer. */
+"Point camera skyward and screen downward" = "将相机指向天空，屏幕朝下";
+
+/* No comment provided by engineer. */
+"Prominent pass %@%lld°" = "显著过境 %@%lld°";
+
+/* No comment provided by engineer. */
+"Real time %@" = "实时 %@";
+
+/* The format text showing the distance betweent the satellite to the observer */
+"RealtimeSkySatelliteCell.distanceText" = "距离 %@ 公里";
+
+/* The text indicating the satellite is not illuminated. */
+"RealtimeSkySatelliteCell.magnitudeText.notIlluminated" = "未照亮";
+
+/* The navigation title of the realtime sky view */
+"realtimeSkyView.navigation.title" = "当前天空";
+
+/* The empty text for the satellite list */
+"realtimeSkyView.satelliteList.emptyText" = "当前没有可见卫星";
+
+/* The loading text for the satellite list */
+"realtimeSkyView.satelliteList.loadingText" = "加载卫星目录...";
+
+/* No comment provided by engineer. */
+"Recalculate using new location" = "使用新位置重新计算";
+
+/* No comment provided by engineer. */
+"Retry" = "重试";
+
+/* The attitude noun as in 'roll', 'pitch', 'yaw' */
+"Roll:" = "翻滚角：";
+
+/* No comment provided by engineer. */
+"Satellite Categories" = "卫星分类";
+
+/* The localized string for the status of a backup satellite
+The localized string for the status of a spare satellite */
+"SatelliteCell.operationalStatusLocalizedString.backup" = "备用";
+
+/* The localized string for the status of a decayed satellite */
+"SatelliteCell.operationalStatusLocalizedString.decayed" = "已坠毁";
+
+/* The localized string for the status of a satellite on extended mission */
+"SatelliteCell.operationalStatusLocalizedString.extendedMission" = "延长任务中";
+
+/* The localized string for the status of a nonoperational satellite */
+"SatelliteCell.operationalStatusLocalizedString.nonoperational" = "非运行状态";
+
+/* The localized string for the status of an operational satellite */
+"SatelliteCell.operationalStatusLocalizedString.operational" = "运行状态";
+
+/* The localized string for the status of a partially operational satellite */
+"SatelliteCell.operationalStatusLocalizedString.partiallyOperational" = "部分运行";
+
+/* The localized string for the unknown status of satellite */
+"SatelliteCell.operationalStatusLocalizedString.unknown" = "状态未知";
+
+/* The cacatenated operator and country strings. */
+"SatelliteCell.operatorAndCountry" = "%1$@，%2$@";
+
+/* The alert message to confirm that the user is changing into his/her current location. */
+"SatelliteListView.locationSettingsView.alert.message.currentLocation" = "请确认将位置更改为您的当前位置。这将影响所有卫星预测。";
+
+/* The alert message to confirm that the user is changing into a custom location. */
+"SatelliteListView.locationSettingsView.alert.message.custom" = "请确认将位置更改为 %@。这将影响所有卫星预测。";
+
+/* The current location text, indicating that the observer location is the current location. */
+"SatelliteListView.observerCell.title.currentLocation" = "当前位置";
+
+/* The text indicating that location service is not available, nor has the user selecetd a location manually. */
+"SatelliteListView.observerCell.title.requiresLocationSelection" = "打开以选择位置";
+
+/* The section header for all active satellites */
+"SatelliteListView.sectionHeader.category.active" = "所有活跃卫星";
+
+/* The section header for the brightest 100 satellites */
+"SatelliteListView.sectionHeader.category.brightest100" = "最亮100颗卫星";
+
+/* The section header for launches in the past 30 days */
+"SatelliteListView.sectionHeader.category.last30DayLaunches" = "过去30天的发射";
+
+/* The title for alarm settings cell */
+"SatelliteOverview.alarmSettingsCell.title" = "管理提醒";
+
+/* The description for ephemerides manager cell */
+"SatelliteOverview.ephemeridesManagerCell.description" = "查看和管理已下载的原始卫星星历。";
+
+/* The section header for all active satellites */
+"SatelliteOverview.sectionOverviewCell.category.active" = "所有活跃卫星";
+
+/* The section header for the brightest 100 satellites */
+"SatelliteOverview.sectionOverviewCell.category.brightest100" = "最亮100颗卫星";
+
+/* The section header for launches in the past 30 days */
+"SatelliteOverview.sectionOverviewCell.category.last30DayLaunches" = "过去30天的发射";
+
+/* The description of ISS in overview page. */
+"SatelliteOverview.sectionOverviewCell.description.satellite.iss" = "一个多国合作项目，拥有自1998年以来在轨最大的航天器。";
+
+/* The description of Tianhe in overview page. */
+"SatelliteOverview.sectionOverviewCell.description.satellite.tianhe" = "中国首个长期空间站，拥有三个舱段，于2022年完全组装。";
+
+/* The title of ISS, displayed in the 'Satellite of special interest' section. */
+"SatelliteOverview.sectionOverviewCell.title.satellite.iss" = "国际空间站";
+
+/* The title of Tianhe, displayed in the 'Satellite of special interest' section. */
+"SatelliteOverview.sectionOverviewCell.title.satellite.tianhe" = "天宫空间站";
+
+/* No comment provided by engineer. */
+"Satellites" = "卫星";
+
+/* No comment provided by engineer. */
+"Saturn" = "土星";
+
+/* No comment provided by engineer. */
+"Select Location" = "选择位置";
+
+/* No comment provided by engineer. */
+"Select zoom level" = "选择缩放级别";
+
+/* Description of the declination in SelectedStarLabel. */
+"SelectedStarLabel.declinationText.format" = "赤纬：%@";
+
+/* Description of the star magnitude in SelectedStarLabel. */
+"SelectedStarLabel.magnitudeText.format" = "%.1f 等星";
+
+/* Description of the right ascension in SelectedStarLabel. */
+"SelectedStarLabel.rightAscensionText.format" = "赤经：%@";
+
+/* No comment provided by engineer. */
+"Settings" = "设置";
+
+/* The section header of the alarms section in settings */
+"SettingsOverviewView.alarms.header" = "提醒";
+
+/* The section header of the ephemerides manager section in settings */
+"SettingsOverviewView.ephemeridesManager.header" = "已下载星历";
+
+/* The title of the toggle that hides the experimental Sky Now tab in the settings view. */
+"SettingsOverviewView.experimentalSkyNowCell.off.title" = "隐藏实验性\"当前天空\"标签";
+
+/* The title of the toggle that shows the experimental Sky Now tab in the settings view. */
+"SettingsOverviewView.experimentalSkyNowCell.on.title" = "显示实验性\"当前天空\"标签";
+
+/* The title of the toggle that toggles night mode off in the settings view. */
+"SettingsOverviewView.nightModeCell.off.title" = "关闭夜间模式";
+
+/* The title of the toggle that toggles night mode on in the settings view. */
+"SettingsOverviewView.nightModeCell.on.title" = "开启夜间模式";
+
+/* The section header of the observer section in settings */
+"SettingsOverviewView.observer.header" = "观测位置";
+
+/* The title for settings */
+"SettingsOverviewView.title" = "设置";
+
+/* The pass label format text of an illumination change: enters shadow */
+"SkyChartPassLabel.text.illuminationChange.entersShadow" = "进入阴影\n%@";
+
+/* The pass label format text of an illumination change: exits shadow */
+"SkyChartPassLabel.text.illuminationChange.exitsShadow" = "离开阴影\n%@";
+
+/* No comment provided by engineer. */
+"Sun" = "太阳";
+
+/* The title of the 'Forecast' tab of the root view. */
+"tabs.forecast.text" = "过境预报";
+
+/* The title of the 'Realtime sky' tab of the root view. */
+"tabs.realtimeSky.text" = "当前天空";
+
+/* The title of the 'Satellites' tab of the root view. */
+"tabs.satelliteCategory.text" = "卫星";
+
+/* The title of the 'Settings' tab of the root view. */
+"tabs.settings.text" = "设置";
+
+/* No comment provided by engineer. */
+"Test deep link" = "测试深度链接";
+
+/* No comment provided by engineer. */
+"The satellites are not loaded." = "卫星数据未加载。";
+
+/* No comment provided by engineer. */
+"Time control" = "时间控制";
+
+/* No comment provided by engineer. */
+"Time frozen at %@" = "时间冻结在 %@";
+
+/* No comment provided by engineer. */
+"Time interval %@" = "时间间隔 %@";
+
+/* No comment provided by engineer. */
+"Unable to load pass information" = "无法加载过境信息";
+
+/* No comment provided by engineer. */
+"Update time offset" = "更新时间偏移";
+
+/* No comment provided by engineer. */
+"Venus" = "金星";
+
+/* No comment provided by engineer. */
+"Visible pass %@%lld°" = "可见过境 %@%lld°";
+
+/* No comment provided by engineer. */
+"Your alarms will appear here. Schedule an alarm by tapping the %@ inside a pass." = "您的提醒将在此处显示。通过点击过境中的 %@ 来设置提醒。";
+

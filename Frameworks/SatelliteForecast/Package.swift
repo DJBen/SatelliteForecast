@@ -43,6 +43,7 @@ let package = Package(
                 "StarryNight"
             ],
             path: "Public/Sources",
+            resources: [.process("Resources")],
             swiftSettings: [
                 .swiftLanguageMode(.v5)
             ]

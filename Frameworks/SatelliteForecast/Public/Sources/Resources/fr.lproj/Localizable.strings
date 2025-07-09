@@ -1,0 +1,6 @@
+/* Description for ElementsLoaderError.expired */
+"ElementsLoaderError.expired.format" = "Les éphémérides modifiées pour la dernière fois à %1$@ ont expiré. La durée maximale est de %2$d secondes.";
+
+/* Description for ElementsLoaderError.unexpectedMimeType */
+"ElementsLoaderError.unexpectedMimeType.description" = "Type MIME inattendu %@ trouvé pour les éléments de satellite.";
+

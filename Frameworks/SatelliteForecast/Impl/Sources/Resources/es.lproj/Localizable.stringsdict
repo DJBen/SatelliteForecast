@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SatelliteOverview.alarmSettingsCell.description</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@alarmCount@</string>
+		<key>alarmCount</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Tienes %d alarma pendiente.</string>
+			<key>other</key>
+			<string>Tienes %d alarmas pendientes.</string>
+			<key>zero</key>
+			<string>Actualmente no has configurado ninguna alarma.</string>
+		</dict>
+	</dict>
+	<key>SatelliteOverview.ephemeridesManagerCell.title</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@ephemerideFileCount@</string>
+		<key>ephemerideFileCount</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d archivo de efemérides</string>
+			<key>other</key>
+			<string>%d archivos de efemérides</string>
+			<key>zero</key>
+			<string>Sin archivos de efemérides</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

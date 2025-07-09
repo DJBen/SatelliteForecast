@@ -212,11 +212,11 @@ public struct SatelliteListView: View {
             },
             failedContentBuilder: failureView
         )
-        .navigationTitle("Satellites")
+        .navigationTitle(Text("Satellites", bundle: .module))
         .searchable(
             text: $textObserver.searchText,
             placement: .navigationBarDrawer(displayMode: .always),
-            prompt: "Filter by name, ID, country, year..."
+            prompt: Text("Filter by name, ID, country, year...", bundle: .module)
         )
         .onChange(of: textObserver.debouncedText) { _, searchText in
             viewModel.dispatch(.searchSatellites(searchText, category: context.category))

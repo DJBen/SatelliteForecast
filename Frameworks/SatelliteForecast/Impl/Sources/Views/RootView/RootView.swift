@@ -41,24 +41,28 @@ public struct RootViewContext {
 
 private let satelliteCategoryText = NSLocalizedString(
     "tabs.satelliteCategory.text",
+    bundle: .module,
     value: "Satellites",
-    comment: "The title of the 'Satellites' tab of the root view."
+    comment: "The title of the 'Satellites' tab of the root view.",
 )
 
 private let realtimeSkyTabText = NSLocalizedString(
     "tabs.realtimeSky.text",
+    bundle: .module,
     value: "Sky now",
     comment: "The title of the 'Realtime sky' tab of the root view."
 )
 
 private let forecastTabText = NSLocalizedString(
     "tabs.forecast.text",
+    bundle: .module,
     value: "Pass forecast",
     comment: "The title of the 'Forecast' tab of the root view."
 )
 
 private let settingsTabText = NSLocalizedString(
     "tabs.settings.text",
+    bundle: .module,
     value: "Settings",
     comment: "The title of the 'Settings' tab of the root view."
 )

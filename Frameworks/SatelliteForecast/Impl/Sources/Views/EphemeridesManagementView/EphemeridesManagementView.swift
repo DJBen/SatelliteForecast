@@ -105,7 +105,7 @@ struct EphemeridesManagementView: View {
                 }
             }
         }
-        .navigationTitle("Ephemerides")
+        .navigationTitle(Text("Ephemerides", bundle: .module))
         .task {
             self.resources = (try? fetchEphemerideResources()) ?? []
         }

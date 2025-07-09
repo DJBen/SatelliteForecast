@@ -149,7 +149,10 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                 }
                 .padding()
             }
-            .navigationBarTitle("Overview", displayMode: .inline)
+            .navigationBarTitle(
+                Text("Overview", bundle: .module),
+                displayMode: .inline
+            )
             .navigationBarHidden(true)
             .navigationDestination(for: SpecialSatellite.self) { specialSatellite in
                 LazyView {
