@@ -22,36 +22,31 @@ struct SatelliteOverviewCell: View {
     let scrollOffset: CGFloat
 
     var body: some View {
-        Group {
-            // Background video
-            if let noradIndex = satellite.noradIndex {
-                let videoName = satellite == .iss ? "iss" : "tiangong"
-                AutoPlayVideoView(videoName: videoName, bundle: .module)
-                    .frame(height: 250 + scrollOffset / 2)
-                    .clipped()
-            }
-        }
-        .overlay(alignment: .topLeading) {
+        VStack(spacing: 0) {
             // Title section
             HStack {
                 Text(SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedTitle(satellite))
                     .font(.title2)
                     .fontWeight(.semibold)
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.secondary)
             }
             .padding(.vertical, 12)
             .padding(.horizontal, 16)
-            .background(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(.black.opacity(0.2))
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-            .padding(.vertical, 12)
-            .padding(.horizontal, 16)
-        }
-        .overlay(alignment: .bottomLeading) {
+            .background(Color(UIColor.systemBackground))
+            
+            // Background video
+            let videoName = satellite == .iss ? "iss" : "tiangong"
+            AutoPlayVideoView(videoName: videoName, bundle: .module)
+                .frame(height: 240)
+                .clipped()
+            
+            // Pass information section
             Group {
-                // Pass information
                 switch nextPassLoadingState {
                 case .failed(_):
                     Text("Unable to load pass information", bundle: .module)
@@ -81,7 +76,7 @@ struct SatelliteOverviewCell: View {
                         if nextPass.nextVisiblePass == nil && nextPass.nextProminentPass == nil {
                             Text("No upcoming visible passes", bundle: .module)
                                 .font(.subheadline)
-                                .foregroundColor(.white.opacity(0.8))
+                                .foregroundColor(.secondary)
                         }
                     }
                 case .loading:
@@ -89,34 +84,35 @@ struct SatelliteOverviewCell: View {
                         Text(SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedDescription(satellite))
                             .font(.subheadline)
                             .multilineTextAlignment(.leading)
-                            .foregroundColor(.white.opacity(0.8))
+                            .foregroundColor(.secondary)
                     } else {
                         HStack(spacing: 8) {
                             ProgressView()
                                 .scaleEffect(0.8)
-                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                .progressViewStyle(CircularProgressViewStyle())
                             Text("Loading pass information...", bundle: .module)
                                 .font(.subheadline)
-                                .foregroundColor(.white.opacity(0.8))
+                                .foregroundColor(.secondary)
                         }
                     }
                 case .notLoaded:
                     Text(SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedDescription(satellite))
                         .font(.subheadline)
                         .multilineTextAlignment(.leading)
-                        .foregroundColor(.white.opacity(0.8))
+                        .foregroundColor(.secondary)
                 }
             }
             .padding(.vertical, 12)
             .padding(.horizontal, 16)
-            .background(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(.black.opacity(0.2))
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-            .padding(.vertical, 12)
-            .padding(.horizontal, 16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color(UIColor.systemBackground))
         }
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(Color(UIColor.systemBackground))
+                .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
+        )
     }
 }
 
@@ -227,7 +223,7 @@ extension SatelliteOverviewCell {
                 }
                 let countdownText = Text(Self.durationFormatter.localizedString(fromTimeInterval: timeUntilRise))
                     .font(.subheadline)
-                    .foregroundColor(isDarkBackground ? .white : .primary)
+                    .foregroundColor(isDarkBackground ? .white : .secondary)
                 amOrPmText + countdownText
             }
         }
@@ -237,7 +233,7 @@ extension SatelliteOverviewCell {
                 title
                     .font(.subheadline)
                     .fontWeight(.medium)
-                    .foregroundColor(isDarkBackground ? .white : .primary)
+                    .foregroundColor(isDarkBackground ? .white : .secondary)
                 
                 Spacer()
                 
