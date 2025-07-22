@@ -94,6 +94,7 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
     @ObservedObject var viewModel: ObservableViewModel<SatelliteOverviewViewAction, SatelliteOverviewViewState>
     @State var currentDate: Date = Date()
     @State private var timer: Timer?
+    @State private var scrollOffset: CGFloat = 0
     let context: SatelliteOverviewViewContext
     let singleSatelliteWrappingViewProducer: ViewProducer<SingleSatelliteWrappingViewContext, SingleSatelliteWrappingView>
 
@@ -137,20 +138,23 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                                     nextPassLoadingState: satellite == .iss ? viewModel.state.issNextPass : viewModel.state.tianheNextPass,
                                     currentDate: currentDate,
                                     julianDateOffset: viewModel.state.julianDateOffset,
-                                    isMissingLocation: viewModel.state.isMissingLocation
+                                    isMissingLocation: viewModel.state.isMissingLocation,
+                                    scrollOffset: scrollOffset
                                 )
                             }
+                            .id(satellite.rawValue)
+                        }
+                        
+                        if viewModel.state.isMissingLocation {
+                            Text("\(Image(systemName: "location.slash")) Location needed to calculate satellite passes. Your experience may be degraded.", bundle: .module)
+                                .font(.footnote)
+                                .foregroundColor(Color(UIColor.secondaryLabel))
+                                .padding(.horizontal)
+                                .padding(.top, 20)
+                                .id("locationWarning")
                         }
                     }
-                    
-                    if viewModel.state.isMissingLocation {
-                        Text("\(Image(systemName: "location.slash")) Location needed to calculate satellite passes. Your experience may be degraded.", bundle: .module)
-                            .font(.footnote)
-                            .foregroundColor(Color(UIColor.secondaryLabel))
-                            .padding(.horizontal)
-                    }
                 }
-                .padding()
             }
             .navigationBarTitle(
                 Text("Overview", bundle: .module),
@@ -191,6 +195,14 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
             timer?.invalidate()
             timer = nil
         }
+    }
+}
+
+struct ScrollOffsetPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
     }
 }
 
