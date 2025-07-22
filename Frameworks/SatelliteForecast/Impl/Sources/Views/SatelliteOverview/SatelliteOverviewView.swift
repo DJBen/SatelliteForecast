@@ -118,63 +118,69 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                 }
             )
         ) {
-            ScrollView {
-                LazyVStack(
-                    alignment: .leading,
-                    spacing: 24,
-                    pinnedViews: []
-                ) {
-                    Section {
-                        ForEach(
-                            [
-                                SatelliteCategory.iss,
-                                SatelliteCategory.tianhe
-                            ],
-                            id: \.self
-                        ) { satellite in
-                            NavigationLink(value: SpecialSatellite(satellite)) {
-                                SatelliteOverviewCell(
-                                    satellite: satellite,
-                                    nextPassLoadingState: satellite == .iss ? viewModel.state.issNextPass : viewModel.state.tianheNextPass,
-                                    currentDate: currentDate,
-                                    julianDateOffset: viewModel.state.julianDateOffset,
-                                    isMissingLocation: viewModel.state.isMissingLocation,
-                                    scrollOffset: scrollOffset
-                                )
+            VStack {
+                ScrollView {
+                    LazyVStack(
+                        alignment: .leading,
+                        spacing: 24,
+                        pinnedViews: []
+                    ) {
+                        Section {
+                            ForEach(
+                                [
+                                    SatelliteCategory.iss,
+                                    SatelliteCategory.tianhe
+                                ],
+                                id: \.self
+                            ) { satellite in
+                                NavigationLink(value: SpecialSatellite(satellite)) {
+                                    SatelliteOverviewCell(
+                                        satellite: satellite,
+                                        nextPassLoadingState: satellite == .iss ? viewModel.state.issNextPass : viewModel.state.tianheNextPass,
+                                        currentDate: currentDate,
+                                        julianDateOffset: viewModel.state.julianDateOffset,
+                                        isMissingLocation: viewModel.state.isMissingLocation,
+                                        scrollOffset: scrollOffset
+                                    )
+                                }
+                                .id(satellite.rawValue)
                             }
-                            .id(satellite.rawValue)
-                        }
-                        
-                        if viewModel.state.isMissingLocation {
-                            Text("\(Image(systemName: "location.slash")) Location needed to calculate satellite passes. Your experience may be degraded.", bundle: .module)
-                                .font(.footnote)
-                                .foregroundColor(Color(UIColor.secondaryLabel))
-                                .padding(.horizontal)
-                                .padding(.top, 20)
-                                .id("locationWarning")
                         }
                     }
                 }
-            }
-            .navigationBarTitle(
-                Text("Overview", bundle: .module),
-                displayMode: .inline
-            )
-            .navigationBarHidden(true)
-            .navigationDestination(for: SpecialSatellite.self) { specialSatellite in
-                LazyView {
-                    singleSatelliteWrappingViewProducer.view(
-                        SingleSatelliteWrappingViewContext(
-                            selectedNoradIndex: specialSatellite.rawValue,
-                            julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
-                            observer: viewModel.state.observer,
-                            julianDateProvider: context.julianDateProvider
+                .navigationBarTitle(
+                    Text("Overview", bundle: .module),
+                    displayMode: .inline
+                )
+                .navigationBarHidden(true)
+                .navigationDestination(for: SpecialSatellite.self) { specialSatellite in
+                    LazyView {
+                        singleSatelliteWrappingViewProducer.view(
+                            SingleSatelliteWrappingViewContext(
+                                selectedNoradIndex: specialSatellite.rawValue,
+                                julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
+                                observer: viewModel.state.observer,
+                                julianDateProvider: context.julianDateProvider
+                            )
                         )
-                    )
+                    }
                 }
             }
+            .tint(Color(uiColor: .label))
+            if viewModel.state.isMissingLocation {
+                HStack {
+                    Image(systemName: "location.slash")
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(.red, Color(uiColor: .label))
+                        .font(.headline)
+                    Text("Location needed to calculate satellite passes. Your experience may be degraded.", bundle: .module)
+                }
+                .font(.footnote)
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal)
+                .padding(.vertical, 4)
+            }
         }
-        .tint(Color(uiColor: .label))
         .onAppear {
             viewModel.dispatch(
                 .onAppear(

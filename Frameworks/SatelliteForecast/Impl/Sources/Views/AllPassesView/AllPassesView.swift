@@ -410,7 +410,8 @@ public struct AllPassesView: View {
                 VStack(spacing: 32) {
                     VStack(spacing: 16) {
                         Image(systemName: "location.slash")
-                            .symbolRenderingMode(.hierarchical)
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(.red, Color(uiColor: .label))
                             .font(.title)
                         
                         Text(
