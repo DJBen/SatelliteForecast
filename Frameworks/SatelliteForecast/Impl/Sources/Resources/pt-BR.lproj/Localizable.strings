@@ -1,0 +1,564 @@
+/* No comment provided by engineer. */
+"%@ %@" = "%@ %@";
+
+/* No comment provided by engineer. */
+"%@ Allow location access" = "%@ Permitir acesso à localização";
+
+/* No comment provided by engineer. */
+"%@ kg" = "%@ kg";
+
+/* No comment provided by engineer. */
+"%@ Location needed to calculate satellite passes. Your experience may be degraded." = "%@ Localização necessária para calcular passagens de satélites. Sua experiência pode ser prejudicada.";
+
+/* No comment provided by engineer. */
+"%@ Manually select a location" = "%@ Selecionar manualmente uma localização";
+
+/* No comment provided by engineer. */
+"%@ Select a location" = "%@ Selecionar uma localização";
+
+/* No comment provided by engineer. */
+"%lld°" = "%lld°";
+
+/* No comment provided by engineer. */
+"↑ %@" = "↑ %@";
+
+/* No comment provided by engineer. */
+"↓ %@" = "↓ %@";
+
+/* No comment provided by engineer. */
+"∠%@°" = "∠%@°";
+
+/* No comment provided by engineer. */
+"∠%@° %@" = "∠%@° %@";
+
+/* No comment provided by engineer. */
+"☉" = "☉";
+
+/* No comment provided by engineer. */
+"☾" = "☾";
+
+/* No comment provided by engineer. */
+"☿" = "☿";
+
+/* No comment provided by engineer. */
+"♀" = "♀";
+
+/* No comment provided by engineer. */
+"♂" = "♂";
+
+/* No comment provided by engineer. */
+"♃" = "♃";
+
+/* No comment provided by engineer. */
+"♄" = "♄";
+
+/* The verb as in alarm clock 'alarms' somebody */
+"Alarm" = "Alarme";
+
+/* Noun, as in alarm clock. */
+"Alarms" = "Alarmes";
+
+/* The timing and offset description for the alarm in the alarm settings view, culmination. */
+"AlarmSettingsView.alarmOffsetDescription.culmination" = "%@ antes do ponto mais alto";
+
+/* The timing and offset description for the alarm in the alarm settings view, highest illuminated. */
+"AlarmSettingsView.alarmOffsetDescription.highestIlluminated" = "%@ antes do ponto mais iluminado";
+
+/* The timing and offset description for the alarm in the alarm settings view, rise. */
+"AlarmSettingsView.alarmOffsetDescription.rise" = "%@ antes da elevação";
+
+/* The timing and offset description for the alarm in the alarm settings view, set. */
+"AlarmSettingsView.alarmOffsetDescription.set" = "%@ antes do pôr do sol";
+
+/* The pass description for each alarm in the alarm settings view */
+"AlarmSettingsView.passDescription" = "Nasce às %1$@ e se põe às %2$@.";
+
+/* The pass description for each alarm in the alarm settings view */
+"AlarmSettingsView.passVisibilityDescription.daytime" = "A passagem ocorre durante o dia com uma elevação máxima de %.1f graus.";
+
+/* The pass description for each alarm in the alarm settings view */
+"AlarmSettingsView.passVisibilityDescription.unlit" = "A passagem não está iluminada com uma elevação máxima de %.1f graus.";
+
+/* The pass description for each alarm in the alarm settings view */
+"AlarmSettingsView.passVisibilityDescription.visible" = "Elevação máxima visível de %.1f graus.";
+
+/* The text for a warning label upon significant deviation of the location used to calculate passes from the current location. */
+"AllPassesLocationChangeWarning.text" = "A nova localização %1$@ está a %2$@ de distância da localização que foi usada para calcular as passagens. Os resultados podem não ser mais precisos.";
+
+/* The altitude format of mission control header */
+"AllPassesView.missionControlHeader.altitudeFormat" = "%@ km acima do solo";
+
+/* The auxiliary text under the navigation title detailing the search date range of the passes. */
+"AllPassesView.searchPassRangeToolbar.text" = "Mostrando passagens de até %1$@";
+
+/* The header of invisible passes */
+"AllPassesView.section.invisible.header" = "Passagens Invisíveis";
+
+/* The caption under the header of invisible passes */
+"AllPassesView.section.invisible.headerCaption" = "Satélites apagados na sombra da terra não podem ser vistos; como estrelas, eles também não podem ser vistos à luz do dia.";
+
+/* The body of observer info */
+"AllPassesView.section.observer.body" = "Você está observando de %@.";
+
+/* The header of visible passes */
+"AllPassesView.section.visible.header" = "Passagens Visíveis";
+
+/* The caption under the header of visible passes */
+"AllPassesView.section.visible.headerCaption" = "Satélites podem ser vistos quando o céu está escuro o suficiente enquanto ainda estão iluminados pelo sol. As condições de visualização são melhores logo após o pôr do sol e antes do nascer do sol.";
+
+/* The progress text when calculating satellite passes */
+"Calculating..." = "Calculando...";
+
+/* No comment provided by engineer. */
+"Cancel alarm" = "Cancelar alarme";
+
+/* No comment provided by engineer. */
+"Confirm" = "Confirmar";
+
+/* No comment provided by engineer. */
+"Current location" = "Localização atual";
+
+/* No comment provided by engineer. */
+"Current location not available" = "Localização atual não disponível";
+
+/* No comment provided by engineer. */
+"Custom location" = "Localização personalizada";
+
+/* No comment provided by engineer. */
+"Debug Menu" = "Menu de Depuração";
+
+/* No comment provided by engineer. */
+"Deep link to Hubble (brightest 100)" = "Link profundo para Hubble (100 mais brilhantes)";
+
+/* No comment provided by engineer. */
+"Deep link to ISS (special)" = "Link profundo para a ISS (especial)";
+
+/* No comment provided by engineer. */
+"Deliver notifications 10 seconds after scheduled" = "Entregar notificações 10 segundos após o agendado";
+
+/* No comment provided by engineer. */
+"Delivered at %@" = "Entregue em %@";
+
+/* No comment provided by engineer. */
+"Delivered notifications" = "Notificações entregues";
+
+/* Title of dismiss button of detailed pass view. */
+"DetailedPassView.navigationBar.discard" = "Descartar";
+
+/* Navigation title of detailed pass view. */
+"DetailedPassView.navigationBar.title" = "Agendar alarme";
+
+/* No comment provided by engineer. */
+"Did you know? Space stations orbits earth 15 times a day, and maybe up to 5-7 times above your location, but most of the time it's either too bright or too dark to be seen." = "Você sabia? Estações espaciais orbitam a terra 15 vezes por dia, e talvez até 5-7 vezes acima da sua localização, mas na maioria das vezes está muito claro ou muito escuro para ser visto.";
+
+/* No comment provided by engineer. */
+"Directions.east" = "leste";
+
+/* No comment provided by engineer. */
+"Directions.north" = "norte";
+
+/* No comment provided by engineer. */
+"Directions.northeast" = "nordeste";
+
+/* No comment provided by engineer. */
+"Directions.northwest" = "noroeste";
+
+/* No comment provided by engineer. */
+"Directions.south" = "sul";
+
+/* No comment provided by engineer. */
+"Directions.southeast" = "sudeste";
+
+/* No comment provided by engineer. */
+"Directions.southwest" = "sudoeste";
+
+/* No comment provided by engineer. */
+"Directions.west" = "oeste";
+
+/* No comment provided by engineer. */
+"Enter address" = "Digite o endereço";
+
+/* No comment provided by engineer. */
+"Ephemerides" = "Efemérides";
+
+/* The comment text for the last 30 days satellites file */
+"EphemeridesManagementView.comment.active" = "Efemérides para todos os satélites ativos.";
+
+/* The comment text for the last 30 days satellites file */
+"EphemeridesManagementView.comment.last30Days" = "Efemérides para os novos lançamentos nos últimos 30 dias.";
+
+/* The comment text for the visual (brightest 100) satellites file */
+"EphemeridesManagementView.comment.visual" = "Efemérides para os 100 satélites mais brilhantes.";
+
+/* The empty text for the satellite ephemerides */
+"EphemeridesManagementView.emptyText" = "Nenhuma efeméride de satélite baixada";
+
+/* The message of the share link in ephemeride text browser view */
+"EphemerideTextBrowserView.shareLink.message" = "Compartilhar ephemerides do satélite %@";
+
+/* No comment provided by engineer. */
+"Evening " = "Evening ";
+
+/* No comment provided by engineer. */
+"Filter by name, ID, country, year..." = "Filtrar por nome, ID, país, ano...";
+
+/* No comment provided by engineer. */
+"Freeze time" = "Congelar tempo";
+
+/* No comment provided by engineer. */
+"Hello, World!" = "Olá, Mundo!";
+
+/* The name of ISS */
+"International space station" = "Estação Espacial Internacional";
+
+/* No comment provided by engineer. */
+"Jupiter" = "Júpiter";
+
+/* No comment provided by engineer. */
+"Loading pass information..." = "Carregando informações da passagem...";
+
+/* No comment provided by engineer. */
+"Loading..." = "Carregando...";
+
+/* No comment provided by engineer. */
+"Location change" = "Alteração de localização";
+
+/* No comment provided by engineer. */
+"Location not available" = "Localização não disponível";
+
+/* No comment provided by engineer. */
+"Mars" = "Marte";
+
+/* No comment provided by engineer. */
+"Mercury" = "Mercúrio";
+
+/* The title for the reset button within mission control view to restore the
+viewport to its orignal position. */
+"MissionControlView.resetButton.title" = "Recentralizar";
+
+/* No comment provided by engineer. */
+"Mock date and time" = "Data e hora fictícias";
+
+/* No comment provided by engineer. */
+"Mock time %@\nOffset %@ JD" = "Tempo fictício %@\nDeslocamento %@ JD";
+
+/* No comment provided by engineer. */
+"Moon" = "Lua";
+
+/* No comment provided by engineer. */
+"Morning " = "Manhã ";
+
+/* No comment provided by engineer. */
+"Need a location to find satellite passes." = "É necessário uma localização para encontrar passagens de satélite.";
+
+/* No comment provided by engineer. */
+"No" = "Não";
+
+/* The default text when no satellite passes are found */
+"No passes found" = "Nenhuma passagem encontrada";
+
+/* No comment provided by engineer. */
+"No upcoming visible passes" = "Nenhuma passagem visível próxima";
+
+/* The concatenation format of pass description in the notification. */
+"Notification.upcomingPass.description.format" = "%1$@ %2$@";
+
+/* The description for the satellite pass notification. */
+"Notification.upcomingPass.description.future" = "Vai nascer em %1$@ de %2$@ e se pôr em %3$@.";
+
+/* The description for the satellite pass notification. */
+"Notification.upcomingPass.description.now" = "Nascendo agora de %1$@ e se pondo em %2$@.";
+
+/* The pass description in the notification. */
+"Notification.upcomingPass.description.passVisibilityDescription.daytime" = "A passagem tem até %.1f graus de elevação. Pode estar muito claro para que o satélite seja visível, no entanto.";
+
+/* The pass description in the notification. */
+"Notification.upcomingPass.description.passVisibilityDescription.entirelyVisible" = "A totalidade da passagem está iluminada até %.1f graus de elevação.";
+
+/* The pass description in the notification. */
+"Notification.upcomingPass.description.passVisibilityDescription.partiallyVisible" = "A passagem é parcialmente visível até %.1f graus de elevação.";
+
+/* The pass description in the notification. */
+"Notification.upcomingPass.description.passVisibilityDescription.unlit" = "A passagem tem até %.1f graus de elevação. Sob a sombra da terra, estará muito fraca para ser visível.";
+
+/* The title for the satellite pass notification. */
+"Notification.upcomingPass.title.future" = "%1$@ vai nascer em %2$@";
+
+/* The title for the satellite pass notification. */
+"Notification.upcomingPass.title.now" = "%1$@ está nascendo agora";
+
+/* No comment provided by engineer. */
+"Open location settings" = "Abra as configurações de localização";
+
+/* No comment provided by engineer. */
+"Overview" = "Visão geral";
+
+/* Title of confirm button of pass alarm settings. */
+"PassAlarmSettingsModalView.confirmButton.title" = "Agendar alarme";
+
+/* Title of delete button of pass alarm settings. */
+"PassAlarmSettingsModalView.deleteButton.title" = "Excluir alarme";
+
+/* Title of lead time label of pass alarm settings. */
+"PassAlarmSettingsModalView.leadTimeLabel.title" = "Me lembre com antecedência...";
+
+/* Title of discard button of pass alarm settings. */
+"PassAlarmSettingsModalView.navigationBar.discard" = "Descartar";
+
+/* Navigation title of pass alarm settings, view alarm
+Navigation title of pass alarm settings. */
+"PassAlarmSettingsModalView.navigationBar.title" = "Agendar alarme";
+
+/* Description of the alarm timing, highest illuminated. */
+"PassAlarmSettingsModalView.timingCell.highestIlluminated" = "Mais iluminado";
+
+/* Description of the alarm timing, rise. */
+"PassAlarmSettingsModalView.timingCell.rise" = "Ao nascer";
+
+/* Description of the alarm timing, set. */
+"PassAlarmSettingsModalView.timingCell.set" = "Ao pôr do sol";
+
+/* Description of the alarm timing, transit. */
+"PassAlarmSettingsModalView.timingCell.transit" = "Ponto mais alto";
+
+/* A string describing that the satellite is currently passing */
+"Passing now!" = "Passando agora!";
+
+/* A string describing that the satellite has already set in a specific time in the past */
+"PassPreviewCell.relativeDate.alreadyPassed" = "%@";
+
+/* A string describing that the satellite is currently passing */
+"PassPreviewCell.relativeDate.passing" = "Passando agora";
+
+/* A string describing that the satellite rises in a specific time in the future */
+"PassPreviewCell.relativeDate.riseInTheFuture" = "%@";
+
+/* The pass happens during daylight */
+"PassPreviewCell.visibilityText.daylight" = "Luz do dia";
+
+/* The pass happens entirely unlit */
+"PassPreviewCell.visibilityText.unlit" = "Sem iluminação";
+
+/* The pass is visible */
+"PassPreviewCell.visibilityText.visible" = "Visível";
+
+/* The toolbar of the pass view describing the direction of the pass. The first and second arguments correspond to the directions of rising and setting. */
+"PassView.descriptionToolbar.text" = "Nasce de %1$@ e se põe em %2$@";
+
+/* No comment provided by engineer. */
+"Pending notifications" = "Notificações pendentes";
+
+/* The attitude noun as in 'roll', 'pitch', 'yaw' */
+"Pitch:" = "Inclinação:";
+
+/* No comment provided by engineer. */
+"Point camera skyward and screen downward" = "Apontar câmera para o céu e tela para baixo";
+
+/* No comment provided by engineer. */
+"Prominent pass %@%lld°" = "Passagem proeminente %@%lld°";
+
+/* No comment provided by engineer. */
+"Real time %@" = "Hora real %@";
+
+/* The format text showing the distance betweent the satellite to the observer */
+"RealtimeSkySatelliteCell.distanceText" = "Distância %@ km";
+
+/* The text indicating the satellite is not illuminated. */
+"RealtimeSkySatelliteCell.magnitudeText.notIlluminated" = "Não iluminado";
+
+/* The navigation title of the realtime sky view */
+"realtimeSkyView.navigation.title" = "Céu agora";
+
+/* The empty text for the satellite list */
+"realtimeSkyView.satelliteList.emptyText" = "Nenhum satélite visível atualmente";
+
+/* The loading text for the satellite list */
+"realtimeSkyView.satelliteList.loadingText" = "Carregando catálogo de satélites...";
+
+/* No comment provided by engineer. */
+"Recalculate using new location" = "Recalcular usando nova localização";
+
+/* No comment provided by engineer. */
+"Retry" = "Tentar novamente";
+
+/* The attitude noun as in 'roll', 'pitch', 'yaw' */
+"Roll:" = "Rolagem:";
+
+/* No comment provided by engineer. */
+"Satellite Categories" = "Categorias de Satélites";
+
+/* The localized string for the status of a backup satellite
+The localized string for the status of a spare satellite */
+"SatelliteCell.operationalStatusLocalizedString.backup" = "Backup";
+
+/* The localized string for the status of a decayed satellite */
+"SatelliteCell.operationalStatusLocalizedString.decayed" = "Decaído";
+
+/* The localized string for the status of a satellite on extended mission */
+"SatelliteCell.operationalStatusLocalizedString.extendedMission" = "Em missão estendida";
+
+/* The localized string for the status of a nonoperational satellite */
+"SatelliteCell.operationalStatusLocalizedString.nonoperational" = "Não operacional";
+
+/* The localized string for the status of an operational satellite */
+"SatelliteCell.operationalStatusLocalizedString.operational" = "Operacional";
+
+/* The localized string for the status of a partially operational satellite */
+"SatelliteCell.operationalStatusLocalizedString.partiallyOperational" = "Parcialmente operacional";
+
+/* The localized string for the unknown status of satellite */
+"SatelliteCell.operationalStatusLocalizedString.unknown" = "Status desconhecido";
+
+/* The cacatenated operator and country strings. */
+"SatelliteCell.operatorAndCountry" = "%1$@, %2$@";
+
+/* The alert message to confirm that the user is changing into his/her current location. */
+"SatelliteListView.locationSettingsView.alert.message.currentLocation" = "Por favor, confirme para alterar a localização para sua localização atual. Isso afetará todas as previsões de satélite.";
+
+/* The alert message to confirm that the user is changing into a custom location. */
+"SatelliteListView.locationSettingsView.alert.message.custom" = "Por favor, confirme para alterar a localização para %@. Isso afetará todas as previsões de satélite.";
+
+/* The current location text, indicating that the observer location is the current location. */
+"SatelliteListView.observerCell.title.currentLocation" = "Localização atual";
+
+/* The text indicating that location service is not available, nor has the user selecetd a location manually. */
+"SatelliteListView.observerCell.title.requiresLocationSelection" = "Abra para selecionar localização";
+
+/* The section header for all active satellites */
+"SatelliteListView.sectionHeader.category.active" = "Todos os satélites ativos";
+
+/* The section header for the brightest 100 satellites */
+"SatelliteListView.sectionHeader.category.brightest100" = "100 satélites mais brilhantes";
+
+/* The section header for launches in the past 30 days */
+"SatelliteListView.sectionHeader.category.last30DayLaunches" = "Lançamentos nos últimos 30 dias";
+
+/* The title for alarm settings cell */
+"SatelliteOverview.alarmSettingsCell.title" = "Gerenciar alarmes";
+
+/* The description for ephemerides manager cell */
+"SatelliteOverview.ephemeridesManagerCell.description" = "Visualizar e gerenciar efemérides brutas de satélite baixadas.";
+
+/* The section header for all active satellites */
+"SatelliteOverview.sectionOverviewCell.category.active" = "Todos os satélites ativos";
+
+/* The section header for the brightest 100 satellites */
+"SatelliteOverview.sectionOverviewCell.category.brightest100" = "100 satélites mais brilhantes";
+
+/* The section header for launches in the past 30 days */
+"SatelliteOverview.sectionOverviewCell.category.last30DayLaunches" = "Lançamentos nos últimos 30 dias";
+
+/* The description of ISS in overview page. */
+"SatelliteOverview.sectionOverviewCell.description.satellite.iss" = "Um projeto colaborativo multinacional com a maior espaçonave em órbita desde 1998.";
+
+/* The description of Tianhe in overview page. */
+"SatelliteOverview.sectionOverviewCell.description.satellite.tianhe" = "Primeira estação espacial de longo prazo da China com três módulos, totalmente montada em 2022.";
+
+/* The title of ISS, displayed in the 'Satellite of special interest' section. */
+"SatelliteOverview.sectionOverviewCell.title.satellite.iss" = "Estação Espacial Internacional";
+
+/* The title of Tianhe, displayed in the 'Satellite of special interest' section. */
+"SatelliteOverview.sectionOverviewCell.title.satellite.tianhe" = "Estação Espacial Tiangong";
+
+/* No comment provided by engineer. */
+"Satellites" = "Satélites";
+
+/* No comment provided by engineer. */
+"Saturn" = "Saturno";
+
+/* No comment provided by engineer. */
+"Select Location" = "Selecionar Localização";
+
+/* No comment provided by engineer. */
+"Select zoom level" = "Selecionar nível de zoom";
+
+/* Description of the declination in SelectedStarLabel. */
+"SelectedStarLabel.declinationText.format" = "DEC: %@";
+
+/* Description of the star magnitude in SelectedStarLabel. */
+"SelectedStarLabel.magnitudeText.format" = "Magnitude %.1f estrela";
+
+/* Description of the right ascension in SelectedStarLabel. */
+"SelectedStarLabel.rightAscensionText.format" = "RA: %@";
+
+/* No comment provided by engineer. */
+"Settings" = "Configurações";
+
+/* The section header of the alarms section in settings */
+"SettingsOverviewView.alarms.header" = "Alarmes";
+
+/* The section header of the ephemerides manager section in settings */
+"SettingsOverviewView.ephemeridesManager.header" = "Efemérides baixadas";
+
+/* The title of the toggle that hides the experimental Sky Now tab in the settings view. */
+"SettingsOverviewView.experimentalSkyNowCell.off.title" = "Ocultar aba experimental Sky Now";
+
+/* The title of the toggle that shows the experimental Sky Now tab in the settings view. */
+"SettingsOverviewView.experimentalSkyNowCell.on.title" = "Mostrar aba experimental Sky Now";
+
+/* The title of the toggle that toggles night mode off in the settings view. */
+"SettingsOverviewView.nightModeCell.off.title" = "Desativar modo noturno";
+
+/* The title of the toggle that toggles night mode on in the settings view. */
+"SettingsOverviewView.nightModeCell.on.title" = "Ativar modo noturno";
+
+/* The section header of the observer section in settings */
+"SettingsOverviewView.observer.header" = "Localização do observador";
+
+/* The title for settings */
+"SettingsOverviewView.title" = "Configurações";
+
+/* The pass label format text of an illumination change: enters shadow */
+"SkyChartPassLabel.text.illuminationChange.entersShadow" = "Entra na sombra\n%@";
+
+/* The pass label format text of an illumination change: exits shadow */
+"SkyChartPassLabel.text.illuminationChange.exitsShadow" = "Sai da sombra\n%@";
+
+/* No comment provided by engineer. */
+"Sun" = "Sol";
+
+/* The title of the 'Forecast' tab of the root view. */
+"tabs.forecast.text" = "Previsão de passagem";
+
+/* The title of the 'Realtime sky' tab of the root view. */
+"tabs.realtimeSky.text" = "Céu agora";
+
+/* The title of the 'Satellites' tab of the root view. */
+"tabs.satelliteCategory.text" = "Satélites";
+
+/* The title of the 'Settings' tab of the root view. */
+"tabs.settings.text" = "Configurações";
+
+/* No comment provided by engineer. */
+"Test deep link" = "Testar link profundo";
+
+/* No comment provided by engineer. */
+"The satellites are not loaded." = "Os satélites não estão carregados.";
+
+/* The name of Tiangong space station */
+"Tiangong space station" = "Estação Espacial Tiangong";
+
+/* No comment provided by engineer. */
+"Time control" = "Controle de tempo";
+
+/* No comment provided by engineer. */
+"Time frozen at %@" = "Tempo congelado em %@";
+
+/* No comment provided by engineer. */
+"Time interval %@" = "Intervalo de tempo %@";
+
+/* No comment provided by engineer. */
+"Unable to load pass information" = "Incapaz de carregar informações da passagem";
+
+/* No comment provided by engineer. */
+"Update time offset" = "Atualizar deslocamento de tempo";
+
+/* No comment provided by engineer. */
+"Venus" = "Vênus";
+
+/* No comment provided by engineer. */
+"Visible pass %@%lld°" = "Passagem visível %@%lld°";
+
+/* No comment provided by engineer. */
+"Your alarms will appear here. Schedule an alarm by tapping the %@ inside a pass." = "Seus alarmes aparecerão aqui. Programe um alarme tocando o %@ dentro de uma passagem.";
+

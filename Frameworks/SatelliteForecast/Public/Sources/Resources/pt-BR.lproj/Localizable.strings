@@ -1,0 +1,6 @@
+/* Description for ElementsLoaderError.expired */
+"ElementsLoaderError.expired.format" = "Efemérides modificadas pela última vez em %1$@ expiraram. A duração máxima é de %2$d segundos.";
+
+/* Description for ElementsLoaderError.unexpectedMimeType */
+"ElementsLoaderError.unexpectedMimeType.description" = "Tipo mime inesperado %@ encontrado para elementos de satélite.";
+

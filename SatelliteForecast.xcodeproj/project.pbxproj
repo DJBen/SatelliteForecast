@@ -62,6 +62,7 @@
 		FC69A7772E1E334F002083EC /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		FC69A7792E1E335D002083EC /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		FC69A77A2E1E336A002083EC /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		FC69A77B2E1E5D09002083EC /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		FC7A7E372DDFC8190026A8B9 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		FC7A7E3D2DDFD4EE0026A8B9 /* SatelliteForecastApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SatelliteForecastApp.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -189,6 +190,7 @@
 				es,
 				fr,
 				"zh-Hans",
+				"pt-BR",
 			);
 			mainGroup = EF9D82742661BBEF00616C97;
 			packageReferences = (
@@ -241,6 +243,7 @@
 				FC69A7772E1E334F002083EC /* es */,
 				FC69A7792E1E335D002083EC /* fr */,
 				FC69A77A2E1E336A002083EC /* zh-Hans */,
+				FC69A77B2E1E5D09002083EC /* pt-BR */,
 			);
 			name = InfoPlist.strings;
 			path = SatelliteForecastApp;
@@ -386,7 +389,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = SatelliteForecastApp/SatelliteForecastApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "SatelliteForecastApp/Preview\\ Content";
 				DEVELOPMENT_TEAM = 52RD2GH5DP;
 				ENABLE_PREVIEWS = YES;
@@ -416,7 +419,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = SatelliteForecastApp/SatelliteForecastApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "SatelliteForecastApp/Preview\\ Content";
 				DEVELOPMENT_TEAM = 52RD2GH5DP;
 				ENABLE_PREVIEWS = YES;
