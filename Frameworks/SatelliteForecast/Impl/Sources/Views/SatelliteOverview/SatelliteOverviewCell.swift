@@ -15,6 +15,7 @@ import SwiftUIVisualEffects
 struct SatelliteOverviewCell: View {
     let satellite: SatelliteCategory
     let nextPassLoadingState: Loadable<NextPass, Error>
+    let currentDate: Date
     let julianDateOffset: Double
     let isMissingLocation: Bool
     
@@ -63,6 +64,7 @@ struct SatelliteOverviewCell: View {
                                     SatelliteOverviewCell.PassCountdownView(
                                         pass: nextVisiblePass,
                                         title: Text("Visible pass \(Image(systemName: "angle"))\(Int(highestIlluminated.elev.rounded()))°", bundle: .module),
+                                        currentDate: currentDate,
                                         julianDateOffset: julianDateOffset,
                                     )
                                 }
@@ -70,6 +72,7 @@ struct SatelliteOverviewCell: View {
                                     SatelliteOverviewCell.PassCountdownView(
                                         pass: nextProminentPass,
                                         title: Text("Prominent pass \(Image(systemName: "angle"))\(Int(highestIlluminated.elev.rounded()))°", bundle: .module),
+                                        currentDate: currentDate,
                                         julianDateOffset: julianDateOffset,
                                     )
                                 }
@@ -174,6 +177,7 @@ extension SatelliteOverviewCell {
     struct PassCountdownView: View {
         let pass: Pass
         let title: Text
+        let currentDate: Date
         let julianDateOffset: Double
         
         @Environment(\.colorScheme) private var colorScheme
@@ -187,7 +191,7 @@ extension SatelliteOverviewCell {
         }()
         
         @ViewBuilder private var countdownText: some View {
-            let currentJulianDate = Date().julianDate + julianDateOffset
+            let currentJulianDate = currentDate.julianDate + julianDateOffset
             let timeUntilRise = (pass.rise.julianDate - currentJulianDate) * TimeConstants.day2sec
             
             if currentJulianDate >= pass.rise.julianDate && currentJulianDate <= pass.set.julianDate {
@@ -263,6 +267,7 @@ struct SatelliteOverviewCell_Previews: PreviewProvider {
                             SatelliteOverviewCell(
                                 satellite: .iss,
                                 nextPassLoadingState: .notLoaded,
+                                currentDate: Date(timeIntervalSinceReferenceDate: 0),
                                 julianDateOffset: 0,
                                 isMissingLocation: false
                             )
@@ -271,6 +276,7 @@ struct SatelliteOverviewCell_Previews: PreviewProvider {
                             SatelliteOverviewCell(
                                 satellite: .iss,
                                 nextPassLoadingState: .loading,
+                                currentDate: Date(timeIntervalSinceReferenceDate: 0),
                                 julianDateOffset: 0,
                                 isMissingLocation: false
                             )
@@ -279,6 +285,7 @@ struct SatelliteOverviewCell_Previews: PreviewProvider {
                             SatelliteOverviewCell(
                                 satellite: .iss,
                                 nextPassLoadingState: .failed(URLError(.notConnectedToInternet)),
+                                currentDate: Date(timeIntervalSinceReferenceDate: 0),
                                 julianDateOffset: 0,
                                 isMissingLocation: false
                             )
@@ -306,6 +313,7 @@ struct SatelliteOverviewCell_Previews: PreviewProvider {
                                         )
                                     )
                                 ),
+                                currentDate: Date(timeIntervalSinceReferenceDate: 0),
                                 julianDateOffset: 0,
                                 isMissingLocation: false
                             )
@@ -316,6 +324,7 @@ struct SatelliteOverviewCell_Previews: PreviewProvider {
                                 nextPassLoadingState: .loaded(
                                     NextPass(nextVisiblePass: nil, nextProminentPass: nil)
                                 ),
+                                currentDate: Date(timeIntervalSinceReferenceDate: 0),
                                 julianDateOffset: 0,
                                 isMissingLocation: false
                             )

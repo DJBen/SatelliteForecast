@@ -13,5 +13,5 @@ public enum AppDelegateAction {
     case didReceiveFCMToken(String)
     case didFinishLaunchingWithOptions([UIApplication.LaunchOptionsKey : Any]? = nil)
     
-    case scenePhaseDidChange(ScenePhase)
+    case scenePhaseDidChange(ScenePhase, ScenePhase)
 }

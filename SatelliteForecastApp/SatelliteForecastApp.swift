@@ -57,8 +57,8 @@ struct SatelliteForecastApp: App {
             .onAppear {
                 store.dispatch(.location(.requestAuthorization))
             }
-            .onChange(of: scenePhase) { _, phase in
-                store.dispatch(.appDelegate(.scenePhaseDidChange(phase)))
+            .onChange(of: scenePhase) { oldPhase, newPhase in
+                store.dispatch(.appDelegate(.scenePhaseDidChange(oldPhase, newPhase)))
             }
             .onReceive(NotificationCenter.default.publisher(for: .deviceDidShakeNotification)) { _ in
                 #if DEBUG

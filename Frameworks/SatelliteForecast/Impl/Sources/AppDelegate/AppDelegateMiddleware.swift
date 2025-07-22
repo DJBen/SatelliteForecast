@@ -86,8 +86,8 @@ extension EffectMiddleware where
                         let db = Firestore.firestore()
                         db.collection("users").document(fcmToken).setData(data, merge: true)
                     }
-                case let .scenePhaseDidChange(phase):
-                    switch phase {
+                case let .scenePhaseDidChange(_, newPhase):
+                    switch newPhase {
                     case .active:
                         logger.debug("App becomes active")
                         

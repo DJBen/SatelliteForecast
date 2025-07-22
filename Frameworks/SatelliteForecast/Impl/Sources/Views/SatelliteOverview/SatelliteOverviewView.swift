@@ -92,6 +92,8 @@ public struct SatelliteOverviewViewContext {
 
 public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
     @ObservedObject var viewModel: ObservableViewModel<SatelliteOverviewViewAction, SatelliteOverviewViewState>
+    @State var currentDate: Date = Date()
+    @State private var timer: Timer?
     let context: SatelliteOverviewViewContext
     let singleSatelliteWrappingViewProducer: ViewProducer<SingleSatelliteWrappingViewContext, SingleSatelliteWrappingView>
 
@@ -133,6 +135,7 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                                 SatelliteOverviewCell(
                                     satellite: satellite,
                                     nextPassLoadingState: satellite == .iss ? viewModel.state.issNextPass : viewModel.state.tianheNextPass,
+                                    currentDate: currentDate,
                                     julianDateOffset: viewModel.state.julianDateOffset,
                                     isMissingLocation: viewModel.state.isMissingLocation
                                 )
@@ -175,6 +178,18 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                     observer: viewModel.state.observer
                 )
             )
+            
+            // Invalidate existing timer if any
+            timer?.invalidate()
+            
+            // Create new timer to update currentDate every second
+            timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+                currentDate = Date()
+            }
+        }
+        .onDisappear {
+            timer?.invalidate()
+            timer = nil
         }
     }
 }
