@@ -53,5 +53,11 @@ public struct AppState: Equatable {
     /// Shows Sky Now tab.
     public var showExperimentalSkyNow: Bool = false
 
-    public init() {}
+    /// The state of onboarding experience.
+    public var onboardingState: OnboardingViewState = .init()
+
+    public init() {
+        // Check if user has completed onboarding
+        self.onboardingState.hasCompletedOnboarding = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
+    }
 }

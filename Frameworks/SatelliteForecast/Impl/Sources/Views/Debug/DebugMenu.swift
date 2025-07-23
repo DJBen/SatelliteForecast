@@ -23,6 +23,8 @@ public enum DebugMenuAction {
     case fetchNotifications
     
     case triggerPassDeepLink(category: SatelliteCategory, noradIndex: UInt)
+    
+    case resetOnboarding
 }
 
 public struct DebugMenuConfig: Equatable {
@@ -244,13 +246,21 @@ public struct DebugMenu: View {
                 } header: {
                     Text("Delivered notifications")
                 }
+                
+                Section {
+                    Button("Reset Onboarding") {
+                        viewModel.dispatch(.resetOnboarding)
+                    }
+                } header: {
+                    Text("Onboarding")
+                }
             }
             .navigationTitle("Debug Menu")
             .onAppear {
                 dateWithinPicker = Date(julianDate: state.trueJulianDate + (state.config.mockedOffsetOn ? state.config.mockedOffset : 0))
                 viewModel.dispatch(.fetchNotifications)
             }
-        }
+        }   
     }
 }
 
@@ -320,6 +330,9 @@ struct DebugMenu_Previews: PreviewProvider {
                         break
                         
                     case .triggerPassDeepLink:
+                        break
+                        
+                    case .resetOnboarding:
                         break
                     }
                 }

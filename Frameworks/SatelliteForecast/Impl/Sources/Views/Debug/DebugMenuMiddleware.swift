@@ -66,6 +66,8 @@ extension EffectMiddleware where
 
                     return subject.eraseToAnyPublisher()
                 }
+            case .resetOnboarding:
+                return .just(.onboarding(.reset))
             }
         }
     }

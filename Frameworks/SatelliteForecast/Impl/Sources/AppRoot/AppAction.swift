@@ -41,6 +41,7 @@ public enum AppAction {
     case realtimeSkyOutput(RealtimeSkyViewOutput)
     case passAlarmSettings(PassAlarmSettingsModalViewAction)
     case detailedPassView(DetailedPassViewAction)
+    case onboarding(OnboardingAction)
 }
 
 extension AppAction {
@@ -382,6 +383,17 @@ extension AppAction {
         set {
             guard case .detailedPassView = self, let newValue = newValue else { return }
             self = .detailedPassView(newValue)
+        }
+    }
+
+    public var onboarding: OnboardingAction? {
+        get {
+            guard case let .onboarding(value) = self else { return nil }
+            return value
+        }
+        set {
+            guard case .onboarding = self, let newValue = newValue else { return }
+            self = .onboarding(newValue)
         }
     }
 }
