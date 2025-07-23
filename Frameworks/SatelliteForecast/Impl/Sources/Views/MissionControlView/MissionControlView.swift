@@ -178,6 +178,7 @@ class MissionControlViewController: UIViewController {
 
     var currentDateCoordinate: DateCoordinate?
     var dateCoordinates: [DateCoordinate]?
+    var currentZoomLevel: MissionControlView.ZoomLevel?
 
     var cancellables = Set<AnyCancellable>()
 
@@ -225,60 +226,86 @@ class MissionControlViewController: UIViewController {
         dateCoordinates: [DateCoordinate],
         zoomLevel: MissionControlView.ZoomLevel
     ) {
-        // Rezoom camera if zoom level has changed
-        if mapView.camera.centerCoordinateDistance != 0 && abs(mapView.camera.centerCoordinateDistance - centerCoordinateDistance(for: zoomLevel)) > 1 {
+        let isInitialSetup = self.currentDateCoordinate == nil
+        let coordinateChanged = self.currentDateCoordinate != currentDateCoordinate
+        let dateCoordinatesChanged = self.dateCoordinates != dateCoordinates
+        let zoomLevelChanged = self.currentZoomLevel != zoomLevel
+        
+        // Only recenter and zoom when zoom level is explicitly changed by user
+        if zoomLevelChanged {
             let camera = MKMapCamera(
                 lookingAtCenter: CLLocationCoordinate2D(currentDateCoordinate.coordinate),
                 fromEyeCoordinate: CLLocationCoordinate2D(currentDateCoordinate.coordinate),
                 eyeAltitude: centerCoordinateDistance(for: zoomLevel)
             )
             mapView.setCamera(camera, animated: true)
+            self.currentZoomLevel = zoomLevel
         }
 
-        if self.currentDateCoordinate == currentDateCoordinate && self.dateCoordinates == dateCoordinates {
+        // Early return if nothing changed
+        if !coordinateChanged && !dateCoordinatesChanged {
             return
         }
 
-        if self.currentDateCoordinate == nil {
-            mapView.setCenter(CLLocationCoordinate2D(currentDateCoordinate.coordinate), animated: true)
+        // Only set initial center once, without interrupting user interaction
+        if isInitialSetup {
+            mapView.setCenter(CLLocationCoordinate2D(currentDateCoordinate.coordinate), animated: false)
+            self.currentZoomLevel = zoomLevel
         }
+        
+        // Update stored values
         self.currentDateCoordinate = currentDateCoordinate
-
-        mapView.overlays
-            .filter { $0 is MKGeodesicPolyline }
-            .forEach { mapView.removeOverlay($0) }
-        let beforeDataset = dateCoordinates.prefix(
-            while: { $0.julianDate <= currentDateCoordinate.julianDate }
-        )
-        let polyline = MKGeodesicPolyline(
-            points: beforeDataset
-            .map(\.coordinate).map { MKMapPoint(CLLocationCoordinate2D($0)) },
-            count: beforeDataset.count
-        )
-        polyline.sf_identifier = "before"
-        mapView.addOverlay(polyline)
-        let afterDataset = dateCoordinates.drop(
-            while: { $0.julianDate < currentDateCoordinate.julianDate }
-        )
-        let afterPolyline = MKGeodesicPolyline(
-            points: Array(afterDataset)
-            .map(\.coordinate).map { MKMapPoint(CLLocationCoordinate2D($0)) },
-            count: afterDataset.count
-        )
-        afterPolyline.sf_identifier = "after"
-        mapView.addOverlay(afterPolyline)
-
-        var currentPositionAnnotation: CurrentPositionAnnotation
-        if let existingAnnotation = mapView.annotations.first(where: { $0 is CurrentPositionAnnotation }) as? CurrentPositionAnnotation {
-            currentPositionAnnotation = existingAnnotation
-        } else {
-            currentPositionAnnotation = CurrentPositionAnnotation()
-            mapView.addAnnotation(currentPositionAnnotation)
+        
+        // Only update overlays if the date coordinates array actually changed
+        if dateCoordinatesChanged {
+            // Remove existing overlays
+            mapView.overlays
+                .filter { $0 is MKGeodesicPolyline }
+                .forEach { mapView.removeOverlay($0) }
+                
+            // Create new overlays
+            let beforeDataset = dateCoordinates.prefix(
+                while: { $0.julianDate <= currentDateCoordinate.julianDate }
+            )
+            let polyline = MKGeodesicPolyline(
+                points: beforeDataset
+                .map(\.coordinate).map { MKMapPoint(CLLocationCoordinate2D($0)) },
+                count: beforeDataset.count
+            )
+            polyline.sf_identifier = "before"
+            mapView.addOverlay(polyline)
+            
+            let afterDataset = dateCoordinates.drop(
+                while: { $0.julianDate < currentDateCoordinate.julianDate }
+            )
+            let afterPolyline = MKGeodesicPolyline(
+                points: Array(afterDataset)
+                .map(\.coordinate).map { MKMapPoint(CLLocationCoordinate2D($0)) },
+                count: afterDataset.count
+            )
+            afterPolyline.sf_identifier = "after"
+            mapView.addOverlay(afterPolyline)
+            
+            self.dateCoordinates = dateCoordinates
         }
-        UIView.animate(withDuration: 5, delay: 0, options: [.curveLinear]) {
-            currentPositionAnnotation.coordinate = CLLocationCoordinate2D(currentDateCoordinate.coordinate)
+
+        // Handle satellite annotation updates - only when coordinate actually changed
+        if coordinateChanged {
+            var currentPositionAnnotation: CurrentPositionAnnotation
+            if let existingAnnotation = mapView.annotations.first(where: { $0 is CurrentPositionAnnotation }) as? CurrentPositionAnnotation {
+                currentPositionAnnotation = existingAnnotation
+            } else {
+                currentPositionAnnotation = CurrentPositionAnnotation()
+                currentPositionAnnotation.coordinate = CLLocationCoordinate2D(currentDateCoordinate.coordinate)
+                mapView.addAnnotation(currentPositionAnnotation)
+                return // No need to animate for new annotation
+            }
+            
+            // Smooth animation for satellite position - NO RECENTERING
+            UIView.animate(withDuration: 0.5, delay: 0, options: [.curveEaseInOut, .allowUserInteraction]) {
+                currentPositionAnnotation.coordinate = CLLocationCoordinate2D(currentDateCoordinate.coordinate)
+            }
         }
-        self.dateCoordinates = dateCoordinates
     }
 
     func resetViewport() {

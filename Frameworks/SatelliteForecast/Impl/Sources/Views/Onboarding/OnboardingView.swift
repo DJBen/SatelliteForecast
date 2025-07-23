@@ -54,7 +54,7 @@ public struct OnboardingView: View {
             videoExtension: "mov"
         ),
         OnboardingPage(
-            title: "Precise Predictions",
+            title: "Accurate Predictions, For You",
             description: "Get accurate pass predictions for your location, whereever you are in the world. We'll notify you when spectacular viewing opportunities are approaching.",
             videoName: "",
             videoExtension: ""
@@ -232,7 +232,7 @@ private struct OnboardingPageView: View {
         
         // Update playback time every 0.5 seconds
         let interval = CMTime(seconds: 0.5, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
-        timeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak player] time in
+        timeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { time in
             let videoKey = page.videoName
             videoPlaybackTimes[videoKey] = time
         }
