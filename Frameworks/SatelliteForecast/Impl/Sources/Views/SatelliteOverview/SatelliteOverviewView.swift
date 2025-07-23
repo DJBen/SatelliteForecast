@@ -94,7 +94,6 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
     @ObservedObject var viewModel: ObservableViewModel<SatelliteOverviewViewAction, SatelliteOverviewViewState>
     @State var currentDate: Date = Date()
     @State private var timer: Timer?
-    @State private var scrollOffset: CGFloat = 0
     let context: SatelliteOverviewViewContext
     let singleSatelliteWrappingViewProducer: ViewProducer<SingleSatelliteWrappingViewContext, SingleSatelliteWrappingView>
 
@@ -140,10 +139,10 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                                         currentDate: currentDate,
                                         julianDateOffset: viewModel.state.julianDateOffset,
                                         isMissingLocation: viewModel.state.isMissingLocation,
-                                        scrollOffset: scrollOffset
                                     )
                                 }
                                 .id(satellite.rawValue)
+                                .animation(.easeInOut(duration: 0.3), value: currentDate)
                             }
                         }
                     }
@@ -192,9 +191,11 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
             // Invalidate existing timer if any
             timer?.invalidate()
             
-            // Create new timer to update currentDate every second
-            timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-                currentDate = Date()
+            // Create new timer to update currentDate every 10 seconds (less frequent to reduce layout thrashing)
+            timer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { _ in
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    currentDate = Date()
+                }
             }
         }
         .onDisappear {

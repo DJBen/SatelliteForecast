@@ -19,7 +19,6 @@ struct SatelliteOverviewCell: View {
     let currentDate: Date
     let julianDateOffset: Double
     let isMissingLocation: Bool
-    let scrollOffset: CGFloat
 
     var body: some View {
         VStack(spacing: 0) {
@@ -105,7 +104,9 @@ struct SatelliteOverviewCell: View {
             .padding(.vertical, 12)
             .padding(.horizontal, 16)
             .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(minHeight: 80) // Ensure consistent minimum height
             .background(Color(UIColor.systemBackground))
+            .animation(.easeInOut(duration: 0.2), value: nextPassLoadingState)
         }
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .background(
@@ -189,13 +190,16 @@ extension SatelliteOverviewCell {
             
             if currentJulianDate >= pass.rise.julianDate && currentJulianDate <= pass.set.julianDate {
                 Text("Passing now!", bundle: .module, comment: "A string describing that the satellite is currently passing")
-                    .font(.subheadline)
+                    .font(.subheadline.monospacedDigit())
                     .fontWeight(.bold)
                     .foregroundColor(isFlashing ? .pink : .orange)
                     .onAppear {
                         withAnimation(Animation.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) {
                             isFlashing = true
                         }
+                    }
+                    .onDisappear {
+                        isFlashing = false
                     }
             } else {
                 let calendar = Calendar.current
@@ -222,7 +226,7 @@ extension SatelliteOverviewCell {
                         )
                 }
                 let countdownText = Text(Self.durationFormatter.localizedString(fromTimeInterval: timeUntilRise))
-                    .font(.subheadline)
+                    .font(.subheadline.monospacedDigit())
                     .foregroundColor(isDarkBackground ? .white : .secondary)
                 amOrPmText + countdownText
             }
@@ -237,7 +241,13 @@ extension SatelliteOverviewCell {
                 
                 Spacer()
                 
-                countdownText
+                // Fixed width container to prevent layout shifts
+                HStack {
+                    Spacer()
+                    countdownText
+                }
+                .frame(minWidth: 120, alignment: .trailing)
+                .animation(.easeInOut(duration: 0.2), value: currentDate)
             }
         }
     }
@@ -263,7 +273,6 @@ struct SatelliteOverviewCell_Previews: PreviewProvider {
                                 currentDate: Date(timeIntervalSinceReferenceDate: 0),
                                 julianDateOffset: 0,
                                 isMissingLocation: false,
-                                scrollOffset: 0
                             )
 
                             // Loading state
@@ -273,7 +282,6 @@ struct SatelliteOverviewCell_Previews: PreviewProvider {
                                 currentDate: Date(timeIntervalSinceReferenceDate: 0),
                                 julianDateOffset: 0,
                                 isMissingLocation: false,
-                                scrollOffset: 0
                             )
                             
                             // Error state
@@ -283,7 +291,6 @@ struct SatelliteOverviewCell_Previews: PreviewProvider {
                                 currentDate: Date(timeIntervalSinceReferenceDate: 0),
                                 julianDateOffset: 0,
                                 isMissingLocation: false,
-                                scrollOffset: 0
                             )
                             
                             // Loaded state with both visible and prominent passes
@@ -312,7 +319,6 @@ struct SatelliteOverviewCell_Previews: PreviewProvider {
                                 currentDate: Date(timeIntervalSinceReferenceDate: 0),
                                 julianDateOffset: 0,
                                 isMissingLocation: false,
-                                scrollOffset: 0
                             )
                             
                             // Loaded state with no upcoming passes
@@ -324,7 +330,6 @@ struct SatelliteOverviewCell_Previews: PreviewProvider {
                                 currentDate: Date(timeIntervalSinceReferenceDate: 0),
                                 julianDateOffset: 0,
                                 isMissingLocation: false,
-                                scrollOffset: 0
                             )
                         }
                     )
