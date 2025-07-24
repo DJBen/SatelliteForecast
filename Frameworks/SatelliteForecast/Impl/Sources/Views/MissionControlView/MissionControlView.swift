@@ -345,12 +345,6 @@ class MissionControlViewController: UIViewController {
 }
 
 extension MissionControlViewController: MKMapViewDelegate {
-    func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
-        guard let coordinate = self.currentDateCoordinate?.coordinate else {
-            return
-        }
-    }
-
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         guard annotation is CurrentPositionAnnotation else {
             return nil

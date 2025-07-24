@@ -8,6 +8,7 @@
 import BTree
 import SwiftUI
 import SatelliteForecast
+import Shimmer
 @preconcurrency import SatelliteKit
 @preconcurrency import CombineRex
 @preconcurrency import CombineRextensions
@@ -77,9 +78,11 @@ struct PassPreviewCell: View {
                             Text(PassPreviewCell.titleForPassVisibility(pass.visibility))
                                 .font(.headline)
                                 .foregroundColor(Color(UIColor.label))
-                            Text("∠\(Self.numberFormatter.string(from: NSNumber(value: notableSnapshots.visibleCulminationElevation))!)°")
-                                .font(.body)
-                                .foregroundColor(Color(UIColor.label))
+                            if notableSnapshots.visibleCulminationElevation > 0 {
+                                Text("∠\(Self.numberFormatter.string(from: NSNumber(value: notableSnapshots.visibleCulminationElevation))!)°")
+                                    .font(.body)
+                                    .foregroundColor(Color(UIColor.label))
+                            }
                             if hasScheduledAlert {
                                 Spacer(minLength: 8)
                                 Image(systemName: "bell.fill")
@@ -98,33 +101,103 @@ struct PassPreviewCell: View {
                             .padding([.bottom], 1)
                             .foregroundColor(Color(UIColor.label))
 
-                        HStack(spacing: 0) {
-                            Image(systemName: "arrow.up")
-                                .font(.subheadline)
-                                .foregroundColor(Color(UIColor.secondaryLabel))
+                        if let exitsShadowJulianDate = notableSnapshots.exitsShadow?.first.julianDate {
+                            HStack(spacing: 0) {
+                                Image(systemName: "eye")
+                                    .font(.subheadline)
+                                    .foregroundColor(Color(UIColor.tertiaryLabel))
+                                
+                                Text(Self.timeFormatter.string(from: Date(julianDate: exitsShadowJulianDate)))
+                                    .font(.subheadline)
+                                    .foregroundColor(Color(UIColor.tertiaryLabel))
+                            }
+                            if exitsShadowJulianDate < pass.culmination.julianDate && exitsShadowJulianDate < pass.set.julianDate {
+                                HStack(spacing: 0) {
+                                    Image(systemName: "arrow.up.to.line")
+                                        .font(.subheadline)
+                                        .foregroundColor(Color(UIColor.secondaryLabel))
+                                        .bold()
 
-                            Text(Self.timeFormatter.string(from: Date(julianDate: pass.rise.julianDate)))
-                                .font(.subheadline)
-                                .foregroundColor(Color(UIColor.secondaryLabel))
+                                    Text(Self.timeFormatter.string(from: Date(julianDate: pass.culmination.julianDate)))
+                                        .font(.subheadline)
+                                        .foregroundColor(Color(UIColor.label))
+                                        .bold()
+                                        .shimmering(gradient: Gradient(colors: [
+                                            Color(UIColor.secondaryLabel),
+                                            Color(UIColor.label),
+                                            Color(UIColor.secondaryLabel)
+                                        ]), bandSize: 0.5)
+                                }
+                            }
+                        } else {
+                            HStack(spacing: 0) {
+                                Image(systemName: "arrow.up")
+                                    .font(.subheadline)
+                                    .foregroundColor(Color(UIColor.tertiaryLabel))
+
+                                Text(Self.timeFormatter.string(from: Date(julianDate: pass.rise.julianDate)))
+                                    .font(.subheadline)
+                                    .foregroundColor(Color(UIColor.tertiaryLabel))
+                            }
                         }
-                        HStack(spacing: 0) {
-                            Image(systemName: "arrow.up.to.line")
-                                .font(.subheadline)
-                                .foregroundColor(Color(UIColor.secondaryLabel))
+                        
+                        if notableSnapshots.exitsShadow?.first.julianDate == nil && notableSnapshots.entersShadow?.first.julianDate == nil {
+                            HStack(spacing: 0) {
+                                Image(systemName: "arrow.up.to.line")
+                                    .font(.subheadline)
+                                    .foregroundColor(Color(UIColor.secondaryLabel))
+                                    .bold()
 
-                            Text(Self.timeFormatter.string(from: Date(julianDate: pass.culmination.julianDate)))
-                                .font(.subheadline)
-                                .foregroundColor(Color(UIColor.secondaryLabel))
+                                Text(Self.timeFormatter.string(from: Date(julianDate: pass.culmination.julianDate)))
+                                    .font(.subheadline)
+                                    .foregroundColor(Color(UIColor.label))
+                                    .bold()
+                                    .shimmering(gradient: Gradient(colors: [
+                                        Color(UIColor.secondaryLabel),
+                                        Color(UIColor.label),
+                                        Color(UIColor.secondaryLabel)
+                                    ]), bandSize: 0.5)
+                            }
                         }
-                        HStack(spacing: 0) {
-                            Image(systemName: "arrow.down")
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
-                                .foregroundColor(Color(UIColor.secondaryLabel))
 
-                            Text(Self.timeFormatter.string(from: Date(julianDate: pass.set.julianDate)))
-                                .font(.subheadline)
-                                .foregroundColor(Color(UIColor.secondaryLabel))
+                        if let entersShadowJulianDate = notableSnapshots.entersShadow?.first.julianDate {
+                            if entersShadowJulianDate > pass.culmination.julianDate && entersShadowJulianDate < pass.set.julianDate {
+                                HStack(spacing: 0) {
+                                    Image(systemName: "arrow.up.to.line")
+                                        .font(.subheadline)
+                                        .foregroundColor(Color(UIColor.secondaryLabel))
+                                        .bold()
+
+                                    Text(Self.timeFormatter.string(from: Date(julianDate: pass.culmination.julianDate)))
+                                        .font(.subheadline)
+                                        .foregroundColor(Color(UIColor.label))
+                                        .bold()
+                                        .shimmering(gradient: Gradient(colors: [
+                                            Color(UIColor.secondaryLabel),
+                                            Color(UIColor.label),
+                                            Color(UIColor.secondaryLabel)
+                                        ]), bandSize: 0.5)
+                                }
+                            }
+                            HStack(spacing: 0) {
+                                Image(systemName: "eye.slash")
+                                    .font(.subheadline)
+                                    .foregroundColor(Color(UIColor.tertiaryLabel))
+
+                                Text(Self.timeFormatter.string(from: Date(julianDate: entersShadowJulianDate)))
+                                    .font(.subheadline)
+                                    .foregroundColor(Color(UIColor.tertiaryLabel))
+                            }
+                        } else {
+                            HStack(spacing: 0) {
+                                Image(systemName: "arrow.down")
+                                    .font(.subheadline)
+                                    .foregroundColor(Color(UIColor.tertiaryLabel))
+                                
+                                Text(Self.timeFormatter.string(from: Date(julianDate: pass.set.julianDate)))
+                                    .font(.subheadline)
+                                    .foregroundColor(Color(UIColor.tertiaryLabel))
+                            }
                         }
                         
                         Spacer(minLength: 4)
@@ -133,7 +206,7 @@ struct PassPreviewCell: View {
                         
                         Text(PassPreviewCell.relativeDate(pass: pass, referenceDate: julianDateProvider() + julianDateOffset))
                             .font(.caption)
-                            .foregroundColor(Color(UIColor.secondaryLabel))
+                            .foregroundColor(Color(UIColor.tertiaryLabel))
                     }
                     .frame(width: 120)
                 }

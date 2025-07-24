@@ -19,6 +19,7 @@ let package = Package(
             targets: ["SatelliteForecastImplWiring"])
     ],
     dependencies: [
+        .package(url: "https://github.com/markiv/SwiftUI-Shimmer.git", from: "1.5.1"),
         .package(url: "https://github.com/attaswift/BTree", from: "4.1.0"),
         .package(url: "https://github.com/SwiftRex/SwiftRex", from: "0.8.12"),
         .package(url: "https://github.com/SwiftRex/CombineRextensions", branch: "master"),
@@ -57,6 +58,7 @@ let package = Package(
                 "ActivityView",
                 "SwiftUIVisualEffects",
                 "Geohash",
+                .product(name: "Shimmer", package: "SwiftUI-Shimmer"),
                 .product(name: "SatelliteKit", package: "SatelliteKit"),
                 .product(name: "StarryNight", package: "StarryNight"),
                 .product(name: "QSMag", package: "QSMag"),
