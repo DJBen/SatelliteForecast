@@ -61,28 +61,16 @@ public struct OnboardingView: View {
                 videoExtension: "mov"
             ),
             OnboardingPage(
-                title: NSLocalizedString("Accurate Predictions, For You", bundle: .module, comment: "Onboarding page 2 title"),
-                description: NSLocalizedString("Get accurate pass predictions for your location, wherever you are in the world. We'll notify you when spectacular viewing opportunities are approaching.", bundle: .module, comment: "Onboarding page 2 description"),
-                videoName: "",
-                videoExtension: "",
+                title: NSLocalizedString("Predictions for You", bundle: .module, comment: "Onboarding page 2 title"),
+                description: NSLocalizedString("Get accurate pass predictions for your location. We'll notify you when viewing opportunities arise.", bundle: .module, comment: "Onboarding page 2 description"),
+                videoName: "pass_demo",
+                videoExtension: "mov",
                 customView: { geometry in
                     AnyView(
-                        ZStack {
-                            LinearGradient(
-                                gradient: Gradient(colors: [
-                                    Color.purple.opacity(0.8),
-                                    Color.blue.opacity(0.6),
-                                    Color.black
-                                ]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                            
-                            VStack {
-                                FlippingCityText()
-                                    .padding(.top, geometry.safeAreaInsets.top + 60)
-                                Spacer()
-                            }
+                        VStack {
+                            FlippingCityText()
+                                .padding(.top, geometry.safeAreaInsets.top + 60)
+                            Spacer()
                         }
                     )
                 }
@@ -117,20 +105,29 @@ private struct OnboardingPageView: View {
     @State private var player: AVPlayer?
     @State private var timeObserver: Any?
     
+    // Compute video offset based on locale
+    private var videoVerticalOffset: CGFloat {
+        let currentLocale = Locale.current
+        let languageCode = currentLocale.language.languageCode?.identifier ?? ""
+        
+        // Don't offset for Chinese locales, offset others by moving up the video a bit
+        if languageCode.hasPrefix("zh") {
+            return 0
+        } else {
+            return -40
+        }
+    }
+    
     var body: some View {
         ZStack {
             GeometryReader { geometry in
-                // Background video, custom view, or gradient
-                if let customView = page.customView {
-                    customView(geometry)
-                        .frame(width: geometry.size.width, height: geometry.size.height)
-                        .ignoresSafeArea(.all)
-                        .clipped()
-                } else if !page.videoName.isEmpty,
+                // Background video or gradient
+                if !page.videoName.isEmpty,
                    let videoURL = Bundle.module.url(forResource: page.videoName, withExtension: page.videoExtension) {
                     VideoPlayer(player: player)
                         .aspectRatio(contentMode: .fill)
                         .frame(width: geometry.size.width, height: geometry.size.height)
+                        .offset(y: videoVerticalOffset)
                         .ignoresSafeArea(.all)
                         .clipped()
                         .onAppear {
@@ -156,13 +153,21 @@ private struct OnboardingPageView: View {
                     .ignoresSafeArea(.all)
                 }
                 
+                // Custom view overlay (if present)
+                if let customView = page.customView {
+                    customView(geometry)
+                        .frame(width: geometry.size.width, height: geometry.size.height)
+                        .ignoresSafeArea(.all)
+                        .clipped()
+                }
+                
                 // Linear gradient overlay for better text readability
                 LinearGradient(
                     gradient: Gradient(stops: [
                         Gradient.Stop(color: Color.clear, location: 0.0),
                         Gradient.Stop(color: Color.clear, location: 0.7),
-                        Gradient.Stop(color: Color.black.opacity(0.35), location: 0.78),
-                        Gradient.Stop(color: Color.black.opacity(0.35), location: 1.0)
+                        Gradient.Stop(color: Color.black.opacity(0.5), location: 0.75),
+                        Gradient.Stop(color: Color.black.opacity(0.5), location: 1.0)
                     ]),
                     startPoint: .top,
                     endPoint: .bottom
