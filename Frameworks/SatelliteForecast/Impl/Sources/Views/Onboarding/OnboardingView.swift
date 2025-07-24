@@ -55,27 +55,35 @@ public struct OnboardingView: View {
     public var body: some View {
         let pages: [OnboardingPage] = [
             OnboardingPage(
-                title: "Welcome to Space Station Passes",
-                description: "Track the International Space Station, Tiangong and others as they pass overhead. Never miss a spectacular sight in the evening sky.",
+                title: NSLocalizedString("Welcome to Space Station Passes", bundle: .module, comment: "Onboarding page 1 title"),
+                description: NSLocalizedString("Track the International Space Station, Tiangong and others as they pass overhead. Never miss a spectacular sight in the evening sky.", bundle: .module, comment: "Onboarding page 1 description"),
                 videoName: "iss_pass_compilation",
                 videoExtension: "mov"
             ),
             OnboardingPage(
-                title: "Accurate Predictions, For You",
-                description: "Get accurate pass predictions for your location, wherever you are in the world. We'll notify you when spectacular viewing opportunities are approaching.",
+                title: NSLocalizedString("Accurate Predictions, For You", bundle: .module, comment: "Onboarding page 2 title"),
+                description: NSLocalizedString("Get accurate pass predictions for your location, wherever you are in the world. We'll notify you when spectacular viewing opportunities are approaching.", bundle: .module, comment: "Onboarding page 2 description"),
                 videoName: "",
                 videoExtension: "",
-                customView: { _ in
+                customView: { geometry in
                     AnyView(
-                        LinearGradient(
-                            gradient: Gradient(colors: [
-                                Color.purple.opacity(0.8),
-                                Color.blue.opacity(0.6),
-                                Color.black
-                            ]),
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
+                        ZStack {
+                            LinearGradient(
+                                gradient: Gradient(colors: [
+                                    Color.purple.opacity(0.8),
+                                    Color.blue.opacity(0.6),
+                                    Color.black
+                                ]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                            
+                            VStack {
+                                FlippingCityText()
+                                    .padding(.top, geometry.safeAreaInsets.top + 60)
+                                Spacer()
+                            }
+                        }
                     )
                 }
             ),
