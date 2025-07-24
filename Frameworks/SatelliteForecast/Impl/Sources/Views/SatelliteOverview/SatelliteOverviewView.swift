@@ -121,7 +121,7 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                 ScrollView {
                     LazyVStack(
                         alignment: .leading,
-                        spacing: 24,
+                        spacing: 0,
                         pinnedViews: []
                     ) {
                         Section {

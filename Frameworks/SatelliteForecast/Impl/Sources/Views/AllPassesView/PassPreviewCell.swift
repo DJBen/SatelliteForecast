@@ -77,8 +77,7 @@ struct PassPreviewCell: View {
                             Text(PassPreviewCell.titleForPassVisibility(pass.visibility))
                                 .font(.headline)
                                 .foregroundColor(Color(UIColor.label))
-
-                            Text("∠\(Self.numberFormatter.string(from: NSNumber(value: pass.culmination.elev))!)°")
+                            Text("∠\(Self.numberFormatter.string(from: NSNumber(value: notableSnapshots.visibleCulminationElevation))!)°")
                                 .font(.body)
                                 .foregroundColor(Color(UIColor.label))
                             if hasScheduledAlert {
