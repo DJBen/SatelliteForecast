@@ -135,7 +135,7 @@ extension SatelliteInfo {
         var maxElevDatePos: Pass.DatePosition!
         var transitSnapshots: SnapshotsAroundPass!
         var illuminationChanges = [Pass.Illumination.Change]()
-        var illuminationChangesAndSnapshots = BTree<Double, NotableSnapshots.IlluminationChangeAndSnapshots>()
+        var illuminationChangesAndSnapshots = [NotableSnapshots.IlluminationChangeAndSnapshots]()
 
         for index in fineSnapshots.indices where index < fineSnapshots.index(before: fineSnapshots.endIndex) {
             let snapshot1 = fineSnapshots[index]
@@ -181,30 +181,24 @@ extension SatelliteInfo {
             if snapshot1.isIlluminated && !snapshot2.isIlluminated {
                 let change = Pass.Illumination.Change.entersShadow(Pass.DatePosition(julianDate: snapshot1.julianDate, azim: snapshot1.position.azim, elev: snapshot1.position.elev))
                 illuminationChanges.append(change)
-                illuminationChangesAndSnapshots.insert(
-                    (
-                        snapshot1.julianDate,
-                        NotableSnapshots.IlluminationChangeAndSnapshots(
-                            change: change,
-                            snapshots: SnapshotsAroundPass(
-                                first: snapshot1,
-                                second: snapshot2
-                            )
+                illuminationChangesAndSnapshots.append(
+                    NotableSnapshots.IlluminationChangeAndSnapshots(
+                        change: change,
+                        snapshots: SnapshotsAroundPass(
+                            first: snapshot1,
+                            second: snapshot2
                         )
                     )
                 )
             } else if !snapshot1.isIlluminated && snapshot2.isIlluminated {
                 let change = Pass.Illumination.Change.exitsShadow(Pass.DatePosition(julianDate: snapshot2.julianDate, azim: snapshot2.position.azim, elev: snapshot2.position.elev))
                 illuminationChanges.append(change)
-                illuminationChangesAndSnapshots.insert(
-                    (
-                        snapshot2.julianDate,
-                        NotableSnapshots.IlluminationChangeAndSnapshots(
-                            change: change,
-                            snapshots: SnapshotsAroundPass(
-                                first: snapshot1,
-                                second: snapshot2
-                            )
+                illuminationChangesAndSnapshots.append(
+                    NotableSnapshots.IlluminationChangeAndSnapshots(
+                        change: change,
+                        snapshots: SnapshotsAroundPass(
+                            first: snapshot1,
+                            second: snapshot2
                         )
                     )
                 )

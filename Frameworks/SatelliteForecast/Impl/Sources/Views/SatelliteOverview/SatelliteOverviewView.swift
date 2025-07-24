@@ -117,60 +117,69 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                 }
             )
         ) {
-            ScrollView {
-                LazyVStack(
-                    alignment: .leading,
-                    spacing: 24,
-                    pinnedViews: []
-                ) {
-                    Section {
-                        ForEach(
-                            [
-                                SatelliteCategory.iss,
-                                SatelliteCategory.tianhe
-                            ],
-                            id: \.self
-                        ) { satellite in
-                            NavigationLink(value: SpecialSatellite(satellite)) {
-                                SatelliteOverviewCell(
-                                    satellite: satellite,
-                                    nextPassLoadingState: satellite == .iss ? viewModel.state.issNextPass : viewModel.state.tianheNextPass,
-                                    currentDate: currentDate,
-                                    julianDateOffset: viewModel.state.julianDateOffset,
-                                    isMissingLocation: viewModel.state.isMissingLocation
-                                )
+            VStack {
+                ScrollView {
+                    LazyVStack(
+                        alignment: .leading,
+                        spacing: 0,
+                        pinnedViews: []
+                    ) {
+                        Section {
+                            ForEach(
+                                [
+                                    SatelliteCategory.iss,
+                                    SatelliteCategory.tianhe
+                                ],
+                                id: \.self
+                            ) { satellite in
+                                NavigationLink(value: SpecialSatellite(satellite)) {
+                                    SatelliteOverviewCell(
+                                        satellite: satellite,
+                                        nextPassLoadingState: satellite == .iss ? viewModel.state.issNextPass : viewModel.state.tianheNextPass,
+                                        currentDate: currentDate,
+                                        julianDateOffset: viewModel.state.julianDateOffset,
+                                        isMissingLocation: viewModel.state.isMissingLocation,
+                                    )
+                                }
+                                .id(satellite.rawValue)
+                                .animation(.easeInOut(duration: 0.3), value: currentDate)
                             }
                         }
                     }
-                    
-                    if viewModel.state.isMissingLocation {
-                        Text("\(Image(systemName: "location.slash")) Location needed to calculate satellite passes. Your experience may be degraded.", bundle: .module)
-                            .font(.footnote)
-                            .foregroundColor(Color(UIColor.secondaryLabel))
-                            .padding(.horizontal)
+                }
+                .navigationBarTitle(
+                    Text("Overview", bundle: .module),
+                    displayMode: .inline
+                )
+                .navigationBarHidden(true)
+                .navigationDestination(for: SpecialSatellite.self) { specialSatellite in
+                    LazyView {
+                        singleSatelliteWrappingViewProducer.view(
+                            SingleSatelliteWrappingViewContext(
+                                selectedNoradIndex: specialSatellite.rawValue,
+                                julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
+                                observer: viewModel.state.observer,
+                                julianDateProvider: context.julianDateProvider
+                            )
+                        )
                     }
                 }
-                .padding()
             }
-            .navigationBarTitle(
-                Text("Overview", bundle: .module),
-                displayMode: .inline
-            )
-            .navigationBarHidden(true)
-            .navigationDestination(for: SpecialSatellite.self) { specialSatellite in
-                LazyView {
-                    singleSatelliteWrappingViewProducer.view(
-                        SingleSatelliteWrappingViewContext(
-                            selectedNoradIndex: specialSatellite.rawValue,
-                            julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
-                            observer: viewModel.state.observer,
-                            julianDateProvider: context.julianDateProvider
-                        )
-                    )
+            .tint(Color(uiColor: .label))
+            if viewModel.state.isMissingLocation {
+                HStack {
+                    Image(systemName: "location.slash")
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(.red, Color(uiColor: .label))
+                        .font(.headline)
+                    Text("Location needed to calculate satellite passes. Your experience may be degraded.", bundle: .module)
                 }
+                .font(.footnote)
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal)
+                .padding(.vertical, 4)
             }
         }
-        .tint(Color(uiColor: .label))
         .onAppear {
             viewModel.dispatch(
                 .onAppear(
@@ -182,15 +191,25 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
             // Invalidate existing timer if any
             timer?.invalidate()
             
-            // Create new timer to update currentDate every second
-            timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-                currentDate = Date()
+            // Create new timer to update currentDate every 10 seconds (less frequent to reduce layout thrashing)
+            timer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { _ in
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    currentDate = Date()
+                }
             }
         }
         .onDisappear {
             timer?.invalidate()
             timer = nil
         }
+    }
+}
+
+struct ScrollOffsetPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
     }
 }
 

@@ -27,14 +27,22 @@ struct SatelliteForecastApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ViewProducer.root(
-                viewModel: store
-            )
-            .view(
-                RootViewContext(
-                    julianDateProvider: { Date().julianDate }
-                )
-            )
+            Group {
+                if store.state.onboardingState.hasCompletedOnboarding {
+                    ViewProducer.root(
+                        viewModel: store
+                    )
+                    .view(
+                        RootViewContext(
+                            julianDateProvider: { Date().julianDate }
+                        )
+                    )
+                } else {
+                    OnboardingView {
+                        store.dispatch(.onboarding(.complete))
+                    }
+                }
+            }
             .sheet(
                 isPresented: Binding<Bool>(
                     get: {

@@ -7,7 +7,6 @@
 
 import Foundation
 @preconcurrency import SatelliteKit
-@preconcurrency import BTree
 
 /// A snapshot of the satellite of a specific date, coordinate, velocity and whether
 /// if it is illuminated by sunlight.
@@ -80,7 +79,27 @@ public struct NotableSnapshots: Equatable, Sendable {
         }
     }
 
-    public let illuminationChanges: BTree<Double, IlluminationChangeAndSnapshots>
+    public let illuminationChanges: [IlluminationChangeAndSnapshots]
+    
+    public var exitsShadow: SnapshotsAroundPass? {
+        illuminationChanges.first {
+            if case .exitsShadow(_) = $0.change {
+                true
+            } else {
+                false
+            }
+        }?.snapshots
+    }
+    
+    public var entersShadow: SnapshotsAroundPass? {
+        illuminationChanges.first {
+            if case .entersShadow(_) = $0.change {
+                true
+            } else {
+                false
+            }
+        }?.snapshots
+    }
     
     /// The highest elevation at which the satellite is illuminated during the pass.
     /// If the transit point is illuminated, this is the transit elevation.
@@ -110,8 +129,8 @@ public struct NotableSnapshots: Equatable, Sendable {
         }
         
         // Check all illumination changes
-        for (_, change) in illuminationChanges {
-            maxElevation = max(maxElevation, 
+        for change in illuminationChanges {
+            maxElevation = max(maxElevation,
                                max(change.snapshots.first.position.elev,
                                    change.snapshots.second.position.elev))
         }
@@ -123,7 +142,7 @@ public struct NotableSnapshots: Equatable, Sendable {
         rise: SnapshotsAroundPass,
         transit: SnapshotsAroundPass,
         set: SnapshotsAroundPass,
-        illuminationChanges: BTree<Double, NotableSnapshots.IlluminationChangeAndSnapshots>
+        illuminationChanges: [NotableSnapshots.IlluminationChangeAndSnapshots]
     ) {
         self.rise = rise
         self.transit = transit
@@ -132,48 +151,7 @@ public struct NotableSnapshots: Equatable, Sendable {
     }
 }
 
-extension NotableSnapshots: Codable {
-    struct IlluminationChangesPair: Equatable, Codable {
-        let timestamp: Double
-        let change: NotableSnapshots.IlluminationChangeAndSnapshots
-
-        init(_ pair: (Double, NotableSnapshots.IlluminationChangeAndSnapshots)) {
-            self.timestamp = pair.0
-            self.change = pair.1
-        }
-    }
-
-    enum CodingKeys: String, CodingKey {
-        case rise
-        case transit
-        case set
-        case illuminationChanges
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(rise, forKey: .rise)
-        try container.encode(transit, forKey: .transit)
-        try container.encode(`set`, forKey: .set)
-        try container.encode(illuminationChanges.map(IlluminationChangesPair.init), forKey: .illuminationChanges)
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        let rise = try container.decode(SnapshotsAroundPass.self, forKey: .rise)
-        let transit = try container.decode(SnapshotsAroundPass.self, forKey: .transit)
-        let `set` = try container.decode(SnapshotsAroundPass.self, forKey: .set)
-        let illuminationChangesPairs = try container.decode([IlluminationChangesPair].self, forKey: .illuminationChanges)
-        self.init(
-            rise: rise,
-            transit: transit,
-            set: `set`,
-            illuminationChanges: BTree<Double, NotableSnapshots.IlluminationChangeAndSnapshots>(
-                illuminationChangesPairs.map { ($0.timestamp, $0.change) }
-            )
-        )
-    }
-}
+extension NotableSnapshots: Codable {}
 
 public struct PassSnapshots: Equatable, Codable, Sendable, CustomDebugStringConvertible {
     public let pass: Pass

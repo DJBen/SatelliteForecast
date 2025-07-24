@@ -38,6 +38,9 @@ extension Reducer where ActionType == DebugMenuAction, StateType == DebugMenuSta
             
         case .triggerPassDeepLink(category: _, noradIndex: _):
             state.config.isDebugMenuVisible = false
+            
+        case .resetOnboarding:
+            break // This will be handled by middleware
         }
     }
 }

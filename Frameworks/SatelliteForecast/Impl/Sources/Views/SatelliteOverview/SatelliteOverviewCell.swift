@@ -11,6 +11,7 @@ import SatelliteForecast
 @preconcurrency import SatelliteKit
 import SwiftUI
 import SwiftUIVisualEffects
+import AVKit
 
 struct SatelliteOverviewCell: View {
     let satellite: SatelliteCategory
@@ -18,109 +19,100 @@ struct SatelliteOverviewCell: View {
     let currentDate: Date
     let julianDateOffset: Double
     let isMissingLocation: Bool
-    
-    @Environment(\.colorScheme) private var colorScheme
-
-    @ViewBuilder private func background(satellite: SatelliteCategory) -> some View {
-        if let noradIndex = satellite.noradIndex {
-            Image(String(noradIndex), bundle: .module)
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-        }
-    }
 
     var body: some View {
-        VStack(alignment: .leading) {
-            Spacer()
-                .frame(height: 180)
+        VStack(spacing: 0) {
+            // Title section
+            HStack {
+                Text(SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedTitle(satellite))
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.secondary)
+            }
+            .padding(.vertical, 12)
+            .padding(.horizontal, 16)
+            .background(Color(UIColor.systemBackground))
             
-            ZStack {
-                Color.clear
-                    .blurEffect()
-                
-                Group {
+            // Background video
+            let videoName = satellite == .iss ? "iss" : "tiangong"
+            AutoPlayVideoView(videoName: videoName, bundle: .module)
+                .frame(height: 225)
+                .clipped()
+            
+            // Pass information section
+            Group {
+                switch nextPassLoadingState {
+                case .failed(_):
+                    Text("Unable to load pass information", bundle: .module)
+                        .font(.body)
+                        .foregroundColor(.red)
+                        .multilineTextAlignment(.leading)
+                case .loaded(let nextPass):
                     VStack(alignment: .leading, spacing: 4) {
-                        HStack {
-                            Text(SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedTitle(satellite))
-                                .font(.title2)
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color(UIColor.label))
-                            Spacer()
-                            Image(systemName: "chevron.forward")
-                                .font(.title2)
-                                .foregroundColor(Color(UIColor.label))
+                        if let nextVisiblePass = nextPass.nextVisiblePass, let highestIlluminated = nextVisiblePass.highestIlluminated {
+                            SatelliteOverviewCell.PassCountdownView(
+                                pass: nextVisiblePass,
+                                title: Text("Visible pass \(Image(systemName: "angle"))\(Int(highestIlluminated.elev.rounded()))°", bundle: .module),
+                                currentDate: currentDate,
+                                julianDateOffset: julianDateOffset,
+                                isDarkBackground: true
+                            )
                         }
-                        
-                        switch nextPassLoadingState {
-                        case .failed(_):
-                            Text("Unable to load pass information", bundle: .module)
-                                .font(.body)
-                                .foregroundColor(.red)
-                            .multilineTextAlignment(.leading)
-                            .vibrancyEffect()
-                        case .loaded(let nextPass):
-                            VStack(alignment: .leading, spacing: 4) {
-                                if let nextVisiblePass = nextPass.nextVisiblePass, let highestIlluminated = nextVisiblePass.highestIlluminated {
-                                    SatelliteOverviewCell.PassCountdownView(
-                                        pass: nextVisiblePass,
-                                        title: Text("Visible pass \(Image(systemName: "angle"))\(Int(highestIlluminated.elev.rounded()))°", bundle: .module),
-                                        currentDate: currentDate,
-                                        julianDateOffset: julianDateOffset,
-                                    )
-                                }
-                                if let nextProminentPass = nextPass.nextProminentPass, let highestIlluminated = nextProminentPass.highestIlluminated {
-                                    SatelliteOverviewCell.PassCountdownView(
-                                        pass: nextProminentPass,
-                                        title: Text("Prominent pass \(Image(systemName: "angle"))\(Int(highestIlluminated.elev.rounded()))°", bundle: .module),
-                                        currentDate: currentDate,
-                                        julianDateOffset: julianDateOffset,
-                                    )
-                                }
-                                if nextPass.nextVisiblePass == nil && nextPass.nextProminentPass == nil {
-                                    Text("No upcoming visible passes", bundle: .module)
-                                        .font(.subheadline)
-                                        .foregroundColor(colorScheme == .light ? Color(UIColor.systemGray2) : Color(UIColor.systemGray4))
-                                        .vibrancyEffect()
-                                }
-                            }
-                        case .loading:
-                            if isMissingLocation {
-                                fallbackText
-                            } else {
-                                HStack(spacing: 8) {
-                                    ProgressView()
-                                        .scaleEffect(0.8)
-                                    Text("Loading pass information...", bundle: .module)
-                                        .font(.subheadline)
-                                        .foregroundColor(colorScheme == .light ? Color(UIColor.systemGray2) : Color(UIColor.systemGray4))
-                                }
-                                .vibrancyEffect()
-                            }
-                        case .notLoaded:
-                            fallbackText
+                        if let nextProminentPass = nextPass.nextProminentPass, let highestIlluminated = nextProminentPass.highestIlluminated {
+                            SatelliteOverviewCell.PassCountdownView(
+                                pass: nextProminentPass,
+                                title: Text("Prominent pass \(Image(systemName: "angle"))\(Int(highestIlluminated.elev.rounded()))°", bundle: .module),
+                                currentDate: currentDate,
+                                julianDateOffset: julianDateOffset,
+                                isDarkBackground: true
+                            )
+                        }
+                        if nextPass.nextVisiblePass == nil && nextPass.nextProminentPass == nil {
+                            Text("No upcoming visible passes", bundle: .module)
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
                         }
                     }
+                case .loading:
+                    if isMissingLocation {
+                        Text(SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedDescription(satellite))
+                            .font(.subheadline)
+                            .multilineTextAlignment(.leading)
+                            .foregroundColor(.secondary)
+                    } else {
+                        HStack(spacing: 8) {
+                            ProgressView()
+                                .scaleEffect(0.8)
+                                .progressViewStyle(CircularProgressViewStyle())
+                            Text("Loading pass information...", bundle: .module)
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                case .notLoaded:
+                    Text(SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedDescription(satellite))
+                        .font(.subheadline)
+                        .multilineTextAlignment(.leading)
+                        .foregroundColor(.secondary)
                 }
-                .padding()
             }
-            .blurEffectStyle(colorScheme == .light ? .systemChromeMaterialLight : .systemChromeMaterialDark)
-            .vibrancyEffectStyle(.fill)
+            .padding(.vertical, 8)
+            .padding(.horizontal, 16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color(UIColor.systemBackground))
+            .animation(.easeInOut(duration: 0.2), value: nextPassLoadingState)
         }
-        .background(background(satellite: satellite))
-        .clipShape(
-            RoundedRectangle(
-                cornerRadius: 8,
-                style: .continuous
-            )
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(Color(UIColor.systemBackground))
+                .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
         )
-    }
-    
-    @ViewBuilder private var fallbackText: some View {
-        Text(SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedDescription(satellite))
-            .font(.subheadline)
-            .multilineTextAlignment(.leading)
-            .foregroundColor(colorScheme == .light ? Color(UIColor.systemGray2) : Color(UIColor.systemGray4))
-            .vibrancyEffect()
     }
 }
 
@@ -179,6 +171,7 @@ extension SatelliteOverviewCell {
         let title: Text
         let currentDate: Date
         let julianDateOffset: Double
+        let isDarkBackground: Bool
         
         @Environment(\.colorScheme) private var colorScheme
         @State private var isFlashing = false
@@ -196,13 +189,16 @@ extension SatelliteOverviewCell {
             
             if currentJulianDate >= pass.rise.julianDate && currentJulianDate <= pass.set.julianDate {
                 Text("Passing now!", bundle: .module, comment: "A string describing that the satellite is currently passing")
-                    .font(.subheadline)
+                    .font(.subheadline.monospacedDigit())
                     .fontWeight(.bold)
                     .foregroundColor(isFlashing ? .pink : .orange)
                     .onAppear {
                         withAnimation(Animation.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) {
                             isFlashing = true
                         }
+                    }
+                    .onDisappear {
+                        isFlashing = false
                     }
             } else {
                 let calendar = Calendar.current
@@ -212,7 +208,7 @@ extension SatelliteOverviewCell {
                         .font(.subheadline)
                         .foregroundStyle(
                             LinearGradient(
-                                colors: [.blue, .purple],
+                                colors: [.cyan, .blue],
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
@@ -222,15 +218,15 @@ extension SatelliteOverviewCell {
                         .font(.subheadline)
                         .foregroundStyle(
                             LinearGradient(
-                                colors: [Color(red: 0.5, green: 0.2, blue: 0.8), Color(red: 0.8, green: 0.2, blue: 0.5)],
+                                colors: [.orange, .pink],
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
                         )
                 }
                 let countdownText = Text(Self.durationFormatter.localizedString(fromTimeInterval: timeUntilRise))
-                    .font(.subheadline)
-                    .foregroundColor(.primary)
+                    .font(.subheadline.monospacedDigit())
+                    .foregroundColor(isDarkBackground ? .white : .secondary)
                 amOrPmText + countdownText
             }
         }
@@ -240,11 +236,17 @@ extension SatelliteOverviewCell {
                 title
                     .font(.subheadline)
                     .fontWeight(.medium)
-                    .foregroundColor(.primary)
+                    .foregroundColor(isDarkBackground ? .white : .secondary)
                 
                 Spacer()
                 
-                countdownText
+                // Fixed width container to prevent layout shifts
+                HStack {
+                    Spacer()
+                    countdownText
+                }
+                .frame(minWidth: 120, alignment: .trailing)
+                .animation(.easeInOut(duration: 0.2), value: currentDate)
             }
         }
     }
@@ -269,7 +271,7 @@ struct SatelliteOverviewCell_Previews: PreviewProvider {
                                 nextPassLoadingState: .notLoaded,
                                 currentDate: Date(timeIntervalSinceReferenceDate: 0),
                                 julianDateOffset: 0,
-                                isMissingLocation: false
+                                isMissingLocation: false,
                             )
 
                             // Loading state
@@ -278,7 +280,7 @@ struct SatelliteOverviewCell_Previews: PreviewProvider {
                                 nextPassLoadingState: .loading,
                                 currentDate: Date(timeIntervalSinceReferenceDate: 0),
                                 julianDateOffset: 0,
-                                isMissingLocation: false
+                                isMissingLocation: false,
                             )
                             
                             // Error state
@@ -287,7 +289,7 @@ struct SatelliteOverviewCell_Previews: PreviewProvider {
                                 nextPassLoadingState: .failed(URLError(.notConnectedToInternet)),
                                 currentDate: Date(timeIntervalSinceReferenceDate: 0),
                                 julianDateOffset: 0,
-                                isMissingLocation: false
+                                isMissingLocation: false,
                             )
                             
                             // Loaded state with both visible and prominent passes
@@ -315,7 +317,7 @@ struct SatelliteOverviewCell_Previews: PreviewProvider {
                                 ),
                                 currentDate: Date(timeIntervalSinceReferenceDate: 0),
                                 julianDateOffset: 0,
-                                isMissingLocation: false
+                                isMissingLocation: false,
                             )
                             
                             // Loaded state with no upcoming passes
@@ -326,7 +328,7 @@ struct SatelliteOverviewCell_Previews: PreviewProvider {
                                 ),
                                 currentDate: Date(timeIntervalSinceReferenceDate: 0),
                                 julianDateOffset: 0,
-                                isMissingLocation: false
+                                isMissingLocation: false,
                             )
                         }
                     )

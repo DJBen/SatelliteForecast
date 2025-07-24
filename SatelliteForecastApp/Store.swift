@@ -44,7 +44,12 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         Reducer.realtimeSkyOutputReducer.lift(),
         Reducer.rootViewReducer.lift(),
         Reducer.passAlarmSettingsModalReducer.lift(),
-        Reducer.detailedPassViewReducer.lift()
+        Reducer.detailedPassViewReducer.lift(),
+        Reducer<OnboardingAction, OnboardingViewState>.onboardingReducer
+        .lift(
+            action: \.onboarding,
+            state: \.onboardingState
+        )
     ]
     .reduce(Reducer<AppAction, AppState>.identity, <>)
 

@@ -130,20 +130,18 @@ public struct SkyChart<ConstellationLabel: View, BackgroundAnnotationView: View>
                     }
 
                     // Illumination change labels
-                    ForEach(context.pass.illumination.changes, id: \.datePosition) { change in
-                        if let illuminationChangeAndSnapshots = context.notableSnapshots.illuminationChanges.value(of: change.datePosition.julianDate) {
-                            SkyChartPassLabel(
-                                snapshotPair: illuminationChangeAndSnapshots.snapshots,
-                                rect: rect,
-                                modifierFactory: PassLabelModifier.init(rotationAngle:)
-                            ) {
-                                Text(
-                                    SkyChartPassLabel<PassLabelModifier, Text>.textForIlluminationChange(
-                                        change,
-                                        dateFormatter: SkyChartUtils.labelDateFormatter
-                                    )
+                    ForEach(context.notableSnapshots.illuminationChanges, id: \.change.datePosition) { illuminationChanges in
+                        SkyChartPassLabel(
+                            snapshotPair: illuminationChanges.snapshots,
+                            rect: rect,
+                            modifierFactory: PassLabelModifier.init(rotationAngle:)
+                        ) {
+                            Text(
+                                SkyChartPassLabel<PassLabelModifier, Text>.textForIlluminationChange(
+                                    illuminationChanges.change,
+                                    dateFormatter: SkyChartUtils.labelDateFormatter
                                 )
-                            }
+                            )
                         }
                     }
                 }

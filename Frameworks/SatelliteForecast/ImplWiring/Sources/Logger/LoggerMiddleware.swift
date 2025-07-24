@@ -117,6 +117,8 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                     }
                 case .detailedPassView(let detailedPassAction):
                     print(detailedPassAction)
+                case .onboarding(let onboardingAction):
+                    print(onboardingAction)
                 }
             }
         }

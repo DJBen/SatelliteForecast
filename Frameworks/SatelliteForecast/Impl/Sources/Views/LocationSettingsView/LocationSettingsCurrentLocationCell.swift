@@ -35,7 +35,9 @@ public struct LocationSettingsCurrentLocationCell: View {
             if let _ = currentLocation {
                 Image(systemName: "location")
             } else {
-                Image(systemName: "location.slash").symbolRenderingMode(.hierarchical)
+                Image(systemName: "location.slash")
+                    .symbolRenderingMode(.palette)
+                    .foregroundStyle(.red, Color(uiColor: .label))
             }
 
             VStack(alignment: .leading, spacing: 2) {

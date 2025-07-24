@@ -14,34 +14,46 @@ import SwiftUIVisualEffects
 
 /// A world map showing the satellite ground tracks akin to that of mission control room of space agencies.
 struct MissionControlView: View {
-    var currentDateCoordinate: DateCoordinate
-    var satelliteGroundTrack: [DateCoordinate]
+    let satelliteInfo: SatelliteInfo
+    let julianDateProvider: () -> Double
+    let julianDateOffset: Double
 
-    @State var viewportIsOriginal: Bool = true
-    var showResetButton: Bool {
-        !viewportIsOriginal
-    }
-
+    @State private var currentDateCoordinate: DateCoordinate?
+    @State private var satelliteGroundTrack: [DateCoordinate] = []
+    
     enum ZoomLevel: Equatable, Hashable {
         case global
         case close
     }
 
     @State var zoomLevel: ZoomLevel = .global
-
-    @State private var resetButtonPublisher = PassthroughSubject<Void, Never>()
+    
+    // Timer for updating satellite position and ground track
+    private let refreshTimer = Timer.publish(
+        every: 0.25,
+        on: .main,
+        in: .common
+    )
+    .autoconnect()
 
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         ZStack(alignment: .topLeading) {
-            MissionControlViewControllerWrapperView(
-                currentDateCoordinate: currentDateCoordinate,
-                satelliteGroundTrack: satelliteGroundTrack,
-                viewportIsOriginal: $viewportIsOriginal,
-                zoomLevel: $zoomLevel,
-                resetButtonTappedPublisher: resetButtonPublisher.eraseToAnyPublisher()
-            )
+            if let currentDateCoordinate = currentDateCoordinate {
+                MissionControlViewControllerWrapperView(
+                    currentDateCoordinate: currentDateCoordinate,
+                    satelliteGroundTrack: satelliteGroundTrack,
+                    zoomLevel: $zoomLevel,
+                )
+            } else {
+                // Show loading state while computing initial position
+                Color.gray.opacity(0.3)
+                    .overlay(
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle())
+                    )
+            }
 
             VStack(alignment: .leading) {
                 Picker(
@@ -70,65 +82,51 @@ struct MissionControlView: View {
                 .cornerRadius(8)
                 .blurEffectStyle(colorScheme == .light ? .systemChromeMaterialLight : .systemChromeMaterialDark)
                 .vibrancyEffectStyle(.fill)
-
-                if showResetButton {
-                    Button(
-                        NSLocalizedString(
-                            "MissionControlView.resetButton.title",
-                            tableName: nil,
-                            bundle: .module,
-                            value: "Recenter",
-                            comment: """
-                            The title for the reset button within mission control view to restore the
-                            viewport to its orignal position.
-                            """
-                        )
-                    ) {
-                        resetButtonPublisher.send(())
-                    }
-                    .padding([.top, .bottom], 8)
-                    .padding([.leading, .trailing], 8)
-                    .vibrancyEffect()
-                    .background(
-                        Color.clear.blurEffect()
-                    )
-                    .cornerRadius(8)
-                    .blurEffectStyle(colorScheme == .light ? .systemChromeMaterialLight : .systemChromeMaterialDark)
-                    .vibrancyEffectStyle(.fill)
-                }
             }
             .padding(8)
         }
         .cornerRadius(16)
+        .onAppear {
+            updateMissionControlState()
+        }
+        .onReceive(refreshTimer) { _ in
+            updateMissionControlState()
+        }
+    }
+    
+    private func updateMissionControlState() {
+        let jd = julianDateProvider() + julianDateOffset
+        do {
+            let satelliteCoordinate = try Satellite(
+                withTLE: satelliteInfo.elements
+            ).geoPosition(
+                julianDays: jd
+            )
+            let groundTrack = try satelliteInfo.elements.generateGroundTrack(
+                julianDateRange: jd...(jd + TimeConstants.hrs2day * 4),
+                interval: 10 * TimeConstants.min2day
+            )
+            currentDateCoordinate = DateCoordinate(julianDate: jd, coordinate: satelliteCoordinate)
+            satelliteGroundTrack = groundTrack
+        } catch {
+            print("Error generating ground track: \(error)")
+        }
     }
 }
 
 struct MissionControlViewControllerWrapperView: UIViewControllerRepresentable {
     class Coordinator: NSObject, MissionControlViewControllerDelegate {
-        @Binding var viewportIsOriginal: Bool
 
-        init(viewportIsOriginal: Binding<Bool>) {
-            self._viewportIsOriginal = viewportIsOriginal
-        }
-
-        func missionControlDidChangeViewPort(_ viewController: MissionControlViewController) {
-            viewportIsOriginal = false
-        }
-
-        func missionControlDidResetViewport(_ viewController: MissionControlViewController) {
-            viewportIsOriginal = true
-        }
     }
 
     var currentDateCoordinate: DateCoordinate
     var satelliteGroundTrack: [DateCoordinate]
-    @Binding var viewportIsOriginal: Bool
     @Binding var zoomLevel: MissionControlView.ZoomLevel
-    var resetButtonTappedPublisher: AnyPublisher<Void, Never>
 
     func makeUIViewController(context: Context) -> MissionControlViewController {
         let viewController = MissionControlViewController(
-            resetButtonTappedPublisher: resetButtonTappedPublisher
+            currentDateCoordinate: currentDateCoordinate,
+            dateCoordinates: satelliteGroundTrack
         )
         viewController.delegate = context.coordinator
         return viewController
@@ -144,14 +142,12 @@ struct MissionControlViewControllerWrapperView: UIViewControllerRepresentable {
 
     func makeCoordinator() -> Coordinator {
         Coordinator(
-            viewportIsOriginal: $viewportIsOriginal
+            
         )
     }
 }
 
 @objc protocol MissionControlViewControllerDelegate {
-    func missionControlDidChangeViewPort(_ viewController: MissionControlViewController)
-    func missionControlDidResetViewport(_ viewController: MissionControlViewController)
 }
 
 // Subclassing `MKGeodesicPolyline` leads to a strange crash.
@@ -178,18 +174,21 @@ class MissionControlViewController: UIViewController {
 
     var currentDateCoordinate: DateCoordinate?
     var dateCoordinates: [DateCoordinate]?
+    var currentZoomLevel: MissionControlView.ZoomLevel?
+    
+    private var currentPositionAnnotation: CurrentPositionAnnotation?
 
     var cancellables = Set<AnyCancellable>()
 
     init(
-        resetButtonTappedPublisher: AnyPublisher<Void, Never>
+        currentDateCoordinate: DateCoordinate,
+        dateCoordinates: [DateCoordinate]
     ) {
         super.init(nibName: nil, bundle: nil)
 
-        resetButtonTappedPublisher.sink(receiveValue: { [unowned self] in
-            self.resetViewport()
-        })
-        .store(in: &cancellables)
+        // Set initial data
+        self.currentDateCoordinate = currentDateCoordinate
+        self.dateCoordinates = dateCoordinates
     }
 
     required init?(coder: NSCoder) {
@@ -218,37 +217,30 @@ class MissionControlViewController: UIViewController {
         mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         mapView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         mapView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+        
+        // Create initial satellite annotation immediately
+        currentPositionAnnotation = CurrentPositionAnnotation()
+        
+        // Use the provided initial coordinate data
+        let coordinate = CLLocationCoordinate2D(currentDateCoordinate!.coordinate)
+        currentPositionAnnotation!.coordinate = coordinate
+        mapView.setCenter(coordinate, animated: false)
+        
+        // Add initial ground track overlays
+        addGroundTrackOverlays(dateCoordinates: dateCoordinates!, currentCoordinate: currentDateCoordinate!)
+        
+        mapView.addAnnotation(currentPositionAnnotation!)
     }
-
-    func setState(
-        currentDateCoordinate: DateCoordinate,
-        dateCoordinates: [DateCoordinate],
-        zoomLevel: MissionControlView.ZoomLevel
-    ) {
-        // Rezoom camera if zoom level has changed
-        if mapView.camera.centerCoordinateDistance != 0 && abs(mapView.camera.centerCoordinateDistance - centerCoordinateDistance(for: zoomLevel)) > 1 {
-            let camera = MKMapCamera(
-                lookingAtCenter: CLLocationCoordinate2D(currentDateCoordinate.coordinate),
-                fromEyeCoordinate: CLLocationCoordinate2D(currentDateCoordinate.coordinate),
-                eyeAltitude: centerCoordinateDistance(for: zoomLevel)
-            )
-            mapView.setCamera(camera, animated: true)
-        }
-
-        if self.currentDateCoordinate == currentDateCoordinate && self.dateCoordinates == dateCoordinates {
-            return
-        }
-
-        if self.currentDateCoordinate == nil {
-            mapView.setCenter(CLLocationCoordinate2D(currentDateCoordinate.coordinate), animated: true)
-        }
-        self.currentDateCoordinate = currentDateCoordinate
-
+    
+    private func addGroundTrackOverlays(dateCoordinates: [DateCoordinate], currentCoordinate: DateCoordinate) {
+        // Remove existing overlays
         mapView.overlays
             .filter { $0 is MKGeodesicPolyline }
             .forEach { mapView.removeOverlay($0) }
+            
+        // Create new overlays
         let beforeDataset = dateCoordinates.prefix(
-            while: { $0.julianDate <= currentDateCoordinate.julianDate }
+            while: { $0.julianDate <= currentCoordinate.julianDate }
         )
         let polyline = MKGeodesicPolyline(
             points: beforeDataset
@@ -257,8 +249,9 @@ class MissionControlViewController: UIViewController {
         )
         polyline.sf_identifier = "before"
         mapView.addOverlay(polyline)
+        
         let afterDataset = dateCoordinates.drop(
-            while: { $0.julianDate < currentDateCoordinate.julianDate }
+            while: { $0.julianDate < currentCoordinate.julianDate }
         )
         let afterPolyline = MKGeodesicPolyline(
             points: Array(afterDataset)
@@ -267,23 +260,67 @@ class MissionControlViewController: UIViewController {
         )
         afterPolyline.sf_identifier = "after"
         mapView.addOverlay(afterPolyline)
-
-        var currentPositionAnnotation: CurrentPositionAnnotation
-        if let existingAnnotation = mapView.annotations.first(where: { $0 is CurrentPositionAnnotation }) as? CurrentPositionAnnotation {
-            currentPositionAnnotation = existingAnnotation
-        } else {
-            currentPositionAnnotation = CurrentPositionAnnotation()
-            mapView.addAnnotation(currentPositionAnnotation)
-        }
-        UIView.animate(withDuration: 5, delay: 0, options: [.curveLinear]) {
-            currentPositionAnnotation.coordinate = CLLocationCoordinate2D(currentDateCoordinate.coordinate)
-        }
-        self.dateCoordinates = dateCoordinates
     }
 
-    func resetViewport() {
-        if let currentDateCoordinate = currentDateCoordinate {
-            mapView.setCenter(CLLocationCoordinate2D(currentDateCoordinate.coordinate), animated: true)
+    func setState(
+        currentDateCoordinate: DateCoordinate,
+        dateCoordinates: [DateCoordinate],
+        zoomLevel: MissionControlView.ZoomLevel
+    ) {
+        let isInitialSetup = self.currentDateCoordinate == nil
+        let coordinateChanged = self.currentDateCoordinate != currentDateCoordinate
+        let dateCoordinatesChanged = self.dateCoordinates != dateCoordinates
+        let zoomLevelChanged = self.currentZoomLevel != zoomLevel
+        
+        // Only recenter and zoom when zoom level is explicitly changed by user
+        if zoomLevelChanged {
+            let camera = MKMapCamera(
+                lookingAtCenter: CLLocationCoordinate2D(currentDateCoordinate.coordinate),
+                fromEyeCoordinate: CLLocationCoordinate2D(currentDateCoordinate.coordinate),
+                eyeAltitude: centerCoordinateDistance(for: zoomLevel)
+            )
+            mapView.setCamera(camera, animated: true)
+            self.currentZoomLevel = zoomLevel
+        }
+
+        // Early return if nothing changed
+        if !coordinateChanged && !dateCoordinatesChanged {
+            return
+        }
+
+        // Only set initial center once, without interrupting user interaction
+        if isInitialSetup {
+            mapView.setCenter(CLLocationCoordinate2D(currentDateCoordinate.coordinate), animated: false)
+            self.currentZoomLevel = zoomLevel
+        }
+        
+        // Update stored values
+        self.currentDateCoordinate = currentDateCoordinate
+        
+        // Only update overlays if the date coordinates array actually changed
+        if dateCoordinatesChanged {
+            addGroundTrackOverlays(dateCoordinates: dateCoordinates, currentCoordinate: currentDateCoordinate)
+            self.dateCoordinates = dateCoordinates
+        }
+
+        // Handle satellite annotation updates
+        let targetCoordinate = CLLocationCoordinate2D(currentDateCoordinate.coordinate)
+        
+        // Ensure annotation exists and is positioned correctly
+        if currentPositionAnnotation == nil {
+            currentPositionAnnotation = CurrentPositionAnnotation()
+            mapView.addAnnotation(currentPositionAnnotation!)
+        }
+        
+        // Always update the satellite position when we get new coordinates
+        if isInitialSetup {
+            // For initial setup, position annotation immediately
+            updateSatellitePosition(targetCoordinate)
+            // Also center the map on the satellite for initial view
+            mapView.setCenter(targetCoordinate, animated: false)
+        } else if coordinateChanged {
+            // Update satellite position immediately
+            updateSatellitePosition(targetCoordinate)
         }
     }
 
@@ -295,34 +332,42 @@ class MissionControlViewController: UIViewController {
             return 2_000_000
         }
     }
+    
+    private func updateSatellitePosition(_ coordinate: CLLocationCoordinate2D) {
+        // Ensure we have an annotation
+        if currentPositionAnnotation == nil {
+            currentPositionAnnotation = CurrentPositionAnnotation()
+            mapView.addAnnotation(currentPositionAnnotation!)
+        }
+        
+        currentPositionAnnotation?.coordinate = coordinate
+    }
 }
 
 extension MissionControlViewController: MKMapViewDelegate {
-    func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
-        guard let coordinate = self.currentDateCoordinate?.coordinate else {
-            return
-        }
-        let tolerance = mapView.camera.centerCoordinateDistance == 0 ? 1e-5 : mapView.camera.centerCoordinateDistance * 1e-10
-        if mapView.centerCoordinate.close(to: CLLocationCoordinate2D(coordinate), tolerance: tolerance) {
-            delegate?.missionControlDidResetViewport(self)
-        } else {
-            delegate?.missionControlDidChangeViewPort(self)
-        }
-    }
-
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        let identifier = "currentPosition"
-        guard let annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKMarkerAnnotationView else {
+        guard annotation is CurrentPositionAnnotation else {
             return nil
         }
-        annotationView.canShowCallout = false
-        annotationView.glyphImage = UIImage(
+        
+        let identifier = "currentPosition"
+        var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKMarkerAnnotationView
+        
+        if annotationView == nil {
+            annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+        } else {
+            annotationView?.annotation = annotation
+        }
+        
+        annotationView?.canShowCallout = false
+        annotationView?.glyphImage = UIImage(
             named: "glyph_satellite",
             in: .module,
             compatibleWith: nil
         )
-        annotationView.markerTintColor = .systemOrange
-        annotationView.glyphTintColor = .white
+        annotationView?.markerTintColor = .systemOrange
+        annotationView?.glyphTintColor = .white
+        
         return annotationView
     }
 
@@ -395,7 +440,7 @@ extension MissionControlViewController: MKMapViewDelegate {
 #if DEBUG
 
 struct MissionControlView_Previews: PreviewProvider {
-    static let issGroundTrack: [DateCoordinate] = {
+    static var previews: some View {
         let elements = try! Elements(
             raw: """
             ISS (ZARYA)
@@ -403,19 +448,13 @@ struct MissionControlView_Previews: PreviewProvider {
             2 25544  51.6453  62.2423 0003364  52.3737  88.5313 15.48937685286109
             """
         )
+        
+        let satelliteInfo = try! SatelliteInfo(elements: elements)
 
-        let formatter = ISO8601DateFormatter()
-
-        return try! elements.generateGroundTrack(
-            julianDateRange: formatter.date(from: "2021-06-02T20:32:00+0800")!.julianDate...formatter.date(from: "2021-06-02T22:32:00+0800")!.julianDate,
-            interval: 60 * TimeConstants.sec2day
-        )
-    }()
-
-    static var previews: some View {
         MissionControlView(
-            currentDateCoordinate: issGroundTrack[issGroundTrack.count / 2],
-            satelliteGroundTrack: issGroundTrack
+            satelliteInfo: satelliteInfo,
+            julianDateProvider: { Date().julianDate },
+            julianDateOffset: 0
         )
         .frame(width: 368, height: 280)
     }
