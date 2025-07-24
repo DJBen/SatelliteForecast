@@ -41,7 +41,7 @@ struct SatelliteOverviewCell: View {
             // Background video
             let videoName = satellite == .iss ? "iss" : "tiangong"
             AutoPlayVideoView(videoName: videoName, bundle: .module)
-                .frame(height: 240)
+                .frame(height: 225)
                 .clipped()
             
             // Pass information section
@@ -53,7 +53,7 @@ struct SatelliteOverviewCell: View {
                         .foregroundColor(.red)
                         .multilineTextAlignment(.leading)
                 case .loaded(let nextPass):
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: 4) {
                         if let nextVisiblePass = nextPass.nextVisiblePass, let highestIlluminated = nextVisiblePass.highestIlluminated {
                             SatelliteOverviewCell.PassCountdownView(
                                 pass: nextVisiblePass,
@@ -101,10 +101,9 @@ struct SatelliteOverviewCell: View {
                         .foregroundColor(.secondary)
                 }
             }
-            .padding(.vertical, 12)
+            .padding(.vertical, 8)
             .padding(.horizontal, 16)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .frame(minHeight: 80) // Ensure consistent minimum height
             .background(Color(UIColor.systemBackground))
             .animation(.easeInOut(duration: 0.2), value: nextPassLoadingState)
         }

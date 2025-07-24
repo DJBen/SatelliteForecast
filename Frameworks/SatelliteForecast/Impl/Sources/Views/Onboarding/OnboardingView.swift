@@ -32,12 +32,14 @@ public struct OnboardingPage {
     let description: String
     let videoName: String
     let videoExtension: String
+    let customView: ((GeometryProxy) -> AnyView)?
     
-    public init(title: String, description: String, videoName: String, videoExtension: String) {
+    public init(title: String, description: String, videoName: String, videoExtension: String, customView: ((GeometryProxy) -> AnyView)? = nil) {
         self.title = title
         self.description = description
         self.videoName = videoName
         self.videoExtension = videoExtension
+        self.customView = customView
     }
 }
 
@@ -46,27 +48,40 @@ public struct OnboardingView: View {
     @State private var videoPlaybackTimes: [String: CMTime] = [:]
     let onComplete: () -> Void
     
-    private let pages: [OnboardingPage] = [
-        OnboardingPage(
-            title: "Welcome to Space Station Passes",
-            description: "Track the International Space Station, Tiangong and others as they pass overhead. Never miss a spectacular sight in the evening sky.",
-            videoName: "iss_pass_compilation",
-            videoExtension: "mov"
-        ),
-        OnboardingPage(
-            title: "Accurate Predictions, For You",
-            description: "Get accurate pass predictions for your location, whereever you are in the world. We'll notify you when spectacular viewing opportunities are approaching.",
-            videoName: "",
-            videoExtension: ""
-        ),
-    ]
-    
     public init(onComplete: @escaping () -> Void) {
         self.onComplete = onComplete
     }
     
     public var body: some View {
-        TabView(selection: $currentPage) {
+        let pages: [OnboardingPage] = [
+            OnboardingPage(
+                title: "Welcome to Space Station Passes",
+                description: "Track the International Space Station, Tiangong and others as they pass overhead. Never miss a spectacular sight in the evening sky.",
+                videoName: "iss_pass_compilation",
+                videoExtension: "mov"
+            ),
+            OnboardingPage(
+                title: "Accurate Predictions, For You",
+                description: "Get accurate pass predictions for your location, wherever you are in the world. We'll notify you when spectacular viewing opportunities are approaching.",
+                videoName: "",
+                videoExtension: "",
+                customView: { _ in
+                    AnyView(
+                        LinearGradient(
+                            gradient: Gradient(colors: [
+                                Color.purple.opacity(0.8),
+                                Color.blue.opacity(0.6),
+                                Color.black
+                            ]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                }
+            ),
+        ]
+        
+        return TabView(selection: $currentPage) {
             ForEach(0..<pages.count, id: \.self) { index in
                 OnboardingPageView(
                     page: pages[index],
@@ -97,8 +112,13 @@ private struct OnboardingPageView: View {
     var body: some View {
         ZStack {
             GeometryReader { geometry in
-                // Background video or gradient
-                if !page.videoName.isEmpty,
+                // Background video, custom view, or gradient
+                if let customView = page.customView {
+                    customView(geometry)
+                        .frame(width: geometry.size.width, height: geometry.size.height)
+                        .ignoresSafeArea(.all)
+                        .clipped()
+                } else if !page.videoName.isEmpty,
                    let videoURL = Bundle.module.url(forResource: page.videoName, withExtension: page.videoExtension) {
                     VideoPlayer(player: player)
                         .aspectRatio(contentMode: .fill)
@@ -133,8 +153,8 @@ private struct OnboardingPageView: View {
                     gradient: Gradient(stops: [
                         Gradient.Stop(color: Color.clear, location: 0.0),
                         Gradient.Stop(color: Color.clear, location: 0.7),
-                        Gradient.Stop(color: Color.black.opacity(0.25), location: 0.8),
-                        Gradient.Stop(color: Color.black.opacity(0.25), location: 1.0)
+                        Gradient.Stop(color: Color.black.opacity(0.35), location: 0.78),
+                        Gradient.Stop(color: Color.black.opacity(0.35), location: 1.0)
                     ]),
                     startPoint: .top,
                     endPoint: .bottom
@@ -158,6 +178,7 @@ private struct OnboardingPageView: View {
                         Text(page.description)
                             .font(.headline)
                             .fontWeight(.medium)
+                            .foregroundStyle(Color(UIColor.secondaryLabel))
                             .multilineTextAlignment(.leading)
                             .lineLimit(nil)
                             .fixedSize(horizontal: false, vertical: true)
