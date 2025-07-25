@@ -67,10 +67,6 @@ public struct FlippingTextView: View {
                         .multilineTextAlignment(.center)
                         .offset(y: nextOffset)
                         .opacity(nextOpacity)
-                } else {
-                    Text(" ") // Placeholder for empty array
-                        .font(font)
-                        .fontWeight(fontWeight)
                 }
             }
             .frame(width: idealSize.width, height: idealSize.height)

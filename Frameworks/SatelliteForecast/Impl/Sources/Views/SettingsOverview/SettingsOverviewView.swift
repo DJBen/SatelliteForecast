@@ -307,7 +307,7 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                     }
                 }
             }
-            .navigationBarTitle("Settings", displayMode: .inline)
+            .navigationBarTitle(Text("Settings", bundle: .module), displayMode: .inline)
             .navigationBarHidden(true)
         }
     }

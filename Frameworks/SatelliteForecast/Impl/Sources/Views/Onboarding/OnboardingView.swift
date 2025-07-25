@@ -188,7 +188,7 @@ private struct OnboardingPageView: View {
                     if isLastPage {
                             Button(action: onComplete) {
                                 HStack {
-                                    Text("Get Started")
+                                    Text("Get Started", bundle: .module)
                                         .font(.headline)
                                         .fontWeight(.semibold)
                                     
@@ -204,7 +204,7 @@ private struct OnboardingPageView: View {
                             .padding(.top, 8)
                     } else {
                         HStack {
-                            Text("Swipe to continue")
+                            Text("Swipe to continue", bundle: .module)
                                 .font(.subheadline)
                                 .foregroundColor(.white.opacity(0.8))
                             

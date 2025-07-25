@@ -173,7 +173,7 @@ public struct LocationSettingsView: View {
         .searchable(
             text: $searchDebouncer.searchTerm,
             placement: .navigationBarDrawer(displayMode: .always),
-            prompt: "Enter address"
+            prompt: Text("Enter address", bundle: .module)
         )
         .navigationTitle(Text("Select Location", bundle: .module))
         .onReceive(

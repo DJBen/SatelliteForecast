@@ -8,9 +8,6 @@
 "%@ kg" = "%@ kg";
 
 /* No comment provided by engineer. */
-"%@ Location needed to calculate satellite passes. Your experience may be degraded." = "%@ Localização necessária para calcular passagens de satélites. Sua experiência pode ser prejudicada.";
-
-/* No comment provided by engineer. */
 "%@ Manually select a location" = "%@ Selecionar manualmente uma localização";
 
 /* No comment provided by engineer. */
@@ -205,6 +202,12 @@
 /* No comment provided by engineer. */
 "Freeze time" = "Congelar tempo";
 
+/* Onboarding page 2 description */
+"Get accurate pass predictions for your location. We'll notify you when viewing opportunities arise." = "Obtenha previsões precisas de passagens para sua localização. Nós notificaremos você quando surgirem oportunidades de visualização.";
+
+/* No comment provided by engineer. */
+"Get Started" = "Começar";
+
 /* No comment provided by engineer. */
 "Hello, World!" = "Olá, Mundo!";
 
@@ -224,6 +227,9 @@
 "Location change" = "Alteração de localização";
 
 /* No comment provided by engineer. */
+"Location needed to calculate satellite passes. Your experience may be degraded." = "Localização necessária para calcular passagens de satélite. Sua experiência pode ser prejudicada.";
+
+/* No comment provided by engineer. */
 "Location not available" = "Localização não disponível";
 
 /* No comment provided by engineer. */
@@ -231,10 +237,6 @@
 
 /* No comment provided by engineer. */
 "Mercury" = "Mercúrio";
-
-/* The title for the reset button within mission control view to restore the
-viewport to its orignal position. */
-"MissionControlView.resetButton.title" = "Recentralizar";
 
 /* No comment provided by engineer. */
 "Mock date and time" = "Data e hora fictícias";
@@ -286,6 +288,9 @@ viewport to its orignal position. */
 
 /* The title for the satellite pass notification. */
 "Notification.upcomingPass.title.now" = "%1$@ está nascendo agora";
+
+/* No comment provided by engineer. */
+"Onboarding" = "Introdução";
 
 /* No comment provided by engineer. */
 "Open location settings" = "Abra as configurações de localização";
@@ -353,6 +358,9 @@ Navigation title of pass alarm settings. */
 
 /* No comment provided by engineer. */
 "Point camera skyward and screen downward" = "Apontar câmera para o céu e tela para baixo";
+
+/* Onboarding page 2 title */
+"Predictions for You" = "Previsões para você";
 
 /* No comment provided by engineer. */
 "Prominent pass %@%lld°" = "Passagem proeminente %@%lld°";
@@ -517,6 +525,9 @@ The localized string for the status of a spare satellite */
 /* No comment provided by engineer. */
 "Sun" = "Sol";
 
+/* No comment provided by engineer. */
+"Swipe to continue" = "Deslize para continuar";
+
 /* The title of the 'Forecast' tab of the root view. */
 "tabs.forecast.text" = "Previsão de passagem";
 
@@ -547,6 +558,9 @@ The localized string for the status of a spare satellite */
 /* No comment provided by engineer. */
 "Time interval %@" = "Intervalo de tempo %@";
 
+/* Onboarding page 1 description */
+"Track the International Space Station, Tiangong and others as they pass overhead. Never miss a spectacular sight in the evening sky." = "Acompanhe a Estação Espacial Internacional, Tiangong e outros enquanto passam acima de você. Nunca perca um espetáculo no céu da noite.";
+
 /* No comment provided by engineer. */
 "Unable to load pass information" = "Incapaz de carregar informações da passagem";
 
@@ -558,6 +572,9 @@ The localized string for the status of a spare satellite */
 
 /* No comment provided by engineer. */
 "Visible pass %@%lld°" = "Passagem visível %@%lld°";
+
+/* Onboarding page 1 title */
+"Welcome to Space Station Passes" = "Bem-vindo ao Passes da Estação Espacial";
 
 /* No comment provided by engineer. */
 "Your alarms will appear here. Schedule an alarm by tapping the %@ inside a pass." = "Seus alarmes aparecerão aqui. Programe um alarme tocando o %@ dentro de uma passagem.";

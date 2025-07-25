@@ -13,6 +13,13 @@ import SwiftUI
 import SwiftUIVisualEffects
 import AVKit
 
+private let durationFormatter: RelativeDateTimeFormatter = {
+    let formatter = RelativeDateTimeFormatter()
+    formatter.dateTimeStyle = .named
+    formatter.formattingContext = .middleOfSentence
+    return formatter
+}()
+
 struct SatelliteOverviewCell: View {
     let satellite: SatelliteCategory
     let nextPassLoadingState: Loadable<NextPass, Error>
@@ -57,7 +64,9 @@ struct SatelliteOverviewCell: View {
                         if let nextVisiblePass = nextPass.nextVisiblePass, let highestIlluminated = nextVisiblePass.highestIlluminated {
                             SatelliteOverviewCell.PassCountdownView(
                                 pass: nextVisiblePass,
-                                title: Text("Visible pass \(Image(systemName: "angle"))\(Int(highestIlluminated.elev.rounded()))°", bundle: .module),
+                                title: Text("Visible pass \(Image(systemName: "angle"))\(Int(highestIlluminated.elev.rounded()))°", bundle: .module)
+                                    .minimumScaleFactor(0.75)
+                                    .lineLimit(1),
                                 currentDate: currentDate,
                                 julianDateOffset: julianDateOffset,
                                 isDarkBackground: true
@@ -66,7 +75,9 @@ struct SatelliteOverviewCell: View {
                         if let nextProminentPass = nextPass.nextProminentPass, let highestIlluminated = nextProminentPass.highestIlluminated {
                             SatelliteOverviewCell.PassCountdownView(
                                 pass: nextProminentPass,
-                                title: Text("Prominent pass \(Image(systemName: "angle"))\(Int(highestIlluminated.elev.rounded()))°", bundle: .module),
+                                title: Text("Prominent pass \(Image(systemName: "angle"))\(Int(highestIlluminated.elev.rounded()))°", bundle: .module)
+                                    .minimumScaleFactor(0.75)
+                                    .lineLimit(1),
                                 currentDate: currentDate,
                                 julianDateOffset: julianDateOffset,
                                 isDarkBackground: true
@@ -166,22 +177,15 @@ extension SatelliteOverviewCell {
     }
     
     /// A reusable view component for displaying pass countdown information
-    struct PassCountdownView: View {
+    struct PassCountdownView<TextView: View>: View {
         let pass: Pass
-        let title: Text
+        let title: TextView
         let currentDate: Date
         let julianDateOffset: Double
         let isDarkBackground: Bool
         
         @Environment(\.colorScheme) private var colorScheme
         @State private var isFlashing = false
-
-        private static let durationFormatter: RelativeDateTimeFormatter = {
-            let formatter = RelativeDateTimeFormatter()
-            formatter.dateTimeStyle = .named
-            formatter.formattingContext = .middleOfSentence
-            return formatter
-        }()
         
         @ViewBuilder private var countdownText: some View {
             let currentJulianDate = currentDate.julianDate + julianDateOffset
@@ -224,10 +228,12 @@ extension SatelliteOverviewCell {
                             )
                         )
                 }
-                let countdownText = Text(Self.durationFormatter.localizedString(fromTimeInterval: timeUntilRise))
+                let countdownText = Text(durationFormatter.localizedString(fromTimeInterval: timeUntilRise))
                     .font(.subheadline.monospacedDigit())
                     .foregroundColor(isDarkBackground ? .white : .secondary)
-                amOrPmText + countdownText
+                (amOrPmText + countdownText)
+                    .minimumScaleFactor(0.75)
+                    .lineLimit(1)
             }
         }
         
