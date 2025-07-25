@@ -105,19 +105,6 @@ private struct OnboardingPageView: View {
     @State private var player: AVPlayer?
     @State private var timeObserver: Any?
     
-    // Compute video offset based on locale
-    private var videoVerticalOffset: CGFloat {
-        let currentLocale = Locale.current
-        let languageCode = currentLocale.language.languageCode?.identifier ?? ""
-        
-        // Don't offset for Chinese locales, offset others by moving up the video a bit
-        if languageCode.hasPrefix("zh") {
-            return 0
-        } else {
-            return -40
-        }
-    }
-    
     var body: some View {
         ZStack {
             GeometryReader { geometry in
@@ -127,7 +114,7 @@ private struct OnboardingPageView: View {
                     VideoPlayer(player: player)
                         .aspectRatio(contentMode: .fill)
                         .frame(width: geometry.size.width, height: geometry.size.height)
-                        .offset(y: videoVerticalOffset)
+                        .offset(y: -40)
                         .ignoresSafeArea(.all)
                         .clipped()
                         .onAppear {
