@@ -16,7 +16,7 @@ public struct MotionManagerView<Content: View>: View {
     @Binding var isActive: Bool
     var content: (Loadable<CMDeviceMotion, Error>) -> Content
 
-    let refreshTimer = Timer.publish(
+    @State var refreshTimer = Timer.publish(
         every: 0.05,
         on: .main,
         in: .common

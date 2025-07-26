@@ -24,7 +24,7 @@ struct SkyChartDynamicIndicator: View {
 
     @State var snapshotPairAtReferenceDate: SnapshotsAroundPass?
 
-    let refreshTimer = Timer.publish(
+    @State var refreshTimer = Timer.publish(
         every: 0.2,
         on: .main,
         in: .common
@@ -36,13 +36,13 @@ struct SkyChartDynamicIndicator: View {
 
     static let labelDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.setLocalizedDateFormatFromTemplate("H:mm:ss.S")
+        formatter.setLocalizedDateFormatFromTemplate("H:mm:ss")
         return formatter
     }()
 
     static let labelAngleFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
-        formatter.maximumFractionDigits = 2
+        formatter.maximumFractionDigits = 1
         return formatter
     }()
 

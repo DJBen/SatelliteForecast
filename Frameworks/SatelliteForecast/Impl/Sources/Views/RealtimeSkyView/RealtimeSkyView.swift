@@ -72,7 +72,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
         self.backgroundSkyViewProducer = backgroundSkyViewProducer
     }
 
-    let refreshTimer = Timer.publish(
+    @State var refreshTimer = Timer.publish(
         every: 0.5,
         on: .main,
         in: .common

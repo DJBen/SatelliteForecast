@@ -56,7 +56,7 @@ public struct SkyChart<ConstellationLabel: View, BackgroundAnnotationView: View>
 
     @State private var contentSize: CGSize = .zero
 
-    let refreshTimer = Timer.publish(
+    @State var refreshTimer = Timer.publish(
         every: 10,
         on: .main,
         in: .common

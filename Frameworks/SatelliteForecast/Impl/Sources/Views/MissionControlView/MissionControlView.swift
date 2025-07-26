@@ -29,7 +29,7 @@ struct MissionControlView: View {
     @State var zoomLevel: ZoomLevel = .global
     
     // Timer for updating satellite position and ground track
-    private let refreshTimer = Timer.publish(
+    @State private var refreshTimer = Timer.publish(
         every: 0.25,
         on: .main,
         in: .common
