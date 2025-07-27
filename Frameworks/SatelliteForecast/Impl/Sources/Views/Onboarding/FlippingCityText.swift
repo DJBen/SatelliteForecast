@@ -24,7 +24,7 @@ private struct CityData {
             "Ciudad de México", "Buenos Aires", "Lima", "Bogotá", "Santiago", "Caracas", "Quito", "Guadalajara", "Monterrey", "Medellín", "La Paz"
         ],
         "pt": ["São Paulo", "Rio de Janeiro", "Brasília", "Salvador", "Fortaleza", "Belo Horizonte", "Manaus", "Curitiba"],
-        "zh_Hans": ["北京", "上海", "广州", "深圳", "成都", "杭州", "南京", "重庆", "西安"]
+        "zh-Hans": ["北京", "上海", "广州", "深圳", "成都", "杭州", "南京", "重庆", "西安"]
     ]
     
     static let localizedText: [String: (prefix: String, suffix: String, layout: LayoutType)] = [
@@ -32,7 +32,7 @@ private struct CityData {
         "fr": ("Voir l'ISS depuis", "", .vertical),
         "es": ("Ver la ISS desde", "", .vertical),
         "pt": ("Ver a ISS de", "", .vertical),
-        "zh_Hans": ("我在", "遇见天宫空间站", .horizontalPrefix)
+        "zh-Hans": ("我在", "遇见天宫空间站", .horizontalPrefix)
     ]
     
     static func getCities(for locale: String) -> [String] {
@@ -60,8 +60,8 @@ struct FlippingCityText: View {
             localeKey = "es"
         } else if currentLocale.hasPrefix("pt") {
             localeKey = "pt"
-        } else if currentLocale.hasPrefix("zh_Hans") {
-            localeKey = "zh_Hans"
+        } else if currentLocale.hasPrefix("zh") {
+            localeKey = "zh-Hans"
         } else {
             localeKey = "en"
         }
