@@ -6,18 +6,6 @@ import SwiftUI
 @preconcurrency import CombineRextensions
 import CoreLocation
 
-public enum SatelliteCategoryViewAction {
-    case navigate(
-        NavigationPath
-    )
-    
-    case loadCategory(
-        SatelliteCategory,
-        julianDateRange: ClosedRange<Double>,
-        observer: LatLonAlt?
-    )
-}
-
 public struct SatelliteCategoryViewState: Equatable {
     public var navigationPath: NavigationPath
     public var observer: LatLonAlt?

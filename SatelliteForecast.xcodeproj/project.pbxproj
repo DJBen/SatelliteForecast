@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -16,9 +16,7 @@
 		EF817489292A362B00A2F225 /* Elements+Preview.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF817484292A362B00A2F225 /* Elements+Preview.swift */; };
 		EF81748A292A362B00A2F225 /* visual.txt in Resources */ = {isa = PBXBuildFile; fileRef = EF817485292A362B00A2F225 /* visual.txt */; };
 		EF9D82A32661BBF100616C97 /* SatelliteForecastApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9D827A2661BBF000616C97 /* SatelliteForecastApp.swift */; };
-		FC19EC752DFEA459007C9731 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = FC19EC742DFEA459007C9731 /* FirebaseCore */; };
-		FC19EC772DFEA459007C9731 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = FC19EC762DFEA459007C9731 /* FirebaseFirestore */; };
-		FC19EC792DFEA459007C9731 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = FC19EC782DFEA459007C9731 /* FirebaseMessaging */; };
+		FC082B5F2E3617BD00DEEBBE /* AppDelegateImpl in Frameworks */ = {isa = PBXBuildFile; productRef = FC082B5E2E3617BD00DEEBBE /* AppDelegateImpl */; };
 		FC69A7782E1E334F002083EC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FC69A7762E1E334F002083EC /* InfoPlist.strings */; };
 		FC7A7E242DDEF1040026A8B9 /* SatelliteForecast in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E232DDEF1040026A8B9 /* SatelliteForecast */; };
 		FC7A7E262DDEF1040026A8B9 /* SatelliteForecastImpl in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E252DDEF1040026A8B9 /* SatelliteForecastImpl */; };
@@ -27,9 +25,6 @@
 		FC7A7E2D2DDF0E9A0026A8B9 /* SatelliteForecastImpl in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E2C2DDF0E9A0026A8B9 /* SatelliteForecastImpl */; };
 		FC7A7E2F2DDF0E9A0026A8B9 /* SatelliteForecastImplWiring in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E2E2DDF0E9A0026A8B9 /* SatelliteForecastImplWiring */; };
 		FC7A7E382DDFC8190026A8B9 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FC7A7E372DDFC8190026A8B9 /* GoogleService-Info.plist */; };
-		FC7A7E3C2DDFC9A80026A8B9 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E3B2DDFC9A80026A8B9 /* FirebaseAnalyticsWithoutAdIdSupport */; };
-		FC7A7E402DDFDCE40026A8B9 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E3F2DDFDCE40026A8B9 /* FirebaseCore */; };
-		FC7A7E422DDFDCE40026A8B9 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E412DDFDCE40026A8B9 /* FirebaseMessaging */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -72,17 +67,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FC19EC792DFEA459007C9731 /* FirebaseMessaging in Frameworks */,
-				FC7A7E422DDFDCE40026A8B9 /* FirebaseMessaging in Frameworks */,
 				FC7A7E282DDEF1040026A8B9 /* SatelliteForecastImplWiring in Frameworks */,
+				FC082B5F2E3617BD00DEEBBE /* AppDelegateImpl in Frameworks */,
 				FC7A7E242DDEF1040026A8B9 /* SatelliteForecast in Frameworks */,
 				FC7A7E2D2DDF0E9A0026A8B9 /* SatelliteForecastImpl in Frameworks */,
 				FC7A7E2F2DDF0E9A0026A8B9 /* SatelliteForecastImplWiring in Frameworks */,
-				FC7A7E3C2DDFC9A80026A8B9 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
-				FC19EC752DFEA459007C9731 /* FirebaseCore in Frameworks */,
 				FC7A7E262DDEF1040026A8B9 /* SatelliteForecastImpl in Frameworks */,
-				FC7A7E402DDFDCE40026A8B9 /* FirebaseCore in Frameworks */,
-				FC19EC772DFEA459007C9731 /* FirebaseFirestore in Frameworks */,
 				FC7A7E2B2DDF0E9A0026A8B9 /* SatelliteForecast in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -194,7 +184,7 @@
 			);
 			mainGroup = EF9D82742661BBEF00616C97;
 			packageReferences = (
-				FC19EC732DFEA459007C9731 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				FC082B5D2E3617BD00DEEBBE /* XCLocalSwiftPackageReference "Frameworks/AppDelegateImpl" */,
 			);
 			productRefGroup = EF9D82822661BBF000616C97 /* Products */;
 			projectDirPath = "";
@@ -293,6 +283,7 @@
 				ENABLE_TESTABILITY = YES;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				EXCLUDED_ARCHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -361,6 +352,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				EXCLUDED_ARCHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -465,48 +457,17 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		FC19EC732DFEA459007C9731 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 11.14.0;
-			};
+/* Begin XCLocalSwiftPackageReference section */
+		FC082B5D2E3617BD00DEEBBE /* XCLocalSwiftPackageReference "Frameworks/AppDelegateImpl" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Frameworks/AppDelegateImpl;
 		};
-		FC7A7E3A2DDFC9A80026A8B9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 11.13.0;
-			};
-		};
-		FC7A7E3E2DDFDCE40026A8B9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 11.13.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
+/* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		FC19EC742DFEA459007C9731 /* FirebaseCore */ = {
+		FC082B5E2E3617BD00DEEBBE /* AppDelegateImpl */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = FC19EC732DFEA459007C9731 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseCore;
-		};
-		FC19EC762DFEA459007C9731 /* FirebaseFirestore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = FC19EC732DFEA459007C9731 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseFirestore;
-		};
-		FC19EC782DFEA459007C9731 /* FirebaseMessaging */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = FC19EC732DFEA459007C9731 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseMessaging;
+			productName = AppDelegateImpl;
 		};
 		FC7A7E232DDEF1040026A8B9 /* SatelliteForecast */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -531,21 +492,6 @@
 		FC7A7E2E2DDF0E9A0026A8B9 /* SatelliteForecastImplWiring */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SatelliteForecastImplWiring;
-		};
-		FC7A7E3B2DDFC9A80026A8B9 /* FirebaseAnalyticsWithoutAdIdSupport */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = FC7A7E3A2DDFC9A80026A8B9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAnalyticsWithoutAdIdSupport;
-		};
-		FC7A7E3F2DDFDCE40026A8B9 /* FirebaseCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = FC7A7E3E2DDFDCE40026A8B9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseCore;
-		};
-		FC7A7E412DDFDCE40026A8B9 /* FirebaseMessaging */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = FC7A7E3E2DDFDCE40026A8B9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseMessaging;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

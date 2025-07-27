@@ -9,6 +9,7 @@ import Foundation
 import os
 import Combine
 @preconcurrency import CombineRex
+import SatelliteForecast
 import SatelliteForecastImpl
 
 fileprivate let logger = Logger(subsystem: "io.djben.alarmSettingsView", category: "middleware")

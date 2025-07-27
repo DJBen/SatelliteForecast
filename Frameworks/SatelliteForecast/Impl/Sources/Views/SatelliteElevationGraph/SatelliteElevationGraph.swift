@@ -24,16 +24,6 @@ public struct SatelliteElevationGraphConfigs: Equatable, Sendable {
     }
 }
 
-public enum SatelliteElevationGraphAction {
-    case requestRasterizeElevationGraph(
-        size: CGSize,
-        noradIndex: UInt,
-        julianDateRange: ClosedRange<Double>,
-        traitCollection: UITraitCollection
-    )
-    case rasterizedElevationGraph(UIImage, size: CGSize, noradIndex: UInt, julianDateRange: ClosedRange<Double>)
-}
-
 public struct SatelliteElevationGraphContext {
     public let satelliteInfo: SatelliteInfo
     public let selectedPassIndex: Int

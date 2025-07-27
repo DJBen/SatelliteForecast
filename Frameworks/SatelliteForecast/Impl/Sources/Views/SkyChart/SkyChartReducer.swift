@@ -8,6 +8,7 @@
 import Foundation
 import BTree
 @preconcurrency import SwiftRex
+import SatelliteForecast
 
 extension Reducer where ActionType == SkyChartOutput, StateType == SkyChartViewState {
     public static let skyChartOutputReducer = Reducer.reduce { action, state in

@@ -7,6 +7,7 @@
 
 import Foundation
 @preconcurrency import SwiftRex
+import SatelliteForecast
 
 extension Reducer where ActionType == DebugMenuAction, StateType == DebugMenuState {
     public static let debugMenuReducer = Reducer.reduce { action, state in

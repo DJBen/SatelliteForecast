@@ -29,6 +29,7 @@ let package = Package(
         ),
         .package(url: "https://github.com/nh7a/Geohash.git", branch: "main"),
         .package(path: "../ActivityView"),
+        .package(path: "../AppDelegate"),
         .package(path: "../SatelliteKit"),
         .package(path: "../StarryNight"),
         .package(path: "../QSMag"),
@@ -41,7 +42,8 @@ let package = Package(
             name: "SatelliteForecast",
             dependencies: [
                 "BTree",
-                "StarryNight"
+                "StarryNight",
+                "AppDelegate"
             ],
             path: "Public/Sources",
             resources: [.process("Resources")],
@@ -65,6 +67,7 @@ let package = Package(
                 .product(name: "SolarSystem", package: "SolarSystem"),
                 .product(name: "SatelliteCatalog", package: "SatelliteCatalogPackage"),
                 .product(name: "SatelliteCatalogImpl_SQLite", package: "SatelliteCatalogPackage"),
+                .product(name: "AppDelegate", package: "AppDelegate"),
                 .product(name: "FirebaseFirestore", package: "firebase-ios-sdk"),
                 .product(name: "FirebaseAnalytics", package: "firebase-ios-sdk"),
             ],
@@ -79,6 +82,7 @@ let package = Package(
             dependencies: [
                 "SatelliteForecast",
                 "SatelliteForecastImpl",
+                .product(name: "AppDelegate", package: "AppDelegate"),
                 .product(name: "SatelliteCatalog", package: "SatelliteCatalogPackage"),
             ],
             path: "ImplWiring/Sources",

@@ -14,12 +14,6 @@ import StarryNight
 import SwiftRex
 import SwiftUI
 
-public enum DetailedPassViewAction {
-    case dismissModal
-}
-
-extension DetailedPassViewAction: Equatable {}
-
 public struct DetailedPassViewState {
     public var showsDetailedPassView: Bool
 

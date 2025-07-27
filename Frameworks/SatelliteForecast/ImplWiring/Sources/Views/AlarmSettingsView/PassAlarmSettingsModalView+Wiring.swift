@@ -7,6 +7,7 @@
 
 @preconcurrency import CombineRex
 @preconcurrency import CombineRextensions
+import SatelliteForecast
 import SatelliteForecastImpl
 
 extension PassAlarmSettingsModalViewState: AppStateMappable {

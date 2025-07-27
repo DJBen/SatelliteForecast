@@ -5,6 +5,7 @@
 //  Created by Ben Lu on 4/4/22.
 //
 
+import SatelliteForecast
 import SatelliteForecastImpl
 
 extension LocationState: AppStateMappable {

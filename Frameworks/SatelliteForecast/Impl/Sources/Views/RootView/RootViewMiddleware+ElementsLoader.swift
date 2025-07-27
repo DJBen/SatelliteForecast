@@ -7,6 +7,7 @@
 
 import Combine
 @preconcurrency import CombineRex
+import SatelliteForecast
 
 extension EffectMiddleware where InputActionType == RootViewAction, OutputActionType == ElementsLoaderAction, StateType == RootViewState, Dependencies == Void {
     public static var rootViewElementsLoader: EffectMiddleware<RootViewAction, ElementsLoaderAction, RootViewState, Void> {

@@ -13,10 +13,6 @@ import CoreLocation
 @preconcurrency import SatelliteKit
 import SatelliteForecast
 
-public enum AlarmSettingsViewAction {
-    case deleteNotifications(ids: Set<String>)
-}
-
 public struct AlarmSettingsViewState: Equatable {
     public var scheduledPassNotifications: [ScheduledPassNotification] = []
 

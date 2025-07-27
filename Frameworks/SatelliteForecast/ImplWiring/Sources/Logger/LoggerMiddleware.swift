@@ -8,6 +8,8 @@
 import Combine
 @preconcurrency import CombineRex
 import SatelliteForecastImpl
+import AppDelegate
+import SatelliteForecast
 
 extension EffectMiddleware where InputActionType == AppAction, OutputActionType == AppAction, StateType == AppState, Dependencies == Void {
     public static var loggerMiddleware: EffectMiddleware<AppAction, AppAction, AppState, Void> {
@@ -86,8 +88,6 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                     }
                 case .debugMenu(let debugMenuAction):
                     print(debugMenuAction)
-                case .observerCell(let observerCellAction):
-                    print(observerCellAction)
                 case .alarmSettingsCell(let alarmSettingsCellAction):
                     print(alarmSettingsCellAction)
                 case .alarmSettingsView(let alarmSettingsViewAction):

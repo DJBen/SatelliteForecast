@@ -12,39 +12,6 @@ import SwiftUI
 import SatelliteForecast
 @preconcurrency import SatelliteKit
 
-public enum DebugMenuAction {
-    case toggleDebugMenu(_ isVisible: Bool)
-
-    case toggleFreezeTime(_ isOn: Bool)
-    case toggleMockedOffset(_ isOn: Bool)
-    case setMockedDateOffset(_ offset: Double)
-    case toggleRapidNotificationDelivery(_ isOn: Bool)
-    
-    case fetchNotifications
-    
-    case triggerPassDeepLink(category: SatelliteCategory, noradIndex: UInt)
-    
-    case resetOnboarding
-}
-
-public struct DebugMenuConfig: Equatable {
-    public var isDebugMenuVisible: Bool = false
-    public var frozenAt: Double?
-    public var mockedOffsetOn: Bool = false
-    public var rapidNotificationDelivery: Bool = false
-
-    /// Offset in days between the real julian date and the mocked julian date. Positive value means mocked date is in the future,
-    /// while negative value means mocked date is in the past.
-    public var mockedOffset: Double = 0
-
-    /// The julian date offset in effect.
-    public var effectiveOffset: Double {
-        mockedOffsetOn ? mockedOffset : 0
-    }
-
-    public init() {}
-}
-
 public struct DebugMenuState: Equatable, AppStateMappable {
     var trueJulianDate: Double
     var config: DebugMenuConfig

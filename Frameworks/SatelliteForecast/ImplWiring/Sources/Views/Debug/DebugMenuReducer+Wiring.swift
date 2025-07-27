@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SatelliteForecast
 import SatelliteForecastImpl
 @preconcurrency import SwiftRex
 

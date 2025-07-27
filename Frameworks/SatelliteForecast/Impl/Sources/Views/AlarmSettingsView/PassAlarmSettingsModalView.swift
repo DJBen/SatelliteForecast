@@ -10,14 +10,6 @@ import SwiftUI
 import SatelliteForecast
 @preconcurrency import SatelliteKit
 
-public enum PassAlarmSettingsModalViewAction {
-    case dismissModal
-    case scheduleAlarm(PassNotification, passSnapshots: PassSnapshots)
-    case unscheduleAlarm(Pass)
-}
-
-extension PassAlarmSettingsModalViewAction: Equatable {}
-
 public struct PassAlarmSettingsModalViewState {
     public var scheduledPassNotifications: Set<ScheduledPassNotification>
     public var showAlarmConfigurationModal: Bool

@@ -14,11 +14,6 @@ import SwiftUI
 import SwiftUIVisualEffects
 import CoreMotion
 
-public enum PassViewAction {
-    case showAlarmConfiguration(Bool)
-    case showDetailPassView(Bool)
-}
-
 public struct PassViewState {
     public var scheduledPassNotifications: Set<ScheduledPassNotification>
     public var showAlarmConfigurationModal: Bool
