@@ -17,7 +17,7 @@ let package = Package(
         .package(url: "https://github.com/SwiftRex/CombineRextensions", branch: "master"),
         .package(
             url: "https://github.com/firebase/firebase-ios-sdk.git",
-            .upToNextMajor(from: "11.14.0")
+            .upToNextMajor(from: "12.0.0")
         ),
         .package(url: "https://github.com/nh7a/Geohash.git", branch: "main"),
         .package(path: "../AppDelegate"),
