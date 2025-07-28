@@ -8,6 +8,7 @@
 import Foundation
 @preconcurrency import SatelliteKit
 import BTree
+import CustomDump
 
 public struct AppState: Equatable {
     public var deviceToken: Data?
@@ -15,7 +16,7 @@ public struct AppState: Equatable {
     
     public var navigationState: NavigationState = .init() {
         willSet {
-            print("[Navigation] \(navigationState)")
+            customDump(navigationState)
         }
     }
 

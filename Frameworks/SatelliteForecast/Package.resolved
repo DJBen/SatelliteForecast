@@ -1,5 +1,5 @@
 {
-  "originHash" : "3348a31a9865886081dc3f2be286666c774584a3571ab8e91c9c523060847109",
+  "originHash" : "a1b972591ec48356e5a40bff639e5bf2a278802c6a94da231d4d95a5caffa26d",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -26,6 +26,15 @@
       "state" : {
         "revision" : "83435371ef3c6d98107f5b562a5870a3dfca6243",
         "version" : "4.1.0"
+      }
+    },
+    {
+      "identity" : "btreecustomdump",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/DJBen/BTreeCustomDump.git",
+      "state" : {
+        "revision" : "235c823c245cf9ecc3419245dc6d5b675ed0f2fd",
+        "version" : "1.0.0"
       }
     },
     {
@@ -173,6 +182,15 @@
       }
     },
     {
+      "identity" : "swift-custom-dump",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-custom-dump.git",
+      "state" : {
+        "revision" : "82645ec760917961cfa08c9c0c7104a57a0fa4b1",
+        "version" : "1.3.3"
+      }
+    },
+    {
       "identity" : "swift-protobuf",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-protobuf.git",
@@ -197,6 +215,15 @@
       "state" : {
         "revision" : "0226e21f9bf355d40e07e5f5e1c33679d50e167f",
         "version" : "1.5.1"
+      }
+    },
+    {
+      "identity" : "xctest-dynamic-overlay",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
+      "state" : {
+        "revision" : "23e3442166b5122f73f9e3e622cd1e4bafeab3b7",
+        "version" : "1.6.0"
       }
     }
   ],

@@ -21,6 +21,8 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/markiv/SwiftUI-Shimmer.git", from: "1.5.1"),
         .package(url: "https://github.com/attaswift/BTree", from: "4.1.0"),
+        .package(url: "https://github.com/pointfreeco/swift-custom-dump.git", from: "1.3.3"),
+        .package(url: "https://github.com/DJBen/BTreeCustomDump.git", from: "1.0.0"),
         .package(url: "https://github.com/SwiftRex/SwiftRex", from: "0.8.12"),
         .package(url: "https://github.com/SwiftRex/CombineRextensions", branch: "master"),
         .package(
@@ -35,7 +37,7 @@ let package = Package(
         .package(path: "../QSMag"),
         .package(path: "../SolarSystem"),
         .package(path: "../SwiftUIVisualEffects"),
-        .package(name: "SatelliteCatalogPackage", path: "../SatelliteCatalog")
+        .package(name: "SatelliteCatalogPackage", path: "../SatelliteCatalog"),
     ],
     targets: [
         .target(
@@ -43,7 +45,8 @@ let package = Package(
             dependencies: [
                 "BTree",
                 "StarryNight",
-                "AppDelegate"
+                "AppDelegate",
+                .product(name: "CustomDump", package: "swift-custom-dump"),
             ],
             path: "Public/Sources",
             resources: [.process("Resources")],
@@ -60,6 +63,7 @@ let package = Package(
                 "ActivityView",
                 "SwiftUIVisualEffects",
                 "Geohash",
+                "BTreeCustomDump",
                 .product(name: "Shimmer", package: "SwiftUI-Shimmer"),
                 .product(name: "SatelliteKit", package: "SatelliteKit"),
                 .product(name: "StarryNight", package: "StarryNight"),
@@ -70,6 +74,7 @@ let package = Package(
                 .product(name: "AppDelegate", package: "AppDelegate"),
                 .product(name: "FirebaseFirestore", package: "firebase-ios-sdk"),
                 .product(name: "FirebaseAnalytics", package: "firebase-ios-sdk"),
+                .product(name: "CustomDump", package: "swift-custom-dump"),
             ],
             path: "Impl/Sources",
             resources: [.process("Resources")],
