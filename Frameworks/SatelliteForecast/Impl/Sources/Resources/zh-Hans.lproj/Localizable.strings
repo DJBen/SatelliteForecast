@@ -208,8 +208,14 @@
 /* No comment provided by engineer. */
 "Get Started" = "由此开始";
 
+/* Button to complete AllPassesView onboarding */
+"Got it!" = "明白了！";
+
 /* No comment provided by engineer. */
 "Hello, World!" = "你好，世界！";
+
+/* Onboarding explanation for culmination */
+"Highest point in the sky (best for viewing)" = "天空中的最高点（最佳观测时机）";
 
 /* The name of ISS */
 "International space station" = "国际空间站";
@@ -298,6 +304,12 @@
 /* No comment provided by engineer. */
 "Overview" = "概览";
 
+/* Onboarding title for explaining a satellite pass */
+"Pass explained" = "过境说明";
+
+/* Onboarding explanation for star rating */
+"Pass quality rating (3 stars are best)" = "过境评级（3颗星最佳）";
+
 /* Title of confirm button of pass alarm settings. */
 "PassAlarmSettingsModalView.confirmButton.title" = "设置提醒";
 
@@ -385,6 +397,15 @@ Navigation title of pass alarm settings. */
 
 /* No comment provided by engineer. */
 "Recalculate using new location" = "使用新位置重新计算";
+
+/* No comment provided by engineer. */
+"Reset All Onboarding" = "重置所有引导";
+
+/* No comment provided by engineer. */
+"Reset Main Onboarding" = "重置主要引导";
+
+/* No comment provided by engineer. */
+"Reset Pass List Onboarding" = "重置过境列表引导";
 
 /* No comment provided by engineer. */
 "Retry" = "重试";
@@ -540,11 +561,17 @@ The localized string for the status of a spare satellite */
 /* The title of the 'Settings' tab of the root view. */
 "tabs.settings.text" = "设置";
 
+/* CTA label in onboarding */
+"Tap on passes to see more details!" = "点击过境记录查看更多详情！";
+
 /* No comment provided by engineer. */
 "Test deep link" = "测试深度链接";
 
 /* No comment provided by engineer. */
 "The satellites are not loaded." = "卫星数据未加载。";
+
+/* Onboarding description for AllPassesView */
+"This screen lists all upcoming passes in 7 days. Each row shows when it will be visible from your location." = "此屏幕列出了7天内的所有即将过境。每行显示何时从您的位置可见。";
 
 /* The name of Tiangong space station */
 "Tiangong space station" = "天宫空间站";
@@ -557,6 +584,18 @@ The localized string for the status of a spare satellite */
 
 /* No comment provided by engineer. */
 "Time interval %@" = "时间间隔 %@";
+
+/* Onboarding explanation for satellite rises above horizon */
+"Times when satellite rises above horizon" = "卫星升出地平线的时间";
+
+/* Onboarding explanation for satellite sets below horizon */
+"Times when satellite sets below horizon" = "卫星降到地平线以下的时间";
+
+/* Onboarding explanation for invisible times */
+"Times when the space station becomes invisible" = "空间站变为不可见的时间";
+
+/* Onboarding explanation for visible times */
+"Times when the space station becomes visible" = "空间站变为可见的时间";
 
 /* Onboarding page 1 description */
 "Track the International Space Station, Tiangong and others as they pass overhead. Never miss a spectacular sight in the evening sky." = "追踪国际空间站、天宫等卫星在您头顶过境。不要错过傍晚的天象哦。";

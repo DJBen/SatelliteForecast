@@ -208,8 +208,14 @@
 /* No comment provided by engineer. */
 "Get Started" = "Comenzar";
 
+/* Button to complete AllPassesView onboarding */
+"Got it!" = "¡Entendido!";
+
 /* No comment provided by engineer. */
 "Hello, World!" = "¡Hola, mundo!";
+
+/* Onboarding explanation for culmination */
+"Highest point in the sky (best for viewing)" = "Punto más alto en el cielo (mejor para observar)";
 
 /* The name of ISS */
 "International space station" = "Estación Espacial Internacional";
@@ -290,10 +296,19 @@
 "Notification.upcomingPass.title.now" = "%1$@ está saliendo ahora";
 
 /* No comment provided by engineer. */
+"Onboarding" = "Incorporación";
+
+/* No comment provided by engineer. */
 "Open location settings" = "Abrir configuración de ubicación";
 
 /* No comment provided by engineer. */
 "Overview" = "Resumen";
+
+/* Onboarding title for explaining a satellite pass */
+"Pass explained" = "Pase explicado";
+
+/* Onboarding explanation for star rating */
+"Pass quality rating (3 stars are best)" = "Calificación de calidad del pase (3 estrellas es lo mejor)";
 
 /* Title of confirm button of pass alarm settings. */
 "PassAlarmSettingsModalView.confirmButton.title" = "Programar alarma";
@@ -382,6 +397,15 @@ Navigation title of pass alarm settings. */
 
 /* No comment provided by engineer. */
 "Recalculate using new location" = "Recalcular usando nueva ubicación";
+
+/* No comment provided by engineer. */
+"Reset All Onboarding" = "Restablecer toda la incorporación";
+
+/* No comment provided by engineer. */
+"Reset Main Onboarding" = "Restablecer incorporación principal";
+
+/* No comment provided by engineer. */
+"Reset Pass List Onboarding" = "Restablecer incorporación de lista de pases";
 
 /* No comment provided by engineer. */
 "Retry" = "Reintentar";
@@ -537,11 +561,17 @@ The localized string for the status of a spare satellite */
 /* The title of the 'Settings' tab of the root view. */
 "tabs.settings.text" = "Configuración";
 
+/* CTA label in onboarding */
+"Tap on passes to see more details!" = "¡Toca en los pases para ver más detalles!";
+
 /* No comment provided by engineer. */
 "Test deep link" = "Probar enlace profundo";
 
 /* No comment provided by engineer. */
 "The satellites are not loaded." = "Los satélites no están cargados.";
+
+/* Onboarding description for AllPassesView */
+"This screen lists all upcoming passes in 7 days. Each row shows when it will be visible from your location." = "Esta pantalla enumera todos los pases próximos en 7 días. Cada fila muestra cuándo será visible desde su ubicación.";
 
 /* The name of Tiangong space station */
 "Tiangong space station" = "Estación Espacial Tiangong";
@@ -554,6 +584,18 @@ The localized string for the status of a spare satellite */
 
 /* No comment provided by engineer. */
 "Time interval %@" = "Intervalo de tiempo %@";
+
+/* Onboarding explanation for satellite rises above horizon */
+"Times when satellite rises above horizon" = "Momentos cuando el satélite aparece sobre el horizonte";
+
+/* Onboarding explanation for satellite sets below horizon */
+"Times when satellite sets below horizon" = "Momentos cuando el satélite se oculta bajo el horizonte";
+
+/* Onboarding explanation for invisible times */
+"Times when the space station becomes invisible" = "Momentos cuando la estación espacial se vuelve invisible";
+
+/* Onboarding explanation for visible times */
+"Times when the space station becomes visible" = "Momentos cuando la estación espacial se vuelve visible";
 
 /* Onboarding page 1 description */
 "Track the International Space Station, Tiangong and others as they pass overhead. Never miss a spectacular sight in the evening sky." = "Rastrea la Estación Espacial Internacional, Tiangong y otras mientras pasan por encima. Nunca te pierdas un espectáculo impresionante en el cielo nocturno.";

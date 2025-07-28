@@ -59,23 +59,7 @@ struct AllPassesOnboardingView: View {
                             )
                         
                         // Explanation text
-                        VStack(alignment: .leading, spacing: 12) {
-                            HStack {
-                                Image(systemName: "arrow.up")
-                                    .foregroundColor(.secondary)
-                                Text("Times when satellite rises above horizon", bundle: .module, comment: "Onboarding explanation for satellite rises above horizon")
-                                    .font(.callout)
-                                    .foregroundColor(.secondary)
-                            }
-                            
-                            HStack {
-                                Image(systemName: "arrow.down")
-                                    .foregroundColor(.secondary)
-                                Text("Times when satellite sets below horizon", bundle: .module, comment: "Onboarding explanation for satellite sets below horizon")
-                                    .font(.callout)
-                                    .foregroundColor(.secondary)
-                            }
-                            
+                        VStack(alignment: .leading, spacing: 8) {
                             HStack {
                                 Image(systemName: "arrow.up.to.line")
                                     .foregroundColor(.orange)
@@ -93,8 +77,24 @@ struct AllPassesOnboardingView: View {
                             }
                             
                             HStack {
+                                Image(systemName: "arrow.up")
+                                    .foregroundColor(.secondary)
+                                Text("Times when satellite rises above horizon", bundle: .module, comment: "Onboarding explanation for satellite rises above horizon")
+                                    .font(.callout)
+                                    .foregroundColor(.secondary)
+                            }
+                            
+                            HStack {
+                                Image(systemName: "arrow.down")
+                                    .foregroundColor(.secondary)
+                                Text("Times when satellite sets below horizon", bundle: .module, comment: "Onboarding explanation for satellite sets below horizon")
+                                    .font(.callout)
+                                    .foregroundColor(.secondary)
+                            }
+                            
+                            HStack {
                                 Image(systemName: "eye")
-                                    .foregroundColor(.blue)
+                                    .foregroundColor(.secondary)
                                 Text("Times when the space station becomes visible", bundle: .module, comment: "Onboarding explanation for visible times")
                                     .font(.callout)
                                     .foregroundColor(.secondary)
@@ -102,7 +102,7 @@ struct AllPassesOnboardingView: View {
                             
                             HStack {
                                 Image(systemName: "eye.slash")
-                                    .foregroundColor(.blue)
+                                    .foregroundColor(.secondary)
                                 Text("Times when the space station becomes invisible", bundle: .module, comment: "Onboarding explanation for invisible times")
                                     .font(.callout)
                                     .foregroundColor(.secondary)
@@ -169,10 +169,8 @@ struct AllPassesOnboardingView: View {
         let selectedPass = passSnapshots.first { $0.notableSnapshots.visibleCulminationElevation > 45 }!
         PassPreviewCell(
             satelliteInfo: satelliteInfo,
-            snapshots: selectedPass.snapshots,
-            notableSnapshots: selectedPass.notableSnapshots,
             observer: observer,
-            pass: selectedPass.pass,
+            passSnapshots: selectedPass,
             hasScheduledAlert: false,
             skyChartProducer: skyChartProducer,
             julianDateOffset: 0,

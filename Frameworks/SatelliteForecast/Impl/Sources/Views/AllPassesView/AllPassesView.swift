@@ -234,10 +234,8 @@ public struct AllPassesView: View {
                     ) {
                         PassPreviewCell(
                             satelliteInfo: context.satelliteInfo,
-                            snapshots: item.passSnapshots.snapshots,
-                            notableSnapshots: item.passSnapshots.notableSnapshots,
                             observer: observer,
-                            pass: item.passSnapshots.pass,
+                            passSnapshots: item.passSnapshots,
                             hasScheduledAlert: item.hasScheduledAlert,
                             skyChartProducer: skyChartProducer,
                             julianDateOffset: viewModel.state.julianDateOffset,
@@ -440,7 +438,12 @@ public struct AllPassesView: View {
         .onAppear {
             // Check if this is the first time viewing AllPassesView
             if !UserDefaults.standard.bool(forKey: "hasCompletedAllPassesOnboarding") {
-                viewModel.dispatch(.showOnboarding(true))
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    // Double-check the UserDefaults in case the user completed onboarding during the delay
+                    if !UserDefaults.standard.bool(forKey: "hasCompletedAllPassesOnboarding") {
+                        viewModel.dispatch(.showOnboarding(true))
+                    }
+                }
             }
         }
         .sheet(isPresented: Binding<Bool>(
@@ -647,15 +650,8 @@ struct AllPassesView_Previews: PreviewProvider {
                             ),
                             context: SkyChartContext<EmptyView, EmptyView>(
                                 satelliteInfo: try! SatelliteInfo(elements: tianHe),
-                                snapshots: passSnapshots.snapshots,
                                 observer: observer,
-                                pass: passSnapshots.pass,
-                                notableSnapshots: NotableSnapshots(
-                                    rise: passSnapshots.notableSnapshots.rise,
-                                    transit: passSnapshots.notableSnapshots.transit,
-                                    set: passSnapshots.notableSnapshots.set,
-                                    illuminationChanges: passSnapshots.notableSnapshots.illuminationChanges
-                                ),
+                                passSnapshots: passSnapshots,
                                 configs: SkyChartConfigs(
                                     backgroundSkyConfigs: BackgroundSkyConfigs(
                                         stars: .limitedMagnitude(2),

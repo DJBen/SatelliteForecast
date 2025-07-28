@@ -34,14 +34,24 @@ private let numberFormatter: NumberFormatter = {
 
 struct PassPreviewCell: View {
     var satelliteInfo: SatelliteInfo
-    var snapshots: [SatelliteSnapshot]
-    var notableSnapshots: NotableSnapshots
     var observer: LatLonAlt
-    var pass: Pass
+    var passSnapshots: PassSnapshots
     var hasScheduledAlert: Bool
     var skyChartProducer: ViewProducer<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>
     var julianDateOffset: Double
     var julianDateProvider: () -> Double
+
+    var snapshots: [SatelliteSnapshot] {
+        passSnapshots.snapshots
+    }
+    
+    var notableSnapshots: NotableSnapshots {
+        passSnapshots.notableSnapshots
+    }
+    
+    var pass: Pass {
+        passSnapshots.pass
+    }
 
     @Environment(\.colorScheme) var colorScheme
 
@@ -214,10 +224,8 @@ struct PassPreviewCell: View {
                 skyChartProducer.view(
                     SkyChartContext(
                         satelliteInfo: satelliteInfo,
-                        snapshots: snapshots,
                         observer: observer,
-                        pass: pass,
-                        notableSnapshots: notableSnapshots,
+                        passSnapshots: passSnapshots,
                         configs: .preview,
                         quality: .onboarding,
                         julianDateProvider: julianDateProvider
@@ -338,10 +346,8 @@ struct PassPreviewCell_Previews: PreviewProvider {
             let passSnapshot = passSnapshots[index]
             return PassPreviewCell(
                 satelliteInfo: try! SatelliteInfo(elements: elements),
-                snapshots: passSnapshot.snapshots,
-                notableSnapshots: passSnapshot.notableSnapshots,
                 observer: observer,
-                pass: passSnapshot.pass,
+                passSnapshots: passSnapshot,
                 hasScheduledAlert: false,
                 skyChartProducer: .pure(
                     SkyChart(
@@ -350,10 +356,8 @@ struct PassPreviewCell_Previews: PreviewProvider {
                         ),
                         context: SkyChartContext(
                             satelliteInfo: satelliteInfo,
-                            snapshots: passSnapshot.snapshots,
                             observer: observer,
-                            pass: passSnapshot.pass,
-                            notableSnapshots: passSnapshot.notableSnapshots,
+                            passSnapshots: passSnapshot,
                             configs: SkyChartConfigs(
                                 backgroundSkyConfigs: BackgroundSkyConfigs(
                                     stars: .limitedMagnitude(2),

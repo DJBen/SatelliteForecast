@@ -103,10 +103,8 @@ public struct PassView: View {
                     skyChartProducer.view(
                         SkyChartContext(
                             satelliteInfo: context.satelliteInfo,
-                            snapshots: context.passSnapshots.snapshots,
                             observer: context.observer,
-                            pass: context.passSnapshots.pass,
-                            notableSnapshots: context.passSnapshots.notableSnapshots,
+                            passSnapshots: context.passSnapshots,
                             configs: .preset,
                             quality: .full,
                             julianDateProvider: context.julianDateProvider,
@@ -310,10 +308,8 @@ struct PassView_Previews: PreviewProvider {
         )
         let skyChartContext = SkyChartContext(
             satelliteInfo: satelliteInfo,
-            snapshots: snapshots,
             observer: observer,
-            pass: passSnapshots.first!.pass,
-            notableSnapshots: passSnapshots.first!.notableSnapshots,
+            passSnapshots: passSnapshots.first!,
             configs: .preview,
             quality: .preview,
             julianDateProvider: { Date().julianDate }
