@@ -7,6 +7,7 @@
 
 import Combine
 @preconcurrency import CombineRex
+import SatelliteForecast
 import SatelliteForecastImpl
 import Foundation
 

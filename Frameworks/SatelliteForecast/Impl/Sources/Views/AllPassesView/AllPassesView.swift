@@ -13,17 +13,6 @@ import SatelliteForecast
 @preconcurrency import SatelliteKit
 import SwiftUI
 
-public enum AllPassesViewAction {
-    /// Calculate the passes.
-    case calculatePasses(CalculatePassesParams)
-    /// Recaculate passes using the latest location.
-    case recalculatePasses(CalculatePassesParams)
-    case scheduleNotification(PassNotification, passSnapshots: PassSnapshots)
-    case unscheduleNotification(pass: Pass)
-    case deeplinkToLocationSelection
-    case showLocationSettings
-}
-
 public struct AllPassesViewContext {
     public let satelliteInfo: SatelliteInfo
     public let julianDateRange: ClosedRange<Double>

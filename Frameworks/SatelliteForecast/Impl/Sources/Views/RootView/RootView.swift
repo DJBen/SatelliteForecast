@@ -11,24 +11,6 @@ import SwiftRex
 import SwiftUI
 import SatelliteForecast
 
-public enum RootViewAction {
-    case selectTab(Tab)
-}
-
-extension RootViewAction: Equatable {}
-
-public struct RootViewState {
-    public var selectedTab: Tab
-    public var showExperimentalSkyNow: Bool
-    
-    public init(selectedTab: Tab = .forecast, showExperimentalSkyNow: Bool = false) {
-        self.selectedTab = selectedTab
-        self.showExperimentalSkyNow = showExperimentalSkyNow
-    }
-}
-
-extension RootViewState: Equatable {}
-
 public struct RootViewContext {
     public let julianDateProvider: () -> Double
 
@@ -102,7 +84,7 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
         UITabBar.appearance().unselectedItemTintColor = UIColor.systemGray2
     }
     
-    private func isSelectedBinding(for tab: SatelliteForecastImpl.Tab) -> Binding<Bool> {
+    private func isSelectedBinding(for tab: SatelliteForecast.Tab) -> Binding<Bool> {
         Binding<Bool>(
             get: {
                 viewModel.state.selectedTab == tab
@@ -115,7 +97,7 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
 
     public var body: some View {
         TabView(
-            selection: Binding<Tab>.store(
+            selection: Binding<SatelliteForecast.Tab>.store(
                 viewModel,
                 state: \.selectedTab,
                 onChange: RootViewAction.selectTab

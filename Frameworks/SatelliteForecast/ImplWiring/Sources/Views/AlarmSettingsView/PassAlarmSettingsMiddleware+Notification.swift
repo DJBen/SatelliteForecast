@@ -6,6 +6,7 @@
 //
 
 @preconcurrency import CombineRex
+import SatelliteForecast
 import SatelliteForecastImpl
 
 extension EffectMiddleware where InputActionType == PassAlarmSettingsModalViewAction, OutputActionType == NotificationAction, StateType == Void, Dependencies == Void {

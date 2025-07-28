@@ -7,6 +7,7 @@
 
 import Foundation
 @preconcurrency import SwiftRex
+import SatelliteForecast
 
 extension Reducer where ActionType == OnboardingAction, StateType == OnboardingViewState {
     public static let onboardingReducer = Reducer.reduce { action, state in

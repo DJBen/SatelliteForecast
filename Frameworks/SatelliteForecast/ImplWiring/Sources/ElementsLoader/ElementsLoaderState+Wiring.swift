@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SatelliteForecast
 import SatelliteForecastImpl
 
 extension ElementsLoaderState: AppStateMappable {

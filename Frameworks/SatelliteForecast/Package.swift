@@ -21,27 +21,32 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/markiv/SwiftUI-Shimmer.git", from: "1.5.1"),
         .package(url: "https://github.com/attaswift/BTree", from: "4.1.0"),
+        .package(url: "https://github.com/pointfreeco/swift-custom-dump.git", from: "1.3.3"),
+        .package(url: "https://github.com/DJBen/BTreeCustomDump.git", from: "1.0.0"),
         .package(url: "https://github.com/SwiftRex/SwiftRex", from: "0.8.12"),
         .package(url: "https://github.com/SwiftRex/CombineRextensions", branch: "master"),
         .package(
             url: "https://github.com/firebase/firebase-ios-sdk.git",
-            .upToNextMajor(from: "11.14.0")
+            .upToNextMajor(from: "12.0.0")
         ),
         .package(url: "https://github.com/nh7a/Geohash.git", branch: "main"),
         .package(path: "../ActivityView"),
+        .package(path: "../AppDelegate"),
         .package(path: "../SatelliteKit"),
         .package(path: "../StarryNight"),
         .package(path: "../QSMag"),
         .package(path: "../SolarSystem"),
         .package(path: "../SwiftUIVisualEffects"),
-        .package(name: "SatelliteCatalogPackage", path: "../SatelliteCatalog")
+        .package(name: "SatelliteCatalogPackage", path: "../SatelliteCatalog"),
     ],
     targets: [
         .target(
             name: "SatelliteForecast",
             dependencies: [
                 "BTree",
-                "StarryNight"
+                "StarryNight",
+                "AppDelegate",
+                .product(name: "CustomDump", package: "swift-custom-dump"),
             ],
             path: "Public/Sources",
             resources: [.process("Resources")],
@@ -58,6 +63,7 @@ let package = Package(
                 "ActivityView",
                 "SwiftUIVisualEffects",
                 "Geohash",
+                "BTreeCustomDump",
                 .product(name: "Shimmer", package: "SwiftUI-Shimmer"),
                 .product(name: "SatelliteKit", package: "SatelliteKit"),
                 .product(name: "StarryNight", package: "StarryNight"),
@@ -65,8 +71,10 @@ let package = Package(
                 .product(name: "SolarSystem", package: "SolarSystem"),
                 .product(name: "SatelliteCatalog", package: "SatelliteCatalogPackage"),
                 .product(name: "SatelliteCatalogImpl_SQLite", package: "SatelliteCatalogPackage"),
+                .product(name: "AppDelegate", package: "AppDelegate"),
                 .product(name: "FirebaseFirestore", package: "firebase-ios-sdk"),
                 .product(name: "FirebaseAnalytics", package: "firebase-ios-sdk"),
+                .product(name: "CustomDump", package: "swift-custom-dump"),
             ],
             path: "Impl/Sources",
             resources: [.process("Resources")],
@@ -79,6 +87,7 @@ let package = Package(
             dependencies: [
                 "SatelliteForecast",
                 "SatelliteForecastImpl",
+                .product(name: "AppDelegate", package: "AppDelegate"),
                 .product(name: "SatelliteCatalog", package: "SatelliteCatalogPackage"),
             ],
             path: "ImplWiring/Sources",

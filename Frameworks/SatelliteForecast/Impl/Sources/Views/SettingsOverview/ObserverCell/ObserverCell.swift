@@ -13,10 +13,6 @@ import SwiftUI
 import SatelliteForecast
 import SwiftUIVisualEffects
 
-public enum ObserverCellAction {
-
-}
-
 public struct ObserverCellState {
     var locationResources: LocationResources = .init()
 

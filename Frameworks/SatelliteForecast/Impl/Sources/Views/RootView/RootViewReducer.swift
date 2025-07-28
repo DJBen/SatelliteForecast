@@ -6,6 +6,7 @@
 //
 
 @preconcurrency import SwiftRex
+import SatelliteForecast
 
 extension Reducer where ActionType == RootViewAction, StateType == RootViewState {
     public static let rootViewReducer = Reducer.reduce { action, state in

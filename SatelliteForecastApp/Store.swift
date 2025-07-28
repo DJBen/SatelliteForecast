@@ -10,6 +10,8 @@ import Foundation
 import SatelliteForecast
 import SatelliteForecastImpl
 import SatelliteForecastImplWiring
+import AppDelegate
+import AppDelegateImpl
 @preconcurrency import SwiftRex
 @preconcurrency import CombineRex
 
@@ -60,7 +62,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         let middlewares: [AnyMiddleware<AppAction, AppAction, AppState>] = [
             LocationMiddleware().lift(),
             EffectMiddleware.locationAuthChange.lift(),
-            EffectMiddleware.appDelegate
+            EffectMiddleware<AppDelegateAction, AppAction, AppState, Void>.appDelegate
             .lift(
                 inputAction: \.appDelegate
             )

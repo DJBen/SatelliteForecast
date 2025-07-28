@@ -13,26 +13,6 @@ import SwiftUI
 @preconcurrency import CombineRextensions
 import CoreLocation
 
-public enum SatelliteOverviewViewAction {
-    case navigate(
-        NavigationPath
-    )
-    
-    case onAppear(
-        julianDateRange: ClosedRange<Double>,
-        observer: LatLonAlt?
-    )
-
-    case selectSatellite(
-        specialSatellite: SpecialSatellite,
-        julianDateRange: ClosedRange<Double>,
-        observer: LatLonAlt?
-    )
-    
-    case deeplinkToLocationSelection
-    case showLocationSettings
-}
-
 public struct NextPass: Equatable {
     let nextVisiblePass: Pass?
     let nextProminentPass: Pass?

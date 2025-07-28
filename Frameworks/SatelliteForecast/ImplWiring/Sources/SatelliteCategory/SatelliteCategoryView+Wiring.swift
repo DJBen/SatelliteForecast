@@ -8,6 +8,7 @@
 @preconcurrency import CombineRex
 @preconcurrency import CombineRextensions
 @preconcurrency import SatelliteKit
+import SatelliteForecast
 import SatelliteForecastImpl
 
 extension SatelliteCategoryViewState: AppStateMappable {

@@ -8,6 +8,7 @@
 import Foundation
 @preconcurrency import SwiftRex
 import CoreLocation
+import SatelliteForecast
 
 extension Reducer where ActionType == SatelliteOverviewViewAction, StateType == SatelliteOverviewViewState {
     public static let satelliteOverviewReducer = Reducer.reduce { action, state in

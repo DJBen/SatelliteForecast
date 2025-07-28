@@ -5,6 +5,7 @@
 //  Created by Ben Lu on 4/8/22.
 //
 
+import SatelliteForecast
 import SatelliteForecastImpl
 @preconcurrency import SwiftRex
 

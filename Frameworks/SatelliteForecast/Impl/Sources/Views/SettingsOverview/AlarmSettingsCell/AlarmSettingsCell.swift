@@ -8,10 +8,7 @@
 import SwiftUI
 @preconcurrency import CombineRex
 @preconcurrency import CombineRextensions
-
-public enum AlarmSettingsCellAction {
-
-}
+import SatelliteForecast
 
 public struct AlarmSettingsCellState: Equatable {
     public var scheduledPassNotifications: Set<ScheduledPassNotification> = []

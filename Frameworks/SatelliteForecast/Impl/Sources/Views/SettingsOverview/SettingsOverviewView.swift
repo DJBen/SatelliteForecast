@@ -11,14 +11,6 @@ import SatelliteForecast
 import SwiftRex
 import SwiftUI
 
-public enum SettingsOverviewViewAction {
-    case navigate(NavigationPath)
-    case setNightMode(Bool)
-    case setExperimentalSkyNow(Bool)
-}
-
-extension SettingsOverviewViewAction: Equatable {}
-
 public struct SettingsOverviewViewState {
     public var navigationPath: NavigationPath = .init()
     public var isNightModeOn: Bool = false

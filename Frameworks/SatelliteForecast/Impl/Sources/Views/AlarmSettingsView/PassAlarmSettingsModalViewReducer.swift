@@ -6,6 +6,7 @@
 //
 
 @preconcurrency import SwiftRex
+import SatelliteForecast
 
 extension Reducer where ActionType == PassAlarmSettingsModalViewAction, StateType == PassAlarmSettingsModalViewState {
     public static let passAlarmSettingsModalReducer = Reducer.reduce { action, state in
