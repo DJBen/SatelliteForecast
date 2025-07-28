@@ -7,4 +7,6 @@ public enum AllPassesViewAction {
     case unscheduleNotification(pass: Pass)
     case deeplinkToLocationSelection
     case showLocationSettings
+    case showOnboarding(Bool)
+    case completeOnboarding
 }

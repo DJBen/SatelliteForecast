@@ -43,6 +43,7 @@ public struct AllPassesViewState {
     public var showsPassAlarmSettingsModal: Bool
     public var satelliteCategory: SatelliteCategory
     public var satelliteTrails: [UInt: SatelliteTrails] = [:]
+    public var showsOnboarding: Bool = false
 
     public init(
         julianDateOffset: Double = 0,
@@ -54,7 +55,8 @@ public struct AllPassesViewState {
         selectedPassIndex: Int? = nil,
         showsPassAlarmSettingsModal: Bool = false,
         satelliteCategory: SatelliteCategory = .iss,
-        satelliteTrails: [UInt : SatelliteTrails] = [:]
+        satelliteTrails: [UInt : SatelliteTrails] = [:],
+        showsOnboarding: Bool = false
     ) {
         self.julianDateOffset = julianDateOffset
         self.scheduledPassNotifications = scheduledPassNotifications
@@ -66,6 +68,7 @@ public struct AllPassesViewState {
         self.showsPassAlarmSettingsModal = showsPassAlarmSettingsModal
         self.satelliteCategory = satelliteCategory
         self.satelliteTrails = satelliteTrails
+        self.showsOnboarding = showsOnboarding
     }
 }
 
@@ -433,6 +436,23 @@ public struct AllPassesView: View {
                     .multilineTextAlignment(.center)
                 }
             }
+        }
+        .onAppear {
+            // Check if this is the first time viewing AllPassesView
+            if !UserDefaults.standard.bool(forKey: "hasCompletedAllPassesOnboarding") {
+                viewModel.dispatch(.showOnboarding(true))
+            }
+        }
+        .sheet(isPresented: Binding<Bool>(
+            get: { viewModel.state.showsOnboarding },
+            set: { viewModel.dispatch(.showOnboarding($0)) }
+        )) {
+            AllPassesOnboardingView(
+                onComplete: {
+                    viewModel.dispatch(.completeOnboarding)
+                },
+                skyChartProducer: skyChartProducer
+            )
         }
     }
 

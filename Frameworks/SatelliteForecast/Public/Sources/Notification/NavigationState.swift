@@ -7,7 +7,6 @@
 
 import Foundation
 @preconcurrency import SatelliteKit
-import SatelliteForecast
 import SwiftUI
 
 public struct NavigationState {
@@ -44,17 +43,20 @@ public struct ListNavigation {
     public var selectedPassIndex: Int?
     public var showAlarmConfigurationModal: Bool
     public var showsDetailPassView: Bool
+    public var showsOnboarding: Bool
 
     public init(
         category: SatelliteCategory = .iss,
         selectedPassIndex: Int? = nil,
         showAlarmConfigurationModal: Bool = false,
-        showsDetailPassView: Bool = false
+        showsDetailPassView: Bool = false,
+        showsOnboarding: Bool = false
     ) {
         self.category = category
         self.selectedPassIndex = selectedPassIndex
         self.showAlarmConfigurationModal = showAlarmConfigurationModal
         self.showsDetailPassView = showsDetailPassView
+        self.showsOnboarding = showsOnboarding
     }
 }
 

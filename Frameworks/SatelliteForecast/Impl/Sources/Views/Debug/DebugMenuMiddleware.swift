@@ -68,7 +68,16 @@ extension EffectMiddleware where
                     return subject.eraseToAnyPublisher()
                 }
             case .resetOnboarding:
+                // Reset both main onboarding and AllPasses onboarding
+                UserDefaults.standard.set(false, forKey: "hasCompletedAllPassesOnboarding")
                 return .just(.onboarding(.reset))
+            case .resetMainOnboarding:
+                // Reset only the main onboarding
+                return .just(.onboarding(.reset))
+            case .resetAllPassesOnboarding:
+                // Reset only the AllPasses onboarding
+                UserDefaults.standard.set(false, forKey: "hasCompletedAllPassesOnboarding")
+                return .doNothing
             }
         }
     }
