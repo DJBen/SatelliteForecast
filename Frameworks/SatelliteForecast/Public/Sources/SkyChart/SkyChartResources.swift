@@ -19,14 +19,18 @@ public struct SkyChartResources: Equatable {
 
     public var previewSatellitePaths: [Pass: UIImage] = [:]
 
+    public var onboardingSatellitePaths: [Pass: UIImage] = [:]
+
     public init(
         detailedSatellitePaths: [Pass: UIImage] = [:],
         rasterizedSatellitePaths: [Pass: UIImage] = [:],
-        previewSatellitePaths: [Pass: UIImage] = [:]
+        previewSatellitePaths: [Pass: UIImage] = [:],
+        onboardingSatellitePaths: [Pass: UIImage] = [:]
     ) {
         self.detailedSatellitePaths = detailedSatellitePaths
         self.rasterizedSatellitePaths = rasterizedSatellitePaths
         self.previewSatellitePaths = previewSatellitePaths
+        self.onboardingSatellitePaths = onboardingSatellitePaths
     }
 
     public func dataSource(for quality: ChartQuality) -> [Pass: UIImage] {
@@ -37,6 +41,8 @@ public struct SkyChartResources: Equatable {
             return rasterizedSatellitePaths
         case .preview:
             return previewSatellitePaths
+        case .onboarding:
+            return onboardingSatellitePaths
         }
     }
 }

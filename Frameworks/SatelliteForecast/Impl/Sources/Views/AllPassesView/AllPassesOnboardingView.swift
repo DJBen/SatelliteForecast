@@ -13,6 +13,7 @@ import SatelliteForecast
 
 struct AllPassesOnboardingView: View {
     let onComplete: () -> Void
+    let onDismiss: () -> Void
     let skyChartProducer: ViewProducer<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>
     
     var body: some View {
@@ -26,72 +27,90 @@ struct AllPassesOnboardingView: View {
                     Spacer()
                     
                     // Title and description
-                    VStack(spacing: 24) {
-                        VStack(spacing: 16) {
-                            Text("Satellite Pass List", bundle: .module, comment: "Onboarding title for AllPassesView")
-                                .font(.largeTitle)
-                                .fontWeight(.bold)
-                                .foregroundColor(.white)
-                                .multilineTextAlignment(.center)
-                            
-                            Text("This is your pass forecast. Each row shows when a satellite will be visible from your location.", bundle: .module, comment: "Onboarding description for AllPassesView")
-                                .font(.title3)
-                                .foregroundColor(.secondary)
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal, 32)
-                        }
+                    VStack(alignment: .leading, spacing: 24) {
+                        Text("Pass explained", bundle: .module, comment: "Onboarding title for explaining a satellite pass")
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.75)
                         
-                        // Example PassPreviewCell
-                        VStack(spacing: 16) {
-                            Text("Example Pass", bundle: .module, comment: "Label for example pass in onboarding")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                            
-                            // Mock PassPreviewCell using preview data
-                            mockPassPreviewCell()
-                                .background(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(Color.gray.opacity(0.2))
-                                )
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .stroke(Color.white.opacity(0.3), lineWidth: 1)
-                                )
-                                .padding(.horizontal, 16)
-                        }
+                        Text("This screen lists all upcoming passes in 7 days. Each row shows when it will be visible from your location.", bundle: .module, comment: "Onboarding description for AllPassesView")
+                            .font(.title3)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.leading)
+                    
+                    
+                        Text("Tap on passes to see more details!", bundle: .module, comment: "CTA label in onboarding")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.75)
+                        
+                        // Mock PassPreviewCell using preview data
+                        mockPassPreviewCell()
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color.gray.opacity(0.2))
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                            )
                         
                         // Explanation text
-                        VStack(spacing: 12) {
+                        VStack(alignment: .leading, spacing: 12) {
                             HStack {
-                                Image(systemName: "eye")
-                                    .foregroundColor(.blue)
-                                Text("Times when the satellite becomes visible", bundle: .module, comment: "Onboarding explanation for visible times")
+                                Image(systemName: "arrow.up")
+                                    .foregroundColor(.secondary)
+                                Text("Times when satellite rises above horizon", bundle: .module, comment: "Onboarding explanation for satellite rises above horizon")
                                     .font(.callout)
                                     .foregroundColor(.secondary)
-                                Spacer()
+                            }
+                            
+                            HStack {
+                                Image(systemName: "arrow.down")
+                                    .foregroundColor(.secondary)
+                                Text("Times when satellite sets below horizon", bundle: .module, comment: "Onboarding explanation for satellite sets below horizon")
+                                    .font(.callout)
+                                    .foregroundColor(.secondary)
                             }
                             
                             HStack {
                                 Image(systemName: "arrow.up.to.line")
                                     .foregroundColor(.orange)
-                                Text("Highest point in the sky (best viewing)", bundle: .module, comment: "Onboarding explanation for culmination")
+                                Text("Highest point in the sky (best for viewing)", bundle: .module, comment: "Onboarding explanation for culmination")
                                     .font(.callout)
                                     .foregroundColor(.secondary)
-                                Spacer()
                             }
                             
                             HStack {
                                 Image(systemName: "star.fill")
                                     .foregroundColor(.yellow)
-                                Text("Pass quality rating (more stars = brighter)", bundle: .module, comment: "Onboarding explanation for star rating")
+                                Text("Pass quality rating (3 stars are best)", bundle: .module, comment: "Onboarding explanation for star rating")
                                     .font(.callout)
                                     .foregroundColor(.secondary)
-                                Spacer()
+                            }
+                            
+                            HStack {
+                                Image(systemName: "eye")
+                                    .foregroundColor(.blue)
+                                Text("Times when the space station becomes visible", bundle: .module, comment: "Onboarding explanation for visible times")
+                                    .font(.callout)
+                                    .foregroundColor(.secondary)
+                            }
+                            
+                            HStack {
+                                Image(systemName: "eye.slash")
+                                    .foregroundColor(.blue)
+                                Text("Times when the space station becomes invisible", bundle: .module, comment: "Onboarding explanation for invisible times")
+                                    .font(.callout)
+                                    .foregroundColor(.secondary)
                             }
                         }
-                        .padding(.horizontal, 32)
                     }
-                    
+                    .padding(.horizontal, 16)
+
                     Spacer()
                     
                     // Get Started button
@@ -110,10 +129,15 @@ struct AllPassesOnboardingView: View {
                         .background(Color.white)
                         .cornerRadius(25)
                     }
-                    .padding(.bottom, 50)
+                    .padding(.bottom, 16)
                 }
             }
             .navigationBarHidden(true)
+            .onDisappear {
+                // If the view disappears without the user tapping "Got it!", 
+                // it means they dismissed by swiping or other means
+                onDismiss()
+            }
         }
     }
     
@@ -129,8 +153,8 @@ struct AllPassesOnboardingView: View {
         )
         
         let observer = LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0)
-        let startDate = Date(timeIntervalSinceReferenceDate: 20 * 365 * 86400)
-        let julianDateRange = startDate.advanced(by: -60 * 60 * 2).julianDate...startDate.advanced(by: 60 * 60 * 30).julianDate
+        let startDate = Date(timeIntervalSinceReferenceDate: 25 * 365 * 86400)
+        let julianDateRange = startDate.julianDate...startDate.advanced(by: 3600 * 24 * 7).julianDate
         let satelliteInfo = try! SatelliteInfo(elements: elements)
         let coarseSnapshots = try! satelliteInfo.generateSnapshots(
             observer: observer,
@@ -142,28 +166,19 @@ struct AllPassesOnboardingView: View {
             coarseSnapshots: coarseSnapshots
         )
         
-        if let firstPass = passSnapshots.first {
-            PassPreviewCell(
-                satelliteInfo: satelliteInfo,
-                snapshots: firstPass.snapshots,
-                notableSnapshots: firstPass.notableSnapshots,
-                observer: observer,
-                pass: firstPass.pass,
-                hasScheduledAlert: false,
-                skyChartProducer: skyChartProducer,
-                julianDateOffset: 0,
-                julianDateProvider: { startDate.julianDate }
-            )
-            .frame(height: 135)
-        } else {
-            // Fallback empty view
-            Rectangle()
-                .fill(Color.gray.opacity(0.3))
-                .frame(height: 135)
-                .overlay(
-                    Text("Example Pass", bundle: .module)
-                        .foregroundColor(.secondary)
-                )
-        }
+        let selectedPass = passSnapshots.first { $0.notableSnapshots.visibleCulminationElevation > 45 }!
+        PassPreviewCell(
+            satelliteInfo: satelliteInfo,
+            snapshots: selectedPass.snapshots,
+            notableSnapshots: selectedPass.notableSnapshots,
+            observer: observer,
+            pass: selectedPass.pass,
+            hasScheduledAlert: false,
+            skyChartProducer: skyChartProducer,
+            julianDateOffset: 0,
+            julianDateProvider: { startDate.julianDate }
+        )
+        .frame(height: 135)
+        .padding(16)
     }
 }

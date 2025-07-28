@@ -21,6 +21,8 @@ extension Reducer where ActionType == SkyChartOutput, StateType == SkyChartViewS
                 state.resources.rasterizedSatellitePaths[pass] = image
             case .preview:
                 state.resources.previewSatellitePaths[pass] = image
+            case .onboarding:
+                state.resources.onboardingSatellitePaths[pass] = image
             }
         }
     }

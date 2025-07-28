@@ -41,6 +41,13 @@ extension Reducer where ActionType == BackgroundSkyViewOutput, StateType == Back
                 } else {
                     state.previewBackgroundSkies[key] = [julianDate: image]
                 }
+            case .onboarding:
+                if var existingSkies = state.onboardingBackgroundSkies[key] {
+                    existingSkies[julianDate] = image
+                    state.onboardingBackgroundSkies[key] = existingSkies
+                } else {
+                    state.onboardingBackgroundSkies[key] = [julianDate: image]
+                }
             }
         }
     }

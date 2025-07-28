@@ -445,11 +445,24 @@ public struct AllPassesView: View {
         }
         .sheet(isPresented: Binding<Bool>(
             get: { viewModel.state.showsOnboarding },
-            set: { viewModel.dispatch(.showOnboarding($0)) }
+            set: { isPresented in
+                // If the sheet is being dismissed (isPresented = false) and we haven't completed onboarding yet,
+                // mark it as completed since the user has seen it
+                if !isPresented && viewModel.state.showsOnboarding && !UserDefaults.standard.bool(forKey: "hasCompletedAllPassesOnboarding") {
+                    viewModel.dispatch(.completeOnboarding)
+                }
+                viewModel.dispatch(.showOnboarding(isPresented))
+            }
         )) {
             AllPassesOnboardingView(
                 onComplete: {
                     viewModel.dispatch(.completeOnboarding)
+                },
+                onDismiss: {
+                    // Mark as completed when dismissed by any means other than the button
+                    if !UserDefaults.standard.bool(forKey: "hasCompletedAllPassesOnboarding") {
+                        viewModel.dispatch(.completeOnboarding)
+                    }
                 },
                 skyChartProducer: skyChartProducer
             )

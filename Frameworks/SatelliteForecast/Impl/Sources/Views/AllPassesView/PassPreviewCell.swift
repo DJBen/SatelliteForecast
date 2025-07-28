@@ -219,7 +219,7 @@ struct PassPreviewCell: View {
                         pass: pass,
                         notableSnapshots: notableSnapshots,
                         configs: .preview,
-                        quality: .preview,
+                        quality: .onboarding,
                         julianDateProvider: julianDateProvider
                     )
                 )

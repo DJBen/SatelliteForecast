@@ -148,6 +148,8 @@ public struct SkyChart<ConstellationLabel: View, BackgroundAnnotationView: View>
             return viewModel.state.resources.rasterizedSatellitePaths[context.pass]
         case .preview:
             return viewModel.state.resources.previewSatellitePaths[context.pass]
+        case .onboarding:
+            return viewModel.state.resources.onboardingSatellitePaths[context.pass]
         }
     }
 
