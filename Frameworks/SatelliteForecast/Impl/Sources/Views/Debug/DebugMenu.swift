@@ -215,8 +215,16 @@ public struct DebugMenu: View {
                 }
                 
                 Section {
-                    Button("Reset Onboarding") {
+                    Button("Reset All Onboarding") {
                         viewModel.dispatch(.resetOnboarding)
+                    }
+                    
+                    Button("Reset Main Onboarding") {
+                        viewModel.dispatch(.resetMainOnboarding)
+                    }
+                    
+                    Button("Reset Pass List Onboarding") {
+                        viewModel.dispatch(.resetAllPassesOnboarding)
                     }
                 } header: {
                     Text("Onboarding")
@@ -244,67 +252,3 @@ extension ViewProducer where Context == Void, ProducedView == DebugMenu {
         }
     }
 }
-
-#if DEBUG
-struct DebugMenu_Previews: PreviewProvider {
-    static var previews: some View {
-        DebugMenu(
-            viewModel: .mock(
-                state: DebugMenuState(
-                    trueJulianDate: 2459420.60909,
-                    config: .init(),
-                    pendingNotifications: [
-                        UNNotificationRequest(
-                            identifier: "id1",
-                            content: {
-                                let content = UNMutableNotificationContent()
-                                content.title = "ISS (ZARYA)"
-                                content.body = "Body text"
-                                return content
-                            }(),
-                            trigger: {
-                                UNTimeIntervalNotificationTrigger(
-                                    timeInterval: 10000,
-                                    repeats: false
-                                )
-                            }()
-                        )
-                    ],
-                    deliveredNotifications: []
-                ),
-                action: { action, source, state in
-                    switch action {
-                    case .toggleDebugMenu(_):
-                        break
-
-                    case let .toggleFreezeTime(isOn):
-                        if isOn {
-                            state?.config.frozenAt = Date().julianDate
-                        } else {
-                            state?.config.frozenAt = nil
-                        }
-
-                    case let .toggleMockedOffset(isOn):
-                        state?.config.mockedOffsetOn = isOn
-
-                    case let .setMockedDateOffset(offset):
-                        state?.config.mockedOffset = offset
-                        
-                    case let .toggleRapidNotificationDelivery(isOn):
-                        state?.config.rapidNotificationDelivery = isOn
-                        
-                    case .fetchNotifications:
-                        break
-                        
-                    case .triggerPassDeepLink:
-                        break
-                        
-                    case .resetOnboarding:
-                        break
-                    }
-                }
-            )
-        )
-    }
-}
-#endif

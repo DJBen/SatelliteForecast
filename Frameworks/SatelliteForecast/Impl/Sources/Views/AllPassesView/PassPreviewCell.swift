@@ -13,38 +13,48 @@ import Shimmer
 @preconcurrency import CombineRex
 @preconcurrency import CombineRextensions
 
+private let dateFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateStyle = .medium
+    formatter.timeStyle = .none
+    return formatter
+}()
+
+private let timeFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.setLocalizedDateFormatFromTemplate("H:mm:ss")
+    return formatter
+}()
+
+private let numberFormatter: NumberFormatter = {
+    let formatter = NumberFormatter()
+    formatter.maximumFractionDigits = 1
+    return formatter
+}()
+
 struct PassPreviewCell: View {
     var satelliteInfo: SatelliteInfo
-    var snapshots: [SatelliteSnapshot]
-    var notableSnapshots: NotableSnapshots
     var observer: LatLonAlt
-    var pass: Pass
+    var passSnapshots: PassSnapshots
     var hasScheduledAlert: Bool
     var skyChartProducer: ViewProducer<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>
     var julianDateOffset: Double
     var julianDateProvider: () -> Double
 
+    var snapshots: [SatelliteSnapshot] {
+        passSnapshots.snapshots
+    }
+    
+    var notableSnapshots: NotableSnapshots {
+        passSnapshots.notableSnapshots
+    }
+    
+    var pass: Pass {
+        passSnapshots.pass
+    }
+
     @Environment(\.colorScheme) var colorScheme
 
-    static let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .none
-        return formatter
-    }()
-
-    static let timeFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.setLocalizedDateFormatFromTemplate("H:mm:ss")
-        return formatter
-    }()
-
-    static let numberFormatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.maximumFractionDigits = 1
-        return formatter
-    }()
-    
     @ViewBuilder private var starRatingView: some View {
         HStack(spacing: 0) {
             Image(systemName: "star.fill")
@@ -79,7 +89,7 @@ struct PassPreviewCell: View {
                                 .font(.headline)
                                 .foregroundColor(Color(UIColor.label))
                             if notableSnapshots.visibleCulminationElevation > 0 {
-                                Text("∠\(Self.numberFormatter.string(from: NSNumber(value: notableSnapshots.visibleCulminationElevation))!)°")
+                                Text("∠\(numberFormatter.string(from: NSNumber(value: notableSnapshots.visibleCulminationElevation))!)°")
                                     .font(.body)
                                     .foregroundColor(Color(UIColor.label))
                             }
@@ -94,7 +104,7 @@ struct PassPreviewCell: View {
                     }
 
                     VStack(alignment: .leading) {
-                        Text(Self.dateFormatter.string(from: Date(julianDate: pass.rise.julianDate)))
+                        Text(dateFormatter.string(from: Date(julianDate: pass.rise.julianDate)))
                             .minimumScaleFactor(0.8)
                             .lineLimit(1)
                             .font(.headline)
@@ -107,7 +117,7 @@ struct PassPreviewCell: View {
                                     .font(.subheadline)
                                     .foregroundColor(Color(UIColor.tertiaryLabel))
                                 
-                                Text(Self.timeFormatter.string(from: Date(julianDate: exitsShadowJulianDate)))
+                                Text(timeFormatter.string(from: Date(julianDate: exitsShadowJulianDate)))
                                     .font(.subheadline)
                                     .foregroundColor(Color(UIColor.tertiaryLabel))
                             }
@@ -118,7 +128,7 @@ struct PassPreviewCell: View {
                                         .foregroundColor(Color(UIColor.secondaryLabel))
                                         .bold()
 
-                                    Text(Self.timeFormatter.string(from: Date(julianDate: pass.culmination.julianDate)))
+                                    Text(timeFormatter.string(from: Date(julianDate: pass.culmination.julianDate)))
                                         .font(.subheadline)
                                         .foregroundColor(Color(UIColor.label))
                                         .bold()
@@ -135,7 +145,7 @@ struct PassPreviewCell: View {
                                     .font(.subheadline)
                                     .foregroundColor(Color(UIColor.tertiaryLabel))
 
-                                Text(Self.timeFormatter.string(from: Date(julianDate: pass.rise.julianDate)))
+                                Text(timeFormatter.string(from: Date(julianDate: pass.rise.julianDate)))
                                     .font(.subheadline)
                                     .foregroundColor(Color(UIColor.tertiaryLabel))
                             }
@@ -148,7 +158,7 @@ struct PassPreviewCell: View {
                                     .foregroundColor(Color(UIColor.secondaryLabel))
                                     .bold()
 
-                                Text(Self.timeFormatter.string(from: Date(julianDate: pass.culmination.julianDate)))
+                                Text(timeFormatter.string(from: Date(julianDate: pass.culmination.julianDate)))
                                     .font(.subheadline)
                                     .foregroundColor(Color(UIColor.label))
                                     .bold()
@@ -168,7 +178,7 @@ struct PassPreviewCell: View {
                                         .foregroundColor(Color(UIColor.secondaryLabel))
                                         .bold()
 
-                                    Text(Self.timeFormatter.string(from: Date(julianDate: pass.culmination.julianDate)))
+                                    Text(timeFormatter.string(from: Date(julianDate: pass.culmination.julianDate)))
                                         .font(.subheadline)
                                         .foregroundColor(Color(UIColor.label))
                                         .bold()
@@ -184,7 +194,7 @@ struct PassPreviewCell: View {
                                     .font(.subheadline)
                                     .foregroundColor(Color(UIColor.tertiaryLabel))
 
-                                Text(Self.timeFormatter.string(from: Date(julianDate: entersShadowJulianDate)))
+                                Text(timeFormatter.string(from: Date(julianDate: entersShadowJulianDate)))
                                     .font(.subheadline)
                                     .foregroundColor(Color(UIColor.tertiaryLabel))
                             }
@@ -194,7 +204,7 @@ struct PassPreviewCell: View {
                                     .font(.subheadline)
                                     .foregroundColor(Color(UIColor.tertiaryLabel))
                                 
-                                Text(Self.timeFormatter.string(from: Date(julianDate: pass.set.julianDate)))
+                                Text(timeFormatter.string(from: Date(julianDate: pass.set.julianDate)))
                                     .font(.subheadline)
                                     .foregroundColor(Color(UIColor.tertiaryLabel))
                             }
@@ -214,12 +224,10 @@ struct PassPreviewCell: View {
                 skyChartProducer.view(
                     SkyChartContext(
                         satelliteInfo: satelliteInfo,
-                        snapshots: snapshots,
                         observer: observer,
-                        pass: pass,
-                        notableSnapshots: notableSnapshots,
+                        passSnapshots: passSnapshots,
                         configs: .preview,
-                        quality: .preview,
+                        quality: .onboarding,
                         julianDateProvider: julianDateProvider
                     )
                 )
@@ -338,10 +346,8 @@ struct PassPreviewCell_Previews: PreviewProvider {
             let passSnapshot = passSnapshots[index]
             return PassPreviewCell(
                 satelliteInfo: try! SatelliteInfo(elements: elements),
-                snapshots: passSnapshot.snapshots,
-                notableSnapshots: passSnapshot.notableSnapshots,
                 observer: observer,
-                pass: passSnapshot.pass,
+                passSnapshots: passSnapshot,
                 hasScheduledAlert: false,
                 skyChartProducer: .pure(
                     SkyChart(
@@ -350,10 +356,8 @@ struct PassPreviewCell_Previews: PreviewProvider {
                         ),
                         context: SkyChartContext(
                             satelliteInfo: satelliteInfo,
-                            snapshots: passSnapshot.snapshots,
                             observer: observer,
-                            pass: passSnapshot.pass,
-                            notableSnapshots: passSnapshot.notableSnapshots,
+                            passSnapshots: passSnapshot,
                             configs: SkyChartConfigs(
                                 backgroundSkyConfigs: BackgroundSkyConfigs(
                                     stars: .limitedMagnitude(2),

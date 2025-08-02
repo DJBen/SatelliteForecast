@@ -30,6 +30,8 @@ public struct BackgroundSkyResources {
 
     public var previewBackgroundSkies: [BackgroundSkyKey: [Double: UIImage]] = [:]
 
+    public var onboardingBackgroundSkies: [BackgroundSkyKey: [Double: UIImage]] = [:]
+
     public func dataSource(for quality: ChartQuality) -> [BackgroundSkyKey: [Double: UIImage]] {
         switch quality {
         case .detailed:
@@ -38,17 +40,21 @@ public struct BackgroundSkyResources {
             return rasterizedBackgroundSky
         case .preview:
             return previewBackgroundSkies
+        case .onboarding:
+            return onboardingBackgroundSkies
         }
     }
 
     public init(
         detailedBackgroundSkies: [BackgroundSkyKey: [Double: UIImage]] = [:],
         rasterizedBackgroundSky: [BackgroundSkyKey: [Double: UIImage]] = [:],
-        previewBackgroundSkies: [BackgroundSkyKey: [Double: UIImage]] = [:]
+        previewBackgroundSkies: [BackgroundSkyKey: [Double: UIImage]] = [:],
+        onboardingBackgroundSkies: [BackgroundSkyKey: [Double: UIImage]] = [:]
     ) {
         self.detailedBackgroundSkies = detailedBackgroundSkies
         self.rasterizedBackgroundSky = rasterizedBackgroundSky
         self.previewBackgroundSkies = previewBackgroundSkies
+        self.onboardingBackgroundSkies = onboardingBackgroundSkies
     }
 }
 

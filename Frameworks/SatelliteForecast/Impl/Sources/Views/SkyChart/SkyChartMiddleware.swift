@@ -25,21 +25,14 @@ extension EffectMiddleware where
     public static var skyChart: EffectMiddleware<SkyChartAction, SkyChartOutput, SkyChartViewState, Void> {
         EffectMiddleware<SkyChartAction, SkyChartOutput, SkyChartViewState, Void>.onAction { action, _, getState in
             switch action {
-            case let .requestRasterizedSatellitePath(size, quality, pass, traitCollection):
+            case let .requestRasterizedSatellitePath(size, quality, passSnapshots, traitCollection):
                 return .promise(token: "") { context, sink in
                     satellitePathRasterizationQueue.async {
                         let state = getState()
                         let dataSource = state.resources.dataSource(for: quality)
                         // Skip if image already generated.
-                        if let _ = dataSource[pass] {
+                        if let _ = dataSource[passSnapshots.pass] {
 //                            logger.debug("\(pass.noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate) already rasterized, skipping.")
-                            return
-                        }
-
-                        guard let passSnapshots = state.elementsPropagatorResources.satelliteTrails[pass.noradIndex]?.passSnapshots?.first(
-                            where: { $0.pass == pass }
-                        ) else {
-//                            logger.debug("\(pass.noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate) lacks snapshots: rasterization on hold")
                             return
                         }
 
@@ -68,7 +61,7 @@ extension EffectMiddleware where
                                 .rasterizedSatellitePath(
                                     image,
                                     quality: quality,
-                                    pass: pass
+                                    pass: passSnapshots.pass
                                 )
                             )
                         }

@@ -43,6 +43,7 @@ public struct AllPassesViewState {
     public var showsPassAlarmSettingsModal: Bool
     public var satelliteCategory: SatelliteCategory
     public var satelliteTrails: [UInt: SatelliteTrails] = [:]
+    public var showsOnboarding: Bool = false
 
     public init(
         julianDateOffset: Double = 0,
@@ -54,7 +55,8 @@ public struct AllPassesViewState {
         selectedPassIndex: Int? = nil,
         showsPassAlarmSettingsModal: Bool = false,
         satelliteCategory: SatelliteCategory = .iss,
-        satelliteTrails: [UInt : SatelliteTrails] = [:]
+        satelliteTrails: [UInt : SatelliteTrails] = [:],
+        showsOnboarding: Bool = false
     ) {
         self.julianDateOffset = julianDateOffset
         self.scheduledPassNotifications = scheduledPassNotifications
@@ -66,6 +68,7 @@ public struct AllPassesViewState {
         self.showsPassAlarmSettingsModal = showsPassAlarmSettingsModal
         self.satelliteCategory = satelliteCategory
         self.satelliteTrails = satelliteTrails
+        self.showsOnboarding = showsOnboarding
     }
 }
 
@@ -231,10 +234,8 @@ public struct AllPassesView: View {
                     ) {
                         PassPreviewCell(
                             satelliteInfo: context.satelliteInfo,
-                            snapshots: item.passSnapshots.snapshots,
-                            notableSnapshots: item.passSnapshots.notableSnapshots,
                             observer: observer,
-                            pass: item.passSnapshots.pass,
+                            passSnapshots: item.passSnapshots,
                             hasScheduledAlert: item.hasScheduledAlert,
                             skyChartProducer: skyChartProducer,
                             julianDateOffset: viewModel.state.julianDateOffset,
@@ -434,6 +435,41 @@ public struct AllPassesView: View {
                 }
             }
         }
+        .onAppear {
+            // Check if this is the first time viewing AllPassesView
+            if !UserDefaults.standard.bool(forKey: "hasCompletedAllPassesOnboarding") {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    // Double-check the UserDefaults in case the user completed onboarding during the delay
+                    if !UserDefaults.standard.bool(forKey: "hasCompletedAllPassesOnboarding") {
+                        viewModel.dispatch(.showOnboarding(true))
+                    }
+                }
+            }
+        }
+        .sheet(isPresented: Binding<Bool>(
+            get: { viewModel.state.showsOnboarding },
+            set: { isPresented in
+                // If the sheet is being dismissed (isPresented = false) and we haven't completed onboarding yet,
+                // mark it as completed since the user has seen it
+                if !isPresented && viewModel.state.showsOnboarding && !UserDefaults.standard.bool(forKey: "hasCompletedAllPassesOnboarding") {
+                    viewModel.dispatch(.completeOnboarding)
+                }
+                viewModel.dispatch(.showOnboarding(isPresented))
+            }
+        )) {
+            AllPassesOnboardingView(
+                onComplete: {
+                    viewModel.dispatch(.completeOnboarding)
+                },
+                onDismiss: {
+                    // Mark as completed when dismissed by any means other than the button
+                    if !UserDefaults.standard.bool(forKey: "hasCompletedAllPassesOnboarding") {
+                        viewModel.dispatch(.completeOnboarding)
+                    }
+                },
+                skyChartProducer: skyChartProducer
+            )
+        }
     }
 
 }
@@ -614,15 +650,8 @@ struct AllPassesView_Previews: PreviewProvider {
                             ),
                             context: SkyChartContext<EmptyView, EmptyView>(
                                 satelliteInfo: try! SatelliteInfo(elements: tianHe),
-                                snapshots: passSnapshots.snapshots,
                                 observer: observer,
-                                pass: passSnapshots.pass,
-                                notableSnapshots: NotableSnapshots(
-                                    rise: passSnapshots.notableSnapshots.rise,
-                                    transit: passSnapshots.notableSnapshots.transit,
-                                    set: passSnapshots.notableSnapshots.set,
-                                    illuminationChanges: passSnapshots.notableSnapshots.illuminationChanges
-                                ),
+                                passSnapshots: passSnapshots,
                                 configs: SkyChartConfigs(
                                     backgroundSkyConfigs: BackgroundSkyConfigs(
                                         stars: .limitedMagnitude(2),

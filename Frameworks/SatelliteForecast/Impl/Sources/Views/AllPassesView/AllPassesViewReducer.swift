@@ -31,6 +31,12 @@ extension Reducer where ActionType == AllPassesViewAction, StateType == AppState
             state.navigationState.tab = .settings
         case .showLocationSettings:
             break
+        case .showOnboarding(let show):
+            state.navigationState.listNavigation.showsOnboarding = show
+        case .completeOnboarding:
+            // Mark onboarding as completed in user defaults
+            UserDefaults.standard.set(true, forKey: "hasCompletedAllPassesOnboarding")
+            state.navigationState.listNavigation.showsOnboarding = false
         }
     }
 }
@@ -50,6 +56,10 @@ extension EffectMiddleware where InputActionType == AllPassesViewAction, OutputA
             case .deeplinkToLocationSelection:
                 return .doNothing
             case .showLocationSettings:
+                return .doNothing
+            case .showOnboarding(_):
+                return .doNothing
+            case .completeOnboarding:
                 return .doNothing
             }
         }
@@ -78,6 +88,10 @@ extension EffectMiddleware where InputActionType == AllPassesViewAction, OutputA
                     options: [:],
                     completionHandler: nil
                 )
+                return .doNothing
+            case .showOnboarding(_):
+                return .doNothing
+            case .completeOnboarding:
                 return .doNothing
             }
         }

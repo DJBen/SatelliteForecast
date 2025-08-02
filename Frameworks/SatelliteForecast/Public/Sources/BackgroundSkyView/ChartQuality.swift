@@ -12,6 +12,7 @@ public enum ChartQuality {
     case detailed
     case full
     case preview
+    case onboarding
 }
 
 extension ChartQuality: Equatable {}

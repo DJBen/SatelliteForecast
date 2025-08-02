@@ -42,6 +42,10 @@ extension Reducer where ActionType == DebugMenuAction, StateType == DebugMenuSta
             
         case .resetOnboarding:
             break // This will be handled by middleware
+        case .resetMainOnboarding:
+            break // This will be handled by middleware
+        case .resetAllPassesOnboarding:
+            break // This will be handled by middleware
         }
     }
 }

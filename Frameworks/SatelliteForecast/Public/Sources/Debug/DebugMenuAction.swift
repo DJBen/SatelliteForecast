@@ -18,4 +18,6 @@ public enum DebugMenuAction {
     case triggerPassDeepLink(category: SatelliteCategory, noradIndex: UInt)
     
     case resetOnboarding
+    case resetMainOnboarding
+    case resetAllPassesOnboarding
 }

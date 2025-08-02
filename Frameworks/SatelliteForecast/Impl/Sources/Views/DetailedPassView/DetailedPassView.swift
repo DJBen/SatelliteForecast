@@ -55,10 +55,8 @@ public struct DetailedPassView: View {
                     skyChartProducer.view(
                         SkyChartContext<ConstellationLabel, DetailedPassViewBackgroundAnnotationView>(
                             satelliteInfo: context.satelliteInfo,
-                            snapshots: context.passSnapshots.snapshots,
                             observer: context.observer,
-                            pass: context.passSnapshots.pass,
-                            notableSnapshots: context.passSnapshots.notableSnapshots,
+                            passSnapshots: context.passSnapshots,
                             configs: SkyChartConfigs(
                                 backgroundSkyConfigs: BackgroundSkyConfigs(
                                     stars: .limitedMagnitude(5.5),

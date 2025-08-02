@@ -22,13 +22,15 @@ extension AllPassesViewState: AppStateMappable {
             selectedPassIndex: appState.navigationState.listNavigation.selectedPassIndex,
             showsPassAlarmSettingsModal: appState.navigationState.listNavigation.showAlarmConfigurationModal,
             satelliteCategory: appState.navigationState.listNavigation.category,
-            satelliteTrails: appState.elementsPropagatorResources.satelliteTrails
+            satelliteTrails: appState.elementsPropagatorResources.satelliteTrails,
+            showsOnboarding: appState.navigationState.listNavigation.showsOnboarding
         )
     }
 
     public static func apply(appState: inout AppState, state: AllPassesViewState) {
         appState.navigationState.listNavigation.selectedPassIndex = state.selectedPassIndex
         appState.navigationState.listNavigation.category = state.satelliteCategory
+        appState.navigationState.listNavigation.showsOnboarding = state.showsOnboarding
     }
 }
 
