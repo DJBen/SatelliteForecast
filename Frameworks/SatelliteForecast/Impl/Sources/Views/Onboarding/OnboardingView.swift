@@ -261,10 +261,6 @@ private struct OnboardingPageView: View {
     }
 }
 
-#if DEBUG
-struct OnboardingView_Previews: PreviewProvider {
-    static var previews: some View {
-        OnboardingView(onComplete: {})
-    }
+#Preview {
+    OnboardingView(onComplete: {})
 }
-#endif

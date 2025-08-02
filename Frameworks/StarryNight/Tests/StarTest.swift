@@ -10,22 +10,27 @@ import XCTest
 @testable import StarryNight
 
 final class StarTest: XCTestCase {
-    func testStarQuery() {
-        let starQuery = Star.magitudeLessThan(0)
-        XCTAssertEqual(starQuery.count, 4)
-        let s2Query = Star.hip(69673)
-        XCTAssertNotNil(s2Query)
-        XCTAssertEqual(s2Query!.identity.properName, "Arcturus")
-        measure {
-            _ = Star.magitudeLessThan(5.6)
+    
+    private var starManager: StarManager!
+    
+    override func setUp() {
+        super.setUp()
+        do {
+            starManager = try StarManager()
+        } catch {
+            XCTFail("Failed to initialize StarManager: \(error)")
         }
     }
-
-    func testMassHrQueries() {
-        measure {
-            for i in 0..<10000 {
-                _ = Star.hr(i)
-            }
-        }
+    
+    func testStarQuery() async throws {
+        let starQuery = await starManager.brightestStars(maximumMagnitude: 0)
+        XCTAssertEqual(starQuery.count, 5) // 5 including the Sun
+        
+        // Search for Arcturus by HIP number
+        let arcturus = await starManager.searchStars(matching: "HIP 69673")
+        XCTAssertFalse(arcturus.isEmpty)
+        let arcturusWithInfoResult = await starManager.starWithInfo(id: arcturus.first!.id)
+        let arcturusWithInfo = try XCTUnwrap(arcturusWithInfoResult)
+        XCTAssertEqual(try XCTUnwrap(arcturusWithInfo.info).properName, "Arcturus")
     }
 }

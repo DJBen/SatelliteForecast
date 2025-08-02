@@ -26,6 +26,11 @@ public class AppDelegate: NSObject, UIApplicationDelegate, AppDelegateActionDisp
     }()
     
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        // Solves the issue that preview is broken by Firebase
+        if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
+            return true
+        }
+        
         // Set up notification delegates
         UNUserNotificationCenter.current().delegate = implementation as? UNUserNotificationCenterDelegate
         

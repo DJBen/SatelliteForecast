@@ -11,14 +11,14 @@ import Foundation
 // superscripts from 1 to 9
 private let superscripts = ["", "\u{00b9}", "\u{00b2}", "\u{00b3}", "\u{2074}", "\u{2075}", "\u{2076}", "\u{2077}", "\u{2078}", "\u{2079}"]
 
-struct BayerFlamsteed: CustomStringConvertible {
-    enum DesignationType {
+public struct BayerFlamsteed: CustomStringConvertible, Hashable, Equatable, Sendable {
+    public enum DesignationType: Sendable {
         case bayer
         case flamsteed
         case bayerFlamsteed
     }
 
-    var description: String {
+    public var description: String {
         switch type {
         case .bayer:
             return "\(greekLetter!) \(constellation.genitive)"
@@ -29,7 +29,7 @@ struct BayerFlamsteed: CustomStringConvertible {
         }
     }
 
-    var superscriptedBinaryNumber: String {
+    public var superscriptedBinaryNumber: String {
         if let num = binaryNumber {
             return superscripts[num]
         } else {
@@ -37,15 +37,15 @@ struct BayerFlamsteed: CustomStringConvertible {
         }
     }
 
-    let type: DesignationType
-    let flamsteed: Int?
-    let greekLetter: GreekLetter?
-    let binaryNumber: Int?
-    let constellation: Constellation
+    public let type: DesignationType
+    public let flamsteed: Int?
+    public let greekLetter: GreekLetter?
+    public let binaryNumber: Int?
+    public let constellation: Constellation
 
-    init?(_ str: String) {
+    public init?(_ str: String, constellation: Constellation) {
         // Define the regex pattern
-        let pattern = #/(\d+)?\s*(\w{2,3})?\s*(\d)?(\w{2,3})/#
+        let pattern = #/(\d+)?\s*(\w{2,3})?\s*(\d)?/#
         
         if let match = str.firstMatch(of: pattern) {
             if let flamsteedCapture = match.1, let flamsteedNumber = Int(flamsteedCapture) {
@@ -65,8 +65,7 @@ struct BayerFlamsteed: CustomStringConvertible {
                 fatalError()
             }
             
-            let con = match.4
-            constellation = Constellation.iau(String(con))!
+            self.constellation = constellation
             
             if let bnStr = match.3, let bnInt = Int(bnStr) {
                 binaryNumber = bnInt
@@ -80,7 +79,7 @@ struct BayerFlamsteed: CustomStringConvertible {
 }
 
 // http://www.unicode.org/charts/PDF/U0370.pdf
-struct GreekLetter: CustomStringConvertible {
+public struct GreekLetter: CustomStringConvertible, Hashable, Equatable, Sendable {
     private static let greekAlphabetEnglish = [
         "alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", "mu", "nu", "xi", "omikron", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega"
     ]
@@ -97,7 +96,7 @@ struct GreekLetter: CustomStringConvertible {
         return index
     }
 
-    static func at(index: Int) -> String {
+    public static func at(index: Int) -> String {
         // eliminate out-of-bound error
         _ = greekAlphabetEnglish[index]
         var rawValue = UnicodeScalar("α").value + UInt32(index)
@@ -110,13 +109,13 @@ struct GreekLetter: CustomStringConvertible {
         return str
     }
 
-    let index: Int
+    public let index: Int
 
-    init(index: Int) {
+    public init(index: Int) {
         self.index = index
     }
 
-    init?(shortEnglish: String) {
+    public init?(shortEnglish: String) {
         if let index = GreekLetter.indexFromShortEnglish(shortEnglish) {
             self.index = index
         } else {
@@ -124,7 +123,7 @@ struct GreekLetter: CustomStringConvertible {
         }
     }
 
-    var description: String {
+    public var description: String {
         return GreekLetter.at(index: self.index)
     }
 }
