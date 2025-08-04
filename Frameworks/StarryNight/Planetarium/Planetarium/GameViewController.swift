@@ -121,9 +121,8 @@ class GameViewController: UIViewController {
         let translation = gesture.translation(in: arView)
         
         // Convert pan to rotation - adjust sensitivity
-        let sensitivity: Float = 0.003
-        let deltaX = Float(translation.x) * sensitivity
-        let deltaY = Float(translation.y) * sensitivity
+        let deltaX = Float(translation.x) * 0.002
+        let deltaY = Float(translation.y) * 0.002
         
         switch gesture.state {
         case .changed:
