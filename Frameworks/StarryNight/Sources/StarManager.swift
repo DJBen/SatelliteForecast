@@ -8,13 +8,14 @@
 import Foundation
 @preconcurrency import SatelliteKit
 @preconcurrency import SQLite
+import Ch3
 
 /// Star database manager responsible for all star-related I/O operations
 public actor StarManager {    
-    private let db: Connection
+    let db: Connection
     
     // Table definitions
-    private struct Tables {
+    struct Tables {
         static let starsBrightest300 = Table("stars_brightest_300")
         static let starsH3_0 = Table("stars_h3_0")
         static let starsH3_1 = Table("stars_h3_1")
@@ -252,6 +253,108 @@ public actor StarManager {
         }
     }
     
+    /// Get stars within a rectangular viewport defined by four lat/lon vertices
+    /// Always includes all brightest 300 stars plus stars from appropriate H3 cells
+    public func stars(inViewport vertices: [(latitude: Double, longitude: Double)], maximumMagnitude magCutoff: Double? = nil) -> [Star] {
+        guard vertices.count == 4 else {
+            print("Error: Viewport must have exactly 4 vertices")
+            return []
+        }
+        
+        // Start with brightest 300 stars (always included)
+        var allStars = Set<Int>() // Use Set to avoid duplicates by star ID
+        let brightestStars = brightestStars()
+        for star in brightestStars {
+            if let magCutoff = magCutoff {
+                if star.magnitude < magCutoff {
+                    allStars.insert(star.id)
+                }
+            } else {
+                allStars.insert(star.id)
+            }
+        }
+        
+        // Convert lat/lon vertices to GeoCoord for H3 (convert degrees to radians)
+        let geoCoords = vertices.map { vertex in
+            GeoCoord(lat: vertex.latitude * .pi / 180.0, lon: vertex.longitude * .pi / 180.0)
+        }
+        
+        // Create polygon for H3 polyfill
+        let geofence = Geofence(numVerts: Int32(geoCoords.count), verts: UnsafeMutablePointer<GeoCoord>.allocate(capacity: geoCoords.count))
+        for (index, coord) in geoCoords.enumerated() {
+            geofence.verts[index] = coord
+        }
+        defer {
+            geofence.verts.deallocate()
+        }
+        
+        var polygon = GeoPolygon(geofence: geofence, numHoles: 0, holes: nil)
+        
+        // Determine the appropriate H3 level by checking if all vertices fall in the same cell
+        var useLevel = 0
+        
+        for testLevel in 0...2 {
+            let h3Indices = geoCoords.map { coord in
+                withUnsafePointer(to: coord) { coordPtr in
+                    geoToH3(coordPtr, Int32(testLevel))
+                }
+            }
+            let uniqueIndices = Set(h3Indices)
+            
+            if uniqueIndices.count == 1 {
+                // All vertices in same cell, can use higher resolution
+                useLevel = testLevel + 1
+                if useLevel > 2 {
+                    useLevel = 2 // Cap at level 2
+                    break
+                }
+            } else {
+                // Use current level
+                useLevel = testLevel
+                break
+            }
+        }
+        
+        // Get H3 cells covering the polygon at the determined level
+        let maxCells = maxPolyfillSize(&polygon, Int32(useLevel))
+        let h3Cells = UnsafeMutablePointer<H3Index>.allocate(capacity: Int(maxCells))
+        defer {
+            h3Cells.deallocate()
+        }
+        
+        polyfill(&polygon, Int32(useLevel), h3Cells)
+        
+        // Query stars from each H3 cell
+        for i in 0..<Int(maxCells) {
+            let h3Index = h3Cells[i]
+            if h3Index != 0 { // Valid H3 index
+                // Convert H3Index to string
+                let bufferSize = 17 // H3 string representation needs max 16 chars + null terminator
+                let buffer = UnsafeMutablePointer<CChar>.allocate(capacity: bufferSize)
+                defer { buffer.deallocate() }
+                
+                h3ToString(h3Index, buffer, bufferSize)
+                
+                if let h3IndexString = String(cString: buffer, encoding: .utf8) {
+                    let cellStars = stars(inH3Cell: h3IndexString, level: useLevel, maximumMagnitude: magCutoff)
+                    for star in cellStars {
+                        allStars.insert(star.id)
+                    }
+                }
+            }
+        }
+        
+        // Convert star IDs back to Star objects
+        var result: [Star] = []
+        for starId in allStars {
+            if let star = star(withId: starId) {
+                result.append(star)
+            }
+        }
+        
+        return result
+    }
+    
     /// Find the closest star to a given cartesian coordinate
     public func closestStar(to coordinate: Vector, maximumMagnitude magCutoff: Double? = nil, maximumAngularDistance angularDistance: Double? = nil) -> Star? {
         // Use the brightest stars table for closest star search
@@ -373,164 +476,6 @@ public actor StarManager {
         guard var star = star(withId: id) else { return nil }
         star.info = starInfo(forId: id)
         return star
-    }
-    
-    // MARK: - Constellation API
-    
-    /// Get all constellations
-    public func allConstellations() -> Set<Constellation> {
-        do {
-            var constellations = Set<Constellation>()
-            for row in try db.prepare(Tables.constellations) {
-                let iau = try row.get(Tables.iauName)
-                let con = Constellation(
-                    name: try row.get(Tables.constellationName),
-                    iAUName: iau,
-                    genitive: try row.get(Tables.genitive)
-                )
-                constellations.insert(con)
-            }
-            return constellations
-        } catch {
-            print("Error fetching all constellations: \(error)")
-            return []
-        }
-    }
-    
-    /// Get a constellation by name
-    public func constellation(named name: String) -> Constellation? {
-        let query = Tables.constellations.select(
-            Tables.constellationName,
-            Tables.iauName,
-            Tables.genitive
-        ).filter(Tables.constellationName == name)
-        
-        return queryConstellation(query)
-    }
-    
-    /// Get a constellation by IAU abbreviation
-    public func constellation(iau: String) -> Constellation? {
-        let query = Tables.constellations.select(
-            Tables.constellationName,
-            Tables.iauName,
-            Tables.genitive
-        ).filter(Tables.iauName == iau)
-        
-        return queryConstellation(query)
-    }
-    
-    /// Get constellation connection lines
-    public func constellationLines(for constellation: Constellation) async -> [Constellation.Line] {
-        guard let lineMappings = getConstellationLineMappings(),
-              let lines = lineMappings[constellation.iAUName] else {
-            return []
-        }
-        
-        var connectionLines: [Constellation.Line] = []
-        for (s1, s2) in lines {
-            if let star1 = await getStarByHR(s1), let star2 = await getStarByHR(s2) {
-                connectionLines.append(Constellation.Line(star1: star1, star2: star2))
-            }
-        }
-        return connectionLines
-    }
-    
-    /// Get neighboring constellations for a given constellation
-    public func neighbors(for constellation: Constellation) -> Set<Constellation> {
-        // Define the constellation borders table structure
-        let fullBorders = Table("constellation_borders")
-        let dbBorderCon = SQLite.Expression<String>("con")
-        let dbOppoCon = SQLite.Expression<String>("opposite_con")
-        
-        var query = fullBorders.select(dbOppoCon)
-        if constellation.iAUName == "Ser" {
-            query = query.filter(dbBorderCon == "Ser1" || dbBorderCon == "Ser2")
-        } else {
-            query = query.filter(dbBorderCon == constellation.iAUName)
-        }
-        
-        var constellations: [Constellation] = []
-        do {
-            for row in try db.prepare(query) {
-                let oppoCon = try row.get(dbOppoCon)
-                if let neighborConstellation = self.constellation(iau: oppoCon) {
-                    constellations.append(neighborConstellation)
-                }
-            }
-        } catch {
-            print("Error fetching neighbors for constellation \(constellation.iAUName): \(error)")
-        }
-        
-        return Set<Constellation>(constellations)
-    }
-    
-    // MARK: - Private Constellation Helpers
-    
-    private func queryConstellation(_ query: QueryType) -> Constellation? {
-        do {
-            if let row = try db.pluck(query) {
-                return Constellation(
-                    name: try row.get(Tables.constellationName),
-                    iAUName: try row.get(Tables.iauName),
-                    genitive: try row.get(Tables.genitive)
-                )
-            } else {
-                return nil
-            }
-        } catch {
-            print("Error querying constellation: \(error)")
-            return nil
-        }
-    }
-    
-    private func getStarByHR(_ hr: Int) async -> Star? {
-        // Search for star with the given HR number
-        let query = Tables.starsInfo.filter(Tables.hr == hr)
-        
-        do {
-            if let infoRow = try db.pluck(query) {
-                let id = try infoRow.get(Tables.id)
-                return star(withId: id)
-            }
-        } catch {
-            print("Error getting star by HR \(hr): \(error)")
-        }
-        
-        return nil
-    }
-    
-    private func getConstellationLineMappings() -> [String: [(Int, Int)]]? {
-        guard let constellationLinePath = Bundle.module.path(forResource: "constellation_lines", ofType: "dat") else {
-            print("Error: Could not find constellation_lines.dat")
-            return nil
-        }
-        
-        do {
-            let content = try String(contentsOfFile: constellationLinePath)
-            let lines = content.components(separatedBy: "\n").filter { (str) -> Bool in
-                return str.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).isEmpty == false
-            }
-            var dict: [String: [(Int, Int)]] = [:]
-            lines.forEach { (line) in
-                let lineComponents: [String] = line.components(separatedBy: " ").filter { $0.isEmpty == false }
-                let con = lineComponents[0]
-                var starHrs: [(Int, Int)] = []
-                for (hr1, hr2) in zip(lineComponents[2..<(lineComponents.endIndex - 1)], lineComponents[3..<(lineComponents.endIndex)]) {
-                    if let hr1Int = Int(hr1), let hr2Int = Int(hr2) {
-                        starHrs.append((hr1Int, hr2Int))
-                    }
-                }
-                if let connections = dict[con] {
-                    dict[con] = connections + starHrs
-                } else {
-                    dict[con] = starHrs
-                }
-            }
-            return dict
-        } catch {
-            print("Error reading constellation lines file: \(error)")
-            return nil
-        }
     }
     
     // MARK: - Private Helpers

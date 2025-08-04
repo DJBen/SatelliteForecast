@@ -36,18 +36,34 @@ final class ConstellationTest: XCTestCase {
 
     func testConnectionLinesLoading() async {
         let allConstellations = await starManager.allConstellations()
-        // Performance test for constellation lines loading
-        await measureAsync {
-            for constellation in allConstellations {
-                _ = await starManager.constellationLines(for: constellation)
+        
+        // Test that we have constellations loaded
+        XCTAssertFalse(allConstellations.isEmpty, "Should have constellations loaded")
+        
+        // Test connection lines for a well-known constellation (Orion)
+        if let orion = await starManager.constellation(named: "Orion") {
+            let orionLines = await starManager.constellationLines(for: orion)
+            XCTAssertFalse(orionLines.isEmpty, "Orion should have connection lines")
+            
+            // Verify that connection lines have valid stars
+            for line in orionLines {
+                XCTAssertNotNil(line.star1, "Connection line should have valid star1")
+                XCTAssertNotNil(line.star2, "Connection line should have valid star2")
+                XCTAssertNotEqual(line.star1.id, line.star2.id, "Connection line should connect different stars")
+            }
+        } else {
+            XCTFail("Should be able to find Orion constellation")
+        }
+        
+        // Test that some constellations have connection lines
+        var constellationsWithLines = 0
+        for constellation in allConstellations.prefix(10) { // Test first 10 to avoid long test times
+            let lines = await starManager.constellationLines(for: constellation)
+            if !lines.isEmpty {
+                constellationsWithLines += 1
             }
         }
+        XCTAssertGreaterThan(constellationsWithLines, 0, "At least some constellations should have connection lines")
     }
     
-    private func measureAsync(_ block: () async throws -> Void) async {
-        let startTime = CFAbsoluteTimeGetCurrent()
-        try! await block()
-        let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
-        print("Time elapsed: \(timeElapsed) s.")
-    }
 }

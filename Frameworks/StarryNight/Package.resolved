@@ -1,5 +1,15 @@
 {
+  "originHash" : "e8efac17f165f7d914155358db1cf196d053d26cdfc7d8baaf0d1b1571ee28aa",
   "pins" : [
+    {
+      "identity" : "ch3",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/DJBen/Ch3.git",
+      "state" : {
+        "branch" : "fix-compilation",
+        "revision" : "ab0c4d6351bfd966ecb6bd73f95fe569624a038d"
+      }
+    },
     {
       "identity" : "sqlite.swift",
       "kind" : "remoteSourceControl",
@@ -10,5 +20,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }
