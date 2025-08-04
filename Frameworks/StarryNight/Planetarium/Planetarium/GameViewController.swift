@@ -15,6 +15,7 @@ class GameViewController: UIViewController {
     private var azimuth: Float = 0      // Horizontal rotation (longitude) -π to π
     private var altitude: Float = 0     // Vertical rotation (latitude) -π/2 to π/2
     private var sceneAnchor: AnchorEntity?
+    private var cameraEntity: Entity?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,6 +43,21 @@ class GameViewController: UIViewController {
         
         // Set camera position at origin with non-AR mode
         arView.cameraMode = .nonAR
+        
+        // Create an entity to hold the camera component
+        let cameraEntity = Entity()
+        var component = PerspectiveCameraComponent()
+        component.fieldOfViewInDegrees = 90
+        // Create an orthographic camera component and add it to the camera entity
+        cameraEntity.components.set(component)
+        
+        // Store reference to camera entity
+        self.cameraEntity = cameraEntity
+        
+        // Add camera to scene
+        let cameraAnchor = AnchorEntity(world: .zero)
+        cameraAnchor.addChild(cameraEntity)
+        arView.scene.addAnchor(cameraAnchor)
         
         // Configure environment
         arView.environment.background = .color(.black)
@@ -116,7 +132,7 @@ class GameViewController: UIViewController {
     }
     
     @objc private func handlePan(_ gesture: UIPanGestureRecognizer) {
-        guard let sceneAnchor = sceneAnchor else { return }
+        guard let cameraEntity = cameraEntity else { return }
         
         let translation = gesture.translation(in: arView)
         
@@ -143,7 +159,6 @@ class GameViewController: UIViewController {
             altitude = max(-Float.pi/2, min(Float.pi/2, altitude))
             
             // Create camera rotation using standard spherical coordinates
-            // Think of this as camera at center of earth looking out
             // Azimuth rotates around Y (up/down) axis
             // Altitude rotates around X (left/right) axis
             
@@ -155,8 +170,8 @@ class GameViewController: UIViewController {
             // This ensures the camera always stays level with latitude lines
             let cameraRotation = azimuthRotation * altitudeRotation
             
-            // Since we're rotating the scene (not the camera), we need the inverse
-            sceneAnchor.transform.rotation = cameraRotation.inverse
+            // Apply rotation to the camera entity
+            cameraEntity.transform.rotation = cameraRotation
             
         default:
             break

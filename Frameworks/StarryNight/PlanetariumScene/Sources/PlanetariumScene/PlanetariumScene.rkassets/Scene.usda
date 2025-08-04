@@ -19,12 +19,15 @@ def Xform "Root"
 
         over "SkySphere_mat"
         {
+            token cullMode = "unspecified" (
+                allowedTokens = ["unspecified", "none", "front", "back"]
+            )
             asset inputs:SkySphere_Texture = @milkyway_2020_4k_cube.exr@ (
                 customData = {
                     dictionary realitykit = {
                         float2 positionInSubgraph = (-754.4517, 71.84726)
                         float2 sizeInSubgraph = (188.5, 53)
-                        int stackingOrderInSubgraph = 390
+                        int stackingOrderInSubgraph = 399
                     }
                 }
             )

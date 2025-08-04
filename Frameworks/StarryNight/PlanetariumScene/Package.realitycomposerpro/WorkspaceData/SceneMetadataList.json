@@ -12,20 +12,30 @@
       [
         "4A0D411C-C224-41C3-9ABA-842FBB2F42F6",
         "Root",
-        "SkySphere"
+        "SkySphere",
+        "SkySphere_mat"
       ],
       {
-        "disallowsFraming" : true,
         "isExpanded" : true,
         "isLocked" : false
       },
       [
         "4A0D411C-C224-41C3-9ABA-842FBB2F42F6",
         "Root",
-        "SkySphere",
-        "SkySphere_mat"
+        "Sphere",
+        "DefaultMaterial"
       ],
       {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "4A0D411C-C224-41C3-9ABA-842FBB2F42F6",
+        "Root",
+        "SkySphere"
+      ],
+      {
+        "disallowsFraming" : true,
         "isExpanded" : true,
         "isLocked" : false
       }
