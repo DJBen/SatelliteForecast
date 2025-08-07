@@ -13,6 +13,7 @@ extension StarManager {
                 let iau = try row.get(Tables.iauName)
                 if let center = constellationCenter[iau] {
                     let con = Constellation(
+                        id: try row.get(Tables.id),
                         name: try row.get(Tables.constellationName),
                         iAUName: iau,
                         genitive: try row.get(Tables.genitive),
@@ -31,6 +32,7 @@ extension StarManager {
     /// Get a constellation by name
     public func constellation(named name: String) -> Constellation? {
         let query = Tables.constellations.select(
+            Tables.id,
             Tables.constellationName,
             Tables.iauName,
             Tables.genitive
@@ -42,6 +44,7 @@ extension StarManager {
     /// Get a constellation by IAU abbreviation
     public func constellation(iau: String) -> Constellation? {
         let query = Tables.constellations.select(
+            Tables.id,
             Tables.constellationName,
             Tables.iauName,
             Tables.genitive
@@ -50,18 +53,25 @@ extension StarManager {
         return queryConstellation(query)
     }
     
-    /// Get constellation connection lines
+    /// Get constellation connection lines from the constellation_lines table
     public func constellationLines(for constellation: Constellation) async -> [Constellation.Line] {
-        guard let lineMappings = getConstellationLineMappings(),
-              let lines = lineMappings[constellation.iAUName] else {
-            return []
-        }
-        
+        // Query the constellation_lines table for this constellation's id
+        let linesTable = Table("constellation_lines")
+        let dbConstellationId = Expression<Int>("constellation_id")
+        let dbStar1Id = Expression<Int>("star1_id")
+        let dbStar2Id = Expression<Int>("star2_id")
+
         var connectionLines: [Constellation.Line] = []
-        for (s1, s2) in lines {
-            if let star1 = await getStarByHR(s1), let star2 = await getStarByHR(s2) {
-                connectionLines.append(Constellation.Line(star1: star1, star2: star2))
+        do {
+            for row in try db.prepare(linesTable.filter(dbConstellationId == constellation.id)) {
+                let star1Id = try row.get(dbStar1Id)
+                let star2Id = try row.get(dbStar2Id)
+                if let star1 = star(withId: star1Id), let star2 = star(withId: star2Id) {
+                    connectionLines.append(Constellation.Line(star1: star1, star2: star2))
+                }
             }
+        } catch {
+            print("Error fetching constellation lines for \(constellation.iAUName): \(error)")
         }
         return connectionLines
     }
@@ -103,6 +113,7 @@ extension StarManager {
                 let iau = try row.get(Tables.iauName)
                 if let center = constellationCenter[iau] {
                     return Constellation(
+                        id: try row.get(Tables.id),
                         name: try row.get(Tables.constellationName),
                         iAUName: iau,
                         genitive: try row.get(Tables.genitive),
@@ -116,56 +127,6 @@ extension StarManager {
             }
         } catch {
             print("Error querying constellation: \(error)")
-            return nil
-        }
-    }
-    
-    private func getStarByHR(_ hr: Int) async -> Star? {
-        // Search for star with the given HR number
-        let query = Tables.starsInfo.filter(Tables.hr == hr)
-        
-        do {
-            if let infoRow = try db.pluck(query) {
-                let id = try infoRow.get(Tables.id)
-                return star(withId: id)
-            }
-        } catch {
-            print("Error getting star by HR \(hr): \(error)")
-        }
-        
-        return nil
-    }
-    
-    private func getConstellationLineMappings() -> [String: [(Int, Int)]]? {
-        guard let constellationLinePath = Bundle.module.path(forResource: "constellation_lines", ofType: "dat") else {
-            print("Error: Could not find constellation_lines.dat")
-            return nil
-        }
-        
-        do {
-            let content = try String(contentsOfFile: constellationLinePath)
-            let lines = content.components(separatedBy: "\n").filter { (str) -> Bool in
-                return str.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).isEmpty == false
-            }
-            var dict: [String: [(Int, Int)]] = [:]
-            lines.forEach { (line) in
-                let lineComponents: [String] = line.components(separatedBy: " ").filter { $0.isEmpty == false }
-                let con = lineComponents[0]
-                var starHrs: [(Int, Int)] = []
-                for (hr1, hr2) in zip(lineComponents[2..<(lineComponents.endIndex - 1)], lineComponents[3..<(lineComponents.endIndex)]) {
-                    if let hr1Int = Int(hr1), let hr2Int = Int(hr2) {
-                        starHrs.append((hr1Int, hr2Int))
-                    }
-                }
-                if let connections = dict[con] {
-                    dict[con] = connections + starHrs
-                } else {
-                    dict[con] = starHrs
-                }
-            }
-            return dict
-        } catch {
-            print("Error reading constellation lines file: \(error)")
             return nil
         }
     }

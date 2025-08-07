@@ -32,6 +32,7 @@ public struct Constellation: Hashable, @unchecked Sendable {
         return lhs.iAUName == rhs.iAUName
     }
 
+    public let id: Int
     public let name: String
     public let iAUName: String
     public let genitive: String
@@ -39,11 +40,13 @@ public struct Constellation: Hashable, @unchecked Sendable {
     public let center: SatelliteKit.Vector
 
     public init(
+        id: Int,
         name: String,
         iAUName: String,
         genitive: String,
         center: SatelliteKit.Vector
     ) {
+        self.id = id
         self.name = name
         self.iAUName = iAUName
         self.genitive = genitive

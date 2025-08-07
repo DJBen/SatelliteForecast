@@ -60,6 +60,7 @@ public actor StarManager: StarManaging {
         static let varMax = SQLite.Expression<Double?>("var_max")
         
         // Constellation columns
+        static let constellationId = SQLite.Expression<Int>("id")
         static let constellationName = SQLite.Expression<String>("constellation")
         static let iauName = SQLite.Expression<String>("iau")
         static let genitive = SQLite.Expression<String>("genitive")
@@ -496,10 +497,11 @@ public actor StarManager: StarManaging {
         // Get constellation information from joined table
         let constellation: Constellation?
         if let iauName = try? row.get(Tables.iauName),
+           let constellationId = try? row.get(Tables.id),
            let constellationName = try? row.get(Tables.constellationName),
            let genitive = try? row.get(Tables.genitive),
            let center = constellationCenter[iauName] {
-            constellation = Constellation(name: constellationName, iAUName: iauName, genitive: genitive, center: center)
+            constellation = Constellation(id: constellationId, name: constellationName, iAUName: iauName, genitive: genitive, center: center)
         } else {
             constellation = nil
         }

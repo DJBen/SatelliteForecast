@@ -26,12 +26,28 @@ final class ConstellationTest: XCTestCase {
         starManager = nil
         super.tearDown()
     }
-    
+
     func testConstellationQuery() async {
         let iauQuery = await starManager.constellation(iau: "Tau")
         XCTAssertNotNil(iauQuery)
         let nameQuery = await starManager.constellation(named: "Orion")
         XCTAssertNotNil(nameQuery)
+    }
+
+    func testConstellationLinesFetch() async throws {
+        // You may need to adjust this path or use a test DB
+        // let dbPath = Bundle.module.path(forResource: "stars", ofType: "sqlite3")!
+        // let manager = StarManager(databasePath: dbPath)
+        // Use the test's starManager instance
+        guard let orion = await starManager.constellation(iau: "Ori") else {
+            XCTFail("Could not find Orion constellation in DB")
+            return
+        }
+        let lines = await starManager.constellationLines(for: orion)
+        XCTAssertFalse(lines.isEmpty, "Orion should have constellation lines")
+        for line in lines {
+            XCTAssertNotEqual(line.star1.id, line.star2.id, "Line endpoints should not be the same star")
+        }
     }
 
     func testConnectionLinesLoading() async {
