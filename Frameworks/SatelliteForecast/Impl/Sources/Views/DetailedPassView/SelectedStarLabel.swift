@@ -12,6 +12,7 @@ import StarryNight
 struct SelectedStarLabel: View {
     @Environment(\.colorScheme) var colorScheme
 
+    let starManager: any StarManaging
     let star: Star
 
     var body: some View {

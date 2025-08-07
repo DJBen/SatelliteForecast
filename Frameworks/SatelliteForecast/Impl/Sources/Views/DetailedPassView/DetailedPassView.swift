@@ -101,7 +101,8 @@ public struct DetailedPassView: View {
 
                 if let selectedBackgroundStar = selectedBackgroundStar {
                     SelectedStarLabel(
-                        star: selectedBackgroundStar
+                        starManager: context.starManager,
+                        star: selectedBackgroundStar,
                     )
                     .padding(.horizontal, 16)
                 }
@@ -147,14 +148,24 @@ public struct DetailPassViewContext {
     public let julianDateRange: ClosedRange<Double>
     public let observer: LatLonAlt
     public let passSnapshots: PassSnapshots
+    public let starManager: any StarManaging
     public let julianDateProvider: () -> Double
 
-    public init(satelliteInfo: SatelliteInfo, category: SatelliteCategory?, julianDateRange: ClosedRange<Double>, observer: LatLonAlt, passSnapshots: PassSnapshots, julianDateProvider: @escaping () -> Double) {
+    public init(
+        satelliteInfo: SatelliteInfo,
+        category: SatelliteCategory?,
+        julianDateRange: ClosedRange<Double>,
+        observer: LatLonAlt,
+        passSnapshots: PassSnapshots,
+        starManager: any StarManaging,
+        julianDateProvider: @escaping () -> Double
+    ) {
         self.satelliteInfo = satelliteInfo
         self.category = category
         self.julianDateRange = julianDateRange
         self.observer = observer
         self.passSnapshots = passSnapshots
+        self.starManager = starManager
         self.julianDateProvider = julianDateProvider
     }
 }
@@ -191,6 +202,7 @@ struct DetailedPassView_Previews: PreviewProvider {
                 julianDateRange: julianDateRange,
                 observer: observer,
                 passSnapshots: passSnapshots[0],
+                starManager: StarManagerMock(),
                 julianDateProvider: { Date().julianDate }
             ),
             skyChartProducer: .crash

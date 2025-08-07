@@ -7,6 +7,7 @@
 
 import UIKit
 import RealityKit
+import ARKit
 import Combine
 
 class GameViewController: UIViewController {
@@ -19,15 +20,7 @@ class GameViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Set view background
-        view.backgroundColor = .black
-        
-        // Create ARView
-        arView = ARView(frame: view.bounds)
-        arView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        view.addSubview(arView)
-        
+    
         // Configure the ARView
         setupARView()
         
@@ -37,12 +30,21 @@ class GameViewController: UIViewController {
         }
     }
     
+    override func loadView() {
+        arView = ARView(frame: .zero)
+        self.view = arView
+    }
+    
     private func setupARView() {
         // Disable AR features and use it as a 3D viewer
         arView.automaticallyConfigureSession = false
         
         // Set camera position at origin with non-AR mode
         arView.cameraMode = .nonAR
+                
+        arView.scene.subscribe(to: SceneEvents.Update.self) {
+            [unowned self] in self.updateScene(on: $0)
+        }.store(in: &cancellables)
         
         // Create an entity to hold the camera component
         let cameraEntity = Entity()
@@ -180,6 +182,84 @@ class GameViewController: UIViewController {
         gesture.setTranslation(.zero, in: arView)
     }
     
+    func updateScene(on event: SceneEvents.Update) {
+        self.calculateCameraViewportVertices()
+    }
+    
+    /// Calculate the camera's four vertices in the world space, converted to lat lon.
+    private func calculateCameraViewportVertices() {
+        guard let cameraEntity = cameraEntity,
+              let cameraComponent = cameraEntity.components[PerspectiveCameraComponent.self] else {
+            return
+        }
+        
+        // Get camera's field of view
+        let fovRadians = cameraComponent.fieldOfViewInDegrees * Float.pi / 180.0
+        
+        // Get viewport aspect ratio
+        let viewportSize = arView.bounds.size
+        let aspectRatio = Float(viewportSize.width / viewportSize.height)
+        
+        // Calculate half angles for viewport corners
+        let halfVerticalFOV = fovRadians / 2.0
+        let halfHorizontalFOV = atan(tan(halfVerticalFOV) * aspectRatio)
+        
+        // Define the four corners of the viewport in camera space
+        // Assuming a distance of 1 unit from camera (on the near plane)
+        let distance: Float = 1.0
+        
+        let corners: [SIMD3<Float>] = [
+            // Top-left
+            SIMD3<Float>(-tan(halfHorizontalFOV) * distance, tan(halfVerticalFOV) * distance, -distance),
+            // Top-right
+            SIMD3<Float>(tan(halfHorizontalFOV) * distance, tan(halfVerticalFOV) * distance, -distance),
+            // Bottom-left
+            SIMD3<Float>(-tan(halfHorizontalFOV) * distance, -tan(halfVerticalFOV) * distance, -distance),
+            // Bottom-right
+            SIMD3<Float>(tan(halfHorizontalFOV) * distance, -tan(halfVerticalFOV) * distance, -distance)
+        ]
+        
+        // Transform corners from camera space to world space
+        let cameraTransform = cameraEntity.transform.matrix
+        var worldCorners: [SIMD3<Float>] = []
+        
+        for corner in corners {
+            // Convert to homogeneous coordinates
+            let homogeneousCorner = SIMD4<Float>(corner.x, corner.y, corner.z, 1.0)
+            
+            // Transform to world space
+            let worldCorner = cameraTransform * homogeneousCorner
+            
+            // Normalize the direction vector (ignore w component for direction)
+            let direction = normalize(SIMD3<Float>(worldCorner.x, worldCorner.y, worldCorner.z))
+            
+            worldCorners.append(direction)
+        }
+        
+        // Convert world space directions to latitude/longitude
+        var latLonCorners: [(latitude: Float, longitude: Float)] = []
+        
+        for direction in worldCorners {
+            // Convert Cartesian coordinates to spherical coordinates
+            // Assuming Y is up, X is east, Z is north (adjust based on your coordinate system)
+            let latitude = asin(direction.y) // Y component gives latitude
+            let longitude = atan2(direction.x, direction.z) // X and Z give longitude
+            
+            // Convert from radians to degrees
+            let latDegrees = latitude * 180.0 / Float.pi
+            let lonDegrees = longitude * 180.0 / Float.pi
+            
+            latLonCorners.append((latitude: latDegrees, longitude: lonDegrees))
+        }
+        
+        // Debug output
+        print("Camera viewport corners (lat, lon):")
+        for (index, corner) in latLonCorners.enumerated() {
+            let cornerName = ["Top-left", "Top-right", "Bottom-left", "Bottom-right"][index]
+            print("  \(cornerName): (\(corner.latitude)°, \(corner.longitude)°)")
+        }
+    }
+    
     override var prefersStatusBarHidden: Bool {
         return true
     }
@@ -191,5 +271,9 @@ class GameViewController: UIViewController {
             return .all
         }
     }
-
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        calculateCameraViewportVertices()
+    }
 }

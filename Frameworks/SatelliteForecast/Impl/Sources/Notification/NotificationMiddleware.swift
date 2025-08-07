@@ -20,9 +20,14 @@ import UIKit
 fileprivate let logger = Logger(subsystem: "io.djben.notification", category: "middleware")
 
 public struct NotificationMiddlewareDependencies {
+    public let starManager: any StarManaging
     public let dateProvider: () -> Date
 
-    public init(dateProvider: @escaping () -> Date) {
+    public init(
+        starManager: any StarManaging,
+        dateProvider: @escaping () -> Date
+    ) {
+        self.starManager = starManager
         self.dateProvider = dateProvider
     }
 }
@@ -43,7 +48,10 @@ extension EffectMiddleware where
                     let subject = PassthroughSubject<DispatchedAction<AppAction>, Never>()
                     let pass = passNotification.pass
 
-                    DispatchQueue.global(qos: .userInitiated).async {
+                    Task {
+                        let stars = await context.dependencies.starManager.brightestStars()
+                        let constellations = await context.dependencies.starManager.allConstellations()
+
                         // Force dark theme
                         let traitCollection = UITraitCollection(userInterfaceStyle: .dark)
                         traitCollection.performAsCurrent {
@@ -55,8 +63,8 @@ extension EffectMiddleware where
                                     to: ctx,
                                     params: BackgroundSkyRenderParams(
                                         rect: imageRect,
-                                        stars: Star.magitudeLessThan(4),
-                                        constellations: Constellation.all,
+                                        stars: stars,
+                                        constellations: constellations,
                                         observer: passNotification.observer,
                                         julianDate: pass.rise.julianDate,
                                         starColor: SkyChartTheme.starColor(

@@ -241,6 +241,7 @@ public struct PassView: View {
                         julianDateRange: context.julianDateRange,
                         observer: context.observer,
                         passSnapshots: context.passSnapshots,
+                        starManager: context.starManager,
                         julianDateProvider: context.julianDateProvider
                     )
                 )

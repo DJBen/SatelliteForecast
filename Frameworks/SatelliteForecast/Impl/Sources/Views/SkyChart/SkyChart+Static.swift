@@ -138,7 +138,8 @@ public enum SkyChartUtils {
 
     public static func addRasterizedBackgroundSkyPath(
         to ctx: UIGraphicsImageRendererContext,
-        params: BackgroundSkyRenderParams
+        params: BackgroundSkyRenderParams,
+        starManager: any StarManaging
     ) {
         if let border = params.border {
             ctx.cgContext.saveGState()
@@ -200,7 +201,7 @@ public enum SkyChartUtils {
             let aziElev = azel(
                 julianDate: params.julianDate,
                 site: (params.observer.lat, params.observer.lon),
-                cele: RADec(vector: star.physicalInfo.coordinate)
+                cele: RADec(vector: star.coordinate)
             )
             if aziElev.elev < 0 {
                 continue
@@ -209,7 +210,7 @@ public enum SkyChartUtils {
 
             ctx.cgContext.move(to: point)
 
-            let radius = params.magToRadius(star.physicalInfo.apparentMagnitude)
+            let radius = params.magToRadius(star.magnitude)
 
             ctx.cgContext.addEllipse(in: CGRect(x: point.x - radius, y: point.y - radius, width: radius * 2, height: radius * 2))
         }
@@ -288,9 +289,6 @@ struct ImageRenderer_Previews: PreviewProvider {
     }()
     
     struct Preview: View {
-        static let stars = Star.magitudeLessThan(4)
-        static let constellations = Constellation.all
-        
         let pass: Pass
         let snapshots: [SatelliteSnapshot]
         let notableSnapshots: NotableSnapshots
@@ -298,6 +296,11 @@ struct ImageRenderer_Previews: PreviewProvider {
         
         @Environment(\.colorScheme) var colorScheme
 
+        @State var stars: [Star] = []
+        @State var constellations: Set<Constellation> = []
+        
+        private let starManager = try! StarManager()
+        
         var body: some View {
             GeometryReader { geometry in
                 let rect: CGRect = {
@@ -316,8 +319,8 @@ struct ImageRenderer_Previews: PreviewProvider {
                                     to: ctx,
                                     params: BackgroundSkyRenderParams(
                                         rect: rect,
-                                        stars: Self.stars,
-                                        constellations: Self.constellations,
+                                        stars: stars,
+                                        constellations: constellations,
                                         observer: observer,
                                         julianDate: pass.rise.julianDate,
                                         starColor: UIColor(
@@ -397,6 +400,10 @@ struct ImageRenderer_Previews: PreviewProvider {
                         Text("Special", bundle: .module)
                     }
                 )
+            }
+            .task {
+                stars = await starManager.brightestStars()
+                constellations = await starManager.allConstellations()
             }
         }
     }

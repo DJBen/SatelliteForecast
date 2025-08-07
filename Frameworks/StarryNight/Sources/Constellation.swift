@@ -7,8 +7,9 @@
 //
 
 import Foundation
+@preconcurrency import SatelliteKit
 
-public struct Constellation: Hashable, Sendable {
+public struct Constellation: Hashable, @unchecked Sendable {
     public struct Line: CustomStringConvertible, Sendable {
         public let star1: Star
         public let star2: Star
@@ -34,10 +35,18 @@ public struct Constellation: Hashable, Sendable {
     public let name: String
     public let iAUName: String
     public let genitive: String
+    /// A unit vector pointing to the center of the constellation
+    public let center: SatelliteKit.Vector
 
-    public init(name: String, iAUName: String, genitive: String) {
+    public init(
+        name: String,
+        iAUName: String,
+        genitive: String,
+        center: SatelliteKit.Vector
+    ) {
         self.name = name
         self.iAUName = iAUName
         self.genitive = genitive
+        self.center = center
     }
 }

@@ -11,7 +11,7 @@ import Foundation
 import Ch3
 
 /// Star database manager responsible for all star-related I/O operations
-public actor StarManager {    
+public actor StarManager: StarManaging {    
     let db: Connection
     
     // Table definitions
@@ -497,8 +497,9 @@ public actor StarManager {
         let constellation: Constellation?
         if let iauName = try? row.get(Tables.iauName),
            let constellationName = try? row.get(Tables.constellationName),
-           let genitive = try? row.get(Tables.genitive) {
-            constellation = Constellation(name: constellationName, iAUName: iauName, genitive: genitive)
+           let genitive = try? row.get(Tables.genitive),
+           let center = constellationCenter[iauName] {
+            constellation = Constellation(name: constellationName, iAUName: iauName, genitive: genitive, center: center)
         } else {
             constellation = nil
         }

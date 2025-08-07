@@ -3,7 +3,9 @@
     "objectMetadataList" : [
       [
         "4A0D411C-C224-41C3-9ABA-842FBB2F42F6",
-        "Root"
+        "Root",
+        "Sphere",
+        "DefaultMaterial"
       ],
       {
         "isExpanded" : true,
@@ -21,9 +23,7 @@
       },
       [
         "4A0D411C-C224-41C3-9ABA-842FBB2F42F6",
-        "Root",
-        "Sphere",
-        "DefaultMaterial"
+        "Root"
       ],
       {
         "isExpanded" : true,

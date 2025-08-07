@@ -12,6 +12,7 @@ import SatelliteForecastImpl
 import SatelliteForecastImplWiring
 import AppDelegate
 import AppDelegateImpl
+import StarryNight
 @preconcurrency import SwiftRex
 @preconcurrency import CombineRex
 
@@ -57,6 +58,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
 
     static func buildMiddleware(
         elementsLoader: ElementsLoader,
+        starManager: any StarManaging,
         currentDateProvider: @escaping () -> Date
     ) -> AnyMiddleware<AppAction, AppAction, AppState> {
         let middlewares: [AnyMiddleware<AppAction, AppAction, AppState>] = [
@@ -74,6 +76,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             )
             .inject(
                 NotificationMiddlewareDependencies(
+                    starManager: starManager,
                     dateProvider: currentDateProvider
                 )
             )
@@ -155,6 +158,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             reducer: Store.reducer,
             middleware: Store.buildMiddleware(
                 elementsLoader: elementsLoader,
+                starManager: try! StarManager(),
                 currentDateProvider: currentDateProvider
             ),
             emitsValue: .whenDifferent

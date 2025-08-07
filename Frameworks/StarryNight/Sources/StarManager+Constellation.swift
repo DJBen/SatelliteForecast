@@ -11,12 +11,15 @@ extension StarManager {
             var constellations = Set<Constellation>()
             for row in try db.prepare(Tables.constellations) {
                 let iau = try row.get(Tables.iauName)
-                let con = Constellation(
-                    name: try row.get(Tables.constellationName),
-                    iAUName: iau,
-                    genitive: try row.get(Tables.genitive)
-                )
-                constellations.insert(con)
+                if let center = constellationCenter[iau] {
+                    let con = Constellation(
+                        name: try row.get(Tables.constellationName),
+                        iAUName: iau,
+                        genitive: try row.get(Tables.genitive),
+                        center: center
+                    )
+                    constellations.insert(con)
+                }
             }
             return constellations
         } catch {
@@ -97,11 +100,17 @@ extension StarManager {
     private func queryConstellation(_ query: QueryType) -> Constellation? {
         do {
             if let row = try db.pluck(query) {
-                return Constellation(
-                    name: try row.get(Tables.constellationName),
-                    iAUName: try row.get(Tables.iauName),
-                    genitive: try row.get(Tables.genitive)
-                )
+                let iau = try row.get(Tables.iauName)
+                if let center = constellationCenter[iau] {
+                    return Constellation(
+                        name: try row.get(Tables.constellationName),
+                        iAUName: iau,
+                        genitive: try row.get(Tables.genitive),
+                        center: center
+                    )
+                } else {
+                    return nil
+                }
             } else {
                 return nil
             }
@@ -159,5 +168,30 @@ extension StarManager {
             print("Error reading constellation lines file: \(error)")
             return nil
         }
+    }
+}
+
+extension StarManager {
+    public func displayCenter(for constellation: Constellation) -> Vector? {
+        return constellationCenter[constellation.iAUName]
+    }
+
+    public func displayCenters(for constellations: [Constellation]) async -> [Constellation: Vector] {
+        var result = [Constellation: Vector]()
+        for constellation in constellations {
+            if constellation.iAUName == "Ser1" || constellation.iAUName == "Ser2" || constellation.iAUName == "Ser" {
+                if let ser1 = self.constellation(iau: "Ser1"), let ser1Center = constellationCenter["Ser1"] {
+                    result[ser1] = ser1Center
+                }
+                if let ser2 = self.constellation(iau: "Ser2"), let ser2Center = constellationCenter["Ser2"] {
+                    result[ser2] = ser2Center
+                }
+            } else {
+                if let center = constellationCenter[constellation.iAUName] {
+                    result[constellation] = center
+                }
+            }
+        }
+        return result
     }
 }
