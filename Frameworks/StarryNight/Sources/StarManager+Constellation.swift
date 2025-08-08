@@ -54,7 +54,7 @@ extension StarManager {
     }
     
     /// Get constellation connection lines from the constellation_lines table
-    public func constellationLines(for constellation: Constellation) async -> [Constellation.Line] {
+    public func constellationLines(for constellation: Constellation) -> [Constellation.Line] {
         // Query the constellation_lines table for this constellation's id
         let linesTable = Table("constellation_lines")
         let dbConstellationId = Expression<Int>("constellation_id")

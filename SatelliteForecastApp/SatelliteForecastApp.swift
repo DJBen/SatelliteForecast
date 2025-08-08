@@ -30,14 +30,19 @@ struct SatelliteForecastApp: App {
         let starManager = try! StarManager()
         self.starManager = starManager
         julianDateProvider = { Date().julianDate }
-        _store = StateObject(
-            wrappedValue: Store(
-                starManager: starManager
-            ).asObservableViewModel(
-                initialState: .init(),
-                emitsValue: .whenDifferent
-            )
+        let store = Store(
+            starManager: starManager
+        ).asObservableViewModel(
+            initialState: .init(),
+            emitsValue: .whenDifferent
         )
+        _store = StateObject(
+            wrappedValue: store
+        )
+        // After self init
+        appDelegate.dispatch = { event in
+            store.dispatch(event)
+        }
     }
 
     var body: some Scene {
@@ -78,6 +83,9 @@ struct SatelliteForecastApp: App {
                     .view()
                 }
             )
+            .task {
+                store.dispatch(.initializeAllConstellations(starManager.allConstellations()))
+            }
             .onAppear {
                 store.dispatch(.location(.requestAuthorization))
             }

@@ -8,8 +8,10 @@
 import Foundation
 @preconcurrency import SatelliteKit
 import AppDelegate
+import StarryNight
 
 public enum AppAction {
+    case initializeAllConstellations(Set<Constellation>)
     case appDelegate(AppDelegateAction)
     case backgroundTask(BackgroundTask)
     case notification(NotificationAction)

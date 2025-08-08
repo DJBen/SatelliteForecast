@@ -19,6 +19,8 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
         EffectMiddleware.onAction { action, _, getState in
             return .fireAndForget {
                 switch action {
+                case .initializeAllConstellations(_):
+                    customDump(action)
                 case .appDelegate(let appDelegateAction):
                     customDump(appDelegateAction)
                 case .backgroundTask(let backgroundTask):

@@ -20,6 +20,8 @@ import AppDelegateImpl
 fileprivate let logger = Logger(subsystem: "io.djben.appDelegate", category: "class")
 
 public class AppDelegate: NSObject, UIApplicationDelegate, AppDelegateActionDispatcher {
+    public var dispatch: ((Store.ActionType) -> Void)?
+    
     private lazy var implementation: AppDelegateImplementation = {
         let firebaseImpl = FirebaseAppDelegate()
         return StoreAwareAppDelegate(implementation: firebaseImpl, actionDispatcher: self)
@@ -52,10 +54,10 @@ public class AppDelegate: NSObject, UIApplicationDelegate, AppDelegateActionDisp
     // MARK: - AppDelegateActionDispatcher
     
     public func dispatch(_ action: AppDelegateAction) {
-        Store.shared.dispatch(.appDelegate(action))
+        dispatch?(.appDelegate(action))
     }
     
     public func dispatchNotificationAction(_ action: NotificationAction) {
-        Store.shared.dispatch(.notification(action))
+        dispatch?(.notification(action))
     }
 }

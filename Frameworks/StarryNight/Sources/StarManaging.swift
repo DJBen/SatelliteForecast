@@ -9,7 +9,7 @@ import Foundation
 import SatelliteKit
 
 /// Protocol defining the star management interface
-public protocol StarManaging: Actor {
+public protocol StarManaging: Sendable {
     
     /// Get the brightest stars
     func brightestStars() -> [Star]
@@ -54,7 +54,7 @@ public protocol StarManaging: Actor {
     func constellation(iau: String) -> Constellation?
     
     /// Get constellation connection lines
-    func constellationLines(for constellation: Constellation) async -> [Constellation.Line]
+    func constellationLines(for constellation: Constellation) -> [Constellation.Line]
     
     /// Get neighboring constellations for a given constellation
     func neighbors(for constellation: Constellation) -> Set<Constellation>

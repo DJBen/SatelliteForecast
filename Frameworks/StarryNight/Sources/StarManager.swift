@@ -11,7 +11,7 @@ import SatelliteKit
 import Ch3
 
 /// Star database manager responsible for all star-related I/O operations
-public actor StarManager: StarManaging {    
+public class StarManager: StarManaging, @unchecked Sendable {
     let db: Connection
     
     // Table definitions

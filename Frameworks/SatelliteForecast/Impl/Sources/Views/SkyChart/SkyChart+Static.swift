@@ -140,7 +140,7 @@ public enum SkyChartUtils {
         to ctx: UIGraphicsImageRendererContext,
         params: BackgroundSkyRenderParams,
         starManager: any StarManaging
-    ) async {
+    ) {
         if let border = params.border {
             ctx.cgContext.saveGState()
             ctx.cgContext.setStrokeColor(border.borderColor.cgColor)
@@ -173,7 +173,7 @@ public enum SkyChartUtils {
             if alt < 0 {
                 continue
             }
-            for line in try await starManager.constellationLines(for: constellation) {
+            for line in starManager.constellationLines(for: constellation) {
                 let aziElev1 = azel(julianDate: params.julianDate, site: (params.observer.lat, params.observer.lon), cele: RADec(vector: line.star1.coordinate))
                 let aziElev2 = azel(julianDate: params.julianDate, site: (params.observer.lat, params.observer.lon), cele: RADec(vector: line.star2.coordinate))
                 if aziElev1.elev < 0 || aziElev2.elev < 0 {
@@ -250,20 +250,15 @@ public enum SkyChartUtils {
     public static func rasterizedBackgroundSkyPath(
         params: BackgroundSkyRenderParams,
         starManager: any StarManaging
-    ) async -> UIImage {
+    ) -> UIImage {
         let renderer = UIGraphicsImageRenderer(size: params.rect.size)
 
-        return await withCheckedContinuation { continuation in
-            let image = renderer.image { ctx in
-                Task {
-                    await addRasterizedBackgroundSkyPath(
-                        to: ctx,
-                        params: params,
-                        starManager: starManager
-                    )
-                }
-            }
-            continuation.resume(returning: image)
+        return renderer.image { ctx in
+            addRasterizedBackgroundSkyPath(
+                to: ctx,
+                params: params,
+                starManager: starManager
+            )
         }
     }
 }
@@ -294,20 +289,20 @@ struct ImageRenderer_Previews: PreviewProvider {
             coarseSnapshots: snapshots
         )
     }()
-    
+
     struct Preview: View {
         let pass: Pass
         let snapshots: [SatelliteSnapshot]
         let notableSnapshots: NotableSnapshots
         let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
-        
+
         @Environment(\.colorScheme) var colorScheme
 
         @State var stars: [Star] = []
         @State var constellations: Set<Constellation> = []
-        
+
         private let starManager = try! StarManager()
-        
+
         var body: some View {
             GeometryReader { geometry in
                 let rect: CGRect = {
@@ -315,56 +310,54 @@ struct ImageRenderer_Previews: PreviewProvider {
                     let dimension = min(rect.size.width, rect.size.height)
                     return CGRect(origin: rect.origin, size: CGSize(width: dimension, height: dimension))
                 }()
-                
+
                 Image(
                     uiImage: {
                         let renderer = UIGraphicsImageRenderer(size: rect.size)
-                        
+
                         return renderer.image { ctx in
                             UITraitCollection(userInterfaceStyle: colorScheme == .light ? .light : .dark).performAsCurrent {
-                                Task { @MainActor in
-                                    await SkyChartUtils.addRasterizedBackgroundSkyPath(
-                                        to: ctx,
-                                        params: BackgroundSkyRenderParams(
-                                            rect: rect,
-                                            stars: stars,
-                                            constellations: constellations,
-                                            observer: observer,
-                                            julianDate: pass.rise.julianDate,
-                                            starColor: UIColor(
-                                                named: "star",
+                                SkyChartUtils.addRasterizedBackgroundSkyPath(
+                                    to: ctx,
+                                    params: BackgroundSkyRenderParams(
+                                        rect: rect,
+                                        stars: stars,
+                                        constellations: constellations,
+                                        observer: observer,
+                                        julianDate: pass.rise.julianDate,
+                                        starColor: UIColor(
+                                            named: "star",
+                                            in: .module,
+                                            compatibleWith: nil
+                                        )!,
+                                        constellationLineColor: UIColor(
+                                            named: "constellationLine",
+                                            in: .module,
+                                            compatibleWith: nil
+                                        )!,
+                                        drawPlanaryBodies: true,
+                                        backgroundFillColor: UIColor.secondarySystemBackground,
+                                        border: BackgroundSkyRenderParams.Border(
+                                            borderColor: UIColor(
+                                                named: "skyChartStroke",
                                                 in: .module,
                                                 compatibleWith: nil
-                                            )!,
-                                            constellationLineColor: UIColor(
-                                                named: "constellationLine",
-                                                in: .module,
-                                                compatibleWith: nil
-                                            )!,
-                                            drawPlanaryBodies: true,
-                                            backgroundFillColor: UIColor.secondarySystemBackground,
-                                            border: BackgroundSkyRenderParams.Border(
-                                                borderColor: UIColor(
-                                                    named: "skyChartStroke",
-                                                    in: .module,
-                                                    compatibleWith: nil
-                                                )!
-                                            ),
-                                            magToRadius: { CGFloat(3 * exp(-0.425 * $0)) }
+                                            )!
                                         ),
-                                        starManager: StarManagerMock()
+                                        magToRadius: { CGFloat(3 * exp(-0.425 * $0)) }
+                                    ),
+                                    starManager: StarManagerMock()
+                                )
+
+                                SkyChartUtils.addRasterizedSatellitePassPath(
+                                    to: ctx,
+                                    params: SatellitePassPathRenderParams(
+                                        rect: rect,
+                                        snapshotsDuringPass: snapshots,
+                                        illuminatedColor: UIColor(named: "satellitePath_illuminated")!,
+                                        unlitColor: UIColor(named: "satellitePath_notIlluminated")!
                                     )
-                                    
-                                    await SkyChartUtils.addRasterizedSatellitePassPath(
-                                        to: ctx,
-                                        params: SatellitePassPathRenderParams(
-                                            rect: rect,
-                                            snapshotsDuringPass: snapshots,
-                                            illuminatedColor: UIColor(named: "satellitePath_illuminated")!,
-                                            unlitColor: UIColor(named: "satellitePath_notIlluminated")!
-                                        )
-                                    )
-                                }
+                                )
                             }
                         }
                     }()
@@ -412,8 +405,8 @@ struct ImageRenderer_Previews: PreviewProvider {
                 )
             }
             .task {
-                stars = await starManager.brightestStars()
-                constellations = await starManager.allConstellations()
+                stars = starManager.brightestStars()
+                constellations = starManager.allConstellations()
             }
         }
     }

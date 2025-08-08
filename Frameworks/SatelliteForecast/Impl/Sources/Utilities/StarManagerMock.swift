@@ -1,7 +1,7 @@
 import StarryNight
 @preconcurrency import SatelliteKit
 
-actor StarManagerMock: StarManaging {
+final class StarManagerMock: StarManaging {
     func stars(maximumMagnitude: Double) -> [StarryNight.Star] {
         []
     }
@@ -54,13 +54,11 @@ actor StarManagerMock: StarManaging {
         nil
     }
     
-    func constellationLines(for constellation: StarryNight.Constellation) async -> [StarryNight.Constellation.Line] {
+    func constellationLines(for constellation: StarryNight.Constellation) -> [StarryNight.Constellation.Line] {
         []
     }
     
     func neighbors(for constellation: StarryNight.Constellation) -> Set<StarryNight.Constellation> {
         []
     }
-    
-    
 }

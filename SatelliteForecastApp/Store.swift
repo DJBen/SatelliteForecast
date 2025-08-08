@@ -16,8 +16,9 @@ import StarryNight
 @preconcurrency import SwiftRex
 @preconcurrency import CombineRex
 
-class Store: ReduxStoreBase<AppAction, AppState> {
+public class Store: ReduxStoreBase<AppAction, AppState> {
     static let reducer: Reducer<AppAction, AppState> = [
+        Reducer<AppAction, AppState>.initializerReducer,
         Reducer<AppDelegateAction, AppState>.appDelegateReducer.lift(action: \.appDelegate),
         Reducer.locationReducer.lift(),
         Reducer.locationOutputReducer.lift(),

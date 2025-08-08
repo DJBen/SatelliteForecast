@@ -172,10 +172,8 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
                         let aziEle = SkyChartUtils.aziEle(at: point, in: rect)
                         let raDec = azelToRADec(aziEle: aziEle, julianDate: julianDate, site: (context.observer.lat, context.observer.lon))
                         let vec = Vector(raDec: raDec)
-                        Task { @MainActor in
-                            if let star = await context.starManager.closestStar(to: vec, maximumMagnitude: magnitude, maximumAngularDistance: nil) {
-                                context.starTapped(star)
-                            }
+                        if let star = context.starManager.closestStar(to: vec, maximumMagnitude: magnitude, maximumAngularDistance: nil) {
+                            context.starTapped(star)
                         }
                     }
                 }
@@ -243,9 +241,11 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
                     .overlay(
                         planetaryBodiesView(julianDate: backgroundSkyJulianDate)
                     )
-                    .overlay(
-                        constellationLabelView(julianDate: backgroundSkyJulianDate)
-                    )
+                    .overlay {
+                        if context.configs.showConstellationLines {
+                            constellationLabelView(julianDate: backgroundSkyJulianDate)
+                        }
+                    }
                     .clipShape(Circle())
                 )
             } else {
