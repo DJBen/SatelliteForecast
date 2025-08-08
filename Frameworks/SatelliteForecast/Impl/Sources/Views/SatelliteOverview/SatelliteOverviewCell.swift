@@ -87,6 +87,7 @@ struct SatelliteOverviewCell: View {
                             Text("No upcoming visible passes; check back after a few days!", bundle: .module)
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
+                                .multilineTextAlignment(.leading)
                         }
                     }
                 case .loading:
