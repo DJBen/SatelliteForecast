@@ -17,8 +17,6 @@ import StarryNight
 @preconcurrency import CombineRex
 
 class Store: ReduxStoreBase<AppAction, AppState> {
-    static let shared = Store()
-
     static let reducer: Reducer<AppAction, AppState> = [
         Reducer<AppDelegateAction, AppState>.appDelegateReducer.lift(action: \.appDelegate),
         Reducer.locationReducer.lift(),
@@ -117,7 +115,9 @@ class Store: ReduxStoreBase<AppAction, AppState> {
                     dateProvider: currentDateProvider
                 )
             ),
-            EffectMiddleware.backgroundSky.lift(),
+            EffectMiddleware.backgroundSky.lift(
+                dependencies: starManager
+            ),
             EffectMiddleware.realtimeSky.lift(),
             EffectMiddleware.realtimeSkyToElementsLoader.lift(),
             EffectMiddleware.passAlarmSettingsToNotification.lift(),
@@ -131,7 +131,9 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         .eraseToAnyMiddleware()
     }
 
-    private init() {
+    init(
+        starManager: any StarManaging
+    ) {
         let elementsLoader: ElementsLoader
         let currentDateProvider: () -> Date = Date.init
         if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
@@ -158,7 +160,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             reducer: Store.reducer,
             middleware: Store.buildMiddleware(
                 elementsLoader: elementsLoader,
-                starManager: try! StarManager(),
+                starManager: starManager,
                 currentDateProvider: currentDateProvider
             ),
             emitsValue: .whenDifferent

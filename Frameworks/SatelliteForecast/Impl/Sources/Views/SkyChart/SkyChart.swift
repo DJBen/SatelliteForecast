@@ -202,6 +202,7 @@ public struct SkyChart<ConstellationLabel: View, BackgroundAnnotationView: View>
                 basicChartConfigs: context.configs.basicChartConfigs,
                 configs: context.configs.backgroundSkyConfigs,
                 quality: context.quality,
+                starManager: context.starManager,
                 constellationLabel: context.constellationLabel,
                 annotationView: context.backgroundAnnotationView,
                 starTapped: context.backgroundStarTapped
@@ -238,6 +239,7 @@ public struct SkyChartContext<ConstellationLabel: View, BackgroundAnnotationView
     public let passSnapshots: PassSnapshots
     public let configs: SkyChartConfigs
     public let quality: ChartQuality
+    public let starManager: any StarManaging
     public let julianDateProvider: () -> Double
     public let deviceMotion: Loadable<CMDeviceMotion, Error>
     @ViewBuilder public let constellationLabel: (String) -> ConstellationLabel
@@ -250,6 +252,7 @@ public struct SkyChartContext<ConstellationLabel: View, BackgroundAnnotationView
         passSnapshots: PassSnapshots,
         configs: SkyChartConfigs,
         quality: ChartQuality,
+        starManager: any StarManaging,
         julianDateProvider: @escaping () -> Double,
         deviceMotion: Loadable<CMDeviceMotion, Error> = .notLoaded,
         @ViewBuilder constellationLabel: @escaping (String) -> ConstellationLabel,
@@ -261,6 +264,7 @@ public struct SkyChartContext<ConstellationLabel: View, BackgroundAnnotationView
         self.passSnapshots = passSnapshots
         self.configs = configs
         self.quality = quality
+        self.starManager = starManager
         self.julianDateProvider = julianDateProvider
         self.deviceMotion = deviceMotion
         self.constellationLabel = constellationLabel
@@ -270,12 +274,23 @@ public struct SkyChartContext<ConstellationLabel: View, BackgroundAnnotationView
 }
 
 extension SkyChartContext where ConstellationLabel == EmptyView, BackgroundAnnotationView == EmptyView {
-    public init(satelliteInfo: SatelliteInfo, observer: LatLonAlt, passSnapshots: PassSnapshots, configs: SkyChartConfigs, quality: ChartQuality, julianDateProvider: @escaping () -> Double, deviceMotion: Loadable<CMDeviceMotion, Error> = .notLoaded, backgroundStarTapped: @escaping (Star?) -> Void = { _ in }) {
+    public init(
+        satelliteInfo: SatelliteInfo,
+        observer: LatLonAlt,
+        passSnapshots: PassSnapshots,
+        configs: SkyChartConfigs,
+        quality: ChartQuality,
+        starManager: any StarManaging,
+        julianDateProvider: @escaping () -> Double,
+        deviceMotion: Loadable<CMDeviceMotion, Error> = .notLoaded,
+        backgroundStarTapped: @escaping (Star?) -> Void = { _ in }
+    ) {
         self.satelliteInfo = satelliteInfo
         self.observer = observer
         self.passSnapshots = passSnapshots
         self.configs = configs
         self.quality = quality
+        self.starManager = starManager
         self.julianDateProvider = julianDateProvider
         self.deviceMotion = deviceMotion
         self.constellationLabel = { _ in EmptyView() }
@@ -410,6 +425,7 @@ struct SkyChart_Previews: PreviewProvider {
                     passSnapshots: passSnapshots,
                     configs: .preset,
                     quality: .full,
+                    starManager: StarManagerMock(),
                     julianDateProvider: { referenceDate }
                 ),
                 backgroundSkyViewProducer: .pure(
@@ -422,6 +438,7 @@ struct SkyChart_Previews: PreviewProvider {
                             basicChartConfigs: .init(),
                             configs: .init(),
                             quality: .full,
+                            starManager: StarManagerMock(),
                             constellationLabel: { _ in EmptyView() },
                             annotationView: { _ in EmptyView() },
                             starTapped: { _ in }
@@ -460,6 +477,7 @@ struct SkyChart_Previews: PreviewProvider {
                 passSnapshots: passSnapshots2,
                 configs: .preset,
                 quality: .full,
+                starManager: StarManagerMock(),
                 julianDateProvider: { passSnapshots2.pass.rise.julianDate }
             ),
             backgroundSkyViewProducer: .pure(
@@ -472,6 +490,7 @@ struct SkyChart_Previews: PreviewProvider {
                         basicChartConfigs: .init(),
                         configs: .preset,
                         quality: .full,
+                        starManager: StarManagerMock(),
                         constellationLabel: { _ in EmptyView() },
                         annotationView: { _ in EmptyView() },
                         starTapped: { _ in }
@@ -490,6 +509,7 @@ struct SkyChart_Previews: PreviewProvider {
                 passSnapshots: passSnapshots2,
                 configs: .preset,
                 quality: .full,
+                starManager: StarManagerMock(),
                 julianDateProvider: { passSnapshots2.pass.rise.julianDate }
             ),
             backgroundSkyViewProducer: .pure(
@@ -502,6 +522,7 @@ struct SkyChart_Previews: PreviewProvider {
                         basicChartConfigs: .init(),
                         configs: .preset,
                         quality: .full,
+                        starManager: StarManagerMock(),
                         constellationLabel: { _ in EmptyView() },
                         annotationView: { _ in EmptyView() },
                         starTapped: { _ in }

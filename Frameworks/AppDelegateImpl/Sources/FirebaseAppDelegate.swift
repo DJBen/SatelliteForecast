@@ -43,9 +43,6 @@ public class FirebaseAppDelegate: NSObject, AppDelegateImplementation {
 
         application.registerForRemoteNotifications()
         
-        // Dispatch to store if available (this would need to be injected or accessed differently)
-        // Store.shared.dispatch(.appDelegate(.didFinishLaunchingWithOptions(launchOptions)))
-        
         return true
     }
     
@@ -63,7 +60,6 @@ public class FirebaseAppDelegate: NSObject, AppDelegateImplementation {
     
     public func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         print("APNs token retrieved: \(deviceToken)")
-        // Store.shared.dispatch(.appDelegate(.didRegisterForRemoteNotificationsWithDeviceToken(deviceToken)))
     }
     
     // MARK: - MessagingHandlerProtocol
@@ -73,7 +69,6 @@ public class FirebaseAppDelegate: NSObject, AppDelegateImplementation {
         guard let fcmToken else {
             return
         }
-        // Store.shared.dispatch(.appDelegate(.didReceiveFCMToken(fcmToken)))
     }
     
     // MARK: - NotificationHandlerProtocol
@@ -106,15 +101,6 @@ public class FirebaseAppDelegate: NSObject, AppDelegateImplementation {
                 } else {
                     break
                 }
-                
-                // Store.shared.dispatch(
-                //     .notification(.deepLink(
-                //         category: satelliteCategory,
-                //         noradIndex: noradIndex,
-                //         observer: observer,
-                //         passIdentifier: response.notification.request.identifier
-                //     ))
-                // )
 
                 completionHandler()
             default:

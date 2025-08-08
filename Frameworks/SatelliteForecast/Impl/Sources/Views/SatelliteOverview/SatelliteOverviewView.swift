@@ -12,6 +12,7 @@ import SwiftUI
 @preconcurrency import CombineRex
 @preconcurrency import CombineRextensions
 import CoreLocation
+import StarryNight
 
 public struct NextPass: Equatable {
     let nextVisiblePass: Pass?
@@ -63,9 +64,14 @@ public struct SatelliteOverviewViewState: Equatable {
 public protocol SatelliteOverviewView: View {}
 
 public struct SatelliteOverviewViewContext {
+    public let starManager: any StarManaging
     public let julianDateProvider: () -> Double
 
-    public init(julianDateProvider: @escaping () -> Double) {
+    public init(
+        starManager: any StarManaging,
+        julianDateProvider: @escaping () -> Double
+    ) {
+        self.starManager = starManager
         self.julianDateProvider = julianDateProvider
     }
 }
@@ -139,6 +145,7 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                                 selectedNoradIndex: specialSatellite.rawValue,
                                 julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
                                 observer: viewModel.state.observer,
+                                starManager: context.starManager,
                                 julianDateProvider: context.julianDateProvider
                             )
                         )
@@ -146,6 +153,7 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                 }
             }
             .tint(Color(uiColor: .label))
+            
             if viewModel.state.isMissingLocation {
                 HStack {
                     Image(systemName: "location.slash")
@@ -201,7 +209,10 @@ struct SatelliteOverviewView_Previews: PreviewProvider {
                 state: SatelliteOverviewViewState()
             ),
             context: SatelliteOverviewViewContext(
-                julianDateProvider: { Date().julianDate }
+                starManager: StarManagerMock(),
+                julianDateProvider: {
+                    Date().julianDate
+                }
             ),
             singleSatelliteWrappingViewProducer: .crash
         )

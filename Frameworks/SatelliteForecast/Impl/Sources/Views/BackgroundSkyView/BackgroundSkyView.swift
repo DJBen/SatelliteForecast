@@ -172,8 +172,10 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
                         let aziEle = SkyChartUtils.aziEle(at: point, in: rect)
                         let raDec = azelToRADec(aziEle: aziEle, julianDate: julianDate, site: (context.observer.lat, context.observer.lon))
                         let vec = Vector(raDec: raDec)
-                        if let star = Star.closest(to: vec, maximumMagnitude: magnitude) {
-                            context.starTapped(star)
+                        Task { @MainActor in
+                            if let star = await context.starManager.closestStar(to: vec, maximumMagnitude: magnitude, maximumAngularDistance: nil) {
+                                context.starTapped(star)
+                            }
                         }
                     }
                 }
@@ -198,27 +200,25 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
     @ViewBuilder func constellationLabelView(julianDate: Double) -> some View {
         GeometryReader { geometry in
             let rect = geometry.frame(in: .local)
-
             ZStack {
-                ForEach(viewModel.state.resources.allConstellations, id: \.self) { constellation in
-                    if let displayCenter = constellation.displayCenter {
-                        let raDec = RADec(vector: displayCenter)
-                        let coordinate = azel(
-                            julianDate: julianDate,
-                            site: (context.observer.lat, context.observer.lon),
-                            cele: raDec
-                        )
+                ForEach(viewModel.state.resources.allConstellations) { constellation in
+                    let displayCenter = constellation.center
+                    let raDec = RADec(vector: displayCenter)
+                    let coordinate = azel(
+                        julianDate: julianDate,
+                        site: (context.observer.lat, context.observer.lon),
+                        cele: raDec
+                    )
 
-                        context.constellationLabel(
-                            constellation.name
+                    context.constellationLabel(
+                        constellation.name
+                    )
+                    .position(
+                        SkyChartUtils.point(
+                            at: coordinate,
+                            rect: rect
                         )
-                        .position(
-                            SkyChartUtils.point(
-                                at: coordinate,
-                                rect: rect
-                            )
-                        )
-                    }
+                    )
                 }
 
                 context.annotationView(

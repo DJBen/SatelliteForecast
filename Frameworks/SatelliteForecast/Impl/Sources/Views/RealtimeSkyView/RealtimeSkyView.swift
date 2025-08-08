@@ -10,6 +10,7 @@ import BTree
 @preconcurrency import CombineRextensions
 import SatelliteForecast
 @preconcurrency import SatelliteKit
+import StarryNight
 import SwiftRex
 import SwiftUI
 import CoreMotion
@@ -39,17 +40,20 @@ public struct RealtimeSkyViewContext {
     public let basicChartConfigs: BasicChartConfigs
     public let backgroundSkyConfigs: BackgroundSkyConfigs
     public let satelliteMagToRadiusFunction: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction
+    public let starManager: any StarManaging
     public let julianDateProvider: () -> Double
 
     public init(
         basicChartConfigs: BasicChartConfigs,
         backgroundSkyConfigs: BackgroundSkyConfigs,
         satelliteMagToRadiusFunction: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction,
+        starManager: any StarManaging,
         julianDateProvider: @escaping () -> Double
     ) {
         self.basicChartConfigs = basicChartConfigs
         self.backgroundSkyConfigs = backgroundSkyConfigs
         self.satelliteMagToRadiusFunction = satelliteMagToRadiusFunction
+        self.starManager = starManager
         self.julianDateProvider = julianDateProvider
     }
 }
@@ -235,6 +239,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
                 basicChartConfigs: context.basicChartConfigs,
                 configs: context.backgroundSkyConfigs,
                 quality: .full,
+                starManager: context.starManager,
                 constellationLabel: { _ in EmptyView() },
                 annotationView: { _ in EmptyView() },
                 starTapped: { _ in }
@@ -412,18 +417,20 @@ struct RealtimeSkyView_Previews: PreviewProvider {
                 basicChartConfigs: .init(),
                 backgroundSkyConfigs: .init(),
                 satelliteMagToRadiusFunction: .init(),
+                starManager: StarManagerMock(),
                 julianDateProvider: { Date().julianDate }
             ),
             backgroundSkyViewProducer: .pure(
                 BackgroundSkyView(
                     viewModel: .mock(
-                        state: BackgroundSkyViewState()
+                        state: BackgroundSkyViewState(),
                     ),
                     context: BackgroundSkyViewContext(
                         observer: LatLonAlt(lat: 0, lon: 0, alt: 0),
                         basicChartConfigs: .init(),
                         configs: .init(),
                         quality: .full,
+                        starManager: StarManagerMock(),
                         constellationLabel: { _ in EmptyView() },
                         annotationView: { _ in EmptyView() },
                         starTapped: { _ in }

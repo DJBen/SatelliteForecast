@@ -9,7 +9,7 @@
 import Foundation
 import SatelliteKit
 
-public struct Constellation: Hashable, @unchecked Sendable {
+public struct Constellation: Hashable, Identifiable, @unchecked Sendable {
     public struct Line: CustomStringConvertible, Sendable {
         public let star1: Star
         public let star2: Star

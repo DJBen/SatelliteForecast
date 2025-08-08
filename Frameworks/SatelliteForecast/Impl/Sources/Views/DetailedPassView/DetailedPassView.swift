@@ -72,6 +72,7 @@ public struct DetailedPassView: View {
                                 showPassInfoLabels: true
                             ),
                             quality: .detailed,
+                            starManager: context.starManager,
                             julianDateProvider: context.julianDateProvider,
                             constellationLabel: { text in
                                 ConstellationLabel(text: text)

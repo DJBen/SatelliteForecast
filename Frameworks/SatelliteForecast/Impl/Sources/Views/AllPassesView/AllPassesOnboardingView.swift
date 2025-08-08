@@ -174,6 +174,7 @@ struct AllPassesOnboardingView: View {
             hasScheduledAlert: false,
             skyChartProducer: skyChartProducer,
             julianDateOffset: 0,
+            starManager: StarManagerMock(),
             julianDateProvider: { startDate.julianDate }
         )
         .frame(height: 135)

@@ -12,6 +12,7 @@ import Shimmer
 @preconcurrency import SatelliteKit
 @preconcurrency import CombineRex
 @preconcurrency import CombineRextensions
+import StarryNight
 
 private let dateFormatter: DateFormatter = {
     let formatter = DateFormatter()
@@ -39,6 +40,7 @@ struct PassPreviewCell: View {
     var hasScheduledAlert: Bool
     var skyChartProducer: ViewProducer<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>
     var julianDateOffset: Double
+    var starManager: any StarManaging
     var julianDateProvider: () -> Double
 
     var snapshots: [SatelliteSnapshot] {
@@ -228,6 +230,7 @@ struct PassPreviewCell: View {
                         passSnapshots: passSnapshots,
                         configs: .preview,
                         quality: .onboarding,
+                        starManager: starManager,
                         julianDateProvider: julianDateProvider
                     )
                 )
@@ -374,6 +377,7 @@ struct PassPreviewCell_Previews: PreviewProvider {
                                 showPassInfoLabels: false
                             ),
                             quality: .preview,
+                            starManager: StarManagerMock(),
                             julianDateProvider: { passSnapshot.pass.rise.julianDate }
                         ),
                         backgroundSkyViewProducer: .pure(
@@ -386,6 +390,7 @@ struct PassPreviewCell_Previews: PreviewProvider {
                                     basicChartConfigs: .init(),
                                     configs: .preset,
                                     quality: .full,
+                                    starManager: StarManagerMock(),
                                     constellationLabel: { _ in EmptyView() },
                                     annotationView: { _ in EmptyView() },
                                     starTapped: { _ in }
@@ -395,6 +400,7 @@ struct PassPreviewCell_Previews: PreviewProvider {
                     )
                 ),
                 julianDateOffset: 0,
+                starManager: StarManagerMock(),
                 julianDateProvider: { startDate.julianDate }
             )
             .environment(\.backgroundSkyJulianDateKey, passSnapshot.pass.rise.julianDate.roundJulianDate(.toMins(1)))
