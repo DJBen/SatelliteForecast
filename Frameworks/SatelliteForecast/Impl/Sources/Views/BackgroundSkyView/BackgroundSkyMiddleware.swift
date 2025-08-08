@@ -13,8 +13,11 @@ import SatelliteForecast
 import UIKit
 
 extension EffectMiddleware where InputActionType == BackgroundSkyViewAction, OutputActionType == BackgroundSkyViewOutput, StateType == BackgroundSkyResources, Dependencies == Void {
-    public static var backgroundSky: EffectMiddleware<BackgroundSkyViewAction, BackgroundSkyViewOutput, BackgroundSkyResources, Void> {
-        EffectMiddleware.onAction { action, _, getState in
+    
+    public typealias BackgroundSkyEffectMiddleware = EffectMiddleware<BackgroundSkyViewAction, BackgroundSkyViewOutput, BackgroundSkyResources, any StarManaging>
+    
+    public static var backgroundSky: MiddlewareReader<any StarManaging, BackgroundSkyEffectMiddleware> {
+        BackgroundSkyEffectMiddleware.onAction { action, _, getState in
             switch action {
             case .requestRasterizedBackgroundSky(
                 size: let size,
@@ -40,10 +43,10 @@ extension EffectMiddleware where InputActionType == BackgroundSkyViewAction, Out
                                     case .none:
                                         return []
                                     case let .limitedMagnitude(mag):
-                                        return Star.magitudeLessThan(mag)
+                                        return context.dependencies.stars(maximumMagnitude: mag)
                                     }
                                 }(),
-                                constellations: key.configs.showConstellationLines ? Constellation.all : [],
+                                constellations: key.configs.showConstellationLines ? context.dependencies.allConstellations() : [],
                                 observer: key.observer,
                                 julianDate: julianDate,
                                 starColor: UIColor(
@@ -57,7 +60,8 @@ extension EffectMiddleware where InputActionType == BackgroundSkyViewAction, Out
                                     compatibleWith: traitCollection
                                 )!,
                                 magToRadius: key.configs.starMagToDisplayRadiusMappingFunction.apply
-                            )
+                            ),
+                            starManager: context.dependencies
                         )
 
                         //                            logger.debug("Rasterized background sky at observer coodinate \(String(describing: key.observer)) @ JD \(julianDate).")

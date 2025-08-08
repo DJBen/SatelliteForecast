@@ -1,5 +1,5 @@
 import Foundation
-@preconcurrency import SatelliteKit
+import SatelliteKit
 @preconcurrency import SQLite
 
 extension StarManager {
@@ -10,7 +10,7 @@ extension StarManager {
         do {
             var constellations = Set<Constellation>()
             for row in try db.prepare(Tables.constellations) {
-                let iau = try row.get(Tables.iauName)
+                let iau = try row.get(Tables.iau)
                 if let center = constellationCenter[iau] {
                     let con = Constellation(
                         id: try row.get(Tables.id),
@@ -34,7 +34,7 @@ extension StarManager {
         let query = Tables.constellations.select(
             Tables.id,
             Tables.constellationName,
-            Tables.iauName,
+            Tables.iau,
             Tables.genitive
         ).filter(Tables.constellationName == name)
         
@@ -46,9 +46,9 @@ extension StarManager {
         let query = Tables.constellations.select(
             Tables.id,
             Tables.constellationName,
-            Tables.iauName,
+            Tables.iau,
             Tables.genitive
-        ).filter(Tables.iauName == iau)
+        ).filter(Tables.iau == iau)
         
         return queryConstellation(query)
     }
@@ -110,7 +110,7 @@ extension StarManager {
     private func queryConstellation(_ query: QueryType) -> Constellation? {
         do {
             if let row = try db.pluck(query) {
-                let iau = try row.get(Tables.iauName)
+                let iau = try row.get(Tables.iau)
                 if let center = constellationCenter[iau] {
                     return Constellation(
                         id: try row.get(Tables.id),

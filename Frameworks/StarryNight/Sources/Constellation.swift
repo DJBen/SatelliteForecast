@@ -7,7 +7,7 @@
 //
 
 import Foundation
-@preconcurrency import SatelliteKit
+import SatelliteKit
 
 public struct Constellation: Hashable, @unchecked Sendable {
     public struct Line: CustomStringConvertible, Sendable {

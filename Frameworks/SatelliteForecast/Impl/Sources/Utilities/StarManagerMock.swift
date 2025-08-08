@@ -2,6 +2,10 @@ import StarryNight
 @preconcurrency import SatelliteKit
 
 actor StarManagerMock: StarManaging {
+    func stars(maximumMagnitude: Double) -> [StarryNight.Star] {
+        []
+    }
+    
     func brightestStars() -> [StarryNight.Star] {
         []
     }

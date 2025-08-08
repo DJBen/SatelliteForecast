@@ -6,7 +6,7 @@
 //
 
 import Foundation
-@preconcurrency import SatelliteKit
+import SatelliteKit
 @preconcurrency import SQLite
 import Ch3
 
@@ -62,7 +62,7 @@ public actor StarManager: StarManaging {
         // Constellation columns
         static let constellationId = SQLite.Expression<Int>("id")
         static let constellationName = SQLite.Expression<String>("constellation")
-        static let iauName = SQLite.Expression<String>("iau")
+        static let iau = SQLite.Expression<String>("iau")
         static let genitive = SQLite.Expression<String>("genitive")
     }
 
@@ -180,6 +180,62 @@ public actor StarManager: StarManaging {
             print("Error fetching brightest stars: \(error)")
             return []
         }
+    }
+    
+    /// Get stars up to a maximum magnitude, starting with brightest stars and falling back to H3 levels if needed
+    public func stars(maximumMagnitude: Double) -> [Star] {
+        var allStars: [Star] = []
+        
+        // First, get stars from brightest 300 that meet the magnitude criteria
+        let brightestQuery = Tables.starsBrightest300
+            .filter(Tables.mag <= maximumMagnitude)
+            .order(Tables.mag.asc)
+        
+        do {
+            let brightestRows = try db.prepare(brightestQuery)
+            allStars = brightestRows.map { createStar(from: $0) }
+            
+            // Check the magnitude of the dimmest star in brightest 300 table
+            let dimmestBrightestQuery = Tables.starsBrightest300
+                .order(Tables.mag.desc)
+                .limit(1)
+            
+            if let dimmestRow = try db.pluck(dimmestBrightestQuery) {
+                let dimmestMagnitude = try dimmestRow.get(Tables.mag)
+                
+                // If the maximum magnitude exceeds the dimmest in brightest 300, search H3 levels
+                if maximumMagnitude > dimmestMagnitude {
+                    // Use a Set to track star IDs to avoid duplicates
+                    var starIds = Set<Int>()
+                    
+                    // Add existing stars to the set
+                    for star in allStars {
+                        starIds.insert(star.id)
+                    }
+                    
+                    // Search through H3 levels 0, 1, 2 for additional stars
+                    for level in 0...2 {
+                        let levelStars = stars(forH3Level: level, maximumMagnitude: maximumMagnitude)
+                        
+                        for star in levelStars {
+                            if !starIds.contains(star.id) {
+                                allStars.append(star)
+                                starIds.insert(star.id)
+                            }
+                        }
+                    }
+                    
+                    // Sort the final result by magnitude since we added stars from different sources
+                    allStars.sort { $0.magnitude < $1.magnitude }
+                }
+            }
+            
+        } catch {
+            print("Error fetching stars with maximum magnitude \(maximumMagnitude): \(error)")
+            return []
+        }
+        
+        return allStars
     }
     
     /// Get stars for a specific H3 resolution level
@@ -357,35 +413,142 @@ public actor StarManager: StarManaging {
     }
     
     /// Find the closest star to a given cartesian coordinate
-    public func closestStar(to coordinate: Vector, maximumMagnitude magCutoff: Double? = nil, maximumAngularDistance angularDistance: Double? = nil) -> Star? {
-        // Use the brightest stars table for closest star search
-        let xSqr = (Tables.x - coordinate.x) * (Tables.x - coordinate.x)
-        let ySqr = (Tables.y - coordinate.y) * (Tables.y - coordinate.y)
-        let zSqr = (Tables.z - coordinate.z) * (Tables.z - coordinate.z)
-        let distanceSqr = xSqr + ySqr + zSqr
+    public func closestStar(
+        to coordinate: Vector,
+        maximumMagnitude magCutoff: Double? = nil,
+        maximumAngularDistance angularDistance: Double? = nil
+    ) -> Star? {
+        // Convert cartesian coordinate to latitude/longitude
+        let (latitude, longitude) = cartesianToLatLon(coordinate)
         
-        var query = Tables.starsBrightest300.select(Tables.id, Tables.mag, Tables.x, Tables.y, Tables.z, Tables.spectClass)
+        // Convert to GeoCoord for H3
+        let geoCoord = GeoCoord(lat: latitude * .pi / 180.0, lon: longitude * .pi / 180.0)
         
-        if let magCutoff = magCutoff {
-            query = query.filter(Tables.mag < magCutoff)
+        // Get H3 indices for different resolution levels
+        let h3_0_index = withUnsafePointer(to: geoCoord) { coordPtr in
+            geoToH3(coordPtr, 0)
+        }
+        let h3_1_index = withUnsafePointer(to: geoCoord) { coordPtr in
+            geoToH3(coordPtr, 1)
+        }
+        let h3_2_index = withUnsafePointer(to: geoCoord) { coordPtr in
+            geoToH3(coordPtr, 2)
         }
         
-        if let angularDistance = angularDistance {
-            let maxDistSqr = pow(asin(angularDistance / 2) * 2, 2)
-            query = query.filter(distanceSqr < maxDistSqr)
-        }
+        // Convert H3 indices to strings for database queries
+        let h3_0_string = h3IndexToString(h3_0_index)
+        let h3_1_string = h3IndexToString(h3_1_index)
+        let h3_2_string = h3IndexToString(h3_2_index)
         
-        query = query.order(distanceSqr).limit(1)
+        var closestStar: Star?
+        var minimumDistance = Double.infinity
         
-        do {
-            if let row = try db.pluck(query) {
-                return createStar(from: row)
+        // Helper function to calculate distance and find closest star
+        func checkStarsFromQuery(_ query: QueryType) {
+            do {
+                let rows = try db.prepare(query)
+                for row in rows {
+                    let star = createStar(from: row)
+                    let distance = (normalize(coordinate) - normalize(star.coordinate)).magnitude()
+                    
+                    // Check angular distance constraint if provided
+                    if let angularDistance = angularDistance {
+                        let actualAngularDistance = 2 * asin(distance / 2)
+                        if actualAngularDistance > angularDistance {
+                            continue
+                        }
+                    }
+                    
+                    if distance < minimumDistance {
+                        minimumDistance = distance
+                        closestStar = star
+                    }
+                }
+            } catch {
+                print("Error querying stars: \(error)")
             }
-        } catch {
-            print("Error finding closest star: \(error)")
         }
         
-        return nil
+        if let h3_0_string = h3_0_string {
+            // 1. Start with brightest 300 stars
+            var query = Tables.starsBrightest300
+                .filter(Tables.h3_0 == h3_0_string)
+                .select(Tables.id, Tables.mag, Tables.x, Tables.y, Tables.z, Tables.spectClass)
+            if let magCutoff = magCutoff {
+                query = query.filter(Tables.mag < magCutoff)
+            }
+            checkStarsFromQuery(query)
+            
+            // 2. Check H3 level 0 with H3 filter
+            var h3_0_query = Tables.starsH3_0
+                .filter(Tables.h3_0 == h3_0_string)
+                .select(Tables.id, Tables.mag, Tables.x, Tables.y, Tables.z, Tables.spectClass)
+            if let magCutoff = magCutoff {
+                h3_0_query = h3_0_query.filter(Tables.mag < magCutoff)
+            }
+            checkStarsFromQuery(h3_0_query)
+        }
+        
+        // 3. Check H3 level 1 with H3 filter
+        if let h3_1_string = h3_1_string {
+            var h3_1_query = Tables.starsH3_1
+                .filter(Tables.h3_1 == h3_1_string)
+                .select(Tables.id, Tables.mag, Tables.x, Tables.y, Tables.z, Tables.spectClass)
+            if let magCutoff = magCutoff {
+                h3_1_query = h3_1_query.filter(Tables.mag < magCutoff)
+            }
+            checkStarsFromQuery(h3_1_query)
+        }
+        
+        // 4. Check H3 level 2 with H3 filter
+        if let h3_2_string = h3_2_string {
+            var h3_2_query = Tables.starsH3_2
+                .filter(Tables.h3_2 == h3_2_string)
+                .select(Tables.id, Tables.mag, Tables.x, Tables.y, Tables.z, Tables.spectClass)
+            if let magCutoff = magCutoff {
+                h3_2_query = h3_2_query.filter(Tables.mag < magCutoff)
+            }
+            checkStarsFromQuery(h3_2_query)
+        }
+        
+        return closestStar
+    }
+    
+    // MARK: - Private Helper Functions
+    
+    /// Convert cartesian coordinates to latitude/longitude
+    private func cartesianToLatLon(_ coordinate: Vector) -> (latitude: Double, longitude: Double) {
+        // Normalize the vector (in case it's not already unit length)
+        let magnitude = sqrt(coordinate.x * coordinate.x + coordinate.y * coordinate.y + coordinate.z * coordinate.z)
+        guard magnitude > 0 else {
+            return (0, 0)
+        }
+        
+        let x_norm = coordinate.x / magnitude
+        let y_norm = coordinate.y / magnitude
+        let z_norm = coordinate.z / magnitude
+        
+        // Convert to spherical coordinates
+        // Latitude (declination): arcsin(z)
+        let latitude = asin(z_norm) * 180.0 / .pi
+        
+        // Longitude (right ascension): atan2(y, x)
+        let longitude = atan2(y_norm, x_norm) * 180.0 / .pi
+        
+        return (latitude, longitude)
+    }
+    
+    /// Convert H3 index to string
+    private func h3IndexToString(_ h3Index: H3Index) -> String? {
+        guard h3Index != 0 else { return nil }
+        
+        let bufferSize = 17 // H3 string representation needs max 16 chars + null terminator
+        let buffer = UnsafeMutablePointer<CChar>.allocate(capacity: bufferSize)
+        defer { buffer.deallocate() }
+        
+        h3ToString(h3Index, buffer, bufferSize)
+        
+        return String(cString: buffer, encoding: .utf8)
     }
     
     /// Search for stars by name or catalog identifier
@@ -458,7 +621,7 @@ public actor StarManager: StarManaging {
     public func starInfo(forId id: Int) -> StarInfo? {
         // Join with constellations table to get full constellation information
         let query = Tables.starsInfo
-            .join(Tables.constellations, on: Tables.starsInfo[Tables.con] == Tables.constellations[Tables.iauName])
+            .join(Tables.constellations, on: Tables.starsInfo[Tables.con] == Tables.constellations[Tables.iau])
             .filter(Tables.starsInfo[Tables.id] == id)
         
         do {
@@ -496,11 +659,11 @@ public actor StarManager: StarManaging {
     private func createStarInfo(from row: Row) -> StarInfo {
         // Get constellation information from joined table
         let constellation: Constellation?
-        if let iauName = try? row.get(Tables.iauName),
-           let constellationId = try? row.get(Tables.id),
-           let constellationName = try? row.get(Tables.constellationName),
-           let genitive = try? row.get(Tables.genitive),
-           let center = constellationCenter[iauName] {
+        let iauName = try? row.get(Tables.iau)
+        let constellationId = try? row.get(Tables.constellations[Tables.constellationId])
+        let constellationName = try? row.get(Tables.constellationName)
+        let genitive = try? row.get(Tables.genitive)
+        if let iauName, let constellationId, let constellationName, let genitive, let center = constellationCenter[iauName] {
             constellation = Constellation(id: constellationId, name: constellationName, iAUName: iauName, genitive: genitive, center: center)
         } else {
             constellation = nil

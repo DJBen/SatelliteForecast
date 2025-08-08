@@ -59,46 +59,49 @@ extension EffectMiddleware where
                             let imageRect = rect.insetBy(dx: 5, dy: 5)
                             let renderer = UIGraphicsImageRenderer(size: rect.size)
                             let image = renderer.image { ctx in
-                                SkyChartUtils.addRasterizedBackgroundSkyPath(
-                                    to: ctx,
-                                    params: BackgroundSkyRenderParams(
-                                        rect: imageRect,
-                                        stars: stars,
-                                        constellations: constellations,
-                                        observer: passNotification.observer,
-                                        julianDate: pass.rise.julianDate,
-                                        starColor: SkyChartTheme.starColor(
-                                            traitCollection: traitCollection
+                                Task { @MainActor in
+                                    await SkyChartUtils.addRasterizedBackgroundSkyPath(
+                                        to: ctx,
+                                        params: BackgroundSkyRenderParams(
+                                            rect: imageRect,
+                                            stars: stars,
+                                            constellations: constellations,
+                                            observer: passNotification.observer,
+                                            julianDate: pass.rise.julianDate,
+                                            starColor: SkyChartTheme.starColor(
+                                                traitCollection: traitCollection
+                                            ),
+                                            constellationLineColor: SkyChartTheme.constellationLineColor(
+                                                traitCollection: traitCollection
+                                            ),
+                                            drawPlanaryBodies: true,
+                                            backgroundFillColor: UIColor.secondarySystemBackground,
+                                            border: BackgroundSkyRenderParams.Border(
+                                                borderColor: SkyChartTheme.skyChartStrokeColor(
+                                                    traitCollection: traitCollection
+                                                )
+                                            ),
+                                            magToRadius: { CGFloat(3 * exp(-0.425 * $0)) }
                                         ),
-                                        constellationLineColor: SkyChartTheme.constellationLineColor(
-                                            traitCollection: traitCollection
-                                        ),
-                                        drawPlanaryBodies: true,
-                                        backgroundFillColor: UIColor.secondarySystemBackground,
-                                        border: BackgroundSkyRenderParams.Border(
-                                            borderColor: SkyChartTheme.skyChartStrokeColor(
+                                        starManager: StarManagerMock()
+                                    )
+                                    
+                                    await SkyChartUtils.addRasterizedSatellitePassPath(
+                                        to: ctx,
+                                        params: SatellitePassPathRenderParams(
+                                            rect: imageRect,
+                                            snapshotsDuringPass: passSnapshots.snapshots,
+                                            illuminatedColor: SkyChartTheme.satellitePathColor(
+                                                illuminated: true,
+                                                traitCollection: traitCollection
+                                            ),
+                                            unlitColor: SkyChartTheme.satellitePathColor(
+                                                illuminated: false,
                                                 traitCollection: traitCollection
                                             )
-                                        ),
-                                        magToRadius: { CGFloat(3 * exp(-0.425 * $0)) }
-                                    )
-                                )
-
-                                SkyChartUtils.addRasterizedSatellitePassPath(
-                                    to: ctx,
-                                    params: SatellitePassPathRenderParams(
-                                        rect: imageRect,
-                                        snapshotsDuringPass: passSnapshots.snapshots,
-                                        illuminatedColor: SkyChartTheme.satellitePathColor(
-                                            illuminated: true,
-                                            traitCollection: traitCollection
-                                        ),
-                                        unlitColor: SkyChartTheme.satellitePathColor(
-                                            illuminated: false,
-                                            traitCollection: traitCollection
                                         )
                                     )
-                                )
+                                }
                             }
 
                             do {

@@ -140,7 +140,7 @@ public enum SkyChartUtils {
         to ctx: UIGraphicsImageRendererContext,
         params: BackgroundSkyRenderParams,
         starManager: any StarManaging
-    ) {
+    ) async {
         if let border = params.border {
             ctx.cgContext.saveGState()
             ctx.cgContext.setStrokeColor(border.borderColor.cgColor)
@@ -165,20 +165,17 @@ public enum SkyChartUtils {
         ctx.cgContext.setLineWidth(params.constellationLineWidth)
 
         for constellation in params.constellations {
-            guard let center = constellation.displayCenter else {
-                continue
-            }
             let alt = azel(
                 julianDate: params.julianDate,
                 site: (params.observer.lat, params.observer.lon),
-                cele: RADec(vector: center)
+                cele: RADec(vector: constellation.center)
             ).elev
             if alt < 0 {
                 continue
             }
-            for line in constellation.connectionLines {
-                let aziElev1 = azel(julianDate: params.julianDate, site: (params.observer.lat, params.observer.lon), cele: RADec(vector: line.star1.physicalInfo.coordinate))
-                let aziElev2 = azel(julianDate: params.julianDate, site: (params.observer.lat, params.observer.lon), cele: RADec(vector: line.star2.physicalInfo.coordinate))
+            for line in try await starManager.constellationLines(for: constellation) {
+                let aziElev1 = azel(julianDate: params.julianDate, site: (params.observer.lat, params.observer.lon), cele: RADec(vector: line.star1.coordinate))
+                let aziElev2 = azel(julianDate: params.julianDate, site: (params.observer.lat, params.observer.lon), cele: RADec(vector: line.star2.coordinate))
                 if aziElev1.elev < 0 || aziElev2.elev < 0 {
                     continue
                 }
@@ -251,12 +248,22 @@ public enum SkyChartUtils {
     }
         
     public static func rasterizedBackgroundSkyPath(
-        params: BackgroundSkyRenderParams
-    ) -> UIImage {
+        params: BackgroundSkyRenderParams,
+        starManager: any StarManaging
+    ) async -> UIImage {
         let renderer = UIGraphicsImageRenderer(size: params.rect.size)
 
-        return renderer.image { ctx in
-            addRasterizedBackgroundSkyPath(to: ctx, params: params)
+        return await withCheckedContinuation { continuation in
+            let image = renderer.image { ctx in
+                Task {
+                    await addRasterizedBackgroundSkyPath(
+                        to: ctx,
+                        params: params,
+                        starManager: starManager
+                    )
+                }
+            }
+            continuation.resume(returning: image)
         }
     }
 }
@@ -315,46 +322,49 @@ struct ImageRenderer_Previews: PreviewProvider {
                         
                         return renderer.image { ctx in
                             UITraitCollection(userInterfaceStyle: colorScheme == .light ? .light : .dark).performAsCurrent {
-                                SkyChartUtils.addRasterizedBackgroundSkyPath(
-                                    to: ctx,
-                                    params: BackgroundSkyRenderParams(
-                                        rect: rect,
-                                        stars: stars,
-                                        constellations: constellations,
-                                        observer: observer,
-                                        julianDate: pass.rise.julianDate,
-                                        starColor: UIColor(
-                                            named: "star",
-                                            in: .module,
-                                            compatibleWith: nil
-                                        )!,
-                                        constellationLineColor: UIColor(
-                                            named: "constellationLine",
-                                            in: .module,
-                                            compatibleWith: nil
-                                        )!,
-                                        drawPlanaryBodies: true,
-                                        backgroundFillColor: UIColor.secondarySystemBackground,
-                                        border: BackgroundSkyRenderParams.Border(
-                                            borderColor: UIColor(
-                                                named: "skyChartStroke",
+                                Task { @MainActor in
+                                    await SkyChartUtils.addRasterizedBackgroundSkyPath(
+                                        to: ctx,
+                                        params: BackgroundSkyRenderParams(
+                                            rect: rect,
+                                            stars: stars,
+                                            constellations: constellations,
+                                            observer: observer,
+                                            julianDate: pass.rise.julianDate,
+                                            starColor: UIColor(
+                                                named: "star",
                                                 in: .module,
                                                 compatibleWith: nil
-                                            )!
+                                            )!,
+                                            constellationLineColor: UIColor(
+                                                named: "constellationLine",
+                                                in: .module,
+                                                compatibleWith: nil
+                                            )!,
+                                            drawPlanaryBodies: true,
+                                            backgroundFillColor: UIColor.secondarySystemBackground,
+                                            border: BackgroundSkyRenderParams.Border(
+                                                borderColor: UIColor(
+                                                    named: "skyChartStroke",
+                                                    in: .module,
+                                                    compatibleWith: nil
+                                                )!
+                                            ),
+                                            magToRadius: { CGFloat(3 * exp(-0.425 * $0)) }
                                         ),
-                                        magToRadius: { CGFloat(3 * exp(-0.425 * $0)) }
+                                        starManager: StarManagerMock()
                                     )
-                                )
-                                
-                                SkyChartUtils.addRasterizedSatellitePassPath(
-                                    to: ctx,
-                                    params: SatellitePassPathRenderParams(
-                                        rect: rect,
-                                        snapshotsDuringPass: snapshots,
-                                        illuminatedColor: UIColor(named: "satellitePath_illuminated")!,
-                                        unlitColor: UIColor(named: "satellitePath_notIlluminated")!
+                                    
+                                    await SkyChartUtils.addRasterizedSatellitePassPath(
+                                        to: ctx,
+                                        params: SatellitePassPathRenderParams(
+                                            rect: rect,
+                                            snapshotsDuringPass: snapshots,
+                                            illuminatedColor: UIColor(named: "satellitePath_illuminated")!,
+                                            unlitColor: UIColor(named: "satellitePath_notIlluminated")!
+                                        )
                                     )
-                                )
+                                }
                             }
                         }
                     }()

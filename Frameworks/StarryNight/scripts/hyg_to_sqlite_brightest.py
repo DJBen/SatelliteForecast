@@ -11,7 +11,8 @@ import csv
 import sqlite3
 import sys
 import os
-from pathlib import Path
+import h3
+import math
 
 
 def extract_spectral_class(spect):
@@ -40,6 +41,27 @@ def extract_spectral_class(spect):
                 return char
     
     return None
+
+
+def cartesian_to_lat_lon(x, y, z):
+    """Convert Cartesian coordinates to latitude and longitude."""
+    # Normalize the vector (in case it's not already unit length)
+    magnitude = math.sqrt(x*x + y*y + z*z)
+    if magnitude == 0:
+        return None, None
+    
+    x_norm = x / magnitude
+    y_norm = y / magnitude
+    z_norm = z / magnitude
+    
+    # Convert to spherical coordinates
+    # Latitude (declination): arcsin(z)
+    lat = math.asin(z_norm) * 180 / math.pi
+    
+    # Longitude (right ascension): atan2(y, x)
+    lon = math.atan2(y_norm, x_norm) * 180 / math.pi
+    
+    return lat, lon
 
 
 def parse_arguments():
@@ -112,6 +134,23 @@ def read_and_sort_stars(csv_file, brightest_n):
                         'z': float(row['z']) if row['z'] else None,
                         'spect_class': extract_spectral_class(row.get('spect', ''))
                     }
+                    
+                    # Skip stars with missing coordinate data
+                    if any(coord is None for coord in [star['x'], star['y'], star['z']]):
+                        continue
+                    
+                    # Convert Cartesian coordinates to lat/lon and generate H3 hash
+                    lat, lon = cartesian_to_lat_lon(star['x'], star['y'], star['z'])
+                    if lat is not None and lon is not None:
+                        try:
+                            star['h3_0'] = h3.latlng_to_cell(lat, lon, 0)
+                        except Exception as e:
+                            print(f"Warning: Could not generate H3 hash for star {star['id']}: {e}")
+                            continue
+                    else:
+                        print(f"Warning: Could not convert coordinates for star {star['id']}")
+                        continue
+                        
                     stars.append(star)
                 except (ValueError, TypeError) as e:
                     # Skip rows with invalid data
@@ -149,15 +188,16 @@ def create_sqlite_database(sqlite_file, brightest_stars, brightest_n):
             x REAL,
             y REAL,
             z REAL,
-            spect_class TEXT
+            spect_class TEXT,
+            h3_0 TEXT
         )
         """
         cursor.execute(create_table_sql)
         
         # Insert data
         insert_sql = f"""
-        INSERT INTO {table_name} (id, mag, x, y, z, spect_class)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO {table_name} (id, mag, x, y, z, spect_class, h3_0)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
         """
         
         for star in brightest_stars:
@@ -167,11 +207,15 @@ def create_sqlite_database(sqlite_file, brightest_stars, brightest_n):
                 star['x'],
                 star['y'],
                 star['z'],
-                star['spect_class']
+                star['spect_class'],
+                star['h3_0']
             ))
         
         # Create index on magnitude for faster queries
         cursor.execute(f"CREATE INDEX idx_{table_name}_mag ON {table_name}(mag)")
+        
+        # Create index on H3 hash for faster geospatial queries
+        cursor.execute(f"CREATE INDEX idx_{table_name}_h3_0 ON {table_name}(h3_0)")
         
         # Commit changes and close connection
         conn.commit()

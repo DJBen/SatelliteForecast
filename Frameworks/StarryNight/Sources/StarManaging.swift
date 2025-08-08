@@ -6,7 +6,7 @@
 //
 
 import Foundation
-@preconcurrency import SatelliteKit
+import SatelliteKit
 
 /// Protocol defining the star management interface
 public protocol StarManaging: Actor {
@@ -14,6 +14,9 @@ public protocol StarManaging: Actor {
     /// Get the brightest stars
     func brightestStars() -> [Star]
     
+    /// Get stars up to a maximum magnitude, starting with brightest stars and falling back to more H3 resolution levels if needed
+    func stars(maximumMagnitude: Double) -> [Star]
+        
     /// Get stars for a specific H3 resolution level
     func stars(forH3Level level: Int, maximumMagnitude magCutoff: Double?) -> [Star]
     

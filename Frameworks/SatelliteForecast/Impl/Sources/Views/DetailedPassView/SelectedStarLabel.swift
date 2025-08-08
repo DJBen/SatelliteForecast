@@ -14,12 +14,13 @@ struct SelectedStarLabel: View {
 
     let starManager: any StarManaging
     let star: Star
+    @State var starInfo: StarInfo?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(alignment: .firstTextBaseline) {
                 Text(
-                    primaryStarDescription
+                    primaryStarDescription ?? ""
                 )
                 .font(.title2)
                 .foregroundColor(Color(UIColor.label))
@@ -35,46 +36,49 @@ struct SelectedStarLabel: View {
                 Spacer()
 
                 Text(
-                    star.identity.constellation.name
+                    starInfo?.constellation?.name ?? ""
                 )
                 .font(.headline)
                 .foregroundColor(Color(UIColor.secondaryLabel))
             }
 
             Text(
-                LocalizedStrings.magnitudeText(magnitude: star.physicalInfo.apparentMagnitude)
+                LocalizedStrings.magnitudeText(magnitude: star.magnitude)
             )
             .font(.body)
             .foregroundColor(Color(UIColor.secondaryLabel))
 
             HStack(alignment: .firstTextBaseline, spacing: 16) {
                 Text(
-                    LocalizedStrings.rightAscensionText(raDec: RADec(vector: star.physicalInfo.coordinate))
+                    LocalizedStrings.rightAscensionText(raDec: RADec(vector: star.coordinate))
                 )
                 .font(.caption)
                 .foregroundColor(Color(UIColor.secondaryLabel))
 
                 Text(
-                    LocalizedStrings.declinationText(raDec: RADec(vector: star.physicalInfo.coordinate))
+                    LocalizedStrings.declinationText(raDec: RADec(vector: star.coordinate))
                 )
                 .font(.caption)
                 .foregroundColor(Color(UIColor.secondaryLabel))
             }
         }
+        .task {
+            starInfo = starManager.starInfo(forId: star.id)
+        }
     }
 
-    private var primaryStarDescription: String {
-        star.identity.description
+    private var primaryStarDescription: String? {
+        starInfo?.displayName
     }
 
     private var secondaryStarDescription: String? {
         let candidates: [String?] = [
-            star.identity.properName,
-            star.identity.bayerFlamsteedDesignation,
-            star.identity.gl,
-            star.identity.hrIdString,
-            star.identity.hdIdString,
-            star.identity.hipIdString
+            starInfo?.properName,
+            starInfo?.bayerFlamsteedDesignation,
+            starInfo?.gl,
+            starInfo?.hrIdString,
+            starInfo?.hdIdString,
+            starInfo?.hipIdString
         ]
         var foundFirst: Bool = false
         for candidate in candidates {
@@ -130,14 +134,5 @@ extension SelectedStarLabel {
                 raDec.formattedDec
             )
         }
-    }
-}
-
-struct SelectedStarLabel_Previews: PreviewProvider {
-    static var previews: some View {
-        SelectedStarLabel(
-            star: Star.hr(7001)!
-        )
-        .previewLayout(.fixed(width: 320, height: 80))
     }
 }

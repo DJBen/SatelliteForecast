@@ -28,6 +28,7 @@ public struct BackgroundSkyViewContext<ConstellationLabel: View, AnnotationView:
     public let basicChartConfigs: BasicChartConfigs
     public let configs: BackgroundSkyConfigs
     public let quality: ChartQuality
+    public let starManager: any StarManaging
     public let constellationLabel: (String) -> ConstellationLabel
     public let annotationView: (@escaping (RADec) -> CGPoint) -> AnnotationView
     public let starTapped: (Star?) -> Void
@@ -37,6 +38,7 @@ public struct BackgroundSkyViewContext<ConstellationLabel: View, AnnotationView:
         basicChartConfigs: BasicChartConfigs,
         configs: BackgroundSkyConfigs,
         quality: ChartQuality,
+        starManager: any StarManaging,
         @ViewBuilder constellationLabel: @escaping (String) -> ConstellationLabel,
         @ViewBuilder annotationView: @escaping (@escaping (RADec) -> CGPoint) -> AnnotationView,
         starTapped: @escaping (Star?) -> Void
@@ -45,6 +47,7 @@ public struct BackgroundSkyViewContext<ConstellationLabel: View, AnnotationView:
         self.basicChartConfigs = basicChartConfigs
         self.configs = configs
         self.quality = quality
+        self.starManager = starManager
         self.constellationLabel = constellationLabel
         self.annotationView = annotationView
         self.starTapped = starTapped
@@ -97,9 +100,10 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
 
     private func starDisplayPoint(_ star: Star, julianDate: Double, rect: CGRect) -> CGPoint {
         return getStarCoordinateConverter(
-            julianDate: julianDate, rect: rect
+            julianDate: julianDate,
+            rect: rect
         )(
-            RADec(vector: star.physicalInfo.coordinate)
+            RADec(vector: star.coordinate)
         )
     }
 
@@ -196,7 +200,7 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
             let rect = geometry.frame(in: .local)
 
             ZStack {
-                ForEach(Array(Constellation.all), id: \.self) { constellation in
+                ForEach(viewModel.state.resources.allConstellations, id: \.self) { constellation in
                     if let displayCenter = constellation.displayCenter {
                         let raDec = RADec(vector: displayCenter)
                         let coordinate = azel(
@@ -289,6 +293,7 @@ struct BackgroundSkyView_Previews: PreviewProvider {
                 basicChartConfigs: .init(),
                 configs: .preset,
                 quality: .full,
+                starManager: StarManagerMock(),
                 constellationLabel: { _ in EmptyView() },
                 annotationView: { _ in EmptyView() },
                 starTapped: { _ in }

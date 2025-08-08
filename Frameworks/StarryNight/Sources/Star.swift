@@ -7,7 +7,7 @@
 //
 
 import Foundation
-@preconcurrency import SatelliteKit
+import SatelliteKit
 import SQLite
 
 /// Core star data structure containing essential rendering information
