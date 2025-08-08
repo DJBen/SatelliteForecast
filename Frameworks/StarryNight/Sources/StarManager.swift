@@ -668,12 +668,12 @@ public class StarManager: StarManaging, @unchecked Sendable {
         } else {
             constellation = nil
         }
-        
-        // Parse BayerFlamsteed designation
+
         let bfDesignation: BayerFlamsteed?
-        if let bfString = try? row.get(Tables.bf), !bfString.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-           let constellation = constellation {
-            bfDesignation = BayerFlamsteed(bfString, constellation: constellation)
+        if let constellation {
+            let bayer = try? row.get(Tables.bayer)
+            let flam = try? row.get(Tables.flam)
+            bfDesignation = BayerFlamsteed(bayer: bayer, flamsteed: flam, constellation: constellation)
         } else {
             bfDesignation = nil
         }

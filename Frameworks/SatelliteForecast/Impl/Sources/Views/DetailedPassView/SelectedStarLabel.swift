@@ -62,8 +62,8 @@ struct SelectedStarLabel: View {
                 .foregroundColor(Color(UIColor.secondaryLabel))
             }
         }
-        .task {
-            starInfo = starManager.starInfo(forId: star.id)
+        .onChange(of: star.id, initial: true) { _, starId in
+            starInfo = starManager.starInfo(forId: starId)
         }
     }
 

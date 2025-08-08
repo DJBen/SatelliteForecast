@@ -43,35 +43,18 @@ public struct BayerFlamsteed: CustomStringConvertible, Hashable, Equatable, Send
     public let binaryNumber: Int?
     public let constellation: Constellation
 
-    public init?(_ str: String, constellation: Constellation) {
-        // Define the regex pattern
-        let pattern = #/(\d+)?\s*(\w{2,3})?\s*(\d)?/#
-        
-        if let match = str.firstMatch(of: pattern) {
-            if let flamsteedCapture = match.1, let flamsteedNumber = Int(flamsteedCapture) {
-                flamsteed = flamsteedNumber
-                if let bayerGreek = match.2 {
-                    type = .bayerFlamsteed
-                    greekLetter = GreekLetter(shortEnglish: String(bayerGreek))!
-                } else {
-                    type = .flamsteed
-                    greekLetter = nil
-                }
-            } else if let bayerGreek = match.2 {
-                type = .bayer
-                greekLetter = GreekLetter(shortEnglish: String(bayerGreek))!
-                flamsteed = nil
-            } else {
-                fatalError()
-            }
-            
-            self.constellation = constellation
-            
-            if let bnStr = match.3, let bnInt = Int(bnStr) {
-                binaryNumber = bnInt
-            } else {
-                binaryNumber = nil
-            }
+    public init?(bayer: String?, flamsteed: Int?, constellation: Constellation) {
+        self.constellation = constellation
+        self.flamsteed = flamsteed
+        let bayerPattern = #/(\w+)(?:-(\d+))?/#
+        if let match = bayer?.firstMatch(of: bayerPattern) {
+            self.greekLetter = GreekLetter(shortEnglish: String(match.1))
+            self.binaryNumber = match.2.flatMap({ Int($0) })
+            self.type = flamsteed == nil ? .bayer : .bayerFlamsteed
+        } else if let flamsteed {
+            self.greekLetter = nil
+            self.binaryNumber = nil
+            self.type = .flamsteed
         } else {
             return nil
         }

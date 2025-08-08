@@ -84,7 +84,7 @@ struct SatelliteOverviewCell: View {
                             )
                         }
                         if nextPass.nextVisiblePass == nil && nextPass.nextProminentPass == nil {
-                            Text("No upcoming visible passes; check back after 7 days", bundle: .module)
+                            Text("No upcoming visible passes; check back after a few days!", bundle: .module)
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                         }
