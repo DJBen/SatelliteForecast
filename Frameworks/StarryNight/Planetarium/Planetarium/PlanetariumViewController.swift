@@ -234,12 +234,17 @@ class PlanetariumViewController: UIViewController {
     }
     
     @objc private func updateMomentum() {
+        guard let displayLink = momentumDisplayLink else { return }
+        
         let damping: Float = 0.9
         let minimumVelocity: Float = 0.01 // Threshold below which we stop the animation
         
-        // Apply velocities to rotation
-        azimuth += azimuthVelocity * (1.0/60.0) // Assuming 60 FPS
-        altitude += altitudeVelocity * (1.0/60.0)
+        // Get the actual frame duration from the display link
+        let frameDuration = Float(displayLink.targetTimestamp - displayLink.timestamp)
+        
+        // Apply velocities to rotation using actual frame duration
+        azimuth += azimuthVelocity * frameDuration
+        altitude += altitudeVelocity * frameDuration
         
         // Keep azimuth in -π to π range
         if azimuth > Float.pi {
