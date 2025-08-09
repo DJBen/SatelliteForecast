@@ -16,6 +16,11 @@ class PlanetariumViewController: UIViewController {
     private var altitudeVelocity: Float = 0
     private var momentumDisplayLink: CADisplayLink?
     private var lastPanTime: CFTimeInterval = 0
+    
+    // Zoom properties
+    private var currentFOV: Float = 90.0  // Start at minimum zoom (widest view)
+    private let minFOV: Float = 2.0       // Maximum zoom (narrowest view)
+    private let maxFOV: Float = 90.0      // Minimum zoom (widest view)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,7 +53,7 @@ class PlanetariumViewController: UIViewController {
         // Create an entity to hold the camera component
         let cameraEntity = Entity()
         var component = PerspectiveCameraComponent()
-        component.fieldOfViewInDegrees = 90
+        component.fieldOfViewInDegrees = currentFOV
         // Create an orthographic camera component and add it to the camera entity
         cameraEntity.components.set(component)
         
@@ -66,6 +71,10 @@ class PlanetariumViewController: UIViewController {
         // Add pan gesture for rotation (but not translation)
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
         arView.addGestureRecognizer(panGesture)
+        
+        // Add pinch gesture for zooming
+        let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(handlePinch(_:)))
+        arView.addGestureRecognizer(pinchGesture)
         
         // Add tap gesture to stop momentum
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
@@ -140,9 +149,15 @@ class PlanetariumViewController: UIViewController {
         let translation = gesture.translation(in: arView)
         let currentTime = CACurrentMediaTime()
         
-        // Convert pan to rotation - adjust sensitivity
-        let deltaX = Float(translation.x) * 0.002
-        let deltaY = Float(translation.y) * 0.002
+        // Calculate FOV-adjusted sensitivity to maintain consistent panning speed
+        // When FOV is smaller (zoomed in), reduce sensitivity proportionally
+        let baseSensitivity: Float = 0.002
+        let fovAdjustment = currentFOV / maxFOV  // This gives us a ratio from minFOV/maxFOV to 1.0
+        let adjustedSensitivity = baseSensitivity * fovAdjustment
+        
+        // Convert pan to rotation with FOV-adjusted sensitivity
+        let deltaX = Float(translation.x) * adjustedSensitivity
+        let deltaY = Float(translation.y) * adjustedSensitivity
         
         switch gesture.state {
         case .began:
@@ -202,6 +217,36 @@ class PlanetariumViewController: UIViewController {
         }
     }
     
+    @objc private func handlePinch(_ gesture: UIPinchGestureRecognizer) {
+        switch gesture.state {
+        case .began:
+            // Stop any existing momentum
+            stopMomentum()
+            
+        case .changed:
+            // Calculate new FOV based on pinch scale
+            // Pinch out (scale > 1) = zoom in = smaller FOV
+            // Pinch in (scale < 1) = zoom out = larger FOV
+            let scaleFactor = gesture.scale
+            let newFOV = currentFOV / Float(scaleFactor)
+
+            // Clamp FOV to valid range
+            currentFOV = max(minFOV, min(maxFOV, newFOV))
+            
+            // Update camera component
+            updateCameraFOV()
+            
+            // Reset gesture scale to avoid accumulation
+            gesture.scale = 1.0
+            
+        case .ended, .cancelled:
+            break
+            
+        default:
+            break
+        }
+    }
+    
     private func updateCameraRotation() {
         guard let cameraEntity = cameraEntity else { return }
         
@@ -219,6 +264,15 @@ class PlanetariumViewController: UIViewController {
         
         // Apply rotation to the camera entity
         cameraEntity.transform.rotation = cameraRotation
+    }
+    
+    private func updateCameraFOV() {
+        guard let cameraEntity = cameraEntity else { return }
+        
+        // Update the camera component's field of view
+        var component = cameraEntity.components[PerspectiveCameraComponent.self] ?? PerspectiveCameraComponent()
+        component.fieldOfViewInDegrees = currentFOV
+        cameraEntity.components.set(component)
     }
     
     private func startMomentum() {
