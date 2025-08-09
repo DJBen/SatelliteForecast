@@ -208,6 +208,7 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                 )
                 .font(.headline)
                 .foregroundColor(Color(UIColor.label))
+                .multilineTextAlignment(.leading)
 
                 Spacer()
             }

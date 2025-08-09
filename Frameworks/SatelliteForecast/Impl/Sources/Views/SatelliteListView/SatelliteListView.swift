@@ -13,6 +13,7 @@ import SwiftRex
 @preconcurrency import SatelliteKit
 import SatelliteForecast
 import SatelliteCatalog
+import StarryNight
 
 public struct SatelliteListViewState {
     public var navigationPath: NavigationPath = .init()
@@ -49,17 +50,20 @@ public struct SatelliteListViewContext {
     public let category: SatelliteCategory
     public let julianDateRange: ClosedRange<Double>
     public let observer: LatLonAlt?
+    public let starManager: any StarManaging
     public let julianDateProvider: () -> Double
 
     public init(
         category: SatelliteCategory,
         julianDateRange: ClosedRange<Double>,
         observer: LatLonAlt?,
+        starManager: any StarManaging,
         julianDateProvider: @escaping () -> Double
     ) {
         self.category = category
         self.julianDateRange = julianDateRange
         self.observer = observer
+        self.starManager = starManager
         self.julianDateProvider = julianDateProvider
     }
 }
@@ -130,6 +134,7 @@ public struct SatelliteListView: View {
                         satelliteInfo: viewModel.state.satelliteInfo[context.category]!.content![satellite.noradIndex]!,
                         julianDateRange: context.julianDateRange,
                         observer: context.observer,
+                        starManager: context.starManager,
                         julianDateProvider: context.julianDateProvider
                     )
                 )
@@ -232,6 +237,7 @@ struct SatelliteListView_Previews: PreviewProvider {
                 category: .brightest100,
                 julianDateRange: Date(daysSince1950: 1000).julianDate...Date(daysSince1950: 1002).julianDate,
                 observer: nil,
+                starManager: StarManagerMock(),
                 julianDateProvider: { Date(daysSince1950: 1001).julianDate }
             ),
             allPassesViewProducer: .crash

@@ -24,6 +24,7 @@ private struct CityData {
             "Ciudad de México", "Buenos Aires", "Lima", "Bogotá", "Santiago", "Caracas", "Quito", "Guadalajara", "Monterrey", "Medellín", "La Paz"
         ],
         "pt": ["São Paulo", "Rio de Janeiro", "Brasília", "Salvador", "Fortaleza", "Belo Horizonte", "Manaus", "Curitiba"],
+        "ru": ["Москва", "Санкт-Петербург", "Новосибирск", "Екатеринбург", "Казань", "Нижний Новгород", "Челябинск", "Самара", "Омск", "Ростов-на-Дону"],
         "zh-Hans": ["北京", "上海", "广州", "深圳", "成都", "杭州", "南京", "重庆", "西安"]
     ]
     
@@ -32,6 +33,7 @@ private struct CityData {
         "fr": ("Voir l'ISS depuis", "", .vertical),
         "es": ("Ver la ISS desde", "", .vertical),
         "pt": ("Ver a ISS de", "", .vertical),
+        "ru": ("Посмотреть МКС из", "", .vertical),
         "zh-Hans": ("我在", "遇见天宫空间站", .horizontalPrefix)
     ]
     
@@ -60,6 +62,8 @@ struct FlippingCityText: View {
             localeKey = "es"
         } else if currentLocale.hasPrefix("pt") {
             localeKey = "pt"
+        } else if currentLocale.hasPrefix("ru") {
+            localeKey = "ru"
         } else if currentLocale.hasPrefix("zh") {
             localeKey = "zh-Hans"
         } else {

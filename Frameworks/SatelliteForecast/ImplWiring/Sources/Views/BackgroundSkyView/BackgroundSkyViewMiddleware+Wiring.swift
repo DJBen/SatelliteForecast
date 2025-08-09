@@ -8,14 +8,17 @@
 @preconcurrency import CombineRex
 import SatelliteForecast
 import SatelliteForecastImpl
+import StarryNight
 
-extension EffectMiddleware where InputActionType == BackgroundSkyViewAction, OutputActionType == BackgroundSkyViewOutput, StateType == BackgroundSkyResources, Dependencies == Void {
-
-    public func lift() -> AnyMiddleware<AppAction, AppAction, AppState> {
+extension MiddlewareReader where MiddlewareType == BackgroundSkyEffectMiddleware, Dependencies == any StarManaging {
+    public func lift(dependencies: any StarManaging) -> AnyMiddleware<AppAction, AppAction, AppState> {
         lift(
             inputAction: \.backgroundSky,
             outputAction: AppAction.backgroundSkyOutput,
             state: BackgroundSkyResources.project(appState:)
+        )
+        .inject(
+            dependencies
         )
         .eraseToAnyMiddleware()
     }

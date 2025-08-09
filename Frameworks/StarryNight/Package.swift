@@ -4,7 +4,8 @@ import PackageDescription
 let package = Package(
     name: "StarryNight",
     platforms: [
-        .iOS(.v18)
+        .iOS(.v16),
+        .macOS(.v13)
     ],
     products: [
         .library(
@@ -13,6 +14,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/stephencelis/SQLite.swift.git", from: "0.15.0"),
+        .package(url: "https://github.com/DJBen/Ch3.git", branch: "fix-compilation"),
         .package(path: "../SatelliteKit"),
     ],
     targets: [
@@ -20,7 +22,8 @@ let package = Package(
             name: "StarryNight",
             dependencies: [
                 "SatelliteKit",
-                .product(name: "SQLite", package: "SQLite.swift")
+                .product(name: "SQLite", package: "SQLite.swift"),
+                .product(name: "Ch3", package: "Ch3")
             ],
             path: "Sources",
             resources: [

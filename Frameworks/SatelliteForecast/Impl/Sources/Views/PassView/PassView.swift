@@ -12,6 +12,7 @@ import SatelliteForecast
 @preconcurrency import SatelliteKit
 import SwiftUI
 import SwiftUIVisualEffects
+import StarryNight
 import CoreMotion
 
 public struct PassViewState {
@@ -107,6 +108,7 @@ public struct PassView: View {
                             passSnapshots: context.passSnapshots,
                             configs: .preset,
                             quality: .full,
+                            starManager: context.starManager,
                             julianDateProvider: context.julianDateProvider,
                         )
                     )
@@ -177,7 +179,9 @@ public struct PassView: View {
             .navigationTitle(Date(julianDate: context.passSnapshots.pass.rise.julianDate).formatted(date: .abbreviated, time: .shortened))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .principal) {
+                ToolbarItem(
+                    placement: .principal
+                ) {
                     VStack(alignment: .center, spacing: 4) {
                         Text(Date(julianDate: context.passSnapshots.pass.rise.julianDate).formatted(date: .abbreviated, time: .shortened))
                             .font(.headline)
@@ -241,6 +245,7 @@ public struct PassView: View {
                         julianDateRange: context.julianDateRange,
                         observer: context.observer,
                         passSnapshots: context.passSnapshots,
+                        starManager: context.starManager,
                         julianDateProvider: context.julianDateProvider
                     )
                 )
@@ -256,15 +261,26 @@ public struct PassViewContext {
     public let julianDateRange: ClosedRange<Double>
     public let observer: LatLonAlt
     public let passSnapshots: PassSnapshots
+    public let starManager: any StarManaging
     public let julianDateProvider: () -> Double
 
-    public init(passIndex: Int, satelliteInfo: SatelliteInfo, category: SatelliteCategory, julianDateRange: ClosedRange<Double>, observer: LatLonAlt, passSnapshots: PassSnapshots, julianDateProvider: @escaping () -> Double) {
+    public init(
+        passIndex: Int,
+        satelliteInfo: SatelliteInfo,
+        category: SatelliteCategory,
+        julianDateRange: ClosedRange<Double>,
+        observer: LatLonAlt,
+        passSnapshots: PassSnapshots,
+        starManager: any StarManaging,
+        julianDateProvider: @escaping () -> Double
+    ) {
         self.passIndex = passIndex
         self.satelliteInfo = satelliteInfo
         self.category = category
         self.julianDateRange = julianDateRange
         self.observer = observer
         self.passSnapshots = passSnapshots
+        self.starManager = starManager
         self.julianDateProvider = julianDateProvider
     }
 }
@@ -312,6 +328,7 @@ struct PassView_Previews: PreviewProvider {
             passSnapshots: passSnapshots.first!,
             configs: .preview,
             quality: .preview,
+            starManager: StarManagerMock(),
             julianDateProvider: { Date().julianDate }
         )
         let elementPropagatorResources = ElementsPropagatorResources(
@@ -343,6 +360,7 @@ struct PassView_Previews: PreviewProvider {
             julianDateRange: julianDateRange,
             observer: observer,
             passSnapshots: passSnapshots[0],
+            starManager: StarManagerMock(),
             julianDateProvider: { Date().julianDate }
         )
         let elevationGraphContext = SatelliteElevationGraphContext(
@@ -382,6 +400,7 @@ struct PassView_Previews: PreviewProvider {
                                 basicChartConfigs: .init(),
                                 configs: .preset,
                                 quality: .full,
+                                starManager: StarManagerMock(),
                                 constellationLabel: { _ in EmptyView() },
                                 annotationView: { _ in EmptyView() },
                                 starTapped: { _ in }

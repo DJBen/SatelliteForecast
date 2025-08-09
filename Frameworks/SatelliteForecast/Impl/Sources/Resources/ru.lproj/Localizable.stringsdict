@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SatelliteOverview.alarmSettingsCell.description</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@alarmCount@</string>
+		<key>alarmCount</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>few</key>
+			<string>У вас %d ожидающих будильника.</string>
+			<key>many</key>
+			<string>У вас %d ожидающих будильников.</string>
+			<key>one</key>
+			<string>У вас %d ожидающий будильник.</string>
+			<key>other</key>
+			<string>У вас %d ожидающих будильников.</string>
+			<key>zero</key>
+			<string>У вас пока нет установленных будильников.</string>
+		</dict>
+	</dict>
+	<key>SatelliteOverview.ephemeridesManagerCell.title</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@ephemerideFileCount@</string>
+		<key>ephemerideFileCount</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>few</key>
+			<string>%d файла эфемерид</string>
+			<key>many</key>
+			<string>%d файлов эфемерид</string>
+			<key>one</key>
+			<string>%d файл эфемерид</string>
+			<key>other</key>
+			<string>%d файлов эфемерид</string>
+			<key>zero</key>
+			<string>Нет файлов эфемерид</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

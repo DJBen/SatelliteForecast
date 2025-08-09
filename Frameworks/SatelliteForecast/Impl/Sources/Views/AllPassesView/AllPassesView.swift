@@ -11,23 +11,27 @@ import CoreLocation
 @preconcurrency import CombineRextensions
 import SatelliteForecast
 @preconcurrency import SatelliteKit
+import StarryNight
 import SwiftUI
 
 public struct AllPassesViewContext {
     public let satelliteInfo: SatelliteInfo
     public let julianDateRange: ClosedRange<Double>
     public let observer: LatLonAlt?
+    public let starManager: any StarManaging
     public let julianDateProvider: () -> Double
 
     public init(
         satelliteInfo: SatelliteInfo,
         julianDateRange: ClosedRange<Double>,
         observer: LatLonAlt?,
+        starManager: any StarManaging,
         julianDateProvider: @escaping () -> Double
     ) {
         self.satelliteInfo = satelliteInfo
         self.julianDateRange = julianDateRange
         self.observer = observer
+        self.starManager = starManager
         self.julianDateProvider = julianDateProvider
     }
 }
@@ -239,6 +243,7 @@ public struct AllPassesView: View {
                             hasScheduledAlert: item.hasScheduledAlert,
                             skyChartProducer: skyChartProducer,
                             julianDateOffset: viewModel.state.julianDateOffset,
+                            starManager: context.starManager,
                             julianDateProvider: context.julianDateProvider
                         )
                     }
@@ -346,6 +351,7 @@ public struct AllPassesView: View {
                                 julianDateRange: context.julianDateRange,
                                 observer: observer,
                                 passSnapshots: allPassViewNavigation.passSnapshots,
+                                starManager: context.starManager,
                                 julianDateProvider: context.julianDateProvider,
                             )
                         )
@@ -623,6 +629,7 @@ struct AllPassesView_Previews: PreviewProvider {
             satelliteInfo: try! SatelliteInfo(elements: tianHe),
             julianDateRange: Date().julianDate...Date().julianDate + 1,
             observer: observer,
+            starManager: StarManagerMock(),
             julianDateProvider: { Date().julianDate }
         )
         let passSnapshots = tianHePasses[0]
@@ -668,6 +675,7 @@ struct AllPassesView_Previews: PreviewProvider {
                                     showPassInfoLabels: false
                                 ),
                                 quality: .preview,
+                                starManager: StarManagerMock(),
                                 julianDateProvider: { passSnapshots.pass.rise.julianDate }
                             ),
                             backgroundSkyViewProducer: .pure(
@@ -680,6 +688,7 @@ struct AllPassesView_Previews: PreviewProvider {
                                         basicChartConfigs: .init(),
                                         configs: .preset,
                                         quality: .full,
+                                        starManager: StarManagerMock(),
                                         constellationLabel: { _ in EmptyView() },
                                         annotationView: { _ in EmptyView() },
                                         starTapped: { _ in }

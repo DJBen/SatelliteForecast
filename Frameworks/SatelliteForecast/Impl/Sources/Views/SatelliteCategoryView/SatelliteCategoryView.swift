@@ -5,6 +5,7 @@ import SwiftUI
 @preconcurrency import CombineRex
 @preconcurrency import CombineRextensions
 import CoreLocation
+import StarryNight
 
 public struct SatelliteCategoryViewState: Equatable {
     public var navigationPath: NavigationPath
@@ -25,9 +26,14 @@ public struct SatelliteCategoryViewState: Equatable {
 public protocol SatelliteCategoryView: View {}
 
 public struct SatelliteCategoryViewContext {
+    public let starManager: any StarManaging
     public let julianDateProvider: () -> Double
 
-    public init(julianDateProvider: @escaping () -> Double) {
+    public init(
+        starManager: any StarManaging,
+        julianDateProvider: @escaping () -> Double
+    ) {
+        self.starManager = starManager
         self.julianDateProvider = julianDateProvider
     }
 }
@@ -97,6 +103,7 @@ public struct SatelliteCategoryViewImpl: SatelliteCategoryView {
                             category: category,
                             julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
                             observer: viewModel.state.observer,
+                            starManager: context.starManager,
                             julianDateProvider: context.julianDateProvider
                         )
                     )
@@ -124,6 +131,7 @@ struct SatelliteCategoryView_Previews: PreviewProvider {
                 state: SatelliteCategoryViewState()
             ),
             context: SatelliteCategoryViewContext(
+                starManager: StarManagerMock(),
                 julianDateProvider: { Date().julianDate }
             ),
             listViewProducer: .crash

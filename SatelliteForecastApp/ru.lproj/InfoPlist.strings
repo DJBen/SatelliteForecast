@@ -1,0 +1,9 @@
+/* Bundle display name */
+"CFBundleDisplayName" = "Космическая станция";
+
+/* Bundle name */
+"CFBundleName" = "SatelliteForecastApp";
+
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "Местоположение влияет на точность расчётов проходов спутников. Ваши данные о местоположении всегда остаются на вашем устройстве и не будут сохраняться.";
+

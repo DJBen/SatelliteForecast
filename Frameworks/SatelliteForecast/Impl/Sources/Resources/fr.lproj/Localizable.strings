@@ -266,7 +266,7 @@
 "No passes found" = "Aucun passage trouvé";
 
 /* No comment provided by engineer. */
-"No upcoming visible passes" = "Aucun passage visible à venir";
+"No upcoming visible passes; check back after a few days!" = "Aucun passage visible à venir ; revenez dans quelques jours !";
 
 /* The concatenation format of pass description in the notification. */
 "Notification.upcomingPass.description.format" = "%1$@ %2$@";

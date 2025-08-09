@@ -1,0 +1,6 @@
+/* Description for ElementsLoaderError.expired */
+"ElementsLoaderError.expired.format" = "Эфемериды, последний раз изменённые в %1$@, истекли. Максимальная продолжительность - %2$d секунд.";
+
+/* Description for ElementsLoaderError.unexpectedMimeType */
+"ElementsLoaderError.unexpectedMimeType.description" = "Неожиданный тип содержимого %@ найден для элементов спутника.";
+

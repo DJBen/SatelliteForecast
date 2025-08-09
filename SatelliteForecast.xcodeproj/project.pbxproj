@@ -17,6 +17,9 @@
 		EF81748A292A362B00A2F225 /* visual.txt in Resources */ = {isa = PBXBuildFile; fileRef = EF817485292A362B00A2F225 /* visual.txt */; };
 		EF9D82A32661BBF100616C97 /* SatelliteForecastApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9D827A2661BBF000616C97 /* SatelliteForecastApp.swift */; };
 		FC082B5F2E3617BD00DEEBBE /* AppDelegateImpl in Frameworks */ = {isa = PBXBuildFile; productRef = FC082B5E2E3617BD00DEEBBE /* AppDelegateImpl */; };
+		FC2930A52E43E9D900F838D9 /* SatelliteForecast in Frameworks */ = {isa = PBXBuildFile; productRef = FC2930A42E43E9D900F838D9 /* SatelliteForecast */; };
+		FC2930A72E43E9D900F838D9 /* SatelliteForecastImpl in Frameworks */ = {isa = PBXBuildFile; productRef = FC2930A62E43E9D900F838D9 /* SatelliteForecastImpl */; };
+		FC2930A92E43E9D900F838D9 /* SatelliteForecastImplWiring in Frameworks */ = {isa = PBXBuildFile; productRef = FC2930A82E43E9D900F838D9 /* SatelliteForecastImplWiring */; };
 		FC69A7782E1E334F002083EC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FC69A7762E1E334F002083EC /* InfoPlist.strings */; };
 		FC7A7E242DDEF1040026A8B9 /* SatelliteForecast in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E232DDEF1040026A8B9 /* SatelliteForecast */; };
 		FC7A7E262DDEF1040026A8B9 /* SatelliteForecastImpl in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E252DDEF1040026A8B9 /* SatelliteForecastImpl */; };
@@ -53,7 +56,7 @@
 		EF9D827A2661BBF000616C97 /* SatelliteForecastApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteForecastApp.swift; sourceTree = "<group>"; };
 		EF9D827C2661BBF000616C97 /* Icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Icons.xcassets; sourceTree = "<group>"; };
 		EF9D82812661BBF000616C97 /* SatelliteForecastApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SatelliteForecastApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		FC45A13E2E0F1C790009A04A /* SatelliteForecast */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = SatelliteForecast; path = Frameworks/SatelliteForecast; sourceTree = "<group>"; };
+		FC4FD8F82E46E576007B15BD /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		FC69A7772E1E334F002083EC /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		FC69A7792E1E335D002083EC /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		FC69A77A2E1E336A002083EC /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
@@ -68,12 +71,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				FC7A7E282DDEF1040026A8B9 /* SatelliteForecastImplWiring in Frameworks */,
+				FC2930A92E43E9D900F838D9 /* SatelliteForecastImplWiring in Frameworks */,
 				FC082B5F2E3617BD00DEEBBE /* AppDelegateImpl in Frameworks */,
 				FC7A7E242DDEF1040026A8B9 /* SatelliteForecast in Frameworks */,
 				FC7A7E2D2DDF0E9A0026A8B9 /* SatelliteForecastImpl in Frameworks */,
 				FC7A7E2F2DDF0E9A0026A8B9 /* SatelliteForecastImplWiring in Frameworks */,
 				FC7A7E262DDEF1040026A8B9 /* SatelliteForecastImpl in Frameworks */,
 				FC7A7E2B2DDF0E9A0026A8B9 /* SatelliteForecast in Frameworks */,
+				FC2930A52E43E9D900F838D9 /* SatelliteForecast in Frameworks */,
+				FC2930A72E43E9D900F838D9 /* SatelliteForecastImpl in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -104,7 +110,6 @@
 			isa = PBXGroup;
 			children = (
 				EF2EF4D727B11C0A000D5EC8 /* README.md */,
-				FC45A13E2E0F1C790009A04A /* SatelliteForecast */,
 				EF9D82792661BBEF00616C97 /* SatelliteForecastApp */,
 				EF9D82822661BBF000616C97 /* Products */,
 			);
@@ -181,10 +186,12 @@
 				fr,
 				"zh-Hans",
 				"pt-BR",
+				ru,
 			);
 			mainGroup = EF9D82742661BBEF00616C97;
 			packageReferences = (
 				FC082B5D2E3617BD00DEEBBE /* XCLocalSwiftPackageReference "Frameworks/AppDelegateImpl" */,
+				FC2930A32E43E9D900F838D9 /* XCLocalSwiftPackageReference "Frameworks/SatelliteForecast" */,
 			);
 			productRefGroup = EF9D82822661BBF000616C97 /* Products */;
 			projectDirPath = "";
@@ -234,6 +241,7 @@
 				FC69A7792E1E335D002083EC /* fr */,
 				FC69A77A2E1E336A002083EC /* zh-Hans */,
 				FC69A77B2E1E5D09002083EC /* pt-BR */,
+				FC4FD8F82E46E576007B15BD /* ru */,
 			);
 			name = InfoPlist.strings;
 			path = SatelliteForecastApp;
@@ -393,7 +401,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.2;
+				MARKETING_VERSION = 1.3.1;
 				PRODUCT_BUNDLE_IDENTIFIER = io.djben.SatelliteForecast;
 				PRODUCT_NAME = SatelliteForecastApp;
 				SDKROOT = iphoneos;
@@ -423,7 +431,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.2;
+				MARKETING_VERSION = 1.3.1;
 				PRODUCT_BUNDLE_IDENTIFIER = io.djben.SatelliteForecast;
 				PRODUCT_NAME = SatelliteForecastApp;
 				SDKROOT = iphoneos;
@@ -462,12 +470,28 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Frameworks/AppDelegateImpl;
 		};
+		FC2930A32E43E9D900F838D9 /* XCLocalSwiftPackageReference "Frameworks/SatelliteForecast" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Frameworks/SatelliteForecast;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		FC082B5E2E3617BD00DEEBBE /* AppDelegateImpl */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = AppDelegateImpl;
+		};
+		FC2930A42E43E9D900F838D9 /* SatelliteForecast */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SatelliteForecast;
+		};
+		FC2930A62E43E9D900F838D9 /* SatelliteForecastImpl */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SatelliteForecastImpl;
+		};
+		FC2930A82E43E9D900F838D9 /* SatelliteForecastImplWiring */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SatelliteForecastImplWiring;
 		};
 		FC7A7E232DDEF1040026A8B9 /* SatelliteForecast */ = {
 			isa = XCSwiftPackageProductDependency;

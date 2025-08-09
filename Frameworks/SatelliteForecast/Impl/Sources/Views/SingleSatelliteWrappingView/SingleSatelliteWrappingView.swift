@@ -11,6 +11,7 @@ import SwiftUI
 @preconcurrency import CombineRextensions
 import SatelliteForecast
 @preconcurrency import SatelliteKit
+import StarryNight
 
 public struct SingleSatelliteWrappingViewState: Equatable {
     public var elementsLoader: ElementsLoaderResources = .init()
@@ -24,12 +25,20 @@ public struct SingleSatelliteWrappingViewContext {
     public let selectedNoradIndex: UInt
     public let julianDateRange: ClosedRange<Double>
     public let observer: LatLonAlt?
+    public let starManager: any StarManaging
     public let julianDateProvider: () -> Double
 
-    public init(selectedNoradIndex: UInt, julianDateRange: ClosedRange<Double>, observer: LatLonAlt?, julianDateProvider: @escaping () -> Double) {
+    public init(
+        selectedNoradIndex: UInt,
+        julianDateRange: ClosedRange<Double>,
+        observer: LatLonAlt?,
+        starManager: any StarManaging,
+        julianDateProvider: @escaping () -> Double
+    ) {
         self.selectedNoradIndex = selectedNoradIndex
         self.julianDateRange = julianDateRange
         self.observer = observer
+        self.starManager = starManager
         self.julianDateProvider = julianDateProvider
     }
 }
@@ -87,6 +96,7 @@ public struct SingleSatelliteWrappingView: View {
                     satelliteInfo: satelliteInfo,
                     julianDateRange: context.julianDateRange,
                     observer: context.observer,
+                    starManager: context.starManager,
                     julianDateProvider: context.julianDateProvider
                 )
             )
@@ -128,6 +138,7 @@ struct SingleSatelliteWrappingView_Previews: PreviewProvider {
                 selectedNoradIndex: 0,
                 julianDateRange: Date(daysSince1950: 1000).julianDate...Date(daysSince1950: 1002).julianDate,
                 observer: nil,
+                starManager: StarManagerMock(),
                 julianDateProvider: { Date(daysSince1950: 1001).julianDate }
             ),
             allPassesViewProducer: .crash

@@ -14,16 +14,36 @@ import CoreMotion
 import SatelliteForecast
 import SatelliteForecastImpl
 import SatelliteForecastImplWiring
+import StarryNight
 
 @main
 struct SatelliteForecastApp: App {
     @UIApplicationDelegateAdaptor private var appDelegate: AppDelegate
-    @StateObject var store = Store.shared.asObservableViewModel(
-        initialState: .init(),
-        emitsValue: .whenDifferent
-    )
+    @StateObject var store: ObservableViewModel<Store.ActionType, Store.StateType>
     @Environment(\.scenePhase) private var scenePhase
-    let motionManager = CMMotionManager()
+    let motionManager: CMMotionManager
+    let starManager: any StarManaging
+    let julianDateProvider: () -> Double
+    
+    init() {
+        motionManager = CMMotionManager()
+        let starManager = try! StarManager()
+        self.starManager = starManager
+        julianDateProvider = { Date().julianDate }
+        let store = Store(
+            starManager: starManager
+        ).asObservableViewModel(
+            initialState: .init(),
+            emitsValue: .whenDifferent
+        )
+        _store = StateObject(
+            wrappedValue: store
+        )
+        // After self init
+        appDelegate.dispatch = { event in
+            store.dispatch(event)
+        }
+    }
 
     var body: some Scene {
         WindowGroup {
@@ -34,7 +54,8 @@ struct SatelliteForecastApp: App {
                     )
                     .view(
                         RootViewContext(
-                            julianDateProvider: { Date().julianDate }
+                            starManager: starManager,
+                            julianDateProvider: julianDateProvider
                         )
                     )
                 } else {
@@ -62,6 +83,9 @@ struct SatelliteForecastApp: App {
                     .view()
                 }
             )
+            .task {
+                    store.dispatch(.initializeAllConstellations(starManager.allConstellations()))
+            }
             .onAppear {
                 store.dispatch(.location(.requestAuthorization))
             }

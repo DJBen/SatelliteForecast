@@ -266,7 +266,7 @@
 "No passes found" = "未找到过境";
 
 /* No comment provided by engineer. */
-"No upcoming visible passes" = "没有即将到来的可见过境";
+"No upcoming visible passes; check back after a few days!" = "未来几天没有可见过境；请过几天再查看！";
 
 /* The concatenation format of pass description in the notification. */
 "Notification.upcomingPass.description.format" = "%1$@ %2$@";

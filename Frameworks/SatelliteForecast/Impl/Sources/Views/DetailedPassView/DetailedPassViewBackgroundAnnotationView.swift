@@ -29,8 +29,8 @@ public struct DetailedPassViewBackgroundAnnotationView: View {
         GeometryReader { geometry in
             if let selectedBackgroundStar = selectedBackgroundStar {
                 Path { path in
-                    let point = raDecToPoint(RADec(vector: selectedBackgroundStar.physicalInfo.coordinate))
-                    let len = mappingFunction.apply(selectedBackgroundStar.physicalInfo.apparentMagnitude) + 4
+                    let point = raDecToPoint(RADec(vector: selectedBackgroundStar.coordinate))
+                    let len = mappingFunction.apply(selectedBackgroundStar.magnitude) + 4
 
                     path.move(to: CGPoint(x: point.x - len, y: point.y))
                     path.addLine(to: CGPoint(x: point.x - len - 4, y: point.y))
@@ -51,23 +51,3 @@ public struct DetailedPassViewBackgroundAnnotationView: View {
     }
 }
 
-
-#if DEBUG
-
-struct DetailedPassViewBackgroundAnnotationView_Previews: PreviewProvider {
-    static var previews: some View {
-        DetailedPassViewBackgroundAnnotationView(
-            selectedBackgroundStar: Star.hr(7001)!,
-            mappingFunction: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction(
-                multipler: 6,
-                exponent: -0.4
-            )
-        ) { _ in
-            CGPoint(x: 25, y: 25)
-        }
-        .background(Color.black)
-        .previewLayout(.fixed(width: 100, height: 100))
-    }
-}
-
-#endif

@@ -53,7 +53,20 @@ public struct BackgroundSkyRenderParams {
     public var border: Border? = nil
     public var magToRadius: (Double) -> CGFloat
 
-    public init(rect: CGRect, stars: [Star], constellations: Set<Constellation>, observer: LatLonAlt, julianDate: Double, starColor: UIColor, constellationLineColor: UIColor, constellationLineWidth: CGFloat = 1, drawPlanaryBodies: Bool = false, backgroundFillColor: UIColor = .clear, border: BackgroundSkyRenderParams.Border? = nil, magToRadius: @escaping (Double) -> CGFloat) {
+    public init(
+        rect: CGRect,
+        stars: [Star],
+        constellations: Set<Constellation>,
+        observer: LatLonAlt,
+        julianDate: Double,
+        starColor: UIColor,
+        constellationLineColor: UIColor,
+        constellationLineWidth: CGFloat = 1,
+        drawPlanaryBodies: Bool = false,
+        backgroundFillColor: UIColor = .clear,
+        border: BackgroundSkyRenderParams.Border? = nil,
+        magToRadius: @escaping (Double) -> CGFloat
+    ) {
         self.rect = rect
         self.stars = stars
         self.constellations = constellations

@@ -20,12 +20,19 @@ import AppDelegateImpl
 fileprivate let logger = Logger(subsystem: "io.djben.appDelegate", category: "class")
 
 public class AppDelegate: NSObject, UIApplicationDelegate, AppDelegateActionDispatcher {
+    public var dispatch: ((Store.ActionType) -> Void)?
+    
     private lazy var implementation: AppDelegateImplementation = {
         let firebaseImpl = FirebaseAppDelegate()
         return StoreAwareAppDelegate(implementation: firebaseImpl, actionDispatcher: self)
     }()
     
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        // Solves the issue that preview is broken by Firebase
+        if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
+            return true
+        }
+        
         // Set up notification delegates
         UNUserNotificationCenter.current().delegate = implementation as? UNUserNotificationCenterDelegate
         
@@ -47,10 +54,10 @@ public class AppDelegate: NSObject, UIApplicationDelegate, AppDelegateActionDisp
     // MARK: - AppDelegateActionDispatcher
     
     public func dispatch(_ action: AppDelegateAction) {
-        Store.shared.dispatch(.appDelegate(action))
+        dispatch?(.appDelegate(action))
     }
     
     public func dispatchNotificationAction(_ action: NotificationAction) {
-        Store.shared.dispatch(.notification(action))
+        dispatch?(.notification(action))
     }
 }

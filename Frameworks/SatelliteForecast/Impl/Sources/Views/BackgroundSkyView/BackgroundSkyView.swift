@@ -28,6 +28,7 @@ public struct BackgroundSkyViewContext<ConstellationLabel: View, AnnotationView:
     public let basicChartConfigs: BasicChartConfigs
     public let configs: BackgroundSkyConfigs
     public let quality: ChartQuality
+    public let starManager: any StarManaging
     public let constellationLabel: (String) -> ConstellationLabel
     public let annotationView: (@escaping (RADec) -> CGPoint) -> AnnotationView
     public let starTapped: (Star?) -> Void
@@ -37,6 +38,7 @@ public struct BackgroundSkyViewContext<ConstellationLabel: View, AnnotationView:
         basicChartConfigs: BasicChartConfigs,
         configs: BackgroundSkyConfigs,
         quality: ChartQuality,
+        starManager: any StarManaging,
         @ViewBuilder constellationLabel: @escaping (String) -> ConstellationLabel,
         @ViewBuilder annotationView: @escaping (@escaping (RADec) -> CGPoint) -> AnnotationView,
         starTapped: @escaping (Star?) -> Void
@@ -45,6 +47,7 @@ public struct BackgroundSkyViewContext<ConstellationLabel: View, AnnotationView:
         self.basicChartConfigs = basicChartConfigs
         self.configs = configs
         self.quality = quality
+        self.starManager = starManager
         self.constellationLabel = constellationLabel
         self.annotationView = annotationView
         self.starTapped = starTapped
@@ -97,9 +100,10 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
 
     private func starDisplayPoint(_ star: Star, julianDate: Double, rect: CGRect) -> CGPoint {
         return getStarCoordinateConverter(
-            julianDate: julianDate, rect: rect
+            julianDate: julianDate,
+            rect: rect
         )(
-            RADec(vector: star.physicalInfo.coordinate)
+            RADec(vector: star.coordinate)
         )
     }
 
@@ -168,7 +172,7 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
                         let aziEle = SkyChartUtils.aziEle(at: point, in: rect)
                         let raDec = azelToRADec(aziEle: aziEle, julianDate: julianDate, site: (context.observer.lat, context.observer.lon))
                         let vec = Vector(raDec: raDec)
-                        if let star = Star.closest(to: vec, maximumMagnitude: magnitude) {
+                        if let star = context.starManager.closestStar(to: vec, maximumMagnitude: magnitude, maximumAngularDistance: nil) {
                             context.starTapped(star)
                         }
                     }
@@ -194,27 +198,25 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
     @ViewBuilder func constellationLabelView(julianDate: Double) -> some View {
         GeometryReader { geometry in
             let rect = geometry.frame(in: .local)
-
             ZStack {
-                ForEach(Array(Constellation.all), id: \.self) { constellation in
-                    if let displayCenter = constellation.displayCenter {
-                        let raDec = RADec(vector: displayCenter)
-                        let coordinate = azel(
-                            julianDate: julianDate,
-                            site: (context.observer.lat, context.observer.lon),
-                            cele: raDec
-                        )
+                ForEach(viewModel.state.resources.allConstellations) { constellation in
+                    let displayCenter = constellation.center
+                    let raDec = RADec(vector: displayCenter)
+                    let coordinate = azel(
+                        julianDate: julianDate,
+                        site: (context.observer.lat, context.observer.lon),
+                        cele: raDec
+                    )
 
-                        context.constellationLabel(
-                            constellation.name
+                    context.constellationLabel(
+                        constellation.name
+                    )
+                    .position(
+                        SkyChartUtils.point(
+                            at: coordinate,
+                            rect: rect
                         )
-                        .position(
-                            SkyChartUtils.point(
-                                at: coordinate,
-                                rect: rect
-                            )
-                        )
-                    }
+                    )
                 }
 
                 context.annotationView(
@@ -239,9 +241,11 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
                     .overlay(
                         planetaryBodiesView(julianDate: backgroundSkyJulianDate)
                     )
-                    .overlay(
-                        constellationLabelView(julianDate: backgroundSkyJulianDate)
-                    )
+                    .overlay {
+                        if context.configs.showConstellationLines {
+                            constellationLabelView(julianDate: backgroundSkyJulianDate)
+                        }
+                    }
                     .clipShape(Circle())
                 )
             } else {
@@ -289,6 +293,7 @@ struct BackgroundSkyView_Previews: PreviewProvider {
                 basicChartConfigs: .init(),
                 configs: .preset,
                 quality: .full,
+                starManager: StarManagerMock(),
                 constellationLabel: { _ in EmptyView() },
                 annotationView: { _ in EmptyView() },
                 starTapped: { _ in }

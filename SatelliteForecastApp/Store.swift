@@ -12,13 +12,13 @@ import SatelliteForecastImpl
 import SatelliteForecastImplWiring
 import AppDelegate
 import AppDelegateImpl
+import StarryNight
 @preconcurrency import SwiftRex
 @preconcurrency import CombineRex
 
-class Store: ReduxStoreBase<AppAction, AppState> {
-    static let shared = Store()
-
+public class Store: ReduxStoreBase<AppAction, AppState> {
     static let reducer: Reducer<AppAction, AppState> = [
+        Reducer<AppAction, AppState>.initializerReducer,
         Reducer<AppDelegateAction, AppState>.appDelegateReducer.lift(action: \.appDelegate),
         Reducer.locationReducer.lift(),
         Reducer.locationOutputReducer.lift(),
@@ -57,6 +57,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
 
     static func buildMiddleware(
         elementsLoader: ElementsLoader,
+        starManager: any StarManaging,
         currentDateProvider: @escaping () -> Date
     ) -> AnyMiddleware<AppAction, AppAction, AppState> {
         let middlewares: [AnyMiddleware<AppAction, AppAction, AppState>] = [
@@ -74,6 +75,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             )
             .inject(
                 NotificationMiddlewareDependencies(
+                    starManager: starManager,
                     dateProvider: currentDateProvider
                 )
             )
@@ -114,7 +116,9 @@ class Store: ReduxStoreBase<AppAction, AppState> {
                     dateProvider: currentDateProvider
                 )
             ),
-            EffectMiddleware.backgroundSky.lift(),
+            EffectMiddleware.backgroundSky.lift(
+                dependencies: starManager
+            ),
             EffectMiddleware.realtimeSky.lift(),
             EffectMiddleware.realtimeSkyToElementsLoader.lift(),
             EffectMiddleware.passAlarmSettingsToNotification.lift(),
@@ -128,7 +132,9 @@ class Store: ReduxStoreBase<AppAction, AppState> {
         .eraseToAnyMiddleware()
     }
 
-    private init() {
+    init(
+        starManager: any StarManaging
+    ) {
         let elementsLoader: ElementsLoader
         let currentDateProvider: () -> Date = Date.init
         if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
@@ -155,6 +161,7 @@ class Store: ReduxStoreBase<AppAction, AppState> {
             reducer: Store.reducer,
             middleware: Store.buildMiddleware(
                 elementsLoader: elementsLoader,
+                starManager: starManager,
                 currentDateProvider: currentDateProvider
             ),
             emitsValue: .whenDifferent

@@ -10,13 +10,17 @@
 import SwiftRex
 import SwiftUI
 import SatelliteForecast
+import StarryNight
 
 public struct RootViewContext {
+    public let starManager: any StarManaging
     public let julianDateProvider: () -> Double
 
     public init(
+        starManager: any StarManaging,
         julianDateProvider: @escaping () -> Double
     ) {
+        self.starManager = starManager
         self.julianDateProvider = julianDateProvider
     }
 }
@@ -106,6 +110,7 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
             SwiftUI.Tab(value: .forecast, role: nil) {
                 satelliteOverviewViewProducer.view(
                     SatelliteOverviewViewContext(
+                        starManager: context.starManager,
                         julianDateProvider: context.julianDateProvider
                     )
                 )
@@ -126,6 +131,7 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
             SwiftUI.Tab(value: .satellites, role: nil) {
                 satelliteCategoryViewProducer.view(
                     SatelliteCategoryViewContext(
+                        starManager: context.starManager,
                         julianDateProvider: context.julianDateProvider
                     )
                 )
@@ -150,6 +156,7 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
                             basicChartConfigs: .init(),
                             backgroundSkyConfigs: .preset,
                             satelliteMagToRadiusFunction: .init(multipler: 3.2, exponent: -0.32, minimum: 1),
+                            starManager: context.starManager,
                             julianDateProvider: context.julianDateProvider
                         )
                     )
@@ -226,7 +233,10 @@ struct RootView_Previews: PreviewProvider {
                     }
                 }
             ),
-            context: RootViewContext(julianDateProvider: { Date().julianDate }),
+            context: RootViewContext(
+                starManager: StarManagerMock(),
+                julianDateProvider: { Date().julianDate }
+            ),
             realtimeSkyViewProducer: .pure(MockRealtimeSkyView()),
             satelliteOverviewViewProducer: .pure(MockSatelliteOverviewView()),
             satelliteCategoryViewProducer: .pure(MockSatelliteCategoryView()),

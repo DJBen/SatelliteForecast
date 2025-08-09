@@ -35,6 +35,7 @@ struct SatelliteOverviewCell: View {
                     .font(.title2)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
+                    .multilineTextAlignment(.leading)
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.title2)
@@ -84,9 +85,10 @@ struct SatelliteOverviewCell: View {
                             )
                         }
                         if nextPass.nextVisiblePass == nil && nextPass.nextProminentPass == nil {
-                            Text("No upcoming visible passes", bundle: .module)
+                            Text("No upcoming visible passes; check back after a few days!", bundle: .module)
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
+                                .multilineTextAlignment(.leading)
                         }
                     }
                 case .loading:

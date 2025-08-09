@@ -1,5 +1,5 @@
 {
-  "originHash" : "a1b972591ec48356e5a40bff639e5bf2a278802c6a94da231d4d95a5caffa26d",
+  "originHash" : "841e015ae4df2938d7ca96d83f8d893550472a071b7ea59edd30d8b07f41f9b8",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -35,6 +35,15 @@
       "state" : {
         "revision" : "235c823c245cf9ecc3419245dc6d5b675ed0f2fd",
         "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "ch3",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/DJBen/Ch3.git",
+      "state" : {
+        "branch" : "fix-compilation",
+        "revision" : "ab0c4d6351bfd966ecb6bd73f95fe569624a038d"
       }
     },
     {
@@ -177,8 +186,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/stephencelis/SQLite.swift.git",
       "state" : {
-        "revision" : "a95fc6df17d108bd99210db5e8a9bac90fe984b8",
-        "version" : "0.15.3"
+        "revision" : "392dd6058624d9f6c5b4c769d165ddd8c7293394",
+        "version" : "0.15.4"
       }
     },
     {
@@ -197,6 +206,15 @@
       "state" : {
         "revision" : "102a647b573f60f73afdce5613a51d71349fe507",
         "version" : "1.30.0"
+      }
+    },
+    {
+      "identity" : "swift-toolchain-sqlite",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-toolchain-sqlite",
+      "state" : {
+        "revision" : "b626d3002773b1a1304166643e7f118f724b2132",
+        "version" : "1.0.4"
       }
     },
     {

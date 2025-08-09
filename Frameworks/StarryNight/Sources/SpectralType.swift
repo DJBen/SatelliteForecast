@@ -49,39 +49,4 @@ public struct SpectralType: CustomStringConvertible {
         return 0
     }
 
-    public init?(_ str: String) {
-        if str.isEmpty {
-            return nil
-        }
-        self.rawType = str
-        // some spectral type may have ambiguity e.g. G8III/IV
-        // will remove anything after /
-        let unambiguousType = String(str.prefix(while: { $0 != "/" }))
-        
-        let pattern = #/^(\w)(\d(?:\.\d)?)?((?:IV|Iab|Ia\+?|Ib|I+|V)(?:-(?:IV|Iab|Ia\+?|Ib|I+|V))?)(.*)/#
-        
-        if let match = try? pattern.firstMatch(in: unambiguousType),
-           ["O", "B", "A", "F", "G", "K", "M"].contains(String(match.1)) {
-            self.type = String(match.1)
-            subType = doubleOrEmpty(match.2)
-            luminosityClass = String(match.3)
-            peculiarities = nilIfEmpty(String(match.4))
-        } else {
-            return nil
-        }
-    }
-}
-
-private func doubleOrEmpty(_ str: (any StringProtocol)?) -> Double? {
-    if let str = str, let dblValue = Double(str) {
-        return dblValue
-    }
-    return nil
-}
-
-private func nilIfEmpty(_ str: String?) -> String? {
-    if let str = str, str.isEmpty {
-        return nil
-    }
-    return str
 }
