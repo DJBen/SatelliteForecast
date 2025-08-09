@@ -18,8 +18,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window = UIWindow(frame: UIScreen.main.bounds)
         
         // Create and set root view controller
-        let gameViewController = GameViewController()
-        window?.rootViewController = gameViewController
+        let PlanetariumViewController = PlanetariumViewController()
+        window?.rootViewController = PlanetariumViewController
         
         // Make window visible
         window?.makeKeyAndVisible()

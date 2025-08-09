@@ -1,22 +1,21 @@
-//
-//  GameViewController.swift
-//  Planetarium
-//
-//  Created by Sihao Lu on 8/3/25.
-//
-
 import UIKit
 import RealityKit
 import ARKit
 import Combine
 
-class GameViewController: UIViewController {
+class PlanetariumViewController: UIViewController {
     private var arView: ARView!
     private var cancellables = Set<AnyCancellable>()
     private var azimuth: Float = 0      // Horizontal rotation (longitude) -π to π
     private var altitude: Float = 0     // Vertical rotation (latitude) -π/2 to π/2
     private var sceneAnchor: AnchorEntity?
     private var cameraEntity: Entity?
+    
+    // Momentum properties
+    private var azimuthVelocity: Float = 0
+    private var altitudeVelocity: Float = 0
+    private var momentumDisplayLink: CADisplayLink?
+    private var lastPanTime: CFTimeInterval = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -67,6 +66,10 @@ class GameViewController: UIViewController {
         // Add pan gesture for rotation (but not translation)
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
         arView.addGestureRecognizer(panGesture)
+        
+        // Add tap gesture to stop momentum
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        arView.addGestureRecognizer(tapGesture)
     }
     
     private func loadScene() async throws {
@@ -133,17 +136,24 @@ class GameViewController: UIViewController {
         anchor.addChild(nadirMarker)
     }
     
-    @objc private func handlePan(_ gesture: UIPanGestureRecognizer) {
-        guard let cameraEntity = cameraEntity else { return }
-        
+    @objc private func handlePan(_ gesture: UIPanGestureRecognizer) {        
         let translation = gesture.translation(in: arView)
+        let currentTime = CACurrentMediaTime()
         
         // Convert pan to rotation - adjust sensitivity
         let deltaX = Float(translation.x) * 0.002
         let deltaY = Float(translation.y) * 0.002
         
         switch gesture.state {
+        case .began:
+            // Stop any existing momentum
+            stopMomentum()
+            lastPanTime = currentTime
+            
         case .changed:
+            // Calculate time delta for velocity calculation
+            let timeDelta = Float(currentTime - lastPanTime)
+            
             // Update azimuth (horizontal pan = rotate around Y axis)
             azimuth += deltaX
             
@@ -160,26 +170,98 @@ class GameViewController: UIViewController {
             // Clamp altitude to prevent flipping over poles
             altitude = max(-Float.pi/2, min(Float.pi/2, altitude))
             
-            // Create camera rotation using standard spherical coordinates
-            // Azimuth rotates around Y (up/down) axis
-            // Altitude rotates around X (left/right) axis
+            // Calculate velocities based on change over time
+            if timeDelta > 0 {
+                azimuthVelocity = deltaX / timeDelta
+                altitudeVelocity = deltaY / timeDelta
+            }
             
-            // Create individual rotations
-            let azimuthRotation = simd_quatf(angle: azimuth, axis: SIMD3<Float>(0, 1, 0))
-            let altitudeRotation = simd_quatf(angle: altitude, axis: SIMD3<Float>(1, 0, 0))
+            // Apply rotation
+            updateCameraRotation()
             
-            // Apply rotations in order: azimuth first, then altitude
-            // This ensures the camera always stays level with latitude lines
-            let cameraRotation = azimuthRotation * altitudeRotation
+            lastPanTime = currentTime
             
-            // Apply rotation to the camera entity
-            cameraEntity.transform.rotation = cameraRotation
+        case .ended, .cancelled:
+            // Start momentum animation if velocity is significant
+            let velocityThreshold: Float = 0.1
+            if abs(azimuthVelocity) > velocityThreshold || abs(altitudeVelocity) > velocityThreshold {
+                startMomentum()
+            }
             
         default:
             break
         }
         
         gesture.setTranslation(.zero, in: arView)
+    }
+    
+    @objc private func handleTap(_ gesture: UITapGestureRecognizer) {
+        // Stop momentum animation if it's running
+        if momentumDisplayLink != nil {
+            stopMomentum()
+        }
+    }
+    
+    private func updateCameraRotation() {
+        guard let cameraEntity = cameraEntity else { return }
+        
+        // Create camera rotation using standard spherical coordinates
+        // Azimuth rotates around Y (up/down) axis
+        // Altitude rotates around X (left/right) axis
+        
+        // Create individual rotations
+        let azimuthRotation = simd_quatf(angle: azimuth, axis: SIMD3<Float>(0, 1, 0))
+        let altitudeRotation = simd_quatf(angle: altitude, axis: SIMD3<Float>(1, 0, 0))
+        
+        // Apply rotations in order: azimuth first, then altitude
+        // This ensures the camera always stays level with latitude lines
+        let cameraRotation = azimuthRotation * altitudeRotation
+        
+        // Apply rotation to the camera entity
+        cameraEntity.transform.rotation = cameraRotation
+    }
+    
+    private func startMomentum() {
+        stopMomentum() // Stop any existing momentum
+        
+        momentumDisplayLink = CADisplayLink(target: self, selector: #selector(updateMomentum))
+        momentumDisplayLink?.add(to: .main, forMode: .common)
+    }
+    
+    private func stopMomentum() {
+        momentumDisplayLink?.invalidate()
+        momentumDisplayLink = nil
+    }
+    
+    @objc private func updateMomentum() {
+        let damping: Float = 0.9 
+        let minimumVelocity: Float = 0.01 // Threshold below which we stop the animation
+        
+        // Apply velocities to rotation
+        azimuth += azimuthVelocity * (1.0/60.0) // Assuming 60 FPS
+        altitude += altitudeVelocity * (1.0/60.0)
+        
+        // Keep azimuth in -π to π range
+        if azimuth > Float.pi {
+            azimuth -= 2 * Float.pi
+        } else if azimuth < -Float.pi {
+            azimuth += 2 * Float.pi
+        }
+        
+        // Clamp altitude to prevent flipping over poles
+        altitude = max(-Float.pi/2, min(Float.pi/2, altitude))
+        
+        // Apply damping to velocities
+        azimuthVelocity *= damping
+        altitudeVelocity *= damping
+        
+        // Update camera rotation
+        updateCameraRotation()
+        
+        // Stop momentum if velocities are too small
+        if abs(azimuthVelocity) < minimumVelocity && abs(altitudeVelocity) < minimumVelocity {
+            stopMomentum()
+        }
     }
     
     func updateScene(on event: SceneEvents.Update) {
@@ -275,5 +357,9 @@ class GameViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         calculateCameraViewportVertices()
+    }
+    
+    deinit {
+        stopMomentum()
     }
 }
