@@ -84,7 +84,7 @@ struct SatelliteForecastApp: App {
                 }
             )
             .task {
-                store.dispatch(.initializeAllConstellations(starManager.allConstellations()))
+                    store.dispatch(.initializeAllConstellations(starManager.allConstellations()))
             }
             .onAppear {
                 store.dispatch(.location(.requestAuthorization))

@@ -35,6 +35,7 @@ struct SatelliteOverviewCell: View {
                     .font(.title2)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
+                    .multilineTextAlignment(.leading)
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.title2)

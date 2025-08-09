@@ -1,0 +1,620 @@
+/* No comment provided by engineer. */
+"%@ %@" = "%@ %@";
+
+/* No comment provided by engineer. */
+"%@ Allow location access" = "%@ Разрешить доступ к местоположению";
+
+/* No comment provided by engineer. */
+"%@ kg" = "%@ кг";
+
+/* No comment provided by engineer. */
+"%@ Manually select a location" = "%@ Выбрать местоположение вручную";
+
+/* No comment provided by engineer. */
+"%@ Select a location" = "%@ Выбрать местоположение";
+
+/* No comment provided by engineer. */
+"%lld°" = "%lld°";
+
+/* No comment provided by engineer. */
+"↑ %@" = "↑ %@";
+
+/* No comment provided by engineer. */
+"↓ %@" = "↓ %@";
+
+/* No comment provided by engineer. */
+"∠%@°" = "∠%@°";
+
+/* No comment provided by engineer. */
+"∠%@° %@" = "∠%@° %@";
+
+/* No comment provided by engineer. */
+"☉" = "☉";
+
+/* No comment provided by engineer. */
+"☾" = "☾";
+
+/* No comment provided by engineer. */
+"☿" = "☿";
+
+/* No comment provided by engineer. */
+"♀" = "♀";
+
+/* No comment provided by engineer. */
+"♂" = "♂";
+
+/* No comment provided by engineer. */
+"♃" = "♃";
+
+/* No comment provided by engineer. */
+"♄" = "♄";
+
+/* The verb as in alarm clock 'alarms' somebody */
+"Alarm" = "Будильник";
+
+/* Noun, as in alarm clock. */
+"Alarms" = "Будильники";
+
+/* The timing and offset description for the alarm in the alarm settings view, culmination. */
+"AlarmSettingsView.alarmOffsetDescription.culmination" = "%@ до наивысшей точки";
+
+/* The timing and offset description for the alarm in the alarm settings view, highest illuminated. */
+"AlarmSettingsView.alarmOffsetDescription.highestIlluminated" = "%@ до самой освещённой точки";
+
+/* The timing and offset description for the alarm in the alarm settings view, rise. */
+"AlarmSettingsView.alarmOffsetDescription.rise" = "%@ до восхода";
+
+/* The timing and offset description for the alarm in the alarm settings view, set. */
+"AlarmSettingsView.alarmOffsetDescription.set" = "%@ до захода";
+
+/* The pass description for each alarm in the alarm settings view */
+"AlarmSettingsView.passDescription" = "Восходит в %1$@ и заходит в %2$@.";
+
+/* The pass description for each alarm in the alarm settings view */
+"AlarmSettingsView.passVisibilityDescription.daytime" = "Проход происходит в дневное время с максимальным углом подъёма %.1f градусов.";
+
+/* The pass description for each alarm in the alarm settings view */
+"AlarmSettingsView.passVisibilityDescription.unlit" = "Проход не освещается при максимальном угле подъёма %.1f градусов.";
+
+/* The pass description for each alarm in the alarm settings view */
+"AlarmSettingsView.passVisibilityDescription.visible" = "Максимальный видимый угол подъёма %.1f градусов.";
+
+/* The text for a warning label upon significant deviation of the location used to calculate passes from the current location. */
+"AllPassesLocationChangeWarning.text" = "Новое местоположение %1$@ находится в %2$@ от места, которое использовалось для расчёта проходов. Результаты могут быть больше неактуальными.";
+
+/* The altitude format of mission control header */
+"AllPassesView.missionControlHeader.altitudeFormat" = "%@ км над землёй";
+
+/* The auxiliary text under the navigation title detailing the search date range of the passes. */
+"AllPassesView.searchPassRangeToolbar.text" = "Показаны проходы до %1$@";
+
+/* The header of invisible passes */
+"AllPassesView.section.invisible.header" = "Невидимые проходы";
+
+/* The caption under the header of invisible passes */
+"AllPassesView.section.invisible.headerCaption" = "Спутники, затенённые тенью земли, не видны; как звёзды, их также не видно при ярком дневном свете.";
+
+/* The body of observer info */
+"AllPassesView.section.observer.body" = "Вы наблюдаете из %@.";
+
+/* The header of visible passes */
+"AllPassesView.section.visible.header" = "Видимые проходы";
+
+/* The caption under the header of visible passes */
+"AllPassesView.section.visible.headerCaption" = "Спутники видны, когда небо достаточно тёмное, но всё ещё освещено солнцем. Условия для наблюдения лучше всего вскоре после заката и перед восходом.";
+
+/* The progress text when calculating satellite passes */
+"Calculating..." = "Расчёт...";
+
+/* No comment provided by engineer. */
+"Cancel alarm" = "Отменить будильник";
+
+/* No comment provided by engineer. */
+"Confirm" = "Подтвердить";
+
+/* No comment provided by engineer. */
+"Current location" = "Текущее местоположение";
+
+/* No comment provided by engineer. */
+"Current location not available" = "Текущее местоположение недоступно";
+
+/* No comment provided by engineer. */
+"Custom location" = "Пользовательское местоположение";
+
+/* No comment provided by engineer. */
+"Debug Menu" = "Отладочное меню";
+
+/* No comment provided by engineer. */
+"Deep link to Hubble (brightest 100)" = "Глубокая ссылка на Хаббл (100 самых ярких)";
+
+/* No comment provided by engineer. */
+"Deep link to ISS (special)" = "Глубокая ссылка на МКС (специальная)";
+
+/* No comment provided by engineer. */
+"Deliver notifications 10 seconds after scheduled" = "Отправлять уведомления через 10 секунд после запланированного времени";
+
+/* No comment provided by engineer. */
+"Delivered at %@" = "Доставлено в %@";
+
+/* No comment provided by engineer. */
+"Delivered notifications" = "Доставленные уведомления";
+
+/* Title of dismiss button of detailed pass view. */
+"DetailedPassView.navigationBar.discard" = "Отклонить";
+
+/* Navigation title of detailed pass view. */
+"DetailedPassView.navigationBar.title" = "Запланировать будильник";
+
+/* No comment provided by engineer. */
+"Did you know? Space stations orbits earth 15 times a day, and maybe up to 5-7 times above your location, but most of the time it's either too bright or too dark to be seen." = "Знали ли вы, что космические станции оборачиваются вокруг Земли 15 раз в день, и, возможно, до 5-7 раз над вашим местоположением, но большую часть времени их либо слишком ярко, либо слишком темно, чтобы их можно было увидеть.";
+
+/* No comment provided by engineer. */
+"Directions.east" = "восток";
+
+/* No comment provided by engineer. */
+"Directions.north" = "север";
+
+/* No comment provided by engineer. */
+"Directions.northeast" = "северо-восток";
+
+/* No comment provided by engineer. */
+"Directions.northwest" = "северо-запад";
+
+/* No comment provided by engineer. */
+"Directions.south" = "юг";
+
+/* No comment provided by engineer. */
+"Directions.southeast" = "юго-восток";
+
+/* No comment provided by engineer. */
+"Directions.southwest" = "юго-запад";
+
+/* No comment provided by engineer. */
+"Directions.west" = "запад";
+
+/* No comment provided by engineer. */
+"Enter address" = "Введите адрес";
+
+/* No comment provided by engineer. */
+"Ephemerides" = "Эфемериды";
+
+/* The comment text for the last 30 days satellites file */
+"EphemeridesManagementView.comment.active" = "Эфемериды для всех активных спутников.";
+
+/* The comment text for the last 30 days satellites file */
+"EphemeridesManagementView.comment.last30Days" = "Эфемериды для новых запусков за последние 30 дней.";
+
+/* The comment text for the visual (brightest 100) satellites file */
+"EphemeridesManagementView.comment.visual" = "Эфемериды для 100 самых ярких спутников.";
+
+/* The empty text for the satellite ephemerides */
+"EphemeridesManagementView.emptyText" = "Нет загруженных эфемерид спутников";
+
+/* The message of the share link in ephemeride text browser view */
+"EphemerideTextBrowserView.shareLink.message" = "Поделиться эпhemerидами спутника %@";
+
+/* No comment provided by engineer. */
+"Evening " = "Вечер ";
+
+/* No comment provided by engineer. */
+"Filter by name, ID, country, year..." = "Фильтр по имени, ID, стране, году...";
+
+/* No comment provided by engineer. */
+"Freeze time" = "Заморозить время";
+
+/* Onboarding page 2 description */
+"Get accurate pass predictions for your location. We'll notify you when viewing opportunities arise." = "Получите точные прогнозы проходов для вашего местоположения. Мы уведомим вас, когда появятся возможности для наблюдения.";
+
+/* No comment provided by engineer. */
+"Get Started" = "Начать";
+
+/* Button to complete AllPassesView onboarding */
+"Got it!" = "Понял!";
+
+/* No comment provided by engineer. */
+"Hello, World!" = "Привет, мир!";
+
+/* Onboarding explanation for culmination */
+"Highest point in the sky (best for viewing)" = "Наивысшая точка на небе (лучше всего для наблюдения)";
+
+/* The name of ISS */
+"International space station" = "Международная космическая станция";
+
+/* No comment provided by engineer. */
+"Jupiter" = "Юпитер";
+
+/* No comment provided by engineer. */
+"Loading pass information..." = "Загрузка информации о проходах...";
+
+/* No comment provided by engineer. */
+"Loading..." = "Загрузка...";
+
+/* No comment provided by engineer. */
+"Location change" = "Изменение местоположения";
+
+/* No comment provided by engineer. */
+"Location needed to calculate satellite passes. Your experience may be degraded." = "Требуется местоположение для расчёта проходов спутников. Ваш опыт может быть ухудшен.";
+
+/* No comment provided by engineer. */
+"Location not available" = "Местоположение недоступно";
+
+/* No comment provided by engineer. */
+"Mars" = "Марс";
+
+/* No comment provided by engineer. */
+"Mercury" = "Меркурий";
+
+/* No comment provided by engineer. */
+"Mock date and time" = "Тестовая дата и время";
+
+/* No comment provided by engineer. */
+"Mock time %@\nOffset %@ JD" = "Тестовое время %@\nСмещение %@ JD";
+
+/* No comment provided by engineer. */
+"Moon" = "Луна";
+
+/* No comment provided by engineer. */
+"Morning " = "Утро ";
+
+/* No comment provided by engineer. */
+"Need a location to find satellite passes." = "Требуется местоположение для поиска проходов спутников.";
+
+/* No comment provided by engineer. */
+"No" = "Нет";
+
+/* The default text when no satellite passes are found */
+"No passes found" = "Проходы не найдены";
+
+/* No comment provided by engineer. */
+"No upcoming visible passes; check back after a few days!" = "Нет предстоящих видимых проходов; загляните через несколько дней!";
+
+/* The concatenation format of pass description in the notification. */
+"Notification.upcomingPass.description.format" = "%1$@ %2$@";
+
+/* The description for the satellite pass notification. */
+"Notification.upcomingPass.description.future" = "Восходит в %1$@ из %2$@ и заходит в %3$@.";
+
+/* The description for the satellite pass notification. */
+"Notification.upcomingPass.description.now" = "Восходит сейчас из %1$@ и заходит в %2$@.";
+
+/* The pass description in the notification. */
+"Notification.upcomingPass.description.passVisibilityDescription.daytime" = "Проход имеет до %.1f градусов высоты. Однако, возможно, будет слишком ярко, чтобы спутник был виден.";
+
+/* The pass description in the notification. */
+"Notification.upcomingPass.description.passVisibilityDescription.entirelyVisible" = "Вся траектория прохода освещена до %.1f градусов высоты.";
+
+/* The pass description in the notification. */
+"Notification.upcomingPass.description.passVisibilityDescription.partiallyVisible" = "Проход частично виден под углом до %.1f градусов высоты.";
+
+/* The pass description in the notification. */
+"Notification.upcomingPass.description.passVisibilityDescription.unlit" = "Проход имеет до %.1f градусов высоты. В тени земли он будет слишком тусклым, чтобы его можно было увидеть.";
+
+/* The title for the satellite pass notification. */
+"Notification.upcomingPass.title.future" = "%1$@ восходит в %2$@";
+
+/* The title for the satellite pass notification. */
+"Notification.upcomingPass.title.now" = "%1$@ восходит сейчас";
+
+/* No comment provided by engineer. */
+"Onboarding" = "Ввод в курс дела";
+
+/* No comment provided by engineer. */
+"Open location settings" = "Открыть настройки местоположения";
+
+/* No comment provided by engineer. */
+"Overview" = "Обзор";
+
+/* Onboarding title for explaining a satellite pass */
+"Pass explained" = "Объяснение прохода";
+
+/* Onboarding explanation for star rating */
+"Pass quality rating (3 stars are best)" = "Рейтинг качества прохода (3 звезды - это лучший вариант)";
+
+/* Title of confirm button of pass alarm settings. */
+"PassAlarmSettingsModalView.confirmButton.title" = "Запланировать будильник";
+
+/* Title of delete button of pass alarm settings. */
+"PassAlarmSettingsModalView.deleteButton.title" = "Удалить будильник";
+
+/* Title of lead time label of pass alarm settings. */
+"PassAlarmSettingsModalView.leadTimeLabel.title" = "Напомнить заранее...";
+
+/* Title of discard button of pass alarm settings. */
+"PassAlarmSettingsModalView.navigationBar.discard" = "Отклонить";
+
+/* Navigation title of pass alarm settings, view alarm
+Navigation title of pass alarm settings. */
+"PassAlarmSettingsModalView.navigationBar.title" = "Запланировать будильник";
+
+/* Description of the alarm timing, highest illuminated. */
+"PassAlarmSettingsModalView.timingCell.highestIlluminated" = "Самая освещённая";
+
+/* Description of the alarm timing, rise. */
+"PassAlarmSettingsModalView.timingCell.rise" = "При восходе";
+
+/* Description of the alarm timing, set. */
+"PassAlarmSettingsModalView.timingCell.set" = "При заходе";
+
+/* Description of the alarm timing, transit. */
+"PassAlarmSettingsModalView.timingCell.transit" = "Наивысшая точка";
+
+/* A string describing that the satellite is currently passing */
+"Passing now!" = "Проходит сейчас!";
+
+/* A string describing that the satellite has already set in a specific time in the past */
+"PassPreviewCell.relativeDate.alreadyPassed" = "%@";
+
+/* A string describing that the satellite is currently passing */
+"PassPreviewCell.relativeDate.passing" = "Проходит сейчас";
+
+/* A string describing that the satellite rises in a specific time in the future */
+"PassPreviewCell.relativeDate.riseInTheFuture" = "%@";
+
+/* The pass happens during daylight */
+"PassPreviewCell.visibilityText.daylight" = "Дневное время";
+
+/* The pass happens entirely unlit */
+"PassPreviewCell.visibilityText.unlit" = "Без освещения";
+
+/* The pass is visible */
+"PassPreviewCell.visibilityText.visible" = "Видимый";
+
+/* The toolbar of the pass view describing the direction of the pass. The first and second arguments correspond to the directions of rising and setting. */
+"PassView.descriptionToolbar.text" = "Восходит из %1$@ и заходит в %2$@";
+
+/* No comment provided by engineer. */
+"Pending notifications" = "Ожидающие уведомления";
+
+/* The attitude noun as in 'roll', 'pitch', 'yaw' */
+"Pitch:" = "Угол наклона:";
+
+/* No comment provided by engineer. */
+"Point camera skyward and screen downward" = "Направьте камеру в небо, а экран вниз";
+
+/* Onboarding page 2 title */
+"Predictions for You" = "Прогнозы для вас";
+
+/* No comment provided by engineer. */
+"Prominent pass %@%lld°" = "Яркий проход %@%lld°";
+
+/* No comment provided by engineer. */
+"Real time %@" = "Реальное время %@";
+
+/* The format text showing the distance betweent the satellite to the observer */
+"RealtimeSkySatelliteCell.distanceText" = "Расстояние %@ км";
+
+/* The text indicating the satellite is not illuminated. */
+"RealtimeSkySatelliteCell.magnitudeText.notIlluminated" = "Не освещается";
+
+/* The navigation title of the realtime sky view */
+"realtimeSkyView.navigation.title" = "Небо сейчас";
+
+/* The empty text for the satellite list */
+"realtimeSkyView.satelliteList.emptyText" = "В настоящее время нет видимых спутников";
+
+/* The loading text for the satellite list */
+"realtimeSkyView.satelliteList.loadingText" = "Загрузка каталога спутников...";
+
+/* No comment provided by engineer. */
+"Recalculate using new location" = "Пересчитать с использованием нового местоположения";
+
+/* No comment provided by engineer. */
+"Reset All Onboarding" = "Сбросить все вводы в курс дела";
+
+/* No comment provided by engineer. */
+"Reset Main Onboarding" = "Сбросить основной ввод в курс дела";
+
+/* No comment provided by engineer. */
+"Reset Pass List Onboarding" = "Сбросить ввод в курс дела списка проходов";
+
+/* No comment provided by engineer. */
+"Retry" = "Повторить";
+
+/* The attitude noun as in 'roll', 'pitch', 'yaw' */
+"Roll:" = "Крен:";
+
+/* No comment provided by engineer. */
+"Satellite Categories" = "Категории спутников";
+
+/* The localized string for the status of a backup satellite
+The localized string for the status of a spare satellite */
+"SatelliteCell.operationalStatusLocalizedString.backup" = "Резервный";
+
+/* The localized string for the status of a decayed satellite */
+"SatelliteCell.operationalStatusLocalizedString.decayed" = "Умерший";
+
+/* The localized string for the status of a satellite on extended mission */
+"SatelliteCell.operationalStatusLocalizedString.extendedMission" = "На расширенной миссии";
+
+/* The localized string for the status of a nonoperational satellite */
+"SatelliteCell.operationalStatusLocalizedString.nonoperational" = "Неисправный";
+
+/* The localized string for the status of an operational satellite */
+"SatelliteCell.operationalStatusLocalizedString.operational" = "Рабочий";
+
+/* The localized string for the status of a partially operational satellite */
+"SatelliteCell.operationalStatusLocalizedString.partiallyOperational" = "Частично рабочий";
+
+/* The localized string for the unknown status of satellite */
+"SatelliteCell.operationalStatusLocalizedString.unknown" = "Неизвестный статус";
+
+/* The cacatenated operator and country strings. */
+"SatelliteCell.operatorAndCountry" = "%1$@, %2$@";
+
+/* The alert message to confirm that the user is changing into his/her current location. */
+"SatelliteListView.locationSettingsView.alert.message.currentLocation" = "Пожалуйста, подтвердите изменение местоположения на ваше текущее местоположение. Это повлияет на все прогнозы спутников.";
+
+/* The alert message to confirm that the user is changing into a custom location. */
+"SatelliteListView.locationSettingsView.alert.message.custom" = "Пожалуйста, подтвердите изменение местоположения на %@. Это повлияет на все прогнозы спутников.";
+
+/* The current location text, indicating that the observer location is the current location. */
+"SatelliteListView.observerCell.title.currentLocation" = "Текущее местоположение";
+
+/* The text indicating that location service is not available, nor has the user selecetd a location manually. */
+"SatelliteListView.observerCell.title.requiresLocationSelection" = "Открыть, чтобы выбрать местоположение";
+
+/* The section header for all active satellites */
+"SatelliteListView.sectionHeader.category.active" = "Все активные спутники";
+
+/* The section header for the brightest 100 satellites */
+"SatelliteListView.sectionHeader.category.brightest100" = "100 самых ярких спутников";
+
+/* The section header for launches in the past 30 days */
+"SatelliteListView.sectionHeader.category.last30DayLaunches" = "Запуски за последние 30 дней";
+
+/* The title for alarm settings cell */
+"SatelliteOverview.alarmSettingsCell.title" = "Управление будильниками";
+
+/* The description for ephemerides manager cell */
+"SatelliteOverview.ephemeridesManagerCell.description" = "Просмотр и управление загруженными сырыми эфемеридами спутников.";
+
+/* The section header for all active satellites */
+"SatelliteOverview.sectionOverviewCell.category.active" = "Все активные спутники";
+
+/* The section header for the brightest 100 satellites */
+"SatelliteOverview.sectionOverviewCell.category.brightest100" = "100 самых ярких спутников";
+
+/* The section header for launches in the past 30 days */
+"SatelliteOverview.sectionOverviewCell.category.last30DayLaunches" = "Запуски за последние 30 дней";
+
+/* The description of ISS in overview page. */
+"SatelliteOverview.sectionOverviewCell.description.satellite.iss" = "Многонациональный совместный проект с участием крупнейшего космического аппарата на орбите с 1998 года.";
+
+/* The description of Tianhe in overview page. */
+"SatelliteOverview.sectionOverviewCell.description.satellite.tianhe" = "Первая китайская долгосрочная космическая станция, состоящая из трёх модулей, полностью собранная в 2022 году.";
+
+/* The title of ISS, displayed in the 'Satellite of special interest' section. */
+"SatelliteOverview.sectionOverviewCell.title.satellite.iss" = "Международная космическая станция";
+
+/* The title of Tianhe, displayed in the 'Satellite of special interest' section. */
+"SatelliteOverview.sectionOverviewCell.title.satellite.tianhe" = "Космическая станция Тяньхэ";
+
+/* No comment provided by engineer. */
+"Satellites" = "Спутники";
+
+/* No comment provided by engineer. */
+"Saturn" = "Сатурн";
+
+/* No comment provided by engineer. */
+"Select Location" = "Выбрать местоположение";
+
+/* No comment provided by engineer. */
+"Select zoom level" = "Выбрать уровень масштабирования";
+
+/* Description of the declination in SelectedStarLabel. */
+"SelectedStarLabel.declinationText.format" = "ДЕК: %@";
+
+/* Description of the star magnitude in SelectedStarLabel. */
+"SelectedStarLabel.magnitudeText.format" = "Звёздная величина %.1f";
+
+/* Description of the right ascension in SelectedStarLabel. */
+"SelectedStarLabel.rightAscensionText.format" = "ЧВ: %@";
+
+/* No comment provided by engineer. */
+"Settings" = "Настройки";
+
+/* The section header of the alarms section in settings */
+"SettingsOverviewView.alarms.header" = "Будильники";
+
+/* The section header of the ephemerides manager section in settings */
+"SettingsOverviewView.ephemeridesManager.header" = "Загруженные эфемериды";
+
+/* The title of the toggle that hides the experimental Sky Now tab in the settings view. */
+"SettingsOverviewView.experimentalSkyNowCell.off.title" = "Скрыть экспериментальную вкладку \"Небо сейчас\"";
+
+/* The title of the toggle that shows the experimental Sky Now tab in the settings view. */
+"SettingsOverviewView.experimentalSkyNowCell.on.title" = "Показать экспериментальную вкладку \"Небо сейчас\"";
+
+/* The title of the toggle that toggles night mode off in the settings view. */
+"SettingsOverviewView.nightModeCell.off.title" = "Выключить ночной режим";
+
+/* The title of the toggle that toggles night mode on in the settings view. */
+"SettingsOverviewView.nightModeCell.on.title" = "Включить ночной режим";
+
+/* The section header of the observer section in settings */
+"SettingsOverviewView.observer.header" = "Местоположение наблюдателя";
+
+/* The title for settings */
+"SettingsOverviewView.title" = "Настройки";
+
+/* The pass label format text of an illumination change: enters shadow */
+"SkyChartPassLabel.text.illuminationChange.entersShadow" = "Входит в тень\n%@";
+
+/* The pass label format text of an illumination change: exits shadow */
+"SkyChartPassLabel.text.illuminationChange.exitsShadow" = "Выходит из тени\n%@";
+
+/* No comment provided by engineer. */
+"Sun" = "Солнце";
+
+/* No comment provided by engineer. */
+"Swipe to continue" = "Проведите, чтобы продолжить";
+
+/* The title of the 'Forecast' tab of the root view. */
+"tabs.forecast.text" = "Прогноз проходов";
+
+/* The title of the 'Realtime sky' tab of the root view. */
+"tabs.realtimeSky.text" = "Небо сейчас";
+
+/* The title of the 'Satellites' tab of the root view. */
+"tabs.satelliteCategory.text" = "Спутники";
+
+/* The title of the 'Settings' tab of the root view. */
+"tabs.settings.text" = "Настройки";
+
+/* CTA label in onboarding */
+"Tap on passes to see more details!" = "Нажмите на проходы, чтобы увидеть больше деталей!";
+
+/* No comment provided by engineer. */
+"Test deep link" = "Тест глубоких ссылок";
+
+/* No comment provided by engineer. */
+"The satellites are not loaded." = "Спутники не загружены.";
+
+/* Onboarding description for AllPassesView */
+"This screen lists all upcoming passes in 7 days. Each row shows when it will be visible from your location." = "Этот экран показывает все предстоящие проходы в течение 7 дней. Каждая строка показывает, когда он будет виден с вашего местоположения.";
+
+/* The name of Tiangong space station */
+"Tiangong space station" = "Космическая станция Тяньгун";
+
+/* No comment provided by engineer. */
+"Time control" = "Управление временем";
+
+/* No comment provided by engineer. */
+"Time frozen at %@" = "Время заморожено на %@";
+
+/* No comment provided by engineer. */
+"Time interval %@" = "Интервал времени %@";
+
+/* Onboarding explanation for satellite rises above horizon */
+"Times when satellite rises above horizon" = "Время, когда спутник восходит над горизонтом";
+
+/* Onboarding explanation for satellite sets below horizon */
+"Times when satellite sets below horizon" = "Время, когда спутник заходит за горизонт";
+
+/* Onboarding explanation for invisible times */
+"Times when the space station becomes invisible" = "Время, когда космическая станция становится невидимой";
+
+/* Onboarding explanation for visible times */
+"Times when the space station becomes visible" = "Время, когда космическая станция становится видимой";
+
+/* Onboarding page 1 description */
+"Track the International Space Station, Tiangong and others as they pass overhead. Never miss a spectacular sight in the evening sky." = "Отслеживайте Международную космическую станцию, Тяньгун и других, когда они проходят над головой. Никогда не пропустите зрелище вечернего неба.";
+
+/* No comment provided by engineer. */
+"Unable to load pass information" = "Невозможно загрузить информацию о проходах";
+
+/* No comment provided by engineer. */
+"Update time offset" = "Обновить смещение времени";
+
+/* No comment provided by engineer. */
+"Venus" = "Венера";
+
+/* No comment provided by engineer. */
+"Visible pass %@%lld°" = "Видимый проход %@%lld°";
+
+/* Onboarding page 1 title */
+"Welcome to Space Station Passes" = "Добро пожаловать в проходы космической станции";
+
+/* No comment provided by engineer. */
+"Your alarms will appear here. Schedule an alarm by tapping the %@ inside a pass." = "Ваши будильники появятся здесь. Запланируйте будильник, нажав на %@ внутри прохода.";
+

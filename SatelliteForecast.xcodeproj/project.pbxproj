@@ -56,6 +56,7 @@
 		EF9D827A2661BBF000616C97 /* SatelliteForecastApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteForecastApp.swift; sourceTree = "<group>"; };
 		EF9D827C2661BBF000616C97 /* Icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Icons.xcassets; sourceTree = "<group>"; };
 		EF9D82812661BBF000616C97 /* SatelliteForecastApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SatelliteForecastApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FC4FD8F82E46E576007B15BD /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		FC69A7772E1E334F002083EC /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		FC69A7792E1E335D002083EC /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		FC69A77A2E1E336A002083EC /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
@@ -185,6 +186,7 @@
 				fr,
 				"zh-Hans",
 				"pt-BR",
+				ru,
 			);
 			mainGroup = EF9D82742661BBEF00616C97;
 			packageReferences = (
@@ -239,6 +241,7 @@
 				FC69A7792E1E335D002083EC /* fr */,
 				FC69A77A2E1E336A002083EC /* zh-Hans */,
 				FC69A77B2E1E5D09002083EC /* pt-BR */,
+				FC4FD8F82E46E576007B15BD /* ru */,
 			);
 			name = InfoPlist.strings;
 			path = SatelliteForecastApp;
@@ -398,7 +401,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.0;
+				MARKETING_VERSION = 1.3.1;
 				PRODUCT_BUNDLE_IDENTIFIER = io.djben.SatelliteForecast;
 				PRODUCT_NAME = SatelliteForecastApp;
 				SDKROOT = iphoneos;
@@ -428,7 +431,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.0;
+				MARKETING_VERSION = 1.3.1;
 				PRODUCT_BUNDLE_IDENTIFIER = io.djben.SatelliteForecast;
 				PRODUCT_NAME = SatelliteForecastApp;
 				SDKROOT = iphoneos;
