@@ -14,7 +14,7 @@ class PlanetariumViewController: UIViewController {
     // Momentum properties
     private var azimuthVelocity: Float = 0
     private var altitudeVelocity: Float = 0
-    private var momentumDisplayLink: CADisplayLink?
+    private var isMomentumActive: Bool = false
     private var lastPanTime: CFTimeInterval = 0
     
     // Zoom properties
@@ -162,7 +162,7 @@ class PlanetariumViewController: UIViewController {
         switch gesture.state {
         case .began:
             // Stop any existing momentum
-            stopMomentum()
+            isMomentumActive = false
             lastPanTime = currentTime
             
         case .changed:
@@ -200,7 +200,7 @@ class PlanetariumViewController: UIViewController {
             // Start momentum animation if velocity is significant
             let velocityThreshold: Float = 0.1
             if abs(azimuthVelocity) > velocityThreshold || abs(altitudeVelocity) > velocityThreshold {
-                startMomentum()
+                isMomentumActive = true
             }
             
         default:
@@ -212,16 +212,14 @@ class PlanetariumViewController: UIViewController {
     
     @objc private func handleTap(_ gesture: UITapGestureRecognizer) {
         // Stop momentum animation if it's running
-        if momentumDisplayLink != nil {
-            stopMomentum()
-        }
+        isMomentumActive = false
     }
     
     @objc private func handlePinch(_ gesture: UIPinchGestureRecognizer) {
         switch gesture.state {
         case .began:
             // Stop any existing momentum
-            stopMomentum()
+            isMomentumActive = false
             
         case .changed:
             // Calculate new FOV based on pinch scale
@@ -275,26 +273,14 @@ class PlanetariumViewController: UIViewController {
         cameraEntity.components.set(component)
     }
     
-    private func startMomentum() {
-        stopMomentum() // Stop any existing momentum
-        
-        momentumDisplayLink = CADisplayLink(target: self, selector: #selector(updateMomentum))
-        momentumDisplayLink?.add(to: .main, forMode: .common)
-    }
-    
-    private func stopMomentum() {
-        momentumDisplayLink?.invalidate()
-        momentumDisplayLink = nil
-    }
-    
-    @objc private func updateMomentum() {
-        guard let displayLink = momentumDisplayLink else { return }
+    private func updateMomentum(deltaTime: TimeInterval) {
+        guard isMomentumActive else { return }
         
         let damping: Float = 0.9
         let minimumVelocity: Float = 0.01 // Threshold below which we stop the animation
         
-        // Get the actual frame duration from the display link
-        let frameDuration = Float(displayLink.targetTimestamp - displayLink.timestamp)
+        // Use the provided deltaTime from SceneEvents.Update
+        let frameDuration = Float(deltaTime)
         
         // Apply velocities to rotation using actual frame duration
         azimuth += azimuthVelocity * frameDuration
@@ -319,12 +305,16 @@ class PlanetariumViewController: UIViewController {
         
         // Stop momentum if velocities are too small
         if abs(azimuthVelocity) < minimumVelocity && abs(altitudeVelocity) < minimumVelocity {
-            stopMomentum()
+            isMomentumActive = false
         }
     }
     
     func updateScene(on event: SceneEvents.Update) {
-        self.calculateCameraViewportVertices()
+        // Update momentum animation using the render loop's deltaTime
+        updateMomentum(deltaTime: event.deltaTime)
+        
+        // Calculate camera viewport vertices
+        calculateCameraViewportVertices()
     }
     
     /// Calculate the camera's four vertices in the world space, converted to lat lon.
@@ -419,6 +409,6 @@ class PlanetariumViewController: UIViewController {
     }
     
     deinit {
-        stopMomentum()
+        // No need to clean up CADisplayLink anymore
     }
 }
