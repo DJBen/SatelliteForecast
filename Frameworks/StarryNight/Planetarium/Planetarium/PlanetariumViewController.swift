@@ -234,7 +234,7 @@ class PlanetariumViewController: UIViewController {
     }
     
     @objc private func updateMomentum() {
-        let damping: Float = 0.9 
+        let damping: Float = 0.9
         let minimumVelocity: Float = 0.01 // Threshold below which we stop the animation
         
         // Apply velocities to rotation
