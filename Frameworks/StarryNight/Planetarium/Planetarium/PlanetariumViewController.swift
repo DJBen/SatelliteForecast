@@ -402,13 +402,4 @@ class PlanetariumViewController: UIViewController {
             return .all
         }
     }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        calculateCameraViewportVertices()
-    }
-    
-    deinit {
-        // No need to clean up CADisplayLink anymore
-    }
 }

@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		FC4FD9112E48499B007B15BD /* StarryNight in Frameworks */ = {isa = PBXBuildFile; productRef = FC4FD9102E48499B007B15BD /* StarryNight */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		FC2930632E4061A300F838D9 /* Planetarium.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Planetarium.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC4FD9112E48499B007B15BD /* StarryNight in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +70,7 @@
 			);
 			name = Planetarium;
 			packageProductDependencies = (
+				FC4FD9102E48499B007B15BD /* StarryNight */,
 			);
 			productName = Planetarium;
 			productReference = FC2930632E4061A300F838D9 /* Planetarium.app */;
@@ -94,6 +100,9 @@
 			);
 			mainGroup = FC29305A2E4061A300F838D9;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				FC4FD90F2E48499B007B15BD /* XCLocalSwiftPackageReference "../../StarryNight" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FC2930642E4061A300F838D9 /* Products */;
 			projectDirPath = "";
@@ -322,6 +331,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		FC4FD90F2E48499B007B15BD /* XCLocalSwiftPackageReference "../../StarryNight" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../StarryNight;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		FC4FD9102E48499B007B15BD /* StarryNight */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = StarryNight;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = FC29305B2E4061A300F838D9 /* Project object */;
 }
