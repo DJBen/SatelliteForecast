@@ -174,7 +174,10 @@ extension MKGeodesicPolyline {
 class CurrentPositionAnnotation: MKPointAnnotation {
 }
 
-class UserLocationAnnotation: MKPointAnnotation {} // Add this class
+
+class UserLocationAnnotation: MKPointAnnotation {}
+
+class UserVisibilityLabelAnnotation: MKPointAnnotation {}
 
 class MissionControlViewController: UIViewController {
     var mapView: MKMapView!
@@ -188,6 +191,7 @@ class MissionControlViewController: UIViewController {
     private var currentPositionAnnotation: CurrentPositionAnnotation?
     private var userCircleOverlay: MKCircle? // store overlay
     private var userLocationAnnotation: UserLocationAnnotation? // store user pin
+    private var userVisibilityLabelAnnotation: UserVisibilityLabelAnnotation? // store label annotation
 
     var cancellables = Set<AnyCancellable>()
 
@@ -392,6 +396,7 @@ class MissionControlViewController: UIViewController {
     }
 
     private func addOrUpdateUserLocationAnnotation(userLocation: CLLocationCoordinate2D) {
+        // User pin
         if let annotation = userLocationAnnotation {
             annotation.coordinate = userLocation
         } else {
@@ -400,6 +405,16 @@ class MissionControlViewController: UIViewController {
             userLocationAnnotation = annotation
             mapView.addAnnotation(annotation)
         }
+
+        // Label annotation
+        if let labelAnnotation = userVisibilityLabelAnnotation {
+            labelAnnotation.coordinate = userLocation
+        } else {
+            let labelAnnotation = UserVisibilityLabelAnnotation()
+            labelAnnotation.coordinate = userLocation
+            userVisibilityLabelAnnotation = labelAnnotation
+            mapView.addAnnotation(labelAnnotation)
+        }
     }
 
     private func removeUserLocationAnnotation() {
@@ -407,34 +422,62 @@ class MissionControlViewController: UIViewController {
             mapView.removeAnnotation(annotation)
             userLocationAnnotation = nil
         }
+        if let labelAnnotation = userVisibilityLabelAnnotation {
+            mapView.removeAnnotation(labelAnnotation)
+            userVisibilityLabelAnnotation = nil
+        }
     }
 }
 
 extension MissionControlViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        guard annotation is CurrentPositionAnnotation else {
-            return nil
+        if annotation is CurrentPositionAnnotation {
+            let identifier = "currentPosition"
+            var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKMarkerAnnotationView
+            if annotationView == nil {
+                annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+            } else {
+                annotationView?.annotation = annotation
+            }
+            annotationView?.canShowCallout = false
+            annotationView?.glyphImage = UIImage(
+                named: "glyph_satellite",
+                in: .module,
+                compatibleWith: nil
+            )
+            annotationView?.markerTintColor = .systemOrange
+            annotationView?.glyphTintColor = .white
+            return annotationView
+        } else if annotation is UserVisibilityLabelAnnotation {
+            let identifier = "userVisibilityLabel"
+            var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
+            if annotationView == nil {
+                let labelView = MKAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+                let label = UILabel()
+                label.text = NSLocalizedString(
+                    "Visible",
+                    bundle: .module,
+                    comment: "Map annotation indicating the radius that space stations are visible for the user"
+                )
+                label.font = UIFont.boldSystemFont(ofSize: 14)
+                label.textColor = .systemYellow
+                label.backgroundColor = UIColor(white: 0, alpha: 0.5)
+                label.layer.cornerRadius = 6
+                label.layer.masksToBounds = true
+                label.sizeToFit()
+                label.textAlignment = .center
+                label.frame = CGRect(x: 0, y: 0, width: label.frame.width + 16, height: label.frame.height + 6)
+                labelView.addSubview(label)
+                labelView.frame = label.frame
+                labelView.centerOffset = CGPoint(x: 0, y: -40)
+                annotationView = labelView
+            } else {
+                annotationView?.annotation = annotation
+            }
+            annotationView?.canShowCallout = false
+            return annotationView
         }
-        
-        let identifier = "currentPosition"
-        var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKMarkerAnnotationView
-        
-        if annotationView == nil {
-            annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
-        } else {
-            annotationView?.annotation = annotation
-        }
-        
-        annotationView?.canShowCallout = false
-        annotationView?.glyphImage = UIImage(
-            named: "glyph_satellite",
-            in: .module,
-            compatibleWith: nil
-        )
-        annotationView?.markerTintColor = .systemOrange
-        annotationView?.glyphTintColor = .white
-        
-        return annotationView
+        return nil
     }
 
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
