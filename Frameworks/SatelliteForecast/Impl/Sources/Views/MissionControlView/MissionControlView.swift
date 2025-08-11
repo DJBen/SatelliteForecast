@@ -25,6 +25,7 @@ struct MissionControlView: View {
 
     @State private var currentDateCoordinate: DateCoordinate?
     @State private var satelliteGroundTrack: [DateCoordinate] = []
+    @State private var satelliteLabelTrack: [DateCoordinate] = []
     
     enum ZoomLevel: Equatable, Hashable {
         case global
@@ -49,6 +50,7 @@ struct MissionControlView: View {
                 MissionControlViewControllerWrapperView(
                     currentDateCoordinate: currentDateCoordinate,
                     satelliteGroundTrack: satelliteGroundTrack,
+                    satelliteLabelTrack: satelliteLabelTrack,
                     zoomLevel: $zoomLevel,
                     userLocation: userLocation // pass down
                 )
@@ -114,8 +116,34 @@ struct MissionControlView: View {
             )
             currentDateCoordinate = DateCoordinate(julianDate: jd, coordinate: satelliteCoordinate)
             satelliteGroundTrack = groundTrack
+
+            // Generate label track at every 30-min interval for the next 4 hours
+            let now = Date()
+            let calendar = Calendar.current
+            var comps = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: now)
+            let minute = comps.minute ?? 0
+            // Find next :00 or :30
+            if minute < 30 {
+                comps.minute = 30
+            } else {
+                comps.hour = (comps.hour ?? 0) + 1
+                comps.minute = 0
+            }
+            comps.second = 0
+            comps.nanosecond = 0
+            let firstMark = calendar.date(from: comps) ?? now
+            let min2day = 1.0 / (24.0 * 60.0)
+            let interval = 30.0 * min2day // 30 minutes in Julian days
+            let startJD = firstMark.julianDate
+            let endJD = startJD + (4.0 * 60.0 * min2day) // 4 hours later
+            let labelTrack = try satelliteInfo.elements.generateGroundTrack(
+                julianDateRange: startJD...endJD,
+                interval: interval
+            )
+            satelliteLabelTrack = labelTrack
         } catch {
             print("Error generating ground track: \(error)")
+            satelliteLabelTrack = []
         }
     }
 }
@@ -127,6 +155,7 @@ struct MissionControlViewControllerWrapperView: UIViewControllerRepresentable {
 
     var currentDateCoordinate: DateCoordinate
     var satelliteGroundTrack: [DateCoordinate]
+    var satelliteLabelTrack: [DateCoordinate]
     @Binding var zoomLevel: MissionControlView.ZoomLevel
     var userLocation: CLLocationCoordinate2D? // add property
 
@@ -134,7 +163,8 @@ struct MissionControlViewControllerWrapperView: UIViewControllerRepresentable {
         let viewController = MissionControlViewController(
             currentDateCoordinate: currentDateCoordinate,
             dateCoordinates: satelliteGroundTrack,
-            userLocation: userLocation // pass down
+            labelTrack: satelliteLabelTrack,
+            userLocation: userLocation
         )
         viewController.delegate = context.coordinator
         return viewController
@@ -144,6 +174,7 @@ struct MissionControlViewControllerWrapperView: UIViewControllerRepresentable {
         uiViewController.setState(
             currentDateCoordinate: currentDateCoordinate,
             dateCoordinates: satelliteGroundTrack,
+            labelTrack: satelliteLabelTrack,
             zoomLevel: zoomLevel,
             userLocation: userLocation // pass down
         )
@@ -182,15 +213,17 @@ class UserLocationAnnotation: MKPointAnnotation {}
 
 class UserVisibilityLabelAnnotation: MKPointAnnotation {}
 
+
 class MissionControlViewController: UIViewController {
     var mapView: MKMapView!
     weak var delegate: MissionControlViewControllerDelegate?
 
     var currentDateCoordinate: DateCoordinate?
     var dateCoordinates: [DateCoordinate]?
+    var labelTrack: [DateCoordinate]?
     var currentZoomLevel: MissionControlView.ZoomLevel?
     var userLocation: CLLocationCoordinate2D? // add property
-    
+
     private var currentPositionAnnotation: CurrentPositionAnnotation?
     private var userCircleOverlay: MKCircle? // store overlay
     private var userLocationAnnotation: UserLocationAnnotation? // store user pin
@@ -202,11 +235,13 @@ class MissionControlViewController: UIViewController {
     init(
         currentDateCoordinate: DateCoordinate,
         dateCoordinates: [DateCoordinate],
-        userLocation: CLLocationCoordinate2D? // add param
+        labelTrack: [DateCoordinate],
+        userLocation: CLLocationCoordinate2D?
     ) {
         super.init(nibName: nil, bundle: nil)
         self.currentDateCoordinate = currentDateCoordinate
         self.dateCoordinates = dateCoordinates
+        self.labelTrack = labelTrack
         self.userLocation = userLocation // assign
     }
 
@@ -257,7 +292,10 @@ class MissionControlViewController: UIViewController {
         }
     }
     
-    private func addGroundTrackOverlays(dateCoordinates: [DateCoordinate], currentCoordinate: DateCoordinate) {
+    private func addGroundTrackOverlays(
+        dateCoordinates: [DateCoordinate],
+        currentCoordinate: DateCoordinate
+    ) {
         // Remove existing overlays
         mapView.overlays
             .filter { $0 is MKGeodesicPolyline }
@@ -272,31 +310,12 @@ class MissionControlViewController: UIViewController {
         mapView.addOverlay(afterPolyline)
 
         // --- Stable time label annotations logic ---
-        // Compute whole 30-min marks for the next 3.5 hours
-        let now = Date()
-        let calendar = Calendar.current
-        var comps = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: now)
-        let minute = comps.minute ?? 0
-        // Find next :00 or :30
-        if minute < 30 {
-            comps.minute = 30
-        } else {
-            comps.hour = (comps.hour ?? 0) + 1
-            comps.minute = 0
-        }
-        comps.second = 0
-        comps.nanosecond = 0
-        var t = calendar.date(from: comps) ?? now
-        let end = now.addingTimeInterval(3.5 * 3600)
-        var marks: [Date] = []
-        while t <= end {
-            marks.append(t)
-            t = t.addingTimeInterval(30 * 60)
-        }
+        // Use labelTrack passed in from SwiftUI
+        guard let labelTrack = self.labelTrack else { return }
 
         // Remove annotations for marks that are no longer in the window
         let oldKeys = Set(satelliteTimeLabelAnnotations.keys)
-        let newKeys = Set(marks)
+        let newKeys: Set<Date> = Set(labelTrack.map { Date(julianDate: $0.julianDate) })
         let toRemove = oldKeys.subtracting(newKeys)
         for date in toRemove {
             if let annotation = satelliteTimeLabelAnnotations[date] {
@@ -314,12 +333,11 @@ class MissionControlViewController: UIViewController {
             df.timeZone = TimeZone.current
             return df
         }()
-        for date in toAdd {
-            // Find closest DateCoordinate to this mark
-            let jd = date.julianDate
-            if let closest = dateCoordinates.min(by: { abs($0.julianDate - jd) < abs($1.julianDate - jd) }) {
+        for dc in labelTrack {
+            let date = Date(julianDate: dc.julianDate)
+            if toAdd.contains(date) {
                 let timeString = dateFormatter.string(from: date)
-                let annotation = SatelliteTimeLabelAnnotation(coordinate: CLLocationCoordinate2D(closest.coordinate), displayTime: timeString)
+                let annotation = SatelliteTimeLabelAnnotation(coordinate: CLLocationCoordinate2D(dc.coordinate), displayTime: timeString)
                 satelliteTimeLabelAnnotations[date] = annotation
                 mapView.addAnnotation(annotation)
             }
@@ -330,6 +348,7 @@ class MissionControlViewController: UIViewController {
     func setState(
         currentDateCoordinate: DateCoordinate,
         dateCoordinates: [DateCoordinate],
+        labelTrack: [DateCoordinate],
         zoomLevel: MissionControlView.ZoomLevel,
         userLocation: CLLocationCoordinate2D?
     ) {
@@ -366,6 +385,7 @@ class MissionControlViewController: UIViewController {
         
         // Only update overlays if the date coordinates array actually changed
         if dateCoordinatesChanged {
+            self.labelTrack = labelTrack
             addGroundTrackOverlays(dateCoordinates: dateCoordinates, currentCoordinate: currentDateCoordinate)
             self.dateCoordinates = dateCoordinates
         }
@@ -491,6 +511,7 @@ extension MissionControlViewController: MKMapViewDelegate {
             )
             annotationView?.markerTintColor = .systemOrange
             annotationView?.glyphTintColor = .white
+            annotationView?.displayPriority = .required
             return annotationView
         } else if annotation is UserVisibilityLabelAnnotation {
             let identifier = "userVisibilityLabel"
@@ -549,57 +570,28 @@ extension MissionControlViewController: MKMapViewDelegate {
 
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         if let polyline = overlay as? MKGeodesicPolyline {
-            let isBefore = polyline.sf_identifier.contains("before")
-
-            let colorsAndStops: [GradientPathRenderer.ColorAndStop]
-
-            if isBefore {
-                colorsAndStops = [
-                    GradientPathRenderer.ColorAndStop(
-                        color: UIColor.systemRed.withAlphaComponent(0.3).cgColor,
-                        stop: 0
-                    ),
-                    GradientPathRenderer.ColorAndStop(
-                        color: UIColor.systemOrange.withAlphaComponent(0.3).cgColor,
-                        stop: 0.25
-                    ),
-                    GradientPathRenderer.ColorAndStop(
-                        color: UIColor.systemYellow.withAlphaComponent(0.3).cgColor,
-                        stop: 0.5
-                    ),
-                    GradientPathRenderer.ColorAndStop(
-                        color: UIColor.systemGreen.withAlphaComponent(0.3).cgColor,
-                        stop: 0.75
-                    ),
-                    GradientPathRenderer.ColorAndStop(
-                        color: UIColor.systemBlue.withAlphaComponent(0.3).cgColor,
-                        stop: 1
-                    )
-                ]
-            } else {
-                colorsAndStops = [
-                    GradientPathRenderer.ColorAndStop(
-                        color: UIColor.systemBlue.cgColor,
-                        stop: 0
-                    ),
-                    GradientPathRenderer.ColorAndStop(
-                        color: UIColor.systemGreen.cgColor,
-                        stop: 0.25
-                    ),
-                    GradientPathRenderer.ColorAndStop(
-                        color: UIColor.systemYellow.cgColor,
-                        stop: 0.5
-                    ),
-                    GradientPathRenderer.ColorAndStop(
-                        color: UIColor.systemOrange.cgColor,
-                        stop: 0.75
-                    ),
-                    GradientPathRenderer.ColorAndStop(
-                        color: UIColor.systemRed.cgColor,
-                        stop: 1
-                    )
-                ]
-            }
+            let colorsAndStops: [GradientPathRenderer.ColorAndStop] = [
+                GradientPathRenderer.ColorAndStop(
+                    color: UIColor.systemBlue.cgColor,
+                    stop: 0
+                ),
+                GradientPathRenderer.ColorAndStop(
+                    color: UIColor.systemGreen.cgColor,
+                    stop: 0.25
+                ),
+                GradientPathRenderer.ColorAndStop(
+                    color: UIColor.systemYellow.cgColor,
+                    stop: 0.5
+                ),
+                GradientPathRenderer.ColorAndStop(
+                    color: UIColor.systemOrange.cgColor,
+                    stop: 0.75
+                ),
+                GradientPathRenderer.ColorAndStop(
+                    color: UIColor.systemRed.cgColor,
+                    stop: 1
+                )
+            ]
 
             let renderer = GradientPathRenderer(
                 polyline: polyline,
