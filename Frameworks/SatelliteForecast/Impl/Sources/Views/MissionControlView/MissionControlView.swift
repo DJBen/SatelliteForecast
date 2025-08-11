@@ -1,16 +1,19 @@
-//
-//  MissionControlView.swift
-//  SatelliteForecastImpl
-//
-//  Created by Ben Lu on 4/3/22.
-//
-
 import Combine
 import SwiftUI
 import MapKit
 import SatelliteForecast
 @preconcurrency import SatelliteKit
 import SwiftUIVisualEffects
+
+class SatelliteTimeLabelAnnotation: MKPointAnnotation {
+    let displayTime: String
+    init(coordinate: CLLocationCoordinate2D, displayTime: String) {
+        self.displayTime = displayTime
+        super.init()
+        self.coordinate = coordinate
+        self.title = displayTime
+    }
+}
 
 /// A world map showing the satellite ground tracks akin to that of mission control room of space agencies.
 struct MissionControlView: View {
@@ -192,6 +195,7 @@ class MissionControlViewController: UIViewController {
     private var userCircleOverlay: MKCircle? // store overlay
     private var userLocationAnnotation: UserLocationAnnotation? // store user pin
     private var userVisibilityLabelAnnotation: UserVisibilityLabelAnnotation? // store label annotation
+    private var satelliteTimeLabelAnnotations: [Date: SatelliteTimeLabelAnnotation] = [:]
 
     var cancellables = Set<AnyCancellable>()
 
@@ -258,29 +262,69 @@ class MissionControlViewController: UIViewController {
         mapView.overlays
             .filter { $0 is MKGeodesicPolyline }
             .forEach { mapView.removeOverlay($0) }
-            
-        // Create new overlays
-        let beforeDataset = dateCoordinates.prefix(
-            while: { $0.julianDate <= currentCoordinate.julianDate }
-        )
-        let polyline = MKGeodesicPolyline(
-            points: beforeDataset
-            .map(\.coordinate).map { MKMapPoint(CLLocationCoordinate2D($0)) },
-            count: beforeDataset.count
-        )
-        polyline.sf_identifier = "before"
-        mapView.addOverlay(polyline)
-        
-        let afterDataset = dateCoordinates.drop(
-            while: { $0.julianDate < currentCoordinate.julianDate }
-        )
+
         let afterPolyline = MKGeodesicPolyline(
-            points: Array(afterDataset)
+            points: Array(dateCoordinates)
             .map(\.coordinate).map { MKMapPoint(CLLocationCoordinate2D($0)) },
-            count: afterDataset.count
+            count: dateCoordinates.count
         )
         afterPolyline.sf_identifier = "after"
         mapView.addOverlay(afterPolyline)
+
+        // --- Stable time label annotations logic ---
+        // Compute whole 30-min marks for the next 3.5 hours
+        let now = Date()
+        let calendar = Calendar.current
+        var comps = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: now)
+        let minute = comps.minute ?? 0
+        // Find next :00 or :30
+        if minute < 30 {
+            comps.minute = 30
+        } else {
+            comps.hour = (comps.hour ?? 0) + 1
+            comps.minute = 0
+        }
+        comps.second = 0
+        comps.nanosecond = 0
+        var t = calendar.date(from: comps) ?? now
+        let end = now.addingTimeInterval(3.5 * 3600)
+        var marks: [Date] = []
+        while t <= end {
+            marks.append(t)
+            t = t.addingTimeInterval(30 * 60)
+        }
+
+        // Remove annotations for marks that are no longer in the window
+        let oldKeys = Set(satelliteTimeLabelAnnotations.keys)
+        let newKeys = Set(marks)
+        let toRemove = oldKeys.subtracting(newKeys)
+        for date in toRemove {
+            if let annotation = satelliteTimeLabelAnnotations[date] {
+                mapView.removeAnnotation(annotation)
+                satelliteTimeLabelAnnotations.removeValue(forKey: date)
+            }
+        }
+
+        // Add new annotations for new marks
+        let toAdd = newKeys.subtracting(oldKeys)
+        let dateFormatter: DateFormatter = {
+            let df = DateFormatter()
+            df.timeStyle = .short
+            df.dateStyle = .none
+            df.timeZone = TimeZone.current
+            return df
+        }()
+        for date in toAdd {
+            // Find closest DateCoordinate to this mark
+            let jd = date.julianDate
+            if let closest = dateCoordinates.min(by: { abs($0.julianDate - jd) < abs($1.julianDate - jd) }) {
+                let timeString = dateFormatter.string(from: date)
+                let annotation = SatelliteTimeLabelAnnotation(coordinate: CLLocationCoordinate2D(closest.coordinate), displayTime: timeString)
+                satelliteTimeLabelAnnotations[date] = annotation
+                mapView.addAnnotation(annotation)
+            }
+        }
+        // (Existing annotations for marks in window are left untouched)
     }
 
     func setState(
@@ -470,6 +514,29 @@ extension MissionControlViewController: MKMapViewDelegate {
                 labelView.addSubview(label)
                 labelView.frame = label.frame
                 labelView.centerOffset = CGPoint(x: 0, y: -40)
+                annotationView = labelView
+            } else {
+                annotationView?.annotation = annotation
+            }
+            annotationView?.canShowCallout = false
+            return annotationView
+        } else if let timeLabelAnnotation = annotation as? SatelliteTimeLabelAnnotation {
+            let identifier = "satelliteTimeLabel"
+            var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
+            if annotationView == nil {
+                let labelView = MKAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+                let label = UILabel()
+                label.text = timeLabelAnnotation.displayTime
+                label.font = UIFont.monospacedDigitSystemFont(ofSize: 12, weight: .medium)
+                label.textColor = .white
+                label.backgroundColor = UIColor(white: 0, alpha: 0.7)
+                label.layer.cornerRadius = 4
+                label.layer.masksToBounds = true
+                label.sizeToFit()
+                label.textAlignment = .center
+                label.frame = CGRect(x: 0, y: 0, width: label.frame.width + 10, height: label.frame.height + 4)
+                labelView.addSubview(label)
+                labelView.frame = label.frame
                 annotationView = labelView
             } else {
                 annotationView?.annotation = annotation
