@@ -130,12 +130,6 @@ struct MissionControlView: View {
     private func updateAllTracks() {
         let jd = julianDateProvider() + julianDateOffset
         do {
-            let groundTrack = try satelliteInfo.elements.generateGroundTrack(
-                julianDateRange: jd...(jd + TimeConstants.hrs2day * 4),
-                interval: 10 * TimeConstants.min2day
-            )
-            satelliteGroundTrack = groundTrack
-
             // Generate label track at every 30-min interval for the next 4 hours
             let now = Date()
             let calendar = Calendar.current
@@ -154,12 +148,18 @@ struct MissionControlView: View {
             let min2day = 1.0 / (24.0 * 60.0)
             let interval = 30.0 * min2day // 30 minutes in Julian days
             let startJD = firstMark.julianDate
-            let endJD = startJD + (4.0 * 60.0 * min2day) // 4 hours later
+            let endJD = startJD + 4.0 * TimeConstants.hrs2day // 4 hours later
             let labelTrack = try satelliteInfo.elements.generateGroundTrack(
                 julianDateRange: startJD...endJD,
                 interval: interval
             )
             satelliteLabelTrack = labelTrack
+
+            let groundTrack = try satelliteInfo.elements.generateGroundTrack(
+                julianDateRange: jd...(endJD - 30 * TimeConstants.min2day),
+                interval: 10 * TimeConstants.min2day
+            )
+            satelliteGroundTrack = groundTrack
         } catch {
             print("Error generating ground track: \(error)")
             satelliteGroundTrack = []
@@ -563,7 +563,7 @@ extension MissionControlViewController: MKMapViewDelegate {
             annotationView?.canShowCallout = false
             return annotationView
         } else if let timeLabelAnnotation = annotation as? SatelliteTimeLabelAnnotation {
-            let identifier = "satelliteTimeLabel"
+            let identifier = "satelliteTimeLabel" + timeLabelAnnotation.displayTime
             var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
             if annotationView == nil {
                 let labelView = MKAnnotationView(annotation: annotation, reuseIdentifier: identifier)
