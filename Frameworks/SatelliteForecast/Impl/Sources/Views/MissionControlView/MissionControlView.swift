@@ -34,13 +34,19 @@ struct MissionControlView: View {
 
     @State var zoomLevel: ZoomLevel = .global
     
-    // Timer for updating satellite position and ground track
-    @State private var refreshTimer = Timer.publish(
-        every: 0.25,
+    // Timer for updating satellite position
+    @State private var positionTimer = Timer.publish(
+        every: 0.2,
         on: .main,
         in: .common
-    )
-    .autoconnect()
+    ).autoconnect()
+
+    // Timer for updating ground tracks and label track
+    @State private var trackTimer = Timer.publish(
+        every: 10.0,
+        on: .main,
+        in: .common
+    ).autoconnect()
 
     @Environment(\.colorScheme) private var colorScheme
 
@@ -95,14 +101,19 @@ struct MissionControlView: View {
         }
         .cornerRadius(16)
         .onAppear {
-            updateMissionControlState()
+            updateAllTracks()
+            updateSatellitePositionOnly()
         }
-        .onReceive(refreshTimer) { _ in
-            updateMissionControlState()
+        .onReceive(positionTimer) { _ in
+            updateSatellitePositionOnly()
+        }
+        .onReceive(trackTimer) { _ in
+            updateAllTracks()
         }
     }
     
-    private func updateMissionControlState() {
+
+    private func updateSatellitePositionOnly() {
         let jd = julianDateProvider() + julianDateOffset
         do {
             let satelliteCoordinate = try Satellite(
@@ -110,11 +121,19 @@ struct MissionControlView: View {
             ).geoPosition(
                 julianDays: jd
             )
+            currentDateCoordinate = DateCoordinate(julianDate: jd, coordinate: satelliteCoordinate)
+        } catch {
+            print("Error updating satellite position: \(error)")
+        }
+    }
+
+    private func updateAllTracks() {
+        let jd = julianDateProvider() + julianDateOffset
+        do {
             let groundTrack = try satelliteInfo.elements.generateGroundTrack(
                 julianDateRange: jd...(jd + TimeConstants.hrs2day * 4),
                 interval: 10 * TimeConstants.min2day
             )
-            currentDateCoordinate = DateCoordinate(julianDate: jd, coordinate: satelliteCoordinate)
             satelliteGroundTrack = groundTrack
 
             // Generate label track at every 30-min interval for the next 4 hours
@@ -143,6 +162,7 @@ struct MissionControlView: View {
             satelliteLabelTrack = labelTrack
         } catch {
             print("Error generating ground track: \(error)")
+            satelliteGroundTrack = []
             satelliteLabelTrack = []
         }
     }
@@ -228,7 +248,7 @@ class MissionControlViewController: UIViewController {
     private var userCircleOverlay: MKCircle? // store overlay
     private var userLocationAnnotation: UserLocationAnnotation? // store user pin
     private var userVisibilityLabelAnnotation: UserVisibilityLabelAnnotation? // store label annotation
-    private var satelliteTimeLabelAnnotations: [Date: SatelliteTimeLabelAnnotation] = [:]
+    private var satelliteTimeLabelAnnotations: NSHashTable<SatelliteTimeLabelAnnotation> = .init()
 
     var cancellables = Set<AnyCancellable>()
 
@@ -313,19 +333,7 @@ class MissionControlViewController: UIViewController {
         // Use labelTrack passed in from SwiftUI
         guard let labelTrack = self.labelTrack else { return }
 
-        // Remove annotations for marks that are no longer in the window
-        let oldKeys = Set(satelliteTimeLabelAnnotations.keys)
-        let newKeys: Set<Date> = Set(labelTrack.map { Date(julianDate: $0.julianDate) })
-        let toRemove = oldKeys.subtracting(newKeys)
-        for date in toRemove {
-            if let annotation = satelliteTimeLabelAnnotations[date] {
-                mapView.removeAnnotation(annotation)
-                satelliteTimeLabelAnnotations.removeValue(forKey: date)
-            }
-        }
-
-        // Add new annotations for new marks
-        let toAdd = newKeys.subtracting(oldKeys)
+        // Build set of displayTimes needed
         let dateFormatter: DateFormatter = {
             let df = DateFormatter()
             df.timeStyle = .short
@@ -333,12 +341,25 @@ class MissionControlViewController: UIViewController {
             df.timeZone = TimeZone.current
             return df
         }()
+        let neededDisplayTimes: Set<String> = Set(labelTrack.map { dc in
+            dateFormatter.string(from: Date(julianDate: dc.julianDate))
+        })
+
+        // Remove annotations whose displayTime is not needed
+        for annotation in satelliteTimeLabelAnnotations.allObjects {
+            if !neededDisplayTimes.contains(annotation.displayTime) {
+                mapView.removeAnnotation(annotation)
+                satelliteTimeLabelAnnotations.remove(annotation)
+            }
+        }
+
+        // Add new annotations for displayTimes not already present
+        let existingDisplayTimes: Set<String> = Set(satelliteTimeLabelAnnotations.allObjects.map { $0.displayTime })
         for dc in labelTrack {
-            let date = Date(julianDate: dc.julianDate)
-            if toAdd.contains(date) {
-                let timeString = dateFormatter.string(from: date)
+            let timeString = dateFormatter.string(from: Date(julianDate: dc.julianDate))
+            if !existingDisplayTimes.contains(timeString) {
                 let annotation = SatelliteTimeLabelAnnotation(coordinate: CLLocationCoordinate2D(dc.coordinate), displayTime: timeString)
-                satelliteTimeLabelAnnotations[date] = annotation
+                satelliteTimeLabelAnnotations.add(annotation)
                 mapView.addAnnotation(annotation)
             }
         }
