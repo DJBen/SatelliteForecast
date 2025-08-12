@@ -11,8 +11,9 @@ Estación Espacial predice los pasos de la ISS y Tiangong sobre usted con infogr
 - Cielo en tiempo real: esta es una función experimental que muestra todos los satélites que actualmente están pasando sobre usted.
 
 What's New in This Version
-- Se añadió la localización en ruso
-- Se optimizaron algunos diseños para acomodar textos largos
+
+- Experiencia de mapa mejorada: el mapa del globo terráqueo ahora incluye el rango de visibilidad del observador; se añadieron etiquetas de tiempo para las futuras ubicaciones de las estaciones espaciales
+- Se reformularon algunas explicaciones sobre la visibilidad de la estación espacial
 
 Keywords
 pasos tiangong,pasos iss,pasos de satélite,estación espacial,satélite,astronomía

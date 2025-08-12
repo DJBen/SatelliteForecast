@@ -39,6 +39,10 @@ public struct Constellation: Hashable, Identifiable, @unchecked Sendable {
     /// A unit vector pointing to the center of the constellation
     public let center: SatelliteKit.Vector
 
+    public var localizedName: String {
+        return NSLocalizedString(name, bundle: .module, comment: "")
+    }
+
     public init(
         id: Int,
         name: String,

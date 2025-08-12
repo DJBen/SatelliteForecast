@@ -92,7 +92,7 @@
 "AllPassesView.section.invisible.header" = "不可见过境";
 
 /* The caption under the header of invisible passes */
-"AllPassesView.section.invisible.headerCaption" = "进入地球阴影的卫星无法看见；就像恒星一样，它们在白天也无法看见。";
+"AllPassesView.section.invisible.headerCaption.v2" = "几个原因可能使过境不可见：\n1. 日光太亮；\n2. 深夜时分，卫星消失在地球的阴影中。";
 
 /* The body of observer info */
 "AllPassesView.section.observer.body" = "您正在从 %@ 观测。";
@@ -101,7 +101,7 @@
 "AllPassesView.section.visible.header" = "可见过境";
 
 /* The caption under the header of visible passes */
-"AllPassesView.section.visible.headerCaption" = "当天空足够暗但卫星仍被太阳照亮时，可以看到卫星。在日落后不久和日出前观测条件最佳。";
+"AllPassesView.section.visible.headerCaption.v2" = "当天空黑暗但卫星仍被太阳照亮时可以看到卫星。最佳观测条件出现在日落后不久和日出前。";
 
 /* The progress text when calculating satellite passes */
 "Calculating..." = "计算中...";
@@ -608,6 +608,9 @@ The localized string for the status of a spare satellite */
 
 /* No comment provided by engineer. */
 "Venus" = "金星";
+
+/* Map annotation indicating the radius that space stations are visible for the user */
+"Visible" = "可见";
 
 /* No comment provided by engineer. */
 "Visible pass %@%lld°" = "可见过境 %@%lld°";

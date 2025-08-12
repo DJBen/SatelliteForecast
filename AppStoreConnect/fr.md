@@ -11,8 +11,9 @@ Station spatiale prédit les passages de l'ISS et de Tiangong au-dessus de vous 
 
 
 What's New in This Version
-- Ajout de la localisation russe
-- Optimisation de certaines mises en page pour accueillir des textes longs
+
+- Expérience de la carte améliorée : la carte du globe terrestre inclut désormais la zone de visibilité de l’observateur ; ajout d’étiquettes temporelles pour les futures positions des stations spatiales
+- Reformulation de certaines explications concernant la visibilité de la station spatiale
 
 Keywords
 passages tiangong,passages iss,passages satellite,station spatiale,satellite,astronomie

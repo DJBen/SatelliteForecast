@@ -209,7 +209,7 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
                     )
 
                     context.constellationLabel(
-                        constellation.name
+                        constellation.localizedName
                     )
                     .position(
                         SkyChartUtils.point(

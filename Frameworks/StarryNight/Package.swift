@@ -3,6 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "StarryNight",
+    defaultLocalization: "en",
     platforms: [
         .iOS(.v16),
         .macOS(.v13)

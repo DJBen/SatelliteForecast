@@ -10,8 +10,8 @@ Space Station Passes predicts ISS and Tiangong passes over you with useful infog
 - Realtime sky: This is an experimental feature that shows all the currently passing satellites above you.
 
 What's New in This Version
-- Add Russian localization
-- Optimized a few layout to accomodate long texts
+- Improved map experience: earth globe map includes observer's visibility range; added timestamp labels for future space station locations
+- Rephrased some explanations about space station's visibility
 
 Keywords
 iss passes,tiangong passes,satellite passes,satellite,astronomy

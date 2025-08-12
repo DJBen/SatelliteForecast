@@ -36,7 +36,7 @@ struct SelectedStarLabel: View {
                 Spacer()
 
                 Text(
-                    starInfo?.constellation?.name ?? ""
+                    starInfo?.constellation?.localizedName ?? ""
                 )
                 .font(.headline)
                 .foregroundColor(Color(UIColor.secondaryLabel))
