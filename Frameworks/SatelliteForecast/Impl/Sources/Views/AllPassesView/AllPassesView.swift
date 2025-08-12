@@ -553,12 +553,12 @@ extension AllPassesView {
 
             static var headerCaption: String {
                 NSLocalizedString(
-                    "AllPassesView.section.visible.headerCaption",
+                    "AllPassesView.section.visible.headerCaption.v2",
                     tableName: nil,
                     bundle: .module,
                     value: """
-                    Satellites can be seen when the sky is dark enough while still being \
-                    illuminated by the sun. Viewing condition is best short after sunset and \
+                    Satellites can be seen when the sky is dark while still being \
+                    illuminated by the sun. Best viewing condition occurs shortly after sunset and \
                     before sunrise.
                     """,
                     comment: "The caption under the header of visible passes"
@@ -579,12 +579,13 @@ extension AllPassesView {
 
             static var headerCaption: String {
                 NSLocalizedString(
-                    "AllPassesView.section.invisible.headerCaption",
+                    "AllPassesView.section.invisible.headerCaption.v2",
                     tableName: nil,
                     bundle: .module,
                     value: """
-                    Satellites faded into earth's shadow cannot be seen; \
-                    like stars, they cannot be seen in broad daylight either.
+                    A few reasons can make passes not visible:
+                    1. Daylight is too bright;
+                    2. Later at night, the satellite fades into earth's shadow.
                     """,
                     comment: "The caption under the header of invisible passes"
                 )
