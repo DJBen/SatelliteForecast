@@ -185,7 +185,7 @@ struct DetailedPassView_Previews: PreviewProvider {
         let julianDateRange = Date().advanced(by: -60 * 60 * 2).julianDate...Date().advanced(by: 60 * 60 * 22).julianDate
         let satelliteInfo = try! SatelliteInfo(elements: elements)
         // 2000 Broadway, Redwood City, CA 94063
-        let observer = LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0)
+        let observer = LatLonAlt(37.486743000691185, -122.22655970246515, 0)
         let snapshots = try! satelliteInfo.generateSnapshots(
             observer: observer,
             julianDateRange: julianDateRange

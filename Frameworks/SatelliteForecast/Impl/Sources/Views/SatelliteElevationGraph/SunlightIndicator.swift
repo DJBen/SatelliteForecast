@@ -166,7 +166,15 @@ struct SunlightIndicator: View, Equatable {
         
         // Stride in a 10 minute interval across the julian date to improve performance
         for julianDate in stride(from: julianDateRange.lowerBound.roundJulianDate(.toMins(10)), through: julianDateRange.upperBound.roundJulianDate(.toMins(10)), by: 10 * TimeConstants.min2day) {
-            julianDateElevations[julianDate] = SolarSystemBody.sun.aziEle(julianDay: julianDate, observer: observer).elev
+            julianDateElevations[julianDate] = azel(
+                time: Date(julianDate: julianDate),
+                site: LatLon(observer),
+                cele: RADec(
+                    SolarSystemBody.sun.eci(
+                        julianDay: julianDate
+                    )
+                )
+            ).elev
         }
 
         return julianDateElevations
@@ -202,7 +210,7 @@ struct SunlightIndicator: View, Equatable {
 struct SunlightIndicator_Previews: PreviewProvider {
     static var previews: some View {
         // 2000 Broadway, Redwood City, CA 94063
-        let observerCoordinate = LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0)
+        let observerCoordinate = LatLonAlt(37.486743000691185, -122.22655970246515, 0)
         // Date range
         let julianDateRange = Date().advanced(by: -60 * 60 * 2).julianDate...Date().advanced(by: 60 * 60 * 30).julianDate
         let jdElevs = SunlightIndicator.sunElevations(julianDateRange: julianDateRange, observer: observerCoordinate)

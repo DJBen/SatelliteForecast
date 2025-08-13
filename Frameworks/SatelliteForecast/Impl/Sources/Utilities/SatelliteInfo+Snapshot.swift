@@ -27,9 +27,9 @@ extension SatelliteSnapshot {
             let z = top.magnitude()
 
             return AziEleDst(
-                azim: atan2pi(top.y, -top.x) * rad2deg,
-                elev: asin(top.z / z) * rad2deg,
-                dist: z
+                atan2pi(top.y, -top.x) * rad2deg,
+                asin(top.z / z) * rad2deg,
+                z
             )
         }
         let position = topVector2AziEleDst(
@@ -47,9 +47,9 @@ extension SatelliteSnapshot {
             observerPosition: obsCel
         )
         let sunElev = azel(
-            julianDate: julianDate,
-            site: (observer.lat, observer.lon),
-            cele: RADec(vector: solarCel)
+            time: Date(julianDate: julianDate),
+            site: LatLon(observer),
+            cele: RADec(solarCel)
         ).elev
         let visualMagnitude: Double?
         if let crossSectionArea = satelliteInfo.satCat?.rcs {
@@ -205,9 +205,14 @@ extension SatelliteInfo {
             }
         }
 
-        let sunElev = SolarSystemBody.sun.aziEle(
-            julianDay: maxElevDatePos.julianDate,
-            observer: observer
+        let sunElev = azel(
+            time: Date(julianDate: maxElevDatePos.julianDate),
+            site: LatLon(observer),
+            cele: RADec(
+                SolarSystemBody.sun.eci(
+                    julianDay: maxElevDatePos.julianDate
+                )
+            )
         ).elev
 
         let pass = Pass(

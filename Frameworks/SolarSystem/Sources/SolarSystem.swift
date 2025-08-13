@@ -15,16 +15,6 @@ extension SolarSystemBody {
     public func eci(julianDay: Double) -> Vector {
         VSOP87.getBodyECICoordinate(self, julianDay: julianDay)
     }
-
-    public func aziEle(julianDay: Double, observer: LatLonAlt) -> AziEle {
-        azel(
-            julianDate: julianDay,
-            site: (observer.lat, observer.lon),
-            cele: RADec(
-                vector: eci(julianDay: julianDay)
-            )
-        )
-    }
 }
 
 extension VSOP87 {

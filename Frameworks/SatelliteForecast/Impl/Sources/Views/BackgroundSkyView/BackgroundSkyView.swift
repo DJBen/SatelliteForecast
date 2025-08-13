@@ -103,15 +103,15 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
             julianDate: julianDate,
             rect: rect
         )(
-            RADec(vector: star.coordinate)
+            RADec(star.coordinate)
         )
     }
 
     private func getStarCoordinateConverter(julianDate: Double, rect: CGRect) -> (RADec) -> CGPoint {
         return { raDec in
             let starAziEle = azel(
-                julianDate: julianDate,
-                site: (context.observer.lat, context.observer.lon),
+                time: Date(julianDate: julianDate),
+                site: LatLon(context.observer),
                 cele: raDec
             )
 
@@ -126,8 +126,18 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
         GeometryReader { geometry in
             Group {
                 let rect = geometry.frame(in: .local)
-                if !(SolarSystemBody.sun.aziEle(julianDay: julianDate, observer: context.observer).elev > -6 &&
-                     context.configs.hidesStarsDuringDay),
+                if !(
+                    azel(
+                        time: Date(julianDate: julianDate),
+                        site: LatLon(context.observer),
+                        cele: RADec(
+                            SolarSystemBody.sun.eci(
+                                julianDay: julianDate
+                            )
+                        )
+                    ).elev > -6 &&
+                    context.configs.hidesStarsDuringDay
+                ),
                 let image = rasterizedBackgroundSky {
                     Image(
                         uiImage: image
@@ -189,7 +199,15 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
                     label: context.configs.bodySymbol,
                     referenceDate: julianDate,
                     observer: context.observer,
-                    sunElevation: SolarSystemBody.sun.aziEle(julianDay: julianDate, observer: context.observer).elev
+                    sunElevation: azel(
+                        time: Date(julianDate: julianDate),
+                        site: LatLon(context.observer),
+                        cele: RADec(
+                            SolarSystemBody.sun.eci(
+                                julianDay: julianDate
+                            )
+                        )
+                    ).elev
                 )
             }
         }
@@ -201,10 +219,10 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
             ZStack {
                 ForEach(viewModel.state.resources.allConstellations) { constellation in
                     let displayCenter = constellation.center
-                    let raDec = RADec(vector: displayCenter)
+                    let raDec = RADec(displayCenter)
                     let coordinate = azel(
-                        julianDate: julianDate,
-                        site: (context.observer.lat, context.observer.lon),
+                        time: Date(julianDate: julianDate),
+                        site: LatLon(context.observer),
                         cele: raDec
                     )
 
@@ -289,7 +307,7 @@ struct BackgroundSkyView_Previews: PreviewProvider {
                 state: .init()
             ),
             context: BackgroundSkyViewContext(
-                observer: LatLonAlt(lat: 0, lon: 0, alt: 0),
+                observer: LatLonAlt(0, 0, 0),
                 basicChartConfigs: .init(),
                 configs: .preset,
                 quality: .full,

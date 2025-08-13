@@ -406,7 +406,7 @@ struct PassAlarmSettingsModalView_Previews: PreviewProvider {
             """
         )
         // 2000 Broadway, Redwood City, CA 94063
-        let observer = LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0)
+        let observer = LatLonAlt(37.486743000691185, -122.22655970246515, 0)
         // Date range
         let startDate = Date(timeIntervalSinceReferenceDate: 20 * 365 * 86400)
         let julianDateRange = startDate.advanced(by: -60 * 60 * 2).julianDate...startDate.advanced(by: 60 * 60 * 30).julianDate
@@ -428,7 +428,7 @@ struct PassAlarmSettingsModalView_Previews: PreviewProvider {
                 satelliteName: "ISS (ZARYA)",
                 category: .iss,
                 passSnapshots: passSnapshotsList[0],
-                observer: LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0)
+                observer: LatLonAlt(37.486743000691185, -122.22655970246515, 0)
             )
         )
     }

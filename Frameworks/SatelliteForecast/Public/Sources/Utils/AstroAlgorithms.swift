@@ -8,6 +8,33 @@
 @preconcurrency import SatelliteKit
 import Darwin
 
+extension Vector {
+    public init(raDec: RADec) {
+        self.init(
+            cos(raDec.dec * deg2rad) * cos(raDec.ra * deg2rad),
+            cos(raDec.dec * deg2rad) * sin(raDec.ra * deg2rad),
+            sin(raDec.dec * deg2rad)
+        )
+    }
+
+    public func magnitudeSquared() -> Double {
+        return x * x + y * y + z * z
+    }
+}
+
+public func azelToRADec(
+    aziEle: AziEle,
+    julianDate: Double,
+    site: (Double, Double)
+) -> RADec {
+    let dec = asin(sin(deg2rad * aziEle.elev) * sin(deg2rad * site.0) + cos(deg2rad * aziEle.elev) * cos(deg2rad * site.0) * cos(deg2rad * aziEle.azim))
+    let lhsDivisor = -sin(deg2rad * aziEle.azim) * cos(deg2rad * aziEle.elev) / cos(dec)
+    let lhsDividend = (sin(deg2rad * aziEle.elev) - sin(dec) * sin(deg2rad * site.0)) / (cos(dec) * cos(deg2rad * site.0))
+    let lha = atan2pi(lhsDivisor, lhsDividend)
+    let ra = fmod(siteMeanSiderealTime(julianDate: julianDate, site.1) - rad2deg * lha, 360)
+    return RADec(ra, rad2deg * dec)
+}
+
 public enum AstroAlgorithms {
     /// Whether two objects have line of sight (and not blocked by earth).
     ///

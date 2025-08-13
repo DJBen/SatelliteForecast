@@ -152,7 +152,7 @@ struct AllPassesOnboardingView: View {
             """
         )
         
-        let observer = LatLonAlt(lat: 37.486743000691185, lon: -122.22655970246515, alt: 0)
+        let observer = LatLonAlt(37.486743000691185, -122.22655970246515, 0)
         let startDate = Date(timeIntervalSinceReferenceDate: 25 * 365 * 86400)
         let julianDateRange = startDate.julianDate...startDate.advanced(by: 3600 * 24 * 7).julianDate
         let satelliteInfo = try! SatelliteInfo(elements: elements)

@@ -22,7 +22,15 @@ struct PlanetaryBodyView: View {
         solarSystemBody: SolarSystemBody,
         @ViewBuilder planetViewGenerator: @escaping (SolarSystemBody, AziEle) -> Content
     ) -> some View {
-        let aziElev = solarSystemBody.aziEle(julianDay: referenceDate, observer: observer)
+        let aziElev = azel(
+            time: Date(julianDate: referenceDate),
+            site: LatLon(observer),
+            cele: RADec(
+                solarSystemBody.eci(
+                    julianDay: referenceDate
+                )
+            )
+        )
 
         if aziElev.elev >= 0 {
             GeometryReader { geometry in

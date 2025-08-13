@@ -30,7 +30,7 @@ struct SkyChartPassLabel<BackgroundModifier: ViewModifier, Content: View>: View 
 
     var body: some View {
         let (rot, textRotation) = SkyChartUtils.rotationAndTextRotation(snapshotPair: snapshotPair, rect: rect)
-        let textPosition = AziEleDst(azim: snapshotPair.first.position.azim, elev: snapshotPair.first.position.elev, dist: 0)
+        let textPosition = AziEle(snapshotPair.first.position.azim, snapshotPair.first.position.elev)
         return HStack(spacing: 2) {
             Path { path in
                 path.move(to: CGPoint(x: rect.midX, y: rect.midY))
