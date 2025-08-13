@@ -146,14 +146,15 @@ struct AllPassesOnboardingView: View {
         // Create mock data for preview
         let elements = try! Elements(
             raw: """
-            ISS (ZARYA)
-            1 25544U 98067A   21155.08058252  .00001489  00000-0  35252-4 0  9997
-            2 25544  51.6446  47.5538 0003512  61.1482  91.5411 15.48950578286563
+            ISS (ZARYA)             
+            1 25544U 98067A   25224.47423135  .00010254  00000+0  18430-3 0  9994
+            2 25544  51.6349  28.0780 0001172 181.8871 178.2114 15.50477111523893
             """
         )
         
-        let observer = LatLonAlt(37.486743000691185, -122.22655970246515, 0)
-        let startDate = Date(timeIntervalSinceReferenceDate: 25 * 365 * 86400)
+        let observer = LatLonAlt(37.4253, -122.1399, 0)
+        let formatter = ISO8601DateFormatter()
+        let startDate = formatter.date(from: "2025-08-19T04:00:00-07:00")!
         let julianDateRange = startDate.julianDate...startDate.advanced(by: 3600 * 24 * 7).julianDate
         let satelliteInfo = try! SatelliteInfo(elements: elements)
         let coarseSnapshots = try! satelliteInfo.generateSnapshots(
