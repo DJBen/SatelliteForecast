@@ -6,7 +6,7 @@
 //  Copyright © 2022 Ben Lu. All rights reserved.
 //
 
-public enum SolarSystemBody {
+public enum SolarSystemBody: Equatable, CaseIterable, Hashable, Codable {
     case sun
     case mercury
     case venus
