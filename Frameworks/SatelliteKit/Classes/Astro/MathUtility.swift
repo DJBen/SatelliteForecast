@@ -5,6 +5,7 @@
   ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝*/
 
 import Foundation
+import simd
 
 // swiftlint:disable identifier_name
 
@@ -53,110 +54,13 @@ extension Double {
     }
 }
 
-/*╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
-  ║ V E C T O R S                                                                                    ║
-  ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝*/
-
-public struct Vector: Equatable, Sendable {
-
-    public var x: Double
-    public var y: Double
-    public var z: Double
-
-    public init() {
-        self.x = 0.0
-        self.y = 0.0
-        self.z = 0.0
-    }
-
-    public init(_ x: Double, _ y: Double, _ z: Double) {
-        self.x = x
-        self.y = y
-        self.z = z
-    }
-
-    public init(raDec: RADec) {
-        self.x = cos(raDec.dec * deg2rad) * cos(raDec.ra * deg2rad)
-        self.y = cos(raDec.dec * deg2rad) * sin(raDec.ra * deg2rad)
-        self.z = sin(raDec.dec * deg2rad)
-    }
-
-    public static prefix func - (v: Vector) -> Vector {
-        return Vector(-v.x, -v.y, -v.z)
-    }
-
-    public static func + (lhs: Vector, rhs: Vector) -> Vector {
-        return Vector(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z)
-    }
-
-    public static func - (lhs: Vector, rhs: Vector) -> Vector {
-        return Vector(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z)
-    }
-
-    public static func * (lhs: Vector, scalar: Double) -> Vector {
-        return Vector(lhs.x * scalar, lhs.y * scalar, lhs.z * scalar)
-    }
-
-    public func magnitude() -> Double {
-        return magnitudeSquared().squareRoot()
-    }
-
-    public func magnitudeSquared() -> Double {
-        return self.x*self.x + self.y*self.y + self.z*self.z
-    }
-}
-
-/*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-  ┃ magnitude                                                                           [3-D Vector] ┃
-  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛*/
-public func magnitude(_ vector: Vector) -> Double {
-    return (vector.x*vector.x + vector.y*vector.y + vector.z*vector.z).squareRoot()
-}
-
-/*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-  ┃ normalize to unit vector [zero length Vector aborts]                                             ┃
-  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛*/
-public func normalize(_ vector: Vector) -> Vector {
-    let mag = magnitude(vector)
-    guard mag > 0 else { preconditionFailure("normalize: empty vector") }
-    return Vector(vector.x / mag, vector.y / mag, vector.z / mag)
-}
-
-/*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-  ┃ dot product                                                                                      ┃
-  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛*/
-infix operator •
-
-public func dotProduct(_ vector1: Vector, _ vector2: Vector) -> Double {
-    return (vector1.x*vector2.x + vector1.y*vector2.y + vector1.z*vector2.z)
-}
-
-func • (_ vector1: Vector, _ vector2: Vector) -> Double {
-    return (vector1.x*vector2.x + vector1.y*vector2.y + vector1.z*vector2.z)
-}
-
 /*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
   ┃ angle between (degrees)                                                                          ┃
   ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛*/
-public func separation(_ vector1: Vector, _ vector2: Vector) -> Double {
-    return(acos((vector1 • vector2) / (magnitude(vector1)*magnitude(vector2))) * rad2deg)
-}
-
-/*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-  ┃ cross product                                                                                    ┃
-  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛*/
-infix operator ⨯
-
-public func crossProduct(_ vector1: Vector, _ vector2: Vector) -> Vector {
-    return Vector(vector1.y*vector2.z - vector1.z*vector2.y,
-                  vector1.z*vector2.x - vector1.x*vector2.z,
-                  vector1.x*vector2.y - vector1.y*vector2.x)
-}
-
-func ⨯ (_ vector1: Vector, _ vector2: Vector) -> Vector {
-    return Vector(vector1.y*vector2.z - vector1.z*vector2.y,
-                  vector1.z*vector2.x - vector1.x*vector2.z,
-                  vector1.x*vector2.y - vector1.y*vector2.x)
+public func separation(_ vector1: SIMD3<Double>, _ vector2: SIMD3<Double>) -> Double {
+  let dotProduct = simd_dot(vector1, vector2)
+  let magnitudeProduct = simd_length(vector1) * simd_length(vector2)
+  return acos(dotProduct / magnitudeProduct) * rad2deg
 }
 
 /*╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
@@ -223,4 +127,14 @@ public func limit360 (_ value: Double) -> Double {
     while value > +360.0 { value -= 360.0 }
     while value <    0.0 { value += 360.0 }
     return value
+}
+
+extension SIMD3<Double> {
+    public init(raDec: RADec) {
+        self.init(
+            x: cos(raDec.dec * deg2rad) * cos(raDec.ra * deg2rad),
+            y: cos(raDec.dec * deg2rad) * sin(raDec.ra * deg2rad),
+            z: sin(raDec.dec * deg2rad)
+        )
+    }
 }

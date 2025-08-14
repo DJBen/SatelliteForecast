@@ -347,14 +347,14 @@ struct SkyChart_Previews: PreviewProvider {
         let formatter = ISO8601DateFormatter()
         let date = formatter.date(from: "2021-06-02T20:35:30+0800")!
         let satelliteInfo = try! SatelliteInfo(elements: elements)
-        let observer = LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0)
+        let observer = LatLonAlt(32.0669, 118.8251, 0)
         let snapshots = try! satelliteInfo.generateSnapshots(
             observer: observer,
             julianDateRange: date.julianDate...date.addingTimeInterval(800).julianDate
         )
 
         let passSnapshots = try! satelliteInfo.findPasses(
-            observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
+            observer: LatLonAlt(32.0669, 118.8251, 0),
             coarseSnapshots: snapshots
         )
         let firstPassSnapshots = passSnapshots.first!
@@ -373,14 +373,14 @@ struct SkyChart_Previews: PreviewProvider {
         let formatter = ISO8601DateFormatter()
         let date = formatter.date(from: "2021-06-02T06:29:00-0600")!
         let satelliteInfo = try! SatelliteInfo(elements: elements)
-        let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
+        let observer = LatLonAlt(-27.1570, -109.4274, 0)
         let snapshots = try! satelliteInfo.generateSnapshots(
             observer: observer,
             julianDateRange: date.julianDate...date.addingTimeInterval(800).julianDate
         )
 
         let passSnapshots = try! satelliteInfo.findPasses(
-            observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
+            observer: LatLonAlt(-27.1570, -109.4274, 0),
             coarseSnapshots: snapshots
         )
         let firstPassSnapshots = passSnapshots.first!
@@ -421,7 +421,7 @@ struct SkyChart_Previews: PreviewProvider {
                 ),
                 context: SkyChartContext(
                     satelliteInfo: try! SatelliteInfo(elements: elements),
-                    observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
+                    observer: LatLonAlt(32.0669, 118.8251, 0),
                     passSnapshots: passSnapshots,
                     configs: .preset,
                     quality: .full,
@@ -434,7 +434,7 @@ struct SkyChart_Previews: PreviewProvider {
                             state: BackgroundSkyViewState()
                         ),
                         context: BackgroundSkyViewContext(
-                            observer: LatLonAlt(lat: 32.0669, lon: 118.8251, alt: 0),
+                            observer: LatLonAlt(32.0669, 118.8251, 0),
                             basicChartConfigs: .init(),
                             configs: .init(),
                             quality: .full,
@@ -473,7 +473,7 @@ struct SkyChart_Previews: PreviewProvider {
             ),
             context: SkyChartContext(
                 satelliteInfo: try! SatelliteInfo(elements: elements2),
-                observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
+                observer: LatLonAlt(-27.1570, -109.4274, 0),
                 passSnapshots: passSnapshots2,
                 configs: .preset,
                 quality: .full,
@@ -486,7 +486,7 @@ struct SkyChart_Previews: PreviewProvider {
                         state: BackgroundSkyViewState()
                     ),
                     context: BackgroundSkyViewContext(
-                        observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
+                        observer: LatLonAlt(-27.1570, -109.4274, 0),
                         basicChartConfigs: .init(),
                         configs: .preset,
                         quality: .full,
@@ -505,7 +505,7 @@ struct SkyChart_Previews: PreviewProvider {
             viewModel: .mock(state: .init()),
             context: SkyChartContext(
                 satelliteInfo: try! SatelliteInfo(elements: elements2),
-                observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
+                observer: LatLonAlt(-27.1570, -109.4274, 0),
                 passSnapshots: passSnapshots2,
                 configs: .preset,
                 quality: .full,
@@ -518,7 +518,7 @@ struct SkyChart_Previews: PreviewProvider {
                         state: BackgroundSkyViewState()
                     ),
                     context: BackgroundSkyViewContext(
-                        observer: LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0),
+                        observer: LatLonAlt(-27.1570, -109.4274, 0),
                         basicChartConfigs: .init(),
                         configs: .preset,
                         quality: .full,

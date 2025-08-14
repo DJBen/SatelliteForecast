@@ -98,20 +98,11 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
         }
     }
 
-    private func starDisplayPoint(_ star: Star, julianDate: Double, rect: CGRect) -> CGPoint {
-        return getStarCoordinateConverter(
-            julianDate: julianDate,
-            rect: rect
-        )(
-            RADec(vector: star.coordinate)
-        )
-    }
-
     private func getStarCoordinateConverter(julianDate: Double, rect: CGRect) -> (RADec) -> CGPoint {
         return { raDec in
             let starAziEle = azel(
-                julianDate: julianDate,
-                site: (context.observer.lat, context.observer.lon),
+                time: Date(julianDate: julianDate),
+                site: LatLon(context.observer),
                 cele: raDec
             )
 
@@ -122,12 +113,28 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
         }
     }
 
+    private func rankedVisibleBodies(julianDate: Double) -> [SolarSystemBody] {
+        context.configs.visibleBodies.sorted { body1, body2 in
+            body1.distance(to: .earth, julianDate: julianDate) > body2.distance(to: .earth, julianDate: julianDate)
+        }
+    }
+
     @ViewBuilder func backgroundSky(julianDate: Double) -> some View {
         GeometryReader { geometry in
             Group {
                 let rect = geometry.frame(in: .local)
-                if !(SolarSystemBody.sun.aziEle(julianDay: julianDate, observer: context.observer).elev > -6 &&
-                     context.configs.hidesStarsDuringDay),
+                if !(
+                    azel(
+                        time: Date(julianDate: julianDate),
+                        site: LatLon(context.observer),
+                        cele: RADec(
+                            SolarSystemBody.sun.eci(
+                                julianDay: julianDate
+                            )
+                        )
+                    ).elev > -6 &&
+                    context.configs.hidesStarsDuringDay
+                ),
                 let image = rasterizedBackgroundSky {
                     Image(
                         uiImage: image
@@ -168,10 +175,17 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
                     switch context.configs.stars {
                     case .none:
                         break
+                    case .brightest300:
+                        let aziEle = SkyChartUtils.aziEle(at: point, in: rect)
+                        let raDec = azelToRADec(aziEle: aziEle, julianDate: julianDate, site: (context.observer.lat, context.observer.lon))
+                        let vec = SIMD3<Double>(raDec: raDec)
+                        if let star = context.starManager.closestStar(to: vec, maximumMagnitude: 3.52, maximumAngularDistance: nil) {
+                            context.starTapped(star)
+                        }
                     case .limitedMagnitude(let magnitude):
                         let aziEle = SkyChartUtils.aziEle(at: point, in: rect)
                         let raDec = azelToRADec(aziEle: aziEle, julianDate: julianDate, site: (context.observer.lat, context.observer.lon))
-                        let vec = Vector(raDec: raDec)
+                        let vec = SIMD3<Double>(raDec: raDec)
                         if let star = context.starManager.closestStar(to: vec, maximumMagnitude: magnitude, maximumAngularDistance: nil) {
                             context.starTapped(star)
                         }
@@ -183,13 +197,22 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
 
     @ViewBuilder func planetaryBodiesView(julianDate: Double) -> some View {
         ZStack {
-            ForEach(context.configs.visibleBodies, id: \.self) { body in
+            ForEach(rankedVisibleBodies(julianDate: julianDate), id: \.self) { body in
                 PlanetaryBodyView(
                     planetaryBody: body,
                     label: context.configs.bodySymbol,
+                    magFunction: context.configs.starMagToDisplayRadiusMappingFunction,
                     referenceDate: julianDate,
                     observer: context.observer,
-                    sunElevation: SolarSystemBody.sun.aziEle(julianDay: julianDate, observer: context.observer).elev
+                    sunElevation: azel(
+                        time: Date(julianDate: julianDate),
+                        site: LatLon(context.observer),
+                        cele: RADec(
+                            SolarSystemBody.sun.eci(
+                                julianDay: julianDate
+                            )
+                        )
+                    ).elev
                 )
             }
         }
@@ -201,15 +224,15 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
             ZStack {
                 ForEach(viewModel.state.resources.allConstellations) { constellation in
                     let displayCenter = constellation.center
-                    let raDec = RADec(vector: displayCenter)
+                    let raDec = RADec(displayCenter)
                     let coordinate = azel(
-                        julianDate: julianDate,
-                        site: (context.observer.lat, context.observer.lon),
+                        time: Date(julianDate: julianDate),
+                        site: LatLon(context.observer),
                         cele: raDec
                     )
 
                     context.constellationLabel(
-                        constellation.name
+                        constellation.localizedName
                     )
                     .position(
                         SkyChartUtils.point(
@@ -289,7 +312,7 @@ struct BackgroundSkyView_Previews: PreviewProvider {
                 state: .init()
             ),
             context: BackgroundSkyViewContext(
-                observer: LatLonAlt(lat: 0, lon: 0, alt: 0),
+                observer: LatLonAlt(0, 0, 0),
                 basicChartConfigs: .init(),
                 configs: .preset,
                 quality: .full,

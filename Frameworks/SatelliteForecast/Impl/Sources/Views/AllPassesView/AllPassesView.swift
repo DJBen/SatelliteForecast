@@ -296,7 +296,8 @@ public struct AllPassesView: View {
             MissionControlView(
                 satelliteInfo: context.satelliteInfo,
                 julianDateProvider: context.julianDateProvider,
-                julianDateOffset: viewModel.state.julianDateOffset
+                julianDateOffset: viewModel.state.julianDateOffset,
+                userLocation: viewModel.state.location
             )
             .aspectRatio(1.33, contentMode: .fill)
             .padding([.leading, .trailing], -16)
@@ -315,7 +316,7 @@ public struct AllPassesView: View {
                                     selectedNoradIndex: context.satelliteInfo.noradIndex,
                                     satelliteInfo: context.satelliteInfo,
                                     julianDateRange: context.julianDateRange,
-                                    observer: LatLonAlt(lat: locationChangeWarning.observer.latitude, lon: locationChangeWarning.observer.longitude, alt: 0)
+                                    observer: LatLonAlt(locationChangeWarning.observer.latitude, locationChangeWarning.observer.longitude, 0)
                                 )
                             )
                         )
@@ -552,12 +553,12 @@ extension AllPassesView {
 
             static var headerCaption: String {
                 NSLocalizedString(
-                    "AllPassesView.section.visible.headerCaption",
+                    "AllPassesView.section.visible.headerCaption.v2",
                     tableName: nil,
                     bundle: .module,
                     value: """
-                    Satellites can be seen when the sky is dark enough while still being \
-                    illuminated by the sun. Viewing condition is best short after sunset and \
+                    Satellites can be seen when the sky is dark while still being \
+                    illuminated by the sun. Best viewing condition occurs shortly after sunset and \
                     before sunrise.
                     """,
                     comment: "The caption under the header of visible passes"
@@ -578,12 +579,13 @@ extension AllPassesView {
 
             static var headerCaption: String {
                 NSLocalizedString(
-                    "AllPassesView.section.invisible.headerCaption",
+                    "AllPassesView.section.invisible.headerCaption.v2",
                     tableName: nil,
                     bundle: .module,
                     value: """
-                    Satellites faded into earth's shadow cannot be seen; \
-                    like stars, they cannot be seen in broad daylight either.
+                    A few reasons can make passes not visible:
+                    1. Daylight is too bright;
+                    2. Later at night, the satellite fades into earth's shadow.
                     """,
                     comment: "The caption under the header of invisible passes"
                 )
@@ -610,7 +612,7 @@ struct AllPassesView_Previews: PreviewProvider {
         let formatter = ISO8601DateFormatter()
         let date = formatter.date(from: "2021-06-02T06:29:00-0600")!
 
-        let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
+        let observer = LatLonAlt(-27.1570, -109.4274, 0)
         let snapshots = try! SatelliteInfo(elements: elements).generateSnapshots(
             observer: observer,
             julianDateRange: date.julianDate...date.julianDate + 2
@@ -623,7 +625,7 @@ struct AllPassesView_Previews: PreviewProvider {
     }()
 
     static var previews: some View {
-        let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
+        let observer = LatLonAlt(-27.1570, -109.4274, 0)
         let location = CLLocation(observer)
         let context = AllPassesViewContext(
             satelliteInfo: try! SatelliteInfo(elements: tianHe),
@@ -661,9 +663,9 @@ struct AllPassesView_Previews: PreviewProvider {
                                 passSnapshots: passSnapshots,
                                 configs: SkyChartConfigs(
                                     backgroundSkyConfigs: BackgroundSkyConfigs(
-                                        stars: .limitedMagnitude(2),
+                                        stars: .brightest300,
                                         showConstellationLines: false,
-                                        visibleBodies: [.sun, .moon],
+                                        visibleBodies: [.sun, .moon, .venus, .jupiter],
                                         bodySymbol: .symbol
                                     ),
                                     basicChartConfigs: BasicChartConfigs(

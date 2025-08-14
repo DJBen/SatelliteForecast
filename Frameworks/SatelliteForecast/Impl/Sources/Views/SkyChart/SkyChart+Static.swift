@@ -10,6 +10,7 @@ import SatelliteForecast
 @preconcurrency import SatelliteKit
 import StarryNight
 import SolarSystem
+import simd
 
 public enum SkyChartUtils {
     public static var labelDateFormatter: DateFormatter {
@@ -33,7 +34,7 @@ public enum SkyChartUtils {
     ///   - coordinate: The polar coordinate
     ///   - rect: The bounding rectangle.
     /// - Returns: The cartesian coordinate bounded by a rectangle.
-    public static func point<Coordinate: AziEleProviding>(at coordinate: Coordinate, rect: CGRect) -> CGPoint {
+    public static func point(at coordinate: AziEle, rect: CGRect) -> CGPoint {
         let dist = (90 - coordinate.elev) / 90.0 * Double(radius(fromRect: rect))
         let xOffset = sin(coordinate.azim * deg2rad) * dist
         let yOffset = cos(coordinate.azim * deg2rad) * dist
@@ -46,7 +47,7 @@ public enum SkyChartUtils {
         let azi = limit360(atan2(x, y) * rad2deg)
         let radius = min(rect.width, rect.height) / 2
         let ele = (radius - sqrt(x * x + y * y)) / radius * 90
-        return AziEle(azim: Double(azi), elev: Double(ele))
+        return AziEle(Double(azi), Double(ele))
     }
 
     public static func azimuthMarkPoints(azimuth: Double, length: CGFloat, rect: CGRect) -> (CGPoint, CGPoint) {
@@ -67,12 +68,12 @@ public enum SkyChartUtils {
     ///   - rect: The rectangle of the view.
     /// - Returns: The rotation angle in radians, and the rotation angle for the text to be the most legible.
     public static func rotationAndTextRotation(snapshotPair: SnapshotsAroundPass, rect: CGRect) -> (Double, Double) {
-        let position = Self.point(at: snapshotPair.first.position, rect: rect)
-        let afterPosition = Self.point(at: snapshotPair.second.position, rect: rect)
-        let satellitePositionVector = Vector(Double(afterPosition.x - position.x), Double(afterPosition.y - position.y), 0)
+        let position = Self.point(at: AziEle(snapshotPair.first.position), rect: rect)
+        let afterPosition = Self.point(at: AziEle(snapshotPair.second.position), rect: rect)
+        let satellitePositionVector = SIMD3<Double>(Double(afterPosition.x - position.x), Double(afterPosition.y - position.y), 0)
         // A vector from origin to the position
-        let originVector = Vector(Double(afterPosition.x - rect.midX), Double(afterPosition.y - rect.midY), 0)
-        let normal = crossProduct(satellitePositionVector, originVector)
+        let originVector = SIMD3<Double>(Double(afterPosition.x - rect.midX), Double(afterPosition.y - rect.midY), 0)
+        let normal = simd_cross(satellitePositionVector, originVector)
         let rot = atan2(Double(afterPosition.y - position.y), Double(afterPosition.x - position.x))
         let factor: Double = normal.z > 0 ? -1 : 1
         let adjustedRot = factor > 0 ? rot + .pi / 2 : rot - .pi / 2
@@ -97,10 +98,10 @@ public enum SkyChartUtils {
             ctx.cgContext.setLineWidth(params.lineWidth)
             for i in snapshotsGroup.indices where i < snapshotsGroup.index(before: snapshotsGroup.endIndex) {
                 if i == snapshotsGroup.startIndex {
-                    let point = point(at: snapshotsGroup[i].position, rect: params.rect)
+                    let point = point(at: AziEle(snapshotsGroup[i].position), rect: params.rect)
                     ctx.cgContext.move(to: point)
                 }
-                let nextPoint = point(at: snapshotsGroup[snapshotsGroup.index(after: i)].position, rect: params.rect)
+                let nextPoint = point(at: AziEle(snapshotsGroup[snapshotsGroup.index(after: i)].position), rect: params.rect)
                 ctx.cgContext.addLine(to: nextPoint)
             }
             ctx.cgContext.drawPath(using: .stroke)
@@ -110,8 +111,8 @@ public enum SkyChartUtils {
 
                 let e1 = snapshotsGroup[snapshotsGroup.count / 2 - 1].position
                 let e2 = snapshotsGroup[snapshotsGroup.count / 2].position
-                let p1 = point(at: e1, rect: params.rect)
-                let p2 = point(at: e2, rect: params.rect)
+                let p1 = point(at: AziEle(e1), rect: params.rect)
+                let p2 = point(at: AziEle(e2), rect: params.rect)
                 let rot = atan2pi(Double(p2.y - p1.y), Double(p2.x - p1.x))
                 ctx.cgContext.translateBy(x: p1.x, y: p1.y)
                 ctx.cgContext.rotate(by: CGFloat(rot))
@@ -166,21 +167,21 @@ public enum SkyChartUtils {
 
         for constellation in params.constellations {
             let alt = azel(
-                julianDate: params.julianDate,
-                site: (params.observer.lat, params.observer.lon),
-                cele: RADec(vector: constellation.center)
+                time: Date(julianDate: params.julianDate),
+                site: LatLon(params.observer),
+                cele: RADec(constellation.center)
             ).elev
             if alt < 0 {
                 continue
             }
             for line in starManager.constellationLines(for: constellation) {
-                let aziElev1 = azel(julianDate: params.julianDate, site: (params.observer.lat, params.observer.lon), cele: RADec(vector: line.star1.coordinate))
-                let aziElev2 = azel(julianDate: params.julianDate, site: (params.observer.lat, params.observer.lon), cele: RADec(vector: line.star2.coordinate))
+                let aziElev1 = azel(time: Date(julianDate: params.julianDate), site: LatLon(params.observer), cele: RADec(line.star1.coordinate))
+                let aziElev2 = azel(time: Date(julianDate: params.julianDate), site: LatLon(params.observer), cele: RADec(line.star2.coordinate))
                 if aziElev1.elev < 0 || aziElev2.elev < 0 {
                     continue
                 }
-                let point1 = Self.point(at: AziEleDst(azim: aziElev1.azim, elev: aziElev1.elev, dist: 0), rect: params.rect)
-                let point2 = Self.point(at: AziEleDst(azim: aziElev2.azim, elev: aziElev2.elev, dist: 0), rect: params.rect)
+                let point1 = Self.point(at: AziEle(aziElev1.azim, aziElev1.elev), rect: params.rect)
+                let point2 = Self.point(at: AziEle(aziElev2.azim, aziElev2.elev), rect: params.rect)
 
                 ctx.cgContext.move(to: point1)
                 ctx.cgContext.addLine(to: point2)
@@ -196,14 +197,14 @@ public enum SkyChartUtils {
 
         for star in params.stars {
             let aziElev = azel(
-                julianDate: params.julianDate,
-                site: (params.observer.lat, params.observer.lon),
-                cele: RADec(vector: star.coordinate)
+                time: Date(julianDate: params.julianDate),
+                site: LatLon(params.observer),
+                cele: RADec(star.coordinate)
             )
             if aziElev.elev < 0 {
                 continue
             }
-            let point = Self.point(at: AziEleDst(azim: aziElev.azim, elev: aziElev.elev, dist: 0), rect: params.rect)
+            let point = Self.point(at: AziEle(aziElev.azim, aziElev.elev), rect: params.rect)
 
             ctx.cgContext.move(to: point)
 
@@ -220,12 +221,17 @@ public enum SkyChartUtils {
         
         // -- Plantary bodies
 
-
-        let sunAziElev = SolarSystemBody.sun.aziEle(
-            julianDay: params.julianDate,
-            observer: params.observer
+        let sunAziElev = azel(
+            time: Date(julianDate: params.julianDate),
+            site: LatLon(params.observer),
+            cele: RADec(
+                SolarSystemBody.sun.eci(
+                    julianDay: params.julianDate
+                )
+            )
         )
-        let sunPoint = Self.point(at: AziEleDst(azim: sunAziElev.azim, elev: sunAziElev.elev, dist: 0), rect: params.rect)
+
+        let sunPoint = Self.point(at: AziEle(sunAziElev.azim, sunAziElev.elev), rect: params.rect)
         
         ctx.cgContext.saveGState()
         ctx.cgContext.addEllipse(in: params.rect)
@@ -236,8 +242,8 @@ public enum SkyChartUtils {
         ctx.cgContext.addEllipse(in: CGRect(x: sunPoint.x - 7, y: sunPoint.y - 7, width: 14, height: 14))
         ctx.cgContext.drawPath(using: .fill)
 
-        let moonAziElev = azel(julianDate: params.julianDate, site: (params.observer.lat, params.observer.lon), cele: lunarGeo(julianDays: params.julianDate))
-        let moonPoint = Self.point(at: AziEleDst(azim: moonAziElev.azim, elev: moonAziElev.elev, dist: 0), rect: params.rect)
+        let moonAziElev = azel(time: Date(julianDate: params.julianDate), site: LatLon(params.observer), cele: lunarGeo(julianDays: params.julianDate))
+        let moonPoint = Self.point(at: AziEle(moonAziElev.azim, moonAziElev.elev), rect: params.rect)
         ctx.cgContext.setFillColor(UIColor.gray.cgColor)
         ctx.cgContext.setShadow(offset: .zero, blur: 12, color: UIColor.systemYellow.cgColor)
         ctx.cgContext.addEllipse(in: CGRect(x: moonPoint.x - 5, y: moonPoint.y - 5, width: 10, height: 10))
@@ -278,7 +284,7 @@ struct ImageRenderer_Previews: PreviewProvider {
         let formatter = ISO8601DateFormatter()
         let date = formatter.date(from: "2021-06-02T06:29:00-0600")!
         let satelliteInfo = try! SatelliteInfo(elements: elements)
-        let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
+        let observer = LatLonAlt(-27.1570, -109.4274, 0)
         let snapshots = try! satelliteInfo.generateSnapshots(
             observer: observer,
             julianDateRange: date.julianDate...date.julianDate + 2
@@ -294,7 +300,7 @@ struct ImageRenderer_Previews: PreviewProvider {
         let pass: Pass
         let snapshots: [SatelliteSnapshot]
         let notableSnapshots: NotableSnapshots
-        let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
+        let observer = LatLonAlt(-27.1570, -109.4274, 0)
 
         @Environment(\.colorScheme) var colorScheme
 

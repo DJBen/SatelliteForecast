@@ -13,7 +13,7 @@ let package = Package(
             targets: ["AppDelegate"])
     ],
     dependencies: [
-        .package(path: "../SatelliteKit")
+        .package(path: "../SatelliteKit"),
     ],
     targets: [
         .target(

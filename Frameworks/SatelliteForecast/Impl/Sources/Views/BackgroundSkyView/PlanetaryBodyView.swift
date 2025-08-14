@@ -12,17 +12,32 @@ import SatelliteForecast
 import SolarSystem
 
 struct PlanetaryBodyView: View {
-    let planetaryBody: BackgroundSkyConfigs.PlantaryBody
+    let planetaryBody: SolarSystemBody
     let label: BackgroundSkyConfigs.PlantaryBodyLabel
+    let magFunction: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction
     let referenceDate: Double
     let observer: LatLonAlt
     let sunElevation: Double
+
+    var displayRadius: CGFloat {
+        let apparentMagnitude = planetaryBody.apparentMagnitude(julianDay: referenceDate)
+        print("\(planetaryBody): \(apparentMagnitude) -> \(magFunction.apply(apparentMagnitude ?? 0))")
+        return magFunction.apply(apparentMagnitude ?? 0)
+    }
 
     @ViewBuilder func planetView<Content: View>(
         solarSystemBody: SolarSystemBody,
         @ViewBuilder planetViewGenerator: @escaping (SolarSystemBody, AziEle) -> Content
     ) -> some View {
-        let aziElev = solarSystemBody.aziEle(julianDay: referenceDate, observer: observer)
+        let aziElev = azel(
+            time: Date(julianDate: referenceDate),
+            site: LatLon(observer),
+            cele: RADec(
+                solarSystemBody.eci(
+                    julianDay: referenceDate
+                )
+            )
+        )
 
         if aziElev.elev >= 0 {
             GeometryReader { geometry in
@@ -37,11 +52,12 @@ struct PlanetaryBodyView: View {
 
             if planetaryBody.visible(sunElevation: sunElevation) {
                 planetView(
-                    solarSystemBody: SolarSystemBody(planetaryBody)
+                    solarSystemBody: planetaryBody
                 ) { solarSystemBody, coordinate in
                     planetaryBody.view(
                         label: label,
-                        rect: rect
+                        rect: rect,
+                        radius: displayRadius
                     )
                     .position(
                         SkyChartUtils.point(
@@ -56,20 +72,6 @@ struct PlanetaryBodyView: View {
 }
 
 extension SolarSystemBody {
-    init(_ planetaryBody: BackgroundSkyConfigs.PlantaryBody) {
-        switch planetaryBody {
-        case .sun: self = .sun
-        case .moon: self = .moon
-        case .mercury: self = .mercury
-        case .venus: self = .venus
-        case .mars: self = .mars
-        case .jupiter: self = .jupiter
-        case .saturn: self = .saturn
-        }
-    }
-}
-
-extension BackgroundSkyConfigs.PlantaryBody {
     @ViewBuilder private func view<ShapeModifier: ViewModifier, TextLabel: View, Symbol: View> (
         rect: CGRect,
         label: BackgroundSkyConfigs.PlantaryBodyLabel,
@@ -142,19 +144,24 @@ extension BackgroundSkyConfigs.PlantaryBody {
             return sunElevation < -6
         case .mercury, .jupiter, .mars, .saturn:
             return sunElevation < -12
+        case .uranus, .neptune:
+            return sunElevation < -18
+        case .earth, .earthMoonBarycenter:
+            return false
         }
     }
 
     @ViewBuilder fileprivate func view(
         label: BackgroundSkyConfigs.PlantaryBodyLabel,
-        rect: CGRect
+        rect: CGRect,
+        radius: CGFloat
     ) -> some View {
         switch self {
         case .sun:
             view(
                 rect: rect,
                 label: label,
-                radius: 8,
+                radius: radius,
                 shapeModifier: SunShapeModifier(),
                 textLabel: {
                     Text("Sun", bundle: .module)
@@ -171,7 +178,7 @@ extension BackgroundSkyConfigs.PlantaryBody {
             view(
                 rect: rect,
                 label: label,
-                radius: 5,
+                radius: radius,
                 shapeModifier: MoonShapeModifier(),
                 textLabel: {
                     Text("Moon", bundle: .module)
@@ -188,7 +195,7 @@ extension BackgroundSkyConfigs.PlantaryBody {
             view(
                 rect: rect,
                 label: label,
-                radius: 2,
+                radius: radius,
                 shapeModifier: PlanetsShapeModifier(),
                 textLabel: {
                     Text("Mercury", bundle: .module)
@@ -205,7 +212,7 @@ extension BackgroundSkyConfigs.PlantaryBody {
             view(
                 rect: rect,
                 label: label,
-                radius: 3.5,
+                radius: radius,
                 shapeModifier: PlanetsShapeModifier(),
                 textLabel: {
                     Text("Venus", bundle: .module)
@@ -222,7 +229,7 @@ extension BackgroundSkyConfigs.PlantaryBody {
             view(
                 rect: rect,
                 label: label,
-                radius: 2,
+                radius: radius,
                 shapeModifier: PlanetsShapeModifier(),
                 textLabel: {
                     Text("Mars", bundle: .module)
@@ -239,7 +246,7 @@ extension BackgroundSkyConfigs.PlantaryBody {
             view(
                 rect: rect,
                 label: label,
-                radius: 3,
+                radius: radius,
                 shapeModifier: PlanetsShapeModifier(),
                 textLabel: {
                     Text("Jupiter", bundle: .module)
@@ -269,6 +276,15 @@ extension BackgroundSkyConfigs.PlantaryBody {
                         .foregroundColor(.white)
                 }
             )
+        case .earth, .earthMoonBarycenter:
+            // Not applied
+            EmptyView()
+        case .uranus:
+            // TODO
+            EmptyView()
+        case .neptune:
+            // TODO
+            EmptyView()
         }
     }
 }

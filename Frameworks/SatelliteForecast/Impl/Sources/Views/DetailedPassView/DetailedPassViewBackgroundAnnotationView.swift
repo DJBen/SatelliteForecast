@@ -29,7 +29,7 @@ public struct DetailedPassViewBackgroundAnnotationView: View {
         GeometryReader { geometry in
             if let selectedBackgroundStar = selectedBackgroundStar {
                 Path { path in
-                    let point = raDecToPoint(RADec(vector: selectedBackgroundStar.coordinate))
+                    let point = raDecToPoint(RADec(selectedBackgroundStar.coordinate))
                     let len = mappingFunction.apply(selectedBackgroundStar.magnitude) + 4
 
                     path.move(to: CGPoint(x: point.x - len, y: point.y))

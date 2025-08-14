@@ -7,9 +7,10 @@
 //swiftlint:disable identifier_name
 
 import Foundation
+import simd
 
 public struct LatLonAlt: Equatable, Hashable, Codable, Sendable {
-    public init(lat: Double, lon: Double, alt: Double) {
+    public init(_ lat: Double, _ lon: Double, _ alt: Double) {
         self.lat = lat
         self.lon = lon
         self.alt = alt
@@ -18,11 +19,26 @@ public struct LatLonAlt: Equatable, Hashable, Codable, Sendable {
     public var lat: Double                                  // latitude (degrees)
     public var lon: Double                                  // longitude (degrees)
     public var alt: Double                                  // altitude
-
 }
 
-public struct AziEleDst: AziEleProviding, Hashable, Codable, Sendable {
-    public init(azim: Double, elev: Double, dist: Double) {
+/// LatLon: latitude and longitude only
+public struct LatLon: Equatable, Hashable, Codable, Sendable {
+    public var lat: Double
+    public var lon: Double
+
+    public init(_ lat: Double, _ lon: Double) {
+        self.lat = lat
+        self.lon = lon
+    }
+
+    public init(_ lla: LatLonAlt) {
+        self.lat = lla.lat
+        self.lon = lla.lon
+    }
+}
+
+public struct AziEleDst: Hashable, Codable, Sendable {
+    public init(_ azim: Double, _ elev: Double, _ dist: Double) {
         self.azim = azim
         self.elev = elev
         self.dist = dist
@@ -40,37 +56,32 @@ public struct RADec: Equatable, Hashable, Codable {
     /// Declination in degrees
     public let dec: Double
 
-    public init(ra: Double, dec: Double) {
+    public init(_ ra: Double, _ dec: Double) {
         self.ra = ra
         self.dec = dec
     }
 
-    public init(vector: Vector) {
+    public init(_ vector: SIMD3<Double>) {
         self.init(
-            ra: atan2pi(vector.y, vector.x) * rad2deg,
-            dec: asin(vector.z / (vector.x * vector.x +
-                                  vector.y * vector.y +
-                                  vector.z * vector.z).squareRoot()) * rad2deg
+            atan2pi(vector.y, vector.x) * rad2deg,
+            asin(vector.z / simd_length(vector)) * rad2deg
         )
     }
 }
 
-public protocol AziEleProviding: Equatable {
-    /// Azimuth in degrees
-    var azim: Double { get }
-
-    /// Elevation in degrees
-    var elev: Double { get }
-}
-
-public struct AziEle: AziEleProviding, Hashable, Codable {
-    public init(azim: Double, elev: Double) {
+public struct AziEle: Hashable, Codable {
+    public init(_ azim: Double, _ elev: Double) {
         self.azim = azim
         self.elev = elev
     }
 
     public var azim: Double                                 // azimuth (degrees)
     public var elev: Double                                 // elevation (degrees)
+
+    public init(_ aed: AziEleDst) {
+        self.azim = aed.azim
+        self.elev = aed.elev
+    }
 }
 
 /*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -117,7 +128,7 @@ public func siteMeanSiderealTime(date: Date, _ siteLongitude: Double) -> Double 
   ┃ http://aa.usno.navy.mil/faq/docs/SunApprox.php                                                   ┃
   ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛*/
 
-public func solarCel(julianDays: Double) -> Vector {
+public func solarCel(julianDays: Double) -> SIMD3<Double> {
     let     daysSinceJD2000 = julianDays - JD.epoch2000
 
     let     eclipticInclin =  (23.439 - 0.00000036 * daysSinceJD2000) * deg2rad
@@ -125,7 +136,7 @@ public func solarCel(julianDays: Double) -> Vector {
     let     aberration = 1.915 * sin(1.0 * solarMeanAnom) + 0.020 * sin(2.0 * solarMeanAnom)
     let     solarEclpLong = ((280.459 + 0.98564736 * daysSinceJD2000) + aberration) * deg2rad
 
-    return Vector(cos(solarEclpLong),
+    return SIMD3<Double>(cos(solarEclpLong),
                   sin(solarEclpLong) * cos(eclipticInclin),
                   sin(solarEclpLong) * sin(eclipticInclin))
 }
@@ -133,11 +144,11 @@ public func solarCel(julianDays: Double) -> Vector {
 //  Declination (delta) and Right Ascension (alpha) are returned as decimal degrees.
 
 public func solarGeo(julianDays: Double) -> RADec {
-    let     solarVector: Vector = solarCel(julianDays: julianDays)
+    let solarVector: SIMD3<Double> = solarCel(julianDays: julianDays)
 
     return RADec(
-        ra: atan2pi(solarVector.y, solarVector.x) * rad2deg,
-        dec: asin(solarVector.z) * rad2deg
+        atan2pi(solarVector.y, solarVector.x) * rad2deg,
+        asin(solarVector.z) * rad2deg
     )
 }
 
@@ -147,7 +158,7 @@ public func solarGeo(julianDays: Double) -> RADec {
   ┃                                                                by: David G. Simpson (NASA, GSFC) ┃
   ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛*/
 
-public func lunarCel(julianDays: Double) -> Vector {
+public func lunarCel(julianDays: Double) -> SIMD3<Double> {
     let     centsSinceJD2000 = ( julianDays - JD.epoch2000 ) / 36525.0
 
     let moonX1 = 383.0e3 * sin( 8399.685 * centsSinceJD2000 + 5.381) +
@@ -174,19 +185,16 @@ public func lunarCel(julianDays: Double) -> Vector {
                    3.0e3 * sin(  104.881 * centsSinceJD2000 + 2.555) +
                    1.8e3 * sin( 8399.116 * centsSinceJD2000 + 6.248)
 
-    return Vector(moonX1, moonY1, moonZ1)
+    return SIMD3<Double>(moonX1, moonY1, moonZ1)
 }
 
 //  (Declination, Right_Ascension) are returned as decimal degrees.
 
-public func lunarGeo (julianDays: Double) -> RADec {
-    let     lunarVector: Vector = lunarCel(julianDays: julianDays)
-
+public func lunarGeo(julianDays: Double) -> RADec {
+    let lunarVector: SIMD3<Double> = lunarCel(julianDays: julianDays)
     return RADec(
-        ra: atan2pi(lunarVector.y, lunarVector.x) * rad2deg,
-        dec: asin(lunarVector.z / (lunarVector.x * lunarVector.x +
-                                   lunarVector.y * lunarVector.y +
-                                   lunarVector.z * lunarVector.z).squareRoot()) * rad2deg
+        atan2pi(lunarVector.y, lunarVector.x) * rad2deg,
+        asin(lunarVector.z / simd_length(lunarVector)) * rad2deg
     )
 }
 
@@ -203,34 +211,42 @@ public func azel(julianDate: Double,
     let azim = atan2pi(sin(hourAngle), sin(lat) * cos(hourAngle) - cos(lat) * tan(dec))
 
     return AziEle(
-        azim: fmod(azim * rad2deg + 540.0, 360.0),
-        elev: fmod(elev * rad2deg, 360.0)
+        fmod(azim * rad2deg + 540.0, 360.0),
+        fmod(elev * rad2deg, 360.0)
     )
 }
 
 /*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
   ┃ Date, (lat°, lon°), (ra°, dec°) -> (alt°, azi°)                                                  ┃
   ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛*/
-public func azel(time: Date,
-                 site: (Double, Double),
-                 cele: RADec) -> AziEle {
 
-    let hourAngle = (siteMeanSiderealTime(date: time, site.1) - cele.ra) * deg2rad
+/// calculates `el-az`  from date, observer location (LatLon), and object coordinates (RADec)
+/// - Parameters:
+///   - time: date
+///   - site: LatLon
+///   - cele: RADec
+/// - Returns: AziEle
+public func azel(
+    time: Date,
+    site: LatLon,
+    cele: RADec
+) -> AziEle {
+    let hourAngle = (siteMeanSiderealTime(date: time, site.lon) - cele.ra) * deg2rad
 
-    let lat = site.0 * deg2rad
+    let lat = site.lat * deg2rad
     let dec = cele.dec * deg2rad
 
     let elev = asin(sin(lat) * sin(dec) + cos(lat) * cos(dec) * cos(hourAngle))
     let azim = atan2pi(sin(hourAngle), sin(lat) * cos(hourAngle) - cos(lat) * tan(dec))
 
     return AziEle(
-        azim: fmod(azim * rad2deg + 540.0, 360.0),
-        elev: fmod(elev * rad2deg, 360.0)
+        fmod(azim * rad2deg + 540.0, 360.0),
+        fmod(elev * rad2deg, 360.0),
     )
 }
 
 public func azelToRADec(
-    aziEle: any AziEleProviding,
+    aziEle: AziEle,
     julianDate: Double,
     site: (Double, Double)
 ) -> RADec {
@@ -239,7 +255,7 @@ public func azelToRADec(
     let lhsDividend = (sin(deg2rad * aziEle.elev) - sin(dec) * sin(deg2rad * site.0)) / (cos(dec) * cos(deg2rad * site.0))
     let lha = atan2pi(lhsDivisor, lhsDividend)
     let ra = fmod(siteMeanSiderealTime(julianDate: julianDate, site.1) - rad2deg * lha, 360)
-    return RADec(ra: ra, dec: rad2deg * dec)
+    return RADec(ra, rad2deg * dec)
 }
 
 /*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -253,7 +269,7 @@ public func azelToRADec(
   ┃          : longitude (degrees)                                                                   ┃
   ┃          : altitude (Kms above geoid)                                                            ┃
   ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛*/
-public func eci2geo(julianDays: Double, celestial: Vector) -> LatLonAlt {
+public func eci2geo(julianDays: Double, celestial: SIMD3<Double>) -> LatLonAlt {
 
     let     positionXY = (celestial.x*celestial.x + celestial.y*celestial.y).squareRoot()
     var     newLatRads = atan2(celestial.z, positionXY)
@@ -269,17 +285,17 @@ public func eci2geo(julianDays: Double, celestial: Vector) -> LatLonAlt {
         newLatRads = atan2(celestial.z + correction * EarthConstants.e2 * sinLatitude, positionXY)
     } while (fabs(newLatRads - oldLatRads) > 0.0001)
 
-    return LatLonAlt(lat: newLatRads * rad2deg,
-                     lon: fmod(360.0 + atan2pi(celestial.y, celestial.x) *
+    return LatLonAlt(newLatRads * rad2deg,
+                     fmod(360.0 + atan2pi(celestial.y, celestial.x) *
                         rad2deg - ((julianDays < 0.0) ? 0.0 :
                             zeroMeanSiderealTime(julianDate: julianDays)), 360.0),
-                     alt: positionXY / cos(newLatRads) - correction)
+                     positionXY / cos(newLatRads) - correction)
 }
 
 /*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
   ┃ geo2eci .. JD, (lat°, lon°, alt) -> (x, y, z,)                                            OBLATE ┃
   ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛*/
-public func geo2eci(julianDays: Double, geodetic: LatLonAlt) -> Vector {
+public func geo2eci(julianDays: Double, geodetic: LatLonAlt) -> SIMD3<Double> {
     let     latitudeRads = geodetic.lat * deg2rad
     let     sinLatitude = sin(latitudeRads)
     let     cosLatitude = cos(latitudeRads)
@@ -293,7 +309,7 @@ public func geo2eci(julianDays: Double, geodetic: LatLonAlt) -> Vector {
     let     s = (1 - EarthConstants.e2) * correction
     let     achcp = (correction + geodetic.alt) * cosLatitude
 
-    return Vector(achcp * cosSidereal,
+    return SIMD3<Double>(achcp * cosSidereal,
                   achcp * sinSidereal,
                   (geodetic.alt+s) * sinLatitude)
 }
@@ -301,7 +317,7 @@ public func geo2eci(julianDays: Double, geodetic: LatLonAlt) -> Vector {
 /*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
   ┃ geo2eci .. (lat°, lon°, alt) -> (x, y, z,)                         OBLATE - NO SIDEREAL ROTATION ┃
   ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛*/
-public func geo2eci(geodetic: LatLonAlt) -> Vector {
+public func geo2eci(geodetic: LatLonAlt) -> SIMD3<Double> {
     let     latitudeRads = geodetic.lat * deg2rad
     let     sinLatitude = sin(latitudeRads)
     let     cosLatitude = cos(latitudeRads)
@@ -315,7 +331,7 @@ public func geo2eci(geodetic: LatLonAlt) -> Vector {
     let     s = (1 - EarthConstants.e2) * correction
     let     achcp = (correction + geodetic.alt) * cosLatitude
 
-    return Vector(achcp * cosSidereal,
+    return SIMD3<Double>(achcp * cosSidereal,
                   achcp * sinSidereal,
                   (geodetic.alt+s) * sinLatitude)
 }
@@ -323,7 +339,7 @@ public func geo2eci(geodetic: LatLonAlt) -> Vector {
 /*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
   ┃ geo2xyz .. JD, (lat°, lon°, alt) -> (x, y, z,)                                         SPHERICAL ┃
   ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛*/
-public func geo2xyz(julianDays: Double, geodetic: LatLonAlt) -> Vector {
+public func geo2xyz(julianDays: Double, geodetic: LatLonAlt) -> SIMD3<Double> {
     let     latitudeRads = geodetic.lat * deg2rad
     let     sinLatitude = sin(latitudeRads)
     let     cosLatitude = cos(latitudeRads)
@@ -332,7 +348,7 @@ public func geo2xyz(julianDays: Double, geodetic: LatLonAlt) -> Vector {
     let     sinSidereal = sin(siderealRads)
     let     cosSidereal = cos(siderealRads)
 
-    return Vector((geodetic.alt+EarthConstants.Rₑ) * cosLatitude * cosSidereal,
+    return SIMD3<Double>((geodetic.alt+EarthConstants.Rₑ) * cosLatitude * cosSidereal,
                   (geodetic.alt+EarthConstants.Rₑ) * cosLatitude * sinSidereal,
                   (geodetic.alt+EarthConstants.Rₑ) * sinLatitude)
 }
@@ -340,7 +356,7 @@ public func geo2xyz(julianDays: Double, geodetic: LatLonAlt) -> Vector {
 /*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
   ┃ geo2xyz .. (lat°, lon°, alt) -> (x, y, z,)                      SPHERICAL - NO SIDEREAL ROTATION ┃
   ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛*/
-public func geo2xyz(geodetic: LatLonAlt) -> Vector {
+public func geo2xyz(geodetic: LatLonAlt) -> SIMD3<Double> {
     let     latitudeRads = geodetic.lat * deg2rad
     let     sinLatitude = sin(latitudeRads)
     let     cosLatitude = cos(latitudeRads)
@@ -349,7 +365,7 @@ public func geo2xyz(geodetic: LatLonAlt) -> Vector {
     let     sinSidereal = sin(siderealRads)
     let     cosSidereal = cos(siderealRads)
 
-    return Vector((geodetic.alt+EarthConstants.Rₑ) * cosLatitude * cosSidereal,
+    return SIMD3<Double>((geodetic.alt+EarthConstants.Rₑ) * cosLatitude * cosSidereal,
                   (geodetic.alt+EarthConstants.Rₑ) * cosLatitude * sinSidereal,
                   (geodetic.alt+EarthConstants.Rₑ) * sinLatitude)
 }
@@ -357,14 +373,14 @@ public func geo2xyz(geodetic: LatLonAlt) -> Vector {
 /*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
   ┃ eci2top .. JD, sat(x, y, z), obs(lat°, lon°, alt) -> (x, y, z)       [obs→sat in obs topo frame] ┃
   ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛*/
-public func eci2top(julianDays: Double, satCel: Vector, obsLLA: LatLonAlt) -> Vector {
+public func eci2top(julianDays: Double, satCel: SIMD3<Double>, obsLLA: LatLonAlt) -> SIMD3<Double> {
    topoVector(julianDays: julianDays, satCel: satCel, obsLLA: obsLLA)
 }
 
 /*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
   ┃ cel2top .. JD, sat(x, y, z), obs(x, y, z) -> (x, y, z)        [vector obs→sat in obs topo frame] ┃
   ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛*/
-public func cel2top(julianDays: Double, satCel: Vector, obsCel: Vector) -> Vector {
+public func cel2top(julianDays: Double, satCel: SIMD3<Double>, obsCel: SIMD3<Double>) -> SIMD3<Double> {
     topoVector(julianDays: julianDays, satCel: satCel,
                                        obsLLA: eci2geo(julianDays: julianDays, celestial: obsCel))
 }
@@ -372,23 +388,25 @@ public func cel2top(julianDays: Double, satCel: Vector, obsCel: Vector) -> Vecto
 /*┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
   ┃ eci2top .. JD, sat(x, y, z), obs(lat°, lon°, alt) -> (azi°, ele°, dst)                           ┃
   ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛*/
-public func topPosition(julianDays: Double, satCel: Vector, obsLLA: LatLonAlt) -> AziEleDst {
+public func topPosition(julianDays: Double, satCel: SIMD3<Double>, obsLLA: LatLonAlt) -> AziEleDst {
 
     let obsCel = geo2eci(julianDays: julianDays, geodetic: obsLLA)    // ECI
 
     let top = cel2top(julianDays: julianDays, satCel: satCel, obsCel: obsCel)
 
-    let d = magnitude(obsCel - satCel)
+    let d = simd_length(obsCel - satCel)
 
-    return AziEleDst(azim: atan2pi(top.y, -top.x) * rad2deg,
-                     elev: asin(top.z / d) * rad2deg,
-                     dist: d)
+    return AziEleDst(
+        atan2pi(top.y, -top.x) * rad2deg,
+        asin(top.z / d) * rad2deg,
+        d
+    )
 }
 
 /*┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
   │ utility function used in both eci2top and cet2top -> (x, y, z)       [obs→sat in obs topo frame] │
   └──────────────────────────────────────────────────────────────────────────────────────────────────┘*/
-private func topoVector(julianDays: Double, satCel: Vector, obsLLA: LatLonAlt) -> Vector {
+private func topoVector(julianDays: Double, satCel: SIMD3<Double>, obsLLA: LatLonAlt) -> SIMD3<Double> {
     let latitudeRads = obsLLA.lat * deg2rad
     let sinLatitude = sin(latitudeRads)
     let cosLatitude = cos(latitudeRads)
@@ -400,7 +418,7 @@ private func topoVector(julianDays: Double, satCel: Vector, obsLLA: LatLonAlt) -
     let obsCel = geo2eci(julianDays: julianDays, geodetic: obsLLA)    // ECI
     let obs2sat = satCel - obsCel
 
-    return Vector(obs2sat.x*(+sinLatitude * cosSidereal) +
+    return SIMD3<Double>(obs2sat.x*(+sinLatitude * cosSidereal) +
                   obs2sat.y*(+sinLatitude * sinSidereal) +
                   obs2sat.z*(-cosLatitude),
 

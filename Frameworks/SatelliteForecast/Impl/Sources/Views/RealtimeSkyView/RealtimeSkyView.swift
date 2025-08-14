@@ -140,7 +140,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
                         .frame(alignment: .leading)
                         .position(
                             SkyChartUtils.point(
-                                at: result.snapshot.position,
+                                at: AziEle(result.snapshot.position),
                                 rect: rect
                             )
                         )
@@ -159,7 +159,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
                         .frame(alignment: .leading)
                         .position(
                             SkyChartUtils.point(
-                                at: result.snapshot.position,
+                                at: AziEle(result.snapshot.position),
                                 rect: rect
                             )
                         )
@@ -175,7 +175,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
         Path { path in
             for result in results {
                 let point = SkyChartUtils.point(
-                    at: result.snapshot.position,
+                    at: AziEle(result.snapshot.position),
                     rect: rect
                 )
 
@@ -211,7 +211,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
                 Path { path in
                     for result in visiblePropagationResults {
                         let point = SkyChartUtils.point(
-                            at: result.snapshot.position,
+                            at: AziEle(result.snapshot.position),
                             rect: rect
                         )
 
@@ -416,7 +416,7 @@ struct RealtimeSkyView_Previews: PreviewProvider {
             context: RealtimeSkyViewContext(
                 basicChartConfigs: .init(),
                 backgroundSkyConfigs: .init(),
-                satelliteMagToRadiusFunction: .init(),
+                satelliteMagToRadiusFunction: .default,
                 starManager: StarManagerMock(),
                 julianDateProvider: { Date().julianDate }
             ),
@@ -426,7 +426,7 @@ struct RealtimeSkyView_Previews: PreviewProvider {
                         state: BackgroundSkyViewState(),
                     ),
                     context: BackgroundSkyViewContext(
-                        observer: LatLonAlt(lat: 0, lon: 0, alt: 0),
+                        observer: LatLonAlt(0, 0, 0),
                         basicChartConfigs: .init(),
                         configs: .init(),
                         quality: .full,

@@ -4,7 +4,8 @@ import PackageDescription
 let package = Package(
     name: "SolarSystem",
     platforms: [
-        .iOS(.v18)
+        .iOS(.v18),
+        .macOS(.v13),
     ],
     products: [
         .library(
@@ -12,13 +13,11 @@ let package = Package(
             targets: ["SolarSystem"])
     ],
     dependencies: [
-        .package(path: "../SatelliteKit"),
     ],
     targets: [
         .target(
             name: "SolarSystem",
             dependencies: [
-                "SatelliteKit",
             ],
             path: "Sources"
         ),

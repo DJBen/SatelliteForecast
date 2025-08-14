@@ -41,6 +41,8 @@ extension EffectMiddleware where InputActionType == BackgroundSkyViewAction, Out
                                     switch key.configs.stars {
                                     case .none:
                                         return []
+                                    case .brightest300:
+                                        return context.dependencies.brightestStars()
                                     case let .limitedMagnitude(mag):
                                         return context.dependencies.stars(maximumMagnitude: mag)
                                     }

@@ -92,7 +92,7 @@
 "AllPassesView.section.invisible.header" = "Passagens Invisíveis";
 
 /* The caption under the header of invisible passes */
-"AllPassesView.section.invisible.headerCaption" = "Satélites apagados na sombra da terra não podem ser vistos; como estrelas, eles também não podem ser vistos à luz do dia.";
+"AllPassesView.section.invisible.headerCaption.v2" = "Algumas razões podem tornar as passagens não visíveis:\n1. A luz do dia é muito brilhante;\n2. Mais tarde à noite, o satélite desaparece na sombra da terra.";
 
 /* The body of observer info */
 "AllPassesView.section.observer.body" = "Você está observando de %@.";
@@ -101,7 +101,7 @@
 "AllPassesView.section.visible.header" = "Passagens Visíveis";
 
 /* The caption under the header of visible passes */
-"AllPassesView.section.visible.headerCaption" = "Satélites podem ser vistos quando o céu está escuro o suficiente enquanto ainda estão iluminados pelo sol. As condições de visualização são melhores logo após o pôr do sol e antes do nascer do sol.";
+"AllPassesView.section.visible.headerCaption.v2" = "Os satélites podem ser vistos quando o céu está escuro enquanto ainda estão iluminados pelo sol. A melhor condição de observação ocorre logo após o pôr do sol e antes do nascer do sol.";
 
 /* The progress text when calculating satellite passes */
 "Calculating..." = "Calculando...";
@@ -608,6 +608,9 @@ The localized string for the status of a spare satellite */
 
 /* No comment provided by engineer. */
 "Venus" = "Vênus";
+
+/* Map annotation indicating the radius that space stations are visible for the user */
+"Visible" = "Visível";
 
 /* No comment provided by engineer. */
 "Visible pass %@%lld°" = "Passagem visível %@%lld°";

@@ -121,7 +121,7 @@ struct SkyChartLegend: View, Equatable {
 
 struct SkyChartLegend_Previews: PreviewProvider {
     static var previews: some View {
-        let observer = LatLonAlt(lat: -27.1570, lon: -109.4274, alt: 0)
+        let observer = LatLonAlt(-27.1570, -109.4274, 0)
 
         ForEach(ColorScheme.allCases, id: \.self) { colorScheme in
             SkyChartLegend(

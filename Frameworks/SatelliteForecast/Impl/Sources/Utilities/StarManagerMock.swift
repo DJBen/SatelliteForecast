@@ -22,7 +22,7 @@ final class StarManagerMock: StarManaging {
         []
     }
     
-    func closestStar(to coordinate: SatelliteKit.Vector, maximumMagnitude magCutoff: Double?, maximumAngularDistance angularDistance: Double?) -> StarryNight.Star? {
+    func closestStar(to coordinate: SIMD3<Double>, maximumMagnitude magCutoff: Double?, maximumAngularDistance angularDistance: Double?) -> StarryNight.Star? {
         nil
     }
     

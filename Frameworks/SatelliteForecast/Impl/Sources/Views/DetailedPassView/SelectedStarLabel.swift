@@ -36,7 +36,7 @@ struct SelectedStarLabel: View {
                 Spacer()
 
                 Text(
-                    starInfo?.constellation?.name ?? ""
+                    starInfo?.constellation?.localizedName ?? ""
                 )
                 .font(.headline)
                 .foregroundColor(Color(UIColor.secondaryLabel))
@@ -50,13 +50,13 @@ struct SelectedStarLabel: View {
 
             HStack(alignment: .firstTextBaseline, spacing: 16) {
                 Text(
-                    LocalizedStrings.rightAscensionText(raDec: RADec(vector: star.coordinate))
+                    LocalizedStrings.rightAscensionText(raDec: RADec(star.coordinate))
                 )
                 .font(.caption)
                 .foregroundColor(Color(UIColor.secondaryLabel))
 
                 Text(
-                    LocalizedStrings.declinationText(raDec: RADec(vector: star.coordinate))
+                    LocalizedStrings.declinationText(raDec: RADec(star.coordinate))
                 )
                 .font(.caption)
                 .foregroundColor(Color(UIColor.secondaryLabel))

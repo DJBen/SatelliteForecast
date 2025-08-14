@@ -33,7 +33,7 @@ let package = Package(
         .package(path: "../ActivityView"),
         .package(path: "../AppDelegate"),
         .package(path: "../SatelliteKit"),
-        .package(path: "../StarryNight"),
+        .package(url: "https://github.com/DJBen/StarryNight.git", from: "1.0.0"),
         .package(path: "../QSMag"),
         .package(path: "../SolarSystem"),
         .package(path: "../SwiftUIVisualEffects"),

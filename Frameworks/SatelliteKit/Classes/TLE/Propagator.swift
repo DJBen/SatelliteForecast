@@ -340,7 +340,7 @@ public class Propagator {
 
         // Position and velocity
         let cr = 1000.0 * rk * EarthConstants.Rₑ
-        let pos = Vector(cr * ux, cr * uy, cr * uz)
+        let pos = SIMD3<Double>(cr * ux, cr * uy, cr * uz)
 
         let rdot   = EarthConstants.kₑ * √a * esinE / r
         let rfdot  = EarthConstants.kₑ * √pl / r
@@ -352,7 +352,7 @@ public class Propagator {
         let vz     = sinik * cosuk
 
         let cv = 1000.0 * EarthConstants.Rₑ / 60.0
-        let vel = Vector(cv * (rdotk * ux + rfdotk * vx),
+        let vel = SIMD3<Double>(cv * (rdotk * ux + rfdotk * vx),
                          cv * (rdotk * uy + rfdotk * vy),
                          cv * (rdotk * uz + rfdotk * vz))
 

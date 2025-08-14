@@ -11,6 +11,7 @@ import QSMag
 @preconcurrency import SatelliteKit
 import SatelliteForecast
 import SolarSystem
+import simd
 
 extension SatelliteSnapshot {
     public init(
@@ -23,33 +24,33 @@ extension SatelliteSnapshot {
         let eciPosition = try satellite.position(julianDays: julianDate)
         let obsCel = geo2eci(julianDays: julianDate, geodetic: observer)
 
-        func topVector2AziEleDst(_ top: Vector) -> AziEleDst {
-            let z = top.magnitude()
+        func topVector2AziEleDst(_ top: SIMD3<Double>) -> AziEleDst {
+            let z = simd_length(top)
 
             return AziEleDst(
-                azim: atan2pi(top.y, -top.x) * rad2deg,
-                elev: asin(top.z / z) * rad2deg,
-                dist: z
+                atan2pi(top.y, -top.x) * rad2deg,
+                asin(top.z / z) * rad2deg,
+                z
             )
         }
         let position = topVector2AziEleDst(
             cel2top(julianDays: julianDate, satCel: eciPosition, obsCel: obsCel)
         )
-        let distance = (eciPosition - obsCel).magnitude()
+        let distance = simd_length(eciPosition - obsCel)
         let solarCel = solarCel(julianDays: julianDate)
         let isIlluminated = AstroAlgorithms.hasLineOfSight(
-            object1Geo: eciPosition,
+            object1Geo: SIMD3<Double>(eciPosition),
             object2Geo: solarCel * au2Km
         )
         let phaseAngle = AstroAlgorithms.phaseAngle(
-            targetPosition: eciPosition,
+            targetPosition: SIMD3<Double>(eciPosition),
             sunPosition: solarCel,
-            observerPosition: obsCel
+            observerPosition: SIMD3<Double>(obsCel)
         )
         let sunElev = azel(
-            julianDate: julianDate,
-            site: (observer.lat, observer.lon),
-            cele: RADec(vector: solarCel)
+            time: Date(julianDate: julianDate),
+            site: LatLon(observer),
+            cele: RADec(solarCel)
         ).elev
         let visualMagnitude: Double?
         if let crossSectionArea = satelliteInfo.satCat?.rcs {
@@ -205,9 +206,14 @@ extension SatelliteInfo {
             }
         }
 
-        let sunElev = SolarSystemBody.sun.aziEle(
-            julianDay: maxElevDatePos.julianDate,
-            observer: observer
+        let sunElev = azel(
+            time: Date(julianDate: maxElevDatePos.julianDate),
+            site: LatLon(observer),
+            cele: RADec(
+                SolarSystemBody.sun.eci(
+                    julianDay: maxElevDatePos.julianDate
+                )
+            )
         ).elev
 
         let pass = Pass(

@@ -92,7 +92,7 @@
 "AllPassesView.section.invisible.header" = "Невидимые проходы";
 
 /* The caption under the header of invisible passes */
-"AllPassesView.section.invisible.headerCaption" = "Спутники, затенённые тенью земли, не видны; как звёзды, их также не видно при ярком дневном свете.";
+"AllPassesView.section.invisible.headerCaption.v2" = "Несколько причин могут сделать пролёты невидимыми:\n1. Дневной свет слишком яркий;\n2. Поздно ночью спутник исчезает в тени Земли.";
 
 /* The body of observer info */
 "AllPassesView.section.observer.body" = "Вы наблюдаете из %@.";
@@ -101,7 +101,7 @@
 "AllPassesView.section.visible.header" = "Видимые проходы";
 
 /* The caption under the header of visible passes */
-"AllPassesView.section.visible.headerCaption" = "Спутники видны, когда небо достаточно тёмное, но всё ещё освещено солнцем. Условия для наблюдения лучше всего вскоре после заката и перед восходом.";
+"AllPassesView.section.visible.headerCaption.v2" = "Спутники можно увидеть, когда небо тёмное, но они ещё освещены солнцем. Лучшие условия наблюдения возникают вскоре после захода солнца и перед рассветом.";
 
 /* The progress text when calculating satellite passes */
 "Calculating..." = "Расчёт...";
@@ -608,6 +608,9 @@ The localized string for the status of a spare satellite */
 
 /* No comment provided by engineer. */
 "Venus" = "Венера";
+
+/* Map annotation indicating the radius that space stations are visible for the user */
+"Visible" = "Видимый";
 
 /* No comment provided by engineer. */
 "Visible pass %@%lld°" = "Видимый проход %@%lld°";

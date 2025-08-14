@@ -30,4 +30,12 @@ public struct RealtimePropagationResult {
     }
 }
 
-extension RealtimePropagationResult: Equatable, Hashable {}
+extension RealtimePropagationResult: Equatable {}
+
+extension RealtimePropagationResult: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(noradIndex)
+        hasher.combine(snapshot.julianDate)
+        hasher.combine(satelliteInfo.elements.t₀)
+    }
+}

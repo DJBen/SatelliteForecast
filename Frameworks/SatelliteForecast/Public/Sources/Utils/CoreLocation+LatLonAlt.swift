@@ -47,9 +47,9 @@ extension CLLocationCoordinate2D: @retroactive Equatable {
 extension LatLonAlt {
     public init(location: CLLocation) {
         self.init(
-            lat: location.coordinate.latitude,
-            lon: location.coordinate.longitude,
-            alt: location.altitude
+            location.coordinate.latitude,
+            location.coordinate.longitude,
+            location.altitude
         )
     }
 }

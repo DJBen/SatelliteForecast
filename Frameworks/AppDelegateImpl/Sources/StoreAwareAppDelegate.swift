@@ -87,7 +87,7 @@ public class StoreAwareAppDelegate: NSObject, AppDelegateImplementation {
                 if let anObserver = (userInfo["observer"] as? Data).flatMap({ try? JSONDecoder().decode(LatLonAlt.self, from: $0) }) {
                     observer = anObserver
                 } else if let lat = (userInfo["lat"] as? String).flatMap(Double.init), let lon = (userInfo["lon"] as? String).flatMap(Double.init), let alt = (userInfo["alt"] as? String).flatMap(Double.init) {
-                    observer = LatLonAlt(lat: lat, lon: lon, alt: alt)
+                    observer = LatLonAlt(lat, lon, alt)
                 } else {
                     break
                 }

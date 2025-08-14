@@ -1,5 +1,5 @@
 {
-  "originHash" : "841e015ae4df2938d7ca96d83f8d893550472a071b7ea59edd30d8b07f41f9b8",
+  "originHash" : "2b07f23b03f061b9a80594a3255f3a52e0bf4ab1a06fa33254d0c4173c5375f0",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -42,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/DJBen/Ch3.git",
       "state" : {
-        "branch" : "fix-compilation",
-        "revision" : "ab0c4d6351bfd966ecb6bd73f95fe569624a038d"
+        "revision" : "ab0c4d6351bfd966ecb6bd73f95fe569624a038d",
+        "version" : "3.6.0-fix"
       }
     },
     {
@@ -60,8 +60,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/firebase/firebase-ios-sdk.git",
       "state" : {
-        "revision" : "4e62da1e5e6baf61674d3f5ae23d6d60c19f9c4a",
-        "version" : "12.0.0"
+        "revision" : "b9bf3adac18e6e3059167194aeb632f15a5ba4b2",
+        "version" : "12.1.0"
       }
     },
     {
@@ -78,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/googleads/google-ads-on-device-conversion-ios-sdk",
       "state" : {
-        "revision" : "428d8bb138e00f9a3f4f61cc6cd8863607524f65",
-        "version" : "2.1.0"
+        "revision" : "e15f979c3eaf477d24e5bfec9d87f1d76fbac297",
+        "version" : "2.2.0"
       }
     },
     {
@@ -87,8 +87,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/GoogleAppMeasurement.git",
       "state" : {
-        "revision" : "63c18311aac00032f15f5ce431c9e83ada96c386",
-        "version" : "12.0.0"
+        "revision" : "883305109ead4599e4ca59591754ee72e81e6b5e",
+        "version" : "12.1.0"
       }
     },
     {
@@ -123,8 +123,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/gtm-session-fetcher.git",
       "state" : {
-        "revision" : "c756a29784521063b6a1202907e2cc47f41b667c",
-        "version" : "4.5.0"
+        "revision" : "fb7f2740b1570d2f7599c6bb9531bf4fad6974b7",
+        "version" : "5.0.0"
       }
     },
     {
@@ -168,8 +168,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ReactiveCocoa/ReactiveSwift.git",
       "state" : {
-        "revision" : "c5eecb5374ac342e22d46abd333e4c8c698c93cc",
-        "version" : "7.2.0"
+        "revision" : "a44317ce38b5bcce173b03f5d36cfdc939e1768b",
+        "version" : "7.2.1"
       }
     },
     {
@@ -182,12 +182,30 @@
       }
     },
     {
+      "identity" : "satellitekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/DJBen/SatelliteKit.git",
+      "state" : {
+        "revision" : "d279d1b4ed081e7658eed3f8e9df0fd9c6d5c2ce",
+        "version" : "3.0.0"
+      }
+    },
+    {
       "identity" : "sqlite.swift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/stephencelis/SQLite.swift.git",
       "state" : {
         "revision" : "392dd6058624d9f6c5b4c769d165ddd8c7293394",
         "version" : "0.15.4"
+      }
+    },
+    {
+      "identity" : "starrynight",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/DJBen/StarryNight.git",
+      "state" : {
+        "revision" : "db61f90396f26c2c7f64c90e91f8e65ce08fba43",
+        "version" : "1.0.0"
       }
     },
     {
@@ -220,7 +238,7 @@
     {
       "identity" : "swiftrex",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SwiftRex/SwiftRex",
+      "location" : "https://github.com/SwiftRex/SwiftRex.git",
       "state" : {
         "revision" : "b5b5409c221c5b69bd6b074e84988f90b098e347",
         "version" : "0.8.12"
@@ -240,8 +258,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
       "state" : {
-        "revision" : "23e3442166b5122f73f9e3e622cd1e4bafeab3b7",
-        "version" : "1.6.0"
+        "revision" : "b2ed9eabefe56202ee4939dd9fc46b6241c88317",
+        "version" : "1.6.1"
       }
     }
   ],

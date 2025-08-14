@@ -49,7 +49,7 @@ struct SkyChartSatelliteIndicator: View {
             }
             .position(
                 SkyChartUtils.point(
-                    at: AziEleDst(azim: state.coordinate.azim, elev: state.coordinate.elev, dist: 0),
+                    at: AziEle(state.coordinate.azim, state.coordinate.elev),
                     rect: rect
                 )
             )
@@ -62,7 +62,7 @@ struct SkyChartSatelliteIndicator_Previews: PreviewProvider {
     static var previews: some View {
         SkyChartSatelliteIndicator(
             state: SkyChartSatelliteIndicatorState(
-                coordinate: AziEleDst(azim: 0, elev: 30, dist: 0)
+                coordinate: AziEleDst(0, 30, 0)
             )
         )
         .previewLayout(.fixed(width: 200, height: 200))

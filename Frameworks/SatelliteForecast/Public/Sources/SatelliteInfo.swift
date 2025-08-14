@@ -34,10 +34,3 @@ public struct SatelliteInfo: Sendable {
 }
 
 extension SatelliteInfo: Equatable {}
-
-extension SatelliteInfo: Hashable {
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(noradIndex)
-        hasher.combine(elements)
-    }
-}

@@ -1,10 +1,3 @@
-//
-//  MissionControlView.swift
-//  SatelliteForecastImpl
-//
-//  Created by Ben Lu on 4/3/22.
-//
-
 import Combine
 import SwiftUI
 import MapKit
@@ -12,14 +5,27 @@ import SatelliteForecast
 @preconcurrency import SatelliteKit
 import SwiftUIVisualEffects
 
+class SatelliteTimeLabelAnnotation: MKPointAnnotation {
+    let displayTime: String
+    init(coordinate: CLLocationCoordinate2D, displayTime: String) {
+        self.displayTime = displayTime
+        super.init()
+        self.coordinate = coordinate
+        self.title = displayTime
+    }
+}
+
 /// A world map showing the satellite ground tracks akin to that of mission control room of space agencies.
 struct MissionControlView: View {
     let satelliteInfo: SatelliteInfo
     let julianDateProvider: () -> Double
     let julianDateOffset: Double
+    /// Optional user location for visibility circle
+    let userLocation: CLLocation?
 
     @State private var currentDateCoordinate: DateCoordinate?
     @State private var satelliteGroundTrack: [DateCoordinate] = []
+    @State private var satelliteLabelTrack: [DateCoordinate] = []
     
     enum ZoomLevel: Equatable, Hashable {
         case global
@@ -28,13 +34,19 @@ struct MissionControlView: View {
 
     @State var zoomLevel: ZoomLevel = .global
     
-    // Timer for updating satellite position and ground track
-    @State private var refreshTimer = Timer.publish(
-        every: 0.25,
+    // Timer for updating satellite position
+    @State private var positionTimer = Timer.publish(
+        every: 0.2,
         on: .main,
         in: .common
-    )
-    .autoconnect()
+    ).autoconnect()
+
+    // Timer for updating ground tracks and label track
+    @State private var trackTimer = Timer.publish(
+        every: 10.0,
+        on: .main,
+        in: .common
+    ).autoconnect()
 
     @Environment(\.colorScheme) private var colorScheme
 
@@ -44,7 +56,9 @@ struct MissionControlView: View {
                 MissionControlViewControllerWrapperView(
                     currentDateCoordinate: currentDateCoordinate,
                     satelliteGroundTrack: satelliteGroundTrack,
+                    satelliteLabelTrack: satelliteLabelTrack,
                     zoomLevel: $zoomLevel,
+                    userLocation: userLocation, // pass down
                 )
             } else {
                 // Show loading state while computing initial position
@@ -87,29 +101,72 @@ struct MissionControlView: View {
         }
         .cornerRadius(16)
         .onAppear {
-            updateMissionControlState()
+            updateAllTracks()
+            updateSatellitePositionOnly()
         }
-        .onReceive(refreshTimer) { _ in
-            updateMissionControlState()
+        .onReceive(positionTimer) { _ in
+            updateSatellitePositionOnly()
+        }
+        .onReceive(trackTimer) { _ in
+            updateAllTracks()
         }
     }
-    
-    private func updateMissionControlState() {
+
+    private func updateSatellitePositionOnly() {
         let jd = julianDateProvider() + julianDateOffset
         do {
-            let satelliteCoordinate = try Satellite(
+            let satellite = try Satellite(
                 withTLE: satelliteInfo.elements
-            ).geoPosition(
+            )
+            let geoPosition = try satellite.geoPosition(
                 julianDays: jd
             )
-            let groundTrack = try satelliteInfo.elements.generateGroundTrack(
-                julianDateRange: jd...(jd + TimeConstants.hrs2day * 4),
-                interval: 10 * TimeConstants.min2day
+            currentDateCoordinate = DateCoordinate(
+                julianDate: jd,
+                coordinate: geoPosition,
             )
-            currentDateCoordinate = DateCoordinate(julianDate: jd, coordinate: satelliteCoordinate)
+        } catch {
+            print("Error updating satellite position: \(error)")
+        }
+    }
+
+    private func updateAllTracks() {
+        let jd = julianDateProvider() + julianDateOffset
+        do {
+            // Generate label track at every 30-min interval for the next 4 hours
+            let now = Date()
+            let calendar = Calendar.current
+            var comps = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: now)
+            let minute = comps.minute ?? 0
+            // Find next :00 or :30
+            if minute < 30 {
+                comps.minute = 30
+            } else {
+                comps.hour = (comps.hour ?? 0) + 1
+                comps.minute = 0
+            }
+            comps.second = 0
+            comps.nanosecond = 0
+            let firstMark = calendar.date(from: comps) ?? now
+            let min2day = 1.0 / (24.0 * 60.0)
+            let interval = 30.0 * min2day // 30 minutes in Julian days
+            let startJD = firstMark.julianDate
+            let endJD = startJD + 4.0 * TimeConstants.hrs2day // 4 hours later
+            let labelTrack = try satelliteInfo.elements.generateGroundTrack(
+                julianDateRange: startJD...endJD,
+                interval: interval,
+            )
+            satelliteLabelTrack = labelTrack
+
+            let groundTrack = try satelliteInfo.elements.generateGroundTrack(
+                julianDateRange: jd...(endJD - 30 * TimeConstants.min2day),
+                interval: 10 * TimeConstants.min2day,
+            )
             satelliteGroundTrack = groundTrack
         } catch {
             print("Error generating ground track: \(error)")
+            satelliteGroundTrack = []
+            satelliteLabelTrack = []
         }
     }
 }
@@ -121,12 +178,16 @@ struct MissionControlViewControllerWrapperView: UIViewControllerRepresentable {
 
     var currentDateCoordinate: DateCoordinate
     var satelliteGroundTrack: [DateCoordinate]
+    var satelliteLabelTrack: [DateCoordinate]
     @Binding var zoomLevel: MissionControlView.ZoomLevel
+    var userLocation: CLLocation? // add property
 
     func makeUIViewController(context: Context) -> MissionControlViewController {
         let viewController = MissionControlViewController(
             currentDateCoordinate: currentDateCoordinate,
-            dateCoordinates: satelliteGroundTrack
+            dateCoordinates: satelliteGroundTrack,
+            labelTrack: satelliteLabelTrack,
+            userLocation: userLocation,
         )
         viewController.delegate = context.coordinator
         return viewController
@@ -136,7 +197,9 @@ struct MissionControlViewControllerWrapperView: UIViewControllerRepresentable {
         uiViewController.setState(
             currentDateCoordinate: currentDateCoordinate,
             dateCoordinates: satelliteGroundTrack,
-            zoomLevel: zoomLevel
+            labelTrack: satelliteLabelTrack,
+            zoomLevel: zoomLevel,
+            userLocation: userLocation
         )
     }
 
@@ -168,27 +231,42 @@ extension MKGeodesicPolyline {
 class CurrentPositionAnnotation: MKPointAnnotation {
 }
 
+
+class UserLocationAnnotation: MKPointAnnotation {}
+
+class UserVisibilityLabelAnnotation: MKPointAnnotation {}
+
+
 class MissionControlViewController: UIViewController {
     var mapView: MKMapView!
     weak var delegate: MissionControlViewControllerDelegate?
 
-    var currentDateCoordinate: DateCoordinate?
-    var dateCoordinates: [DateCoordinate]?
+    var currentDateCoordinate: DateCoordinate
+    var dateCoordinates: [DateCoordinate]
+    var labelTrack: [DateCoordinate]
     var currentZoomLevel: MissionControlView.ZoomLevel?
-    
+    var userLocation: CLLocation?
+    var satelliteAltitude: Double?
+
     private var currentPositionAnnotation: CurrentPositionAnnotation?
+    private var userCircleOverlay: MKCircle?
+    private var userLocationAnnotation: UserLocationAnnotation?
+    private var userVisibilityLabelAnnotation: UserVisibilityLabelAnnotation?
+    private var satelliteTimeLabelAnnotations: NSHashTable<SatelliteTimeLabelAnnotation> = .init()
 
     var cancellables = Set<AnyCancellable>()
 
     init(
         currentDateCoordinate: DateCoordinate,
-        dateCoordinates: [DateCoordinate]
+        dateCoordinates: [DateCoordinate],
+        labelTrack: [DateCoordinate],
+        userLocation: CLLocation?,
     ) {
-        super.init(nibName: nil, bundle: nil)
-
-        // Set initial data
         self.currentDateCoordinate = currentDateCoordinate
         self.dateCoordinates = dateCoordinates
+        self.labelTrack = labelTrack
+        self.userLocation = userLocation
+        super.init(nibName: nil, bundle: nil)
     }
 
     required init?(coder: NSCoder) {
@@ -222,56 +300,91 @@ class MissionControlViewController: UIViewController {
         currentPositionAnnotation = CurrentPositionAnnotation()
         
         // Use the provided initial coordinate data
-        let coordinate = CLLocationCoordinate2D(currentDateCoordinate!.coordinate)
+        let coordinate = CLLocationCoordinate2D(currentDateCoordinate.coordinate)
         currentPositionAnnotation!.coordinate = coordinate
         mapView.setCenter(coordinate, animated: false)
         
         // Add initial ground track overlays
-        addGroundTrackOverlays(dateCoordinates: dateCoordinates!, currentCoordinate: currentDateCoordinate!)
+        addGroundTrackOverlays(dateCoordinates: dateCoordinates, currentCoordinate: currentDateCoordinate)
         
         mapView.addAnnotation(currentPositionAnnotation!)
+        
+        // Add initial user circle overlay and pin if needed
+        if let userLocation = userLocation {
+            addOrUpdateUserCircleOverlay(
+                userLocation: userLocation,
+                satelliteCoordinate: currentDateCoordinate.coordinate,
+            )
+            addOrUpdateUserLocationAnnotation(
+                userLocation: userLocation
+            )
+        }
     }
     
-    private func addGroundTrackOverlays(dateCoordinates: [DateCoordinate], currentCoordinate: DateCoordinate) {
+    private func addGroundTrackOverlays(
+        dateCoordinates: [DateCoordinate],
+        currentCoordinate: DateCoordinate
+    ) {
         // Remove existing overlays
         mapView.overlays
             .filter { $0 is MKGeodesicPolyline }
             .forEach { mapView.removeOverlay($0) }
-            
-        // Create new overlays
-        let beforeDataset = dateCoordinates.prefix(
-            while: { $0.julianDate <= currentCoordinate.julianDate }
-        )
-        let polyline = MKGeodesicPolyline(
-            points: beforeDataset
-            .map(\.coordinate).map { MKMapPoint(CLLocationCoordinate2D($0)) },
-            count: beforeDataset.count
-        )
-        polyline.sf_identifier = "before"
-        mapView.addOverlay(polyline)
-        
-        let afterDataset = dateCoordinates.drop(
-            while: { $0.julianDate < currentCoordinate.julianDate }
-        )
+
         let afterPolyline = MKGeodesicPolyline(
-            points: Array(afterDataset)
+            points: Array(dateCoordinates)
             .map(\.coordinate).map { MKMapPoint(CLLocationCoordinate2D($0)) },
-            count: afterDataset.count
+            count: dateCoordinates.count
         )
         afterPolyline.sf_identifier = "after"
         mapView.addOverlay(afterPolyline)
+
+        // Build set of displayTimes needed
+        let dateFormatter: DateFormatter = {
+            let df = DateFormatter()
+            df.timeStyle = .short
+            df.dateStyle = .none
+            df.timeZone = TimeZone.current
+            return df
+        }()
+        let neededDisplayTimes: Set<String> = Set(labelTrack.map { dc in
+            dateFormatter.string(from: Date(julianDate: dc.julianDate))
+        })
+
+        // Remove annotations whose displayTime is not needed
+        for annotation in satelliteTimeLabelAnnotations.allObjects {
+            if !neededDisplayTimes.contains(annotation.displayTime) {
+                mapView.removeAnnotation(annotation)
+                satelliteTimeLabelAnnotations.remove(annotation)
+            }
+        }
+
+        // Add new annotations for displayTimes not already present
+        let existingDisplayTimes: Set<String> = Set(satelliteTimeLabelAnnotations.allObjects.map { $0.displayTime })
+        for dc in labelTrack {
+            let timeString = dateFormatter.string(from: Date(julianDate: dc.julianDate))
+            if !existingDisplayTimes.contains(timeString) {
+                let annotation = SatelliteTimeLabelAnnotation(coordinate: CLLocationCoordinate2D(dc.coordinate), displayTime: timeString)
+                satelliteTimeLabelAnnotations.add(annotation)
+                mapView.addAnnotation(annotation)
+            }
+        }
+        // (Existing annotations for marks in window are left untouched)
     }
 
     func setState(
         currentDateCoordinate: DateCoordinate,
         dateCoordinates: [DateCoordinate],
-        zoomLevel: MissionControlView.ZoomLevel
+        labelTrack: [DateCoordinate],
+        zoomLevel: MissionControlView.ZoomLevel,
+        userLocation: CLLocation?,
     ) {
         let isInitialSetup = self.currentDateCoordinate == nil
         let coordinateChanged = self.currentDateCoordinate != currentDateCoordinate
         let dateCoordinatesChanged = self.dateCoordinates != dateCoordinates
         let zoomLevelChanged = self.currentZoomLevel != zoomLevel
-        
+        let userLocationChanged = self.userLocation != userLocation
+        let satelliteAltitudeChanged = self.satelliteAltitude != satelliteAltitude
+
         // Only recenter and zoom when zoom level is explicitly changed by user
         if zoomLevelChanged {
             let camera = MKMapCamera(
@@ -284,7 +397,7 @@ class MissionControlViewController: UIViewController {
         }
 
         // Early return if nothing changed
-        if !coordinateChanged && !dateCoordinatesChanged {
+        if !coordinateChanged && !dateCoordinatesChanged && !userLocationChanged && !satelliteAltitudeChanged {
             return
         }
 
@@ -299,6 +412,7 @@ class MissionControlViewController: UIViewController {
         
         // Only update overlays if the date coordinates array actually changed
         if dateCoordinatesChanged {
+            self.labelTrack = labelTrack
             addGroundTrackOverlays(dateCoordinates: dateCoordinates, currentCoordinate: currentDateCoordinate)
             self.dateCoordinates = dateCoordinates
         }
@@ -322,6 +436,23 @@ class MissionControlViewController: UIViewController {
             // Update satellite position immediately
             updateSatellitePosition(targetCoordinate)
         }
+
+        // Update user circle overlay and pin if needed
+        if userLocationChanged || satelliteAltitudeChanged {
+            if let userLocation = userLocation {
+                addOrUpdateUserCircleOverlay(
+                    userLocation: userLocation,
+                    satelliteCoordinate: currentDateCoordinate.coordinate
+                )
+                addOrUpdateUserLocationAnnotation(
+                    userLocation: userLocation
+                )
+            } else {
+                removeUserCircleOverlay()
+                removeUserLocationAnnotation()
+            }
+            self.userLocation = userLocation
+        }
     }
 
     func centerCoordinateDistance(for zoomLevel: MissionControlView.ZoomLevel) -> Double {
@@ -342,88 +473,193 @@ class MissionControlViewController: UIViewController {
         
         currentPositionAnnotation?.coordinate = coordinate
     }
+
+    private func addOrUpdateUserCircleOverlay(
+        userLocation: CLLocation,
+        satelliteCoordinate: LatLonAlt
+    ) {
+        // Remove existing overlay if present
+        if let overlay = userCircleOverlay {
+            mapView.removeOverlay(overlay)
+        }
+        
+        // Calculate visibility radius for satellite at 10 degrees above horizon
+        // Earth's radius in kilometers
+        let earthRadiusKm: Double = 6371.0
+        
+        // Minimum elevation angle in radians (10 degrees)
+        let minElevationDegrees: Double = 10.0
+        let minElevationRadians = minElevationDegrees * .pi / 180.0
+        
+        // Calculate the ground distance for 10-degree elevation
+        // Using the formula: d = R * (arccos(R / (R + h)) - elevation)
+        // For ground observer looking at 10° elevation, we calculate the ground distance
+        // where a satellite would appear at exactly 10° above horizon
+
+        let satelliteAltitudeKm: Double = satelliteCoordinate.alt
+        let radiusWithAltitude = earthRadiusKm + satelliteAltitudeKm
+
+        // Compute the central angle between observer and satellite at minimum elevation
+        let centralAngle = acos(earthRadiusKm / radiusWithAltitude)
+        // Subtract the minimum elevation angle to get the angle subtended at Earth's center
+        let groundAngle = centralAngle - minElevationRadians
+
+        // Ground distance is Earth's radius times the ground angle (in radians)
+        let distanceKm = earthRadiusKm * groundAngle
+
+        // Convert to meters
+        let radiusMeters = max(0, distanceKm * 1000.0)
+        
+        let circle = MKCircle(
+            center: userLocation.coordinate,
+            radius: radiusMeters
+        )
+        userCircleOverlay = circle
+        mapView.addOverlay(circle)
+    }
+
+    private func removeUserCircleOverlay() {
+        if let overlay = userCircleOverlay {
+            mapView.removeOverlay(overlay)
+            userCircleOverlay = nil
+        }
+    }
+
+    private func addOrUpdateUserLocationAnnotation(
+        userLocation: CLLocation
+    ) {
+        // User pin
+        if let annotation = userLocationAnnotation {
+            annotation.coordinate = userLocation.coordinate
+        } else {
+            let annotation = UserLocationAnnotation()
+            annotation.coordinate = userLocation.coordinate
+            userLocationAnnotation = annotation
+            mapView.addAnnotation(annotation)
+        }
+
+        // Label annotation
+        if let labelAnnotation = userVisibilityLabelAnnotation {
+            labelAnnotation.coordinate = userLocation.coordinate
+        } else {
+            let labelAnnotation = UserVisibilityLabelAnnotation()
+            labelAnnotation.coordinate = userLocation.coordinate
+            userVisibilityLabelAnnotation = labelAnnotation
+            mapView.addAnnotation(labelAnnotation)
+        }
+    }
+
+    private func removeUserLocationAnnotation() {
+        if let annotation = userLocationAnnotation {
+            mapView.removeAnnotation(annotation)
+            userLocationAnnotation = nil
+        }
+        if let labelAnnotation = userVisibilityLabelAnnotation {
+            mapView.removeAnnotation(labelAnnotation)
+            userVisibilityLabelAnnotation = nil
+        }
+    }
 }
 
 extension MissionControlViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        guard annotation is CurrentPositionAnnotation else {
-            return nil
+        if annotation is CurrentPositionAnnotation {
+            let identifier = "currentPosition"
+            var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKMarkerAnnotationView
+            if annotationView == nil {
+                annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+            } else {
+                annotationView?.annotation = annotation
+            }
+            annotationView?.canShowCallout = false
+            annotationView?.glyphImage = UIImage(
+                named: "glyph_satellite",
+                in: .module,
+                compatibleWith: nil
+            )
+            annotationView?.markerTintColor = .systemOrange
+            annotationView?.glyphTintColor = .white
+            annotationView?.displayPriority = .required
+            return annotationView
+        } else if annotation is UserVisibilityLabelAnnotation {
+            let identifier = "userVisibilityLabel"
+            var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
+            if annotationView == nil {
+                let labelView = MKAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+                let label = UILabel()
+                label.text = NSLocalizedString(
+                    "Visible",
+                    bundle: .module,
+                    comment: "Map annotation indicating the radius that space stations are visible for the user"
+                )
+                label.font = UIFont.boldSystemFont(ofSize: 14)
+                label.textColor = .systemYellow
+                label.backgroundColor = UIColor(white: 0, alpha: 0.5)
+                label.layer.cornerRadius = 6
+                label.layer.masksToBounds = true
+                label.sizeToFit()
+                label.textAlignment = .center
+                label.frame = CGRect(x: 0, y: 0, width: label.frame.width + 16, height: label.frame.height + 6)
+                labelView.addSubview(label)
+                labelView.frame = label.frame
+                labelView.centerOffset = CGPoint(x: 0, y: -40)
+                annotationView = labelView
+            } else {
+                annotationView?.annotation = annotation
+            }
+            annotationView?.canShowCallout = false
+            return annotationView
+        } else if let timeLabelAnnotation = annotation as? SatelliteTimeLabelAnnotation {
+            let identifier = "satelliteTimeLabel" + timeLabelAnnotation.displayTime
+            var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
+            if annotationView == nil {
+                let labelView = MKAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+                let label = UILabel()
+                label.text = timeLabelAnnotation.displayTime
+                label.font = UIFont.monospacedDigitSystemFont(ofSize: 12, weight: .medium)
+                label.textColor = .white
+                label.backgroundColor = UIColor(white: 0, alpha: 0.7)
+                label.layer.cornerRadius = 4
+                label.layer.masksToBounds = true
+                label.sizeToFit()
+                label.textAlignment = .center
+                label.frame = CGRect(x: 0, y: 0, width: label.frame.width + 10, height: label.frame.height + 4)
+                labelView.addSubview(label)
+                labelView.frame = label.frame
+                annotationView = labelView
+            } else {
+                annotationView?.annotation = annotation
+            }
+            annotationView?.canShowCallout = false
+            return annotationView
         }
-        
-        let identifier = "currentPosition"
-        var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKMarkerAnnotationView
-        
-        if annotationView == nil {
-            annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
-        } else {
-            annotationView?.annotation = annotation
-        }
-        
-        annotationView?.canShowCallout = false
-        annotationView?.glyphImage = UIImage(
-            named: "glyph_satellite",
-            in: .module,
-            compatibleWith: nil
-        )
-        annotationView?.markerTintColor = .systemOrange
-        annotationView?.glyphTintColor = .white
-        
-        return annotationView
+        return nil
     }
 
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         if let polyline = overlay as? MKGeodesicPolyline {
-            let isBefore = polyline.sf_identifier.contains("before")
-
-            let colorsAndStops: [GradientPathRenderer.ColorAndStop]
-
-            if isBefore {
-                colorsAndStops = [
-                    GradientPathRenderer.ColorAndStop(
-                        color: UIColor.systemRed.withAlphaComponent(0.3).cgColor,
-                        stop: 0
-                    ),
-                    GradientPathRenderer.ColorAndStop(
-                        color: UIColor.systemOrange.withAlphaComponent(0.3).cgColor,
-                        stop: 0.25
-                    ),
-                    GradientPathRenderer.ColorAndStop(
-                        color: UIColor.systemYellow.withAlphaComponent(0.3).cgColor,
-                        stop: 0.5
-                    ),
-                    GradientPathRenderer.ColorAndStop(
-                        color: UIColor.systemGreen.withAlphaComponent(0.3).cgColor,
-                        stop: 0.75
-                    ),
-                    GradientPathRenderer.ColorAndStop(
-                        color: UIColor.systemBlue.withAlphaComponent(0.3).cgColor,
-                        stop: 1
-                    )
-                ]
-            } else {
-                colorsAndStops = [
-                    GradientPathRenderer.ColorAndStop(
-                        color: UIColor.systemBlue.cgColor,
-                        stop: 0
-                    ),
-                    GradientPathRenderer.ColorAndStop(
-                        color: UIColor.systemGreen.cgColor,
-                        stop: 0.25
-                    ),
-                    GradientPathRenderer.ColorAndStop(
-                        color: UIColor.systemYellow.cgColor,
-                        stop: 0.5
-                    ),
-                    GradientPathRenderer.ColorAndStop(
-                        color: UIColor.systemOrange.cgColor,
-                        stop: 0.75
-                    ),
-                    GradientPathRenderer.ColorAndStop(
-                        color: UIColor.systemRed.cgColor,
-                        stop: 1
-                    )
-                ]
-            }
+            let colorsAndStops: [GradientPathRenderer.ColorAndStop] = [
+                GradientPathRenderer.ColorAndStop(
+                    color: UIColor.systemBlue.cgColor,
+                    stop: 0
+                ),
+                GradientPathRenderer.ColorAndStop(
+                    color: UIColor.systemGreen.cgColor,
+                    stop: 0.25
+                ),
+                GradientPathRenderer.ColorAndStop(
+                    color: UIColor.systemYellow.cgColor,
+                    stop: 0.5
+                ),
+                GradientPathRenderer.ColorAndStop(
+                    color: UIColor.systemOrange.cgColor,
+                    stop: 0.75
+                ),
+                GradientPathRenderer.ColorAndStop(
+                    color: UIColor.systemRed.cgColor,
+                    stop: 1
+                )
+            ]
 
             let renderer = GradientPathRenderer(
                 polyline: polyline,
@@ -432,7 +668,14 @@ extension MissionControlViewController: MKMapViewDelegate {
             renderer.lineWidth = 10
             return renderer
         }
-
+        // Add circle overlay rendering for user visibility
+        if let circle = overlay as? MKCircle {
+            let renderer = MKCircleRenderer(circle: circle)
+            renderer.fillColor = UIColor.systemYellow.withAlphaComponent(0.15)
+            renderer.strokeColor = UIColor.systemYellow.withAlphaComponent(0.5)
+            renderer.lineWidth = 2
+            return renderer
+        }
         return MKOverlayRenderer()
     }
 }
@@ -454,7 +697,8 @@ struct MissionControlView_Previews: PreviewProvider {
         MissionControlView(
             satelliteInfo: satelliteInfo,
             julianDateProvider: { Date().julianDate },
-            julianDateOffset: 0
+            julianDateOffset: 0,
+            userLocation: nil
         )
         .frame(width: 368, height: 280)
     }
