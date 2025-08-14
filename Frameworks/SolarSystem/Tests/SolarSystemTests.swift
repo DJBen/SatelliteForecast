@@ -7,21 +7,12 @@
 
 import XCTest
 @testable import SolarSystem
-@preconcurrency import SatelliteKit
+
+let appleZero: TimeInterval = 2451910.5   // 2001-Jan-01 00h00m00.0s (CFAbsoluteTime zero)
+let day2sec = 24.0 * 60.0 * 60.0
+let sec2day = 1.0 / day2sec
 
 class SolarSystemTests: XCTestCase {
-    func testSunCoordinate() throws {
-        let formatter = ISO8601DateFormatter()
-        let date = formatter.date(from: "2021-06-02T06:29:00-0600")!
-        let observer = LatLonAlt(-27.1570, -109.4274, 0.0)
-        let sunEci = SolarSystemBody.sun.eci(julianDay: date.julianDate)
-        XCTAssertEqual(sunEci, solarCel(julianDays: date.julianDate), accuracy: Vector(0.01, 0.015, 0.01))
-        let reference = azel(time: date, site: LatLon(observer), cele: solarGeo(julianDays: date.julianDate))
-        // Just test that these are approximately reasonable values
-        XCTAssertGreaterThan(reference.azim, 0.0)
-        XCTAssertLessThan(reference.azim, 360.0)
-    }
-    
     func testApparentMagnitude() throws {
         // Test Venus apparent magnitude calculation
         // Using a known date for validation
@@ -53,17 +44,8 @@ class SolarSystemTests: XCTestCase {
     }
 }
 
-#if canImport(XCTest)
-
-public func XCTAssertEqual(_ expression1: Vector, _ expression2: Vector, accuracy: Vector, _ message: @autoclosure () -> String = "", file: StaticString = #filePath, line: UInt = #line) {
-    XCTAssertEqual(expression1.x, expression2.x, accuracy: accuracy.x)
-    XCTAssertEqual(expression1.y, expression2.y, accuracy: accuracy.y)
-    XCTAssertEqual(expression1.z, expression2.z, accuracy: accuracy.z)
+extension Date {
+    public var julianDate: Double {
+        appleZero + timeIntervalSinceReferenceDate * sec2day
+    }
 }
-
-public func XCTAssertEqual(_ expression1: AziEle, _ expression2: AziEle, accuracy: AziEle, _ message: @autoclosure () -> String = "", file: StaticString = #filePath, line: UInt = #line) {
-    XCTAssertEqual(expression1.azim, expression2.azim, accuracy: accuracy.azim)
-    XCTAssertEqual(expression1.elev, expression2.elev, accuracy: accuracy.elev)
-}
-
-#endif

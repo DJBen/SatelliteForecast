@@ -182,7 +182,8 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
                         let aziEle = SkyChartUtils.aziEle(at: point, in: rect)
                         let raDec = azelToRADec(aziEle: aziEle, julianDate: julianDate, site: (context.observer.lat, context.observer.lon))
                         let vec = Vector(raDec: raDec)
-                        if let star = context.starManager.closestStar(to: vec, maximumMagnitude: magnitude, maximumAngularDistance: nil) {
+                        let vec3 = SIMD3<Double>(vec.x, vec.y, vec.z)
+                        if let star = context.starManager.closestStar(to: vec3, maximumMagnitude: magnitude, maximumAngularDistance: nil) {
                             context.starTapped(star)
                         }
                     }

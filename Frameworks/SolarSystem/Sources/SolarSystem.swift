@@ -7,10 +7,10 @@
 //
 
 import Foundation
-@preconcurrency import SatelliteKit
+import simd
 
 extension SolarSystemBody {
-    public func eci(julianDay: Double) -> Vector {
+    public func eci(julianDay: Double) -> SIMD3<Double> {
         VSOP87.getBodyECICoordinate(self, julianDay: julianDay)
     }
     
@@ -154,18 +154,18 @@ extension SolarSystemBody {
         let earthHeliocentricPosition = VSOP87.getBodyHeliocentricEclipticCoordinate(.earth, julianDay: julianDay)
         
         // Convert to km
-        let planetPosition = Vector(planetHeliocentricPosition) * au2Km
-        let earthPosition = Vector(earthHeliocentricPosition) * au2Km
-        let sunPosition = Vector(0, 0, 0) // Sun is at origin in heliocentric coordinates
-        
+        let planetPosition = planetHeliocentricPosition * au2Km
+        let earthPosition = earthHeliocentricPosition * au2Km
+        let sunPosition: SIMD3<Double> = .zero // Sun is at origin in heliocentric coordinates
+
         // Observer position is Earth center in heliocentric coordinates
         let observerHeliocentricPosition = earthPosition
         
         // Calculate distances in km
-        let d_BS = (planetPosition - sunPosition).magnitude() // Body-Sun distance
-        let d_BO = (planetPosition - observerHeliocentricPosition).magnitude() // Body-Observer distance  
-        let d_OS = (observerHeliocentricPosition - sunPosition).magnitude() // Observer-Sun distance
-        
+        let d_BS = simd_length(planetPosition - sunPosition) // Body-Sun distance
+        let d_BO = simd_length(planetPosition - observerHeliocentricPosition) // Body-Observer distance
+        let d_OS = simd_length(observerHeliocentricPosition - sunPosition) // Observer-Sun distance
+
         // Calculate phase angle using law of cosines
         let cosAlpha = (d_BO * d_BO + d_BS * d_BS - d_OS * d_OS) / (2.0 * d_BO * d_BS)
         let alpha = acos(max(-1.0, min(1.0, cosAlpha))) // Clamp to valid range for acos
@@ -193,9 +193,19 @@ extension VSOP87 {
     public static func getBodyECICoordinate(
         _ solarSystemBody: SolarSystemBody,
         julianDay: Double
-    ) -> Vector {
-        let geocentricEclipticalCoordinate = getBodyHeliocentricEclipticCoordinate(solarSystemBody, julianDay: julianDay) - getBodyHeliocentricEclipticCoordinate(.earth, julianDay: julianDay)
-        let (x, y, z) = (geocentricEclipticalCoordinate.x, geocentricEclipticalCoordinate.y, geocentricEclipticalCoordinate.z)
+    ) -> SIMD3<Double> {
+        let geocentricEclipticalCoordinate = getBodyHeliocentricEclipticCoordinate(
+            solarSystemBody,
+            julianDay: julianDay
+        ) - getBodyHeliocentricEclipticCoordinate(
+            .earth,
+            julianDay: julianDay
+        )
+        let (x, y, z) = (
+            geocentricEclipticalCoordinate.x,
+            geocentricEclipticalCoordinate.y,
+            geocentricEclipticalCoordinate.z
+        )
 
         // https://en.wikipedia.org/wiki/Axial_tilt#Earth
         let obliquity: Double = {
@@ -215,16 +225,10 @@ extension VSOP87 {
             return term.reduce(0, +)
         }()
 
-        let sini = sin(obliquity * deg2rad)
-        let cosi = cos(obliquity * deg2rad)
+        let sini = sin(obliquity / 180 * .pi)
+        let cosi = cos(obliquity / 180 * .pi)
         let eci_y = cosi * y - sini * z
         let eci_z = sini * y + cosi * z
-        return Vector(x, eci_y, eci_z)
-    }
-}
-
-extension Vector {
-    public init(_ rectangularCoordinate: RectangularCoordinate) {
-        self.init(rectangularCoordinate.x, rectangularCoordinate.y, rectangularCoordinate.z)
+        return SIMD3<Double>(x, eci_y, eci_z)
     }
 }

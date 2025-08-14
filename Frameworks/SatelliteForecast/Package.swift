@@ -32,7 +32,7 @@ let package = Package(
         .package(url: "https://github.com/nh7a/Geohash.git", branch: "main"),
         .package(path: "../ActivityView"),
         .package(path: "../AppDelegate"),
-        .package(url: "https://github.com/DJBen/SatelliteKit.git", from: "3.0.0"),
+        .package(path: "../SatelliteKit"),
         .package(url: "https://github.com/DJBen/StarryNight.git", from: "1.0.0"),
         .package(path: "../QSMag"),
         .package(path: "../SolarSystem"),

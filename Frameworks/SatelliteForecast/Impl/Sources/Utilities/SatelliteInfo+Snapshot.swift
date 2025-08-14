@@ -38,13 +38,13 @@ extension SatelliteSnapshot {
         let distance = (eciPosition - obsCel).magnitude()
         let solarCel = solarCel(julianDays: julianDate)
         let isIlluminated = AstroAlgorithms.hasLineOfSight(
-            object1Geo: eciPosition,
+            object1Geo: SIMD3<Double>(eciPosition),
             object2Geo: solarCel * au2Km
         )
         let phaseAngle = AstroAlgorithms.phaseAngle(
-            targetPosition: eciPosition,
+            targetPosition: SIMD3<Double>(eciPosition),
             sunPosition: solarCel,
-            observerPosition: obsCel
+            observerPosition: SIMD3<Double>(obsCel)
         )
         let sunElev = azel(
             time: Date(julianDate: julianDate),

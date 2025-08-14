@@ -7,50 +7,27 @@
 
 @preconcurrency import SatelliteKit
 import Darwin
-
-extension Vector {
-    public init(raDec: RADec) {
-        self.init(
-            cos(raDec.dec * deg2rad) * cos(raDec.ra * deg2rad),
-            cos(raDec.dec * deg2rad) * sin(raDec.ra * deg2rad),
-            sin(raDec.dec * deg2rad)
-        )
-    }
-
-    public func magnitudeSquared() -> Double {
-        return x * x + y * y + z * z
-    }
-}
-
-public func azelToRADec(
-    aziEle: AziEle,
-    julianDate: Double,
-    site: (Double, Double)
-) -> RADec {
-    let dec = asin(sin(deg2rad * aziEle.elev) * sin(deg2rad * site.0) + cos(deg2rad * aziEle.elev) * cos(deg2rad * site.0) * cos(deg2rad * aziEle.azim))
-    let lhsDivisor = -sin(deg2rad * aziEle.azim) * cos(deg2rad * aziEle.elev) / cos(dec)
-    let lhsDividend = (sin(deg2rad * aziEle.elev) - sin(dec) * sin(deg2rad * site.0)) / (cos(dec) * cos(deg2rad * site.0))
-    let lha = atan2pi(lhsDivisor, lhsDividend)
-    let ra = fmod(siteMeanSiderealTime(julianDate: julianDate, site.1) - rad2deg * lha, 360)
-    return RADec(ra, rad2deg * dec)
-}
+import simd
 
 public enum AstroAlgorithms {
     /// Whether two objects have line of sight (and not blocked by earth).
     ///
     /// One of the object's geocentric coordinate can be replaced by sun's coordinate
-    /// to determine if the object is illuminated. Note that this approach assumes a cynlindrical shadow, instead of the actual conic shaow.
+    /// to determine if the object is illuminated. Note that this approach assumes a cylindrical shadow, instead of the actual conic shadow.
     /// - Parameters:
     ///   - object1Geo: The object1's geocentric vector in kilometers.
-    ///   - object2Geo: The object1's geocentric vector in kilometers.
-    public static func hasLineOfSight(object1Geo: Vector, object2Geo: Vector) -> Bool {
-        let τ_min = (object1Geo.magnitudeSquared() - dotProduct(object1Geo, object2Geo))
-            / ((object1Geo.magnitudeSquared() + object2Geo.magnitudeSquared()) - 2 * dotProduct(object1Geo, object2Geo))
+    ///   - object2Geo: The object2's geocentric vector in kilometers.
+    public static func hasLineOfSight(object1Geo: SIMD3<Double>, object2Geo: SIMD3<Double>) -> Bool {
+        let object1MagSq = simd_length_squared(object1Geo)
+        let object2MagSq = simd_length_squared(object2Geo)
+        let dotProd = simd_dot(object1Geo, object2Geo)
+        let τ_min = (object1MagSq - dotProd)
+            / ((object1MagSq + object2MagSq) - 2 * dotProd)
         if τ_min < 0 || τ_min > 1 {
             return true
         }
 
-        return (1 - τ_min) * object1Geo.magnitudeSquared() + dotProduct(object1Geo, object2Geo) * τ_min >= EarthConstants.Rₑ * EarthConstants.Rₑ
+        return (1 - τ_min) * object1MagSq + dotProd * τ_min >= EarthConstants.Rₑ * EarthConstants.Rₑ
     }
 
     /// Calculate the air mass given a true zenith angle.
@@ -74,13 +51,13 @@ public enum AstroAlgorithms {
     ///   - observerPosition: The observer position in ECI frame.
     /// - Returns: The phase angle between the sun, the target and observer.
     public static func phaseAngle(
-        targetPosition: Vector,
-        sunPosition: Vector,
-        observerPosition: Vector
+        targetPosition: SIMD3<Double>,
+        sunPosition: SIMD3<Double>,
+        observerPosition: SIMD3<Double>
     ) -> Double {
-        let bodyObserverDist = (targetPosition - observerPosition).magnitude()
-        let sunObserverDist = (sunPosition - observerPosition).magnitude()
-        let sunBodyDist = (targetPosition - sunPosition).magnitude()
+        let bodyObserverDist = simd_length(targetPosition - observerPosition)
+        let sunObserverDist = simd_length(sunPosition - observerPosition)
+        let sunBodyDist = simd_length(targetPosition - sunPosition)
         let cosPhaseAngle = (bodyObserverDist * bodyObserverDist + sunBodyDist * sunBodyDist - sunObserverDist * sunObserverDist) / (2 * bodyObserverDist * sunBodyDist)
         return acos(cosPhaseAngle)
     }

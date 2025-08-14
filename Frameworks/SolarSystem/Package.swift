@@ -13,13 +13,11 @@ let package = Package(
             targets: ["SolarSystem"])
     ],
     dependencies: [
-        .package(url: "https://github.com/DJBen/SatelliteKit.git", from: "3.0.0"),
     ],
     targets: [
         .target(
             name: "SolarSystem",
             dependencies: [
-                "SatelliteKit",
             ],
             path: "Sources"
         ),

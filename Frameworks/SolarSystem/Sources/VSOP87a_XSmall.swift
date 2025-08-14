@@ -2,100 +2,49 @@
 //Greg Miller (gmiller@gregmiller.net) 2021.  Released as Public Domain
 
 import Foundation
+import simd
 
 class VSOP87a_XSmall {
-   public static func getMercury(t: Double) -> Array<Double> {
-      var temp=[0.0, 0.0, 0.0]
-      temp[0]=mercury_x(t:t)
-      temp[1]=mercury_y(t:t)
-      temp[2]=mercury_z(t:t)
-
-      return temp
+   public static func getMercury(t: Double) -> SIMD3<Double> {
+      return SIMD3<Double>(mercury_x(t:t), mercury_y(t:t), mercury_z(t:t))
    }
 
-   public static func getVenus(t: Double) -> Array<Double> {
-      var temp=[0.0, 0.0, 0.0]
-      temp[0]=venus_x(t:t)
-      temp[1]=venus_y(t:t)
-      temp[2]=venus_z(t:t)
-
-      return temp
+   public static func getVenus(t: Double) -> SIMD3<Double> {
+      return SIMD3<Double>(venus_x(t:t), venus_y(t:t), venus_z(t:t))
    }
 
-   public static func getEarth(t: Double) -> Array<Double> {
-      var temp=[0.0, 0.0, 0.0]
-      temp[0]=earth_x(t:t)
-      temp[1]=earth_y(t:t)
-      temp[2]=earth_z(t:t)
-
-      return temp
+   public static func getEarth(t: Double) -> SIMD3<Double> {
+      return SIMD3<Double>(earth_x(t:t), earth_y(t:t), earth_z(t:t))
    }
 
-   public static func getMars(t: Double) -> Array<Double> {
-      var temp=[0.0, 0.0, 0.0]
-      temp[0]=mars_x(t:t)
-      temp[1]=mars_y(t:t)
-      temp[2]=mars_z(t:t)
-
-      return temp
+   public static func getMars(t: Double) -> SIMD3<Double> {
+      return SIMD3<Double>(mars_x(t:t), mars_y(t:t), mars_z(t:t))
    }
 
-   public static func getJupiter(t: Double) -> Array<Double> {
-      var temp=[0.0, 0.0, 0.0]
-      temp[0]=jupiter_x(t:t)
-      temp[1]=jupiter_y(t:t)
-      temp[2]=jupiter_z(t:t)
-
-      return temp
+   public static func getJupiter(t: Double) -> SIMD3<Double> {
+      return SIMD3<Double>(jupiter_x(t:t), jupiter_y(t:t), jupiter_z(t:t))
    }
 
-   public static func getSaturn(t: Double) -> Array<Double> {
-      var temp=[0.0, 0.0, 0.0]
-      temp[0]=saturn_x(t:t)
-      temp[1]=saturn_y(t:t)
-      temp[2]=saturn_z(t:t)
-
-      return temp
+   public static func getSaturn(t: Double) -> SIMD3<Double> {
+      return SIMD3<Double>(saturn_x(t:t), saturn_y(t:t), saturn_z(t:t))
    }
 
-   public static func getUranus(t: Double) -> Array<Double> {
-      var temp=[0.0, 0.0, 0.0]
-      temp[0]=uranus_x(t:t)
-      temp[1]=uranus_y(t:t)
-      temp[2]=uranus_z(t:t)
-
-      return temp
+   public static func getUranus(t: Double) -> SIMD3<Double> {
+      return SIMD3<Double>(uranus_x(t:t), uranus_y(t:t), uranus_z(t:t))
    }
 
-   public static func getNeptune(t: Double) -> Array<Double> {
-      var temp=[0.0, 0.0, 0.0]
-      temp[0]=neptune_x(t:t)
-      temp[1]=neptune_y(t:t)
-      temp[2]=neptune_z(t:t)
-
-      return temp
+   public static func getNeptune(t: Double) -> SIMD3<Double> {
+      return SIMD3<Double>(neptune_x(t:t), neptune_y(t:t), neptune_z(t:t))
    }
 
-   public static func getEmb(t: Double) -> Array<Double> {
-      var temp=[0.0, 0.0, 0.0]
-      temp[0]=emb_x(t:t)
-      temp[1]=emb_y(t:t)
-      temp[2]=emb_z(t:t)
-
-      return temp
+   public static func getEmb(t: Double) -> SIMD3<Double> {
+      return SIMD3<Double>(emb_x(t:t), emb_y(t:t), emb_z(t:t))
    }
 
-   public static func getMoon(earth: Array<Double>, emb: Array<Double>) -> Array<Double> {
-      var temp=[0.0, 0.0, 0,0]
-
-      temp[0]=(emb[0]-earth[0])*(1 + 1 / 0.01230073677)
-      temp[1]=(emb[1]-earth[1])*(1 + 1 / 0.01230073677)
-      temp[2]=(emb[2]-earth[2])*(1 + 1 / 0.01230073677)
-      temp[0]=temp[0]+earth[0]
-      temp[1]=temp[1]+earth[1]
-      temp[2]=temp[2]+earth[2]
-
-      return temp
+   public static func getMoon(earth: SIMD3<Double>, emb: SIMD3<Double>) -> SIMD3<Double> {
+      let factor = 1 + 1 / 0.01230073677
+      let delta = (emb - earth) * factor
+      return earth + delta
    }
 
    static func venus_z(t:Double)->Double{

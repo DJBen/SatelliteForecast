@@ -21,7 +21,7 @@ let package = Package(
         ),
         .package(url: "https://github.com/nh7a/Geohash.git", branch: "main"),
         .package(path: "../AppDelegate"),
-        .package(url: "https://github.com/DJBen/SatelliteKit.git", from: "3.0.0"),
+        .package(path: "../SatelliteKit"),
         .package(path: "../SatelliteForecast")
     ],
     targets: [
