@@ -178,6 +178,13 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
                     switch context.configs.stars {
                     case .none:
                         break
+                    case .brightest300:
+                        let aziEle = SkyChartUtils.aziEle(at: point, in: rect)
+                        let raDec = azelToRADec(aziEle: aziEle, julianDate: julianDate, site: (context.observer.lat, context.observer.lon))
+                        let vec = SIMD3<Double>(raDec: raDec)
+                        if let star = context.starManager.closestStar(to: vec, maximumMagnitude: 3.52, maximumAngularDistance: nil) {
+                            context.starTapped(star)
+                        }
                     case .limitedMagnitude(let magnitude):
                         let aziEle = SkyChartUtils.aziEle(at: point, in: rect)
                         let raDec = azelToRADec(aziEle: aziEle, julianDate: julianDate, site: (context.observer.lat, context.observer.lon))
@@ -197,6 +204,7 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
                 PlanetaryBodyView(
                     planetaryBody: body,
                     label: context.configs.bodySymbol,
+                    magFunction: context.configs.starMagToDisplayRadiusMappingFunction,
                     referenceDate: julianDate,
                     observer: context.observer,
                     sunElevation: azel(

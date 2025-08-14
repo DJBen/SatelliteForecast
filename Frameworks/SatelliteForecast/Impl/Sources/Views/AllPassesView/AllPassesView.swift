@@ -663,9 +663,9 @@ struct AllPassesView_Previews: PreviewProvider {
                                 passSnapshots: passSnapshots,
                                 configs: SkyChartConfigs(
                                     backgroundSkyConfigs: BackgroundSkyConfigs(
-                                        stars: .limitedMagnitude(2),
+                                        stars: .brightest300,
                                         showConstellationLines: false,
-                                        visibleBodies: [.sun, .moon],
+                                        visibleBodies: [.sun, .moon, .venus, .jupiter],
                                         bodySymbol: .symbol
                                     ),
                                     basicChartConfigs: BasicChartConfigs(

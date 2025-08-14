@@ -7,46 +7,56 @@
 
 import Foundation
 import CoreGraphics
+import SolarSystem
 
 public struct BackgroundSkyConfigs: Equatable, Hashable, Sendable {
     public enum Stars: Equatable, Hashable, Sendable {
         case none
+        case brightest300
         case limitedMagnitude(Double)
     }
-    public var stars: Stars = .limitedMagnitude(4.5)
+
+    public let stars: Stars
 
     /// A mapping function between the star's magitude to the display radius
-    public struct StarMagToDisplayRadiusMappingFunction: Equatable, Hashable, Sendable {
-        public let multiplier: Double
-        public let exponent: Double
-        public let minimum: Double
+    public struct StarMagToDisplayRadiusMappingFunction: Equatable, Hashable, Identifiable, Sendable {
+        public let id: String
+        public let apply: (Double) -> CGFloat
 
-        public init(multipler: Double = 3, exponent: Double = -0.425, minimum: Double = 0.0) {
-            self.multiplier = multipler
-            self.exponent = exponent
-            self.minimum = minimum
+        public static func == (lhs: StarMagToDisplayRadiusMappingFunction, rhs: StarMagToDisplayRadiusMappingFunction) -> Bool {
+            lhs.id == rhs.id
         }
 
-        public func apply(_ value: Double) -> CGFloat {
-            max(minimum, CGFloat(multiplier * exp(exponent * value)))
+        public func hash(into hasher: inout Hasher) {
+            hasher.combine(id)
         }
+
+        public init(id: String, apply: @escaping (Double) -> CGFloat) {
+            self.id = id
+            self.apply = apply
+        }
+
+        public static let `default`: StarMagToDisplayRadiusMappingFunction = {
+            StarMagToDisplayRadiusMappingFunction(id: "default") { mag in
+                min(12, max(exp(mag * -0.38) * 2.5, 0))
+            }
+        }()
     }
 
-    public var starMagToDisplayRadiusMappingFunction = StarMagToDisplayRadiusMappingFunction()
+    public var starMagToDisplayRadiusMappingFunction: StarMagToDisplayRadiusMappingFunction
     public var hidesStarsDuringDay: Bool = true
     public var showConstellationLines: Bool = true
 
-    public enum PlantaryBody: Equatable, CaseIterable, Hashable, Sendable {
-        case sun
-        case moon
-        case mercury
-        case venus
-        case mars
-        case jupiter
-        case saturn
-    }
-
-    public var visibleBodies: [PlantaryBody] = PlantaryBody.allCases
+    public var visibleBodies: [SolarSystemBody] = [
+        .sun,
+        .moon,
+        .mercury,
+        .venus,
+        .mars,
+        .jupiter,
+        .saturn,
+        // Consider Uranus and Neptune
+    ]
 
     public enum PlantaryBodyLabel: Equatable, Hashable, Sendable {
         case text
@@ -61,10 +71,19 @@ public struct BackgroundSkyConfigs: Equatable, Hashable, Sendable {
 
     public init(
         stars: BackgroundSkyConfigs.Stars = .limitedMagnitude(4.5),
-        starMagToDisplayRadiusMappingFunction: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction = StarMagToDisplayRadiusMappingFunction(),
+        starMagToDisplayRadiusMappingFunction: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction = .default,
         hidesStarsDuringDay: Bool = true,
         showConstellationLines: Bool = true,
-        visibleBodies: [BackgroundSkyConfigs.PlantaryBody] = PlantaryBody.allCases,
+        visibleBodies: [SolarSystemBody] = [
+            .sun,
+            .moon,
+            .mercury,
+            .venus,
+            .mars,
+            .jupiter,
+            .saturn,
+            // Consider Uranus and Neptune
+        ],
         bodySymbol: BackgroundSkyConfigs.PlantaryBodyLabel = .text
     ) {
         self.stars = stars
@@ -124,10 +143,12 @@ public struct SkyChartConfigs: Equatable, Hashable, Sendable {
     public static var preview: SkyChartConfigs {
         SkyChartConfigs(
             backgroundSkyConfigs: BackgroundSkyConfigs(
-                stars: .limitedMagnitude(2.25),
-                starMagToDisplayRadiusMappingFunction: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction(multipler: 1.5, exponent: -0.5),
+                stars: .limitedMagnitude(2.8),
+                starMagToDisplayRadiusMappingFunction: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction(id: "preview", apply: { mag in
+                    min(8, max(exp(mag * -0.325) * 1.4, 0))
+                }),
                 showConstellationLines: false,
-                visibleBodies: [.sun, .moon],
+                visibleBodies: [.sun, .moon, .venus, .jupiter],
                 bodySymbol: .symbol
             ),
             basicChartConfigs: BasicChartConfigs(

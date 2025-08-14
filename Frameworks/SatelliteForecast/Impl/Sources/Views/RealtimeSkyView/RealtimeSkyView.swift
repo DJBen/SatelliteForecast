@@ -416,7 +416,7 @@ struct RealtimeSkyView_Previews: PreviewProvider {
             context: RealtimeSkyViewContext(
                 basicChartConfigs: .init(),
                 backgroundSkyConfigs: .init(),
-                satelliteMagToRadiusFunction: .init(),
+                satelliteMagToRadiusFunction: .default,
                 starManager: StarManagerMock(),
                 julianDateProvider: { Date().julianDate }
             ),

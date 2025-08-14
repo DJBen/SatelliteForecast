@@ -46,6 +46,12 @@ public struct DetailedPassView: View {
     }
 
     public var body: some View {
+        let magFunc = BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction(
+            id: "detail"
+        ) { mag in
+            min(16, max(exp(mag * -0.38) * 4.5, 0))
+        }
+
         NavigationStack {
             VStack {
                 ScrollView(
@@ -59,11 +65,8 @@ public struct DetailedPassView: View {
                             passSnapshots: context.passSnapshots,
                             configs: SkyChartConfigs(
                                 backgroundSkyConfigs: BackgroundSkyConfigs(
-                                    stars: .limitedMagnitude(5.5),
-                                    starMagToDisplayRadiusMappingFunction: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction(
-                                        multipler: 6,
-                                        exponent: -0.4
-                                    ),
+                                    stars: .limitedMagnitude(6),
+                                    starMagToDisplayRadiusMappingFunction: magFunc,
                                     hidesStarsDuringDay: true,
                                     showConstellationLines: true,
                                     bodySymbol: .text
@@ -80,10 +83,7 @@ public struct DetailedPassView: View {
                             backgroundAnnotationView: { raDecToPoint in
                                 DetailedPassViewBackgroundAnnotationView(
                                     selectedBackgroundStar: selectedBackgroundStar,
-                                    mappingFunction: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction(
-                                        multipler: 6,
-                                        exponent: -0.4
-                                    ),
+                                    mappingFunction: magFunc,
                                     raDecToPoint: raDecToPoint
                                 )
                             },
