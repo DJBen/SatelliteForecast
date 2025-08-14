@@ -10,6 +10,7 @@ import SatelliteForecast
 @preconcurrency import SatelliteKit
 import StarryNight
 import SolarSystem
+import simd
 
 public enum SkyChartUtils {
     public static var labelDateFormatter: DateFormatter {
@@ -69,10 +70,10 @@ public enum SkyChartUtils {
     public static func rotationAndTextRotation(snapshotPair: SnapshotsAroundPass, rect: CGRect) -> (Double, Double) {
         let position = Self.point(at: AziEle(snapshotPair.first.position), rect: rect)
         let afterPosition = Self.point(at: AziEle(snapshotPair.second.position), rect: rect)
-        let satellitePositionVector = Vector(Double(afterPosition.x - position.x), Double(afterPosition.y - position.y), 0)
+        let satellitePositionVector = SIMD3<Double>(Double(afterPosition.x - position.x), Double(afterPosition.y - position.y), 0)
         // A vector from origin to the position
-        let originVector = Vector(Double(afterPosition.x - rect.midX), Double(afterPosition.y - rect.midY), 0)
-        let normal = crossProduct(satellitePositionVector, originVector)
+        let originVector = SIMD3<Double>(Double(afterPosition.x - rect.midX), Double(afterPosition.y - rect.midY), 0)
+        let normal = simd_cross(satellitePositionVector, originVector)
         let rot = atan2(Double(afterPosition.y - position.y), Double(afterPosition.x - position.x))
         let factor: Double = normal.z > 0 ? -1 : 1
         let adjustedRot = factor > 0 ? rot + .pi / 2 : rot - .pi / 2

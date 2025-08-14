@@ -11,6 +11,7 @@ import QSMag
 @preconcurrency import SatelliteKit
 import SatelliteForecast
 import SolarSystem
+import simd
 
 extension SatelliteSnapshot {
     public init(
@@ -23,8 +24,8 @@ extension SatelliteSnapshot {
         let eciPosition = try satellite.position(julianDays: julianDate)
         let obsCel = geo2eci(julianDays: julianDate, geodetic: observer)
 
-        func topVector2AziEleDst(_ top: Vector) -> AziEleDst {
-            let z = top.magnitude()
+        func topVector2AziEleDst(_ top: SIMD3<Double>) -> AziEleDst {
+            let z = simd_length(top)
 
             return AziEleDst(
                 atan2pi(top.y, -top.x) * rad2deg,
@@ -35,7 +36,7 @@ extension SatelliteSnapshot {
         let position = topVector2AziEleDst(
             cel2top(julianDays: julianDate, satCel: eciPosition, obsCel: obsCel)
         )
-        let distance = (eciPosition - obsCel).magnitude()
+        let distance = simd_length(eciPosition - obsCel)
         let solarCel = solarCel(julianDays: julianDate)
         let isIlluminated = AstroAlgorithms.hasLineOfSight(
             object1Geo: SIMD3<Double>(eciPosition),

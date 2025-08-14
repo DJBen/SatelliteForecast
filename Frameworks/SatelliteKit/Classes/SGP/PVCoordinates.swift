@@ -8,10 +8,10 @@ import Foundation
 
 public struct PVCoordinates {
 
-    public let position: Vector                 // position in meters
-    public let velocity: Vector                 // velocity in m/sec
+    public let position: SIMD3<Double>                 // position in meters
+    public let velocity: SIMD3<Double>                 // velocity in m/sec
 
-    init(position pos: Vector, velocity vel: Vector) {
+    init(position pos: SIMD3<Double>, velocity vel: SIMD3<Double>) {
         self.position = pos
         self.velocity = vel
     }

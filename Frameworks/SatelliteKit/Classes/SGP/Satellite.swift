@@ -7,6 +7,7 @@
 // swiftlint:disable identifier_name
 
 import Foundation
+import simd
 
 public struct Satellite {
 
@@ -95,9 +96,9 @@ public extension Satellite {
 /*┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
   │ return satellite's earth centered inertial position (Kilometers) at minutes after TLE epoch      │
   └──────────────────────────────────────────────────────────────────────────────────────────────────┘*/
-    func position(minsAfterEpoch: Double) throws -> Vector {
+    func position(minsAfterEpoch: Double) throws -> SIMD3<Double> {
         let pv = try propagator.getPVCoordinates(minsAfterEpoch: minsAfterEpoch)
-        return Vector((pv.position.x)/1000.0,
+        return SIMD3<Double>((pv.position.x)/1000.0,
                       (pv.position.y)/1000.0,
                       (pv.position.z)/1000.0)
     }
@@ -105,9 +106,9 @@ public extension Satellite {
 /*┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
   │ return satellite's earth centered inertial velocity (Kms/second) at minutes after TLE epoch      │
   └──────────────────────────────────────────────────────────────────────────────────────────────────┘*/
-    func velocity(minsAfterEpoch: Double) throws -> Vector {
+    func velocity(minsAfterEpoch: Double) throws -> SIMD3<Double> {
         let pv = try propagator.getPVCoordinates(minsAfterEpoch: minsAfterEpoch)
-        return Vector((pv.velocity.x)/1000.0,
+        return SIMD3<Double>((pv.velocity.x)/1000.0,
                       (pv.velocity.y)/1000.0,
                       (pv.velocity.z)/1000.0)
     }
@@ -115,14 +116,14 @@ public extension Satellite {
 /*┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
   │ return satellite's earth centered inertial position (Kilometers) at Julian Date                  │
   └──────────────────────────────────────────────────────────────────────────────────────────────────┘*/
-    func position(julianDays: Double) throws -> Vector {
+    func position(julianDays: Double) throws -> SIMD3<Double> {
         try position(minsAfterEpoch: minsAfterEpoch(julianDays))
     }
 
 /*┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
   │ return satellite's earth centered inertial velocity (Kms/second) at Julian Date                  │
   └──────────────────────────────────────────────────────────────────────────────────────────────────┘*/
-    func velocity(julianDays: Double) throws -> Vector {
+    func velocity(julianDays: Double) throws -> SIMD3<Double> {
         try velocity(minsAfterEpoch: minsAfterEpoch(julianDays))
     }
 
@@ -160,7 +161,7 @@ public extension Satellite {
 
        let top = cel2top(julianDays: julianDays, satCel: satCel, obsCel: obsCel)
 
-       let z = top.magnitude()
+       let z = simd_length(top)
 
        return AziEleDst(
             atan2pi(top.y, -top.x) * rad2deg,
