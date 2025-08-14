@@ -16,7 +16,7 @@ class UCSSatTests: XCTestCase {
 
         let rows = try DB.prepare(UCSSat.Table.tableName)
         for row in rows {
-            _ = UCSSat(row: row)
+            _ = try UCSSat(row: row)
         }
     }
 

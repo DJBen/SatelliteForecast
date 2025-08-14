@@ -16,7 +16,7 @@ class SatCatTests: XCTestCase {
 
         let rows = try DB.prepare(SatCat.Table.tableName)
         for row in rows {
-            _ = SatCat(row: row)
+            _ = try SatCat(row: row)
         }
     }
 }

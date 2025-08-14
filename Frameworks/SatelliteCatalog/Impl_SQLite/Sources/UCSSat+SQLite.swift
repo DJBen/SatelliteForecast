@@ -8,7 +8,6 @@
 import Foundation
 import SatelliteCatalog
 import SQLite
-@preconcurrency import SatelliteKit
 
 extension UCSSat {
     typealias Table = SatelliteCatalog.UCSSatTable

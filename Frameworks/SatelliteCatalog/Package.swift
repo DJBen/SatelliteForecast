@@ -33,7 +33,11 @@ let package = Package(
             resources: [
                 .process("Resources")
             ]
+        ),
+        .testTarget(
+            name: "SatelliteCatalogImpl_SQLiteTests",
+            dependencies: ["SatelliteCatalogImpl_SQLite"],
+            path: "Impl_SQLite/Tests"
         )
-        // Add test targets if they exist for these modules
     ]
 )

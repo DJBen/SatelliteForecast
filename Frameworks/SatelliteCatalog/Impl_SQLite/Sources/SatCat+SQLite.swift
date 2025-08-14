@@ -9,16 +9,16 @@ import Foundation
 import SatelliteCatalog
 import SQLite
 
+private let dateFormatter: DateFormatter = {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "YYYY-MM-dd"
+    return dateFormatter
+}()
+
 extension SatCat {
     typealias Table = SatelliteCatalog.SatCatTable
 
     init(row: Row) throws {
-        let dateFormatter: DateFormatter = {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "YYYY-MM-dd"
-            return dateFormatter
-        }()
-
         self.init(
             name: try row.get(Table.name),
             cosparID: try row.get(Table.objectID),
