@@ -11,9 +11,11 @@ Estação Espacial prevê os passes da ISS e Tiangong sobre você com infográfi
 - Céu em tempo real: Este é um recurso experimental que mostra todos os satélites atualmente passando sobre você.
 
 What's New in This Version
+Mais realismo!
+- Os planetas são mostrados com sua magnitude aparente real no mapa estelar.
+- Adiciona raio de visibilidade em sua localização na visualização do mapa do globo.
+- Adiciona rótulo de tempo ao longo da projeção futura do satélite no solo na visualização do mapa do globo.
 
-- Experiência de mapa aprimorada: o mapa do globo terrestre agora inclui o alcance de visibilidade do observador; adicionadas etiquetas de tempo para futuras localizações das estações espaciais
-- Reformuladas algumas explicações sobre a visibilidade da estação espacial
 
 Keywords
 passes iss,passes tiangong,passes de satélites,satélite,astronomia
