@@ -51,7 +51,7 @@ extension SolarSystemBody {
     
     /// Phase integral magnitude correction: -2.5 * log10(q(α))
     /// Returns a function that calculates the magnitude correction based on phase angle α in degrees
-    public func magnitudePhaseIntegral(phaseAngleDegrees alpha: Double) -> Double {
+    private func magnitudePhaseIntegral(phaseAngleDegrees alpha: Double) -> Double {
         precondition(alpha >= 0 && alpha <= 180, "Phase angle must be between 0° and 180°, got \(alpha)°")
         
         switch self {
@@ -186,6 +186,20 @@ extension SolarSystemBody {
         let apparentMag = H + distanceFactor + phaseIntegralCorrection
         
         return apparentMag
+    }
+    
+    /// Calculate the distance between two solar system bodies
+    /// - Parameters:
+    ///   - other: The other solar system body to calculate distance to
+    ///   - julianDate: Julian day for the calculation
+    /// - Returns: Distance between the two bodies in AU
+    public func distance(to other: SolarSystemBody, julianDate: Double) -> Double {        
+        // Get heliocentric positions for both bodies
+        let selfHeliocentricPosition = VSOP87.getBodyHeliocentricEclipticCoordinate(self, julianDay: julianDate)
+        let otherHeliocentricPosition = VSOP87.getBodyHeliocentricEclipticCoordinate(other, julianDay: julianDate)
+        let distance = simd_length(otherHeliocentricPosition - selfHeliocentricPosition)
+        
+        return distance
     }
 }
 

@@ -98,15 +98,6 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
         }
     }
 
-    private func starDisplayPoint(_ star: Star, julianDate: Double, rect: CGRect) -> CGPoint {
-        return getStarCoordinateConverter(
-            julianDate: julianDate,
-            rect: rect
-        )(
-            RADec(star.coordinate)
-        )
-    }
-
     private func getStarCoordinateConverter(julianDate: Double, rect: CGRect) -> (RADec) -> CGPoint {
         return { raDec in
             let starAziEle = azel(
@@ -119,6 +110,12 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
                 at: starAziEle,
                 rect: rect
             )
+        }
+    }
+
+    private func rankedVisibleBodies(julianDate: Double) -> [SolarSystemBody] {
+        context.configs.visibleBodies.sorted { body1, body2 in
+            body1.distance(to: .earth, julianDate: julianDate) > body2.distance(to: .earth, julianDate: julianDate)
         }
     }
 
@@ -200,7 +197,7 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
 
     @ViewBuilder func planetaryBodiesView(julianDate: Double) -> some View {
         ZStack {
-            ForEach(context.configs.visibleBodies, id: \.self) { body in
+            ForEach(rankedVisibleBodies(julianDate: julianDate), id: \.self) { body in
                 PlanetaryBodyView(
                     planetaryBody: body,
                     label: context.configs.bodySymbol,
