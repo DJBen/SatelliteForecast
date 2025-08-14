@@ -21,7 +21,7 @@ struct MissionControlView: View {
     let julianDateProvider: () -> Double
     let julianDateOffset: Double
     /// Optional user location for visibility circle
-    let userLocation: CLLocationCoordinate2D?
+    let userLocation: CLLocation?
 
     @State private var currentDateCoordinate: DateCoordinate?
     @State private var satelliteGroundTrack: [DateCoordinate] = []
@@ -58,7 +58,7 @@ struct MissionControlView: View {
                     satelliteGroundTrack: satelliteGroundTrack,
                     satelliteLabelTrack: satelliteLabelTrack,
                     zoomLevel: $zoomLevel,
-                    userLocation: userLocation // pass down
+                    userLocation: userLocation, // pass down
                 )
             } else {
                 // Show loading state while computing initial position
@@ -111,17 +111,20 @@ struct MissionControlView: View {
             updateAllTracks()
         }
     }
-    
 
     private func updateSatellitePositionOnly() {
         let jd = julianDateProvider() + julianDateOffset
         do {
-            let satelliteCoordinate = try Satellite(
+            let satellite = try Satellite(
                 withTLE: satelliteInfo.elements
-            ).geoPosition(
+            )
+            let geoPosition = try satellite.geoPosition(
                 julianDays: jd
             )
-            currentDateCoordinate = DateCoordinate(julianDate: jd, coordinate: satelliteCoordinate)
+            currentDateCoordinate = DateCoordinate(
+                julianDate: jd,
+                coordinate: geoPosition,
+            )
         } catch {
             print("Error updating satellite position: \(error)")
         }
@@ -151,13 +154,13 @@ struct MissionControlView: View {
             let endJD = startJD + 4.0 * TimeConstants.hrs2day // 4 hours later
             let labelTrack = try satelliteInfo.elements.generateGroundTrack(
                 julianDateRange: startJD...endJD,
-                interval: interval
+                interval: interval,
             )
             satelliteLabelTrack = labelTrack
 
             let groundTrack = try satelliteInfo.elements.generateGroundTrack(
                 julianDateRange: jd...(endJD - 30 * TimeConstants.min2day),
-                interval: 10 * TimeConstants.min2day
+                interval: 10 * TimeConstants.min2day,
             )
             satelliteGroundTrack = groundTrack
         } catch {
@@ -177,14 +180,14 @@ struct MissionControlViewControllerWrapperView: UIViewControllerRepresentable {
     var satelliteGroundTrack: [DateCoordinate]
     var satelliteLabelTrack: [DateCoordinate]
     @Binding var zoomLevel: MissionControlView.ZoomLevel
-    var userLocation: CLLocationCoordinate2D? // add property
+    var userLocation: CLLocation? // add property
 
     func makeUIViewController(context: Context) -> MissionControlViewController {
         let viewController = MissionControlViewController(
             currentDateCoordinate: currentDateCoordinate,
             dateCoordinates: satelliteGroundTrack,
             labelTrack: satelliteLabelTrack,
-            userLocation: userLocation
+            userLocation: userLocation,
         )
         viewController.delegate = context.coordinator
         return viewController
@@ -196,7 +199,7 @@ struct MissionControlViewControllerWrapperView: UIViewControllerRepresentable {
             dateCoordinates: satelliteGroundTrack,
             labelTrack: satelliteLabelTrack,
             zoomLevel: zoomLevel,
-            userLocation: userLocation // pass down
+            userLocation: userLocation
         )
     }
 
@@ -238,16 +241,17 @@ class MissionControlViewController: UIViewController {
     var mapView: MKMapView!
     weak var delegate: MissionControlViewControllerDelegate?
 
-    var currentDateCoordinate: DateCoordinate?
-    var dateCoordinates: [DateCoordinate]?
-    var labelTrack: [DateCoordinate]?
+    var currentDateCoordinate: DateCoordinate
+    var dateCoordinates: [DateCoordinate]
+    var labelTrack: [DateCoordinate]
     var currentZoomLevel: MissionControlView.ZoomLevel?
-    var userLocation: CLLocationCoordinate2D? // add property
+    var userLocation: CLLocation?
+    var satelliteAltitude: Double?
 
     private var currentPositionAnnotation: CurrentPositionAnnotation?
-    private var userCircleOverlay: MKCircle? // store overlay
-    private var userLocationAnnotation: UserLocationAnnotation? // store user pin
-    private var userVisibilityLabelAnnotation: UserVisibilityLabelAnnotation? // store label annotation
+    private var userCircleOverlay: MKCircle?
+    private var userLocationAnnotation: UserLocationAnnotation?
+    private var userVisibilityLabelAnnotation: UserVisibilityLabelAnnotation?
     private var satelliteTimeLabelAnnotations: NSHashTable<SatelliteTimeLabelAnnotation> = .init()
 
     var cancellables = Set<AnyCancellable>()
@@ -256,13 +260,13 @@ class MissionControlViewController: UIViewController {
         currentDateCoordinate: DateCoordinate,
         dateCoordinates: [DateCoordinate],
         labelTrack: [DateCoordinate],
-        userLocation: CLLocationCoordinate2D?
+        userLocation: CLLocation?,
     ) {
-        super.init(nibName: nil, bundle: nil)
         self.currentDateCoordinate = currentDateCoordinate
         self.dateCoordinates = dateCoordinates
         self.labelTrack = labelTrack
-        self.userLocation = userLocation // assign
+        self.userLocation = userLocation
+        super.init(nibName: nil, bundle: nil)
     }
 
     required init?(coder: NSCoder) {
@@ -296,19 +300,24 @@ class MissionControlViewController: UIViewController {
         currentPositionAnnotation = CurrentPositionAnnotation()
         
         // Use the provided initial coordinate data
-        let coordinate = CLLocationCoordinate2D(currentDateCoordinate!.coordinate)
+        let coordinate = CLLocationCoordinate2D(currentDateCoordinate.coordinate)
         currentPositionAnnotation!.coordinate = coordinate
         mapView.setCenter(coordinate, animated: false)
         
         // Add initial ground track overlays
-        addGroundTrackOverlays(dateCoordinates: dateCoordinates!, currentCoordinate: currentDateCoordinate!)
+        addGroundTrackOverlays(dateCoordinates: dateCoordinates, currentCoordinate: currentDateCoordinate)
         
         mapView.addAnnotation(currentPositionAnnotation!)
         
         // Add initial user circle overlay and pin if needed
         if let userLocation = userLocation {
-            addOrUpdateUserCircleOverlay(userLocation: userLocation)
-            addOrUpdateUserLocationAnnotation(userLocation: userLocation)
+            addOrUpdateUserCircleOverlay(
+                userLocation: userLocation,
+                satelliteCoordinate: currentDateCoordinate.coordinate,
+            )
+            addOrUpdateUserLocationAnnotation(
+                userLocation: userLocation
+            )
         }
     }
     
@@ -328,10 +337,6 @@ class MissionControlViewController: UIViewController {
         )
         afterPolyline.sf_identifier = "after"
         mapView.addOverlay(afterPolyline)
-
-        // --- Stable time label annotations logic ---
-        // Use labelTrack passed in from SwiftUI
-        guard let labelTrack = self.labelTrack else { return }
 
         // Build set of displayTimes needed
         let dateFormatter: DateFormatter = {
@@ -371,13 +376,14 @@ class MissionControlViewController: UIViewController {
         dateCoordinates: [DateCoordinate],
         labelTrack: [DateCoordinate],
         zoomLevel: MissionControlView.ZoomLevel,
-        userLocation: CLLocationCoordinate2D?
+        userLocation: CLLocation?,
     ) {
         let isInitialSetup = self.currentDateCoordinate == nil
         let coordinateChanged = self.currentDateCoordinate != currentDateCoordinate
         let dateCoordinatesChanged = self.dateCoordinates != dateCoordinates
         let zoomLevelChanged = self.currentZoomLevel != zoomLevel
         let userLocationChanged = self.userLocation != userLocation
+        let satelliteAltitudeChanged = self.satelliteAltitude != satelliteAltitude
 
         // Only recenter and zoom when zoom level is explicitly changed by user
         if zoomLevelChanged {
@@ -391,7 +397,7 @@ class MissionControlViewController: UIViewController {
         }
 
         // Early return if nothing changed
-        if !coordinateChanged && !dateCoordinatesChanged {
+        if !coordinateChanged && !dateCoordinatesChanged && !userLocationChanged && !satelliteAltitudeChanged {
             return
         }
 
@@ -432,10 +438,15 @@ class MissionControlViewController: UIViewController {
         }
 
         // Update user circle overlay and pin if needed
-        if userLocationChanged {
+        if userLocationChanged || satelliteAltitudeChanged {
             if let userLocation = userLocation {
-                addOrUpdateUserCircleOverlay(userLocation: userLocation)
-                addOrUpdateUserLocationAnnotation(userLocation: userLocation)
+                addOrUpdateUserCircleOverlay(
+                    userLocation: userLocation,
+                    satelliteCoordinate: currentDateCoordinate.coordinate
+                )
+                addOrUpdateUserLocationAnnotation(
+                    userLocation: userLocation
+                )
             } else {
                 removeUserCircleOverlay()
                 removeUserLocationAnnotation()
@@ -463,12 +474,46 @@ class MissionControlViewController: UIViewController {
         currentPositionAnnotation?.coordinate = coordinate
     }
 
-    private func addOrUpdateUserCircleOverlay(userLocation: CLLocationCoordinate2D) {
+    private func addOrUpdateUserCircleOverlay(
+        userLocation: CLLocation,
+        satelliteCoordinate: LatLonAlt
+    ) {
         // Remove existing overlay if present
         if let overlay = userCircleOverlay {
             mapView.removeOverlay(overlay)
         }
-        let circle = MKCircle(center: userLocation, radius: 1_312_000) // 1312 km in meters
+        
+        // Calculate visibility radius for satellite at 10 degrees above horizon
+        // Earth's radius in kilometers
+        let earthRadiusKm: Double = 6371.0
+        
+        // Minimum elevation angle in radians (10 degrees)
+        let minElevationDegrees: Double = 10.0
+        let minElevationRadians = minElevationDegrees * .pi / 180.0
+        
+        // Calculate the ground distance for 10-degree elevation
+        // Using the formula: d = R * (arccos(R / (R + h)) - elevation)
+        // For ground observer looking at 10° elevation, we calculate the ground distance
+        // where a satellite would appear at exactly 10° above horizon
+
+        let satelliteAltitudeKm: Double = satelliteCoordinate.alt
+        let radiusWithAltitude = earthRadiusKm + satelliteAltitudeKm
+
+        // Compute the central angle between observer and satellite at minimum elevation
+        let centralAngle = acos(earthRadiusKm / radiusWithAltitude)
+        // Subtract the minimum elevation angle to get the angle subtended at Earth's center
+        let groundAngle = centralAngle - minElevationRadians
+
+        // Ground distance is Earth's radius times the ground angle (in radians)
+        let distanceKm = earthRadiusKm * groundAngle
+
+        // Convert to meters
+        let radiusMeters = max(0, distanceKm * 1000.0)
+        
+        let circle = MKCircle(
+            center: userLocation.coordinate,
+            radius: radiusMeters
+        )
         userCircleOverlay = circle
         mapView.addOverlay(circle)
     }
@@ -480,23 +525,25 @@ class MissionControlViewController: UIViewController {
         }
     }
 
-    private func addOrUpdateUserLocationAnnotation(userLocation: CLLocationCoordinate2D) {
+    private func addOrUpdateUserLocationAnnotation(
+        userLocation: CLLocation
+    ) {
         // User pin
         if let annotation = userLocationAnnotation {
-            annotation.coordinate = userLocation
+            annotation.coordinate = userLocation.coordinate
         } else {
             let annotation = UserLocationAnnotation()
-            annotation.coordinate = userLocation
+            annotation.coordinate = userLocation.coordinate
             userLocationAnnotation = annotation
             mapView.addAnnotation(annotation)
         }
 
         // Label annotation
         if let labelAnnotation = userVisibilityLabelAnnotation {
-            labelAnnotation.coordinate = userLocation
+            labelAnnotation.coordinate = userLocation.coordinate
         } else {
             let labelAnnotation = UserVisibilityLabelAnnotation()
-            labelAnnotation.coordinate = userLocation
+            labelAnnotation.coordinate = userLocation.coordinate
             userVisibilityLabelAnnotation = labelAnnotation
             mapView.addAnnotation(labelAnnotation)
         }

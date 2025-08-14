@@ -297,7 +297,7 @@ public struct AllPassesView: View {
                 satelliteInfo: context.satelliteInfo,
                 julianDateProvider: context.julianDateProvider,
                 julianDateOffset: viewModel.state.julianDateOffset,
-                userLocation: viewModel.state.location?.coordinate
+                userLocation: viewModel.state.location
             )
             .aspectRatio(1.33, contentMode: .fill)
             .padding([.leading, .trailing], -16)
