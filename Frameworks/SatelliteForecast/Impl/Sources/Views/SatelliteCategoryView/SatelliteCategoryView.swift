@@ -90,7 +90,6 @@ public struct SatelliteCategoryViewImpl: SatelliteCategoryView {
                         }
                     }
                 }
-                .padding()
             }
             .navigationBarTitle("Satellite Categories", displayMode: .inline)
             .navigationBarHidden(true)

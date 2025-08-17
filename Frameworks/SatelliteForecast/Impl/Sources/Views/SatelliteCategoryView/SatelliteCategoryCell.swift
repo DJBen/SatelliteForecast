@@ -44,6 +44,7 @@ struct SatelliteCategoryCell: View {
                     .fontWeight(.semibold)
                     .foregroundColor(.secondary)
             }
+            .padding(.horizontal, 16)
             .background(Color(UIColor.systemBackground))
 
             // Background image
