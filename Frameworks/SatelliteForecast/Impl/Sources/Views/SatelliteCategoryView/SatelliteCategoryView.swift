@@ -70,12 +70,10 @@ public struct SatelliteCategoryViewImpl: SatelliteCategoryView {
                     pinnedViews: []
                 ) {
                     Section {
-                        LazyVGrid(
-                            columns: [
-                                GridItem(.flexible()),
-                            ],
+                        LazyVStack(
                             alignment: .leading,
-                            spacing: 10
+                            spacing: 12,
+                            pinnedViews: []
                         ) {
                             ForEach(
                                 [

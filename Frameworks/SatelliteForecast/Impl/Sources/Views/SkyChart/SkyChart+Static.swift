@@ -193,7 +193,6 @@ public enum SkyChartUtils {
         // -- Stars --
         
         ctx.cgContext.saveGState()
-        ctx.cgContext.setFillColor(params.starColor.cgColor)
 
         for star in params.stars {
             let aziElev = azel(
@@ -206,13 +205,18 @@ public enum SkyChartUtils {
             }
             let point = Self.point(at: AziEle(aziElev.azim, aziElev.elev), rect: params.rect)
 
-            ctx.cgContext.move(to: point)
-
             let radius = params.magToRadius(star.magnitude)
-
-            ctx.cgContext.addEllipse(in: CGRect(x: point.x - radius, y: point.y - radius, width: radius * 2, height: radius * 2))
+            
+            // Set color based on spectral class for realistic star colors
+            let starColor = SkyChartTheme.starColor(
+                spectralClass: star.spectralClass,
+                traitCollection: UITraitCollection.current
+            )
+            ctx.cgContext.setFillColor(starColor.cgColor)
+            
+            // Draw individual star
+            ctx.cgContext.fillEllipse(in: CGRect(x: point.x - radius, y: point.y - radius, width: radius * 2, height: radius * 2))
         }
-        ctx.cgContext.drawPath(using: .fill)
         ctx.cgContext.restoreGState()
         
         guard params.drawPlanaryBodies else {

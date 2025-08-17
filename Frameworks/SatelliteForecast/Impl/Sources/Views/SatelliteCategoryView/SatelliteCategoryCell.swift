@@ -11,8 +11,6 @@ import SwiftUI
 struct SatelliteCategoryCell: View {
     let category: SatelliteCategory
 
-    @Environment(\.colorScheme) private var colorScheme
-
     @ViewBuilder private func background(category: SatelliteCategory) -> some View {
         let imageName = switch category {
         case .active:
@@ -30,40 +28,29 @@ struct SatelliteCategoryCell: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading) {
-            Spacer()
-                .frame(height: 140)
-
-            ZStack {
-                Color.clear
-                    .blurEffect()
-
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack {
-                        Text(SatelliteCategoryCell.categoryLocalizedString(category))
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                            .foregroundColor(Color(UIColor.label))
-                            .minimumScaleFactor(0.8)
-                            .lineLimit(1)
-                        Spacer()
-                        Image(systemName: "chevron.forward")
-                            .font(.title2)
-                            .foregroundColor(Color(UIColor.label))
-                    }
-                }
-                .padding()
+        VStack(alignment: .leading, spacing: 12) {
+            // Title section
+            HStack {
+                Text(SatelliteCategoryCell.categoryLocalizedString(category))
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+                    .multilineTextAlignment(.leading)
+                    .minimumScaleFactor(0.8)
+                    .lineLimit(1)
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.secondary)
             }
-            .blurEffectStyle(colorScheme == .light ? .systemChromeMaterialLight : .systemChromeMaterialDark)
-            .vibrancyEffectStyle(.fill)
+            .background(Color(UIColor.systemBackground))
+
+            // Background image
+            background(category: category)
+                .frame(height: 168)
+                .clipped()
         }
-        .background(background(category: category))
-        .clipShape(
-            RoundedRectangle(
-                cornerRadius: 8,
-                style: .continuous
-            )
-        )
     }
 }
 
@@ -99,33 +86,3 @@ extension SatelliteCategoryCell {
         }
     }
 }
-
-#if DEBUG
-struct SatelliteCategoryCell_Previews: PreviewProvider {
-    static var previews: some View {
-        ForEach(["iPhone SE (2nd generation)", "iPhone 13 Pro Max"], id: \.self) { previewDevice in
-            ForEach(ColorScheme.allCases, id: \.self) { colorScheme in
-                VStack {
-                    LazyVGrid(
-                        columns: [
-                            GridItem(.flexible())
-                        ],
-                        alignment: .leading,
-                        spacing: 10,
-                        content: {
-                            SatelliteCategoryCell(category: .brightest100)
-
-                            SatelliteCategoryCell(category: .active)
-
-                            SatelliteCategoryCell(category: .last30DayLaunches)
-                        }
-                    )
-                }
-                .padding()
-                .preferredColorScheme(colorScheme)
-            }
-            .previewDevice(PreviewDevice(rawValue:  previewDevice))
-        }
-    }
-}
-#endif
