@@ -31,8 +31,8 @@ public struct AlarmSettingsView: View {
     }
     
     @ViewBuilder private func itemView(_ item: ScheduledPassNotification) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .firstTextBaseline) {
                 Text(item.notification.satelliteName)
                     .font(.headline)
                     .foregroundColor(Color(UIColor.label))
@@ -41,27 +41,20 @@ public struct AlarmSettingsView: View {
                 
                 Text(Date(julianDate: item.notification.alertJulianDate).formatted())
                     .font(.subheadline)
+                    .minimumScaleFactor(0.75)
+                    .lineLimit(1)
                     .foregroundColor(Color(UIColor.secondaryLabel))
             }
 
-            HStack {
-                Text(CLLocation(item.notification.observer).coordinate.formattedString)
-                    .font(.caption)
-                    .multilineTextAlignment(.leading)
-                    .foregroundColor(.secondary)
-                
-                Spacer()
-                
-                if item.notification.timeOffset != 0 {
-                    Text(
-                        AlarmSettingsView.alarmOffsetDescription(
-                            timing: item.notification.timing,
-                            offset: item.notification.timeOffset
-                        )
+            if item.notification.timeOffset != 0 {
+                Text(
+                    AlarmSettingsView.alarmOffsetDescription(
+                        timing: item.notification.timing,
+                        offset: item.notification.timeOffset
                     )
-                    .font(.caption)
-                    .foregroundColor(Color(UIColor.secondaryLabel))
-                }
+                )
+                .font(.caption)
+                .foregroundColor(Color(UIColor.secondaryLabel))
             }
                         
             VStack(alignment: .leading, spacing: 4) {

@@ -15,6 +15,8 @@ extension Reducer where ActionType == PassViewAction, StateType == PassViewState
             state.showAlarmConfigurationModal = isShowing
         case .showDetailPassView(let showsDetailPassView):
             state.showsDetailPassView = showsDetailPassView
+        case .unscheduleAlarm(_):
+            break
         }
     }
 }

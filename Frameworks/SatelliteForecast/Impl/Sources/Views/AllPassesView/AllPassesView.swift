@@ -348,6 +348,7 @@ public struct AllPassesView: View {
                             PassViewContext(
                                 passIndex: allPassViewNavigation.passIndex,
                                 satelliteInfo: context.satelliteInfo,
+                                satelliteCommonName: satelliteCommonName,
                                 category: viewModel.state.satelliteCategory,
                                 julianDateRange: context.julianDateRange,
                                 observer: observer,

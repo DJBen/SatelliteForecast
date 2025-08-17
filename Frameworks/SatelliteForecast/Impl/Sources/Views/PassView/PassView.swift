@@ -200,8 +200,11 @@ public struct PassView: View {
                     placement: .primaryAction
                 ) {
                     Button {
-                        viewModel.dispatch(.showAlarmConfiguration(true)
-                        )
+                        if viewModel.state.scheduledPassNotifications.contains(where: { $0.id == context.passSnapshots.pass.notificationIdentifier }) {
+                            viewModel.dispatch(.unscheduleAlarm(context.passSnapshots.pass))
+                        } else {
+                            viewModel.dispatch(.showAlarmConfiguration(true))
+                        }
                     } label: {
                         if viewModel.state.scheduledPassNotifications.contains(where: { $0.id == context.passSnapshots.pass.notificationIdentifier }) {
                             Image(systemName: "bell.fill")
@@ -220,7 +223,7 @@ public struct PassView: View {
             content: {
                 passAlarmSettingsProducer.view(
                     PassAlarmSettingsModalViewContext(
-                        satelliteName: context.satelliteInfo.ucsSat?.officialName ?? context.satelliteInfo.elements.commonName,
+                        satelliteName: context.satelliteCommonName,
                         category: context.category,
                         passSnapshots: context.passSnapshots,
                         observer: context.observer
@@ -257,6 +260,7 @@ public struct PassView: View {
 public struct PassViewContext {
     public let passIndex: Int
     public let satelliteInfo: SatelliteInfo
+    public let satelliteCommonName: String
     public let category: SatelliteCategory
     public let julianDateRange: ClosedRange<Double>
     public let observer: LatLonAlt
@@ -267,6 +271,7 @@ public struct PassViewContext {
     public init(
         passIndex: Int,
         satelliteInfo: SatelliteInfo,
+        satelliteCommonName: String,
         category: SatelliteCategory,
         julianDateRange: ClosedRange<Double>,
         observer: LatLonAlt,
@@ -276,6 +281,7 @@ public struct PassViewContext {
     ) {
         self.passIndex = passIndex
         self.satelliteInfo = satelliteInfo
+        self.satelliteCommonName = satelliteCommonName
         self.category = category
         self.julianDateRange = julianDateRange
         self.observer = observer
@@ -356,6 +362,7 @@ struct PassView_Previews: PreviewProvider {
         let context = PassViewContext(
             passIndex: 0,
             satelliteInfo: try! SatelliteInfo(elements: elements),
+            satelliteCommonName: "foo",
             category: .tianhe,
             julianDateRange: julianDateRange,
             observer: observer,
