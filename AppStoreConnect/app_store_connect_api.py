@@ -134,21 +134,25 @@ class AppStoreConnectAPI:
         self, 
         localization_id: str,
         promotional_text: Optional[str] = None,
-        whats_new: Optional[str] = None
+        whats_new: Optional[str] = None,
+        description: Optional[str] = None,
+        keywords: Optional[str] = None
     ) -> Dict:
         """
-        Update promotional text and/or what's new for a specific localization.
+        Update promotional text, what's new, description, and/or keywords for a specific localization.
         
         Args:
             localization_id: The ID of the localization to update
             promotional_text: The new promotional text (optional)
             whats_new: The new what's new text (optional)
+            description: The new app description (optional)
+            keywords: The new keywords for the app (optional)
         
         Returns:
             The updated localization data
         """
-        if not promotional_text and not whats_new:
-            raise ValueError("At least one of promotional_text or whats_new must be provided")
+        if not any([promotional_text, whats_new, description, keywords]):
+            raise ValueError("At least one of promotional_text, whats_new, description, or keywords must be provided")
         
         data = {
             "data": {
@@ -163,6 +167,12 @@ class AppStoreConnectAPI:
         
         if whats_new is not None:
             data["data"]["attributes"]["whatsNew"] = whats_new
+        
+        if description is not None:
+            data["data"]["attributes"]["description"] = description
+        
+        if keywords is not None:
+            data["data"]["attributes"]["keywords"] = keywords
         
         endpoint = f"/v1/appStoreVersionLocalizations/{localization_id}"
         return self._make_request("PATCH", endpoint, data)

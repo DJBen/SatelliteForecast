@@ -124,7 +124,9 @@ def update_app_localizations(
             updated = api.update_app_store_version_localization(
                 localization_id,
                 promotional_text=update_data.get('promotionalText'),
-                whats_new=update_data.get('whatsNew')
+                whats_new=update_data.get('whatsNew'),
+                description=update_data.get('description'),
+                keywords=update_data.get('keywords')
             )
             
             print(f"  ✅ Successfully updated {locale}")
@@ -138,6 +140,14 @@ def update_app_localizations(
             if update_data.get('whatsNew'):
                 whats_new = attributes.get('whatsNew', 'N/A')
                 print(f"  🆕 What's New: {whats_new[:100]}{'...' if len(whats_new) > 100 else ''}")
+            
+            if update_data.get('description'):
+                description = attributes.get('description', 'N/A')
+                print(f"  📝 Description: {description[:100]}{'...' if len(description) > 100 else ''}")
+            
+            if update_data.get('keywords'):
+                keywords = attributes.get('keywords', 'N/A')
+                print(f"  🏷️  Keywords: {keywords[:100]}{'...' if len(keywords) > 100 else ''}")
             
             updated_count += 1
             
