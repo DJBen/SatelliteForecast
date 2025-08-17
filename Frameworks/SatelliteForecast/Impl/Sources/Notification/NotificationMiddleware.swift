@@ -100,48 +100,49 @@ Dependencies == Void {
                                 )
                             )
                         }
-                        
-                        do {
-                            let imageURL = pass.attachmentImageURL(extension: "png")
-                            
-                            guard let data = image.pngData() else {
+
+                        DispatchQueue.global().async {
+                            do {
+                                let imageURL = pass.attachmentImageURL(extension: "png")
+
+                                guard let data = image.pngData() else {
+                                    subject.send(
+                                        DispatchedAction(
+                                            .notification(
+                                                .requestNotificationAuthorization(
+                                                    pendingNotification: passNotification
+                                                )
+                                            )
+                                        )
+                                    )
+                                    subject.send(completion: .finished)
+                                    return
+                                }
+
+                                try data.write(to: imageURL)
+                                logger.info("Generated alarm attachment \(imageURL)")
+
                                 subject.send(
                                     DispatchedAction(
                                         .notification(
-                                            .requestNotificationAuthorization(
-                                                pendingNotification: passNotification
-                                            )
+                                            .requestNotificationAuthorization(pendingNotification: passNotification)
                                         )
                                     )
                                 )
                                 subject.send(completion: .finished)
-                                return
+
+                            } catch {
+                                logger.error("Failed to save alarm attachment: \(error.localizedDescription)")
+                                subject.send(
+                                    DispatchedAction(
+                                        .notification(
+                                            .requestNotificationAuthorization(pendingNotification: passNotification)
+                                        )
+                                    )
+                                )
+                                subject.send(completion: .finished)
                             }
-                            
-                            try data.write(to: imageURL)
-                            logger.info("Generated alarm attachment \(imageURL)")
-                            
-                            subject.send(
-                                DispatchedAction(
-                                    .notification(
-                                        .requestNotificationAuthorization(pendingNotification: passNotification)
-                                    )
-                                )
-                            )
-                            subject.send(completion: .finished)
-                            
-                        } catch {
-                            logger.error("Failed to save alarm attachment: \(error.localizedDescription)")
-                            subject.send(
-                                DispatchedAction(
-                                    .notification(
-                                        .requestNotificationAuthorization(pendingNotification: passNotification)
-                                    )
-                                )
-                            )
-                            subject.send(completion: .finished)
                         }
-                        
                     }
                     
                     // Make sure that the request finishes at least 0.75 seconds after triggering,

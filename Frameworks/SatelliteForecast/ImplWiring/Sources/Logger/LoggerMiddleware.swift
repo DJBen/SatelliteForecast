@@ -20,13 +20,13 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
             return .fireAndForget {
                 switch action {
                 case .initializeAllConstellations(_):
-                    customDump(action)
+                    customDump(action, maxDepth: 1)
                 case .appDelegate(let appDelegateAction):
                     customDump(appDelegateAction)
                 case .backgroundTask(let backgroundTask):
                     customDump(backgroundTask)
                 case .notification(let notificationAction):
-                    customDump(notificationAction)
+                    customDump(notificationAction, maxDepth: 2)
                 case .location(let locationAction):
                     customDump(locationAction)
                 case .locationOutput(let locationOutput):
@@ -34,7 +34,7 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                 case .elementsLoader(let elementsLoaderAction):
                     customDump(elementsLoaderAction)
                 case .elementsLoaderOutput(let elementsLoaderOutput):
-                    customDump(elementsLoaderOutput)
+                    customDump(elementsLoaderOutput, maxDepth: 1)
                 case .rootView(let rootViewAction):
                     customDump(rootViewAction)
                 case .satelliteOverview(let satelliteOverviewViewAction):
@@ -50,9 +50,9 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                 case .singleSatelliteWrappingView(let singleSatelliteWrappingViewAction):
                     customDump(singleSatelliteWrappingViewAction)
                 case .allPassesView(let allPassesViewAction):
-                    customDump(allPassesViewAction)
+                    customDump(allPassesViewAction, maxDepth: 2)
                 case .passView(let passViewAction):
-                    customDump(passViewAction)
+                    customDump(passViewAction, maxDepth: 2)
                 case .satelliteElevationGraph(let satelliteElevationGraphAction):
                     customDump(satelliteElevationGraphAction)
                 case .skyChart(_):
@@ -85,7 +85,7 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                 case .alarmSettingsView(let alarmSettingsViewAction):
                     customDump(alarmSettingsViewAction)
                 case .passAlarmSettings(let passAlarmSettingsModalViewAction):
-                    customDump(passAlarmSettingsModalViewAction)
+                    customDump(passAlarmSettingsModalViewAction, maxDepth: 2)
                 case .realtimeSky(let realtimeSkyViewAction):
                     switch realtimeSkyViewAction {
                     case .propagateCurrentEphemerides(_, observer: _, julianDate: _):

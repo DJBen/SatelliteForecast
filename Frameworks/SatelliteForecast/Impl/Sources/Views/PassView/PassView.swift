@@ -220,7 +220,7 @@ public struct PassView: View {
             content: {
                 passAlarmSettingsProducer.view(
                     PassAlarmSettingsModalViewContext(
-                        satelliteName: context.satelliteInfo.ucsSat?.officialName ??  context.satelliteInfo.elements.commonName,
+                        satelliteName: context.satelliteInfo.ucsSat?.officialName ?? context.satelliteInfo.elements.commonName,
                         category: context.category,
                         passSnapshots: context.passSnapshots,
                         observer: context.observer

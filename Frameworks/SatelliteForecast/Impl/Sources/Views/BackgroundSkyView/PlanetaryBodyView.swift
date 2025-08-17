@@ -21,7 +21,6 @@ struct PlanetaryBodyView: View {
 
     var displayRadius: CGFloat {
         let apparentMagnitude = planetaryBody.apparentMagnitude(julianDay: referenceDate)
-        print("\(planetaryBody): \(apparentMagnitude) -> \(magFunction.apply(apparentMagnitude ?? 0))")
         return magFunction.apply(apparentMagnitude ?? 0)
     }
 

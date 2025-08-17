@@ -16,7 +16,7 @@ public struct AppState: Equatable {
     
     public var navigationState: NavigationState = .init() {
         willSet {
-            customDump(navigationState)
+            customDump(navigationState, maxDepth: 2)
         }
     }
 
