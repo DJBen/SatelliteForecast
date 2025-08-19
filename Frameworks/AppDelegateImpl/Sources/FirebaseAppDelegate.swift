@@ -34,12 +34,6 @@ public class FirebaseAppDelegate: NSObject, AppDelegateImplementation {
         Messaging.messaging().delegate = self
         // Initializes Firestore; creates shared instance once
         let _ = Firestore.firestore()
-        
-        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-        UNUserNotificationCenter.current().requestAuthorization(
-          options: authOptions,
-          completionHandler: { _, _ in }
-        )
 
         application.registerForRemoteNotifications()
         

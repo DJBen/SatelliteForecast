@@ -115,7 +115,7 @@ struct MissionControlView: View {
     private func updateSatellitePositionOnly() {
         let jd = julianDateProvider() + julianDateOffset
         do {
-            let satellite = try Satellite(
+            let satellite = Satellite(
                 withTLE: satelliteInfo.elements
             )
             let geoPosition = try satellite.geoPosition(
@@ -378,7 +378,6 @@ class MissionControlViewController: UIViewController {
         zoomLevel: MissionControlView.ZoomLevel,
         userLocation: CLLocation?,
     ) {
-        let isInitialSetup = self.currentDateCoordinate == nil
         let coordinateChanged = self.currentDateCoordinate != currentDateCoordinate
         let dateCoordinatesChanged = self.dateCoordinates != dateCoordinates
         let zoomLevelChanged = self.currentZoomLevel != zoomLevel
@@ -400,12 +399,6 @@ class MissionControlViewController: UIViewController {
         if !coordinateChanged && !dateCoordinatesChanged && !userLocationChanged && !satelliteAltitudeChanged {
             return
         }
-
-        // Only set initial center once, without interrupting user interaction
-        if isInitialSetup {
-            mapView.setCenter(CLLocationCoordinate2D(currentDateCoordinate.coordinate), animated: false)
-            self.currentZoomLevel = zoomLevel
-        }
         
         // Update stored values
         self.currentDateCoordinate = currentDateCoordinate
@@ -426,13 +419,7 @@ class MissionControlViewController: UIViewController {
             mapView.addAnnotation(currentPositionAnnotation!)
         }
         
-        // Always update the satellite position when we get new coordinates
-        if isInitialSetup {
-            // For initial setup, position annotation immediately
-            updateSatellitePosition(targetCoordinate)
-            // Also center the map on the satellite for initial view
-            mapView.setCenter(targetCoordinate, animated: false)
-        } else if coordinateChanged {
+        if coordinateChanged {
             // Update satellite position immediately
             updateSatellitePosition(targetCoordinate)
         }

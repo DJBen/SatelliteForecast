@@ -72,6 +72,7 @@ let package = Package(
                 .product(name: "SatelliteCatalog", package: "SatelliteCatalogPackage"),
                 .product(name: "SatelliteCatalogImpl_SQLite", package: "SatelliteCatalogPackage"),
                 .product(name: "AppDelegate", package: "AppDelegate"),
+                .product(name: "FirebaseMessaging", package: "firebase-ios-sdk"),
                 .product(name: "FirebaseFirestore", package: "firebase-ios-sdk"),
                 .product(name: "FirebaseAnalytics", package: "firebase-ios-sdk"),
                 .product(name: "CustomDump", package: "swift-custom-dump"),
