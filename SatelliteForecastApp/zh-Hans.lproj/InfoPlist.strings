@@ -1,9 +1,0 @@
-/* Bundle display name */
-"CFBundleDisplayName" = "天宫追踪";
-
-/* Bundle name */
-"CFBundleName" = "SatelliteForecastApp";
-
-/* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "位置信息影响卫星过境计算的精度。您的位置数据始终保留在本地设备中，不会被存储。";
-
