@@ -85,7 +85,7 @@ public struct SkyChart<ConstellationLabel: View, BackgroundAnnotationView: View>
                         rect: rect,
                         modifierFactory: PassLabelModifier.init(rotationAngle:)
                     ) {
-                        Text(
+                        Text(verbatim:
                             """
                             ↑ \(SkyChartUtils.labelDateFormatter.string(from: Date(julianDate: context.passSnapshots.pass.rise.julianDate)))
                             """
@@ -98,7 +98,7 @@ public struct SkyChart<ConstellationLabel: View, BackgroundAnnotationView: View>
                         rect: rect,
                         modifierFactory: PassLabelModifier.init(rotationAngle:)
                     ) {
-                        Text(
+                        Text(verbatim:
                             """
                             ↓ \(SkyChartUtils.labelDateFormatter.string(from: Date(julianDate: context.passSnapshots.pass.set.julianDate)))
                             """
@@ -111,7 +111,7 @@ public struct SkyChart<ConstellationLabel: View, BackgroundAnnotationView: View>
                         rect: rect,
                         modifierFactory: PassLabelModifier.init(rotationAngle:)
                     ) {
-                        Text(
+                        Text(verbatim:
                             """
                             ∠\(SkyChartUtils.labelAngleFormatter.string(from: NSNumber(value: context.passSnapshots.pass.culmination.elev))!)° \(SkyChartUtils.labelDateFormatter.string(from: Date(julianDate: context.passSnapshots.pass.culmination.julianDate)))
                             """

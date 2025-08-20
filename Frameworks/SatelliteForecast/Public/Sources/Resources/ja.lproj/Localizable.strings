@@ -1,0 +1,6 @@
+/* Description for ElementsLoaderError.expired */
+"ElementsLoaderError.expired.format" = "%1$@に最後に変更された軌道データの有効期限が切れました。最大期間は%2$d秒です。";
+
+/* Description for ElementsLoaderError.unexpectedMimeType */
+"ElementsLoaderError.unexpectedMimeType.description" = "衛星要素に予期しないMIMEタイプ%@が見つかりました。";
+

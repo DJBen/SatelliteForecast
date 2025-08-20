@@ -1,0 +1,590 @@
+/* No comment provided by engineer. */
+"%@ %@" = "%@ %@";
+
+/* No comment provided by engineer. */
+"%@ Allow location access" = "%@ 위치 접근 허용";
+
+/* No comment provided by engineer. */
+"%@ kg" = "%@ kg";
+
+/* No comment provided by engineer. */
+"%@ Manually select a location" = "%@ 위치 수동 선택";
+
+/* No comment provided by engineer. */
+"%@ Select a location" = "%@ 위치 선택";
+
+/* No comment provided by engineer. */
+"%lld°" = "%lld°";
+
+/* The verb as in alarm clock 'alarms' somebody */
+"Alarm" = "알람";
+
+/* Noun, as in alarm clock. */
+"Alarms" = "알람";
+
+/* The timing and offset description for the alarm in the alarm settings view, culmination. */
+"AlarmSettingsView.alarmOffsetDescription.culmination" = "최고점 %@ 전";
+
+/* The timing and offset description for the alarm in the alarm settings view, highest illuminated. */
+"AlarmSettingsView.alarmOffsetDescription.highestIlluminated" = "최고 조명 %@ 전";
+
+/* The timing and offset description for the alarm in the alarm settings view, rise. */
+"AlarmSettingsView.alarmOffsetDescription.rise" = "상승 %@ 전";
+
+/* The timing and offset description for the alarm in the alarm settings view, set. */
+"AlarmSettingsView.alarmOffsetDescription.set" = "하강 %@ 전";
+
+/* The pass description for each alarm in the alarm settings view */
+"AlarmSettingsView.passDescription" = "%1$@에 상승하여 %2$@에 하강합니다.";
+
+/* The pass description for each alarm in the alarm settings view */
+"AlarmSettingsView.passVisibilityDescription.daytime" = "이 통과는 낮 동안 발생하며 최대 고도는 %.1f도입니다.";
+
+/* The pass description for each alarm in the alarm settings view */
+"AlarmSettingsView.passVisibilityDescription.unlit" = "이 통과는 조명이 없으며 최대 고도는 %.1f도입니다.";
+
+/* The pass description for each alarm in the alarm settings view */
+"AlarmSettingsView.passVisibilityDescription.visible" = "최대 가시 고도 %.1f도.";
+
+/* The text for a warning label upon significant deviation of the location used to calculate passes from the current location. */
+"AllPassesLocationChangeWarning.text" = "새 위치 %1$@는 통과 계산에 사용된 위치에서 %2$@ 떨어져 있습니다. 결과가 더 이상 정확하지 않을 수 있습니다.";
+
+/* The altitude format of mission control header */
+"AllPassesView.missionControlHeader.altitudeFormat" = "지상 %@km 위";
+
+/* The auxiliary text under the navigation title detailing the search date range of the passes. */
+"AllPassesView.searchPassRangeToolbar.text" = "%1$@까지의 통과를 표시합니다";
+
+/* The header of invisible passes */
+"AllPassesView.section.invisible.header" = "보이지 않는 통과";
+
+/* The caption under the header of invisible passes */
+"AllPassesView.section.invisible.headerCaption.v2" = "통과가 보이지 않는 몇 가지 이유:\n1. 낮이 너무 밝음;\n2. 밤 늦게 위성이 지구의 그림자에 사라짐.";
+
+/* The body of observer info */
+"AllPassesView.section.observer.body" = "당신은 %@에서 관측 중입니다.";
+
+/* The header of visible passes */
+"AllPassesView.section.visible.header" = "보이는 통과";
+
+/* The caption under the header of visible passes */
+"AllPassesView.section.visible.headerCaption.v2" = "위성은 하늘이 어둡고 태양빛을 받을 때 볼 수 있습니다. 최적의 관측 조건은 해질 무렵과 해뜨기 전입니다.";
+
+/* The progress text when calculating satellite passes */
+"Calculating..." = "계산 중...";
+
+/* No comment provided by engineer. */
+"Cancel alarm" = "알람 취소";
+
+/* No comment provided by engineer. */
+"Confirm" = "확인";
+
+/* No comment provided by engineer. */
+"Current location" = "현재 위치";
+
+/* No comment provided by engineer. */
+"Current location not available" = "현재 위치를 사용할 수 없습니다";
+
+/* No comment provided by engineer. */
+"Custom location" = "사용자 지정 위치";
+
+/* No comment provided by engineer. */
+"Debug Menu" = "디버그 메뉴";
+
+/* No comment provided by engineer. */
+"Deep link to Hubble (brightest 100)" = "허블(가장 밝은 100개)로 딥 링크";
+
+/* No comment provided by engineer. */
+"Deep link to ISS (special)" = "ISS(특별)로 딥 링크";
+
+/* No comment provided by engineer. */
+"Deliver notifications 10 seconds after scheduled" = "알림을 예약 후 10초 뒤에 전달";
+
+/* No comment provided by engineer. */
+"Delivered at %@" = "%@에 전달됨";
+
+/* No comment provided by engineer. */
+"Delivered notifications" = "전달된 알림";
+
+/* Title of dismiss button of detailed pass view. */
+"DetailedPassView.navigationBar.discard" = "닫기";
+
+/* Navigation title of detailed pass view. */
+"DetailedPassView.navigationBar.title" = "알람 예약";
+
+/* No comment provided by engineer. */
+"Did you know? Space stations orbits earth 15 times a day, and maybe up to 5-7 times above your location, but most of the time it's either too bright or too dark to be seen." = "알고 계셨나요? 우주정거장은 하루에 15번 지구를 돌며, 당신 위치 위로 5~7번 지나갈 수 있지만 대부분 너무 밝거나 너무 어두워서 볼 수 없습니다.";
+
+/* No comment provided by engineer. */
+"Directions.east" = "동";
+
+/* No comment provided by engineer. */
+"Directions.north" = "북";
+
+/* No comment provided by engineer. */
+"Directions.northeast" = "북동";
+
+/* No comment provided by engineer. */
+"Directions.northwest" = "북서";
+
+/* No comment provided by engineer. */
+"Directions.south" = "남";
+
+/* No comment provided by engineer. */
+"Directions.southeast" = "남동";
+
+/* No comment provided by engineer. */
+"Directions.southwest" = "남서";
+
+/* No comment provided by engineer. */
+"Directions.west" = "서";
+
+/* No comment provided by engineer. */
+"Enter address" = "주소 입력";
+
+/* No comment provided by engineer. */
+"Ephemerides" = "궤도 요소";
+
+/* The comment text for the last 30 days satellites file */
+"EphemeridesManagementView.comment.active" = "모든 활성 위성의 궤도 요소입니다.";
+
+/* The comment text for the last 30 days satellites file */
+"EphemeridesManagementView.comment.last30Days" = "최근 30일 내에 발사된 위성의 궤도 요소입니다.";
+
+/* The comment text for the visual (brightest 100) satellites file */
+"EphemeridesManagementView.comment.visual" = "가장 밝은 100개 위성의 궤도 요소입니다.";
+
+/* The empty text for the satellite ephemerides */
+"EphemeridesManagementView.emptyText" = "다운로드된 위성 궤도 요소 없음";
+
+/* The message of the share link in ephemeride text browser view */
+"EphemerideTextBrowserView.shareLink.message" = "%@ 위성 궤도 요소 공유";
+
+/* No comment provided by engineer. */
+"Evening " = "저녁 ";
+
+/* No comment provided by engineer. */
+"Filter by name, ID, country, year..." = "이름, ID, 국가, 연도로 필터...";
+
+/* No comment provided by engineer. */
+"Freeze time" = "시간 고정";
+
+/* Onboarding page 2 description */
+"Get accurate pass predictions for your location. We'll notify you when viewing opportunities arise." = "내 위치에 맞는 정확한 통과 예측을 받아보세요. 관측 기회가 생기면 알려드립니다.";
+
+/* No comment provided by engineer. */
+"Get Started" = "시작하기";
+
+/* Button to complete AllPassesView onboarding */
+"Got it!" = "알겠습니다!";
+
+/* No comment provided by engineer. */
+"Hello, World!" = "안녕하세요!";
+
+/* Onboarding explanation for culmination */
+"Highest point in the sky (best for viewing)" = "하늘에서 가장 높은 지점(관측에 최적)";
+
+/* The name of ISS */
+"International space station" = "국제우주정거장";
+
+/* No comment provided by engineer. */
+"Jupiter" = "목성";
+
+/* No comment provided by engineer. */
+"Loading pass information..." = "통과 정보 불러오는 중...";
+
+/* No comment provided by engineer. */
+"Loading..." = "불러오는 중...";
+
+/* No comment provided by engineer. */
+"Location change" = "위치 변경";
+
+/* No comment provided by engineer. */
+"Location needed to calculate satellite passes. Your experience may be degraded." = "위성 통과 계산을 위해 위치가 필요합니다. 경험이 저하될 수 있습니다.";
+
+/* No comment provided by engineer. */
+"Location not available" = "위치를 사용할 수 없습니다";
+
+/* No comment provided by engineer. */
+"Mars" = "화성";
+
+/* No comment provided by engineer. */
+"Mercury" = "수성";
+
+/* No comment provided by engineer. */
+"Mock date and time" = "모의 날짜 및 시간";
+
+/* No comment provided by engineer. */
+"Mock time %@\nOffset %@ JD" = "모의 시간 %@\n오프셋 %@ JD";
+
+/* No comment provided by engineer. */
+"Moon" = "달";
+
+/* No comment provided by engineer. */
+"Morning " = "아침 ";
+
+/* No comment provided by engineer. */
+"Need a location to find satellite passes." = "위성 통과를 찾으려면 위치가 필요합니다.";
+
+/* No comment provided by engineer. */
+"No" = "아니오";
+
+/* The default text when no satellite passes are found */
+"No passes found" = "통과가 없습니다";
+
+/* No comment provided by engineer. */
+"No upcoming visible passes; check back after a few days!" = "예정된 가시 통과가 없습니다. 며칠 후 다시 확인하세요!";
+
+/* The concatenation format of pass description in the notification. */
+"Notification.upcomingPass.description.format" = "%1$@ %2$@";
+
+/* The description for the satellite pass notification. */
+"Notification.upcomingPass.description.future" = "%2$@에서 %1$@ 후에 상승하여 %3$@로 하강합니다.";
+
+/* The description for the satellite pass notification. */
+"Notification.upcomingPass.description.now" = "지금 %1$@에서 상승하여 %2$@로 하강합니다.";
+
+/* The pass description in the notification. */
+"Notification.upcomingPass.description.passVisibilityDescription.daytime" = "통과는 최대 %.1f도의 고도를 가집니다. 너무 밝아 위성이 보이지 않을 수 있습니다.";
+
+/* The pass description in the notification. */
+"Notification.upcomingPass.description.passVisibilityDescription.entirelyVisible" = "통과 전체가 최대 %.1f도까지 조명됩니다.";
+
+/* The pass description in the notification. */
+"Notification.upcomingPass.description.passVisibilityDescription.partiallyVisible" = "통과가 부분적으로 최대 %.1f도까지 보입니다.";
+
+/* The pass description in the notification. */
+"Notification.upcomingPass.description.passVisibilityDescription.unlit" = "통과는 최대 %.1f도의 고도를 가집니다. 지구 그림자 아래에서는 너무 어두워 보이지 않습니다.";
+
+/* The title for the satellite pass notification. */
+"Notification.upcomingPass.title.future" = "%1$@가 %2$@ 후에 상승합니다";
+
+/* The title for the satellite pass notification. */
+"Notification.upcomingPass.title.now" = "%1$@가 지금 상승 중입니다";
+
+/* No comment provided by engineer. */
+"Onboarding" = "온보딩";
+
+/* No comment provided by engineer. */
+"Open location settings" = "위치 설정 열기";
+
+/* No comment provided by engineer. */
+"Overview" = "개요";
+
+/* Onboarding title for explaining a satellite pass */
+"Pass explained" = "통과 설명";
+
+/* Onboarding explanation for star rating */
+"Pass quality rating (3 stars are best)" = "통과 품질 등급(별 3개가 최고)";
+
+/* Title of confirm button of pass alarm settings. */
+"PassAlarmSettingsModalView.confirmButton.title" = "알람 예약";
+
+/* Title of delete button of pass alarm settings. */
+"PassAlarmSettingsModalView.deleteButton.title" = "알람 삭제";
+
+/* Title of lead time label of pass alarm settings. */
+"PassAlarmSettingsModalView.leadTimeLabel.title" = "미리 알림...";
+
+/* Title of discard button of pass alarm settings. */
+"PassAlarmSettingsModalView.navigationBar.discard" = "닫기";
+
+/* Navigation title of pass alarm settings, view alarm
+Navigation title of pass alarm settings. */
+"PassAlarmSettingsModalView.navigationBar.title" = "알람 예약";
+
+/* Description of the alarm timing, highest illuminated. */
+"PassAlarmSettingsModalView.timingCell.highestIlluminated" = "최고 조명";
+
+/* Description of the alarm timing, rise. */
+"PassAlarmSettingsModalView.timingCell.rise" = "상승 시";
+
+/* Description of the alarm timing, set. */
+"PassAlarmSettingsModalView.timingCell.set" = "하강 시";
+
+/* Description of the alarm timing, transit. */
+"PassAlarmSettingsModalView.timingCell.transit" = "최고점";
+
+/* A string describing that the satellite is currently passing */
+"Passing now!" = "지나가는 중!";
+
+/* A string describing that the satellite has already set in a specific time in the past */
+"PassPreviewCell.relativeDate.alreadyPassed" = "%@";
+
+/* A string describing that the satellite is currently passing */
+"PassPreviewCell.relativeDate.passing" = "지나가는 중";
+
+/* A string describing that the satellite rises in a specific time in the future */
+"PassPreviewCell.relativeDate.riseInTheFuture" = "%@";
+
+/* The pass happens during daylight */
+"PassPreviewCell.visibilityText.daylight" = "주간";
+
+/* The pass happens entirely unlit */
+"PassPreviewCell.visibilityText.unlit" = "조명 없음";
+
+/* The pass is visible */
+"PassPreviewCell.visibilityText.visible" = "가시";
+
+/* The toolbar of the pass view describing the direction of the pass. The first and second arguments correspond to the directions of rising and setting. */
+"PassView.descriptionToolbar.text" = "%1$@에서 상승하여 %2$@로 하강";
+
+/* No comment provided by engineer. */
+"Pending notifications" = "대기 중인 알림";
+
+/* The attitude noun as in 'roll', 'pitch', 'yaw' */
+"Pitch:" = "피치:";
+
+/* No comment provided by engineer. */
+"Point camera skyward and screen downward" = "카메라를 하늘로, 화면을 아래로 향하세요";
+
+/* Onboarding page 2 title */
+"Predictions for You" = "내 예측";
+
+/* No comment provided by engineer. */
+"Prominent pass %@%lld°" = "주요 통과 %@%lld°";
+
+/* No comment provided by engineer. */
+"Real time %@" = "실시간 %@";
+
+/* The format text showing the distance betweent the satellite to the observer */
+"RealtimeSkySatelliteCell.distanceText" = "거리 %@ km";
+
+/* The text indicating the satellite is not illuminated. */
+"RealtimeSkySatelliteCell.magnitudeText.notIlluminated" = "조명 없음";
+
+/* The navigation title of the realtime sky view */
+"realtimeSkyView.navigation.title" = "현재 하늘";
+
+/* The empty text for the satellite list */
+"realtimeSkyView.satelliteList.emptyText" = "현재 보이는 위성이 없습니다";
+
+/* The loading text for the satellite list */
+"realtimeSkyView.satelliteList.loadingText" = "위성 목록 불러오는 중...";
+
+/* No comment provided by engineer. */
+"Recalculate using new location" = "새 위치로 다시 계산";
+
+/* No comment provided by engineer. */
+"Reset All Onboarding" = "모든 온보딩 초기화";
+
+/* No comment provided by engineer. */
+"Reset Main Onboarding" = "메인 온보딩 초기화";
+
+/* No comment provided by engineer. */
+"Reset Pass List Onboarding" = "통과 목록 온보딩 초기화";
+
+/* No comment provided by engineer. */
+"Retry" = "다시 시도";
+
+/* The attitude noun as in 'roll', 'pitch', 'yaw' */
+"Roll:" = "롤:";
+
+/* No comment provided by engineer. */
+"Satellite Categories" = "위성 분류";
+
+/* The localized string for the status of a backup satellite
+The localized string for the status of a spare satellite */
+"SatelliteCell.operationalStatusLocalizedString.backup" = "백업";
+
+/* The localized string for the status of a decayed satellite */
+"SatelliteCell.operationalStatusLocalizedString.decayed" = "소멸됨";
+
+/* The localized string for the status of a satellite on extended mission */
+"SatelliteCell.operationalStatusLocalizedString.extendedMission" = "확장 임무 중";
+
+/* The localized string for the status of a nonoperational satellite */
+"SatelliteCell.operationalStatusLocalizedString.nonoperational" = "비운영";
+
+/* The localized string for the status of an operational satellite */
+"SatelliteCell.operationalStatusLocalizedString.operational" = "운영 중";
+
+/* The localized string for the status of a partially operational satellite */
+"SatelliteCell.operationalStatusLocalizedString.partiallyOperational" = "부분 운영";
+
+/* The localized string for the unknown status of satellite */
+"SatelliteCell.operationalStatusLocalizedString.unknown" = "상태 미확인";
+
+/* The cacatenated operator and country strings. */
+"SatelliteCell.operatorAndCountry" = "%1$@, %2$@";
+
+/* The alert message to confirm that the user is changing into his/her current location. */
+"SatelliteListView.locationSettingsView.alert.message.currentLocation" = "현재 위치로 변경하시겠습니까? 모든 위성 예측에 영향을 줍니다.";
+
+/* The alert message to confirm that the user is changing into a custom location. */
+"SatelliteListView.locationSettingsView.alert.message.custom" = "%@로 위치를 변경하시겠습니까? 모든 위성 예측에 영향을 줍니다.";
+
+/* The current location text, indicating that the observer location is the current location. */
+"SatelliteListView.observerCell.title.currentLocation" = "현재 위치";
+
+/* The text indicating that location service is not available, nor has the user selecetd a location manually. */
+"SatelliteListView.observerCell.title.requiresLocationSelection" = "위치 선택 열기";
+
+/* The section header for all active satellites */
+"SatelliteListView.sectionHeader.category.active" = "모든 활성 위성";
+
+/* The section header for the brightest 100 satellites */
+"SatelliteListView.sectionHeader.category.brightest100" = "가장 밝은 100개 위성";
+
+/* The section header for launches in the past 30 days */
+"SatelliteListView.sectionHeader.category.last30DayLaunches" = "최근 30일 내 발사";
+
+/* The title for alarm settings cell */
+"SatelliteOverview.alarmSettingsCell.title" = "알람 관리";
+
+/* The description for ephemerides manager cell */
+"SatelliteOverview.ephemeridesManagerCell.description" = "다운로드된 원시 위성 궤도 요소를 보고 관리하세요.";
+
+/* The section header for all active satellites */
+"SatelliteOverview.sectionOverviewCell.category.active" = "모든 활성 위성";
+
+/* The section header for the brightest 100 satellites */
+"SatelliteOverview.sectionOverviewCell.category.brightest100" = "가장 밝은 100개 위성";
+
+/* The section header for launches in the past 30 days */
+"SatelliteOverview.sectionOverviewCell.category.last30DayLaunches" = "최근 30일 내 발사";
+
+/* The description of ISS in overview page. */
+"SatelliteOverview.sectionOverviewCell.description.satellite.iss" = "1998년부터 궤도에 있는 최대 우주선의 다국적 협력 프로젝트입니다.";
+
+/* The description of Tianhe in overview page. */
+"SatelliteOverview.sectionOverviewCell.description.satellite.tianhe" = "중국 최초의 장기 우주정거장으로, 3개의 모듈로 구성되어 2022년에 완성되었습니다.";
+
+/* The title of ISS, displayed in the 'Satellite of special interest' section. */
+"SatelliteOverview.sectionOverviewCell.title.satellite.iss" = "국제우주정거장";
+
+/* The title of Tianhe, displayed in the 'Satellite of special interest' section. */
+"SatelliteOverview.sectionOverviewCell.title.satellite.tianhe" = "톈궁 우주정거장";
+
+/* No comment provided by engineer. */
+"Satellites" = "위성";
+
+/* No comment provided by engineer. */
+"Saturn" = "토성";
+
+/* No comment provided by engineer. */
+"Select Location" = "위치 선택";
+
+/* No comment provided by engineer. */
+"Select zoom level" = "확대 수준 선택";
+
+/* Description of the declination in SelectedStarLabel. */
+"SelectedStarLabel.declinationText.format" = "적위: %@";
+
+/* Description of the star magnitude in SelectedStarLabel. */
+"SelectedStarLabel.magnitudeText.format" = "밝기 %.1f 등급 별";
+
+/* Description of the right ascension in SelectedStarLabel. */
+"SelectedStarLabel.rightAscensionText.format" = "적경: %@";
+
+/* No comment provided by engineer. */
+"Settings" = "설정";
+
+/* The section header of the alarms section in settings */
+"SettingsOverviewView.alarms.header" = "알람";
+
+/* The section header of the ephemerides manager section in settings */
+"SettingsOverviewView.ephemeridesManager.header" = "다운로드된 궤도 요소";
+
+/* The title of the toggle that hides the experimental Sky Now tab in the settings view. */
+"SettingsOverviewView.experimentalSkyNowCell.off.title" = "실험적 Sky Now 탭 숨기기";
+
+/* The title of the toggle that shows the experimental Sky Now tab in the settings view. */
+"SettingsOverviewView.experimentalSkyNowCell.on.title" = "실험적 Sky Now 탭 표시";
+
+/* The title of the toggle that toggles night mode off in the settings view. */
+"SettingsOverviewView.nightModeCell.off.title" = "야간 모드 끄기";
+
+/* The title of the toggle that toggles night mode on in the settings view. */
+"SettingsOverviewView.nightModeCell.on.title" = "야간 모드 켜기";
+
+/* The section header of the observer section in settings */
+"SettingsOverviewView.observer.header" = "관측자 위치";
+
+/* The title for settings */
+"SettingsOverviewView.title" = "설정";
+
+/* The pass label format text of an illumination change: enters shadow */
+"SkyChartPassLabel.text.illuminationChange.entersShadow" = "그림자 진입\n%@";
+
+/* The pass label format text of an illumination change: exits shadow */
+"SkyChartPassLabel.text.illuminationChange.exitsShadow" = "그림자 벗어남\n%@";
+
+/* No comment provided by engineer. */
+"Sun" = "태양";
+
+/* No comment provided by engineer. */
+"Swipe to continue" = "계속하려면 스와이프하세요";
+
+/* The title of the 'Forecast' tab of the root view. */
+"tabs.forecast.text" = "통과 예측";
+
+/* The title of the 'Realtime sky' tab of the root view. */
+"tabs.realtimeSky.text" = "현재 하늘";
+
+/* The title of the 'Satellites' tab of the root view. */
+"tabs.satelliteCategory.text" = "위성";
+
+/* The title of the 'Settings' tab of the root view. */
+"tabs.settings.text" = "설정";
+
+/* CTA label in onboarding */
+"Tap on passes to see more details!" = "통과를 탭하면 더 많은 정보를 볼 수 있습니다!";
+
+/* No comment provided by engineer. */
+"Test deep link" = "딥 링크 테스트";
+
+/* No comment provided by engineer. */
+"The satellites are not loaded." = "위성이 로드되지 않았습니다.";
+
+/* Onboarding description for AllPassesView */
+"This screen lists all upcoming passes in 7 days. Each row shows when it will be visible from your location." = "이 화면에는 7일간의 예정된 모든 통과가 표시됩니다. 각 행은 내 위치에서 볼 수 있는 시간을 보여줍니다.";
+
+/* The name of Tiangong space station */
+"Tiangong space station" = "톈궁 우주정거장";
+
+/* No comment provided by engineer. */
+"Time control" = "시간 제어";
+
+/* No comment provided by engineer. */
+"Time frozen at %@" = "시간이 %@에 고정됨";
+
+/* No comment provided by engineer. */
+"Time interval %@" = "시간 간격 %@";
+
+/* Onboarding explanation for satellite rises above horizon */
+"Times when satellite rises above horizon" = "위성이 지평선 위로 떠오르는 시간";
+
+/* Onboarding explanation for satellite sets below horizon */
+"Times when satellite sets below horizon" = "위성이 지평선 아래로 지는 시간";
+
+/* Onboarding explanation for invisible times */
+"Times when the space station becomes invisible" = "우주정거장이 보이지 않는 시간";
+
+/* Onboarding explanation for visible times */
+"Times when the space station becomes visible" = "우주정거장이 보이는 시간";
+
+/* Onboarding page 1 description */
+"Track the International Space Station, Tiangong and others as they pass overhead. Never miss a spectacular sight in the evening sky." = "국제우주정거장, 톈궁 등 다양한 위성이 머리 위를 지나갈 때를 추적하세요. 저녁 하늘의 멋진 광경을 놓치지 마세요.";
+
+/* No comment provided by engineer. */
+"Unable to load pass information" = "통과 정보를 불러올 수 없습니다";
+
+/* No comment provided by engineer. */
+"Update time offset" = "시간 오프셋 업데이트";
+
+/* No comment provided by engineer. */
+"Venus" = "금성";
+
+/* Map annotation indicating the radius that space stations are visible for the user */
+"Visible" = "가시";
+
+/* No comment provided by engineer. */
+"Visible pass %@%lld°" = "가시 통과 %@%lld°";
+
+/* Onboarding page 1 title */
+"Welcome to Space Station Passes" = "우주정거장 통과에 오신 것을 환영합니다";
+
+/* No comment provided by engineer. */
+"Your alarms will appear here. Schedule an alarm by tapping the %@ inside a pass." = "여기에 알람이 표시됩니다. 통과 내에서 %@를 탭하여 알람을 예약하세요.";
+

@@ -91,7 +91,13 @@ public struct SatelliteCategoryViewImpl: SatelliteCategoryView {
                     }
                 }
             }
-            .navigationBarTitle("Satellite Categories", displayMode: .inline)
+            .navigationBarTitle(
+                Text(
+                    "Satellite Categories",
+                    bundle: .module
+                ),
+                displayMode: .inline
+            )
             .navigationBarHidden(true)
             .navigationDestination(for: SatelliteCategory.self) { category in
                 LazyView {

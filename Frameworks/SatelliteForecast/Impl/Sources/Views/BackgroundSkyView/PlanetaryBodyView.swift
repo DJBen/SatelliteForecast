@@ -168,7 +168,7 @@ extension SolarSystemBody {
                         .foregroundColor(.orange)
                 },
                 symbol: {
-                    Text("☉", bundle: .module)
+                    Text(verbatim: "☉")
                         .font(.system(size: 12))
                         .foregroundColor(.white)
                 }
@@ -185,7 +185,7 @@ extension SolarSystemBody {
                         .foregroundColor(.blue)
                 },
                 symbol: {
-                    Text("☾", bundle: .module)
+                    Text(verbatim: "☾")
                         .font(.system(size: 8))
                         .foregroundColor(.white)
                 }
@@ -202,7 +202,7 @@ extension SolarSystemBody {
                         .foregroundColor(.yellow)
                 },
                 symbol: {
-                    Text("☿", bundle: .module)
+                    Text(verbatim: "☿")
                         .font(.system(size: 5))
                         .foregroundColor(.white)
                 }
@@ -219,7 +219,7 @@ extension SolarSystemBody {
                         .foregroundColor(.orange)
                 },
                 symbol: {
-                    Text("♀", bundle: .module)
+                    Text(verbatim: "♀")
                         .font(.system(size: 7))
                         .foregroundColor(.white)
                 }
@@ -236,7 +236,7 @@ extension SolarSystemBody {
                         .foregroundColor(.red)
                 },
                 symbol: {
-                    Text("♂", bundle: .module)
+                    Text(verbatim: "♂")
                         .font(.system(size: 6))
                         .foregroundColor(.white)
                 }
@@ -253,7 +253,7 @@ extension SolarSystemBody {
                         .foregroundColor(.pink)
                 },
                 symbol: {
-                    Text("♃", bundle: .module)
+                    Text(verbatim: "♃")
                         .font(.system(size: 6))
                         .foregroundColor(.white)
                 }
@@ -270,7 +270,7 @@ extension SolarSystemBody {
                         .foregroundColor(.purple)
                 },
                 symbol: {
-                    Text("♄", bundle: .module)
+                    Text(verbatim: "♄")
                         .font(.system(size: 4))
                         .foregroundColor(.white)
                 }
