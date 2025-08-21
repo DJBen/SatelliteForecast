@@ -6,8 +6,7 @@ This module provides Firebase-based implementations of the AppDelegate protocols
 
 The AppDelegateImpl module provides:
 
-- `FirebaseAppDelegate` - A Firebase-based implementation of `AppDelegateImplementation`
-- `StoreAwareAppDelegate` - A wrapper that connects implementations to Redux store dispatch
+- `AppDelegateImpl` - A unified Firebase-based implementation of the AppDelegate protocols
 - `AppDelegateActionDispatcher` - Protocol for dispatching actions to the store
 - Firebase-dependent middleware and reducers
 
@@ -23,14 +22,3 @@ The AppDelegateImpl module provides:
 - Firebase Core, Messaging, and Firestore
 - SatelliteForecast business logic
 - AppDelegate interface module
-
-## Usage
-
-The main app creates a `StoreAwareAppDelegate` that wraps a `FirebaseAppDelegate`:
-
-```swift
-let firebaseImpl = FirebaseAppDelegate()
-let implementation = StoreAwareAppDelegate(implementation: firebaseImpl, actionDispatcher: store)
-```
-
-This separation allows the Firebase dependencies to be isolated while maintaining clean integration with the app's Redux architecture.

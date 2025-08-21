@@ -1,7 +1,7 @@
 {
   "promotionalText": "¡Consulten los próximos pasos de la Estación Espacial Internacional y la Estación Espacial China Tiangong en su ubicación y aprovechen el momento!",
   "description": "Estación Espacial predice los pasos de la ISS y Tiangong sobre usted con infografías útiles y mucho más.\n- Predicción de paso: prediga los pasos de la ISS, Tiangong y más de 4000 satélites sobre cualquier ubicación geográfica globalmente.\n- Carta celeste: localice con precisión la trayectoria del paso del satélite con un detallado mapa estelar interactivo.\n- Notificaciones: reciba alertas oportunas para los pasos de la ISS y Tiangong; configure alarmas para pasos individuales de satélites, para no perderse el momento.\n- Modo nocturno: preserve su visión nocturna mientras usa la aplicación.\n- Cielo en tiempo real: esta es una función experimental que muestra todos los satélites que actualmente están pasando sobre usted.",
-  "whatsNew": "- Mejorada la experiencia de autorización de ubicación y notificaciones",
+  "whatsNew": "- Agregadas localizaciones en japonés y coreano\n- Resuelto un problema que causaba que las notificaciones de paso de estación espacial no se entregaran",
   "keywords": "pasos tiangong,pasos iss,pasos de satélite,estación espacial,satélite,astronomía",
   "locale": "es-ES"
 }

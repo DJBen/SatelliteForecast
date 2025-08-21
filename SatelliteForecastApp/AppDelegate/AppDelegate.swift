@@ -22,9 +22,8 @@ fileprivate let logger = Logger(subsystem: "io.djben.appDelegate", category: "cl
 public class AppDelegate: NSObject, UIApplicationDelegate, AppDelegateActionDispatcher {
     public var dispatch: ((Store.ActionType) -> Void)?
     
-    private lazy var implementation: AppDelegateImplementation = {
-        let firebaseImpl = FirebaseAppDelegate()
-        return StoreAwareAppDelegate(implementation: firebaseImpl, actionDispatcher: self)
+    private lazy var implementation: AppDelegateImpl = {
+        return AppDelegateImpl(actionDispatcher: self)
     }()
     
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
@@ -34,7 +33,7 @@ public class AppDelegate: NSObject, UIApplicationDelegate, AppDelegateActionDisp
         }
         
         // Set up notification delegates
-        UNUserNotificationCenter.current().delegate = implementation as? UNUserNotificationCenterDelegate
+        UNUserNotificationCenter.current().delegate = implementation
         
         return implementation.application(application, didFinishLaunchingWithOptions: launchOptions)
     }

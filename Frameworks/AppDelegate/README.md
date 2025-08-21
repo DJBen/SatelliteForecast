@@ -10,7 +10,6 @@ The AppDelegate module defines:
 - `AppDelegateProtocol` - Interface for core UIApplication delegate methods
 - `MessagingHandlerProtocol` - Interface for handling Firebase Cloud Messaging
 - `NotificationHandlerProtocol` - Interface for handling user notifications
-- `AppDelegateImplementation` - Combined protocol for a complete app delegate implementation
 
 ## Key Features
 
@@ -20,10 +19,10 @@ The AppDelegate module defines:
 
 ## Usage
 
-Implement the `AppDelegateImplementation` protocol to provide your app delegate functionality:
+Implement the individual protocols to provide your app delegate functionality:
 
 ```swift
-class MyAppDelegate: AppDelegateImplementation {
+class MyAppDelegate: AppDelegateProtocol, MessagingHandlerProtocol, NotificationHandlerProtocol {
     // Implement required methods
 }
 ```

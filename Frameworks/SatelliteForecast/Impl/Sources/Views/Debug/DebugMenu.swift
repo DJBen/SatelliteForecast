@@ -17,13 +17,15 @@ public struct DebugMenuState: Equatable, AppStateMappable {
     var config: DebugMenuConfig
     var pendingNotifications: [UNNotificationRequest]
     var deliveredNotifications: [UNNotification]
+    var fcmToken: String?
 
     public static func project(appState state: AppState) -> DebugMenuState {
         DebugMenuState(
             trueJulianDate: Date().julianDate,
             config: state.debugMenu,
             pendingNotifications: state.notificationResources.pendingNotifications,
-            deliveredNotifications: state.notificationResources.deliveredNotifications
+            deliveredNotifications: state.notificationResources.deliveredNotifications,
+            fcmToken: state.fcmToken
         )
     }
 
@@ -37,6 +39,7 @@ public struct DebugMenuState: Equatable, AppStateMappable {
 public struct DebugMenu: View {
     @ObservedObject var viewModel: ObservableViewModel<DebugMenuAction, DebugMenuState?>
     @State var dateWithinPicker: Date
+    @State var showCopySuccess: Bool = false
 
     public init(
         viewModel: ObservableViewModel<DebugMenuAction, DebugMenuState?>
@@ -161,6 +164,48 @@ public struct DebugMenu: View {
     public var body: some View {
         unwrapState { state in
             Form {
+                Section {
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("FCM Token")
+                                    .font(.headline)
+                                if let fcmToken = state.fcmToken {
+                                    Text(fcmToken)
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                        .lineLimit(nil)
+                                } else {
+                                    Text("No FCM token")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            Spacer()
+                            if state.fcmToken != nil {
+                                Button("Copy") {
+                                    if let fcmToken = state.fcmToken {
+                                        UIPasteboard.general.string = fcmToken
+                                        showCopySuccess = true
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                            showCopySuccess = false
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        
+                        if showCopySuccess {
+                            Text("Copied to clipboard")
+                                .font(.caption2)
+                                .foregroundColor(.green)
+                                .animation(.easeInOut(duration: 0.3), value: showCopySuccess)
+                        }
+                    }
+                } header: {
+                    Text("Device Information")
+                }
+                
                 Section {
                     timeSectionContent
                 } header: {
