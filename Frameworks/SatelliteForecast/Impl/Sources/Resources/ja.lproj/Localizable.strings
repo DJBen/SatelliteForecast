@@ -1,0 +1,590 @@
+/* No comment provided by engineer. */
+"%@ %@" = "%@ %@";
+
+/* No comment provided by engineer. */
+"%@ Allow location access" = "%@ 位置情報アクセスを許可";
+
+/* No comment provided by engineer. */
+"%@ kg" = "%@ kg";
+
+/* No comment provided by engineer. */
+"%@ Manually select a location" = "%@ 位置を手動で選択";
+
+/* No comment provided by engineer. */
+"%@ Select a location" = "%@ 位置を選択";
+
+/* No comment provided by engineer. */
+"%lld°" = "%lld°";
+
+/* The verb as in alarm clock 'alarms' somebody */
+"Alarm" = "アラーム";
+
+/* Noun, as in alarm clock. */
+"Alarms" = "アラーム";
+
+/* The timing and offset description for the alarm in the alarm settings view, culmination. */
+"AlarmSettingsView.alarmOffsetDescription.culmination" = "最高点の%@前";
+
+/* The timing and offset description for the alarm in the alarm settings view, highest illuminated. */
+"AlarmSettingsView.alarmOffsetDescription.highestIlluminated" = "最高照明時の%@前";
+
+/* The timing and offset description for the alarm in the alarm settings view, rise. */
+"AlarmSettingsView.alarmOffsetDescription.rise" = "昇天の%@前";
+
+/* The timing and offset description for the alarm in the alarm settings view, set. */
+"AlarmSettingsView.alarmOffsetDescription.set" = "沈没の%@前";
+
+/* The pass description for each alarm in the alarm settings view */
+"AlarmSettingsView.passDescription" = "%1$@に上昇し、%2$@に沈没します。";
+
+/* The pass description for each alarm in the alarm settings view */
+"AlarmSettingsView.passVisibilityDescription.daytime" = "パスは日中に発生し、最大仰角は%.1f度です。";
+
+/* The pass description for each alarm in the alarm settings view */
+"AlarmSettingsView.passVisibilityDescription.unlit" = "パスは照明されておらず、最大仰角は%.1f度です。";
+
+/* The pass description for each alarm in the alarm settings view */
+"AlarmSettingsView.passVisibilityDescription.visible" = "最大可視仰角%.1f度。";
+
+/* The text for a warning label upon significant deviation of the location used to calculate passes from the current location. */
+"AllPassesLocationChangeWarning.text" = "新しい位置%1$@は、パス計算に使用された位置から%2$@離れています。結果が正確でない可能性があります。";
+
+/* The altitude format of mission control header */
+"AllPassesView.missionControlHeader.altitudeFormat" = "地上%@ km";
+
+/* The auxiliary text under the navigation title detailing the search date range of the passes. */
+"AllPassesView.searchPassRangeToolbar.text" = "%1$@までのパスを表示";
+
+/* The header of invisible passes */
+"AllPassesView.section.invisible.header" = "不可視パス";
+
+/* The caption under the header of invisible passes */
+"AllPassesView.section.invisible.headerCaption.v2" = "パスが見えない理由：\n1. 日中は明るすぎる\n2. 夜遅くに衛星が地球の影に入る";
+
+/* The body of observer info */
+"AllPassesView.section.observer.body" = "%@から観測しています。";
+
+/* The header of visible passes */
+"AllPassesView.section.visible.header" = "可視パス";
+
+/* The caption under the header of visible passes */
+"AllPassesView.section.visible.headerCaption.v2" = "衛星は、空が暗く、まだ太陽に照らされているときに見ることができます。最適な観測条件は、日没直後と日の出前です。";
+
+/* The progress text when calculating satellite passes */
+"Calculating..." = "計算中...";
+
+/* No comment provided by engineer. */
+"Cancel alarm" = "アラームをキャンセル";
+
+/* No comment provided by engineer. */
+"Confirm" = "確認";
+
+/* No comment provided by engineer. */
+"Current location" = "現在の場所";
+
+/* No comment provided by engineer. */
+"Current location not available" = "現在の場所は利用できません";
+
+/* No comment provided by engineer. */
+"Custom location" = "カスタム位置";
+
+/* No comment provided by engineer. */
+"Debug Menu" = "デバッグメニュー";
+
+/* No comment provided by engineer. */
+"Deep link to Hubble (brightest 100)" = "ハッブルへのディープリンク（最も明るい100個）";
+
+/* No comment provided by engineer. */
+"Deep link to ISS (special)" = "ISSへのディープリンク（特別）";
+
+/* No comment provided by engineer. */
+"Deliver notifications 10 seconds after scheduled" = "予定時刻の10秒後に通知を配信";
+
+/* No comment provided by engineer. */
+"Delivered at %@" = "%@に配信済み";
+
+/* No comment provided by engineer. */
+"Delivered notifications" = "配信済み通知";
+
+/* Title of dismiss button of detailed pass view. */
+"DetailedPassView.navigationBar.discard" = "閉じる";
+
+/* Navigation title of detailed pass view. */
+"DetailedPassView.navigationBar.title" = "アラームを設定";
+
+/* No comment provided by engineer. */
+"Did you know? Space stations orbits earth 15 times a day, and maybe up to 5-7 times above your location, but most of the time it's either too bright or too dark to be seen." = "ご存知でしたか？宇宙ステーションは1日に15回地球を周回し、あなたの上空を5〜7回通過することがありますが、ほとんどの場合、明るすぎるか暗すぎて見えません。";
+
+/* No comment provided by engineer. */
+"Directions.east" = "東";
+
+/* No comment provided by engineer. */
+"Directions.north" = "北";
+
+/* No comment provided by engineer. */
+"Directions.northeast" = "北東";
+
+/* No comment provided by engineer. */
+"Directions.northwest" = "北西";
+
+/* No comment provided by engineer. */
+"Directions.south" = "南";
+
+/* No comment provided by engineer. */
+"Directions.southeast" = "南東";
+
+/* No comment provided by engineer. */
+"Directions.southwest" = "南西";
+
+/* No comment provided by engineer. */
+"Directions.west" = "西";
+
+/* No comment provided by engineer. */
+"Enter address" = "住所を入力";
+
+/* No comment provided by engineer. */
+"Ephemerides" = "軌道データ";
+
+/* The comment text for the last 30 days satellites file */
+"EphemeridesManagementView.comment.active" = "すべてのアクティブな衛星の軌道データ。";
+
+/* The comment text for the last 30 days satellites file */
+"EphemeridesManagementView.comment.last30Days" = "過去30日以内の新規打ち上げ衛星の軌道データ。";
+
+/* The comment text for the visual (brightest 100) satellites file */
+"EphemeridesManagementView.comment.visual" = "最も明るい100個の衛星の軌道データ。";
+
+/* The empty text for the satellite ephemerides */
+"EphemeridesManagementView.emptyText" = "ダウンロードされた衛星軌道データがありません";
+
+/* The message of the share link in ephemeride text browser view */
+"EphemerideTextBrowserView.shareLink.message" = "%@衛星の軌道データを共有";
+
+/* No comment provided by engineer. */
+"Evening " = "夕方 ";
+
+/* No comment provided by engineer. */
+"Filter by name, ID, country, year..." = "名前、ID、国、年で絞り込み...";
+
+/* No comment provided by engineer. */
+"Freeze time" = "時間を停止";
+
+/* Onboarding page 2 description */
+"Get accurate pass predictions for your location. We'll notify you when viewing opportunities arise." = "あなたの位置での正確なパス予測を取得します。観測機会が生じた際にお知らせします。";
+
+/* No comment provided by engineer. */
+"Get Started" = "始める";
+
+/* Button to complete AllPassesView onboarding */
+"Got it!" = "了解！";
+
+/* No comment provided by engineer. */
+"Hello, World!" = "Hello, World!";
+
+/* Onboarding explanation for culmination */
+"Highest point in the sky (best for viewing)" = "空の最高点（観測に最適）";
+
+/* The name of ISS */
+"International space station" = "国際宇宙ステーション";
+
+/* No comment provided by engineer. */
+"Jupiter" = "木星";
+
+/* No comment provided by engineer. */
+"Loading pass information..." = "パス情報を読み込み中...";
+
+/* No comment provided by engineer. */
+"Loading..." = "読み込み中...";
+
+/* No comment provided by engineer. */
+"Location change" = "位置の変更";
+
+/* No comment provided by engineer. */
+"Location needed to calculate satellite passes. Your experience may be degraded." = "衛星パスの計算には位置情報が必要です。体験が制限される可能性があります。";
+
+/* No comment provided by engineer. */
+"Location not available" = "位置情報が利用できません";
+
+/* No comment provided by engineer. */
+"Mars" = "火星";
+
+/* No comment provided by engineer. */
+"Mercury" = "水星";
+
+/* No comment provided by engineer. */
+"Mock date and time" = "模擬日時";
+
+/* No comment provided by engineer. */
+"Mock time %@\nOffset %@ JD" = "模擬時間 %@\nオフセット %@ JD";
+
+/* No comment provided by engineer. */
+"Moon" = "月";
+
+/* No comment provided by engineer. */
+"Morning " = "朝 ";
+
+/* No comment provided by engineer. */
+"Need a location to find satellite passes." = "衛星パスを見つけるには位置情報が必要です。";
+
+/* No comment provided by engineer. */
+"No" = "いいえ";
+
+/* The default text when no satellite passes are found */
+"No passes found" = "パスが見つかりません";
+
+/* No comment provided by engineer. */
+"No upcoming visible passes; check back after a few days!" = "今後の可視パスはありません。数日後に再度確認してください！";
+
+/* The concatenation format of pass description in the notification. */
+"Notification.upcomingPass.description.format" = "%1$@ %2$@";
+
+/* The description for the satellite pass notification. */
+"Notification.upcomingPass.description.future" = "%1$@後に%2$@から上昇し、%3$@に沈没します。";
+
+/* The description for the satellite pass notification. */
+"Notification.upcomingPass.description.now" = "現在%1$@から上昇中、%2$@に沈没します。";
+
+/* The pass description in the notification. */
+"Notification.upcomingPass.description.passVisibilityDescription.daytime" = "パスの最大仰角は%.1f度です。ただし、衛星が見えるには明るすぎる可能性があります。";
+
+/* The pass description in the notification. */
+"Notification.upcomingPass.description.passVisibilityDescription.entirelyVisible" = "パス全体が%.1f度の仰角まで照明されています。";
+
+/* The pass description in the notification. */
+"Notification.upcomingPass.description.passVisibilityDescription.partiallyVisible" = "パスは%.1f度の仰角まで部分的に可視です。";
+
+/* The pass description in the notification. */
+"Notification.upcomingPass.description.passVisibilityDescription.unlit" = "パスの最大仰角は%.1f度です。地球の影の下では、暗すぎて見えません。";
+
+/* The title for the satellite pass notification. */
+"Notification.upcomingPass.title.future" = "%1$@が%2$@後に上昇します";
+
+/* The title for the satellite pass notification. */
+"Notification.upcomingPass.title.now" = "%1$@が現在上昇中です";
+
+/* No comment provided by engineer. */
+"Onboarding" = "オンボーディング";
+
+/* No comment provided by engineer. */
+"Open location settings" = "位置情報設定を開く";
+
+/* No comment provided by engineer. */
+"Overview" = "概要";
+
+/* Onboarding title for explaining a satellite pass */
+"Pass explained" = "パスの説明";
+
+/* Onboarding explanation for star rating */
+"Pass quality rating (3 stars are best)" = "パス品質評価（3つ星が最高）";
+
+/* Title of confirm button of pass alarm settings. */
+"PassAlarmSettingsModalView.confirmButton.title" = "アラームを設定";
+
+/* Title of delete button of pass alarm settings. */
+"PassAlarmSettingsModalView.deleteButton.title" = "アラームを削除";
+
+/* Title of lead time label of pass alarm settings. */
+"PassAlarmSettingsModalView.leadTimeLabel.title" = "事前に通知...";
+
+/* Title of discard button of pass alarm settings. */
+"PassAlarmSettingsModalView.navigationBar.discard" = "閉じる";
+
+/* Navigation title of pass alarm settings, view alarm
+Navigation title of pass alarm settings. */
+"PassAlarmSettingsModalView.navigationBar.title" = "アラームを設定";
+
+/* Description of the alarm timing, highest illuminated. */
+"PassAlarmSettingsModalView.timingCell.highestIlluminated" = "最高照明時";
+
+/* Description of the alarm timing, rise. */
+"PassAlarmSettingsModalView.timingCell.rise" = "上昇時";
+
+/* Description of the alarm timing, set. */
+"PassAlarmSettingsModalView.timingCell.set" = "沈没時";
+
+/* Description of the alarm timing, transit. */
+"PassAlarmSettingsModalView.timingCell.transit" = "最高点";
+
+/* A string describing that the satellite is currently passing */
+"Passing now!" = "現在通過中！";
+
+/* A string describing that the satellite has already set in a specific time in the past */
+"PassPreviewCell.relativeDate.alreadyPassed" = "%@";
+
+/* A string describing that the satellite is currently passing */
+"PassPreviewCell.relativeDate.passing" = "現在通過中";
+
+/* A string describing that the satellite rises in a specific time in the future */
+"PassPreviewCell.relativeDate.riseInTheFuture" = "%@";
+
+/* The pass happens during daylight */
+"PassPreviewCell.visibilityText.daylight" = "日中";
+
+/* The pass happens entirely unlit */
+"PassPreviewCell.visibilityText.unlit" = "照明なし";
+
+/* The pass is visible */
+"PassPreviewCell.visibilityText.visible" = "可視";
+
+/* The toolbar of the pass view describing the direction of the pass. The first and second arguments correspond to the directions of rising and setting. */
+"PassView.descriptionToolbar.text" = "%1$@から上昇し、%2$@に沈没";
+
+/* No comment provided by engineer. */
+"Pending notifications" = "保留中の通知";
+
+/* The attitude noun as in 'roll', 'pitch', 'yaw' */
+"Pitch:" = "ピッチ:";
+
+/* No comment provided by engineer. */
+"Point camera skyward and screen downward" = "カメラを空に向け、画面を下に向ける";
+
+/* Onboarding page 2 title */
+"Predictions for You" = "あなたの予測";
+
+/* No comment provided by engineer. */
+"Prominent pass %@%lld°" = "目立つパス %@%lld°";
+
+/* No comment provided by engineer. */
+"Real time %@" = "リアルタイム %@";
+
+/* The format text showing the distance betweent the satellite to the observer */
+"RealtimeSkySatelliteCell.distanceText" = "距離 %@ km";
+
+/* The text indicating the satellite is not illuminated. */
+"RealtimeSkySatelliteCell.magnitudeText.notIlluminated" = "照明されていません";
+
+/* The navigation title of the realtime sky view */
+"realtimeSkyView.navigation.title" = "現在の空";
+
+/* The empty text for the satellite list */
+"realtimeSkyView.satelliteList.emptyText" = "現在見える衛星はありません";
+
+/* The loading text for the satellite list */
+"realtimeSkyView.satelliteList.loadingText" = "衛星カタログを読み込み中...";
+
+/* No comment provided by engineer. */
+"Recalculate using new location" = "新しい位置で再計算";
+
+/* No comment provided by engineer. */
+"Reset All Onboarding" = "すべてのオンボーディングをリセット";
+
+/* No comment provided by engineer. */
+"Reset Main Onboarding" = "メインオンボーディングをリセット";
+
+/* No comment provided by engineer. */
+"Reset Pass List Onboarding" = "パスリストオンボーディングをリセット";
+
+/* No comment provided by engineer. */
+"Retry" = "再試行";
+
+/* The attitude noun as in 'roll', 'pitch', 'yaw' */
+"Roll:" = "ロール:";
+
+/* No comment provided by engineer. */
+"Satellite Categories" = "衛星カテゴリ";
+
+/* The localized string for the status of a backup satellite
+The localized string for the status of a spare satellite */
+"SatelliteCell.operationalStatusLocalizedString.backup" = "バックアップ";
+
+/* The localized string for the status of a decayed satellite */
+"SatelliteCell.operationalStatusLocalizedString.decayed" = "減衰";
+
+/* The localized string for the status of a satellite on extended mission */
+"SatelliteCell.operationalStatusLocalizedString.extendedMission" = "拡張ミッション中";
+
+/* The localized string for the status of a nonoperational satellite */
+"SatelliteCell.operationalStatusLocalizedString.nonoperational" = "非運用";
+
+/* The localized string for the status of an operational satellite */
+"SatelliteCell.operationalStatusLocalizedString.operational" = "運用中";
+
+/* The localized string for the status of a partially operational satellite */
+"SatelliteCell.operationalStatusLocalizedString.partiallyOperational" = "部分運用";
+
+/* The localized string for the unknown status of satellite */
+"SatelliteCell.operationalStatusLocalizedString.unknown" = "状態不明";
+
+/* The cacatenated operator and country strings. */
+"SatelliteCell.operatorAndCountry" = "%1$@, %2$@";
+
+/* The alert message to confirm that the user is changing into his/her current location. */
+"SatelliteListView.locationSettingsView.alert.message.currentLocation" = "現在の場所に変更することを確認してください。これはすべての衛星予測に影響します。";
+
+/* The alert message to confirm that the user is changing into a custom location. */
+"SatelliteListView.locationSettingsView.alert.message.custom" = "位置を%@に変更することを確認してください。これはすべての衛星予測に影響します。";
+
+/* The current location text, indicating that the observer location is the current location. */
+"SatelliteListView.observerCell.title.currentLocation" = "現在の場所";
+
+/* The text indicating that location service is not available, nor has the user selecetd a location manually. */
+"SatelliteListView.observerCell.title.requiresLocationSelection" = "タップして位置を選択";
+
+/* The section header for all active satellites */
+"SatelliteListView.sectionHeader.category.active" = "すべてのアクティブな衛星";
+
+/* The section header for the brightest 100 satellites */
+"SatelliteListView.sectionHeader.category.brightest100" = "最も明るい100個の衛星";
+
+/* The section header for launches in the past 30 days */
+"SatelliteListView.sectionHeader.category.last30DayLaunches" = "過去30日間の打ち上げ";
+
+/* The title for alarm settings cell */
+"SatelliteOverview.alarmSettingsCell.title" = "アラーム管理";
+
+/* The description for ephemerides manager cell */
+"SatelliteOverview.ephemeridesManagerCell.description" = "ダウンロードされた生の衛星軌道データを表示・管理します。";
+
+/* The section header for all active satellites */
+"SatelliteOverview.sectionOverviewCell.category.active" = "すべてのアクティブな衛星";
+
+/* The section header for the brightest 100 satellites */
+"SatelliteOverview.sectionOverviewCell.category.brightest100" = "最も明るい100個の衛星";
+
+/* The section header for launches in the past 30 days */
+"SatelliteOverview.sectionOverviewCell.category.last30DayLaunches" = "過去30日間の打ち上げ";
+
+/* The description of ISS in overview page. */
+"SatelliteOverview.sectionOverviewCell.description.satellite.iss" = "1998年から軌道上で最大の宇宙船を特徴とする多国間共同プロジェクト。";
+
+/* The description of Tianhe in overview page. */
+"SatelliteOverview.sectionOverviewCell.description.satellite.tianhe" = "3つのモジュールを特徴とする中国初の長期宇宙ステーション、2022年に完全組立。";
+
+/* The title of ISS, displayed in the 'Satellite of special interest' section. */
+"SatelliteOverview.sectionOverviewCell.title.satellite.iss" = "国際宇宙ステーション";
+
+/* The title of Tianhe, displayed in the 'Satellite of special interest' section. */
+"SatelliteOverview.sectionOverviewCell.title.satellite.tianhe" = "天宮宇宙ステーション";
+
+/* No comment provided by engineer. */
+"Satellites" = "衛星";
+
+/* No comment provided by engineer. */
+"Saturn" = "土星";
+
+/* No comment provided by engineer. */
+"Select Location" = "位置を選択";
+
+/* No comment provided by engineer. */
+"Select zoom level" = "ズームレベルを選択";
+
+/* Description of the declination in SelectedStarLabel. */
+"SelectedStarLabel.declinationText.format" = "赤緯: %@";
+
+/* Description of the star magnitude in SelectedStarLabel. */
+"SelectedStarLabel.magnitudeText.format" = "%.1f等星";
+
+/* Description of the right ascension in SelectedStarLabel. */
+"SelectedStarLabel.rightAscensionText.format" = "赤経: %@";
+
+/* No comment provided by engineer. */
+"Settings" = "設定";
+
+/* The section header of the alarms section in settings */
+"SettingsOverviewView.alarms.header" = "アラーム";
+
+/* The section header of the ephemerides manager section in settings */
+"SettingsOverviewView.ephemeridesManager.header" = "ダウンロード済み軌道データ";
+
+/* The title of the toggle that hides the experimental Sky Now tab in the settings view. */
+"SettingsOverviewView.experimentalSkyNowCell.off.title" = "実験的な「現在の空」タブを非表示";
+
+/* The title of the toggle that shows the experimental Sky Now tab in the settings view. */
+"SettingsOverviewView.experimentalSkyNowCell.on.title" = "実験的な「現在の空」タブを表示";
+
+/* The title of the toggle that toggles night mode off in the settings view. */
+"SettingsOverviewView.nightModeCell.off.title" = "ナイトモードをオフ";
+
+/* The title of the toggle that toggles night mode on in the settings view. */
+"SettingsOverviewView.nightModeCell.on.title" = "ナイトモードをオン";
+
+/* The section header of the observer section in settings */
+"SettingsOverviewView.observer.header" = "観測者の位置";
+
+/* The title for settings */
+"SettingsOverviewView.title" = "設定";
+
+/* The pass label format text of an illumination change: enters shadow */
+"SkyChartPassLabel.text.illuminationChange.entersShadow" = "影に入る\n%@";
+
+/* The pass label format text of an illumination change: exits shadow */
+"SkyChartPassLabel.text.illuminationChange.exitsShadow" = "影から出る\n%@";
+
+/* No comment provided by engineer. */
+"Sun" = "太陽";
+
+/* No comment provided by engineer. */
+"Swipe to continue" = "スワイプして続行";
+
+/* The title of the 'Forecast' tab of the root view. */
+"tabs.forecast.text" = "パス予報";
+
+/* The title of the 'Realtime sky' tab of the root view. */
+"tabs.realtimeSky.text" = "現在の空";
+
+/* The title of the 'Satellites' tab of the root view. */
+"tabs.satelliteCategory.text" = "衛星";
+
+/* The title of the 'Settings' tab of the root view. */
+"tabs.settings.text" = "設定";
+
+/* CTA label in onboarding */
+"Tap on passes to see more details!" = "パスをタップして詳細を確認！";
+
+/* No comment provided by engineer. */
+"Test deep link" = "ディープリンクをテスト";
+
+/* No comment provided by engineer. */
+"The satellites are not loaded." = "衛星が読み込まれていません。";
+
+/* Onboarding description for AllPassesView */
+"This screen lists all upcoming passes in 7 days. Each row shows when it will be visible from your location." = "この画面は7日間の今後のパスをすべて一覧表示します。各行はあなたの位置から見える時間を示しています。";
+
+/* The name of Tiangong space station */
+"Tiangong space station" = "天宮宇宙ステーション";
+
+/* No comment provided by engineer. */
+"Time control" = "時間制御";
+
+/* No comment provided by engineer. */
+"Time frozen at %@" = "%@で時間停止中";
+
+/* No comment provided by engineer. */
+"Time interval %@" = "時間間隔 %@";
+
+/* Onboarding explanation for satellite rises above horizon */
+"Times when satellite rises above horizon" = "衛星が地平線上に現れる時間";
+
+/* Onboarding explanation for satellite sets below horizon */
+"Times when satellite sets below horizon" = "衛星が地平線下に沈む時間";
+
+/* Onboarding explanation for invisible times */
+"Times when the space station becomes invisible" = "宇宙ステーションが見えなくなる時間";
+
+/* Onboarding explanation for visible times */
+"Times when the space station becomes visible" = "宇宙ステーションが見えるようになる時間";
+
+/* Onboarding page 1 description */
+"Track the International Space Station, Tiangong and others as they pass overhead. Never miss a spectacular sight in the evening sky." = "国際宇宙ステーション、天宮、その他の宇宙船が頭上を通過するのを追跡します。夕空の壮観な光景を見逃すことはありません。";
+
+/* No comment provided by engineer. */
+"Unable to load pass information" = "パス情報を読み込めません";
+
+/* No comment provided by engineer. */
+"Update time offset" = "時間オフセットを更新";
+
+/* No comment provided by engineer. */
+"Venus" = "金星";
+
+/* Map annotation indicating the radius that space stations are visible for the user */
+"Visible" = "可視";
+
+/* No comment provided by engineer. */
+"Visible pass %@%lld°" = "可視パス %@%lld°";
+
+/* Onboarding page 1 title */
+"Welcome to Space Station Passes" = "宇宙ステーションパスへようこそ";
+
+/* No comment provided by engineer. */
+"Your alarms will appear here. Schedule an alarm by tapping the %@ inside a pass." = "あなたのアラームがここに表示されます。パス内の%@をタップしてアラームを設定してください。";
+

@@ -1,5 +1,5 @@
 //
-//  FirebaseAppDelegate.swift
+//  AppDelegateImpl.swift
 //  AppDelegateImpl
 //
 //  Created by Ben Lu on 7/27/25.
@@ -10,38 +10,49 @@ import os
 import UIKit
 import UserNotifications
 import AppDelegate
-import SatelliteKit
 import SatelliteForecast
+import SatelliteForecastImpl
+import SatelliteKit
 import FirebaseCore
 import FirebaseMessaging
 import FirebaseFirestore
 
-fileprivate let logger = Logger(subsystem: "io.djben.appDelegate", category: "firebase")
+fileprivate let logger = Logger(subsystem: "io.djben.appDelegate", category: "impl")
 fileprivate let gcmMessageIDKey = "gcm.message_id"
 
-/// Firebase-based implementation of AppDelegateImplementation
-public class FirebaseAppDelegate: NSObject, AppDelegateImplementation {
+/// Protocol for dispatching app delegate actions to a store
+public protocol AppDelegateActionDispatcher: AnyObject {
+    func dispatch(_ action: AppDelegateAction)
+    func dispatchNotificationAction(_ action: NotificationAction)
+}
+
+/// Unified app delegate implementation that combines Firebase functionality with store awareness
+public class AppDelegateImpl: NSObject, AppDelegateProtocol, MessagingHandlerProtocol, NotificationHandlerProtocol {
+    private let actionDispatcher: AppDelegateActionDispatcher
     
-    public override init() {
+    public init(actionDispatcher: AppDelegateActionDispatcher) {
+        self.actionDispatcher = actionDispatcher
         super.init()
     }
     
     // MARK: - AppDelegateProtocol
     
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]?) -> Bool {
+        // Set up notification center
         UNUserNotificationCenter.current().delegate = self
+        
+        // Initialize Firebase
         FirebaseApp.configure()
         Messaging.messaging().delegate = self
-        // Initializes Firestore; creates shared instance once
-        let _ = Firestore.firestore()
         
-        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-        UNUserNotificationCenter.current().requestAuthorization(
-          options: authOptions,
-          completionHandler: { _, _ in }
-        )
+        // Initialize Firestore; creates shared instance once
+        let _ = Firestore.firestore()
 
+        // Register for remote notifications
         application.registerForRemoteNotifications()
+        
+        // Dispatch action to store
+        actionDispatcher.dispatch(.didFinishLaunchingWithOptions(launchOptions))
         
         return true
     }
@@ -60,14 +71,15 @@ public class FirebaseAppDelegate: NSObject, AppDelegateImplementation {
     
     public func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         print("APNs token retrieved: \(deviceToken)")
+        actionDispatcher.dispatch(.didRegisterForRemoteNotificationsWithDeviceToken(deviceToken))
     }
     
     // MARK: - MessagingHandlerProtocol
     
     public func didReceiveRegistrationToken(_ fcmToken: String?) {
         print("Firebase registration token: \(String(describing: fcmToken))")
-        guard let fcmToken else {
-            return
+        if let fcmToken = fcmToken {
+            actionDispatcher.dispatch(.didReceiveFCMToken(fcmToken))
         }
     }
     
@@ -85,7 +97,7 @@ public class FirebaseAppDelegate: NSObject, AppDelegateImplementation {
         case "PASS":
             switch response.actionIdentifier {
             case UNNotificationDismissActionIdentifier:
-                completionHandler()
+                break
             case UNNotificationDefaultActionIdentifier:
                 let userInfo = response.notification.request.content.userInfo
                 guard let noradIndex = (userInfo["noradIndex"] as? String).flatMap(UInt.init),
@@ -101,20 +113,29 @@ public class FirebaseAppDelegate: NSObject, AppDelegateImplementation {
                 } else {
                     break
                 }
-
-                completionHandler()
+                
+                actionDispatcher.dispatchNotificationAction(
+                    .deepLink(
+                        category: satelliteCategory,
+                        noradIndex: noradIndex,
+                        observer: observer,
+                        passIdentifier: response.notification.request.identifier
+                    )
+                )
             default:
-                completionHandler()
+                break
             }
         default:
             logger.warning("Unknown push notification category \(categoryIdentifier). Ignored.")
         }
+        
+        completionHandler()
     }
 }
 
 // MARK: - MessagingDelegate
 
-extension FirebaseAppDelegate: MessagingDelegate {
+extension AppDelegateImpl: MessagingDelegate {
     public func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         didReceiveRegistrationToken(fcmToken)
     }
@@ -122,7 +143,7 @@ extension FirebaseAppDelegate: MessagingDelegate {
 
 // MARK: - UNUserNotificationCenterDelegate
 
-extension FirebaseAppDelegate: UNUserNotificationCenterDelegate {
+extension AppDelegateImpl: UNUserNotificationCenterDelegate {
     public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         willPresent(notification: notification, withCompletionHandler: completionHandler)
     }

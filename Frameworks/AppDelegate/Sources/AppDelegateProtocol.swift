@@ -28,7 +28,3 @@ public protocol NotificationHandlerProtocol: AnyObject {
     func willPresent(notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void)
     func didReceive(response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void)
 }
-
-/// Combined protocol for a complete app delegate implementation
-public protocol AppDelegateImplementation: AppDelegateProtocol, MessagingHandlerProtocol, NotificationHandlerProtocol {
-}

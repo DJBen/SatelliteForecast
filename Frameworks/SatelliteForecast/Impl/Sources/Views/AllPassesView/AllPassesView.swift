@@ -269,9 +269,22 @@ public struct AllPassesView: View {
 
     private var visiblePassHeader: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(AllPassesView.Section.VisiblePasses.header)
-                .font(.headline.lowercaseSmallCaps())
-                .foregroundColor(Color(UIColor.label))
+            HStack {
+                Text(AllPassesView.Section.VisiblePasses.header)
+                    .font(.headline.lowercaseSmallCaps())
+                    .foregroundColor(Color(UIColor.label))
+
+                Spacer()
+                
+                Button {
+                    viewModel.dispatch(.showOnboarding(true))
+                } label: {
+                    Image(systemName: "questionmark.circle")
+                        .font(.subheadline)
+                        .foregroundColor(Color(UIColor.secondaryLabel))
+                }
+                .accessibilityLabel(Text("Show help", bundle: .module, comment: "Accessibility label for help button"))
+            }
             Text(AllPassesView.Section.VisiblePasses.headerCaption)
                 .font(.caption)
                 .foregroundColor(Color(UIColor.secondaryLabel))
@@ -454,7 +467,7 @@ public struct AllPassesView: View {
                 }
             }
         }
-        .sheet(isPresented: Binding<Bool>(
+        .fullScreenCover(isPresented: Binding<Bool>(
             get: { viewModel.state.showsOnboarding },
             set: { isPresented in
                 // If the sheet is being dismissed (isPresented = false) and we haven't completed onboarding yet,

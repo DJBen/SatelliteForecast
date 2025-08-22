@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SatelliteOverview.alarmSettingsCell.description</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@alarmCount@</string>
+		<key>alarmCount</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>other</key>
+			<string>대기 중인 알람이 %d개 있습니다.</string>
+			<key>zero</key>
+			<string>현재 설정된 알람이 없습니다.</string>
+		</dict>
+	</dict>
+	<key>SatelliteOverview.ephemeridesManagerCell.title</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@ephemerideFileCount@</string>
+		<key>ephemerideFileCount</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>other</key>
+			<string>궤도 요소 파일 %d개</string>
+			<key>zero</key>
+			<string>궤도 요소 파일 없음</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

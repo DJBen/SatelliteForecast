@@ -1,0 +1,6 @@
+/* Description for ElementsLoaderError.expired */
+"ElementsLoaderError.expired.format" = "%1$@에 마지막으로 수정된 궤도 요소가 만료되었습니다. 최대 지속 시간은 %2$d초입니다.";
+
+/* Description for ElementsLoaderError.unexpectedMimeType */
+"ElementsLoaderError.unexpectedMimeType.description" = "위성 요소에 예상치 못한 MIME 유형(%@)이 발견되었습니다.";
+

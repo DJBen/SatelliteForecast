@@ -1,0 +1,181 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "CFBundleDisplayName" : {
+      "comment" : "Bundle display name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Space Station"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estación Espacial"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Station Spatiale"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スペースステーション"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "우주정거장"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estação Espacial"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Космическая станция"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "天宫追踪"
+          }
+        }
+      }
+    },
+    "CFBundleName" : {
+      "comment" : "Bundle name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "SatelliteForecastApp"
+          }
+        }
+      },
+      "shouldTranslate" : false
+    },
+    "NSLocationWhenInUseUsageDescription" : {
+      "comment" : "Privacy - Location When In Use Usage Description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Space stations move fast, and passes above you are short; your location is required to calculate passes."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las estaciones espaciales se mueven rápido, y los pases por encima de ti son cortos; tu ubicación es necesaria para calcular los pases."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les stations spatiales se déplacent rapidement, et les passages au-dessus de vous sont courts ; votre localisation est nécessaire pour calculer les passages."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "宇宙ステーションは高速で移動し、あなたの上空の通過は短時間です。パスを計算するためにあなたの位置情報が必要です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "우주정거장은 빠르게 이동하며 머리 위를 지나는 시간은 짧습니다. 통과 계산을 위해 위치 정보가 필요합니다."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As estações espaciais se movem rapidamente, e as passagens sobre você são curtas; sua localização é necessária para calcular as passagens."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Космические станции движутся быстро, и пролёты над вами короткие; ваше местоположение необходимо для расчёта пролётов."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "空间站移动速度很快，经过您上空的时间很短；需要您的位置信息来计算过境时间。"
+          }
+        }
+      }
+    },
+    "NSUserNotificationsUsageDescription" : {
+      "comment" : "Privacy - User Notifications Usage Description",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We only notify you of evening space station pass opportunities. No ads or promotions."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo te notificamos de las oportunidades de paso de estaciones espaciales en la tarde. Sin anuncios ni promociones."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous vous notifions uniquement des opportunités de passage de stations spatiales en soirée. Aucune publicité ni promotion."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "夕方の宇宙ステーション通過機会のみお知らせします。広告やプロモーションはありません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저녁 시간 우주정거장 통과 기회만 알림으로 알려드립니다. 광고나 프로모션은 없습니다."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notificamos você apenas sobre oportunidades de passagem da estação espacial no período da tarde. Sem anúncios ou promoções."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Мы уведомляем вас только о возможностях вечерних пролётов космических станций. Никакой рекламы и акций."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我们只会通知您傍晚时分的空间站过境机会。不会给您推送广告。"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

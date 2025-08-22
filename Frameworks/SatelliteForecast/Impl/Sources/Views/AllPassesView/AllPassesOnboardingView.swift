@@ -18,123 +18,97 @@ struct AllPassesOnboardingView: View {
     
     var body: some View {
         NavigationStack {
-            ZStack {
-                // Dark background
-                Color.black
-                    .ignoresSafeArea(.all)
-                
-                VStack(spacing: 32) {
-                    Spacer()
-                    
-                    // Title and description
-                    VStack(alignment: .leading, spacing: 24) {
-                        Text("Pass explained", bundle: .module, comment: "Onboarding title for explaining a satellite pass")
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.75)
-                        
-                        Text("This screen lists all upcoming passes in 7 days. Each row shows when it will be visible from your location.", bundle: .module, comment: "Onboarding description for AllPassesView")
-                            .font(.title3)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.leading)
-                    
-                    
-                        Text("Tap on passes to see more details!", bundle: .module, comment: "CTA label in onboarding")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.75)
-                        
-                        // Mock PassPreviewCell using preview data
-                        mockPassPreviewCell()
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color.gray.opacity(0.2))
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.white.opacity(0.3), lineWidth: 1)
-                            )
-                        
-                        // Explanation text
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack {
-                                Image(systemName: "arrow.up.to.line")
-                                    .foregroundColor(.orange)
-                                Text("Highest point in the sky (best for viewing)", bundle: .module, comment: "Onboarding explanation for culmination")
-                                    .font(.callout)
-                                    .foregroundColor(.secondary)
-                            }
-                            
-                            HStack {
-                                Image(systemName: "star.fill")
-                                    .foregroundColor(.yellow)
-                                Text("Pass quality rating (3 stars are best)", bundle: .module, comment: "Onboarding explanation for star rating")
-                                    .font(.callout)
-                                    .foregroundColor(.secondary)
-                            }
-                            
-                            HStack {
-                                Image(systemName: "arrow.up")
-                                    .foregroundColor(.secondary)
-                                Text("Times when satellite rises above horizon", bundle: .module, comment: "Onboarding explanation for satellite rises above horizon")
-                                    .font(.callout)
-                                    .foregroundColor(.secondary)
-                            }
-                            
-                            HStack {
-                                Image(systemName: "arrow.down")
-                                    .foregroundColor(.secondary)
-                                Text("Times when satellite sets below horizon", bundle: .module, comment: "Onboarding explanation for satellite sets below horizon")
-                                    .font(.callout)
-                                    .foregroundColor(.secondary)
-                            }
-                            
-                            HStack {
-                                Image(systemName: "eye")
-                                    .foregroundColor(.secondary)
-                                Text("Times when the space station becomes visible", bundle: .module, comment: "Onboarding explanation for visible times")
-                                    .font(.callout)
-                                    .foregroundColor(.secondary)
-                            }
-                            
-                            HStack {
-                                Image(systemName: "eye.slash")
-                                    .foregroundColor(.secondary)
-                                Text("Times when the space station becomes invisible", bundle: .module, comment: "Onboarding explanation for invisible times")
-                                    .font(.callout)
-                                    .foregroundColor(.secondary)
-                            }
-                        }
-                    }
-                    .padding(.horizontal, 16)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 32) {
+                    Text("This screen lists all upcoming passes in 7 days. Each row shows when it will be visible from your location.", bundle: .module, comment: "Onboarding description for AllPassesView")
+                        .font(.title3)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.leading)
 
-                    Spacer()
-                    
-                    // Get Started button
-                    Button(action: onComplete) {
-                        HStack {
-                            Text("Got it!", bundle: .module, comment: "Button to complete AllPassesView onboarding")
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                            
-                            Image(systemName: "checkmark")
-                                .font(.headline)
-                        }
-                        .foregroundColor(.black)
-                        .padding(.horizontal, 32)
-                        .padding(.vertical, 16)
-                        .background(Color.white)
-                        .cornerRadius(25)
+
+                    // Mock PassPreviewCell using preview data
+                    HStack(alignment: .center, spacing: 0) {
+                        mockPassPreviewCell()
+                        Image(systemName: "chevron.right")
+                            .foregroundStyle(.tertiary)
+                            .padding(.trailing, 8)
                     }
-                    .padding(.bottom, 16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color.gray.opacity(0.2))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                    )
+                    .overlay(alignment: .bottomTrailing) {
+                        Image(systemName: "hand.tap.fill")
+                            .font(.largeTitle)
+                            .symbolRenderingMode(.hierarchical)
+                            .symbolEffect(.bounce.up.byLayer, options: .repeat(.periodic(delay: 1.0)))
+                            .padding(16)
+                    }
+                    .onTapGesture {
+                        onComplete()
+                    }
+
+                    // Explanation text
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Image(systemName: "arrow.up.to.line")
+                                .foregroundColor(.orange)
+                            Text("Highest point in the sky (best for viewing)", bundle: .module, comment: "Onboarding explanation for culmination")
+                                .font(.body)
+                                .foregroundColor(.secondary)
+                        }
+
+                        HStack {
+                            Image(systemName: "star.fill")
+                                .foregroundColor(.yellow)
+                            Text("Pass quality rating (3 stars are best)", bundle: .module, comment: "Onboarding explanation for star rating")
+                                .font(.body)
+                                .foregroundColor(.secondary)
+                        }
+
+                        HStack {
+                            Image(systemName: "arrow.up")
+                                .foregroundColor(.secondary)
+                            Text("Times when satellite rises above horizon", bundle: .module, comment: "Onboarding explanation for satellite rises above horizon")
+                                .font(.body)
+                                .foregroundColor(.secondary)
+                        }
+
+                        HStack {
+                            Image(systemName: "arrow.down")
+                                .foregroundColor(.secondary)
+                            Text("Times when satellite sets below horizon", bundle: .module, comment: "Onboarding explanation for satellite sets below horizon")
+                                .font(.body)
+                                .foregroundColor(.secondary)
+                        }
+
+                        HStack {
+                            Image(systemName: "eye")
+                                .foregroundColor(.secondary)
+                            Text("Times when the space station becomes visible", bundle: .module, comment: "Onboarding explanation for visible times")
+                                .font(.body)
+                                .foregroundColor(.secondary)
+                        }
+
+                        HStack {
+                            Image(systemName: "eye.slash")
+                                .foregroundColor(.secondary)
+                            Text("Times when the space station becomes invisible", bundle: .module, comment: "Onboarding explanation for invisible times")
+                                .font(.body)
+                                .foregroundColor(.secondary)
+
+                        }
+                    }
                 }
+                .padding(.horizontal, 16)
             }
-            .navigationBarHidden(true)
+            .navigationTitle(Text("Pass explained", bundle: .module, comment: "Onboarding title for explaining a satellite pass"))
             .onDisappear {
-                // If the view disappears without the user tapping "Got it!", 
+                // If the view disappears without the user tapping "Got it!",
                 // it means they dismissed by swiping or other means
                 onDismiss()
             }

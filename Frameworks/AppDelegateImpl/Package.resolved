@@ -1,5 +1,5 @@
 {
-  "originHash" : "522ec6f9333993b575e599523522e8fc1a4d1520e859612fddcdd40de17ab3a9",
+  "originHash" : "3119616cf13a1620e6b931b94e1a748bd32eea5240251e0dd58add1b2e470b1b",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -182,15 +182,6 @@
       }
     },
     {
-      "identity" : "satellitekit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/DJBen/SatelliteKit.git",
-      "state" : {
-        "revision" : "d279d1b4ed081e7658eed3f8e9df0fd9c6d5c2ce",
-        "version" : "3.0.0"
-      }
-    },
-    {
       "identity" : "sqlite.swift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/stephencelis/SQLite.swift.git",
@@ -204,8 +195,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/DJBen/StarryNight.git",
       "state" : {
-        "revision" : "db61f90396f26c2c7f64c90e91f8e65ce08fba43",
-        "version" : "1.0.0"
+        "revision" : "10e6a35f7c3e670196f483bab9b897873823653c",
+        "version" : "1.0.1"
       }
     },
     {
@@ -222,8 +213,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-protobuf.git",
       "state" : {
-        "revision" : "102a647b573f60f73afdce5613a51d71349fe507",
-        "version" : "1.30.0"
+        "revision" : "e3f69fd321d0c9fcdc16fb576a0cdd956675face",
+        "version" : "1.31.0"
       }
     },
     {

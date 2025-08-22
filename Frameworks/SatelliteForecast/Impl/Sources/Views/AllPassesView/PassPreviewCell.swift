@@ -91,7 +91,7 @@ struct PassPreviewCell: View {
                                 .font(.headline)
                                 .foregroundColor(Color(UIColor.label))
                             if notableSnapshots.visibleCulminationElevation > 0 {
-                                Text("∠\(numberFormatter.string(from: NSNumber(value: notableSnapshots.visibleCulminationElevation))!)°")
+                                Text(verbatim: "∠\(numberFormatter.string(from: NSNumber(value: notableSnapshots.visibleCulminationElevation))!)°")
                                     .font(.body)
                                     .foregroundColor(Color(UIColor.label))
                             }

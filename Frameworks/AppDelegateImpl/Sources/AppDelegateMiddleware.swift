@@ -51,10 +51,12 @@ extension EffectMiddleware where
                             // Do not write to firebase for simulators
                             return
                         }
+                        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "unknown"
                         var data: [String: Any] = [
                             "deviceModel": device.machineName,
                             "osVersion": device.systemVersion,
                             "appVariant": appVariant,
+                            "appVersion": appVersion,
                             "lastAppLaunch": Timestamp(date: Date()),
                             "tzOffset": TimeZone.current.secondsFromGMT(),
                             "locale": Locale.current.identifier
