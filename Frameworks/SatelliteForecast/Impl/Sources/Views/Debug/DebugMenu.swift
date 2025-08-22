@@ -40,6 +40,7 @@ public struct DebugMenu: View {
     @ObservedObject var viewModel: ObservableViewModel<DebugMenuAction, DebugMenuState?>
     @State var dateWithinPicker: Date
     @State var showCopySuccess: Bool = false
+    @Environment(\.dismiss) private var dismiss
 
     public init(
         viewModel: ObservableViewModel<DebugMenuAction, DebugMenuState?>
@@ -163,124 +164,134 @@ public struct DebugMenu: View {
 
     public var body: some View {
         unwrapState { state in
-            Form {
-                Section {
-                    VStack(alignment: .leading, spacing: 4) {
-                        HStack {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("FCM Token")
-                                    .font(.headline)
-                                if let fcmToken = state.fcmToken {
-                                    Text(fcmToken)
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                        .lineLimit(nil)
-                                } else {
-                                    Text("No FCM token")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
-                            }
-                            Spacer()
-                            if state.fcmToken != nil {
-                                Button("Copy") {
+            NavigationStack {
+                Form {
+                    Section {
+                        VStack(alignment: .leading, spacing: 4) {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("FCM Token")
+                                        .font(.headline)
                                     if let fcmToken = state.fcmToken {
-                                        UIPasteboard.general.string = fcmToken
-                                        showCopySuccess = true
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                                            showCopySuccess = false
+                                        Text(fcmToken)
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                            .lineLimit(nil)
+                                    } else {
+                                        Text("No FCM token")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    }
+                                }
+                                Spacer()
+                                if state.fcmToken != nil {
+                                    Button("Copy") {
+                                        if let fcmToken = state.fcmToken {
+                                            UIPasteboard.general.string = fcmToken
+                                            showCopySuccess = true
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                                showCopySuccess = false
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
-                        
-                        if showCopySuccess {
-                            Text("Copied to clipboard")
-                                .font(.caption2)
-                                .foregroundColor(.green)
-                                .animation(.easeInOut(duration: 0.3), value: showCopySuccess)
-                        }
-                    }
-                } header: {
-                    Text("Device Information")
-                }
-                
-                Section {
-                    timeSectionContent
-                } header: {
-                    Text("Time control")
-                } footer: {
-                    if let frozenAt = state.config.frozenAt {
-                        Text("Time frozen at \(Date(julianDate: frozenAt).formatted(date: .long, time: .standard))")
-                    } else if state.config.mockedOffsetOn {
-                        Text("Mock time \(Date(julianDate: state.trueJulianDate + state.config.mockedOffset).formatted(date: .long, time: .standard))\nOffset \(state.config.mockedOffset.formatted()) JD")
-                    } else {
-                        Text("Real time \(Date(julianDate: state.trueJulianDate).formatted(date: .long, time: .standard))")
-                    }
-                }
 
-                Section {
-                    Toggle(
-                        isOn: Binding<Bool>(
-                            get: {
-                                state.config.rapidNotificationDelivery
-                            },
-                            set: { newValue in
-                                viewModel.dispatch(.toggleRapidNotificationDelivery(newValue))
+                            if showCopySuccess {
+                                Text("Copied to clipboard")
+                                    .font(.caption2)
+                                    .foregroundColor(.green)
+                                    .animation(.easeInOut(duration: 0.3), value: showCopySuccess)
                             }
-                        )
-                        .animation()
-                    ) {
-                        Text("Deliver notifications 10 seconds after scheduled")
+                        }
+                    } header: {
+                        Text("Device Information")
                     }
-                }
 
-                Section {
-                    Button("Deep link to ISS (special)") {
-                        viewModel.dispatch(.triggerPassDeepLink(category: .iss, noradIndex: 25544))
+                    Section {
+                        timeSectionContent
+                    } header: {
+                        Text("Time control")
+                    } footer: {
+                        if let frozenAt = state.config.frozenAt {
+                            Text("Time frozen at \(Date(julianDate: frozenAt).formatted(date: .long, time: .standard))")
+                        } else if state.config.mockedOffsetOn {
+                            Text("Mock time \(Date(julianDate: state.trueJulianDate + state.config.mockedOffset).formatted(date: .long, time: .standard))\nOffset \(state.config.mockedOffset.formatted()) JD")
+                        } else {
+                            Text("Real time \(Date(julianDate: state.trueJulianDate).formatted(date: .long, time: .standard))")
+                        }
                     }
-                    Button("Deep link to Hubble (brightest 100)") {
-                        viewModel.dispatch(.triggerPassDeepLink(category: .brightest100, noradIndex: 20580))
-                    }
-                } header: {
-                    Text("Test deep link")
-                }
 
-                Section {
-                    pendingNotificationsContent
-                } header: {
-                    Text("Pending notifications")
-                }
+                    Section {
+                        Button("Reset All Onboarding") {
+                            viewModel.dispatch(.resetOnboarding)
+                        }
 
-                Section {
-                    deliveredNotificationsContent
-                } header: {
-                    Text("Delivered notifications")
+                        Button("Reset Main Onboarding") {
+                            viewModel.dispatch(.resetMainOnboarding)
+                        }
+
+                        Button("Reset Pass List Onboarding") {
+                            viewModel.dispatch(.resetAllPassesOnboarding)
+                        }
+                    } header: {
+                        Text("Onboarding")
+                    }
+
+                    Section {
+                        Toggle(
+                            isOn: Binding<Bool>(
+                                get: {
+                                    state.config.rapidNotificationDelivery
+                                },
+                                set: { newValue in
+                                    viewModel.dispatch(.toggleRapidNotificationDelivery(newValue))
+                                }
+                            )
+                            .animation()
+                        ) {
+                            Text("Deliver notifications 10 seconds after scheduled")
+                        }
+                    }
+
+                    Section {
+                        Button("Deep link to ISS (special)") {
+                            viewModel.dispatch(.triggerPassDeepLink(category: .iss, noradIndex: 25544))
+                        }
+                        Button("Deep link to Hubble (brightest 100)") {
+                            viewModel.dispatch(.triggerPassDeepLink(category: .brightest100, noradIndex: 20580))
+                        }
+                    } header: {
+                        Text("Test deep link")
+                    }
+
+                    Section {
+                        pendingNotificationsContent
+                    } header: {
+                        Text("Pending notifications")
+                    }
+
+                    Section {
+                        deliveredNotificationsContent
+                    } header: {
+                        Text("Delivered notifications")
+                    }
                 }
-                
-                Section {
-                    Button("Reset All Onboarding") {
-                        viewModel.dispatch(.resetOnboarding)
+                .navigationTitle("Debug Menu")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button("Close") {
+                            dismiss()
+                        }
                     }
-                    
-                    Button("Reset Main Onboarding") {
-                        viewModel.dispatch(.resetMainOnboarding)
-                    }
-                    
-                    Button("Reset Pass List Onboarding") {
-                        viewModel.dispatch(.resetAllPassesOnboarding)
-                    }
-                } header: {
-                    Text("Onboarding")
+                }
+                .onAppear {
+                    dateWithinPicker = Date(julianDate: state.trueJulianDate + (state.config.mockedOffsetOn ? state.config.mockedOffset : 0))
+                    viewModel.dispatch(.fetchNotifications)
                 }
             }
-            .navigationTitle("Debug Menu")
-            .onAppear {
-                dateWithinPicker = Date(julianDate: state.trueJulianDate + (state.config.mockedOffsetOn ? state.config.mockedOffset : 0))
-                viewModel.dispatch(.fetchNotifications)
-            }
-        }   
+        }
     }
 }
 
