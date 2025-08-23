@@ -78,6 +78,10 @@ extension EffectMiddleware where
                 // Reset only the AllPasses onboarding
                 UserDefaults.standard.set(false, forKey: "hasCompletedAllPassesOnboarding")
                 return .doNothing
+            case .resetSkyChartTutorial:
+                // Reset only the sky chart tutorial
+                UserDefaults.standard.set(false, forKey: "hasCompletedSkyChartTutorial")
+                return .doNothing
             }
         }
     }

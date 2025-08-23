@@ -20,4 +20,5 @@ public enum DebugMenuAction {
     case resetOnboarding
     case resetMainOnboarding
     case resetAllPassesOnboarding
+    case resetSkyChartTutorial
 }

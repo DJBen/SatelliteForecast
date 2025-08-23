@@ -15,7 +15,7 @@ extension PassViewState: AppStateMappable {
         return PassViewState(
             scheduledPassNotifications: appState.notificationResources.scheduledPassNotifications,
             showAlarmConfigurationModal: appState.navigationState.listNavigation.showAlarmConfigurationModal,
-            showsDetailPassView: appState.navigationState.listNavigation.showsDetailPassView
+            showsDetailPassView: appState.navigationState.listNavigation.showsDetailPassView,
         )
     }
     

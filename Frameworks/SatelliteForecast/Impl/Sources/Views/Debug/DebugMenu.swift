@@ -234,6 +234,10 @@ public struct DebugMenu: View {
                         Button("Reset Pass List Onboarding") {
                             viewModel.dispatch(.resetAllPassesOnboarding)
                         }
+
+                        Button("Reset Sky Chart Tutorial") {
+                            viewModel.dispatch(.resetSkyChartTutorial)
+                        }
                     } header: {
                         Text("Onboarding")
                     }
