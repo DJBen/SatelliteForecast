@@ -46,8 +46,6 @@ extension Reducer where ActionType == DebugMenuAction, StateType == DebugMenuSta
             break // This will be handled by middleware
         case .resetAllPassesOnboarding:
             break // This will be handled by middleware
-        case .resetSkyChartTutorial:
-            break // This will be handled by middleware
         }
     }
 }

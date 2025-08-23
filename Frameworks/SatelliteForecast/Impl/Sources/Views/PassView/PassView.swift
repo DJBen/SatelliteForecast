@@ -15,8 +15,6 @@ import SwiftUIVisualEffects
 import StarryNight
 import CoreMotion
 
-private let hasCompletedSkyChartTutorialKey = "hasCompletedSkyChartTutorial"
-
 public struct PassViewState {
     public var scheduledPassNotifications: Set<ScheduledPassNotification>
     public var showAlarmConfigurationModal: Bool
@@ -39,7 +37,6 @@ extension PassViewState: Equatable {}
 public struct PassView: View {
     @ObservedObject var viewModel: ObservableViewModel<PassViewAction, PassViewState>
     @State var isCompassEnabled: Bool = true
-    @State var showsTutorial: Bool = false
 
     var context: PassViewContext
     var elevationGraphProducer: ViewProducer<SatelliteElevationGraphContext, SatelliteElevationGraph>
@@ -218,17 +215,6 @@ public struct PassView: View {
                 }
             }
         }
-        .onAppear {
-            // Check if this is the first time viewing PassView
-            if !UserDefaults.standard.bool(forKey: hasCompletedSkyChartTutorialKey) {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                    // Double-check the UserDefaults in case the user completed tutorial during the delay
-                    if !UserDefaults.standard.bool(forKey: hasCompletedSkyChartTutorialKey) {
-                        showsTutorial = true
-                    }
-                }
-            }
-        }
         .fullScreenCover(
             isPresented: $viewModel.state.showAlarmConfigurationModal,
             onDismiss: {
@@ -265,20 +251,6 @@ public struct PassView: View {
                         starManager: context.starManager,
                         julianDateProvider: context.julianDateProvider
                     )
-                )
-            }
-        )
-        .fullScreenCover(
-            isPresented: $showsTutorial,
-            content: {
-                TutorialVideoView(
-                    onDismiss: {
-                        // Mark as completed when dismissed by X button
-                        if !UserDefaults.standard.bool(forKey: hasCompletedSkyChartTutorialKey) {
-                            UserDefaults.standard.set(true, forKey: hasCompletedSkyChartTutorialKey)
-                        }
-                        showsTutorial = false
-                    }
                 )
             }
         )

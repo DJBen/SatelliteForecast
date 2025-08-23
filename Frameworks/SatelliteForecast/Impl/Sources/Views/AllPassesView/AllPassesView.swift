@@ -482,12 +482,6 @@ public struct AllPassesView: View {
                 onComplete: {
                     viewModel.dispatch(.completeOnboarding)
                 },
-                onDismiss: {
-                    // Mark as completed when dismissed by any means other than the button
-                    if !UserDefaults.standard.bool(forKey: "hasCompletedAllPassesOnboarding") {
-                        viewModel.dispatch(.completeOnboarding)
-                    }
-                },
                 skyChartProducer: skyChartProducer
             )
         }

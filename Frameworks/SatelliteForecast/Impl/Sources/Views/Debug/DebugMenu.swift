@@ -242,13 +242,7 @@ public struct DebugMenu: View {
                         Button {
                             viewModel.dispatch(.resetAllPassesOnboarding)
                         } label: {
-                            Text(verbatim: "Reset Pass List Onboarding")
-                        }
-
-                        Button {
-                            viewModel.dispatch(.resetSkyChartTutorial)
-                        } label: {
-                            Text(verbatim: "Reset Sky Chart Tutorial")
+                            Text(verbatim: "Reset Pass List Onboarding (includes Sky Chart Tutorial)")
                         }
                     } header: {
                         Text(verbatim: "Onboarding")

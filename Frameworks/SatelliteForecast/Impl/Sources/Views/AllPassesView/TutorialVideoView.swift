@@ -72,8 +72,7 @@ struct TutorialVideoView: View {
     
     @State private var hasVideoFinished = false
     @State private var overlayText: String?
-    @Environment(\.dismiss) private var dismiss
-    
+
     var body: some View {
         VideoPlayerReader { proxy in
             TutorialVideoPlayerView(
@@ -107,17 +106,6 @@ struct TutorialVideoView: View {
                     )
                 ]
             )
-            .overlay(alignment: .topLeading) {
-                // Dismiss button (X) at top left
-                Button {
-                    onDismiss()
-                } label: {
-                    Image(systemName: "xmark")
-                        .font(.title2)
-                        .foregroundColor(.white)
-                }
-                .padding(16)
-            }
             .overlay {
                 // Satellite animation overlay
                 if hasVideoFinished {
@@ -319,7 +307,7 @@ private class TutorialVideoPlayerUIView: UIView {
             // Center the label on screen
             NSLayoutConstraint.activate([
                 label.centerXAnchor.constraint(equalTo: centerXAnchor),
-                label.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -32),
+                label.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -80),
                 label.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: 20),
                 label.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -20)
             ])
