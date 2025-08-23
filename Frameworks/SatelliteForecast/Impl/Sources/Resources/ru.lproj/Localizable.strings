@@ -16,39 +16,6 @@
 /* No comment provided by engineer. */
 "%lld°" = "%lld°";
 
-/* No comment provided by engineer. */
-"↑ %@" = "↑ %@";
-
-/* No comment provided by engineer. */
-"↓ %@" = "↓ %@";
-
-/* No comment provided by engineer. */
-"∠%@°" = "∠%@°";
-
-/* No comment provided by engineer. */
-"∠%@° %@" = "∠%@° %@";
-
-/* No comment provided by engineer. */
-"☉" = "☉";
-
-/* No comment provided by engineer. */
-"☾" = "☾";
-
-/* No comment provided by engineer. */
-"☿" = "☿";
-
-/* No comment provided by engineer. */
-"♀" = "♀";
-
-/* No comment provided by engineer. */
-"♂" = "♂";
-
-/* No comment provided by engineer. */
-"♃" = "♃";
-
-/* No comment provided by engineer. */
-"♄" = "♄";
-
 /* The verb as in alarm clock 'alarms' somebody */
 "Alarm" = "Будильник";
 
@@ -103,6 +70,9 @@
 /* The caption under the header of visible passes */
 "AllPassesView.section.visible.headerCaption.v2" = "Спутники можно увидеть, когда небо тёмное, но они ещё освещены солнцем. Лучшие условия наблюдения возникают вскоре после захода солнца и перед рассветом.";
 
+/* Video caption final text */
+"At the time of the pass, the space station will be visible as a bright dot in the sky." = "Во время прохождения космическая станция будет видна как яркая точка в небе.";
+
 /* The progress text when calculating satellite passes */
 "Calculating..." = "Расчёт...";
 
@@ -122,22 +92,7 @@
 "Custom location" = "Пользовательское местоположение";
 
 /* No comment provided by engineer. */
-"Debug Menu" = "Отладочное меню";
-
-/* No comment provided by engineer. */
 "Deep link to Hubble (brightest 100)" = "Глубокая ссылка на Хаббл (100 самых ярких)";
-
-/* No comment provided by engineer. */
-"Deep link to ISS (special)" = "Глубокая ссылка на МКС (специальная)";
-
-/* No comment provided by engineer. */
-"Deliver notifications 10 seconds after scheduled" = "Отправлять уведомления через 10 секунд после запланированного времени";
-
-/* No comment provided by engineer. */
-"Delivered at %@" = "Доставлено в %@";
-
-/* No comment provided by engineer. */
-"Delivered notifications" = "Доставленные уведомления";
 
 /* Title of dismiss button of detailed pass view. */
 "DetailedPassView.navigationBar.discard" = "Отклонить";
@@ -199,16 +154,13 @@
 /* No comment provided by engineer. */
 "Filter by name, ID, country, year..." = "Фильтр по имени, ID, стране, году...";
 
-/* No comment provided by engineer. */
-"Freeze time" = "Заморозить время";
-
 /* Onboarding page 2 description */
 "Get accurate pass predictions for your location. We'll notify you when viewing opportunities arise." = "Получите точные прогнозы проходов для вашего местоположения. Мы уведомим вас, когда появятся возможности для наблюдения.";
 
 /* No comment provided by engineer. */
 "Get Started" = "Начать";
 
-/* Button to complete AllPassesView onboarding */
+/* Text of button to dismiss a tutorial video */
 "Got it!" = "Понял!";
 
 /* No comment provided by engineer. */
@@ -222,6 +174,9 @@
 
 /* No comment provided by engineer. */
 "Jupiter" = "Юпитер";
+
+/* Video caption text #1 */
+"Lift up your device towards the sky" = "Поднимите устройство к небу";
 
 /* No comment provided by engineer. */
 "Loading pass information..." = "Загрузка информации о проходах...";
@@ -243,12 +198,6 @@
 
 /* No comment provided by engineer. */
 "Mercury" = "Меркурий";
-
-/* No comment provided by engineer. */
-"Mock date and time" = "Тестовая дата и время";
-
-/* No comment provided by engineer. */
-"Mock time %@\nOffset %@ JD" = "Тестовое время %@\nСмещение %@ JD";
 
 /* No comment provided by engineer. */
 "Moon" = "Луна";
@@ -294,9 +243,6 @@
 
 /* The title for the satellite pass notification. */
 "Notification.upcomingPass.title.now" = "%1$@ восходит сейчас";
-
-/* No comment provided by engineer. */
-"Onboarding" = "Ввод в курс дела";
 
 /* No comment provided by engineer. */
 "Open location settings" = "Открыть настройки местоположения";
@@ -362,23 +308,14 @@ Navigation title of pass alarm settings. */
 /* The toolbar of the pass view describing the direction of the pass. The first and second arguments correspond to the directions of rising and setting. */
 "PassView.descriptionToolbar.text" = "Восходит из %1$@ и заходит в %2$@";
 
-/* No comment provided by engineer. */
-"Pending notifications" = "Ожидающие уведомления";
-
 /* The attitude noun as in 'roll', 'pitch', 'yaw' */
 "Pitch:" = "Угол наклона:";
-
-/* No comment provided by engineer. */
-"Point camera skyward and screen downward" = "Направьте камеру в небо, а экран вниз";
 
 /* Onboarding page 2 title */
 "Predictions for You" = "Прогнозы для вас";
 
 /* No comment provided by engineer. */
 "Prominent pass %@%lld°" = "Яркий проход %@%lld°";
-
-/* No comment provided by engineer. */
-"Real time %@" = "Реальное время %@";
 
 /* The format text showing the distance betweent the satellite to the observer */
 "RealtimeSkySatelliteCell.distanceText" = "Расстояние %@ км";
@@ -399,16 +336,10 @@ Navigation title of pass alarm settings. */
 "Recalculate using new location" = "Пересчитать с использованием нового местоположения";
 
 /* No comment provided by engineer. */
-"Reset All Onboarding" = "Сбросить все вводы в курс дела";
-
-/* No comment provided by engineer. */
-"Reset Main Onboarding" = "Сбросить основной ввод в курс дела";
-
-/* No comment provided by engineer. */
-"Reset Pass List Onboarding" = "Сбросить ввод в курс дела списка проходов";
-
-/* No comment provided by engineer. */
 "Retry" = "Повторить";
+
+/* As in, 'rewatch' a video */
+"Rewatch" = "Пересмотреть";
 
 /* The attitude noun as in 'roll', 'pitch', 'yaw' */
 "Roll:" = "Крен:";
@@ -537,6 +468,12 @@ The localized string for the status of a spare satellite */
 /* The title for settings */
 "SettingsOverviewView.title" = "Настройки";
 
+/* Accessibility label for help button */
+"Show help" = "Показать справку";
+
+/* Video caption text #2 */
+"Sky chart points north, showing the path of space station pass" = "Звёздная карта указывает на север, показывая траекторию прохождения космической станции";
+
 /* The pass label format text of an illumination change: enters shadow */
 "SkyChartPassLabel.text.illuminationChange.entersShadow" = "Входит в тень\n%@";
 
@@ -561,12 +498,6 @@ The localized string for the status of a spare satellite */
 /* The title of the 'Settings' tab of the root view. */
 "tabs.settings.text" = "Настройки";
 
-/* CTA label in onboarding */
-"Tap on passes to see more details!" = "Нажмите на проходы, чтобы увидеть больше деталей!";
-
-/* No comment provided by engineer. */
-"Test deep link" = "Тест глубоких ссылок";
-
 /* No comment provided by engineer. */
 "The satellites are not loaded." = "Спутники не загружены.";
 
@@ -575,15 +506,6 @@ The localized string for the status of a spare satellite */
 
 /* The name of Tiangong space station */
 "Tiangong space station" = "Космическая станция Тяньгун";
-
-/* No comment provided by engineer. */
-"Time control" = "Управление временем";
-
-/* No comment provided by engineer. */
-"Time frozen at %@" = "Время заморожено на %@";
-
-/* No comment provided by engineer. */
-"Time interval %@" = "Интервал времени %@";
 
 /* Onboarding explanation for satellite rises above horizon */
 "Times when satellite rises above horizon" = "Время, когда спутник восходит над горизонтом";
@@ -602,9 +524,6 @@ The localized string for the status of a spare satellite */
 
 /* No comment provided by engineer. */
 "Unable to load pass information" = "Невозможно загрузить информацию о проходах";
-
-/* No comment provided by engineer. */
-"Update time offset" = "Обновить смещение времени";
 
 /* No comment provided by engineer. */
 "Venus" = "Венера";

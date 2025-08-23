@@ -80,7 +80,11 @@ struct TutorialVideoView: View {
                 videoName: "sky_chart_tutorial",
                 onVideoFinished: {
                     hasVideoFinished = true
-                    overlayText = "At the time of the pass, the space station will be visible as a bright dot in the sky."
+                    overlayText = NSLocalizedString(
+                        "At the time of the pass, the space station will be visible as a bright dot in the sky.",
+                        bundle: .module,
+                        comment: "Video caption final text"
+                    )
                 },
                 captions: [
                     VideoCaption(
@@ -114,6 +118,12 @@ struct TutorialVideoView: View {
                 }
                 .padding(16)
             }
+            .overlay {
+                // Satellite animation overlay
+                if hasVideoFinished {
+                    SatelliteAnimationView()
+                }
+            }
             .overlay(alignment: .bottom) {
                 // Bottom overlay with text and rewatch button
                 if hasVideoFinished {
@@ -135,7 +145,7 @@ struct TutorialVideoView: View {
                             } label: {
                                 HStack(spacing: 8) {
                                     Image(systemName: "arrow.clockwise")
-                                    Text("Rewatch")
+                                    Text("Rewatch", bundle: .module, comment: "As in, 'rewatch' a video")
                                 }
                                 .font(.headline)
                                 .foregroundColor(.white)
@@ -150,7 +160,7 @@ struct TutorialVideoView: View {
                             } label: {
                                 HStack(spacing: 8) {
                                     Image(systemName: "checkmark")
-                                    Text("Got it!")
+                                    Text("Got it!", bundle: .module, comment: "Text of button to dismiss a tutorial video")
                                 }
                                 .font(.headline)
                                 .foregroundColor(.black)
@@ -166,6 +176,48 @@ struct TutorialVideoView: View {
                     .animation(.easeInOut(duration: 0.3), value: hasVideoFinished)
                 }
             }
+        }
+    }
+}
+
+// MARK: - Satellite Animation View
+
+struct SatelliteAnimationView: View {
+    @State private var animationProgress: CGFloat = 0.0001
+    private let animationDuration: CGFloat = 10.0
+    
+    private let timer = Timer.publish(every: 0.02, on: .main, in: .common).autoconnect()
+    
+    var body: some View {
+        GeometryReader { geometry in
+            let screenWidth = geometry.size.width
+            let screenHeight = geometry.size.height
+            let arcHeight = screenHeight * 0.1
+            
+            // Create arc path from left to right
+            let path = Path { path in
+                let startPoint = CGPoint(x: -10, y: screenHeight * 0.2)
+                let endPoint = CGPoint(x: screenWidth + 10, y: screenHeight * 0.2)
+                let controlPoint = CGPoint(x: screenWidth * 0.5, y: screenHeight * 0.2 - arcHeight)
+                
+                path.move(to: startPoint)
+                path.addQuadCurve(to: endPoint, control: controlPoint)
+            }
+            
+            Circle()
+                .fill(Color.white)
+                .frame(width: 8, height: 8)
+                .position(path.trimmedPath(from: 0, to: animationProgress).currentPoint!)
+                .onReceive(timer) { _ in
+                    if animationProgress < 1.0 {
+                        withAnimation(.smooth(duration: 0.02)) {
+                            animationProgress += 0.02 / animationDuration
+                        }
+                    }
+                }
+                .onAppear {
+                    animationProgress = 0.0001
+                }
         }
     }
 }

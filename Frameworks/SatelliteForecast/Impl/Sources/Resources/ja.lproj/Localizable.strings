@@ -70,6 +70,9 @@
 /* The caption under the header of visible passes */
 "AllPassesView.section.visible.headerCaption.v2" = "衛星は、空が暗く、まだ太陽に照らされているときに見ることができます。最適な観測条件は、日没直後と日の出前です。";
 
+/* Video caption final text */
+"At the time of the pass, the space station will be visible as a bright dot in the sky." = "パスの時間には、宇宙ステーションが空の明るい点として見えるでしょう。";
+
 /* The progress text when calculating satellite passes */
 "Calculating..." = "計算中...";
 
@@ -89,22 +92,7 @@
 "Custom location" = "カスタム位置";
 
 /* No comment provided by engineer. */
-"Debug Menu" = "デバッグメニュー";
-
-/* No comment provided by engineer. */
 "Deep link to Hubble (brightest 100)" = "ハッブルへのディープリンク（最も明るい100個）";
-
-/* No comment provided by engineer. */
-"Deep link to ISS (special)" = "ISSへのディープリンク（特別）";
-
-/* No comment provided by engineer. */
-"Deliver notifications 10 seconds after scheduled" = "予定時刻の10秒後に通知を配信";
-
-/* No comment provided by engineer. */
-"Delivered at %@" = "%@に配信済み";
-
-/* No comment provided by engineer. */
-"Delivered notifications" = "配信済み通知";
 
 /* Title of dismiss button of detailed pass view. */
 "DetailedPassView.navigationBar.discard" = "閉じる";
@@ -166,16 +154,13 @@
 /* No comment provided by engineer. */
 "Filter by name, ID, country, year..." = "名前、ID、国、年で絞り込み...";
 
-/* No comment provided by engineer. */
-"Freeze time" = "時間を停止";
-
 /* Onboarding page 2 description */
 "Get accurate pass predictions for your location. We'll notify you when viewing opportunities arise." = "あなたの位置での正確なパス予測を取得します。観測機会が生じた際にお知らせします。";
 
 /* No comment provided by engineer. */
 "Get Started" = "始める";
 
-/* Button to complete AllPassesView onboarding */
+/* Text of button to dismiss a tutorial video */
 "Got it!" = "了解！";
 
 /* No comment provided by engineer. */
@@ -189,6 +174,9 @@
 
 /* No comment provided by engineer. */
 "Jupiter" = "木星";
+
+/* Video caption text #1 */
+"Lift up your device towards the sky" = "デバイスを空に向けてください";
 
 /* No comment provided by engineer. */
 "Loading pass information..." = "パス情報を読み込み中...";
@@ -210,12 +198,6 @@
 
 /* No comment provided by engineer. */
 "Mercury" = "水星";
-
-/* No comment provided by engineer. */
-"Mock date and time" = "模擬日時";
-
-/* No comment provided by engineer. */
-"Mock time %@\nOffset %@ JD" = "模擬時間 %@\nオフセット %@ JD";
 
 /* No comment provided by engineer. */
 "Moon" = "月";
@@ -261,9 +243,6 @@
 
 /* The title for the satellite pass notification. */
 "Notification.upcomingPass.title.now" = "%1$@が現在上昇中です";
-
-/* No comment provided by engineer. */
-"Onboarding" = "オンボーディング";
 
 /* No comment provided by engineer. */
 "Open location settings" = "位置情報設定を開く";
@@ -329,23 +308,14 @@ Navigation title of pass alarm settings. */
 /* The toolbar of the pass view describing the direction of the pass. The first and second arguments correspond to the directions of rising and setting. */
 "PassView.descriptionToolbar.text" = "%1$@から上昇し、%2$@に沈没";
 
-/* No comment provided by engineer. */
-"Pending notifications" = "保留中の通知";
-
 /* The attitude noun as in 'roll', 'pitch', 'yaw' */
 "Pitch:" = "ピッチ:";
-
-/* No comment provided by engineer. */
-"Point camera skyward and screen downward" = "カメラを空に向け、画面を下に向ける";
 
 /* Onboarding page 2 title */
 "Predictions for You" = "あなたの予測";
 
 /* No comment provided by engineer. */
 "Prominent pass %@%lld°" = "目立つパス %@%lld°";
-
-/* No comment provided by engineer. */
-"Real time %@" = "リアルタイム %@";
 
 /* The format text showing the distance betweent the satellite to the observer */
 "RealtimeSkySatelliteCell.distanceText" = "距離 %@ km";
@@ -366,16 +336,10 @@ Navigation title of pass alarm settings. */
 "Recalculate using new location" = "新しい位置で再計算";
 
 /* No comment provided by engineer. */
-"Reset All Onboarding" = "すべてのオンボーディングをリセット";
-
-/* No comment provided by engineer. */
-"Reset Main Onboarding" = "メインオンボーディングをリセット";
-
-/* No comment provided by engineer. */
-"Reset Pass List Onboarding" = "パスリストオンボーディングをリセット";
-
-/* No comment provided by engineer. */
 "Retry" = "再試行";
+
+/* As in, 'rewatch' a video */
+"Rewatch" = "再視聴";
 
 /* The attitude noun as in 'roll', 'pitch', 'yaw' */
 "Roll:" = "ロール:";
@@ -504,6 +468,12 @@ The localized string for the status of a spare satellite */
 /* The title for settings */
 "SettingsOverviewView.title" = "設定";
 
+/* Accessibility label for help button */
+"Show help" = "ヘルプを表示";
+
+/* Video caption text #2 */
+"Sky chart points north, showing the path of space station pass" = "星図は北を指し、宇宙ステーションのパスの軌道を示しています";
+
 /* The pass label format text of an illumination change: enters shadow */
 "SkyChartPassLabel.text.illuminationChange.entersShadow" = "影に入る\n%@";
 
@@ -528,12 +498,6 @@ The localized string for the status of a spare satellite */
 /* The title of the 'Settings' tab of the root view. */
 "tabs.settings.text" = "設定";
 
-/* CTA label in onboarding */
-"Tap on passes to see more details!" = "パスをタップして詳細を確認！";
-
-/* No comment provided by engineer. */
-"Test deep link" = "ディープリンクをテスト";
-
 /* No comment provided by engineer. */
 "The satellites are not loaded." = "衛星が読み込まれていません。";
 
@@ -542,15 +506,6 @@ The localized string for the status of a spare satellite */
 
 /* The name of Tiangong space station */
 "Tiangong space station" = "天宮宇宙ステーション";
-
-/* No comment provided by engineer. */
-"Time control" = "時間制御";
-
-/* No comment provided by engineer. */
-"Time frozen at %@" = "%@で時間停止中";
-
-/* No comment provided by engineer. */
-"Time interval %@" = "時間間隔 %@";
 
 /* Onboarding explanation for satellite rises above horizon */
 "Times when satellite rises above horizon" = "衛星が地平線上に現れる時間";
@@ -569,9 +524,6 @@ The localized string for the status of a spare satellite */
 
 /* No comment provided by engineer. */
 "Unable to load pass information" = "パス情報を読み込めません";
-
-/* No comment provided by engineer. */
-"Update time offset" = "時間オフセットを更新";
 
 /* No comment provided by engineer. */
 "Venus" = "金星";
