@@ -9,6 +9,36 @@ import SwiftUI
 import AVKit
 import AVFoundation
 
+// MARK: - Caption Model
+
+struct VideoCaption {
+    let startTime: TimeInterval
+    let endTime: TimeInterval
+    let attributedText: AttributedString
+    
+    init(startTime: TimeInterval, endTime: TimeInterval, text: String) {
+        self.startTime = startTime
+        self.endTime = endTime
+        
+        var attributedString = AttributedString(text)
+        // Use UIFont instead of SwiftUI Font for proper UILabel compatibility
+        attributedString.uiKit.font = UIFont.preferredFont(forTextStyle: .title1)
+        attributedString.uiKit.foregroundColor = UIColor.white
+
+        self.attributedText = attributedString
+    }
+    
+    init(startTime: TimeInterval, endTime: TimeInterval, attributedText: AttributedString) {
+        self.startTime = startTime
+        self.endTime = endTime
+        self.attributedText = attributedText
+    }
+    
+    func isActive(at time: TimeInterval) -> Bool {
+        return time >= startTime && time <= endTime
+    }
+}
+
 // MARK: - VideoPlayerProxy
 
 class VideoPlayerProxy: ObservableObject {
@@ -50,8 +80,28 @@ struct TutorialVideoView: View {
                 videoName: "sky_chart_tutorial",
                 onVideoFinished: {
                     hasVideoFinished = true
-                    overlayText = "Learn how to use the sky chart to track satellites in real time!"
-                }
+                    overlayText = "At the time of the pass, the space station will be visible as a bright dot in the sky."
+                },
+                captions: [
+                    VideoCaption(
+                        startTime: 0.0,
+                        endTime: 4.0,
+                        text: NSLocalizedString(
+                            "Lift up your device towards the sky", 
+                            bundle: .module,
+                            comment: "Video caption text #1"
+                        )
+                    ),
+                    VideoCaption(
+                        startTime: 4.5,
+                        endTime: 9,
+                        text: NSLocalizedString(
+                            "Sky chart points north, showing the path of space station pass", 
+                            bundle: .module,
+                            comment: "Video caption text #2"
+                        )
+                    )
+                ]
             )
             .overlay(alignment: .topLeading) {
                 // Dismiss button (X) at top left
@@ -70,7 +120,8 @@ struct TutorialVideoView: View {
                     VStack(spacing: 16) {
                         if let overlayText = overlayText {
                             Text(overlayText)
-                                .font(.headline)
+                                .font(.title)
+                                .minimumScaleFactor(0.75)
                                 .foregroundColor(.white)
                                 .multilineTextAlignment(.center)
                                 .padding(.horizontal, 32)
@@ -90,20 +141,23 @@ struct TutorialVideoView: View {
                                 .foregroundColor(.white)
                                 .padding(.horizontal, 24)
                                 .padding(.vertical, 12)
-                                .background(Color.blue)
+                                .background(Color.secondary)
                                 .clipShape(RoundedRectangle(cornerRadius: 8))
                             }
 
                             Button {
                                 onDismiss()
                             } label: {
-                                Text("Got it!")
-                                    .font(.headline)
-                                    .foregroundColor(.black)
-                                    .padding(.horizontal, 24)
-                                    .padding(.vertical, 12)
-                                    .background(Color.white)
-                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                                HStack(spacing: 8) {
+                                    Image(systemName: "checkmark")
+                                    Text("Got it!")
+                                }
+                                .font(.headline)
+                                .foregroundColor(.black)
+                                .padding(.horizontal, 24)
+                                .padding(.vertical, 12)
+                                .background(Color.primary)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
                             }
                         }
                     }
@@ -119,10 +173,21 @@ struct TutorialVideoView: View {
 private struct TutorialVideoPlayerView: UIViewRepresentable {
     let videoName: String
     let onVideoFinished: () -> Void
+    let captions: [VideoCaption]
     @EnvironmentObject private var proxy: VideoPlayerProxy
 
+    init(videoName: String, onVideoFinished: @escaping () -> Void, captions: [VideoCaption] = []) {
+        self.videoName = videoName
+        self.onVideoFinished = onVideoFinished
+        self.captions = captions
+    }
+
     func makeUIView(context: Context) -> UIView {
-        let uiView = TutorialVideoPlayerUIView(videoName: videoName, onVideoFinished: onVideoFinished)
+        let uiView = TutorialVideoPlayerUIView(
+            videoName: videoName, 
+            onVideoFinished: onVideoFinished,
+            captions: captions
+        )
         proxy.setRestartAction {
             uiView.restartVideo()
         }
@@ -145,15 +210,18 @@ private class TutorialVideoPlayerUIView: UIView {
     private var hasNotifiedFinish = false
     private var captionTextLabel: UILabel?
     private var timeObserver: Any?
+    private let captions: [VideoCaption]
+    private var currentCaptionIndex: Int = -1
     
-    init(videoName: String, onVideoFinished: @escaping () -> Void) {
+    init(videoName: String, onVideoFinished: @escaping () -> Void, captions: [VideoCaption] = []) {
         self.videoName = videoName
         self.onVideoFinished = onVideoFinished
+        self.captions = captions
         super.init(frame: .zero)
 
         setupVideoPlayer(videoName: videoName)
         setupNotifications()
-        setupcaptionTextLabel()
+        setupCaptionTextLabel()
     }
     
     required init?(coder: NSCoder) {
@@ -183,13 +251,10 @@ private class TutorialVideoPlayerUIView: UIView {
         )
     }
     
-    private func setupcaptionTextLabel() {
-        // Create the dummy text label
+    private func setupCaptionTextLabel() {
+        // Create the caption text label
         captionTextLabel = UILabel()
-        captionTextLabel?.text = NSLocalizedString("Lift up your device towards the sky", bundle: .module, comment: "Text shown when the tutorial video is playing")
-        captionTextLabel?.font = UIFont.systemFont(ofSize: 24, weight: .bold)
-        captionTextLabel?.textColor = .white
-        captionTextLabel?.textAlignment = .center
+        captionTextLabel?.textAlignment = .natural
         captionTextLabel?.layer.cornerRadius = 8
         captionTextLabel?.clipsToBounds = true
         captionTextLabel?.numberOfLines = 0
@@ -267,20 +332,39 @@ private class TutorialVideoPlayerUIView: UIView {
         let interval = CMTime(seconds: 0.1, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
         timeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
             let currentSeconds = CMTimeGetSeconds(time)
+            self?.updateCaptionForTime(currentSeconds)
+        }
+    }
+    
+    private func updateCaptionForTime(_ currentTime: TimeInterval) {
+        // Find the active caption for the current time
+        let activeCaptionIndex = captions.firstIndex { $0.isActive(at: currentTime) }
+        
+        // If the active caption has changed
+        if activeCaptionIndex != currentCaptionIndex {
+            currentCaptionIndex = activeCaptionIndex ?? -1
             
-            if currentSeconds >= 0.0 && currentSeconds <= 3.0 {
-                self?.showCaptionText()
+            if let index = activeCaptionIndex {
+                // Show the new caption
+                showCaption(captions[index])
             } else {
-                self?.hideCaptionText()
+                // Hide caption if no active caption
+                hideCaptionText()
             }
         }
     }
     
-    private func showCaptionText() {
-        guard let label = captionTextLabel, label.alpha == 0 else { return }
-
-        UIView.animate(withDuration: 0.3) {
-            label.alpha = 1.0
+    private func showCaption(_ caption: VideoCaption) {
+        guard let label = captionTextLabel else { return }
+        
+        // Convert AttributedString to NSAttributedString for UILabel
+        label.attributedText = NSAttributedString(caption.attributedText)
+        
+        // Animate in if not already visible
+        if label.alpha == 0 {
+            UIView.animate(withDuration: 0.3) {
+                label.alpha = 1.0
+            }
         }
     }
     
@@ -294,6 +378,7 @@ private class TutorialVideoPlayerUIView: UIView {
     
     func restartVideo() {
         hasNotifiedFinish = false
+        currentCaptionIndex = -1 // Reset caption state
         hideCaptionText() // Hide text immediately when restarting
         player?.seek(to: .zero)
         player?.play()
