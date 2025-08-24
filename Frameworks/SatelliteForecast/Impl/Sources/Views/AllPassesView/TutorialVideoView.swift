@@ -165,6 +165,15 @@ struct TutorialVideoView: View {
                 }
             }
         }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: onDismiss) {
+                    Image(systemName: "xmark")
+                        .font(.body.weight(.medium))
+                        .foregroundColor(.primary)
+                }
+            }
+        }
     }
 }
 

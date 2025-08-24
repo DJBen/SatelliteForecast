@@ -22,7 +22,8 @@ struct AllPassesOnboardingView: View {
     let skyChartProducer: ViewProducer<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>
     
     @State private var satelliteData: Loadable<SatelliteData, Error> = .loading
-    
+    @State private var handTapOffset: CGPoint = CGPoint(x: 0, y: 0)
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -59,9 +60,16 @@ struct AllPassesOnboardingView: View {
                         .overlay(alignment: .bottomTrailing) {
                             Image(systemName: "hand.tap.fill")
                                 .font(.largeTitle)
+                                .foregroundStyle(Color.orange)
+                                .shadow(color: Color.yellow, radius: 8)
                                 .symbolRenderingMode(.hierarchical)
                                 .symbolEffect(.bounce.up.byLayer, options: .repeat(.periodic(delay: 1.0)))
                                 .padding(16)
+                                .offset(x: handTapOffset.x, y: handTapOffset.y)
+                                .animation(
+                                    .easeInOut(duration: 2.0),
+                                    value: handTapOffset
+                                )
                         }
                     }
 
@@ -120,9 +128,21 @@ struct AllPassesOnboardingView: View {
                 .padding(.horizontal, 16)
             }
             .navigationTitle(Text("Pass explained", bundle: .module, comment: "Onboarding title for explaining a satellite pass"))
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: onComplete) {
+                        Image(systemName: "xmark")
+                            .font(.body.weight(.medium))
+                            .foregroundColor(.primary)
+                    }
+                }
+            }
         }
         .task {
             await loadSatelliteData()
+        }
+        .onAppear {
+            handTapOffset = CGPoint(x: -60, y: -10)
         }
     }
     
