@@ -1,19 +1,37 @@
-//
-//  VSOP87.swift
-//  VSOP87
-//
-//  Created by Ben Lu on 3/17/22.
-//  Copyright © 2022 Ben Lu. All rights reserved.
-//
-
 import Foundation
 import simd
 
+public enum SolarSystemBody: Equatable, CaseIterable, Hashable, Codable, Sendable {
+    case sun
+    case mercury
+    case venus
+    case earth
+    case earthMoonBarycenter
+    case moon
+    case mars
+    case jupiter
+    case saturn
+    case uranus
+    case neptune
+}
+
 extension SolarSystemBody {
+    /// Get the Earth-Centered Inertial (ECI) coordinates of the body at the given Julian day, in AU.
+    /// - Parameter julianDay: The Julian day for which to calculate the ECI coordinates
+    /// - Returns: A SIMD3<Double> representing the ECI coordinates in AU
+    /// 
+    /// Note: SolarSystemBody.earth.eci(julianDay:) will always return (0, 0, 0)
     public func eci(julianDay: Double) -> SIMD3<Double> {
         VSOP87.getBodyECICoordinate(self, julianDay: julianDay)
     }
-    
+
+    /// Get the heliocentric ecliptic rectangular coordinates of the body at the given Julian day, in AU.
+    /// - Parameter julianDay: The Julian day for which to calculate the heliocentric ecliptic coordinates
+    /// - Returns: A SIMD3<Double> representing the heliocentric ecliptic rectangular coordinates in AU
+    public func heliocentricEclipticCoordinate(julianDay: Double) -> SIMD3<Double> {
+        VSOP87.getBodyHeliocentricEclipticCoordinate(self, julianDay: julianDay)
+    }
+
     /// Diffuse sphere model for phase integral: q(α) = (2/3) * ((1 - α/180°) * cos(α) + (1/π) * sin(α))
     /// Returns -2.5 * log10(q(α)) for the diffuse sphere model
     private func diffuseSpherePhaseIntegral(phaseAngleDegrees alpha: Double) -> Double {

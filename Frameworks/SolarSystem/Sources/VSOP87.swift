@@ -1,25 +1,3 @@
-//
-//  VSOP87.swift
-//  VSOP87
-//
-//  Created by Ben Lu on 3/17/22.
-//  Copyright © 2022 Ben Lu. All rights reserved.
-//
-
-public enum SolarSystemBody: Equatable, CaseIterable, Hashable, Codable, Sendable {
-    case sun
-    case mercury
-    case venus
-    case earth
-    case earthMoonBarycenter
-    case moon
-    case mars
-    case jupiter
-    case saturn
-    case uranus
-    case neptune
-}
-
 public enum VSOP87 {
     public static func getBodyHeliocentricEclipticCoordinate(
         _ solarSystemBody: SolarSystemBody, 
@@ -31,25 +9,25 @@ public enum VSOP87 {
         case .sun:
             return .zero
         case .mercury:
-            return VSOP87a_XSmall.getMercury(t: julianMillenia)
+            return VSOP87a_XSmall.getMercury(julianMillenia)
         case .venus:
-            return VSOP87a_XSmall.getVenus(t: julianMillenia)
+            return VSOP87a_XSmall.getVenus(julianMillenia)
         case .earth:
-            return VSOP87a_XSmall.getEarth(t: julianMillenia)
+            return VSOP87a_XSmall.getEarth(julianMillenia)
         case .earthMoonBarycenter:
-            return VSOP87a_XSmall.getEmb(t: julianMillenia)
+            return VSOP87a_XSmall.getEmb(julianMillenia)
         case .moon:
-            return VSOP87a_XSmall.getMoon(earth: VSOP87a_XSmall.getEarth(t: julianMillenia), emb: VSOP87a_XSmall.getEmb(t: julianMillenia))
+            return VSOP87a_XSmall.getMoon(earth: VSOP87a_XSmall.getEarth(julianMillenia), emb: VSOP87a_XSmall.getEmb(julianMillenia))
         case .mars:
-            return VSOP87a_XSmall.getMars(t: julianMillenia)
+            return VSOP87a_XSmall.getMars(julianMillenia)
         case .jupiter:
-            return VSOP87a_XSmall.getJupiter(t: julianMillenia)
+            return VSOP87a_XSmall.getJupiter(julianMillenia)
         case .saturn:
-            return VSOP87a_XSmall.getSaturn(t: julianMillenia)
+            return VSOP87a_XSmall.getSaturn(julianMillenia)
         case .uranus:
-            return VSOP87a_XSmall.getUranus(t: julianMillenia)
+            return VSOP87a_XSmall.getUranus(julianMillenia)
         case .neptune:
-            return VSOP87a_XSmall.getNeptune(t: julianMillenia)
+            return VSOP87a_XSmall.getNeptune(julianMillenia)
         }
     }
 }
