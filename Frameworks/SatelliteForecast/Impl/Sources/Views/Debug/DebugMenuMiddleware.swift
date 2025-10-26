@@ -75,7 +75,7 @@ extension EffectMiddleware where
                 // Reset only the main onboarding
                 return .just(.onboarding(.reset))
             case .resetAllPassesOnboarding:
-                // Reset only the AllPasses onboarding
+                // Reset only the AllPasses onboarding (which now includes sky chart tutorial)
                 UserDefaults.standard.set(false, forKey: "hasCompletedAllPassesOnboarding")
                 return .doNothing
             }

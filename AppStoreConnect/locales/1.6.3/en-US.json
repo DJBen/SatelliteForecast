@@ -1,7 +1,7 @@
 {
   "promotionalText": "Space enthusiasts: view the next passes of International Space Station, and Chinese Space Station Tiangong at your location and seize the moment!",
   "description": "Space Station Passes predicts ISS and Tiangong passes over you with useful infographics and much more.\n- Pass prediction: predict satellite passes for ISS, Tiangong and 4000+ satellites over any geographical location globally.\n- Sky chart: pinpoint the trail of satellite pass with detailed interactive star chart.\n- Notifications: timely notifications for ISS and Tiangong passes; set alarm for individual satellite passes, so you won't miss the moment.\n- Night mode: preserve your night vision while using the app.\n- Realtime sky: This is an experimental feature that shows all the currently passing satellites above you.",
-  "whatsNew": "- Add Japanese and Korean localizations\n- Resolved an issue causing space station pass notifications not being delivered\n- Reworked space station pass tutorials, and fixed some truncated texts",
+  "whatsNew": "- Combine sky chart tutorials and improved user experience.\n- Added exit button in the tutorial.",
   "keywords": "iss passes,tiangong passes,satellite passes,satellite,astronomy",
   "locale": "en-US"
 }

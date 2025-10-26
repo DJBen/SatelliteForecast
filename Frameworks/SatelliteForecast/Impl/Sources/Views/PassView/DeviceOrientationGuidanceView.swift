@@ -14,7 +14,7 @@ struct DeviceOrientationGuidanceView: View {
     var body: some View {
         VStack(spacing: 8) {
             HStack(spacing: 8) {
-                Text("Point camera skyward and screen downward", bundle: .module)
+                Text("Lift up your device towards the sky", bundle: .module)
                     .font(.caption)
                     .foregroundColor(Color(UIColor.label))
                 

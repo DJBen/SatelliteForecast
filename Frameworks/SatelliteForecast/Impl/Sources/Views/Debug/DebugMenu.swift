@@ -72,7 +72,7 @@ public struct DebugMenu: View {
                 )
                 .animation()
             ) {
-                Text("Freeze time")
+                Text(verbatim: "Freeze time")
             }
 
             Toggle(
@@ -86,7 +86,7 @@ public struct DebugMenu: View {
                 )
                 .animation()
             ) {
-                Text("Mock date and time")
+                Text(verbatim: "Mock date and time")
             }
 
             if state.config.mockedOffsetOn {
@@ -97,8 +97,10 @@ public struct DebugMenu: View {
 
                 HStack {
                     Spacer()
-                    Button("Update time offset") {
+                    Button {
                         viewModel.dispatch(.setMockedDateOffset(dateWithinPicker.julianDate - state.trueJulianDate))
+                    } label: {
+                        Text(verbatim: "Update time offset")
                     }
                 }
             }
@@ -111,30 +113,30 @@ public struct DebugMenu: View {
     ) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
-                Text(request.content.title)
+                Text(verbatim: request.content.title)
                     .font(.headline)
                     .foregroundColor(Color(UIColor.label))
                 Spacer()
             }
             
-            Text(request.content.body)
+            Text(verbatim: request.content.body)
                 .font(.caption)
                 .foregroundColor(Color(UIColor.label))
             
             if let deliveredDate = deliveredDate {
-                Text("Delivered at \(deliveredDate.formatted())")
+                Text(verbatim: "Delivered at \(deliveredDate.formatted())")
                     .font(.caption)
                     .multilineTextAlignment(.leading)
                     .foregroundColor(.secondary)
             }
             
             if let calendarTrigger = request.trigger as? UNCalendarNotificationTrigger {
-                Text(calendarTrigger.dateComponents.description)
+                Text(verbatim: calendarTrigger.dateComponents.description)
                     .font(.caption)
                     .multilineTextAlignment(.leading)
                     .foregroundColor(.secondary)
             } else if let timeIntervalTrigger = request.trigger as? UNTimeIntervalNotificationTrigger {
-                Text("Time interval \(timeIntervalTrigger.timeInterval.formatted())")
+                Text(verbatim: "Time interval \(timeIntervalTrigger.timeInterval.formatted())")
                     .font(.caption)
                     .multilineTextAlignment(.leading)
                     .foregroundColor(.secondary)
@@ -170,22 +172,22 @@ public struct DebugMenu: View {
                         VStack(alignment: .leading, spacing: 4) {
                             HStack {
                                 VStack(alignment: .leading, spacing: 4) {
-                                    Text("FCM Token")
+                                    Text(verbatim: "FCM Token")
                                         .font(.headline)
                                     if let fcmToken = state.fcmToken {
-                                        Text(fcmToken)
+                                        Text(verbatim: fcmToken)
                                             .font(.caption)
                                             .foregroundColor(.secondary)
                                             .lineLimit(nil)
                                     } else {
-                                        Text("No FCM token")
+                                        Text(verbatim: "No FCM token")
                                             .font(.caption)
                                             .foregroundColor(.secondary)
                                     }
                                 }
                                 Spacer()
                                 if state.fcmToken != nil {
-                                    Button("Copy") {
+                                    Button {
                                         if let fcmToken = state.fcmToken {
                                             UIPasteboard.general.string = fcmToken
                                             showCopySuccess = true
@@ -193,49 +195,57 @@ public struct DebugMenu: View {
                                                 showCopySuccess = false
                                             }
                                         }
+                                    } label: {
+                                        Text(verbatim: "Copy")
                                     }
                                 }
                             }
 
                             if showCopySuccess {
-                                Text("Copied to clipboard")
+                                Text(verbatim: "Copied to clipboard")
                                     .font(.caption2)
                                     .foregroundColor(.green)
                                     .animation(.easeInOut(duration: 0.3), value: showCopySuccess)
                             }
                         }
                     } header: {
-                        Text("Device Information")
+                        Text(verbatim: "Device Information")
                     }
 
                     Section {
                         timeSectionContent
                     } header: {
-                        Text("Time control")
+                        Text(verbatim: "Time control")
                     } footer: {
                         if let frozenAt = state.config.frozenAt {
-                            Text("Time frozen at \(Date(julianDate: frozenAt).formatted(date: .long, time: .standard))")
+                            Text(verbatim: "Time frozen at \(Date(julianDate: frozenAt).formatted(date: .long, time: .standard))")
                         } else if state.config.mockedOffsetOn {
-                            Text("Mock time \(Date(julianDate: state.trueJulianDate + state.config.mockedOffset).formatted(date: .long, time: .standard))\nOffset \(state.config.mockedOffset.formatted()) JD")
+                            Text(verbatim: "Mock time \(Date(julianDate: state.trueJulianDate + state.config.mockedOffset).formatted(date: .long, time: .standard))\nOffset \(state.config.mockedOffset.formatted()) JD")
                         } else {
-                            Text("Real time \(Date(julianDate: state.trueJulianDate).formatted(date: .long, time: .standard))")
+                            Text(verbatim: "Real time \(Date(julianDate: state.trueJulianDate).formatted(date: .long, time: .standard))")
                         }
                     }
 
                     Section {
-                        Button("Reset All Onboarding") {
+                        Button {
                             viewModel.dispatch(.resetOnboarding)
+                        } label: {
+                            Text(verbatim: "Reset All Onboarding")
                         }
 
-                        Button("Reset Main Onboarding") {
+                        Button {
                             viewModel.dispatch(.resetMainOnboarding)
+                        } label: {
+                            Text(verbatim: "Reset Main Onboarding")
                         }
 
-                        Button("Reset Pass List Onboarding") {
+                        Button {
                             viewModel.dispatch(.resetAllPassesOnboarding)
+                        } label: {
+                            Text(verbatim: "Reset Pass List Onboarding (includes Sky Chart Tutorial)")
                         }
                     } header: {
-                        Text("Onboarding")
+                        Text(verbatim: "Onboarding")
                     }
 
                     Section {
@@ -250,39 +260,45 @@ public struct DebugMenu: View {
                             )
                             .animation()
                         ) {
-                            Text("Deliver notifications 10 seconds after scheduled")
+                            Text(verbatim: "Deliver notifications 10 seconds after scheduled")
                         }
                     }
 
                     Section {
-                        Button("Deep link to ISS (special)") {
+                        Button {
                             viewModel.dispatch(.triggerPassDeepLink(category: .iss, noradIndex: 25544))
+                        } label: {
+                            Text(verbatim: "Deep link to ISS (special)")
                         }
-                        Button("Deep link to Hubble (brightest 100)") {
+                        Button {
                             viewModel.dispatch(.triggerPassDeepLink(category: .brightest100, noradIndex: 20580))
+                        } label: {
+                            Text("Deep link to Hubble (brightest 100)")
                         }
                     } header: {
-                        Text("Test deep link")
+                        Text(verbatim: "Test deep link")
                     }
 
                     Section {
                         pendingNotificationsContent
                     } header: {
-                        Text("Pending notifications")
+                        Text(verbatim: "Pending notifications")
                     }
 
                     Section {
                         deliveredNotificationsContent
                     } header: {
-                        Text("Delivered notifications")
+                        Text(verbatim: "Delivered notifications")
                     }
                 }
-                .navigationTitle("Debug Menu")
+                .navigationTitle(Text(verbatim: "Debug Menu"))
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
-                        Button("Close") {
+                        Button {
                             dismiss()
+                        } label: {
+                            Text(verbatim: "Close")
                         }
                     }
                 }

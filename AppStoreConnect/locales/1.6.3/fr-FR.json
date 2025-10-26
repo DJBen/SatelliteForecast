@@ -1,7 +1,7 @@
 {
   "promotionalText": "Consultez les prochains passages de la Station spatiale internationale et de la station spatiale chinoise Tiangong à votre emplacement et saisissez l’instant !",
   "description": "Station spatiale prédit les passages de l'ISS et de Tiangong au-dessus de vous avec des infographies utiles et bien plus encore.\n- Prédiction de passage : prévoyez les passages de l'ISS, de Tiangong et de plus de 4000 satellites sur n'importe quelle position géographique dans le monde.\n- Carte céleste : localisez avec précision la trajectoire du passage du satellite grâce à une carte stellaire interactive détaillée.\n- Notifications : recevez des alertes pour les passages de l'ISS et de Tiangong ; configurez des alarmes pour les passages de satellites individuels afin de ne pas manquer le moment.\n- Mode nuit : préservez votre vision nocturne pendant l'utilisation de l'application.\n- Ciel en temps réel : cette fonction expérimentale affiche tous les satellites qui passent actuellement au-dessus de vous.",
-  "whatsNew": "- Ajout des localisations japonaise et coréenne\n- Résolution d'un problème empêchant la livraison des notifications de passage de station spatiale\n- Refonte des tutoriels de passage de station spatiale et correction de certains textes tronqués",
+  "whatsNew": "- Combinaison des tutoriels de carte céleste et amélioration de l'expérience utilisateur.\n- Ajout du bouton de sortie dans le tutoriel.",
   "keywords": "passages tiangong,passages iss,passages satellite,station spatiale,satellite,astronomie",
   "locale": "fr-FR"
 }

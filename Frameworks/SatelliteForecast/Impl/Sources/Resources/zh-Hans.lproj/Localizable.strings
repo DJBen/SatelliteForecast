@@ -16,39 +16,6 @@
 /* No comment provided by engineer. */
 "%lld°" = "%lld°";
 
-/* No comment provided by engineer. */
-"↑ %@" = "↑ %@";
-
-/* No comment provided by engineer. */
-"↓ %@" = "↓ %@";
-
-/* No comment provided by engineer. */
-"∠%@°" = "∠%@°";
-
-/* No comment provided by engineer. */
-"∠%@° %@" = "∠%@° %@";
-
-/* No comment provided by engineer. */
-"☉" = "☉";
-
-/* No comment provided by engineer. */
-"☾" = "☾";
-
-/* No comment provided by engineer. */
-"☿" = "☿";
-
-/* No comment provided by engineer. */
-"♀" = "♀";
-
-/* No comment provided by engineer. */
-"♂" = "♂";
-
-/* No comment provided by engineer. */
-"♃" = "♃";
-
-/* No comment provided by engineer. */
-"♄" = "♄";
-
 /* The verb as in alarm clock 'alarms' somebody */
 "Alarm" = "提醒";
 
@@ -103,6 +70,9 @@
 /* The caption under the header of visible passes */
 "AllPassesView.section.visible.headerCaption.v2" = "当天空黑暗但卫星仍被太阳照亮时可以看到卫星。最佳观测条件出现在日落后不久和日出前。";
 
+/* Video caption final text */
+"At the time of the pass, the space station will be visible as a bright dot in the sky." = "空间站在过境是天空中最明亮的“星星”。";
+
 /* The progress text when calculating satellite passes */
 "Calculating..." = "计算中...";
 
@@ -122,22 +92,7 @@
 "Custom location" = "自定义位置";
 
 /* No comment provided by engineer. */
-"Debug Menu" = "调试菜单";
-
-/* No comment provided by engineer. */
 "Deep link to Hubble (brightest 100)" = "哈勃深度链接（最亮100个）";
-
-/* No comment provided by engineer. */
-"Deep link to ISS (special)" = "国际空间站深度链接（特殊）";
-
-/* No comment provided by engineer. */
-"Deliver notifications 10 seconds after scheduled" = "在预定时间10秒后发送通知";
-
-/* No comment provided by engineer. */
-"Delivered at %@" = "已于 %@ 发送";
-
-/* No comment provided by engineer. */
-"Delivered notifications" = "已发送通知";
 
 /* Title of dismiss button of detailed pass view. */
 "DetailedPassView.navigationBar.discard" = "关闭";
@@ -199,16 +154,13 @@
 /* No comment provided by engineer. */
 "Filter by name, ID, country, year..." = "按名称、ID、国家、年份筛选...";
 
-/* No comment provided by engineer. */
-"Freeze time" = "冻结时间";
-
 /* Onboarding page 2 description */
 "Get accurate pass predictions for your location. We'll notify you when viewing opportunities arise." = "为您的位置提供准确的过境预测。有观测机会时，你可以选择接收推送通知。";
 
 /* No comment provided by engineer. */
 "Get Started" = "由此开始";
 
-/* Button to complete AllPassesView onboarding */
+/* Text of button to dismiss a tutorial video */
 "Got it!" = "明白了！";
 
 /* No comment provided by engineer. */
@@ -222,6 +174,9 @@
 
 /* No comment provided by engineer. */
 "Jupiter" = "木星";
+
+/* Video caption text #1 */
+"Lift up your device towards the sky" = "将设备举向天空";
 
 /* No comment provided by engineer. */
 "Loading pass information..." = "加载过境信息...";
@@ -243,12 +198,6 @@
 
 /* No comment provided by engineer. */
 "Mercury" = "水星";
-
-/* No comment provided by engineer. */
-"Mock date and time" = "模拟日期和时间";
-
-/* No comment provided by engineer. */
-"Mock time %@\nOffset %@ JD" = "模拟时间 %@\n偏移 %@ JD";
 
 /* No comment provided by engineer. */
 "Moon" = "月球";
@@ -294,9 +243,6 @@
 
 /* The title for the satellite pass notification. */
 "Notification.upcomingPass.title.now" = "%1$@ 正在升起";
-
-/* No comment provided by engineer. */
-"Onboarding" = "新手引导";
 
 /* No comment provided by engineer. */
 "Open location settings" = "打开位置设置";
@@ -362,23 +308,14 @@ Navigation title of pass alarm settings. */
 /* The toolbar of the pass view describing the direction of the pass. The first and second arguments correspond to the directions of rising and setting. */
 "PassView.descriptionToolbar.text" = "从 %1$@ 升起，向 %2$@ 落下";
 
-/* No comment provided by engineer. */
-"Pending notifications" = "待发送通知";
-
 /* The attitude noun as in 'roll', 'pitch', 'yaw' */
 "Pitch:" = "俯仰角：";
-
-/* No comment provided by engineer. */
-"Point camera skyward and screen downward" = "将相机指向天空，屏幕朝下";
 
 /* Onboarding page 2 title */
 "Predictions for You" = "为您预测";
 
 /* No comment provided by engineer. */
 "Prominent pass %@%lld°" = "显著过境 %@%lld°";
-
-/* No comment provided by engineer. */
-"Real time %@" = "实时 %@";
 
 /* The format text showing the distance betweent the satellite to the observer */
 "RealtimeSkySatelliteCell.distanceText" = "距离 %@ 公里";
@@ -399,16 +336,10 @@ Navigation title of pass alarm settings. */
 "Recalculate using new location" = "使用新位置重新计算";
 
 /* No comment provided by engineer. */
-"Reset All Onboarding" = "重置所有引导";
-
-/* No comment provided by engineer. */
-"Reset Main Onboarding" = "重置主要引导";
-
-/* No comment provided by engineer. */
-"Reset Pass List Onboarding" = "重置过境列表引导";
-
-/* No comment provided by engineer. */
 "Retry" = "重试";
+
+/* As in, 'rewatch' a video */
+"Rewatch" = "重看";
 
 /* The attitude noun as in 'roll', 'pitch', 'yaw' */
 "Roll:" = "翻滚角：";
@@ -537,6 +468,12 @@ The localized string for the status of a spare satellite */
 /* The title for settings */
 "SettingsOverviewView.title" = "设置";
 
+/* Accessibility label for help button */
+"Show help" = "显示帮助";
+
+/* Video caption text #2 */
+"Sky chart points north, showing the path of space station pass" = "星图指向北方，显示空间站通过的路径";
+
 /* The pass label format text of an illumination change: enters shadow */
 "SkyChartPassLabel.text.illuminationChange.entersShadow" = "进入阴影\n%@";
 
@@ -561,12 +498,6 @@ The localized string for the status of a spare satellite */
 /* The title of the 'Settings' tab of the root view. */
 "tabs.settings.text" = "设置";
 
-/* CTA label in onboarding */
-"Tap on passes to see more details!" = "点击过境记录查看更多详情！";
-
-/* No comment provided by engineer. */
-"Test deep link" = "测试深度链接";
-
 /* No comment provided by engineer. */
 "The satellites are not loaded." = "卫星数据未加载。";
 
@@ -575,15 +506,6 @@ The localized string for the status of a spare satellite */
 
 /* The name of Tiangong space station */
 "Tiangong space station" = "天宫空间站";
-
-/* No comment provided by engineer. */
-"Time control" = "时间控制";
-
-/* No comment provided by engineer. */
-"Time frozen at %@" = "时间冻结在 %@";
-
-/* No comment provided by engineer. */
-"Time interval %@" = "时间间隔 %@";
 
 /* Onboarding explanation for satellite rises above horizon */
 "Times when satellite rises above horizon" = "卫星升出地平线的时间";
@@ -602,9 +524,6 @@ The localized string for the status of a spare satellite */
 
 /* No comment provided by engineer. */
 "Unable to load pass information" = "无法加载过境信息";
-
-/* No comment provided by engineer. */
-"Update time offset" = "更新时间偏移";
 
 /* No comment provided by engineer. */
 "Venus" = "金星";
