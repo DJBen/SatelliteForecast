@@ -120,7 +120,8 @@ extension EffectMiddleware where InputActionType == LocationOutput, OutputAction
                 switch action {
                 case let .authorizationDidChange(authorizationStatus):
                     // Happens after re-enabling location access after disabled it
-                    if case .notDetermined = authorizationStatus {
+                    if case .notDetermined = authorizationStatus,
+                       UserDefaults.standard.bool(forKey: "hasCompletedOnboarding") {
                         return .just(.requestAuthorization)
                     }
                 case .locationChanged(_):

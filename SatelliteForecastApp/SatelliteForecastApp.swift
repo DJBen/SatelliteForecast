@@ -87,6 +87,12 @@ struct SatelliteForecastApp: App {
                 store.dispatch(.initializeAllConstellations(starManager.allConstellations()))
             }
             .onAppear {
+                if store.state.onboardingState.hasCompletedOnboarding {
+                    store.dispatch(.location(.requestAuthorization))
+                }
+            }
+            .onChange(of: store.state.onboardingState.hasCompletedOnboarding) { _, newValue in
+                guard newValue else { return }
                 store.dispatch(.location(.requestAuthorization))
             }
             .onChange(of: scenePhase) { oldPhase, newPhase in
