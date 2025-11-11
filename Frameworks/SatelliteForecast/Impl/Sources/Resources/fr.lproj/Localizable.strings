@@ -489,6 +489,9 @@ The localized string for the status of a spare satellite */
 /* No comment provided by engineer. */
 "Swipe to continue" = "Faites glisser pour continuer";
 
+/* No comment provided by engineer. */
+"Next" = "Suivant";
+
 /* The title of the 'Forecast' tab of the root view. */
 "tabs.forecast.text" = "Prévision de passage";
 

@@ -489,6 +489,9 @@ The localized string for the status of a spare satellite */
 /* No comment provided by engineer. */
 "Swipe to continue" = "계속하려면 스와이프하세요";
 
+/* No comment provided by engineer. */
+"Next" = "다음";
+
 /* The title of the 'Forecast' tab of the root view. */
 "tabs.forecast.text" = "통과 예측";
 

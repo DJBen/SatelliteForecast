@@ -65,6 +65,11 @@ public struct OnboardingView: View {
                     page: pages[index],
                     isLastPage: index == pages.count - 1,
                     onComplete: onComplete,
+                    onAdvance: index == pages.count - 1 ? nil : {
+                        withAnimation {
+                            currentPage = min(index + 1, pages.count - 1)
+                        }
+                    },
                     videoPlaybackTimes: $videoPlaybackTimes
                 )
                 .tag(index)
@@ -82,10 +87,25 @@ private struct OnboardingPageView: View {
     let page: OnboardingPage
     let isLastPage: Bool
     let onComplete: () -> Void
+    let onAdvance: (() -> Void)?
     @Binding var videoPlaybackTimes: [String: CMTime]
     
     @State private var player: AVPlayer?
     @State private var timeObserver: Any?
+    
+    init(
+        page: OnboardingPage,
+        isLastPage: Bool,
+        onComplete: @escaping () -> Void,
+        onAdvance: (() -> Void)? = nil,
+        videoPlaybackTimes: Binding<[String: CMTime]>
+    ) {
+        self.page = page
+        self.isLastPage = isLastPage
+        self.onComplete = onComplete
+        self.onAdvance = onAdvance
+        _videoPlaybackTimes = videoPlaybackTimes
+    }
     
     var body: some View {
         ZStack {
@@ -134,8 +154,8 @@ private struct OnboardingPageView: View {
                 LinearGradient(
                     gradient: Gradient(stops: [
                         Gradient.Stop(color: Color.clear, location: 0.0),
-                        Gradient.Stop(color: Color.clear, location: 0.7),
-                        Gradient.Stop(color: Color.black.opacity(0.5), location: 0.75),
+                        Gradient.Stop(color: Color.clear, location: 0.65),
+                        Gradient.Stop(color: Color.black.opacity(0.5), location: 0.7),
                         Gradient.Stop(color: Color.black.opacity(0.5), location: 1.0)
                     ]),
                     startPoint: .top,
@@ -168,33 +188,39 @@ private struct OnboardingPageView: View {
                     .padding(.horizontal, 32)
                     
                     if isLastPage {
-                            Button(action: onComplete) {
-                                HStack {
-                                    Text("Get Started", bundle: .module)
-                                        .font(.headline)
-                                        .fontWeight(.semibold)
-                                    
-                                    Image(systemName: "arrow.right")
-                                        .font(.headline)
-                                }
-                                .foregroundColor(.black)
-                                .padding(.horizontal, 32)
-                                .padding(.vertical, 16)
-                                .background(Color.white)
-                                .cornerRadius(25)
+                        Button(action: onComplete) {
+                            HStack {
+                                Text("Get Started", bundle: .module)
+                                    .font(.headline)
+                                    .fontWeight(.semibold)
+                                
+                                Image(systemName: "arrow.right")
+                                    .font(.headline)
                             }
-                            .padding(.top, 8)
-                    } else {
-                        HStack {
-                            Text("Swipe to continue", bundle: .module)
-                                .font(.subheadline)
-                                .foregroundColor(.white.opacity(0.8))
-                            
-                            Image(systemName: "chevron.right")
-                                .font(.caption)
-                                .foregroundColor(.white.opacity(0.8))
+                            .foregroundColor(.black)
+                            .padding(.horizontal, 32)
+                            .padding(.vertical, 16)
+                            .background(Color.white)
+                            .cornerRadius(25)
                         }
-                        .padding(.horizontal, 32)
+                        .padding(.top, 8)
+                    } else {
+                        Button(action: { onAdvance?() }) {
+                            HStack {
+                                Text("Next", bundle: .module)
+                                    .font(.headline)
+                                    .fontWeight(.semibold)
+                                
+                                Image(systemName: "arrow.right")
+                                    .font(.headline)
+                            }
+                            .foregroundColor(.black)
+                            .padding(.horizontal, 32)
+                            .padding(.vertical, 16)
+                            .background(Color.white)
+                            .cornerRadius(25)
+                        }
+                        .padding(.top, 8)
                     }
                 }
                 .padding(.bottom, 48)
