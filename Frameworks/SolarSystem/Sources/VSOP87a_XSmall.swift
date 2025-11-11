@@ -5,40 +5,40 @@ import Foundation
 import simd
 
 class VSOP87a_XSmall {
-   public static func getMercury(t: Double) -> SIMD3<Double> {
-      return SIMD3<Double>(mercury_x(t:t), mercury_y(t:t), mercury_z(t:t))
+   public static func getMercury(_ t: Double) -> SIMD3<Double> {
+      return SIMD3<Double>(mercury_x(t), mercury_y(t), mercury_z(t))
    }
 
-   public static func getVenus(t: Double) -> SIMD3<Double> {
-      return SIMD3<Double>(venus_x(t:t), venus_y(t:t), venus_z(t:t))
+   public static func getVenus(_ t: Double) -> SIMD3<Double> {
+      return SIMD3<Double>(venus_x(t), venus_y(t), venus_z(t))
    }
 
-   public static func getEarth(t: Double) -> SIMD3<Double> {
-      return SIMD3<Double>(earth_x(t:t), earth_y(t:t), earth_z(t:t))
+   public static func getEarth(_ t: Double) -> SIMD3<Double> {
+      return SIMD3<Double>(earth_x(t), earth_y(t), earth_z(t))
    }
 
-   public static func getMars(t: Double) -> SIMD3<Double> {
-      return SIMD3<Double>(mars_x(t:t), mars_y(t:t), mars_z(t:t))
+   public static func getMars(_ t: Double) -> SIMD3<Double> {
+      return SIMD3<Double>(mars_x(t), mars_y(t), mars_z(t))
    }
 
-   public static func getJupiter(t: Double) -> SIMD3<Double> {
-      return SIMD3<Double>(jupiter_x(t:t), jupiter_y(t:t), jupiter_z(t:t))
+   public static func getJupiter(_ t: Double) -> SIMD3<Double> {
+      return SIMD3<Double>(jupiter_x(t), jupiter_y(t), jupiter_z(t))
    }
 
-   public static func getSaturn(t: Double) -> SIMD3<Double> {
-      return SIMD3<Double>(saturn_x(t:t), saturn_y(t:t), saturn_z(t:t))
+   public static func getSaturn(_ t: Double) -> SIMD3<Double> {
+      return SIMD3<Double>(saturn_x(t), saturn_y(t), saturn_z(t))
    }
 
-   public static func getUranus(t: Double) -> SIMD3<Double> {
-      return SIMD3<Double>(uranus_x(t:t), uranus_y(t:t), uranus_z(t:t))
+   public static func getUranus(_ t: Double) -> SIMD3<Double> {
+      return SIMD3<Double>(uranus_x(t), uranus_y(t), uranus_z(t))
    }
 
-   public static func getNeptune(t: Double) -> SIMD3<Double> {
-      return SIMD3<Double>(neptune_x(t:t), neptune_y(t:t), neptune_z(t:t))
+   public static func getNeptune(_ t: Double) -> SIMD3<Double> {
+      return SIMD3<Double>(neptune_x(t), neptune_y(t), neptune_z(t))
    }
 
-   public static func getEmb(t: Double) -> SIMD3<Double> {
-      return SIMD3<Double>(emb_x(t:t), emb_y(t:t), emb_z(t:t))
+   public static func getEmb(_ t: Double) -> SIMD3<Double> {
+      return SIMD3<Double>(emb_x(t), emb_y(t), emb_z(t))
    }
 
    public static func getMoon(earth: SIMD3<Double>, emb: SIMD3<Double>) -> SIMD3<Double> {
@@ -47,7 +47,7 @@ class VSOP87a_XSmall {
       return earth + delta
    }
 
-   static func venus_z(t:Double)->Double{
+   static func venus_z(_ t: Double)->Double{
       var venus_z_3: Double = 0.0
 
       venus_z_3 += 0.00000272005 * cos(4.87648116140 + 10213.28554621100*t)
@@ -76,7 +76,7 @@ class VSOP87a_XSmall {
       return venus_z_3+venus_z_2+venus_z_1+venus_z_0
    }
 
-   static func venus_y(t:Double)->Double{
+   static func venus_y(_ t: Double)->Double{
       var venus_y_2: Double = 0.0
 
       venus_y_2 += 0.00000265709 * cos(4.68091836985 + 10213.28554621100*t)
@@ -126,7 +126,7 @@ class VSOP87a_XSmall {
       return venus_y_2+venus_y_1+venus_y_0
    }
 
-   static func venus_x(t:Double)->Double{
+   static func venus_x(_ t: Double)->Double{
       var venus_x_2: Double = 0.0
 
       venus_x_2 += 0.00000649010 * cos(3.14159265359 + 0.00000000000*t)
@@ -176,7 +176,7 @@ class VSOP87a_XSmall {
       return venus_x_2+venus_x_1+venus_x_0
    }
 
-   static func uranus_z(t:Double)->Double{
+   static func uranus_z(_ t: Double)->Double{
       var uranus_z_3: Double = 0.0
 
       uranus_z_3 += 0.00000406961 * cos(3.16314034460 + 74.78159856730*t)
@@ -298,7 +298,7 @@ class VSOP87a_XSmall {
       return uranus_z_3+uranus_z_2+uranus_z_1+uranus_z_0
    }
 
-   static func uranus_y(t:Double)->Double{
+   static func uranus_y(_ t: Double)->Double{
       var uranus_y_3: Double = 0.0
 
       uranus_y_3 += 0.00000120394 * cos(3.74665637710 + 145.63104387150*t)
@@ -788,7 +788,7 @@ class VSOP87a_XSmall {
       return uranus_y_3+uranus_y_2+uranus_y_1+uranus_y_0
    }
 
-   static func uranus_x(t:Double)->Double{
+   static func uranus_x(_ t: Double)->Double{
       var uranus_x_3: Double = 0.0
 
       uranus_x_3 += 0.00000121340 * cos(5.32278814741 + 145.63104387150*t)
@@ -1290,7 +1290,7 @@ class VSOP87a_XSmall {
       return uranus_x_3+uranus_x_2+uranus_x_1+uranus_x_0
    }
 
-   static func saturn_z(t:Double)->Double{
+   static func saturn_z(_ t: Double)->Double{
       var saturn_z_4: Double = 0.0
 
       saturn_z_4 += 0.00000244875 * cos(2.96492296609 + 213.29909543800*t)
@@ -1460,7 +1460,7 @@ class VSOP87a_XSmall {
       return saturn_z_4+saturn_z_3+saturn_z_2+saturn_z_1+saturn_z_0
    }
 
-   static func saturn_y(t:Double)->Double{
+   static func saturn_y(_ t: Double)->Double{
       var saturn_y_5: Double = 0.0
 
       saturn_y_5 += 0.00000131513 * cos(2.04967560816 + 433.71173787680*t)
@@ -1972,7 +1972,7 @@ class VSOP87a_XSmall {
       return saturn_y_5+saturn_y_4+saturn_y_3+saturn_y_2+saturn_y_1+saturn_y_0
    }
 
-   static func saturn_x(t:Double)->Double{
+   static func saturn_x(_ t: Double)->Double{
       var saturn_x_5: Double = 0.0
 
       saturn_x_5 += 0.00000130928 * cos(3.62464025902 + 433.71173787680*t)
@@ -2489,7 +2489,7 @@ class VSOP87a_XSmall {
       return saturn_x_5+saturn_x_4+saturn_x_3+saturn_x_2+saturn_x_1+saturn_x_0
    }
 
-   static func neptune_z(t:Double)->Double{
+   static func neptune_z(_ t: Double)->Double{
       var neptune_z_3: Double = 0.0
 
       neptune_z_3 += 0.00000124222 * cos(3.06928911462 + 38.13303563780*t)
@@ -2564,7 +2564,7 @@ class VSOP87a_XSmall {
       return neptune_z_3+neptune_z_2+neptune_z_1+neptune_z_0
    }
 
-   static func neptune_y(t:Double)->Double{
+   static func neptune_y(_ t: Double)->Double{
       var neptune_y_3: Double = 0.0
 
       neptune_y_3 += 0.00000130731 * cos(2.18169161636 + 38.13303563780*t)
@@ -2775,7 +2775,7 @@ class VSOP87a_XSmall {
       return neptune_y_3+neptune_y_2+neptune_y_1+neptune_y_0
    }
 
-   static func neptune_x(t:Double)->Double{
+   static func neptune_x(_ t: Double)->Double{
       var neptune_x_3: Double = 0.0
 
       neptune_x_3 += 0.00000131073 * cos(3.72972175765 + 38.13303563780*t)
@@ -2993,7 +2993,7 @@ class VSOP87a_XSmall {
       return neptune_x_3+neptune_x_2+neptune_x_1+neptune_x_0
    }
 
-   static func mercury_z(t:Double)->Double{
+   static func mercury_z(_ t: Double)->Double{
       var mercury_z_2: Double = 0.0
 
       mercury_z_2 += 0.00001185024 * cos(0.00000000000 + 0.00000000000*t)
@@ -3023,7 +3023,7 @@ class VSOP87a_XSmall {
       return mercury_z_2+mercury_z_1+mercury_z_0
    }
 
-   static func mercury_y(t:Double)->Double{
+   static func mercury_y(_ t: Double)->Double{
       var mercury_y_2: Double = 0.0
 
       mercury_y_2 += 0.00000131389 * cos(5.67519052208 + 130439.51570787099*t)
@@ -3072,7 +3072,7 @@ class VSOP87a_XSmall {
       return mercury_y_2+mercury_y_1+mercury_y_0
    }
 
-   static func mercury_x(t:Double)->Double{
+   static func mercury_x(_ t: Double)->Double{
       var mercury_x_2: Double = 0.0
 
       mercury_x_2 += 0.00000130149 * cos(0.95681684789 + 130439.51570787099*t)
@@ -3121,7 +3121,7 @@ class VSOP87a_XSmall {
       return mercury_x_2+mercury_x_1+mercury_x_0
    }
 
-   static func mars_z(t:Double)->Double{
+   static func mars_z(_ t: Double)->Double{
       var mars_z_3: Double = 0.0
 
       mars_z_3 += 0.00000212575 * cos(0.00000000000 + 0.00000000000*t)
@@ -3170,7 +3170,7 @@ class VSOP87a_XSmall {
       return mars_z_3+mars_z_2+mars_z_1+mars_z_0
    }
 
-   static func mars_y(t:Double)->Double{
+   static func mars_y(_ t: Double)->Double{
       var mars_y_3: Double = 0.0
 
       mars_y_3 += 0.00000121864 * cos(4.21281448757 + 3340.61242669980*t)
@@ -3328,7 +3328,7 @@ class VSOP87a_XSmall {
       return mars_y_3+mars_y_2+mars_y_1+mars_y_0
    }
 
-   static func mars_x(t:Double)->Double{
+   static func mars_x(_ t: Double)->Double{
       var mars_x_3: Double = 0.0
 
       mars_x_3 += 0.00000113458 * cos(2.75680104109 + 3340.61242669980*t)
@@ -3485,7 +3485,7 @@ class VSOP87a_XSmall {
       return mars_x_3+mars_x_2+mars_x_1+mars_x_0
    }
 
-   static func jupiter_z(t:Double)->Double{
+   static func jupiter_z(_ t: Double)->Double{
       var jupiter_z_3: Double = 0.0
 
       jupiter_z_3 += 0.00000112952 * cos(0.00000000000 + 0.00000000000*t)
@@ -3578,7 +3578,7 @@ class VSOP87a_XSmall {
       return jupiter_z_3+jupiter_z_2+jupiter_z_1+jupiter_z_0
    }
 
-   static func jupiter_y(t:Double)->Double{
+   static func jupiter_y(_ t: Double)->Double{
       var jupiter_y_5: Double = 0.0
 
       jupiter_y_5 += 0.00000126634 * cos(5.87372673584 + 536.80451209540*t)
@@ -3885,7 +3885,7 @@ class VSOP87a_XSmall {
       return jupiter_y_5+jupiter_y_4+jupiter_y_3+jupiter_y_2+jupiter_y_1+jupiter_y_0
    }
 
-   static func jupiter_x(t:Double)->Double{
+   static func jupiter_x(_ t: Double)->Double{
       var jupiter_x_5: Double = 0.0
 
       jupiter_x_5 += 0.00000126748 * cos(1.16307002134 + 536.80451209540*t)
@@ -4194,7 +4194,7 @@ class VSOP87a_XSmall {
       return jupiter_x_5+jupiter_x_4+jupiter_x_3+jupiter_x_2+jupiter_x_1+jupiter_x_0
    }
 
-   static func emb_z(t:Double)->Double{
+   static func emb_z(_ t: Double)->Double{
       var emb_z_3: Double = 0.0
 
       emb_z_3 += 0.00000276077 * cos(0.59413258730 + 6283.07584999140*t)
@@ -4219,7 +4219,7 @@ class VSOP87a_XSmall {
       return emb_z_3+emb_z_2+emb_z_1+emb_z_0
    }
 
-   static func emb_y(t:Double)->Double{
+   static func emb_y(_ t: Double)->Double{
       var emb_y_3: Double = 0.0
 
       emb_y_3 += 0.00000128116 * cos(3.14159265359 + 0.00000000000*t)
@@ -4287,7 +4287,7 @@ class VSOP87a_XSmall {
       return emb_y_3+emb_y_2+emb_y_1+emb_y_0
    }
 
-   static func emb_x(t:Double)->Double{
+   static func emb_x(_ t: Double)->Double{
       var emb_x_3: Double = 0.0
 
       emb_x_3 += 0.00000175213 * cos(3.14159265359 + 0.00000000000*t)
@@ -4353,7 +4353,7 @@ class VSOP87a_XSmall {
       return emb_x_3+emb_x_2+emb_x_1+emb_x_0
    }
 
-   static func earth_z(t:Double)->Double{
+   static func earth_z(_ t: Double)->Double{
       var earth_z_3: Double = 0.0
 
       earth_z_3 += 0.00000276077 * cos(0.59413258730 + 6283.07584999140*t)
@@ -4379,7 +4379,7 @@ class VSOP87a_XSmall {
       return earth_z_3+earth_z_2+earth_z_1+earth_z_0
    }
 
-   static func earth_y(t:Double)->Double{
+   static func earth_y(_ t: Double)->Double{
       var earth_y_3: Double = 0.0
 
       earth_y_3 += 0.00000128116 * cos(3.14159265359 + 0.00000000000*t)
@@ -4449,7 +4449,7 @@ class VSOP87a_XSmall {
       return earth_y_3+earth_y_2+earth_y_1+earth_y_0
    }
 
-   static func earth_x(t:Double)->Double{
+   static func earth_x(_ t: Double)->Double{
       var earth_x_3: Double = 0.0
 
       earth_x_3 += 0.00000175213 * cos(3.14159265359 + 0.00000000000*t)
