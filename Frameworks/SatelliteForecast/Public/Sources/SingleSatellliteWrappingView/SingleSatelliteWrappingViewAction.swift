@@ -13,6 +13,7 @@ public enum SingleSatelliteWrappingViewAction {
         }
     }
     case loadSingleSatellite(LoadSingleSatelliteParams)
+    case reloadSingleSatellite(LoadSingleSatelliteParams)
 }
 
 extension SingleSatelliteWrappingViewAction: Equatable {}

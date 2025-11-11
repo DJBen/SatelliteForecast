@@ -18,6 +18,8 @@ extension Reducer where ActionType == SatelliteListViewAction, StateType == Sate
             break
         case .retryLoadingSatelliteList:
             break
+        case .reloadSatellites:
+            break
         case .searchSatellites(_, category: _):
             break
         }

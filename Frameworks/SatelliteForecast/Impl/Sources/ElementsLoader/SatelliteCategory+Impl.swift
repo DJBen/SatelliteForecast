@@ -38,4 +38,15 @@ extension SatelliteCategory {
             return "active"
         }
     }
+
+    public func cachedFileURL(fileManager: FileManager = .default) -> URL {
+        fileManager.temporaryDirectory
+            .appendingPathComponent(localFilename)
+            .appendingPathExtension("txt")
+    }
+
+    public func removeCachedElements(fileManager: FileManager = .default) {
+        let url = cachedFileURL(fileManager: fileManager)
+        try? fileManager.removeItem(at: url)
+    }
 }

@@ -10,6 +10,7 @@ public struct DebugMenuConfig: Equatable {
     public var frozenAt: Double?
     public var mockedOffsetOn: Bool = false
     public var rapidNotificationDelivery: Bool = false
+    public var simulateTLEFailure: Bool = false
 
     /// Offset in days between the real julian date and the mocked julian date. Positive value means mocked date is in the future,
     /// while negative value means mocked date is in the past.

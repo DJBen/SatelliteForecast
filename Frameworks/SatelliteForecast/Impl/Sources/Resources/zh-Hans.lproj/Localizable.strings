@@ -338,6 +338,9 @@ Navigation title of pass alarm settings. */
 /* No comment provided by engineer. */
 "Retry" = "重试";
 
+/* No comment provided by engineer. */
+"Reload" = "重新加载";
+
 /* As in, 'rewatch' a video */
 "Rewatch" = "重看";
 
@@ -539,4 +542,3 @@ The localized string for the status of a spare satellite */
 
 /* No comment provided by engineer. */
 "Your alarms will appear here. Schedule an alarm by tapping the %@ inside a pass." = "您的提醒将在此处显示。通过点击过境中的 %@ 来设置提醒。";
-

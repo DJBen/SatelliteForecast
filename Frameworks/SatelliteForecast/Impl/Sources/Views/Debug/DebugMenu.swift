@@ -262,6 +262,20 @@ public struct DebugMenu: View {
                         ) {
                             Text(verbatim: "Deliver notifications 10 seconds after scheduled")
                         }
+
+                        Toggle(
+                            isOn: Binding<Bool>(
+                                get: {
+                                    state.config.simulateTLEFailure
+                                },
+                                set: { newValue in
+                                    viewModel.dispatch(.toggleSimulateTLEFailure(newValue))
+                                }
+                            )
+                            .animation()
+                        ) {
+                            Text(verbatim: "Simulate TLE failure (\"No GP Data Found\")")
+                        }
                     }
 
                     Section {

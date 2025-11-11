@@ -16,6 +16,12 @@ import SatelliteCatalog
 
 fileprivate let logger = Logger(subsystem: "io.djben.elementsLoader", category: "middleware")
 
+private struct SimulatedTLEFailureError: LocalizedError {
+    var errorDescription: String? {
+        "No GP Data Found"
+    }
+}
+
 public struct ElementsLoaderDependencies {
     public let elementLoader: ElementsLoader
     public let dateProvider: () -> Date
@@ -45,8 +51,21 @@ extension EffectMiddleware where
             switch inputAction {
             case let .loadElements(category, fetchStrategy, selectNoradIndex, calculatePass):
                 return Effect(token: category) { context -> AnyPublisher<DispatchedAction<ElementsLoaderOutput>, Never> in
-                    func loadSatellitePublisher() -> AnyPublisher<DispatchedAction<ElementsLoaderOutput>, Never> {
-                        context.dependencies.elementLoader.loadElementsPublisher(
+                    func loadSatellitePublisher(forceFailure: Bool) -> AnyPublisher<DispatchedAction<ElementsLoaderOutput>, Never> {
+                        if forceFailure {
+                            logger.notice("Simulating TLE failure for category \(String(describing: category.rawValue))")
+                            return Just(
+                                DispatchedAction(
+                                    .failedLoadingElements(
+                                        category: category,
+                                        error: .data(SimulatedTLEFailureError())
+                                    )
+                                )
+                            )
+                            .eraseToAnyPublisher()
+                        }
+
+                        return context.dependencies.elementLoader.loadElementsPublisher(
                             category: category,
                             fetchStrategy: fetchStrategy
                         )
@@ -72,6 +91,10 @@ extension EffectMiddleware where
 
                     let state = getState()
 
+                    if state.simulateTLEFailure {
+                        return loadSatellitePublisher(forceFailure: true)
+                    }
+
                     if let result = state.resources.info[category], let infoMap = result.content {
                         let julianDate = context.dependencies.dateProvider().julianDate + state.julianDateOffset
                         let mostRecentElementsAge = infoMap.map {
@@ -81,7 +104,7 @@ extension EffectMiddleware where
 
                         if mostRecentElementsAge > context.dependencies.updateInterval {
                             logger.notice("Most recent Elements age \(mostRecentElementsAge) too old: updating.")
-                            return loadSatellitePublisher()
+                            return loadSatellitePublisher(forceFailure: false)
                         }
 
                         logger.notice("Most recent Elements age \(mostRecentElementsAge) is new: skip update.")
@@ -98,7 +121,7 @@ extension EffectMiddleware where
                         )
                         .eraseToAnyPublisher()
                     } else {
-                        return loadSatellitePublisher()
+                        return loadSatellitePublisher(forceFailure: false)
                     }
                 }
             }

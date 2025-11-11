@@ -338,6 +338,9 @@ Navigation title of pass alarm settings. */
 /* No comment provided by engineer. */
 "Retry" = "다시 시도";
 
+/* No comment provided by engineer. */
+"Reload" = "다시 불러오기";
+
 /* As in, 'rewatch' a video */
 "Rewatch" = "다시 보기";
 
@@ -539,4 +542,3 @@ The localized string for the status of a spare satellite */
 
 /* No comment provided by engineer. */
 "Your alarms will appear here. Schedule an alarm by tapping the %@ inside a pass." = "여기에 알람이 표시됩니다. 통과 내에서 %@를 탭하여 알람을 예약하세요.";
-

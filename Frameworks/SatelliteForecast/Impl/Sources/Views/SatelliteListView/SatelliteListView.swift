@@ -105,7 +105,20 @@ public struct SatelliteListView: View {
         } else {
             switch (viewModel.state.satelliteInfo[context.category] ?? .notLoaded) {
             case .notLoaded:
-                Text("The satellites are not loaded.", bundle: .module)
+                VStack(spacing: 16) {
+                    Text("The satellites are not loaded.", bundle: .module)
+
+                    Button(
+                        "Reload",
+                        action: {
+                            viewModel.dispatch(
+                                .reloadSatellites(category: context.category)
+                            )
+                        }
+                    )
+                    .font(Font.headline)
+                    .foregroundColor(Color(UIColor.systemBlue))
+                }
             case .loading:
                 ProgressView {
                     Text("Loading...", bundle: .module)

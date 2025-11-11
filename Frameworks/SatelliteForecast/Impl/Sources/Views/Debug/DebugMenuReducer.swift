@@ -33,6 +33,8 @@ extension Reducer where ActionType == DebugMenuAction, StateType == DebugMenuSta
             
         case let .toggleRapidNotificationDelivery(isOn):
             state.config.rapidNotificationDelivery = isOn
+        case let .toggleSimulateTLEFailure(isOn):
+            state.config.simulateTLEFailure = isOn
             
         case .fetchNotifications:
             break

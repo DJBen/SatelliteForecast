@@ -40,6 +40,8 @@ extension EffectMiddleware where
                 return .doNothing
             case .toggleRapidNotificationDelivery(_):
                 return .doNothing
+            case .toggleSimulateTLEFailure(_):
+                return .doNothing
             case .fetchNotifications:
                 return .sequence([
                     .notification(.fetchPendingNotificationRequests),

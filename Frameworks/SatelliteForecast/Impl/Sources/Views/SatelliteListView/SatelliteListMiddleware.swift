@@ -43,7 +43,7 @@ extension EffectMiddleware where InputActionType == SatelliteListViewAction, Out
                         )
                     }
                 }
-            case .loadSatellite(_), .retryLoadingSatelliteList(category: _), .selectSatellite(_, category: _):
+            case .loadSatellite(_), .retryLoadingSatelliteList(category: _), .selectSatellite(_, category: _), .reloadSatellites:
                 return .doNothing
             }
         }

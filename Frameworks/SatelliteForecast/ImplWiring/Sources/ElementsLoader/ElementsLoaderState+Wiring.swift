@@ -13,7 +13,8 @@ extension ElementsLoaderState: AppStateMappable {
     public static func project(appState: AppState) -> ElementsLoaderState {
         return ElementsLoaderState(
             resources: appState.elementsLoader,
-            julianDateOffset: appState.debugMenu.effectiveOffset
+            julianDateOffset: appState.debugMenu.effectiveOffset,
+            simulateTLEFailure: appState.debugMenu.simulateTLEFailure
         )
     }
 

@@ -12,6 +12,7 @@ public enum DebugMenuAction {
     case toggleMockedOffset(_ isOn: Bool)
     case setMockedDateOffset(_ offset: Double)
     case toggleRapidNotificationDelivery(_ isOn: Bool)
+    case toggleSimulateTLEFailure(_ isOn: Bool)
     
     case fetchNotifications
     

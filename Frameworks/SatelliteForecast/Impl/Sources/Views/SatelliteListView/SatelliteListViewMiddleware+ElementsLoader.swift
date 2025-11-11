@@ -23,6 +23,14 @@ extension EffectMiddleware where InputActionType == SatelliteListViewAction, Out
                         fetchStrategy: .localWithin(21600 /* 6 hours */)
                     )
                 )
+            case .reloadSatellites(let category):
+                category.removeCachedElements()
+                return .just(
+                    .loadElements(
+                        category: category,
+                        fetchStrategy: .onlineFirst
+                    )
+                )
             }
         }
     }

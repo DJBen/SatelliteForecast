@@ -338,6 +338,9 @@ Navigation title of pass alarm settings. */
 /* No comment provided by engineer. */
 "Retry" = "Réessayer";
 
+/* No comment provided by engineer. */
+"Reload" = "Recharger";
+
 /* As in, 'rewatch' a video */
 "Rewatch" = "Revoir";
 
@@ -539,4 +542,3 @@ The localized string for the status of a spare satellite */
 
 /* No comment provided by engineer. */
 "Your alarms will appear here. Schedule an alarm by tapping the %@ inside a pass." = "Vos alarmes apparaîtront ici. Programmez une alarme en appuyant sur %@ dans un passage.";
-

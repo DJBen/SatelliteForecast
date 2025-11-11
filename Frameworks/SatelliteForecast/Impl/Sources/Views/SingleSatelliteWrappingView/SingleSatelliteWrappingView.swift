@@ -69,6 +69,20 @@ public struct SingleSatelliteWrappingView: View {
         } ?? .notLoaded
     }
 
+    private var loadParams: SingleSatelliteWrappingViewAction.LoadSingleSatelliteParams {
+        .init(
+            selectedNoradIndex: context.selectedNoradIndex,
+            julianDateRange: context.julianDateRange,
+            observer: context.observer
+        )
+    }
+
+    private func reloadSingleSatellite() {
+        viewModel.dispatch(
+            .reloadSingleSatellite(loadParams)
+        )
+    }
+
     @ViewBuilder func satelliteContent<Content: View, FailedContent: View>(
         @ViewBuilder contentBuilder: (SatelliteInfo) -> Content,
         @ViewBuilder failedContentBuilder: (UInt, ElementsLoaderError) -> FailedContent
@@ -76,7 +90,13 @@ public struct SingleSatelliteWrappingView: View {
         Group {
             switch satellite {
             case .notLoaded:
-                Text("The satellites are not loaded.", bundle: .module)
+                VStack(spacing: 16) {
+                    Text("The satellites are not loaded.", bundle: .module)
+
+                    Button("Reload", action: reloadSingleSatellite)
+                        .font(Font.headline)
+                        .foregroundColor(Color(UIColor.systemBlue))
+                }
             case .loading:
                 ProgressView {
                     Text("Loading...", bundle: .module)

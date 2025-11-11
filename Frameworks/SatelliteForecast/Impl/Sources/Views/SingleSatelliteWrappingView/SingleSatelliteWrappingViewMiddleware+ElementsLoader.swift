@@ -16,24 +16,42 @@ extension EffectMiddleware where InputActionType == SingleSatelliteWrappingViewA
 
     public static var singleSatelliteWrappingViewToElementsLoader: EffectMiddleware<SingleSatelliteWrappingViewAction, ElementsLoaderAction, Void, Void> {
         EffectMiddleware<SingleSatelliteWrappingViewAction, ElementsLoaderAction, Void, Void>.onAction { action, _, getState in
-            switch action {
-                case let .loadSingleSatellite(params):
-                let category: SatelliteCategory = if params.selectedNoradIndex == 25544 {
-                    .iss
+            func elementsCategory(for noradIndex: UInt) -> SatelliteCategory {
+                if noradIndex == 25544 {
+                    return .iss
                 } else {
-                    .tianhe
+                    return .tianhe
                 }
+            }
+
+            func calculatePassParam(_ params: SingleSatelliteWrappingViewAction.LoadSingleSatelliteParams) -> ElementsLoaderCalculatePassParam? {
+                params.observer.map { observer in
+                    ElementsLoaderCalculatePassParam(
+                        noradIndex: params.selectedNoradIndex,
+                        dateRange: params.julianDateRange,
+                        observer: observer
+                    )
+                }
+            }
+
+            switch action {
+            case let .loadSingleSatellite(params):
+                return .just(
+                    .loadElements(
+                        category: elementsCategory(for: params.selectedNoradIndex),
+                        fetchStrategy: .localWithin(21600 /* 6 hours */),
+                        calculatePass: calculatePassParam(params)
+                    )
+                )
+
+            case let .reloadSingleSatellite(params):
+                let category = elementsCategory(for: params.selectedNoradIndex)
+                category.removeCachedElements()
                 return .just(
                     .loadElements(
                         category: category,
-                        fetchStrategy: .localWithin(21600 /* 6 hours */),
-                        calculatePass: params.observer.map { observer in
-                            ElementsLoaderCalculatePassParam(
-                                noradIndex: params.selectedNoradIndex,
-                                dateRange: params.julianDateRange,
-                                observer: observer
-                            )
-                        }
+                        fetchStrategy: .onlineFirst,
+                        calculatePass: calculatePassParam(params)
                     )
                 )
             }

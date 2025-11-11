@@ -25,6 +25,7 @@ public enum SatelliteListViewAction {
     case selectSatellite(SelectSatelliteParams, category: SatelliteCategory)
     case searchSatellites(String, category: SatelliteCategory)
     case retryLoadingSatelliteList(category: SatelliteCategory)
+    case reloadSatellites(category: SatelliteCategory)
 }
 
 public enum SatelliteListViewOutput {

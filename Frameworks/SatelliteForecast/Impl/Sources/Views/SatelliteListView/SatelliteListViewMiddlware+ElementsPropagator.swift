@@ -39,6 +39,8 @@ extension EffectMiddleware where InputActionType == SatelliteListViewAction, Out
                 return .doNothing
             case .searchSatellites(_, category: _):
                 return .doNothing
+            case .reloadSatellites(category: let category):
+                return .doNothing
             }
         }
     }
