@@ -13,7 +13,7 @@ public struct DateCoordinate {
 
     public init(
         julianDate: Double,
-        coordinate: LatLonAlt,
+        coordinate: LatLonAlt
     ) {
         self.julianDate = julianDate
         self.coordinate = coordinate

@@ -15,8 +15,6 @@ class MathTests: XCTestCase {
 
     override func tearDown() {    }
 
-    class MathsTest: XCTestCase {
-
 /*┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
   │                                                                                                  │
   │               |                                                                                  │
@@ -116,7 +114,5 @@ class MathTests: XCTestCase {
             }
 
         }
-
-    }
 
 }

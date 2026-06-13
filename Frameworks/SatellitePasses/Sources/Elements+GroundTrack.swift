@@ -5,14 +5,13 @@
 //  Created by Ben Lu on 4/3/22.
 //
 
+import Foundation
 @preconcurrency import SatelliteKit
-import CoreLocation
-import SatelliteForecast
 
 extension Elements {
     public func generateGroundTrack(
         julianDateRange: ClosedRange<Double>,
-        interval: TimeInterval,
+        interval: TimeInterval
     ) throws -> [DateCoordinate] {
         let satellite = Satellite(withTLE: self)
         return try stride(
@@ -22,7 +21,7 @@ extension Elements {
         ).map { julianDate -> DateCoordinate in
              return DateCoordinate(
                 julianDate: julianDate,
-                coordinate: try satellite.geoPosition(julianDays: julianDate),
+                coordinate: try satellite.geoPosition(julianDays: julianDate)
              )
         }
     }

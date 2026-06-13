@@ -2,7 +2,9 @@
 //Greg Miller (gmiller@gregmiller.net) 2021.  Released as Public Domain
 
 import Foundation
+#if canImport(simd)
 import simd
+#endif
 
 class VSOP87a_XSmall {
    public static func getMercury(_ t: Double) -> SIMD3<Double> {

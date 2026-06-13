@@ -38,6 +38,7 @@ let package = Package(
         .package(path: "../SolarSystem"),
         .package(path: "../SwiftUIVisualEffects"),
         .package(name: "SatelliteCatalogPackage", path: "../SatelliteCatalog"),
+        .package(path: "../SatellitePasses"),
     ],
     targets: [
         .target(
@@ -47,6 +48,7 @@ let package = Package(
                 "StarryNight",
                 "AppDelegate",
                 .product(name: "CustomDump", package: "swift-custom-dump"),
+                .product(name: "SatellitePasses", package: "SatellitePasses"),
             ],
             path: "Public/Sources",
             resources: [.process("Resources")],

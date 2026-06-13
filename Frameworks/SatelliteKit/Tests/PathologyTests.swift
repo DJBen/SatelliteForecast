@@ -16,8 +16,6 @@ class PathologyTests: XCTestCase {
 
     override func tearDown() {    }
 
-    class Pathology: XCTestCase {
-
         // # check error code 4 (0.0 ... 150.0 ... 5.00)
         func test33333() {
 
@@ -125,8 +123,6 @@ class PathologyTests: XCTestCase {
 
             } catch { print(error) }
         }
-
-    }
 
     /*
 

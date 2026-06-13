@@ -479,10 +479,8 @@ class ThreeLineElementTests: XCTestCase {
         XCTAssert(base10ID("99999") == 99999, "got \(base10ID("99999"))")
     }
 
-    private class BundleLookup: NSObject {}
-
     func testLoad() throws {
-        let path = Bundle(for: BundleLookup.self).path(forResource: "visual", ofType: "txt")!
+        let path = try XCTUnwrap(Bundle.module.path(forResource: "visual", ofType: "txt"))
         let tles = try TLE.load(chunk: try String(contentsOfFile: path))
         XCTAssertEqual(tles.count, 166)
     }

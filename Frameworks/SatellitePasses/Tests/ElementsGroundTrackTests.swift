@@ -7,8 +7,7 @@
 
 import XCTest
 @preconcurrency import SatelliteKit
-import SatelliteForecast
-@testable import SatelliteForecastImpl
+@testable import SatellitePasses
 
 class ElementsGroundTrackTests: XCTestCase {
 
@@ -36,9 +35,10 @@ class ElementsGroundTrackTests: XCTestCase {
             interval: 60 * TimeConstants.sec2day
         )
 
-        XCTAssertEqual(
-            groundTrack,
-            [
+        // Compare element-wise with a tolerance rather than exact `==`: transcendental functions
+        // (sin/cos/atan2 …) differ by 1-2 ULP between Apple's libm and Linux's glibc, so the
+        // reference values captured on macOS won't be bit-identical on Linux.
+        let expected = [
                 DateCoordinate(julianDate: 2459368.066319444, coordinate: LatLonAlt(-13.238089671080688, 309.25153827286107, 422.5968579612263)),
                 DateCoordinate(julianDate: 2459368.0670138886, coordinate: LatLonAlt(-10.224384030514303, 311.5057887915509, 421.6899341550352)),
                 DateCoordinate(julianDate: 2459368.067708333, coordinate: LatLonAlt(-7.190652158516908, 313.7136832182422, 420.87231930984944)),
@@ -56,6 +56,13 @@ class ElementsGroundTrackTests: XCTestCase {
                 DateCoordinate(julianDate: 2459368.0760416663, coordinate: LatLonAlt(28.5974373051848, 341.7648821857409, 419.00253882159905)),
                 DateCoordinate(julianDate: 2459368.0767361107, coordinate: LatLonAlt(31.31741392187695, 344.71263021324074, 419.3902897951748))
             ]
-        )
+
+        XCTAssertEqual(groundTrack.count, expected.count)
+        for (got, exp) in zip(groundTrack, expected) {
+            XCTAssertEqual(got.julianDate, exp.julianDate, accuracy: 1e-9)
+            XCTAssertEqual(got.coordinate.lat, exp.coordinate.lat, accuracy: 1e-6)
+            XCTAssertEqual(got.coordinate.lon, exp.coordinate.lon, accuracy: 1e-6)
+            XCTAssertEqual(got.coordinate.alt, exp.coordinate.alt, accuracy: 1e-6)
+        }
     }
 }

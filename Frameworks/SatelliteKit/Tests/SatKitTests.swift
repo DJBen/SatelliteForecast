@@ -9,6 +9,12 @@
 import XCTest
 @testable import SatelliteKit
 
+/// Vector magnitude helper (the old `SIMD3.magnitude()` convenience was removed; this avoids
+/// depending on the Apple-only `simd` module so the test compiles on Linux too).
+private func magnitude(_ v: SIMD3<Double>) -> Double {
+    (v.x * v.x + v.y * v.y + v.z * v.z).squareRoot()
+}
+
 class SwiftTests: XCTestCase {
 
     func testProp1() {
@@ -26,17 +32,17 @@ class SwiftTests: XCTestCase {
 
             let pv1 = try propagator.getPVCoordinates(minsAfterEpoch: 10.0)
             print(pv1.debugDescription())
-            print(String(format: "radius1 %10.1f", pv1.position.magnitude()))
+            print(String(format: "radius1 %10.1f", magnitude(pv1.position)))
 
             let pv2 = try propagator.getPVCoordinates(minsAfterEpoch: 10.0 + 1.0/60.0)
             print(pv2.debugDescription())
-            print(String(format: "radius2 %10.1f", pv2.position.magnitude()))
-            print(String(format: "r2 - r1 %10.1f", (pv2.position - pv1.position).magnitude()))
+            print(String(format: "radius2 %10.1f", magnitude(pv2.position)))
+            print(String(format: "r2 - r1 %10.1f", magnitude(pv2.position - pv1.position)))
 
             let pv3 = try propagator.getPVCoordinates(minsAfterEpoch: 10.0 + 2.0/60.0)
             print(pv3.debugDescription())
-            print(String(format: "radius3 %10.1f", pv3.position.magnitude()))
-            print(String(format: "r3 - r2 %10.1f", (pv3.position - pv2.position).magnitude()))
+            print(String(format: "radius3 %10.1f", magnitude(pv3.position)))
+            print(String(format: "r3 - r2 %10.1f", magnitude(pv3.position - pv2.position)))
 
         } catch {
 
@@ -61,17 +67,17 @@ class SwiftTests: XCTestCase {
 
             let pv1 = try propagator.getPVCoordinates(minsAfterEpoch: 10.0)
             print(pv1.debugDescription())
-            print(String(format: "radius1 %10.1f", pv1.position.magnitude()))
+            print(String(format: "radius1 %10.1f", magnitude(pv1.position)))
 
             let pv2 = try propagator.getPVCoordinates(minsAfterEpoch: 10.0 + 1.0/60.0)
             print(pv2.debugDescription())
-            print(String(format: "radius2 %10.1f", pv2.position.magnitude()))
-            print(String(format: "r2 - r1 %10.1f", (pv2.position - pv1.position).magnitude()))
+            print(String(format: "radius2 %10.1f", magnitude(pv2.position)))
+            print(String(format: "r2 - r1 %10.1f", magnitude(pv2.position - pv1.position)))
 
             let pv3 = try propagator.getPVCoordinates(minsAfterEpoch: 10.0 + 2.0/60.0)
             print(pv3.debugDescription())
-            print(String(format: "radius3 %10.1f", pv3.position.magnitude()))
-            print(String(format: "r3 - r2 %10.1f", (pv3.position - pv2.position).magnitude()))
+            print(String(format: "radius3 %10.1f", magnitude(pv3.position)))
+            print(String(format: "r3 - r2 %10.1f", magnitude(pv3.position - pv2.position)))
 
         } catch {
 
@@ -89,7 +95,7 @@ class SwiftTests: XCTestCase {
         let moonCele = lunarGeo(julianDays: jdate)
         print(" Moon (Dec/RA): \(moonCele)°")
 
-        let azelx = azel(time: Date(), site: (+42.0, -84.0), cele: (moonCele.1, moonCele.0))
+        let azelx = azel(time: Date(), site: LatLon(+42.0, -84.0), cele: moonCele)
         print("       (Az/El): \(azelx)°")
 
     }

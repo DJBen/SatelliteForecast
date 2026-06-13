@@ -1,5 +1,7 @@
 import Foundation
+#if canImport(simd)
 import simd
+#endif
 
 public enum SolarSystemBody: Equatable, CaseIterable, Hashable, Codable, Sendable {
     case sun

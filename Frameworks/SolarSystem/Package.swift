@@ -1,11 +1,11 @@
-// swift-tools-version:6.1
+// swift-tools-version:5.9
 import PackageDescription
 
 let package = Package(
     name: "SolarSystem",
     platforms: [
-        .iOS(.v18),
-        .macOS(.v13),
+        .iOS(.v16),
+        .macOS(.v13)
     ],
     products: [
         .library(

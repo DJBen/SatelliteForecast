@@ -6,15 +6,14 @@
 //
 
 import XCTest
-@testable import SatelliteForecast
-@preconcurrency import SatelliteKit
+@testable import SatellitePasses
 
 class AstroAlgorithmsTests: XCTestCase {
     func testLineOfSight() {
-        let r1 = Vector(0, -4464.696, -5102.509)
-        let r2 = Vector(0, 5740.323, 3189.068)
+        let r1 = SIMD3<Double>(0, -4464.696, -5102.509)
+        let r2 = SIMD3<Double>(0, 5740.323, 3189.068)
         XCTAssertFalse(AstroAlgorithms.hasLineOfSight(object1Geo: r1, object2Geo: r2))
-        let sun = Vector(122_233_179, -76_150_708, -33_016_374)
+        let sun = SIMD3<Double>(122_233_179, -76_150_708, -33_016_374)
         XCTAssertTrue(AstroAlgorithms.hasLineOfSight(object1Geo: r1, object2Geo: sun))
     }
 
@@ -26,6 +25,11 @@ class AstroAlgorithmsTests: XCTestCase {
     }
 
     func testSatelliteMagnitude() {
+        // This test documents that `satelliteMagnitude` is a known-inaccurate model: on Apple the
+        // whole test is marked with `XCTExpectFailure()` so every assertion below is expected to
+        // fail. `XCTExpectFailure` does not exist in swift-corelibs-xctest (Linux), and the
+        // assertions genuinely fail, so the body is Apple-only.
+#if canImport(Darwin)
         let issMagnitude = AstroAlgorithms.satelliteMagnitude(
             instrinsicMagnitude: -2.5,
             range: 408,
@@ -42,6 +46,7 @@ class AstroAlgorithmsTests: XCTestCase {
             zenithAngle: 0
         )
         XCTAssertEqual(sl16rbMagitude, 4.2, accuracy: 0.1)
+#endif
     }
 
     func testLambertianSphereMagnitude() {

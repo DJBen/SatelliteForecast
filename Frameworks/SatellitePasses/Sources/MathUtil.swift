@@ -5,7 +5,6 @@
 //  Created by Ben Lu on 6/1/21.
 //
 
-import Accelerate
 import Foundation
 @preconcurrency import SatelliteKit
 

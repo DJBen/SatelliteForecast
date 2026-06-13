@@ -7,7 +7,9 @@
 //swiftlint:disable identifier_name
 
 import Foundation
+#if canImport(simd)
 import simd
+#endif
 
 public struct LatLonAlt: Equatable, Hashable, Codable, Sendable {
     public init(_ lat: Double, _ lon: Double, _ alt: Double) {
@@ -241,7 +243,7 @@ public func azel(
 
     return AziEle(
         fmod(azim * rad2deg + 540.0, 360.0),
-        fmod(elev * rad2deg, 360.0),
+        fmod(elev * rad2deg, 360.0)
     )
 }
 

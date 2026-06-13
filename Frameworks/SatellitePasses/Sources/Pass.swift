@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import BTree
 
 /// `Pass` is a summary of the physical characteristics about a satellite pass, including the times of rise, set, culmination
 /// (point of higest elevation), any changes in illumination, and the elevation of the sun at culmination.

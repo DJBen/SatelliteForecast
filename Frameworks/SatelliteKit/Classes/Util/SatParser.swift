@@ -5,6 +5,9 @@
   ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝*/
 
 import Foundation
+#if canImport(FoundationXML)
+import FoundationXML            // XMLParser lives in a separate module on non-Apple platforms (e.g. Linux)
+#endif
 
 extension String {
     var isBlank: Bool { return allSatisfy({ $0.isWhitespace })}

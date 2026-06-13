@@ -7,7 +7,9 @@
 // swiftlint:disable identifier_name
 
 import Foundation
+#if canImport(simd)
 import simd
+#endif
 
 public struct Satellite {
 

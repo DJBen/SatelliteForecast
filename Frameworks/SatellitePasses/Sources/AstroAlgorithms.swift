@@ -6,8 +6,14 @@
 //
 
 @preconcurrency import SatelliteKit
+#if canImport(Darwin)
 import Darwin
+#elseif canImport(Glibc)
+import Glibc
+#endif
+#if canImport(simd)
 import simd
+#endif
 
 public enum AstroAlgorithms {
     /// Whether two objects have line of sight (and not blocked by earth).

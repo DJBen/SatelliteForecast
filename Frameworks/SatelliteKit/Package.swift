@@ -1,4 +1,4 @@
-// swift-tools-version:6.1
+// swift-tools-version:5.9
 import PackageDescription
 
 let package = Package(
@@ -19,12 +19,15 @@ let package = Package(
         .target(
             name: "SatelliteKit",
             dependencies: [],
-            path: "Classes",
+            path: "Classes"
         ),
         .testTarget(
             name: "SatelliteKitTests",
             dependencies: ["SatelliteKit"],
-            path: "Tests"
+            path: "Tests",
+            resources: [
+                .process("Resources")
+            ]
         )
     ]
 )

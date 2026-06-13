@@ -5,13 +5,13 @@
 //  Created by Ben Lu on 6/4/21.
 //
 
-import BTree
 import Foundation
 import QSMag
 @preconcurrency import SatelliteKit
-import SatelliteForecast
 import SolarSystem
+#if canImport(simd)
 import simd
+#endif
 
 extension SatelliteSnapshot {
     public init(

@@ -5,7 +5,9 @@
   ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝*/
 
 import Foundation
+#if canImport(simd)
 import simd
+#endif
 
 // swiftlint:disable identifier_name
 
