@@ -1,26 +1,22 @@
-diff --git a/Frameworks/SatellitePasses/Sources/AstroAlgorithms.swift b/Frameworks/SatellitePasses/Sources/AstroAlgorithms.swift
-index 500ad8a..a69d7fe 100644
---- a/Frameworks/SatellitePasses/Sources/AstroAlgorithms.swift
-+++ b/Frameworks/SatellitePasses/Sources/AstroAlgorithms.swift
-@@ -33,7 +33,7 @@ public enum AstroAlgorithms {
-             return true
-         }
+diff --git a/Frameworks/SatelliteKit/Classes/SGP/DeepSDP4.swift b/Frameworks/SatelliteKit/Classes/SGP/DeepSDP4.swift
+index 0645cf4..3fa212c 100644
+--- a/Frameworks/SatelliteKit/Classes/SGP/DeepSDP4.swift
++++ b/Frameworks/SatelliteKit/Classes/SGP/DeepSDP4.swift
+@@ -459,7 +459,7 @@ class DeepSDP4: SDP4 {
+   └──────────────────────────────────────────────────────────────────────────────────────────────────┘*/
+     override func deepSecularEffects(minutesFromEphoch mins: Double) {
  
--        return (1 - τ_min) * object1MagSq + object2MagSq * τ_min >= EarthConstants.Rₑ * EarthConstants.Rₑ
-+        return (1 - τ_min) * object1MagSq + dotProd * τ_min >= EarthConstants.Rₑ * EarthConstants.Rₑ
-     }
+-        super.xll   -= ssl * mins
++        super.xll   += ssl * mins
+         super.Ω     += ssh * mins
+         super.ω_new += ssg * mins
+         super.e_new  = super.tle.e₀ + sse * mins
+@@ -579,7 +579,7 @@ class DeepSDP4: SDP4 {
+         e_new += pe
+         xll   += pl
+         ω_new += pgh
+-        i_new -= pinc
++        i_new += pinc
+         i_new  = fmod2pi_0(i_new)
  
-     /// Calculate the air mass given a true zenith angle.
-diff --git a/Frameworks/SatellitePasses/Sources/SatelliteInfo+Snapshot.swift b/Frameworks/SatellitePasses/Sources/SatelliteInfo+Snapshot.swift
-index 4c539a0..ae0f5f4 100644
---- a/Frameworks/SatellitePasses/Sources/SatelliteInfo+Snapshot.swift
-+++ b/Frameworks/SatellitePasses/Sources/SatelliteInfo+Snapshot.swift
-@@ -28,7 +28,7 @@ extension SatelliteSnapshot {
-             let z = simd_length(top)
- 
-             return AziEleDst(
--                atan2pi(top.y, top.x) * rad2deg,
-+                atan2pi(top.y, -top.x) * rad2deg,
-                 asin(top.z / z) * rad2deg,
-                 z
-             )
+         let sinis = sin(i_new)
