@@ -33,7 +33,7 @@ public enum AstroAlgorithms {
             return true
         }
 
-        return (1 - τ_min) * object1MagSq + dotProd * τ_min >= EarthConstants.Rₑ * EarthConstants.Rₑ
+        return (1 - τ_min) * object1MagSq + object2MagSq * τ_min >= EarthConstants.Rₑ * EarthConstants.Rₑ
     }
 
     /// Calculate the air mass given a true zenith angle.
