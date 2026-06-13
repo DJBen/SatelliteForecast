@@ -28,7 +28,7 @@ extension SatelliteSnapshot {
             let z = simd_length(top)
 
             return AziEleDst(
-                atan2pi(top.y, -top.x) * rad2deg,
+                atan2pi(top.y, top.x) * rad2deg,
                 asin(top.z / z) * rad2deg,
                 z
             )
