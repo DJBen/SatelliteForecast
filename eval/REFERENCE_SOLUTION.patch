@@ -1,0 +1,26 @@
+diff --git a/Frameworks/SatellitePasses/Sources/AstroAlgorithms.swift b/Frameworks/SatellitePasses/Sources/AstroAlgorithms.swift
+index 500ad8a..a69d7fe 100644
+--- a/Frameworks/SatellitePasses/Sources/AstroAlgorithms.swift
++++ b/Frameworks/SatellitePasses/Sources/AstroAlgorithms.swift
+@@ -33,7 +33,7 @@ public enum AstroAlgorithms {
+             return true
+         }
+ 
+-        return (1 - τ_min) * object1MagSq + object2MagSq * τ_min >= EarthConstants.Rₑ * EarthConstants.Rₑ
++        return (1 - τ_min) * object1MagSq + dotProd * τ_min >= EarthConstants.Rₑ * EarthConstants.Rₑ
+     }
+ 
+     /// Calculate the air mass given a true zenith angle.
+diff --git a/Frameworks/SatellitePasses/Sources/SatelliteInfo+Snapshot.swift b/Frameworks/SatellitePasses/Sources/SatelliteInfo+Snapshot.swift
+index 4c539a0..ae0f5f4 100644
+--- a/Frameworks/SatellitePasses/Sources/SatelliteInfo+Snapshot.swift
++++ b/Frameworks/SatellitePasses/Sources/SatelliteInfo+Snapshot.swift
+@@ -28,7 +28,7 @@ extension SatelliteSnapshot {
+             let z = simd_length(top)
+ 
+             return AziEleDst(
+-                atan2pi(top.y, top.x) * rad2deg,
++                atan2pi(top.y, -top.x) * rad2deg,
+                 asin(top.z / z) * rad2deg,
+                 z
+             )
