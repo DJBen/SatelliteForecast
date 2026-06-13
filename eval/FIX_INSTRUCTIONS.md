@@ -4,9 +4,7 @@
 
 `Frameworks/SatellitePasses` is a Swift package that computes satellite
 **ephemerides** and **observer passes**. It sits on top of `Frameworks/SatelliteKit`,
-a self-contained SGP4 / SDP4 orbital propagator (the standard NORAD model: a
-**near-space** path, SGP4, for orbits with period < 225 min, and a **deep-space**
-path, SDP4 / DeepSDP4, with luni-solar and resonance terms for everything else).
+an orbital propagator that turns a TLE into a position over time.
 
 Given a satellite TLE and an observer's latitude / longitude / altitude, the stack
 produces:
@@ -14,23 +12,17 @@ produces:
 - per-instant **snapshots** (azimuth, elevation, slant range, illumination, …),
 - **passes** (rise / culmination / set, illumination changes, visibility),
 - satellite **ground tracks**,
-- raw Earth-Centered-Inertial **position / velocity** from the propagator.
+- raw Earth-Centered-Inertial **position / velocity**.
 
-The test suite (`Frameworks/SatellitePasses/Tests`) includes:
-
-- `ISSPassSydneyTests` — an end-to-end pass whose expected numbers were
-  cross-checked against **heavens-above.com** for a real ISS pass over Sydney.
-- `ReferenceEphemeridesTests` — a propagator regression suite that propagates
-  **five real satellites** (TLEs from celestrak.org) spanning the near-space and
-  deep-space regimes and checks their ECI positions and geodetic sub-points
-  against reference values.
-- `ElementsGroundTrackTests`, `AstroAlgorithmsTests` — ground-track and
-  astronomy-helper checks.
+The test suite (`Frameworks/SatellitePasses/Tests`) exercises this stack: an
+observer pass cross-checked against heavens-above.com, propagated ephemerides
+checked against reference positions and geodetic sub-points, ground tracks, and
+astronomy helpers.
 
 ## The problem
 
 The library has **bugs introduced into the algorithms**. As a result the test
-suite is only **partially passing** — at least one test fails.
+suite is only **partially passing** — some tests fail.
 
 Run the tests to see the current state:
 
