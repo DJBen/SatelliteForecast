@@ -459,7 +459,7 @@ class DeepSDP4: SDP4 {
   └──────────────────────────────────────────────────────────────────────────────────────────────────┘*/
     override func deepSecularEffects(minutesFromEphoch mins: Double) {
 
-        super.xll   += ssl * mins
+        super.xll   -= ssl * mins
         super.Ω     += ssh * mins
         super.ω_new += ssg * mins
         super.e_new  = super.tle.e₀ + sse * mins
@@ -579,7 +579,7 @@ class DeepSDP4: SDP4 {
         e_new += pe
         xll   += pl
         ω_new += pgh
-        i_new += pinc
+        i_new -= pinc
         i_new  = fmod2pi_0(i_new)
 
         let sinis = sin(i_new)
