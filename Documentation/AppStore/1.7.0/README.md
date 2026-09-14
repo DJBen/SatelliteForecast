@@ -45,3 +45,4 @@ The graph footer previously mixed a 24-hour clock with AM/PM, producing labels s
 - The test plan was restored after capture. Existing regression baseline images were not modified.
 - Release archive and export succeeded for `io.djben.SatelliteForecast`, version 1.7.0, build 2.
 - All 32 replacement assets reached Apple’s `COMPLETE` state; remote order and MD5 checksums match the local files. The public App Store version remains a draft.
+- Build 2 (`5d4d6101-82a0-49ab-8452-5492dc85c355`) processed as `VALID` and is `READY_FOR_BETA_TESTING` in the First Light internal TestFlight group.
