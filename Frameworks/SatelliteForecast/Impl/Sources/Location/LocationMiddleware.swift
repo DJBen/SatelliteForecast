@@ -21,7 +21,6 @@ public class LocationMiddleware: NSObject, MiddlewareProtocol {
 
     var locationManager: CLLocationManager!
     var geocoder: CLGeocoder!
-    var searchCompleter: MKLocalSearchCompleter!
 
     private var getState: GetState<StateType>!
     private var output: AnyActionHandler<LocationOutput>!
@@ -35,8 +34,6 @@ public class LocationMiddleware: NSObject, MiddlewareProtocol {
         locationManager.delegate = self
 
         geocoder = CLGeocoder()
-        searchCompleter = MKLocalSearchCompleter()
-        searchCompleter.delegate = self
 
         self.getState = getState
         self.output = output
@@ -58,8 +55,6 @@ public class LocationMiddleware: NSObject, MiddlewareProtocol {
                         output.dispatch(.reverseGeocodingFinished(.failure(error)))
                     }
                 }
-            case let .requestAutoCompletion(searchTerm):
-                self?.searchCompleter.queryFragment = searchTerm
             case let .selectLocation(selection):
                 switch selection {
                 case .currentLocation:
@@ -103,16 +98,6 @@ extension LocationMiddleware: CLLocationManagerDelegate {
     }
 }
 
-extension LocationMiddleware: MKLocalSearchCompleterDelegate {
-    public func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
-        output.dispatch(.autocompletionFinished(.success(completer.results)))
-    }
-
-    public func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
-        output.dispatch(.autocompletionFinished(.failure(error)))
-    }
-}
-
 extension EffectMiddleware where InputActionType == LocationOutput, OutputActionType == LocationAction, StateType == Void, Dependencies == Void {
     public static var locationAuthChange: EffectMiddleware<LocationOutput, LocationAction, Void, Void> {
         EffectMiddleware<LocationOutput, LocationAction, Void, Void>
@@ -126,8 +111,6 @@ extension EffectMiddleware where InputActionType == LocationOutput, OutputAction
                 case .locationChanged(_):
                     break
                 case .reverseGeocodingFinished(_):
-                    break
-                case .autocompletionFinished(_):
                     break
                 }
             return .doNothing
@@ -153,13 +136,7 @@ extension EffectMiddleware where InputActionType == LocationOutput, OutputAction
                     case let .failure(error):
                         logger.error("[Location] reverse geocoding failed \(error.localizedDescription)")
                     }
-                case let .autocompletionFinished(result):
-                    switch result {
-                    case .success(_):
-                        break
-                    case let .failure(error):
-                        logger.error("[Map] autocompletion failed \(error.localizedDescription)")
-                    }
+
                 }
             return .doNothing
         }

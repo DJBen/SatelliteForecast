@@ -6,25 +6,15 @@
 //
 
 import SwiftUI
-@preconcurrency import CombineRex
-@preconcurrency import CombineRextensions
 import SatelliteForecast
 
-public struct AlarmSettingsCellState: Equatable {
-    public var scheduledPassNotifications: Set<ScheduledPassNotification> = []
-
-    public init(scheduledPassNotifications: Set<ScheduledPassNotification> = []) {
-        self.scheduledPassNotifications = scheduledPassNotifications
-    }
-}
-
 public struct AlarmSettingsCell: View {
-    @ObservedObject var viewModel: ObservableViewModel<AlarmSettingsCellAction, AlarmSettingsCellState>
+    let numberOfAlerts: Int
 
     public init(
-        viewModel: ObservableViewModel<AlarmSettingsCellAction, AlarmSettingsCellState>
+        numberOfAlerts: Int
     ) {
-        self.viewModel = viewModel
+        self.numberOfAlerts = numberOfAlerts
     }
 
     @Environment(\.colorScheme) private var colorScheme
@@ -34,7 +24,7 @@ public struct AlarmSettingsCell: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
-                Image(systemName: viewModel.state.scheduledPassNotifications.isEmpty ? "bell" : "bell.fill")
+                Image(systemName: numberOfAlerts == 0 ? "bell" : "bell.fill")
                     .font(.headline)
                     .foregroundColor(Color(UIColor.label))
                 
@@ -46,7 +36,7 @@ public struct AlarmSettingsCell: View {
             }
 
             Text(
-                AlarmSettingsCell.description(numberOfAlerts: viewModel.state.scheduledPassNotifications.count)
+                AlarmSettingsCell.description(numberOfAlerts: numberOfAlerts)
             )
             .font(.subheadline)
             .multilineTextAlignment(.leading)
@@ -93,7 +83,7 @@ extension AlarmSettingsCell {
 struct AlarmSettingsCell_Previews: PreviewProvider {
     static var previews: some View {
         AlarmSettingsCell(
-            viewModel: .mock(state: AlarmSettingsCellState(scheduledPassNotifications: []))
+            numberOfAlerts: 0
         )
     }
 }

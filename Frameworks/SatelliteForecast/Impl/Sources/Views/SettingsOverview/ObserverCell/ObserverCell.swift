@@ -6,30 +6,19 @@
 //
 
 import Contacts
-@preconcurrency import CombineRex
 import MapKit
 import SwiftUI
 @preconcurrency import SatelliteKit
 import SatelliteForecast
 import SwiftUIVisualEffects
 
-public struct ObserverCellState {
-    var locationResources: LocationResources = .init()
-
-    public init(locationResources: LocationResources = .init()) {
-        self.locationResources = locationResources
-    }
-}
-
-extension ObserverCellState: Equatable {}
-
 public struct ObserverCell: View {
-    @ObservedObject var viewModel: ObservableViewModel<ObserverCellAction, ObserverCellState>
+    let resources: LocationResources
 
     public init(
-        viewModel: ObservableViewModel<ObserverCellAction, ObserverCellState>
+        resources: LocationResources
     ) {
-        self.viewModel = viewModel
+        self.resources = resources
     }
 
     @State private var textRegionSize: CGSize = .zero
@@ -54,7 +43,7 @@ public struct ObserverCell: View {
     }
 
     private var annotationItems: [CustomLocationMarker] {
-        let locationResources = viewModel.state.locationResources
+        let locationResources = resources
         switch locationResources.selection {
         case let .custom(completion, placemark):
             return [
@@ -96,10 +85,10 @@ public struct ObserverCell: View {
             if rect.isEmpty {
                 EmptyView()
             } else {
-                let locationResources = viewModel.state.locationResources
+                let locationResources = resources
                 switch locationResources.authorizationStatus {
                 case .authorizedAlways, .authorizedWhenInUse:
-                    if let location = viewModel.state.locationResources.location {
+                    if let location = resources.location {
                         map(coordinate: location.coordinate, rect: rect)
                     } else {
                         ZStack {
@@ -109,7 +98,7 @@ public struct ObserverCell: View {
                         }
                     }
                 case .denied, .restricted:
-                    if let location = viewModel.state.locationResources.location {
+                    if let location = resources.location {
                         map(coordinate: location.coordinate, rect: rect)
                     } else {
                         ZStack {
@@ -130,7 +119,7 @@ public struct ObserverCell: View {
     }
 
     var secondaryLabelText: String? {
-        let locationResources = viewModel.state.locationResources
+        let locationResources = resources
 
         switch locationResources.authorizationStatus {
         case .authorizedAlways, .authorizedWhenInUse:
@@ -157,7 +146,7 @@ public struct ObserverCell: View {
     }
 
     var titleText: String {
-        let locationResources = viewModel.state.locationResources
+        let locationResources = resources
 
         switch locationResources.selection {
         case .currentLocation:
@@ -207,7 +196,7 @@ public struct ObserverCell: View {
 
                     }
 
-                    if let coordinate = viewModel.state.locationResources.location?.coordinate {
+                    if let coordinate = resources.location?.coordinate {
                         Text(coordinate.formattedString)
                             .modifier(SecondaryLabelModifier())
 
@@ -253,29 +242,10 @@ struct ObserverCell_Previews: PreviewProvider {
     static var previews: some View {
         // 2000 Broadway, Redwood City, CA 94063
         let location = CLLocation(latitude: 37.486743000691185, longitude: -122.22655970246515)
-        ObserverCell(
-            viewModel: .mock(
-                state: ObserverCellState(
-                    locationResources: LocationResources(
-                        authorizationStatus: .authorizedAlways,
-                        currentLocation: location
-                    )
-                )
-            )
-        )
-        .previewLayout(.fixed(width: 200, height: 200))
-
-        ObserverCell(
-            viewModel: .mock(
-                state: ObserverCellState(
-                    locationResources: LocationResources(
-                        authorizationStatus: .denied
-                    )
-                )
-            )
-        )
-        .previewLayout(.fixed(width: 200, height: 200))
-
+        ObserverCell(resources: .init(authorizationStatus: .authorizedAlways, currentLocation: location))
+            .previewLayout(.fixed(width: 200, height: 200))
+        ObserverCell(resources: .init(authorizationStatus: .denied))
+            .previewLayout(.fixed(width: 200, height: 200))
     }
 }
 #endif

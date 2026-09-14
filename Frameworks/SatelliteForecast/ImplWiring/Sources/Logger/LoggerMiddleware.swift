@@ -78,10 +78,6 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                     }
                 case .debugMenu(let debugMenuAction):
                     customDump(debugMenuAction)
-                case .alarmSettingsCell(let alarmSettingsCellAction):
-                    customDump(alarmSettingsCellAction)
-                case .alarmSettingsView(let alarmSettingsViewAction):
-                    customDump(alarmSettingsViewAction)
                 case .passAlarmSettings(let passAlarmSettingsModalViewAction):
                     customDump(passAlarmSettingsModalViewAction, maxDepth: 2)
                 case .realtimeSky(let realtimeSkyViewAction):

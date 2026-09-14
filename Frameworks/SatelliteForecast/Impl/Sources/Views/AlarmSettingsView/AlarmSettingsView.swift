@@ -6,28 +6,23 @@
 //
 
 import SwiftUI
-import Combine
-@preconcurrency import CombineRex
-@preconcurrency import CombineRextensions
 import CoreLocation
 @preconcurrency import SatelliteKit
 import SatelliteForecast
 
-public struct AlarmSettingsViewState: Equatable {
-    public var scheduledPassNotifications: [ScheduledPassNotification] = []
-
-    public init(scheduledPassNotifications: [ScheduledPassNotification] = []) {
-        self.scheduledPassNotifications = scheduledPassNotifications
-    }
-}
-
 public struct AlarmSettingsView: View {
-    @ObservedObject var viewModel: ObservableViewModel<AlarmSettingsViewAction, AlarmSettingsViewState>
+    let notifications: [ScheduledPassNotification]
+    let deleteNotifications: (Set<String>) -> Void
 
     public init(
-        viewModel: ObservableViewModel<AlarmSettingsViewAction, AlarmSettingsViewState>
+        notifications: [ScheduledPassNotification],
+        deleteNotifications: @escaping (Set<String>) -> Void
     ) {
-        self.viewModel = viewModel
+        self.notifications = notifications.sorted {
+            if $0.notification.pass.rise.julianDate == $1.notification.pass.rise.julianDate { return $0.id < $1.id }
+            return $0.notification.pass.rise.julianDate < $1.notification.pass.rise.julianDate
+        }
+        self.deleteNotifications = deleteNotifications
     }
     
     @ViewBuilder private func itemView(_ item: ScheduledPassNotification) -> some View {
@@ -74,7 +69,7 @@ public struct AlarmSettingsView: View {
     
     @ViewBuilder var alarmList: some View {
         List {
-            if viewModel.state.scheduledPassNotifications.isEmpty {
+            if notifications.isEmpty {
                 VStack(spacing: 16) {
                     Image(systemName: "bell.circle")
                         .font(.title)
@@ -97,30 +92,25 @@ public struct AlarmSettingsView: View {
                     )
                 )
             } else {
-                ForEach(viewModel.state.scheduledPassNotifications) { item in
+                ForEach(notifications) { item in
                     itemView(item)
                 }
-                .onDelete { indexSet in
-                    let ids = indexSet.map {
-                        viewModel.state.scheduledPassNotifications[$0]
-                    }
-                    .reduce(
-                        into: Set<String>(), {
-                            $0.insert($1.id)
-                        }
-                    )
-
-                    viewModel.dispatch(.deleteNotifications(ids: ids))
-                }
+                .onDelete(perform: deleteAlarms)
             }
         }
         .listStyle(.insetGrouped)
         .animation(
             .spring(),
-            value: viewModel.state.scheduledPassNotifications
+            value: notifications
         )
     }
     
+    func deleteAlarms(at offsets: IndexSet) {
+        let ids = Set(offsets.filter { notifications.indices.contains($0) }.map { notifications[$0].id })
+        guard !ids.isEmpty else { return }
+        deleteNotifications(ids)
+    }
+
     public var body: some View {
         alarmList.modifier(AppSurface())
         .navigationTitle(Text("Alarms", bundle: .module, comment: "Noun, as in alarm clock."))
@@ -284,11 +274,7 @@ struct AlarmSettingsView_Previews: PreviewProvider {
         }
         
         AlarmSettingsView(
-            viewModel: .mock(
-                state: AlarmSettingsViewState(
-                    scheduledPassNotifications: items
-                )
-            )
+            notifications: items, deleteNotifications: { _ in }
         )
     }
 }

@@ -5,8 +5,6 @@
 //  Created by Ben Lu on 8/1/21.
 //
 
-import Combine
-@preconcurrency import CombineRex
 import MapKit
 import SatelliteForecast
 import SwiftUI
@@ -15,89 +13,34 @@ public struct LocationSettingsViewState: Equatable {
     var locationSelection: LocationResources.Selection = .currentLocation
     var currentLocation: CLLocation?
     var currentLocationPlacemark: CLPlacemark?
-    var autocompletionResult: Result<[MKLocalSearchCompletion], Error>?
 
-    public init(locationSelection: LocationResources.Selection = .currentLocation, currentLocation: CLLocation? = nil, currentLocationPlacemark: CLPlacemark? = nil, autocompletionResult: Result<[MKLocalSearchCompletion], Error>? = nil) {
+    public init(locationSelection: LocationResources.Selection = .currentLocation, currentLocation: CLLocation? = nil, currentLocationPlacemark: CLPlacemark? = nil) {
         self.locationSelection = locationSelection
         self.currentLocation = currentLocation
         self.currentLocationPlacemark = currentLocationPlacemark
-        self.autocompletionResult = autocompletionResult
     }
 
     public static func == (lhs: LocationSettingsViewState, rhs: LocationSettingsViewState) -> Bool {
         return lhs.currentLocation == rhs.currentLocation &&
         lhs.currentLocationPlacemark == rhs.currentLocationPlacemark &&
-        lhs.locationSelection == rhs.locationSelection &&
-        lhs.autocompletionResult?.successValue == rhs.autocompletionResult?.successValue
-    }
-}
-
-fileprivate class SearchDebouncer: NSObject, ObservableObject {
-    @Published var searchTerm = ""
-    @Published var debouncedSearchTerm = ""
-
-    @Published var selectedAutoCompletion: MKLocalSearchCompletion?
-    @Published var autocompletionPlacemark: MKPlacemark?
-
-    private var cancellables : Set<AnyCancellable> = []
-
-    private static func reconcileLocation(location: MKLocalSearchCompletion?) -> AnyPublisher<MKPlacemark?, Error> {
-        guard let location = location else {
-            return Just(nil)
-                .setFailureType(to: Error.self)
-                .eraseToAnyPublisher()
-        }
-
-        let searchRequest = MKLocalSearch.Request(completion: location)
-        let search = MKLocalSearch(request: searchRequest)
-        return Future() { promise in
-            search.start { (response, error) in
-                if let error = error {
-                    promise(.failure(error))
-                } else {
-                    promise(.success(response?.mapItems.first?.placemark))
-                }
-            }
-        }
-        .eraseToAnyPublisher()
-    }
-
-    override init() {
-        super.init()
-
-        $searchTerm
-            .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
-            .removeDuplicates()
-            .assign(to: \.debouncedSearchTerm, on: self)
-            .store(in: &cancellables)
-
-        $selectedAutoCompletion
-            .removeDuplicates()
-            .flatMap { autoCompletion in
-                Self.reconcileLocation(location: autoCompletion)
-            }
-            .sink { completion in
-
-            } receiveValue: { [unowned self] coordinate in
-                self.autocompletionPlacemark = coordinate
-            }
-            .store(in: &cancellables)
+        lhs.locationSelection == rhs.locationSelection
     }
 }
 
 public struct LocationSettingsView: View {
     @Environment(\.dismiss) private var dismiss
-    @ObservedObject var viewModel: ObservableViewModel<LocationAction, LocationSettingsViewState>
+    let state: LocationSettingsViewState
+    let selectLocation: (LocationResources.Selection) -> Void
 
     public init(
-        viewModel: ObservableViewModel<LocationAction, LocationSettingsViewState>
+        state: LocationSettingsViewState,
+        selectLocation: @escaping (LocationResources.Selection) -> Void
     ) {
-        self.viewModel = viewModel
+        self.state = state
+        self.selectLocation = selectLocation
     }
 
-    @StateObject private var searchDebouncer = SearchDebouncer()
-    @State private var selection: String?
-    @State private var nextLocationSelection: LocationResources.Selection?
+    @State private var search = LocationSearchModel()
 
     @ViewBuilder private func autocompletionCell(locationAutoCompletion: MKLocalSearchCompletion) -> some View {
         HStack {
@@ -109,7 +52,7 @@ public struct LocationSettingsView: View {
                     .tint(nil)
             }
 
-            switch viewModel.state.locationSelection {
+            switch state.locationSelection {
             case .currentLocation:
                 EmptyView()
             case let .custom(completion, _):
@@ -125,23 +68,23 @@ public struct LocationSettingsView: View {
         List {
             Section(content: {
                 Button(action: {
-                    if viewModel.state.currentLocation == nil {
+                    if state.currentLocation == nil {
                         UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
-                    } else if viewModel.state.locationSelection != .currentLocation {
-                        nextLocationSelection = .currentLocation
+                    } else if state.locationSelection != .currentLocation {
+                        search.useCurrentLocation()
                     }
                 }) {
                     LocationSettingsCurrentLocationCell(
-                        currentLocation: viewModel.state.currentLocation,
-                        currentLocationPlacemark: viewModel.state.currentLocationPlacemark,
-                        isSelected: viewModel.state.locationSelection == .currentLocation
+                        currentLocation: state.currentLocation,
+                        currentLocationPlacemark: state.currentLocationPlacemark,
+                        isSelected: state.locationSelection == .currentLocation
                     )
                 }
             }, header: {
                 Text("Current location", bundle: .module)
             })
 
-            switch viewModel.state.locationSelection {
+            switch state.locationSelection {
             case .currentLocation:
                 EmptyView()
             case let .custom(completion, _):
@@ -161,10 +104,13 @@ public struct LocationSettingsView: View {
                 })
             }
 
+            if let message = search.errorMessage {
+                Section { Text(message).foregroundStyle(.secondary) }
+            }
             Section {
-                ForEach(viewModel.state.autocompletionResult?.successValue ?? [], id: \.self) { locationAutoCompletion in
+                ForEach(search.results, id: \.self) { locationAutoCompletion in
                     Button(action: {
-                        searchDebouncer.selectedAutoCompletion = locationAutoCompletion
+                        search.select(locationAutoCompletion)
                     }) {
                         autocompletionCell(locationAutoCompletion: locationAutoCompletion)
                     }
@@ -172,51 +118,39 @@ public struct LocationSettingsView: View {
             }
         }
         .searchable(
-            text: $searchDebouncer.searchTerm,
+            text: $search.query,
             placement: .navigationBarDrawer(displayMode: .always),
             prompt: Text("Enter address", bundle: .module)
         )
         .modifier(AppSurface())
         .navigationTitle(Text("Select Location", bundle: .module))
-        .onReceive(
-            searchDebouncer.$debouncedSearchTerm
-        ) { newSearchTerm in
-            viewModel.dispatch(.requestAutoCompletion(newSearchTerm))
-        }
-        .onReceive(
-            searchDebouncer.$autocompletionPlacemark
-        ) { placemark in
-            guard let autoCompletion = searchDebouncer.selectedAutoCompletion,
-                    let placemark = placemark else {
-                return
-            }
-            nextLocationSelection = .custom(autoCompletion, placemark)
+        .task(id: search.query) { await search.search() }
+        .onDisappear { search.cancel() }
+        .overlay(alignment: .bottom) {
+            if search.isResolving { ProgressView("Finding location…").padding().background(.regularMaterial) }
         }
         .alert(
             Text("Location change", bundle: .module),
             isPresented: Binding<Bool>(
                 get: {
-                    nextLocationSelection != nil
+                    search.pendingSelection != nil
                 },
-                set: { _ in
-                }
-            )
-        ) {
+                set: { if !$0 { search.pendingSelection = nil } }
+            ),
+            presenting: search.pendingSelection
+        ) { selection in
             Button("No", role: .cancel) {
-                nextLocationSelection = nil
+                search.pendingSelection = nil
             }
 
             Button("Confirm", role: .none) {
-                guard let nextLocationSelection = nextLocationSelection else {
-                    fatalError()
-                }
-                guard nextLocationSelection != .currentLocation || viewModel.state.currentLocation != nil else { return }
-                viewModel.dispatch(.selectLocation(nextLocationSelection))
+                guard selection != .currentLocation || state.currentLocation != nil else { return }
+                selectLocation(selection)
                 dismiss()
-                self.nextLocationSelection = nil
+                search.pendingSelection = nil
             }
-        } message: {
-            Text(LocationSettingsView.alertMessage(from: nextLocationSelection ?? .currentLocation))
+        } message: { selection in
+            Text(LocationSettingsView.alertMessage(from: selection))
         }
     }
 }
@@ -250,7 +184,7 @@ extension LocationSettingsView {
 struct LocationSettingsView_Previews: PreviewProvider {
     static var previews: some View {
         LocationSettingsView(
-            viewModel: .mock(state: .init())
+            state: .init(), selectLocation: { _ in }
         )
     }
 }

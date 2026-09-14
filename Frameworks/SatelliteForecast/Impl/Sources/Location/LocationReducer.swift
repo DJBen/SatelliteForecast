@@ -16,8 +16,6 @@ extension Reducer where ActionType == LocationAction, StateType == LocationState
             break
         case .requestReverseGeocoding(_):
             break
-        case .requestAutoCompletion(_):
-            break
         case let .selectLocation(selection):
             if selection == .currentLocation && state.resources.currentLocation == nil {
                 break
@@ -44,8 +42,6 @@ extension Reducer where ActionType == LocationOutput, StateType == LocationState
             case .failure(_):
                 break
             }
-        case let .autocompletionFinished(result):
-            state.resources.autocompletionResult = result
         }
     }
 }

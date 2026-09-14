@@ -111,7 +111,6 @@ public class Store: ReduxStoreBase<AppAction, AppState> {
             EffectMiddleware.passViewToNotification.lift(),
             EffectMiddleware.skyChart.lift(),
             EffectMiddleware.satelliteElevationGraph.lift(),
-            EffectMiddleware.alarmSettingsViewToNotification.lift(),
             EffectMiddleware.debugMenu.lift(
                 dependencies: DebugMenuMiddlewareDependencies(
                     dateProvider: currentDateProvider

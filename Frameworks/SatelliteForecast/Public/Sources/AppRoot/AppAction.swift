@@ -35,9 +35,6 @@ public enum AppAction {
     case skyChart(SkyChartAction)
     case skyChartOutput(SkyChartOutput)
     case debugMenu(DebugMenuAction)
-    case observerCell(ObserverCellAction)
-    case alarmSettingsCell(AlarmSettingsCellAction)
-    case alarmSettingsView(AlarmSettingsViewAction)
     case realtimeSky(RealtimeSkyViewAction)
     case realtimeSkyOutput(RealtimeSkyViewOutput)
     case passAlarmSettings(PassAlarmSettingsModalViewAction)
@@ -300,38 +297,8 @@ extension AppAction {
         }
     }
 
-    public var observerCell: ObserverCellAction? {
-        get {
-            guard case let .observerCell(value) = self else { return nil }
-            return value
-        }
-        set {
-            guard case .observerCell = self, let newValue = newValue else { return }
-            self = .observerCell(newValue)
-        }
-    }
-    
-    public var alarmSettingsCell: AlarmSettingsCellAction? {
-        get {
-            guard case let .alarmSettingsCell(value) = self else { return nil }
-            return value
-        }
-        set {
-            guard case .alarmSettingsCell = self, let newValue = newValue else { return }
-            self = .alarmSettingsCell(newValue)
-        }
-    }
-    
-    public var alarmSettingsView: AlarmSettingsViewAction? {
-        get {
-            guard case let .alarmSettingsView(value) = self else { return nil }
-            return value
-        }
-        set {
-            guard case .alarmSettingsView = self, let newValue = newValue else { return }
-            self = .alarmSettingsView(newValue)
-        }
-    }
+
+
 
     public var realtimeSky: RealtimeSkyViewAction? {
         get {

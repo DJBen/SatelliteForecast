@@ -11,7 +11,6 @@ import MapKit
 public enum LocationAction {
     case requestAuthorization
     case requestReverseGeocoding(CLLocation)
-    case requestAutoCompletion(String)
     case selectLocation(LocationResources.Selection)
 }
 
@@ -21,7 +20,6 @@ public enum LocationOutput {
     case authorizationDidChange(CLAuthorizationStatus)
     case locationChanged(CLLocation)
     case reverseGeocodingFinished(Result<[CLPlacemark], Error>)
-    case autocompletionFinished(Result<[MKLocalSearchCompletion], Error>)
 }
 
 extension LocationOutput {

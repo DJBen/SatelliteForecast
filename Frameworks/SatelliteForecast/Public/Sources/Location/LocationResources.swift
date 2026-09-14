@@ -15,8 +15,6 @@ public struct LocationResources: Equatable, @unchecked Sendable {
     public var currentLocation: CLLocation?
     /// A reverse-geocoded placemark for the current location.
     public var currentLocationPlacemark: CLPlacemark?
-    /// The autocompletion result containing a list of autocompletion candidates.
-    public var autocompletionResult: Result<[MKLocalSearchCompletion], Error>?
 
     public enum Selection: Equatable, @unchecked Sendable {
         case currentLocation
@@ -55,13 +53,11 @@ public struct LocationResources: Equatable, @unchecked Sendable {
         authorizationStatus: CLAuthorizationStatus = .notDetermined,
         currentLocation: CLLocation? = nil,
         currentLocationPlacemark: CLPlacemark? = nil,
-        autocompletionResult: Result<[MKLocalSearchCompletion], Error>? = nil,
         selection: LocationResources.Selection = .currentLocation
     ) {
         self.authorizationStatus = authorizationStatus
         self.currentLocation = currentLocation
         self.currentLocationPlacemark = currentLocationPlacemark
-        self.autocompletionResult = autocompletionResult
         self.selection = selection
     }
 
@@ -69,7 +65,6 @@ public struct LocationResources: Equatable, @unchecked Sendable {
         return lhs.authorizationStatus == rhs.authorizationStatus &&
         lhs.currentLocation == rhs.currentLocation &&
         lhs.currentLocationPlacemark == rhs.currentLocationPlacemark &&
-        lhs.autocompletionResult?.successValue == rhs.autocompletionResult?.successValue &&
         lhs.selection == rhs.selection
     }
 }
