@@ -228,6 +228,7 @@ public struct AllPassesView: View {
                     bundle: .module,
                     comment: "The default text when no satellite passes are found"
                 )
+                .listRowBackground(AppTheme.surface)
             } else {
                 ForEach(items) { item in
                     NavigationLink(
@@ -248,6 +249,7 @@ public struct AllPassesView: View {
                         )
                     }
                     .frame(height: 135)
+                    .listRowBackground(AppTheme.surface)
                     .id(item.id)
                     .swipeActions(
                         edge: .leading
@@ -264,6 +266,7 @@ public struct AllPassesView: View {
                     comment: "The progress text when calculating satellite passes"
                 )
             }
+            .listRowBackground(AppTheme.surface)
         }
     }
 

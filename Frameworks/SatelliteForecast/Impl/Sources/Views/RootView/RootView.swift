@@ -85,7 +85,14 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
         UINavigationBar.appearance().compactAppearance = navBarAppearance
         UINavigationBar.appearance().scrollEdgeAppearance = navBarAppearance
 
-        UITabBar.appearance().backgroundColor = AppTheme.surfaceColor
+        // Keep navigation on the canvas color; raised surfaces belong to content cards.
+        let tabBarAppearance = UITabBarAppearance()
+        tabBarAppearance.configureWithOpaqueBackground()
+        tabBarAppearance.backgroundColor = AppTheme.backgroundColor
+        tabBarAppearance.shadowColor = AppTheme.borderColor.withAlphaComponent(0.35)
+        UITabBar.appearance().standardAppearance = tabBarAppearance
+        UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
+        UITabBar.appearance().backgroundColor = AppTheme.backgroundColor
         UITabBar.appearance().unselectedItemTintColor = AppTheme.mutedColor
     }
     

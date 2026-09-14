@@ -115,11 +115,11 @@ struct PassPreviewCell: View {
                             HStack(spacing: 0) {
                                 Image(systemName: "eye")
                                     .font(.subheadline)
-                                    .foregroundColor(Color(UIColor.tertiaryLabel))
+                                    .foregroundColor(AppTheme.muted)
                                 
                                 Text(timeFormatter.string(from: Date(julianDate: exitsShadowJulianDate)))
                                     .font(.subheadline)
-                                    .foregroundColor(Color(UIColor.tertiaryLabel))
+                                    .foregroundColor(AppTheme.muted)
                             }
                             if exitsShadowJulianDate < pass.culmination.julianDate && exitsShadowJulianDate < pass.set.julianDate {
                                 HStack(spacing: 0) {
@@ -143,11 +143,11 @@ struct PassPreviewCell: View {
                             HStack(spacing: 0) {
                                 Image(systemName: "arrow.up")
                                     .font(.subheadline)
-                                    .foregroundColor(Color(UIColor.tertiaryLabel))
+                                    .foregroundColor(AppTheme.muted)
 
                                 Text(timeFormatter.string(from: Date(julianDate: pass.rise.julianDate)))
                                     .font(.subheadline)
-                                    .foregroundColor(Color(UIColor.tertiaryLabel))
+                                    .foregroundColor(AppTheme.muted)
                             }
                         }
                         
@@ -192,21 +192,21 @@ struct PassPreviewCell: View {
                             HStack(spacing: 0) {
                                 Image(systemName: "eye.slash")
                                     .font(.subheadline)
-                                    .foregroundColor(Color(UIColor.tertiaryLabel))
+                                    .foregroundColor(AppTheme.muted)
 
                                 Text(timeFormatter.string(from: Date(julianDate: entersShadowJulianDate)))
                                     .font(.subheadline)
-                                    .foregroundColor(Color(UIColor.tertiaryLabel))
+                                    .foregroundColor(AppTheme.muted)
                             }
                         } else {
                             HStack(spacing: 0) {
                                 Image(systemName: "arrow.down")
                                     .font(.subheadline)
-                                    .foregroundColor(Color(UIColor.tertiaryLabel))
+                                    .foregroundColor(AppTheme.muted)
                                 
                                 Text(timeFormatter.string(from: Date(julianDate: pass.set.julianDate)))
                                     .font(.subheadline)
-                                    .foregroundColor(Color(UIColor.tertiaryLabel))
+                                    .foregroundColor(AppTheme.muted)
                             }
                         }
                         
@@ -216,7 +216,7 @@ struct PassPreviewCell: View {
                         
                         Text(PassPreviewCell.relativeDate(pass: pass, referenceDate: julianDateProvider() + julianDateOffset))
                             .font(.caption)
-                            .foregroundColor(Color(UIColor.tertiaryLabel))
+                            .foregroundColor(AppTheme.muted)
                     }
                     .frame(width: 120)
                 }
