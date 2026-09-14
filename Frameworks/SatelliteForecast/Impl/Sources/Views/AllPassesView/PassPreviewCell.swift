@@ -104,9 +104,13 @@ struct PassPreviewCell: View {
                     }
 
                     VStack(alignment: .leading) {
-                        Text(dateFormatter.string(from: Date(julianDate: pass.rise.julianDate)))
-                            .minimumScaleFactor(0.8)
-                            .lineLimit(1)
+                        ViewThatFits(in: .horizontal) {
+                            Text(dateFormatter.string(from: Date(julianDate: pass.rise.julianDate)))
+                                .fixedSize()
+                            Text(Date(julianDate: pass.rise.julianDate), format: .dateTime.year().month(.twoDigits).day(.twoDigits))
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.8)
+                        }
                             .font(.headline)
                             .padding([.bottom], 1)
                             .foregroundColor(Color(UIColor.label))

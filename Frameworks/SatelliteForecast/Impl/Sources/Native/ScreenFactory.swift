@@ -42,7 +42,7 @@ public struct ScreenFactory {
       viewModel: SatelliteListModel(service: session.orbits), context: context,
       allPassesViewFactory: ViewFactory { passes($0, category: context.category) })
   }
-  public func pass(_ context: PassViewContext) -> PassView {
+  public func pass(_ context: PassViewContext, isCompassEnabled: Bool = true) -> PassView {
     let model = PassModel(session: session)
     return PassView(
       viewModel: model, context: context,
@@ -60,7 +60,7 @@ public struct ScreenFactory {
       detailedPassViewFactory: ViewFactory {
         DetailedPassView(
           context: $0, skyChartFactory: ViewFactory { sky($0) })
-      })
+      }, isCompassEnabled: isCompassEnabled)
   }
 }
 

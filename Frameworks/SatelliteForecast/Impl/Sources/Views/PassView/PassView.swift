@@ -50,8 +50,10 @@ public struct PassView: View {
         elevationGraphFactory: ViewFactory<SatelliteElevationGraphContext, SatelliteElevationGraph>,
         skyChartFactory: ViewFactory<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>,
         passAlarmSettingsFactory: ViewFactory<PassAlarmSettingsModalViewContext, PassAlarmSettingsModalView>,
-        detailedPassViewFactory: ViewFactory<DetailPassViewContext, DetailedPassView>
+        detailedPassViewFactory: ViewFactory<DetailPassViewContext, DetailedPassView>,
+        isCompassEnabled: Bool = true
     ) {
+        self._isCompassEnabled = State(initialValue: isCompassEnabled)
         self.viewModel = viewModel
         self.context = context
         self.elevationGraphFactory = elevationGraphFactory

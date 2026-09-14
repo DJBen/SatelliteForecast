@@ -26,18 +26,12 @@ extension SatelliteElevationGraph {
         let state: DateFooterState
         let width: CGFloat
 
-        static let timeFormatter: DateFormatter = {
-            let formatter = DateFormatter()
-            formatter.dateFormat = "HH:mm a"
-            return formatter
-        }()
-
         var body: some View {
             HStack(alignment: .center, spacing: 0) {
                 ForEach(Array(state.xPercentDatePair.enumerated()), id: \.element.julianDate) { (index, pair) in
                     VStack {
                         Text(
-                            Self.timeFormatter.string(from: Date(julianDate: pair.julianDate))
+                            Date(julianDate: pair.julianDate), format: .dateTime.hour().minute()
                         )
                         .font(.caption)
                         .foregroundColor(.gray)

@@ -66,7 +66,7 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                         spacing: 20,
                         pinnedViews: []
                     ) {
-                        Text("Pass forecast", bundle: .module)
+                        Text(NSLocalizedString("tabs.forecast.text", bundle: .module, value: "Pass forecast", comment: "Forecast screen title"))
                             .font(.largeTitle.bold())
                             .foregroundStyle(.primary)
                             .padding(.top, 8)

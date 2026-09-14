@@ -149,7 +149,7 @@
 "EphemerideTextBrowserView.shareLink.message" = "Compartilhar ephemerides do satélite %@";
 
 /* No comment provided by engineer. */
-"Evening " = "Evening ";
+"Evening " = "Noite ";
 
 /* No comment provided by engineer. */
 "Filter by name, ID, country, year..." = "Filtrar por nome, ID, país, ano...";
@@ -539,4 +539,3 @@ The localized string for the status of a spare satellite */
 
 /* No comment provided by engineer. */
 "Your alarms will appear here. Schedule an alarm by tapping the %@ inside a pass." = "Seus alarmes aparecerão aqui. Programe um alarme tocando o %@ dentro de uma passagem.";
-
