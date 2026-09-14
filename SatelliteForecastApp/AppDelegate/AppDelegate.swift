@@ -20,7 +20,22 @@ import AppDelegateImpl
 fileprivate let logger = Logger(subsystem: "io.djben.appDelegate", category: "class")
 
 public class AppDelegate: NSObject, UIApplicationDelegate, AppDelegateActionDispatcher {
-    public var dispatch: ((Store.ActionType) -> Void)?
+    // Catalog loading is asynchronous. Preserve launch/token events until the store
+    // is ready instead of dropping events received during the loading screen.
+    public var dispatch: ((Store.ActionType) -> Void)? {
+        didSet {
+            guard let dispatch else { return }
+            let actions = pendingActions
+            pendingActions.removeAll()
+            actions.forEach(dispatch)
+        }
+    }
+    private var pendingActions: [Store.ActionType] = []
+
+    private func send(_ action: Store.ActionType) {
+        if let dispatch { dispatch(action) }
+        else { pendingActions.append(action) }
+    }
     
     private lazy var implementation: AppDelegateImpl = {
         return AppDelegateImpl(actionDispatcher: self)
@@ -28,7 +43,7 @@ public class AppDelegate: NSObject, UIApplicationDelegate, AppDelegateActionDisp
     
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         // Solves the issue that preview is broken by Firebase
-        if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
+        if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" || ProcessInfo.processInfo.environment["SATELLITE_SNAPSHOT_TESTS"] == "1" {
             return true
         }
         
@@ -53,10 +68,10 @@ public class AppDelegate: NSObject, UIApplicationDelegate, AppDelegateActionDisp
     // MARK: - AppDelegateActionDispatcher
     
     public func dispatch(_ action: AppDelegateAction) {
-        dispatch?(.appDelegate(action))
+        send(.appDelegate(action))
     }
     
     public func dispatchNotificationAction(_ action: NotificationAction) {
-        dispatch?(.notification(action))
+        send(.notification(action))
     }
 }

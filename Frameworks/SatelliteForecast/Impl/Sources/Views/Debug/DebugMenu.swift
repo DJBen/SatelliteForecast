@@ -47,9 +47,9 @@ public struct DebugMenu: View {
     ) {
         self.viewModel = viewModel
         if let offset = viewModel.state?.config.mockedOffset {
-            self._dateWithinPicker = State(initialValue: Date().addingTimeInterval(offset * TimeConstants.day2sec))
+            self._dateWithinPicker = State(initialValue: Date(julianDate: (viewModel.state?.trueJulianDate ?? Date().julianDate) + offset))
         } else {
-            self._dateWithinPicker = State(initialValue: Date())
+            self._dateWithinPicker = State(initialValue: Date(julianDate: viewModel.state?.trueJulianDate ?? Date().julianDate))
         }
     }
 

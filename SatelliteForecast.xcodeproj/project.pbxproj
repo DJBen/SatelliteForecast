@@ -5,6 +5,44 @@
 	};
 	objectVersion = 60;
 	objects = {
+45EAD84EC1E498F9043CCC5B = {isa = XCSwiftPackageProductDependency; productName = BTree; };
+B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043CCC5B; };
+		6127BE1146573B8CE8F34BB0 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogIntegrationTests.swift; sourceTree = "<group>"; };
+		35D1215843C8FF70B1AA2630 = { isa = PBXBuildFile; fileRef = 6127BE1146573B8CE8F34BB0; };
+		8CC843CE5AC3EB4F1840FF17 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenSnapshotTests.swift; sourceTree = "<group>"; };
+		C2EBBCEA2478DA05C079D64B = { isa = PBXBuildFile; fileRef = 8CC843CE5AC3EB4F1840FF17; };
+		4CAA9B7B6E4046B670A8096F = { isa = PBXGroup; children = (6127BE1146573B8CE8F34BB0, 8CC843CE5AC3EB4F1840FF17,); path = SatelliteForecastTests; sourceTree = "<group>"; };
+		5B44CA0DEF45E3B359224C8E = { isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = SatelliteForecastTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CB765A7A92AB8F06C42D59CF = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (35D1215843C8FF70B1AA2630, C2EBBCEA2478DA05C079D64B,); runOnlyForDeploymentPostprocessing = 0; };
+		C1DE39390EC3F79195D32C4F = { isa = XCSwiftPackageProductDependency; productName = SatelliteForecast; };
+		ED776DE853A80A3B422B5B8E = { isa = PBXBuildFile; productRef = C1DE39390EC3F79195D32C4F; };
+		02964AA8E30FC09CEB7B2719 = { isa = XCSwiftPackageProductDependency; productName = SatelliteForecastImpl; };
+		E4E909809D4436B5C79D5B33 = { isa = PBXBuildFile; productRef = 02964AA8E30FC09CEB7B2719; };
+		D881348E087B0732CA89AF56 = { isa = XCSwiftPackageProductDependency; productName = SatelliteForecastImplWiring; };
+		F9DD970F02DDF961B3D0E6C3 = { isa = PBXBuildFile; productRef = D881348E087B0732CA89AF56; };
+		FF14714D42872DC8EF2642BE = { isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (B2F4B5B5F08C675DFC828325,); runOnlyForDeploymentPostprocessing = 0; };
+		C1CACD626BEC0ABD9DEA3A47 = { isa = PBXContainerItemProxy; containerPortal = EF9D82752661BBEF00616C97; proxyType = 1; remoteGlobalIDString = EF9D82802661BBF000616C97; remoteInfo = SatelliteForecastApp; };
+		3420B4DF652ABDF93CCB50CA = { isa = PBXTargetDependency; target = EF9D82802661BBF000616C97; targetProxy = C1CACD626BEC0ABD9DEA3A47; };
+		74CC6185F654BEF2E000E406 = { isa = XCBuildConfiguration; name = Debug; buildSettings = {
+ GENERATE_INFOPLIST_FILE = YES; PRODUCT_BUNDLE_IDENTIFIER = io.djben.SatelliteForecastTests;
+ PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+ TARGETED_DEVICE_FAMILY = "1,2"; SDKROOT = iphoneos; CODE_SIGN_STYLE = Automatic;
+ TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SatelliteForecastApp.app/SatelliteForecastApp";
+ BUNDLE_LOADER = "$(TEST_HOST)"; ENABLE_TESTABILITY = YES;
+ }; };
+		73549E06C7F56B99692F6D0B = { isa = XCBuildConfiguration; name = Release; buildSettings = {
+ GENERATE_INFOPLIST_FILE = YES; PRODUCT_BUNDLE_IDENTIFIER = io.djben.SatelliteForecastTests;
+ PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+ TARGETED_DEVICE_FAMILY = "1,2"; SDKROOT = iphoneos; CODE_SIGN_STYLE = Automatic;
+ TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SatelliteForecastApp.app/SatelliteForecastApp";
+ BUNDLE_LOADER = "$(TEST_HOST)"; ENABLE_TESTABILITY = YES;
+ }; };
+		6912ADA746A6A77E9433A201 = { isa = XCConfigurationList; buildConfigurations = (74CC6185F654BEF2E000E406, 73549E06C7F56B99692F6D0B,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		C4165D43A02BFFE3D52AE6E6 = { isa = PBXNativeTarget; buildConfigurationList = 6912ADA746A6A77E9433A201;
+ buildPhases = (CB765A7A92AB8F06C42D59CF, FF14714D42872DC8EF2642BE,); buildRules = (); dependencies = (3420B4DF652ABDF93CCB50CA,);
+ name = SatelliteForecastTests; productName = SatelliteForecastTests; productReference = 5B44CA0DEF45E3B359224C8E;
+ productType = "com.apple.product-type.bundle.unit-test";
+ packageProductDependencies = (45EAD84EC1E498F9043CCC5B,); };
 
 /* Begin PBXBuildFile section */
 		EF16811E27D00E28001BA9C3 /* Icons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EF9D827C2661BBF000616C97 /* Icons.xcassets */; };
@@ -141,6 +179,7 @@
 		EF9D82742661BBEF00616C97 = {
 			isa = PBXGroup;
 			children = (
+				4CAA9B7B6E4046B670A8096F,
 				EF2EF4D727B11C0A000D5EC8 /* README.md */,
 				EF9D82792661BBEF00616C97 /* SatelliteForecastApp */,
 				EF9D82822661BBF000616C97 /* Products */,
@@ -166,6 +205,7 @@
 		EF9D82822661BBF000616C97 /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				5B44CA0DEF45E3B359224C8E,
 				EF9D82812661BBF000616C97 /* SatelliteForecastApp.app */,
 			);
 			name = Products;
@@ -230,6 +270,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				C4165D43A02BFFE3D52AE6E6,
 				EF9D82802661BBF000616C97 /* SatelliteForecastApp */,
 			);
 		};

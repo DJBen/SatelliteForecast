@@ -149,7 +149,7 @@ public struct DetailPassViewContext {
     public let julianDateRange: ClosedRange<Double>
     public let observer: LatLonAlt
     public let passSnapshots: PassSnapshots
-    public let starManager: any StarManaging
+    public let starManager: AppStarCatalog
     public let julianDateProvider: () -> Double
 
     public init(
@@ -158,7 +158,7 @@ public struct DetailPassViewContext {
         julianDateRange: ClosedRange<Double>,
         observer: LatLonAlt,
         passSnapshots: PassSnapshots,
-        starManager: any StarManaging,
+        starManager: AppStarCatalog,
         julianDateProvider: @escaping () -> Double
     ) {
         self.satelliteInfo = satelliteInfo

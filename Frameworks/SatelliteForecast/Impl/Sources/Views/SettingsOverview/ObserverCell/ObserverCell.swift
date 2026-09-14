@@ -83,7 +83,7 @@ public struct ObserverCell: View {
                 }
             ),
             interactionModes: [],
-            showsUserLocation: true,
+            showsUserLocation: !SnapshotEnvironment.isEnabled,
             annotationItems: annotationItems,
             annotationContent: { $0.location }
         )

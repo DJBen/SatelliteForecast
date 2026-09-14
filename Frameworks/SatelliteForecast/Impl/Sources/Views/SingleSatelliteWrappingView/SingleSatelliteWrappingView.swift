@@ -25,14 +25,14 @@ public struct SingleSatelliteWrappingViewContext {
     public let selectedNoradIndex: UInt
     public let julianDateRange: ClosedRange<Double>
     public let observer: LatLonAlt?
-    public let starManager: any StarManaging
+    public let starManager: AppStarCatalog
     public let julianDateProvider: () -> Double
 
     public init(
         selectedNoradIndex: UInt,
         julianDateRange: ClosedRange<Double>,
         observer: LatLonAlt?,
-        starManager: any StarManaging,
+        starManager: AppStarCatalog,
         julianDateProvider: @escaping () -> Double
     ) {
         self.selectedNoradIndex = selectedNoradIndex

@@ -13,11 +13,11 @@ import SatelliteForecast
 import StarryNight
 
 public struct RootViewContext {
-    public let starManager: any StarManaging
+    public let starManager: AppStarCatalog
     public let julianDateProvider: () -> Double
 
     public init(
-        starManager: any StarManaging,
+        starManager: AppStarCatalog,
         julianDateProvider: @escaping () -> Double
     ) {
         self.starManager = starManager

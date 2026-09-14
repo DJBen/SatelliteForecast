@@ -26,11 +26,11 @@ public struct SatelliteCategoryViewState: Equatable {
 public protocol SatelliteCategoryView: View {}
 
 public struct SatelliteCategoryViewContext {
-    public let starManager: any StarManaging
+    public let starManager: AppStarCatalog
     public let julianDateProvider: () -> Double
 
     public init(
-        starManager: any StarManaging,
+        starManager: AppStarCatalog,
         julianDateProvider: @escaping () -> Double
     ) {
         self.starManager = starManager

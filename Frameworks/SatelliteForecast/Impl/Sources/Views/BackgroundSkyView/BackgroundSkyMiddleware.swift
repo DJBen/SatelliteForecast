@@ -12,11 +12,11 @@ import StarryNight
 import SatelliteForecast
 import UIKit
 
-public typealias BackgroundSkyEffectMiddleware = EffectMiddleware<BackgroundSkyViewAction, BackgroundSkyViewOutput, BackgroundSkyResources, any StarManaging>
+public typealias BackgroundSkyEffectMiddleware = EffectMiddleware<BackgroundSkyViewAction, BackgroundSkyViewOutput, BackgroundSkyResources, AppStarCatalog>
 
 extension EffectMiddleware where InputActionType == BackgroundSkyViewAction, OutputActionType == BackgroundSkyViewOutput, StateType == BackgroundSkyResources, Dependencies == Void {
     
-    public static var backgroundSky: MiddlewareReader<any StarManaging, BackgroundSkyEffectMiddleware> {
+    public static var backgroundSky: MiddlewareReader<AppStarCatalog, BackgroundSkyEffectMiddleware> {
         BackgroundSkyEffectMiddleware.onAction { action, _, getState in
             switch action {
             case .requestRasterizedBackgroundSky(

@@ -40,7 +40,7 @@ struct PassPreviewCell: View {
     var hasScheduledAlert: Bool
     var skyChartProducer: ViewProducer<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>
     var julianDateOffset: Double
-    var starManager: any StarManaging
+    var starManager: AppStarCatalog
     var julianDateProvider: () -> Double
 
     var snapshots: [SatelliteSnapshot] {

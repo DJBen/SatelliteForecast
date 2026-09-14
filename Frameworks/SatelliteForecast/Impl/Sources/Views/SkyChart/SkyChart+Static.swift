@@ -140,7 +140,7 @@ public enum SkyChartUtils {
     public static func addRasterizedBackgroundSkyPath(
         to ctx: UIGraphicsImageRendererContext,
         params: BackgroundSkyRenderParams,
-        starManager: any StarManaging
+        starManager: AppStarCatalog
     ) {
         if let border = params.border {
             ctx.cgContext.saveGState()
@@ -175,8 +175,10 @@ public enum SkyChartUtils {
                 continue
             }
             for line in starManager.constellationLines(for: constellation) {
-                let aziElev1 = azel(time: Date(julianDate: params.julianDate), site: LatLon(params.observer), cele: RADec(line.star1.coordinate))
-                let aziElev2 = azel(time: Date(julianDate: params.julianDate), site: LatLon(params.observer), cele: RADec(line.star2.coordinate))
+                guard let star1 = starManager.star(withId: line.star1Id),
+                      let star2 = starManager.star(withId: line.star2Id) else { continue }
+                let aziElev1 = azel(time: Date(julianDate: params.julianDate), site: LatLon(params.observer), cele: RADec(star1.coordinate))
+                let aziElev2 = azel(time: Date(julianDate: params.julianDate), site: LatLon(params.observer), cele: RADec(star2.coordinate))
                 if aziElev1.elev < 0 || aziElev2.elev < 0 {
                     continue
                 }
@@ -259,7 +261,7 @@ public enum SkyChartUtils {
         
     public static func rasterizedBackgroundSkyPath(
         params: BackgroundSkyRenderParams,
-        starManager: any StarManaging
+        starManager: AppStarCatalog
     ) -> UIImage {
         let renderer = UIGraphicsImageRenderer(size: params.rect.size)
 
@@ -311,7 +313,7 @@ struct ImageRenderer_Previews: PreviewProvider {
         @State var stars: [Star] = []
         @State var constellations: Set<Constellation> = []
 
-        private let starManager = try! StarManager()
+        private let starManager = AppStarCatalog()
 
         var body: some View {
             GeometryReader { geometry in

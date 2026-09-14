@@ -239,7 +239,7 @@ public struct SkyChartContext<ConstellationLabel: View, BackgroundAnnotationView
     public let passSnapshots: PassSnapshots
     public let configs: SkyChartConfigs
     public let quality: ChartQuality
-    public let starManager: any StarManaging
+    public let starManager: AppStarCatalog
     public let julianDateProvider: () -> Double
     public let deviceMotion: Loadable<CMDeviceMotion, Error>
     @ViewBuilder public let constellationLabel: (String) -> ConstellationLabel
@@ -252,7 +252,7 @@ public struct SkyChartContext<ConstellationLabel: View, BackgroundAnnotationView
         passSnapshots: PassSnapshots,
         configs: SkyChartConfigs,
         quality: ChartQuality,
-        starManager: any StarManaging,
+        starManager: AppStarCatalog,
         julianDateProvider: @escaping () -> Double,
         deviceMotion: Loadable<CMDeviceMotion, Error> = .notLoaded,
         @ViewBuilder constellationLabel: @escaping (String) -> ConstellationLabel,
@@ -280,7 +280,7 @@ extension SkyChartContext where ConstellationLabel == EmptyView, BackgroundAnnot
         passSnapshots: PassSnapshots,
         configs: SkyChartConfigs,
         quality: ChartQuality,
-        starManager: any StarManaging,
+        starManager: AppStarCatalog,
         julianDateProvider: @escaping () -> Double,
         deviceMotion: Loadable<CMDeviceMotion, Error> = .notLoaded,
         backgroundStarTapped: @escaping (Star?) -> Void = { _ in }

@@ -20,11 +20,11 @@ import UIKit
 fileprivate let logger = Logger(subsystem: "io.djben.notification", category: "middleware")
 
 public struct NotificationMiddlewareDependencies {
-    public let starManager: any StarManaging
+    public let starManager: AppStarCatalog
     public let dateProvider: () -> Date
 
     public init(
-        starManager: any StarManaging,
+        starManager: AppStarCatalog,
         dateProvider: @escaping () -> Date
     ) {
         self.starManager = starManager

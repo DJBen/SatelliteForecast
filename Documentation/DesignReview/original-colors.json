@@ -1,0 +1,290 @@
+[
+  {
+    "asset": "satellitePath_notIlluminated.colorset",
+    "path": "Frameworks/SatelliteForecast/Impl/Sources/Resources/Colors.xcassets/satellitePath_notIlluminated.colorset/Contents.json",
+    "colors": [
+      {
+        "color": {
+          "color-space": "srgb",
+          "components": {
+            "alpha": "1.000",
+            "blue": "0.800",
+            "green": "0.800",
+            "red": "0.800"
+          }
+        },
+        "idiom": "universal"
+      },
+      {
+        "appearances": [
+          {
+            "appearance": "luminosity",
+            "value": "dark"
+          }
+        ],
+        "color": {
+          "color-space": "srgb",
+          "components": {
+            "alpha": "1.000",
+            "blue": "0.400",
+            "green": "0.400",
+            "red": "0.400"
+          }
+        },
+        "idiom": "universal"
+      }
+    ]
+  },
+  {
+    "asset": "passInfoLabel_foreground.colorset",
+    "path": "Frameworks/SatelliteForecast/Impl/Sources/Resources/Colors.xcassets/passInfoLabel_foreground.colorset/Contents.json",
+    "colors": [
+      {
+        "color": {
+          "color-space": "display-p3",
+          "components": {
+            "alpha": "1.000",
+            "blue": "1.000",
+            "green": "1.000",
+            "red": "1.000"
+          }
+        },
+        "idiom": "universal"
+      },
+      {
+        "appearances": [
+          {
+            "appearance": "luminosity",
+            "value": "dark"
+          }
+        ],
+        "color": {
+          "color-space": "display-p3",
+          "components": {
+            "alpha": "1.000",
+            "blue": "0.000",
+            "green": "0.000",
+            "red": "0.000"
+          }
+        },
+        "idiom": "universal"
+      }
+    ]
+  },
+  {
+    "asset": "star.colorset",
+    "path": "Frameworks/SatelliteForecast/Impl/Sources/Resources/Colors.xcassets/star.colorset/Contents.json",
+    "colors": [
+      {
+        "color": {
+          "color-space": "display-p3",
+          "components": {
+            "alpha": "1.000",
+            "blue": "0.059",
+            "green": "0.059",
+            "red": "0.059"
+          }
+        },
+        "idiom": "universal"
+      },
+      {
+        "appearances": [
+          {
+            "appearance": "luminosity",
+            "value": "dark"
+          }
+        ],
+        "color": {
+          "color-space": "display-p3",
+          "components": {
+            "alpha": "1.000",
+            "blue": "0.938",
+            "green": "0.938",
+            "red": "0.938"
+          }
+        },
+        "idiom": "universal"
+      }
+    ]
+  },
+  {
+    "asset": "constellationLine.colorset",
+    "path": "Frameworks/SatelliteForecast/Impl/Sources/Resources/Colors.xcassets/constellationLine.colorset/Contents.json",
+    "colors": [
+      {
+        "color": {
+          "color-space": "display-p3",
+          "components": {
+            "alpha": "0.200",
+            "blue": "0.500",
+            "green": "0.500",
+            "red": "0.500"
+          }
+        },
+        "idiom": "universal"
+      },
+      {
+        "appearances": [
+          {
+            "appearance": "luminosity",
+            "value": "dark"
+          }
+        ],
+        "color": {
+          "color-space": "display-p3",
+          "components": {
+            "alpha": "0.200",
+            "blue": "1.000",
+            "green": "1.000",
+            "red": "1.000"
+          }
+        },
+        "idiom": "universal"
+      }
+    ]
+  },
+  {
+    "asset": "satellitePath_illuminated.colorset",
+    "path": "Frameworks/SatelliteForecast/Impl/Sources/Resources/Colors.xcassets/satellitePath_illuminated.colorset/Contents.json",
+    "colors": [
+      {
+        "color": {
+          "color-space": "srgb",
+          "components": {
+            "alpha": "1.000",
+            "blue": "0.000",
+            "green": "0.000",
+            "red": "0.000"
+          }
+        },
+        "idiom": "universal"
+      },
+      {
+        "appearances": [
+          {
+            "appearance": "luminosity",
+            "value": "dark"
+          }
+        ],
+        "color": {
+          "color-space": "srgb",
+          "components": {
+            "alpha": "1.000",
+            "blue": "1.000",
+            "green": "1.000",
+            "red": "1.000"
+          }
+        },
+        "idiom": "universal"
+      }
+    ]
+  },
+  {
+    "asset": "skyChartStroke.colorset",
+    "path": "Frameworks/SatelliteForecast/Impl/Sources/Resources/Colors.xcassets/skyChartStroke.colorset/Contents.json",
+    "colors": [
+      {
+        "color": {
+          "color-space": "display-p3",
+          "components": {
+            "alpha": "1.000",
+            "blue": "0.000",
+            "green": "0.000",
+            "red": "0.000"
+          }
+        },
+        "idiom": "universal"
+      },
+      {
+        "appearances": [
+          {
+            "appearance": "luminosity",
+            "value": "dark"
+          }
+        ],
+        "color": {
+          "color-space": "srgb",
+          "components": {
+            "alpha": "1.000",
+            "blue": "1.000",
+            "green": "1.000",
+            "red": "1.000"
+          }
+        },
+        "idiom": "universal"
+      }
+    ]
+  },
+  {
+    "asset": "passInfoLabel_background.colorset",
+    "path": "Frameworks/SatelliteForecast/Impl/Sources/Resources/Colors.xcassets/passInfoLabel_background.colorset/Contents.json",
+    "colors": [
+      {
+        "color": {
+          "color-space": "display-p3",
+          "components": {
+            "alpha": "0.600",
+            "blue": "0.000",
+            "green": "0.000",
+            "red": "0.000"
+          }
+        },
+        "idiom": "universal"
+      },
+      {
+        "appearances": [
+          {
+            "appearance": "luminosity",
+            "value": "dark"
+          }
+        ],
+        "color": {
+          "color-space": "srgb",
+          "components": {
+            "alpha": "0.600",
+            "blue": "1.000",
+            "green": "1.000",
+            "red": "1.000"
+          }
+        },
+        "idiom": "universal"
+      }
+    ]
+  },
+  {
+    "asset": "locationAccessDenied_foreground.colorset",
+    "path": "Frameworks/SatelliteForecast/Impl/Sources/Resources/Images.xcassets/locationAccessDenied_foreground.colorset/Contents.json",
+    "colors": [
+      {
+        "color": {
+          "color-space": "srgb",
+          "components": {
+            "alpha": "1.000",
+            "blue": "0.000",
+            "green": "0.000",
+            "red": "0.000"
+          }
+        },
+        "idiom": "universal"
+      },
+      {
+        "appearances": [
+          {
+            "appearance": "luminosity",
+            "value": "dark"
+          }
+        ],
+        "color": {
+          "color-space": "srgb",
+          "components": {
+            "alpha": "1.000",
+            "blue": "1.000",
+            "green": "1.000",
+            "red": "1.000"
+          }
+        },
+        "idiom": "universal"
+      }
+    ]
+  }
+]

@@ -24,6 +24,14 @@ struct AllPassesOnboardingView: View {
     @State private var satelliteData: Loadable<SatelliteData, Error> = .loading
     @State private var handTapOffset: CGPoint = CGPoint(x: 0, y: 0)
 
+    init(onComplete: @escaping () -> Void,
+         skyChartProducer: ViewProducer<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>,
+         satelliteData: SatelliteData? = nil) {
+        self.onComplete = onComplete
+        self.skyChartProducer = skyChartProducer
+        _satelliteData = State(initialValue: satelliteData.map { .loaded($0) } ?? .loading)
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {

@@ -57,7 +57,7 @@ public class Store: ReduxStoreBase<AppAction, AppState> {
 
     static func buildMiddleware(
         elementsLoader: ElementsLoader,
-        starManager: any StarManaging,
+        starManager: AppStarCatalog,
         currentDateProvider: @escaping () -> Date
     ) -> AnyMiddleware<AppAction, AppAction, AppState> {
         let middlewares: [AnyMiddleware<AppAction, AppAction, AppState>] = [
@@ -135,7 +135,7 @@ public class Store: ReduxStoreBase<AppAction, AppState> {
     }
 
     init(
-        starManager: any StarManaging
+        starManager: AppStarCatalog
     ) {
         let elementsLoader: ElementsLoader
         let currentDateProvider: () -> Date = Date.init

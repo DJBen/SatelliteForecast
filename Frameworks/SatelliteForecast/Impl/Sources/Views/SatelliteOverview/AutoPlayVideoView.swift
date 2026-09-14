@@ -19,6 +19,12 @@ struct AutoPlayVideoView: UIViewRepresentable {
     }
     
     func makeUIView(context: Context) -> UIView {
+        if SnapshotEnvironment.isEnabled, let url = bundle.url(forResource: videoName, withExtension: "mp4") {
+            let image = SnapshotVideoImageView(image: SnapshotEnvironment.videoFrame(url: url))
+            image.contentMode = .scaleAspectFill
+            image.clipsToBounds = true
+            return image
+        }
         return VideoPlayerUIView(videoName: videoName, bundle: bundle)
     }
     
@@ -133,4 +139,8 @@ extension VideoPlayerUIView {
             player?.pause()
         }
     }
+}
+
+private final class SnapshotVideoImageView: UIImageView {
+    override var intrinsicContentSize: CGSize { CGSize(width: UIView.noIntrinsicMetric, height: UIView.noIntrinsicMetric) }
 }

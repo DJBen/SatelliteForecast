@@ -12,7 +12,7 @@ import StarryNight
 struct SelectedStarLabel: View {
     @Environment(\.colorScheme) var colorScheme
 
-    let starManager: any StarManaging
+    let starManager: AppStarCatalog
     let star: Star
     @State var starInfo: StarInfo?
 
@@ -62,8 +62,17 @@ struct SelectedStarLabel: View {
                 .foregroundColor(Color(UIColor.secondaryLabel))
             }
         }
-        .onChange(of: star.id, initial: true) { _, starId in
-            starInfo = starManager.starInfo(forId: starId)
+        .task(id: star.id) {
+            starInfo = nil
+            do {
+                let info = try await starManager.starInfo(forId: star.id)
+                try Task.checkCancellation()
+                starInfo = info
+            } catch is CancellationError {
+                // A new selection superseded this request.
+            } catch {
+                starInfo = nil
+            }
         }
     }
 

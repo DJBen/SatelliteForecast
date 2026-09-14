@@ -40,14 +40,14 @@ public struct RealtimeSkyViewContext {
     public let basicChartConfigs: BasicChartConfigs
     public let backgroundSkyConfigs: BackgroundSkyConfigs
     public let satelliteMagToRadiusFunction: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction
-    public let starManager: any StarManaging
+    public let starManager: AppStarCatalog
     public let julianDateProvider: () -> Double
 
     public init(
         basicChartConfigs: BasicChartConfigs,
         backgroundSkyConfigs: BackgroundSkyConfigs,
         satelliteMagToRadiusFunction: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction,
-        starManager: any StarManaging,
+        starManager: AppStarCatalog,
         julianDateProvider: @escaping () -> Double
     ) {
         self.basicChartConfigs = basicChartConfigs

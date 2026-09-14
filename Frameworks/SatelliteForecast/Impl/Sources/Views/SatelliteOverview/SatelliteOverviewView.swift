@@ -64,11 +64,11 @@ public struct SatelliteOverviewViewState: Equatable {
 public protocol SatelliteOverviewView: View {}
 
 public struct SatelliteOverviewViewContext {
-    public let starManager: any StarManaging
+    public let starManager: AppStarCatalog
     public let julianDateProvider: () -> Double
 
     public init(
-        starManager: any StarManaging,
+        starManager: AppStarCatalog,
         julianDateProvider: @escaping () -> Double
     ) {
         self.starManager = starManager
@@ -90,6 +90,7 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
     ) {
         self.viewModel = viewModel
         self.context = context
+        _currentDate = State(initialValue: Date(julianDate: context.julianDateProvider()))
         self.singleSatelliteWrappingViewProducer = singleSatelliteWrappingViewProducer
     }
 
@@ -176,6 +177,7 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                 )
             )
             
+            guard !SnapshotEnvironment.isEnabled else { return }
             // Invalidate existing timer if any
             timer?.invalidate()
             

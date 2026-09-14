@@ -50,14 +50,14 @@ public struct SatelliteListViewContext {
     public let category: SatelliteCategory
     public let julianDateRange: ClosedRange<Double>
     public let observer: LatLonAlt?
-    public let starManager: any StarManaging
+    public let starManager: AppStarCatalog
     public let julianDateProvider: () -> Double
 
     public init(
         category: SatelliteCategory,
         julianDateRange: ClosedRange<Double>,
         observer: LatLonAlt?,
-        starManager: any StarManaging,
+        starManager: AppStarCatalog,
         julianDateProvider: @escaping () -> Double
     ) {
         self.category = category

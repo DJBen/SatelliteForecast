@@ -265,7 +265,7 @@ public struct PassViewContext {
     public let julianDateRange: ClosedRange<Double>
     public let observer: LatLonAlt
     public let passSnapshots: PassSnapshots
-    public let starManager: any StarManaging
+    public let starManager: AppStarCatalog
     public let julianDateProvider: () -> Double
 
     public init(
@@ -276,7 +276,7 @@ public struct PassViewContext {
         julianDateRange: ClosedRange<Double>,
         observer: LatLonAlt,
         passSnapshots: PassSnapshots,
-        starManager: any StarManaging,
+        starManager: AppStarCatalog,
         julianDateProvider: @escaping () -> Double
     ) {
         self.passIndex = passIndex

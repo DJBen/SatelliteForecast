@@ -30,8 +30,9 @@ public struct OnboardingView: View {
     @State private var videoPlaybackTimes: [String: CMTime] = [:]
     let onComplete: () -> Void
     
-    public init(onComplete: @escaping () -> Void) {
+    public init(initialPage: Int = 0, onComplete: @escaping () -> Void) {
         self.onComplete = onComplete
+        _currentPage = State(initialValue: min(max(initialPage, 0), 1))
     }
     
     public var body: some View {
@@ -93,6 +94,13 @@ private struct OnboardingPageView: View {
                 // Background video or gradient
                 if !page.videoName.isEmpty,
                    let videoURL = Bundle.module.url(forResource: page.videoName, withExtension: page.videoExtension) {
+                    if SnapshotEnvironment.isEnabled {
+                        Image(uiImage: SnapshotEnvironment.videoFrame(url: videoURL) ?? UIImage())
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: geometry.size.width, height: geometry.size.height)
+                            .clipped()
+                    } else {
                     VideoPlayer(player: player)
                         .aspectRatio(contentMode: .fill)
                         .frame(width: geometry.size.width, height: geometry.size.height)
@@ -107,6 +115,7 @@ private struct OnboardingPageView: View {
                             player?.pause()
                             removeTimeObserver()
                         }
+                    }
                 } else {
                     // Fallback gradient background
                     LinearGradient(

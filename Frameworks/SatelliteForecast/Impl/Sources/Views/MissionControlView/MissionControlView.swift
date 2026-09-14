@@ -134,7 +134,7 @@ struct MissionControlView: View {
         let jd = julianDateProvider() + julianDateOffset
         do {
             // Generate label track at every 30-min interval for the next 4 hours
-            let now = Date()
+            let now = Date(julianDate: jd)
             let calendar = Calendar.current
             var comps = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: now)
             let minute = comps.minute ?? 0

@@ -10,8 +10,8 @@ import SatelliteForecast
 import SatelliteForecastImpl
 import StarryNight
 
-extension MiddlewareReader where MiddlewareType == BackgroundSkyEffectMiddleware, Dependencies == any StarManaging {
-    public func lift(dependencies: any StarManaging) -> AnyMiddleware<AppAction, AppAction, AppState> {
+extension MiddlewareReader where MiddlewareType == BackgroundSkyEffectMiddleware, Dependencies == AppStarCatalog {
+    public func lift(dependencies: AppStarCatalog) -> AnyMiddleware<AppAction, AppAction, AppState> {
         lift(
             inputAction: \.backgroundSky,
             outputAction: AppAction.backgroundSkyOutput,

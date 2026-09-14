@@ -1,0 +1,31 @@
+{
+  "configurations": [
+    {
+      "id": "B0C9A74F-E95F-49AB-818F-421A61A01D43",
+      "name": "Default",
+      "options": {}
+    }
+  ],
+  "defaultOptions": {
+    "environmentVariableEntries": [
+      {
+        "key": "SATELLITE_SNAPSHOT_TESTS",
+        "value": "1"
+      },
+      {
+        "key": "SNAPSHOT_RECORD",
+        "value": ""
+      }
+    ]
+  },
+  "testTargets": [
+    {
+      "target": {
+        "containerPath": "container:SatelliteForecast.xcodeproj",
+        "identifier": "C4165D43A02BFFE3D52AE6E6",
+        "name": "SatelliteForecastTests"
+      }
+    }
+  ],
+  "version": 1
+}

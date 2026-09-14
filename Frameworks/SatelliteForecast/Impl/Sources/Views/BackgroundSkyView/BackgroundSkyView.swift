@@ -28,7 +28,7 @@ public struct BackgroundSkyViewContext<ConstellationLabel: View, AnnotationView:
     public let basicChartConfigs: BasicChartConfigs
     public let configs: BackgroundSkyConfigs
     public let quality: ChartQuality
-    public let starManager: any StarManaging
+    public let starManager: AppStarCatalog
     public let constellationLabel: (String) -> ConstellationLabel
     public let annotationView: (@escaping (RADec) -> CGPoint) -> AnnotationView
     public let starTapped: (Star?) -> Void
@@ -38,7 +38,7 @@ public struct BackgroundSkyViewContext<ConstellationLabel: View, AnnotationView:
         basicChartConfigs: BasicChartConfigs,
         configs: BackgroundSkyConfigs,
         quality: ChartQuality,
-        starManager: any StarManaging,
+        starManager: AppStarCatalog,
         @ViewBuilder constellationLabel: @escaping (String) -> ConstellationLabel,
         @ViewBuilder annotationView: @escaping (@escaping (RADec) -> CGPoint) -> AnnotationView,
         starTapped: @escaping (Star?) -> Void
