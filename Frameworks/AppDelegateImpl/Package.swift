@@ -13,8 +13,6 @@ let package = Package(
             targets: ["AppDelegateImpl"])
     ],
     dependencies: [
-        .package(url: "https://github.com/SwiftRex/SwiftRex", from: "0.8.12"),
-        .package(url: "https://github.com/SwiftRex/CombineRextensions", branch: "master"),
         .package(
             url: "https://github.com/firebase/firebase-ios-sdk.git",
             .upToNextMajor(from: "12.0.0")
@@ -29,8 +27,6 @@ let package = Package(
             name: "AppDelegateImpl",
             dependencies: [
                 "AppDelegate",
-                .product(name: "CombineRex", package: "SwiftRex"),
-                "CombineRextensions",
                 "Geohash",
                 .product(name: "SatelliteKit", package: "SatelliteKit"),
                 .product(name: "SatelliteForecast", package: "SatelliteForecast"),

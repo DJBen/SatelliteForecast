@@ -6,44 +6,27 @@
 //
 
 import SwiftUI
-@preconcurrency import SwiftRex
-@preconcurrency import CombineRex
-@preconcurrency import CombineRextensions
 import SatelliteForecast
 @preconcurrency import SatelliteKit
 
-public struct DebugMenuState: Equatable, AppStateMappable {
+public struct DebugMenuState: Equatable {
     var trueJulianDate: Double
     var config: DebugMenuConfig
     var pendingNotifications: [UNNotificationRequest]
     var deliveredNotifications: [UNNotification]
     var fcmToken: String?
 
-    public static func project(appState state: AppState) -> DebugMenuState {
-        DebugMenuState(
-            trueJulianDate: Date().julianDate,
-            config: state.debugMenu,
-            pendingNotifications: state.notificationResources.pendingNotifications,
-            deliveredNotifications: state.notificationResources.deliveredNotifications,
-            fcmToken: state.fcmToken
-        )
-    }
 
-    public static func apply(appState: inout AppState, state: DebugMenuState) {
-        appState.debugMenu = state.config
-        appState.notificationResources.pendingNotifications = state.pendingNotifications
-        appState.notificationResources.deliveredNotifications = state.deliveredNotifications
-    }
 }
 
 public struct DebugMenu: View {
-    @ObservedObject var viewModel: ObservableViewModel<DebugMenuAction, DebugMenuState?>
+    @State var viewModel: DebugModel
     @State var dateWithinPicker: Date
     @State var showCopySuccess: Bool = false
     @Environment(\.dismiss) private var dismiss
 
     public init(
-        viewModel: ObservableViewModel<DebugMenuAction, DebugMenuState?>
+        viewModel: DebugModel
     ) {
         self.viewModel = viewModel
         if let offset = viewModel.state?.config.mockedOffset {
@@ -67,7 +50,7 @@ public struct DebugMenu: View {
                         state.config.frozenAt != nil
                     },
                     set: { newValue in
-                        viewModel.dispatch(.toggleFreezeTime(newValue))
+                        viewModel.send(.toggleFreezeTime(newValue))
                     }
                 )
                 .animation()
@@ -81,7 +64,7 @@ public struct DebugMenu: View {
                         state.config.mockedOffsetOn
                     },
                     set: { newValue in
-                        viewModel.dispatch(.toggleMockedOffset(newValue))
+                        viewModel.send(.toggleMockedOffset(newValue))
                     }
                 )
                 .animation()
@@ -98,7 +81,7 @@ public struct DebugMenu: View {
                 HStack {
                     Spacer()
                     Button {
-                        viewModel.dispatch(.setMockedDateOffset(dateWithinPicker.julianDate - state.trueJulianDate))
+                        viewModel.send(.setMockedDateOffset(dateWithinPicker.julianDate - state.trueJulianDate))
                     } label: {
                         Text(verbatim: "Update time offset")
                     }
@@ -228,19 +211,19 @@ public struct DebugMenu: View {
 
                     Section {
                         Button {
-                            viewModel.dispatch(.resetOnboarding)
+                            viewModel.send(.resetOnboarding)
                         } label: {
                             Text(verbatim: "Reset All Onboarding")
                         }
 
                         Button {
-                            viewModel.dispatch(.resetMainOnboarding)
+                            viewModel.send(.resetMainOnboarding)
                         } label: {
                             Text(verbatim: "Reset Main Onboarding")
                         }
 
                         Button {
-                            viewModel.dispatch(.resetAllPassesOnboarding)
+                            viewModel.send(.resetAllPassesOnboarding)
                         } label: {
                             Text(verbatim: "Reset Pass List Onboarding (includes Sky Chart Tutorial)")
                         }
@@ -255,7 +238,7 @@ public struct DebugMenu: View {
                                     state.config.rapidNotificationDelivery
                                 },
                                 set: { newValue in
-                                    viewModel.dispatch(.toggleRapidNotificationDelivery(newValue))
+                                    viewModel.send(.toggleRapidNotificationDelivery(newValue))
                                 }
                             )
                             .animation()
@@ -266,12 +249,12 @@ public struct DebugMenu: View {
 
                     Section {
                         Button {
-                            viewModel.dispatch(.triggerPassDeepLink(category: .iss, noradIndex: 25544))
+                            viewModel.send(.triggerPassDeepLink(category: .iss, noradIndex: 25544))
                         } label: {
                             Text(verbatim: "Deep link to ISS (special)")
                         }
                         Button {
-                            viewModel.dispatch(.triggerPassDeepLink(category: .brightest100, noradIndex: 20580))
+                            viewModel.send(.triggerPassDeepLink(category: .brightest100, noradIndex: 20580))
                         } label: {
                             Text("Deep link to Hubble (brightest 100)")
                         }
@@ -305,23 +288,9 @@ public struct DebugMenu: View {
                 }
                 .onAppear {
                     dateWithinPicker = Date(julianDate: state.trueJulianDate + (state.config.mockedOffsetOn ? state.config.mockedOffset : 0))
-                    viewModel.dispatch(.fetchNotifications)
+                    viewModel.send(.fetchNotifications)
                 }
             }
-        }
-    }
-}
-
-extension ViewProducer where Context == Void, ProducedView == DebugMenu {
-    public static func debugMenu<S: StoreType>(viewModel: S) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
-        ViewProducer<Context, ProducedView> { context in
-            DebugMenu(
-                viewModel: viewModel.projection(
-                    action: AppAction.debugMenu,
-                    state: DebugMenuState.project(appState:)
-                )
-                .asObservableViewModel(initialState: nil, emitsValue: .whenDifferent)
-            )
         }
     }
 }

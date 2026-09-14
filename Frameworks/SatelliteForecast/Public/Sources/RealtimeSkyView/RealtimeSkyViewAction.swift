@@ -16,19 +16,3 @@ public enum RealtimeSkyViewAction {
 }
 
 extension RealtimeSkyViewAction: Equatable {}
-
-public enum RealtimeSkyViewOutput {
-    case propagatedCurrentEphemerides(
-        results: BTree<Double, RealtimePropagationResult>,
-        satellites: [SatelliteInfo],
-        partialErrors: [Error],
-        observer: LatLonAlt,
-        julianDate: Double
-    )
-
-    case failedToPropagateCurrentEphemerides(
-        error: Error,
-        observer: LatLonAlt,
-        julianDate: Double
-    )
-}

@@ -13,7 +13,7 @@ The AppDelegateImpl module provides:
 ## Key Features
 
 - **Firebase Integration**: Handles Firebase initialization, messaging, and Firestore
-- **Store Integration**: Automatically dispatches relevant actions to the Redux store
+- **Lifecycle Integration**: Forwards typed launch, token, and notification events to native application callbacks
 - **Modular Design**: Can be swapped out for different implementations
 - **Deep Link Handling**: Processes notification deep links and routes them appropriately
 

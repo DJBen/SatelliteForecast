@@ -424,7 +424,7 @@ struct ImageRenderer_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        ForEach(enumerated: tianHePasses, id: \.notableSnapshots.rise.first.julianDate) { index, passSnapshots in
+        ForEach(tianHePasses, id: \.notableSnapshots.rise.first.julianDate) { passSnapshots in
             Preview(
                 pass: passSnapshots.pass,
                 snapshots: passSnapshots.snapshots,

@@ -10,8 +10,6 @@ import SwiftUI
 import SatelliteForecast
 import Shimmer
 @preconcurrency import SatelliteKit
-@preconcurrency import CombineRex
-@preconcurrency import CombineRextensions
 import StarryNight
 
 private let dateFormatter: DateFormatter = {
@@ -38,7 +36,7 @@ struct PassPreviewCell: View {
     var observer: LatLonAlt
     var passSnapshots: PassSnapshots
     var hasScheduledAlert: Bool
-    var skyChartProducer: ViewProducer<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>
+    var skyChartFactory: ViewFactory<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>
     var julianDateOffset: Double
     var starManager: AppStarCatalog
     var julianDateProvider: () -> Double
@@ -223,7 +221,7 @@ struct PassPreviewCell: View {
                     .frame(width: 120)
                 }
 
-                skyChartProducer.view(
+                skyChartFactory.view(
                     SkyChartContext(
                         satelliteInfo: satelliteInfo,
                         observer: observer,
@@ -352,9 +350,9 @@ struct PassPreviewCell_Previews: PreviewProvider {
                 observer: observer,
                 passSnapshots: passSnapshot,
                 hasScheduledAlert: false,
-                skyChartProducer: .pure(
+                skyChartFactory: .pure(
                     SkyChart(
-                        viewModel: .mock(
+                        viewModel: .init(
                             state: SkyChartViewState()
                         ),
                         context: SkyChartContext(
@@ -380,9 +378,9 @@ struct PassPreviewCell_Previews: PreviewProvider {
                             starManager: StarManagerMock(),
                             julianDateProvider: { passSnapshot.pass.rise.julianDate }
                         ),
-                        backgroundSkyViewProducer: .pure(
+                        backgroundSkyViewFactory: .pure(
                             BackgroundSkyView(
-                                viewModel: .mock(
+                                viewModel: .init(
                                     state: BackgroundSkyViewState()
                                 ),
                                 context: BackgroundSkyViewContext(

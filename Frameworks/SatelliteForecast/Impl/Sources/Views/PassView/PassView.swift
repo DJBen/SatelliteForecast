@@ -6,8 +6,6 @@
 //
 
 import BTree
-@preconcurrency import CombineRex
-@preconcurrency import CombineRextensions
 import SatelliteForecast
 @preconcurrency import SatelliteKit
 import SwiftUI
@@ -35,31 +33,31 @@ extension PassViewState: Equatable {}
 
 /// The satellite detail view shows satellite passes and the sky chart during the first visible pass (if available).
 public struct PassView: View {
-    @ObservedObject var viewModel: ObservableViewModel<PassViewAction, PassViewState>
+    @State var viewModel: PassModel
     @State var isCompassEnabled: Bool = true
 
     var context: PassViewContext
-    var elevationGraphProducer: ViewProducer<SatelliteElevationGraphContext, SatelliteElevationGraph>
-    var skyChartProducer: ViewProducer<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>
-    var passAlarmSettingsProducer: ViewProducer<PassAlarmSettingsModalViewContext, PassAlarmSettingsModalView>
-    var detailedPassViewProducer: ViewProducer<DetailPassViewContext, DetailedPassView>
+    var elevationGraphFactory: ViewFactory<SatelliteElevationGraphContext, SatelliteElevationGraph>
+    var skyChartFactory: ViewFactory<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>
+    var passAlarmSettingsFactory: ViewFactory<PassAlarmSettingsModalViewContext, PassAlarmSettingsModalView>
+    var detailedPassViewFactory: ViewFactory<DetailPassViewContext, DetailedPassView>
 
     @Environment(\.colorScheme) private var colorScheme
 
     public init(
-        viewModel: ObservableViewModel<PassViewAction, PassViewState>,
+        viewModel: PassModel,
         context: PassViewContext,
-        elevationGraphProducer: ViewProducer<SatelliteElevationGraphContext, SatelliteElevationGraph>,
-        skyChartProducer: ViewProducer<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>,
-        passAlarmSettingsProducer: ViewProducer<PassAlarmSettingsModalViewContext, PassAlarmSettingsModalView>,
-        detailedPassViewProducer: ViewProducer<DetailPassViewContext, DetailedPassView>
+        elevationGraphFactory: ViewFactory<SatelliteElevationGraphContext, SatelliteElevationGraph>,
+        skyChartFactory: ViewFactory<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>,
+        passAlarmSettingsFactory: ViewFactory<PassAlarmSettingsModalViewContext, PassAlarmSettingsModalView>,
+        detailedPassViewFactory: ViewFactory<DetailPassViewContext, DetailedPassView>
     ) {
         self.viewModel = viewModel
         self.context = context
-        self.elevationGraphProducer = elevationGraphProducer
-        self.skyChartProducer = skyChartProducer
-        self.passAlarmSettingsProducer = passAlarmSettingsProducer
-        self.detailedPassViewProducer = detailedPassViewProducer
+        self.elevationGraphFactory = elevationGraphFactory
+        self.skyChartFactory = skyChartFactory
+        self.passAlarmSettingsFactory = passAlarmSettingsFactory
+        self.detailedPassViewFactory = detailedPassViewFactory
     }
     
     @ViewBuilder private var compassButton: some View {
@@ -101,7 +99,7 @@ public struct PassView: View {
         MotionManagerView { deviceMotionResult in
             ZStack(alignment: .bottom) {
                 ZStack(alignment: .top) {
-                    skyChartProducer.view(
+                    skyChartFactory.view(
                         SkyChartContext(
                             satelliteInfo: context.satelliteInfo,
                             observer: context.observer,
@@ -123,7 +121,7 @@ public struct PassView: View {
                         Spacer()
                         
                         Button {
-                            viewModel.dispatch(.showDetailPassView(true))
+                            viewModel.send(.showDetailPassView(true))
                         } label: {
                             Image(
                                 systemName: "arrow.up.left.and.arrow.down.right"
@@ -158,14 +156,15 @@ public struct PassView: View {
         GeometryReader { geometry in
             let rect = geometry.frame(in: .local)
             VStack(spacing: 20) {
-                elevationGraphProducer.view(
+                elevationGraphFactory.view(
                     SatelliteElevationGraphContext(
                         satelliteInfo: context.satelliteInfo,
                         selectedPassIndex: context.passIndex,
                         julianDateRange: context.julianDateRange,
                         observer: context.observer,
                         configs: .init(),
-                        julianDateProvider: context.julianDateProvider
+                        julianDateProvider: context.julianDateProvider,
+                        selectedPass: context.passSnapshots.pass
                     )
                 )
                 .environment(\.julianDateRangeKey, context.julianDateRange)
@@ -202,9 +201,9 @@ public struct PassView: View {
                 ) {
                     Button {
                         if viewModel.state.scheduledPassNotifications.contains(where: { $0.id == context.passSnapshots.pass.notificationIdentifier }) {
-                            viewModel.dispatch(.unscheduleAlarm(context.passSnapshots.pass))
+                            viewModel.send(.unscheduleAlarm(context.passSnapshots.pass))
                         } else {
-                            viewModel.dispatch(.showAlarmConfiguration(true))
+                            viewModel.send(.showAlarmConfiguration(true))
                         }
                     } label: {
                         if viewModel.state.scheduledPassNotifications.contains(where: { $0.id == context.passSnapshots.pass.notificationIdentifier }) {
@@ -219,10 +218,10 @@ public struct PassView: View {
         .fullScreenCover(
             isPresented: $viewModel.state.showAlarmConfigurationModal,
             onDismiss: {
-                viewModel.dispatch(.showAlarmConfiguration(false))
+                viewModel.send(.showAlarmConfiguration(false))
             },
             content: {
-                passAlarmSettingsProducer.view(
+                passAlarmSettingsFactory.view(
                     PassAlarmSettingsModalViewContext(
                         satelliteName: context.satelliteCommonName,
                         category: context.category,
@@ -238,11 +237,11 @@ public struct PassView: View {
                     viewModel.state.showsDetailPassView
                 },
                 set: { newValue in
-                    viewModel.dispatch(.showDetailPassView(newValue))
+                    viewModel.send(.showDetailPassView(newValue))
                 }
             ),
             content: {
-                detailedPassViewProducer.view(
+                detailedPassViewFactory.view(
                     DetailPassViewContext(
                         satelliteInfo: context.satelliteInfo,
                         category: context.category,
@@ -380,27 +379,27 @@ struct PassView_Previews: PreviewProvider {
             julianDateProvider: { Date().julianDate }
         )
         PassView(
-            viewModel: .mock(
+            viewModel: .init(
                 state: PassViewState()
             ),
             context: context,
-            elevationGraphProducer: .pure(
+            elevationGraphFactory: .pure(
                 SatelliteElevationGraph(
-                    viewModel: .mock(
+                    viewModel: .init(
                         state: satelliteGraphState
                     ),
                     context: elevationGraphContext
                 )
             ),
-            skyChartProducer: .pure(
+            skyChartFactory: .pure(
                 SkyChart<EmptyView, EmptyView>(
-                    viewModel: .mock(
+                    viewModel: .init(
                         state: skyChartState
                     ),
                     context: skyChartContext,
-                    backgroundSkyViewProducer: .pure(
+                    backgroundSkyViewFactory: .pure(
                         BackgroundSkyView(
-                            viewModel: .mock(
+                            viewModel: .init(
                                 state: BackgroundSkyViewState()
                             ),
                             context: BackgroundSkyViewContext(
@@ -417,8 +416,8 @@ struct PassView_Previews: PreviewProvider {
                     )
                 )
             ),
-            passAlarmSettingsProducer: .crash,
-            detailedPassViewProducer: .crash
+            passAlarmSettingsFactory: .crash,
+            detailedPassViewFactory: .crash
         )
         .environment(\.julianDateRangeKey, julianDateRange)
         .environment(\.backgroundSkyJulianDateKey, passSnapshots[0].pass.rise.julianDate.roundJulianDate(.toMins(1)))

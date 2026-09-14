@@ -1,3 +1,4 @@
+import Combine
 //
 //  SatelliteListView.swift
 //  SatelliteKitTests
@@ -6,10 +7,7 @@
 //
 
 import BTree
-@preconcurrency import CombineRex
 import SwiftUI
-import SwiftRex
-@preconcurrency import CombineRextensions
 @preconcurrency import SatelliteKit
 import SatelliteForecast
 import SatelliteCatalog
@@ -80,20 +78,20 @@ class TextFieldObserver : ObservableObject {
 }
 
 public struct SatelliteListView: View {
-    @ObservedObject var viewModel: ObservableViewModel<SatelliteListViewAction, SatelliteListViewState>
+    @State var viewModel: SatelliteListModel
     let context: SatelliteListViewContext
-    let allPassesViewProducer: ViewProducer<AllPassesViewContext, AllPassesView>
+    let allPassesViewFactory: ViewFactory<AllPassesViewContext, AllPassesView>
 
     @StateObject var textObserver = TextFieldObserver(delay: 0.5)
 
     public init(
-        viewModel: ObservableViewModel<SatelliteListViewAction, SatelliteListViewState>,
+        viewModel: SatelliteListModel,
         context: SatelliteListViewContext,
-        allPassesViewProducer: ViewProducer<AllPassesViewContext, AllPassesView>
+        allPassesViewFactory: ViewFactory<AllPassesViewContext, AllPassesView>
     ) {
         self.viewModel = viewModel
         self.context = context
-        self.allPassesViewProducer = allPassesViewProducer
+        self.allPassesViewFactory = allPassesViewFactory
     }
 
     @ViewBuilder func satelliteContent<Content: View, FailedContent: View>(
@@ -129,7 +127,7 @@ public struct SatelliteListView: View {
         }
         .navigationDestination(for: SatelliteListSelectedSatellite.self) { satellite in
             LazyView {
-                allPassesViewProducer.view(
+                allPassesViewFactory.view(
                     AllPassesViewContext(
                         satelliteInfo: viewModel.state.satelliteInfo[context.category]!.content![satellite.noradIndex]!,
                         julianDateRange: context.julianDateRange,
@@ -139,7 +137,7 @@ public struct SatelliteListView: View {
                     )
                 )
                 .onAppear {
-                    viewModel.dispatch(
+                    viewModel.send(
                         .loadSatellite(
                             SatelliteListViewAction.SelectSatelliteParams(
                                 noradIndex: satellite.noradIndex,
@@ -162,7 +160,7 @@ public struct SatelliteListView: View {
             Button(
                 "Retry",
                 action: {
-                    viewModel.dispatch(
+                    viewModel.send(
                         .retryLoadingSatelliteList(
                             category: context.category
                         )
@@ -183,6 +181,8 @@ public struct SatelliteListView: View {
             },
             failedContentBuilder: failureView
         )
+        .task { if !SnapshotEnvironment.isEnabled { viewModel.load(context.category) } }
+        .onDisappear { viewModel.cancel() }
         .modifier(AppSurface())
         .navigationTitle(Text("Satellites", bundle: .module))
         .searchable(
@@ -191,11 +191,11 @@ public struct SatelliteListView: View {
             prompt: Text("Filter by name, ID, country, year...", bundle: .module)
         )
         .onChange(of: textObserver.debouncedText) { _, searchText in
-            viewModel.dispatch(.searchSatellites(searchText, category: context.category))
+            viewModel.send(.searchSatellites(searchText, category: context.category))
         }
         .onDisappear {
             // Clear the search text across different satellite lists
-            viewModel.dispatch(.searchSatellites("", category: context.category))
+            viewModel.send(.searchSatellites("", category: context.category))
         }
     }
 }
@@ -229,7 +229,7 @@ struct SatelliteListView_Previews: PreviewProvider {
         .reduce(into: Map<UInt, SatelliteInfo>(), { $0[$1.noradIndex] = $1 })
 
         SatelliteListView(
-            viewModel: .mock(
+            viewModel: .init(
                 state: SatelliteListViewState(
                     satelliteInfo: [.brightest100: .loaded(brightest100)]
                 )
@@ -241,7 +241,7 @@ struct SatelliteListView_Previews: PreviewProvider {
                 starManager: StarManagerMock(),
                 julianDateProvider: { Date(daysSince1950: 1001).julianDate }
             ),
-            allPassesViewProducer: .crash
+            allPassesViewFactory: .crash
         )
     }
 }

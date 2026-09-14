@@ -3,13 +3,9 @@ import SwiftUI
 import CoreLocation
 import CoreMotion
 import BTree
-import CombineRex
-import CombineRextensions
-import SwiftRex
 @testable import SatelliteForecastApp
 import SatelliteForecast
 @testable import SatelliteForecastImpl
-import SatelliteForecastImplWiring
 import SatelliteKit
 
 /// Native view snapshots at a fixed phone size, locale, timezone and orbital epoch.
@@ -25,12 +21,15 @@ final class ScreenSnapshotTests: XCTestCase {
         UIView.setAnimationsEnabled(false)
         defer { UIView.setAnimationsEnabled(true) }
         let catalog = try await AppStarCatalog.load()
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent("snapshot-empty-" + UUID().uuidString)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
         for style in [UIUserInterfaceStyle.light, .dark] {
             let fixture = try Fixture(catalog: catalog)
             for (name, view) in fixture.screens() {
                 let selected = ProcessInfo.processInfo.environment["SNAPSHOT_SCREEN"] ?? ""
                 if !selected.isEmpty && !selected.split(separator: ",").contains(where: { name.hasPrefix($0) }) { continue }
-                try await assertSnapshot(view, name: "\(name)-\(style == .dark ? "dark" : "light")", style: style)
+                try await assertSnapshot(AnyView(view.environment(\.ephemerisDirectory, directory)), name: "\(name)-\(style == .dark ? "dark" : "light")", style: style)
             }
         }
     }
@@ -112,7 +111,9 @@ struct Fixture {
     let info: SatelliteInfo
     let passes: [PassSnapshots]
     let textResource: EphemerideResource
-    let store: ReduxStoreBase<AppAction, AppState>
+    let session: AppSession
+    let trails: SatelliteTrails
+    var factory: ScreenFactory { ScreenFactory(session: session) }
     var range: ClosedRange<Double> { now.julianDate...(now.julianDate + 7) }
 
     init(catalog: AppStarCatalog) throws {
@@ -126,22 +127,10 @@ struct Fixture {
         info = try SatelliteInfo(elements: elements)
         let snapshots = try info.generateSnapshots(observer: observer, julianDateRange: now.julianDate...(now.julianDate + 7))
         passes = try info.findPasses(observer: observer, coarseSnapshots: snapshots)
-        var state = AppState()
-        state.onboardingState.hasCompletedOnboarding = true
-        state.locationResources = .init(authorizationStatus: .authorizedWhenInUse,
-            currentLocation: CLLocation(latitude: observer.lat, longitude: observer.lon))
-        state.elementsLoader.info[.iss] = .loaded(Map([(elements.noradIndex, info)]))
-        state.elementsLoader.info[.brightest100] = .loaded(Map([(elements.noradIndex, info)]))
-        state.elementsPropagatorResources.satelliteTrails[elements.noradIndex] = SatelliteTrails(observer: observer, snapshots: snapshots, passSnapshots: passes)
-        state.backgroundSkyResources.allConstellations = Array(catalog.allConstellations())
-        store = ReduxStoreBase(
-            subject: .combine(initialValue: state),
-            reducer: Store.reducer,
-            middleware: EffectMiddleware.backgroundSky.lift(dependencies: catalog)
-                <> EffectMiddleware.skyChart.lift()
-                <> EffectMiddleware.satelliteElevationGraph.lift(),
-            emitsValue: .whenDifferent
-        )
+        trails = SatelliteTrails(observer: observer, snapshots: snapshots, passSnapshots: passes)
+        session = AppSession(catalog: catalog, location: LocationService(resources: .init(authorizationStatus: .authorizedWhenInUse, currentLocation: CLLocation(latitude: observer.lat, longitude: observer.lon))))
+        session.settings.showExperimentalSkyNow = true
+
     }
 
     func screens() -> [(String, AnyView)] {
@@ -154,28 +143,28 @@ struct Fixture {
             input: .init(observer: observer, authorizationStatus: .authorizedWhenInUse),
             navigationPath: .constant(NavigationPath()),
             context: .init(starManager: catalog, julianDateProvider: date),
-            singleSatelliteWrappingViewProducer: { ViewProducer.singleSatelliteWrappingView(viewModel: store).view($0) })
+            singleSatelliteWrappingViewFactory: { factory.detail($0) })
         return [
             ("01-welcome", AnyView(OnboardingView(onComplete: {}))),
             ("02-predictions-intro", AnyView(OnboardingView(initialPage: 1, onComplete: {}))),
             ("03-forecast", AnyView(overview)),
-            ("04-satellites", AnyView(ViewProducer.satelliteCategory(viewModel: store).view(.init(starManager: catalog, julianDateProvider: date)))),
-            ("05-satellite-list", AnyView(NavigationStack { ViewProducer.satelliteListView(viewModel: store).view(.init(category: .brightest100, julianDateRange: range, observer: observer, starManager: catalog, julianDateProvider: date)) })),
-            ("06-pass-forecast", AnyView(NavigationStack { ViewProducer.allPassesView(viewModel: store).view(.init(satelliteInfo: info, julianDateRange: range, observer: observer, starManager: catalog, julianDateProvider: date)) })),
-            ("07-pass", AnyView(NavigationStack { ViewProducer.passView(viewModel: store).view(.init(passIndex: 0, satelliteInfo: info, satelliteCommonName: "ISS (ZARYA)", category: .iss, julianDateRange: range, observer: observer, passSnapshots: pass, starManager: catalog, julianDateProvider: date)) })),
-            ("08-detailed-sky", AnyView(ViewProducer.detailedPassView(viewModel: store).view(.init(satelliteInfo: info, category: .iss, julianDateRange: range, observer: observer, passSnapshots: pass, starManager: catalog, julianDateProvider: date)))),
-            ("09-sky-now", AnyView(ViewProducer.realtimeSky(viewModel: store).view(.init(basicChartConfigs: .init(), backgroundSkyConfigs: .preset, satelliteMagToRadiusFunction: .default, starManager: catalog, julianDateProvider: { pass.pass.rise.julianDate })))),
-            ("10-settings", AnyView(ViewProducer.settingsOverview(viewModel: store, settings: AppSettings(showExperimentalSkyNow: true)).view())),
+            ("04-satellites", AnyView(SatelliteCategoryViewImpl(viewModel: .init(state: .init(observer: observer)), context: .init(starManager: catalog, julianDateProvider: date), listViewFactory: ViewFactory { factory.list($0) }))),
+            ("05-satellite-list", AnyView(NavigationStack { SatelliteListView(viewModel: .init(state: .init(satelliteInfo: [.brightest100: .loaded(Map([(info.noradIndex, info)]))])), context: .init(category: .brightest100, julianDateRange: range, observer: observer, starManager: catalog, julianDateProvider: date), allPassesViewFactory: ViewFactory { factory.passes($0) }) })),
+            ("06-pass-forecast", AnyView(NavigationStack { AllPassesView(viewModel: .init(state: .init(location: CLLocation(latitude: observer.lat, longitude: observer.lon), satelliteTrails: [info.noradIndex: trails])), context: .init(satelliteInfo: info, julianDateRange: range, observer: observer, starManager: catalog, julianDateProvider: date), skyChartFactory: ViewFactory { factory.sky($0) }, passViewFactory: ViewFactory { factory.pass($0) }) })),
+            ("07-pass", AnyView(NavigationStack { factory.pass(.init(passIndex: 0, satelliteInfo: info, satelliteCommonName: "ISS (ZARYA)", category: .iss, julianDateRange: range, observer: observer, passSnapshots: pass, starManager: catalog, julianDateProvider: date)) })),
+            ("08-detailed-sky", AnyView(DetailedPassView(context: .init(satelliteInfo: info, category: .iss, julianDateRange: range, observer: observer, passSnapshots: pass, starManager: catalog, julianDateProvider: date), skyChartFactory: ViewFactory { factory.sky($0) }))),
+            ("09-sky-now", AnyView(RealtimeSkyViewImpl(viewModel: .init(state: .init(observer: observer)), context: .init(basicChartConfigs: .init(), backgroundSkyConfigs: .preset, satelliteMagToRadiusFunction: .default, starManager: catalog, julianDateProvider: { pass.pass.rise.julianDate }), backgroundSkyViewFactory: ViewFactory { factory.background($0) }))),
+            ("10-settings", AnyView(NativeSettingsView(session: session))),
             ("11-location", AnyView(NavigationStack { LocationSettingsView(state: .init(currentLocation: CLLocation(latitude: observer.lat, longitude: observer.lon)), selectLocation: { _ in }) })),
             ("12-alarms", AnyView(NavigationStack { AlarmSettingsView(notifications: [], deleteNotifications: { _ in }) })),
-            ("13-pass-alarm", AnyView(ViewProducer.passAlarmSettings(viewModel: store).view(.init(satelliteName: "ISS (ZARYA)", category: .iss, passSnapshots: pass, observer: observer)))),
+            ("13-pass-alarm", AnyView(PassAlarmSettingsModalView(viewModel: .init(), context: .init(satelliteName: "ISS (ZARYA)", category: .iss, passSnapshots: pass, observer: observer)))),
             ("14-ephemerides", AnyView(NavigationStack { EphemeridesManagementView() })),
             ("15-star-detail", AnyView(NavigationStack { SelectedStarLabel(starManager: catalog, star: catalog.brightestStars()[0]).padding().navigationTitle("Star details") })),
             ("17-mission-control", AnyView(MissionControlView(satelliteInfo: info, julianDateProvider: date, julianDateOffset: 0, userLocation: CLLocation(latitude: observer.lat, longitude: observer.lon)))),
             ("18-ephemeris-text", AnyView(NavigationStack { EphemerideTextBrowserView(resource: textResource) })),
-            ("19-pass-tutorial", AnyView(AllPassesOnboardingView(onComplete: {}, skyChartProducer: .skyChart(viewModel: store), satelliteData: SatelliteData(satelliteInfo: info, observer: observer, selectedPass: pass)))),
-            ("20-debug", AnyView(DebugMenu(viewModel: .mock(state: DebugMenuState(trueJulianDate: now.julianDate, config: .init(), pendingNotifications: [], deliveredNotifications: [], fcmToken: nil))))),
-            ("16-night-mode", AnyView(ViewProducer.settingsOverview(viewModel: store, settings: AppSettings(showExperimentalSkyNow: true)).view().overlay(Color.red.blendMode(.plusDarker).allowsHitTesting(false)))),
+            ("19-pass-tutorial", AnyView(AllPassesOnboardingView(onComplete: {}, skyChartFactory: ViewFactory { factory.sky($0) }, satelliteData: SatelliteData(satelliteInfo: info, observer: observer, selectedPass: pass)))),
+            ("20-debug", AnyView(DebugMenu(viewModel: .init(state: DebugMenuState(trueJulianDate: now.julianDate, config: .init(), pendingNotifications: [], deliveredNotifications: [], fcmToken: nil))))),
+            ("16-night-mode", AnyView(NativeSettingsView(session: session).overlay(Color.red.blendMode(.plusDarker).allowsHitTesting(false)))),
         ]
     }
 }

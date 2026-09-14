@@ -1,9 +1,6 @@
 import SatelliteForecast
 @preconcurrency import SatelliteKit
 import SwiftUI
-@preconcurrency import SwiftRex
-@preconcurrency import CombineRex
-@preconcurrency import CombineRextensions
 import CoreLocation
 import StarryNight
 
@@ -39,18 +36,18 @@ public struct SatelliteCategoryViewContext {
 }
 
 public struct SatelliteCategoryViewImpl: SatelliteCategoryView {
-    @ObservedObject var viewModel: ObservableViewModel<SatelliteCategoryViewAction, SatelliteCategoryViewState>
+    @State var viewModel: SatelliteCategoryModel
     let context: SatelliteCategoryViewContext
-    let listViewProducer: ViewProducer<SatelliteListViewContext, SatelliteListView>
+    let listViewFactory: ViewFactory<SatelliteListViewContext, SatelliteListView>
 
     public init(
-        viewModel: ObservableViewModel<SatelliteCategoryViewAction, SatelliteCategoryViewState>,
+        viewModel: SatelliteCategoryModel,
         context: SatelliteCategoryViewContext,
-        listViewProducer: ViewProducer<SatelliteListViewContext, SatelliteListView>,
+        listViewFactory: ViewFactory<SatelliteListViewContext, SatelliteListView>,
     ) {
         self.viewModel = viewModel
         self.context = context
-        self.listViewProducer = listViewProducer
+        self.listViewFactory = listViewFactory
     }
 
     public var body: some View {
@@ -59,7 +56,7 @@ public struct SatelliteCategoryViewImpl: SatelliteCategoryView {
                 get: {
                     viewModel.state.navigationPath
                 }, set: { navigationPath in
-                    viewModel.dispatch(.navigate(navigationPath))
+                    viewModel.send(.navigate(navigationPath))
                 }
             )
         ) {
@@ -107,7 +104,7 @@ public struct SatelliteCategoryViewImpl: SatelliteCategoryView {
             .navigationBarHidden(true)
             .navigationDestination(for: SatelliteCategory.self) { category in
                 LazyView {
-                    listViewProducer.view(
+                    listViewFactory.view(
                         SatelliteListViewContext(
                             category: category,
                             julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
@@ -117,7 +114,7 @@ public struct SatelliteCategoryViewImpl: SatelliteCategoryView {
                         )
                     )
                     .onAppear {
-                        viewModel.dispatch(
+                        viewModel.send(
                             .loadCategory(
                                 category,
                                 julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
@@ -136,14 +133,14 @@ public struct SatelliteCategoryViewImpl: SatelliteCategoryView {
 struct SatelliteCategoryView_Previews: PreviewProvider {
     static var previews: some View {
         SatelliteCategoryViewImpl(
-            viewModel: .mock(
+            viewModel: .init(
                 state: SatelliteCategoryViewState()
             ),
             context: SatelliteCategoryViewContext(
                 starManager: StarManagerMock(),
                 julianDateProvider: { Date().julianDate }
             ),
-            listViewProducer: .crash
+            listViewFactory: .crash
         )
     }
 }

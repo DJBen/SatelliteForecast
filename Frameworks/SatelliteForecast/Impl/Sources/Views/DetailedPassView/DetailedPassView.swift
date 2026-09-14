@@ -6,43 +6,26 @@
 //
 
 import ActivityView
-@preconcurrency import CombineRex
-@preconcurrency import CombineRextensions
 import SatelliteForecast
 @preconcurrency import SatelliteKit
 import StarryNight
-import SwiftRex
 import SwiftUI
-
-public struct DetailedPassViewState {
-    public var showsDetailedPassView: Bool
-
-    public init(
-        showsDetailedPassView: Bool = false
-    ) {
-        self.showsDetailedPassView = showsDetailedPassView
-    }
-}
-
-extension DetailedPassViewState: Equatable {}
 
 /// An enlarged pass view with ability to display details of stars upon tapping.
 public struct DetailedPassView: View {
-    @ObservedObject var viewModel: ObservableViewModel<DetailedPassViewAction, DetailedPassViewState>
-    let skyChartProducer: ViewProducer<SkyChartContext<ConstellationLabel, DetailedPassViewBackgroundAnnotationView>, SkyChart<ConstellationLabel, DetailedPassViewBackgroundAnnotationView>>
+    @Environment(\.dismiss) private var dismiss
+    let skyChartFactory: ViewFactory<SkyChartContext<ConstellationLabel, DetailedPassViewBackgroundAnnotationView>, SkyChart<ConstellationLabel, DetailedPassViewBackgroundAnnotationView>>
     let context: DetailPassViewContext
 
     /// If a star is selected in the background, we expect to show indicator and star information.
     @State var selectedBackgroundStar: Star?
 
     public init(
-        viewModel: ObservableViewModel<DetailedPassViewAction, DetailedPassViewState>,
         context: DetailPassViewContext,
-        skyChartProducer: ViewProducer<SkyChartContext<ConstellationLabel, DetailedPassViewBackgroundAnnotationView>, SkyChart<ConstellationLabel, DetailedPassViewBackgroundAnnotationView>>
+        skyChartFactory: ViewFactory<SkyChartContext<ConstellationLabel, DetailedPassViewBackgroundAnnotationView>, SkyChart<ConstellationLabel, DetailedPassViewBackgroundAnnotationView>>
     ) {
-        self.viewModel = viewModel
         self.context = context
-        self.skyChartProducer = skyChartProducer
+        self.skyChartFactory = skyChartFactory
     }
 
     public var body: some View {
@@ -58,7 +41,7 @@ public struct DetailedPassView: View {
                     [.horizontal, .vertical],
                     showsIndicators: true
                 ) {
-                    skyChartProducer.view(
+                    skyChartFactory.view(
                         SkyChartContext<ConstellationLabel, DetailedPassViewBackgroundAnnotationView>(
                             satelliteInfo: context.satelliteInfo,
                             observer: context.observer,
@@ -115,7 +98,7 @@ public struct DetailedPassView: View {
                         NavigationBar.dismiss,
                         role: .cancel
                     ) {
-                        viewModel.dispatch(.dismissModal)
+                        dismiss()
                     }
                 }
             }
@@ -196,7 +179,6 @@ struct DetailedPassView_Previews: PreviewProvider {
         )
 
         DetailedPassView(
-            viewModel: .mock(state: .init()),
             context: DetailPassViewContext(
                 satelliteInfo: try! SatelliteInfo(elements: elements),
                 category: nil,
@@ -206,7 +188,7 @@ struct DetailedPassView_Previews: PreviewProvider {
                 starManager: StarManagerMock(),
                 julianDateProvider: { Date().julianDate }
             ),
-            skyChartProducer: .crash
+            skyChartFactory: .crash
         )
     }
 }

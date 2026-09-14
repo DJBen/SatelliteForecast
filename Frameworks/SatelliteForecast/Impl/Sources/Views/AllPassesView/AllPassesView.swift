@@ -7,8 +7,6 @@
 
 import BTree
 import CoreLocation
-@preconcurrency import CombineRex
-@preconcurrency import CombineRextensions
 import SatelliteForecast
 @preconcurrency import SatelliteKit
 import StarryNight
@@ -118,22 +116,22 @@ public struct AllPassesView: View {
         }
     }
 
-    @ObservedObject var viewModel: ObservableViewModel<AllPassesViewAction, AllPassesViewState>
+    @State var viewModel: PassListModel
 
     let context: AllPassesViewContext
-    let skyChartProducer: ViewProducer<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>
-    let passViewProducer: ViewProducer<PassViewContext, PassView>
+    let skyChartFactory: ViewFactory<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>
+    let passViewFactory: ViewFactory<PassViewContext, PassView>
 
     public init(
-        viewModel: ObservableViewModel<AllPassesViewAction, AllPassesViewState>,
+        viewModel: PassListModel,
         context: AllPassesViewContext,
-        skyChartProducer: ViewProducer<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>,
-        passViewProducer: ViewProducer<PassViewContext, PassView>
+        skyChartFactory: ViewFactory<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>,
+        passViewFactory: ViewFactory<PassViewContext, PassView>
     ) {
         self.viewModel = viewModel
         self.context = context
-        self.skyChartProducer = skyChartProducer
-        self.passViewProducer = passViewProducer
+        self.skyChartFactory = skyChartFactory
+        self.passViewFactory = passViewFactory
     }
 
     private var itemsByVisibility: [Pass.Visibility: [Item]]? {
@@ -188,7 +186,7 @@ public struct AllPassesView: View {
     @ViewBuilder private func swipeActionLeftButtons(item: Item) -> some View {
         if item.hasScheduledAlert {
             Button {
-                viewModel.dispatch(
+                viewModel.send(
                     .unscheduleNotification(pass: item.passSnapshots.pass)
                 )
             } label: {
@@ -197,7 +195,7 @@ public struct AllPassesView: View {
             .tint(.red)
         } else {
             Button {
-                viewModel.dispatch(
+                viewModel.send(
                     .scheduleNotification(
                         PassNotification(
                             pass: item.passSnapshots.pass,
@@ -243,7 +241,7 @@ public struct AllPassesView: View {
                             observer: observer,
                             passSnapshots: item.passSnapshots,
                             hasScheduledAlert: item.hasScheduledAlert,
-                            skyChartProducer: skyChartProducer,
+                            skyChartFactory: skyChartFactory,
                             julianDateOffset: viewModel.state.julianDateOffset,
                             starManager: context.starManager,
                             julianDateProvider: context.julianDateProvider
@@ -279,7 +277,7 @@ public struct AllPassesView: View {
                 Spacer()
                 
                 Button {
-                    viewModel.dispatch(.showOnboarding(true))
+                    viewModel.send(.showOnboarding(true))
                 } label: {
                     Image(systemName: "questionmark.circle")
                         .font(.subheadline)
@@ -325,7 +323,7 @@ public struct AllPassesView: View {
                 AllPassesLocationChangeWarning(
                     state: locationChangeWarning,
                     onRecalculatePasses: {
-                        viewModel.dispatch(
+                        viewModel.send(
                             .recalculatePasses(
                                 .init(
                                     selectedNoradIndex: context.satelliteInfo.noradIndex,
@@ -359,7 +357,7 @@ public struct AllPassesView: View {
                 }
                 .navigationDestination(for: AllPassViewNavigation.self) { allPassViewNavigation in
                     LazyView {
-                        passViewProducer.view(
+                        passViewFactory.view(
                             PassViewContext(
                                 passIndex: allPassViewNavigation.passIndex,
                                 satelliteInfo: context.satelliteInfo,
@@ -404,14 +402,14 @@ public struct AllPassesView: View {
                     
                     VStack(spacing: 16) {
                         Button {
-                            viewModel.dispatch(.deeplinkToLocationSelection)
+                            viewModel.send(.deeplinkToLocationSelection)
                         } label: {
                             Text("\(Image(systemName: "dot.circle.and.hand.point.up.left.fill").symbolRenderingMode(.hierarchical)) Manually select a location", bundle: .module)
                         }
                         .buttonStyle(.bordered)
                         
                         Button {
-                            viewModel.dispatch(.showLocationSettings)
+                            viewModel.send(.showLocationSettings)
                         } label: {
                             Text("\(Image(systemName: "gear").symbolRenderingMode(.hierarchical)) Allow location access", bundle: .module)
                         }
@@ -459,15 +457,19 @@ public struct AllPassesView: View {
                 }
             }
         }
-        .onAppear {
-            // Check if this is the first time viewing AllPassesView
-            if !UserDefaults.standard.bool(forKey: "hasCompletedAllPassesOnboarding") {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                    // Double-check the UserDefaults in case the user completed onboarding during the delay
-                    if !UserDefaults.standard.bool(forKey: "hasCompletedAllPassesOnboarding") {
-                        viewModel.dispatch(.showOnboarding(true))
-                    }
-                }
+        .task(id: context.observer) {
+            guard !SnapshotEnvironment.isEnabled else { return }
+            if let observer = context.observer {
+                viewModel.send(.calculatePasses(.init(selectedNoradIndex: context.satelliteInfo.noradIndex, satelliteInfo: context.satelliteInfo, julianDateRange: context.julianDateRange, observer: observer)))
+            }
+            guard !SnapshotEnvironment.isEnabled, !UserDefaults.standard.bool(forKey: "hasCompletedAllPassesOnboarding") else { return }
+            do { try await Task.sleep(for: .seconds(2)); try Task.checkCancellation() } catch { return }
+            if !UserDefaults.standard.bool(forKey: "hasCompletedAllPassesOnboarding") { viewModel.send(.showOnboarding(true)) }
+        }
+        .onDisappear { viewModel.cancel() }
+        .overlay(alignment: .center) {
+            if let error = viewModel.errorMessage {
+                ContentUnavailableView { Label("Unable to calculate passes", systemImage: "exclamationmark.triangle") } description: { Text(error) }
             }
         }
         .fullScreenCover(isPresented: Binding<Bool>(
@@ -476,16 +478,16 @@ public struct AllPassesView: View {
                 // If the sheet is being dismissed (isPresented = false) and we haven't completed onboarding yet,
                 // mark it as completed since the user has seen it
                 if !isPresented && viewModel.state.showsOnboarding && !UserDefaults.standard.bool(forKey: "hasCompletedAllPassesOnboarding") {
-                    viewModel.dispatch(.completeOnboarding)
+                    viewModel.send(.completeOnboarding)
                 }
-                viewModel.dispatch(.showOnboarding(isPresented))
+                viewModel.send(.showOnboarding(isPresented))
             }
         )) {
             AllPassesOnboardingView(
                 onComplete: {
-                    viewModel.dispatch(.completeOnboarding)
+                    viewModel.send(.completeOnboarding)
                 },
-                skyChartProducer: skyChartProducer
+                skyChartFactory: skyChartFactory
             )
         }
     }
@@ -650,7 +652,7 @@ struct AllPassesView_Previews: PreviewProvider {
         ForEach(["iPhone SE (2nd generation)", "iPhone 13 Pro Max"], id: \.self) { previewDevice in
             NavigationStack {
                 AllPassesView(
-                    viewModel: .mock(
+                    viewModel: .init(
                         state: AllPassesViewState(
                             scheduledPassNotifications: [],
                             skyChartResources: .init(),
@@ -663,9 +665,9 @@ struct AllPassesView_Previews: PreviewProvider {
                         )
                     ),
                     context: context,
-                    skyChartProducer: ViewProducer<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>> { context in
+                    skyChartFactory: ViewFactory<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>> { context in
                         return SkyChart(
-                            viewModel: .mock(
+                            viewModel: .init(
                                 state: SkyChartViewState()
                             ),
                             context: SkyChartContext<EmptyView, EmptyView>(
@@ -691,9 +693,9 @@ struct AllPassesView_Previews: PreviewProvider {
                                 starManager: StarManagerMock(),
                                 julianDateProvider: { passSnapshots.pass.rise.julianDate }
                             ),
-                            backgroundSkyViewProducer: .pure(
+                            backgroundSkyViewFactory: .pure(
                                 BackgroundSkyView(
-                                    viewModel: .mock(
+                                    viewModel: .init(
                                         state: BackgroundSkyViewState()
                                     ),
                                     context: BackgroundSkyViewContext(
@@ -710,7 +712,7 @@ struct AllPassesView_Previews: PreviewProvider {
                             )
                         )
                     },
-                    passViewProducer: .crash
+                    passViewFactory: .crash
                 )
             }
             .previewDevice(PreviewDevice(rawValue: previewDevice))

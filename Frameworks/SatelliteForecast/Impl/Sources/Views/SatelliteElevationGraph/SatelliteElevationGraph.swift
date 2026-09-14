@@ -6,7 +6,6 @@
 //
 
 import BTree
-@preconcurrency import CombineRex
 import SwiftUI
 @preconcurrency import SatelliteKit
 import SatelliteForecast
@@ -27,6 +26,7 @@ public struct SatelliteElevationGraphConfigs: Equatable, Sendable {
 public struct SatelliteElevationGraphContext {
     public let satelliteInfo: SatelliteInfo
     public let selectedPassIndex: Int
+    public let selectedPass: Pass?
     public let julianDateRange: ClosedRange<Double>
     public let observer: LatLonAlt
     public let configs: SatelliteElevationGraphConfigs
@@ -46,8 +46,10 @@ public struct SatelliteElevationGraphContext {
         julianDateRange: ClosedRange<Double>,
         observer: LatLonAlt,
         configs: SatelliteElevationGraphConfigs,
-        julianDateProvider: @escaping () -> Double
+        julianDateProvider: @escaping () -> Double,
+        selectedPass: Pass? = nil
     ) {
+        self.selectedPass = selectedPass
         self.satelliteInfo = satelliteInfo
         self.selectedPassIndex = selectedPassIndex
         self.julianDateRange = julianDateRange
@@ -74,7 +76,7 @@ public struct SatelliteElevationGraphState: Equatable {
 }
 
 public struct SatelliteElevationGraph: View {
-    @ObservedObject var viewModel: ObservableViewModel<SatelliteElevationGraphAction, SatelliteElevationGraphState>
+    @State var viewModel: ElevationGraphModel
     let context: SatelliteElevationGraphContext
 
     @State private var graphingRegionSize: CGSize = .zero
@@ -87,7 +89,7 @@ public struct SatelliteElevationGraph: View {
     }
 
     public init(
-        viewModel: ObservableViewModel<SatelliteElevationGraphAction, SatelliteElevationGraphState>,
+        viewModel: ElevationGraphModel,
         context: SatelliteElevationGraphContext
     ) {
         self.viewModel = viewModel
@@ -131,7 +133,10 @@ public struct SatelliteElevationGraph: View {
     }
 
     private var selectedSatellitePass: Pass? {
-        return viewModel.state.elementsPropagatorResources.satelliteTrails[context.noradIndex]?.passSnapshots?[context.selectedPassIndex].pass
+        if let pass = context.selectedPass { return pass }
+        guard let passes = viewModel.state.elementsPropagatorResources.satelliteTrails[context.noradIndex]?.passSnapshots,
+              passes.indices.contains(context.selectedPassIndex) else { return nil }
+        return passes[context.selectedPassIndex].pass
     }
 
     private var highlightedDateRange: ClosedRange<Double>? {
@@ -281,7 +286,7 @@ public struct SatelliteElevationGraph: View {
 
                 let traitCollection = UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
 
-                viewModel.dispatch(
+                viewModel.send(
                     .requestRasterizeElevationGraph(
                         size: size,
                         noradIndex: context.satelliteInfo.noradIndex,
@@ -297,7 +302,7 @@ public struct SatelliteElevationGraph: View {
 
                 let traitCollection = UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
 
-                viewModel.dispatch(
+                viewModel.send(
                     .requestRasterizeElevationGraph(
                         size: graphingRegionSize,
                         noradIndex: context.satelliteInfo.noradIndex,
@@ -442,7 +447,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
         )
         
         SatelliteElevationGraph(
-            viewModel: .mock(state: viewModel),
+            viewModel: .init(state: viewModel),
             context: context
         )
         .environment(\.julianDateRangeKey, julianDateRange)
@@ -481,7 +486,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
             )
         )
 
-        SatelliteElevationGraph(viewModel: .mock(state: viewModel2), context: context2)
+        SatelliteElevationGraph(viewModel: .init(state: viewModel2), context: context2)
             .environment(\.julianDateRangeKey, julianDateRange)
             .previewLayout(.fixed(width: 720, height: 240))
             .previewDisplayName("DFH-1")
@@ -518,7 +523,7 @@ struct SatelliteElevationGraph_Previews: PreviewProvider {
             )
         )
 
-        SatelliteElevationGraph(viewModel: .mock(state: viewModel3), context: context3)
+        SatelliteElevationGraph(viewModel: .init(state: viewModel3), context: context3)
             .environment(\.julianDateRangeKey, julianDateRange)
             .previewLayout(.fixed(width: 720, height: 240))
             .previewDisplayName("Molniya 2-9")

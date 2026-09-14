@@ -1,3 +1,4 @@
+import Combine
 //
 //  RealtimeSkyView.swift
 //  RealtimeSkyView
@@ -6,12 +7,9 @@
 //
 
 import BTree
-@preconcurrency import CombineRex
-@preconcurrency import CombineRextensions
 import SatelliteForecast
 @preconcurrency import SatelliteKit
 import StarryNight
-import SwiftRex
 import SwiftUI
 import CoreMotion
 
@@ -62,19 +60,19 @@ public struct RealtimeSkyViewContext {
 public protocol RealtimeSkyView: View {}
 
 public struct RealtimeSkyViewImpl: RealtimeSkyView {
-    @ObservedObject var viewModel: ObservableViewModel<RealtimeSkyViewAction, RealtimeSkyViewState>
+    @State var viewModel: RealtimeSkyModel
     let context: RealtimeSkyViewContext
-    let backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext<EmptyView, EmptyView>, BackgroundSkyView<EmptyView, EmptyView>>
+    let backgroundSkyViewFactory: ViewFactory<BackgroundSkyViewContext<EmptyView, EmptyView>, BackgroundSkyView<EmptyView, EmptyView>>
 
     public init(
-        viewModel: ObservableViewModel<RealtimeSkyViewAction, RealtimeSkyViewState>,
+        viewModel: RealtimeSkyModel,
         context: RealtimeSkyViewContext,
-        backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext<EmptyView, EmptyView>, BackgroundSkyView<EmptyView, EmptyView>>
+        backgroundSkyViewFactory: ViewFactory<BackgroundSkyViewContext<EmptyView, EmptyView>, BackgroundSkyView<EmptyView, EmptyView>>
     ) {
         self.viewModel = viewModel
         self.context = context
         _julianDate = State(initialValue: context.julianDateProvider() + viewModel.state.julianDateOffset)
-        self.backgroundSkyViewProducer = backgroundSkyViewProducer
+        self.backgroundSkyViewFactory = backgroundSkyViewFactory
     }
 
     @State var refreshTimer = Timer.publish(
@@ -234,7 +232,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
     }
 
     @ViewBuilder private func backgroundSkyView(observer: LatLonAlt) -> some View {
-        backgroundSkyViewProducer.view(
+        backgroundSkyViewFactory.view(
             BackgroundSkyViewContext(
                 observer: observer,
                 basicChartConfigs: context.basicChartConfigs,
@@ -270,7 +268,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
                 return
             }
 
-            viewModel.dispatch(
+            viewModel.send(
                 .propagateCurrentEphemerides(
                     satellites,
                     observer: observer,
@@ -304,7 +302,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
                 Button(
                     "Retry",
                     action: {
-                        viewModel.dispatch(
+                        viewModel.send(
                             .loadElements
                         )
                     }
@@ -358,10 +356,10 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
             .navigationBarTitleDisplayMode(.inline)
         }
         .onAppear {
-            viewModel.dispatch(.setRealtimeSkyViewActive(true))
+            if !SnapshotEnvironment.isEnabled { viewModel.send(.setRealtimeSkyViewActive(true)) }
         }
         .onDisappear {
-            viewModel.dispatch(.setRealtimeSkyViewActive(false))
+            viewModel.send(.setRealtimeSkyViewActive(false))
         }
     }
 }
@@ -411,7 +409,7 @@ extension RealtimeSkyViewImpl {
 struct RealtimeSkyView_Previews: PreviewProvider {
     static var previews: some View {
         RealtimeSkyViewImpl(
-            viewModel: .mock(
+            viewModel: .init(
                 state: .init()
             ),
             context: RealtimeSkyViewContext(
@@ -421,9 +419,9 @@ struct RealtimeSkyView_Previews: PreviewProvider {
                 starManager: StarManagerMock(),
                 julianDateProvider: { Date().julianDate }
             ),
-            backgroundSkyViewProducer: .pure(
+            backgroundSkyViewFactory: .pure(
                 BackgroundSkyView(
-                    viewModel: .mock(
+                    viewModel: .init(
                         state: BackgroundSkyViewState(),
                     ),
                     context: BackgroundSkyViewContext(

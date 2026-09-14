@@ -47,15 +47,6 @@
       }
     },
     {
-      "identity": "combinerextensions",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/SwiftRex/CombineRextensions",
-      "state": {
-        "branch": "master",
-        "revision": "0517b8d371c7496af056951ae519ac75f08ae4a3"
-      }
-    },
-    {
       "identity": "firebase-ios-sdk",
       "kind": "remoteSourceControl",
       "location": "https://github.com/firebase/firebase-ios-sdk.git",
@@ -224,15 +215,6 @@
       "state": {
         "revision": "b626d3002773b1a1304166643e7f118f724b2132",
         "version": "1.0.4"
-      }
-    },
-    {
-      "identity": "swiftrex",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/SwiftRex/SwiftRex.git",
-      "state": {
-        "revision": "b5b5409c221c5b69bd6b074e84988f90b098e347",
-        "version": "0.8.12"
       }
     },
     {

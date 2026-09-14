@@ -1,3 +1,4 @@
+import Combine
 //
 //  SkyChart.swift
 //  SatelliteForecastImpl
@@ -5,14 +6,11 @@
 //  Created by Ben Lu on 5/30/21.
 //
 
-@preconcurrency import CombineRex
-@preconcurrency import CombineRextensions
 import SwiftUI
 import SwiftUIVisualEffects
 @preconcurrency import SatelliteKit
 import SatelliteForecast
 import StarryNight
-@preconcurrency import CombineRextensions
 import BTree
 import CoreMotion
 
@@ -39,9 +37,9 @@ public struct SkyChartViewState: Equatable {
 }
 
 public struct SkyChart<ConstellationLabel: View, BackgroundAnnotationView: View>: View {
-    @ObservedObject var viewModel: ObservableViewModel<SkyChartAction, SkyChartViewState>
+    @State var viewModel: SkyChartModel
     let context: SkyChartContext<ConstellationLabel, BackgroundAnnotationView>
-    let backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext<ConstellationLabel, BackgroundAnnotationView>, BackgroundSkyView<ConstellationLabel, BackgroundAnnotationView>>
+    let backgroundSkyViewFactory: ViewFactory<BackgroundSkyViewContext<ConstellationLabel, BackgroundAnnotationView>, BackgroundSkyView<ConstellationLabel, BackgroundAnnotationView>>
 
     @State private var contentSize: CGSize = .zero
 
@@ -64,13 +62,13 @@ public struct SkyChart<ConstellationLabel: View, BackgroundAnnotationView: View>
         backgroundSkyJulianDateKey = context.passSnapshots.pass.rise.julianDate.roundJulianDate(.toMins(1))
     }
     public init(
-        viewModel: ObservableViewModel<SkyChartAction, SkyChartViewState>,
+        viewModel: SkyChartModel,
         context: SkyChartContext<ConstellationLabel, BackgroundAnnotationView>,
-        backgroundSkyViewProducer: ViewProducer<BackgroundSkyViewContext<ConstellationLabel, BackgroundAnnotationView>, BackgroundSkyView<ConstellationLabel, BackgroundAnnotationView>>
+        backgroundSkyViewFactory: ViewFactory<BackgroundSkyViewContext<ConstellationLabel, BackgroundAnnotationView>, BackgroundSkyView<ConstellationLabel, BackgroundAnnotationView>>
     ) {
         self.viewModel = viewModel
         self.context = context
-        self.backgroundSkyViewProducer = backgroundSkyViewProducer
+        self.backgroundSkyViewFactory = backgroundSkyViewFactory
     }
 
     @ViewBuilder private var passInfoLabels: some View {
@@ -171,7 +169,7 @@ public struct SkyChart<ConstellationLabel: View, BackgroundAnnotationView: View>
             .modifier(SizeModifier())
             .onChange(of: colorScheme) { _, _ in
                 guard contentSize.width > 0, contentSize.height > 0 else { return }
-                viewModel.dispatch(.requestRasterizedSatellitePath(
+                viewModel.send(.requestRasterizedSatellitePath(
                     size: contentSize, quality: context.quality, passSnapshots: context.passSnapshots,
                     traitCollection: UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))))
             }
@@ -183,7 +181,7 @@ public struct SkyChart<ConstellationLabel: View, BackgroundAnnotationView: View>
 
                 self.contentSize = contentSize
 
-                viewModel.dispatch(
+                viewModel.send(
                     .requestRasterizedSatellitePath(
                         size: contentSize,
                         quality: context.quality,
@@ -202,7 +200,7 @@ public struct SkyChart<ConstellationLabel: View, BackgroundAnnotationView: View>
     }
 
     public var body: some View {
-        backgroundSkyViewProducer.view(
+        backgroundSkyViewFactory.view(
             BackgroundSkyViewContext(
                 observer: context.observer,
                 basicChartConfigs: context.configs.basicChartConfigs,
@@ -400,7 +398,7 @@ struct SkyChart_Previews: PreviewProvider {
             let traitCollection = UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
             let referenceDate = passSnapshots.pass.culmination.julianDate.advanced(by: 20 * TimeConstants.sec2day)
             SkyChart<EmptyView, EmptyView>(
-                viewModel: .mock(
+                viewModel: .init(
                     state: SkyChartViewState(
                         resources: SkyChartResources(
                             rasterizedSatellitePaths: [
@@ -434,9 +432,9 @@ struct SkyChart_Previews: PreviewProvider {
                     starManager: StarManagerMock(),
                     julianDateProvider: { referenceDate }
                 ),
-                backgroundSkyViewProducer: .pure(
+                backgroundSkyViewFactory: .pure(
                     BackgroundSkyView(
-                        viewModel: .mock(
+                        viewModel: .init(
                             state: BackgroundSkyViewState()
                         ),
                         context: BackgroundSkyViewContext(
@@ -460,7 +458,7 @@ struct SkyChart_Previews: PreviewProvider {
         let (elements2, passSnapshots2) = tianHePass
 
         SkyChart<EmptyView, EmptyView>(
-            viewModel: .mock(
+            viewModel: .init(
                 state: SkyChartViewState(
                     resources: SkyChartResources(
                         rasterizedSatellitePaths: [
@@ -486,9 +484,9 @@ struct SkyChart_Previews: PreviewProvider {
                 starManager: StarManagerMock(),
                 julianDateProvider: { passSnapshots2.pass.rise.julianDate }
             ),
-            backgroundSkyViewProducer: .pure(
+            backgroundSkyViewFactory: .pure(
                 BackgroundSkyView(
-                    viewModel: .mock(
+                    viewModel: .init(
                         state: BackgroundSkyViewState()
                     ),
                     context: BackgroundSkyViewContext(
@@ -508,7 +506,7 @@ struct SkyChart_Previews: PreviewProvider {
         .environment(\.backgroundSkyJulianDateKey, passSnapshots2.pass.rise.julianDate.roundJulianDate(.toMins(1)))
 
         SkyChart<EmptyView, EmptyView>(
-            viewModel: .mock(state: .init()),
+            viewModel: .init(state: .init()),
             context: SkyChartContext(
                 satelliteInfo: try! SatelliteInfo(elements: elements2),
                 observer: LatLonAlt(-27.1570, -109.4274, 0),
@@ -518,9 +516,9 @@ struct SkyChart_Previews: PreviewProvider {
                 starManager: StarManagerMock(),
                 julianDateProvider: { passSnapshots2.pass.rise.julianDate }
             ),
-            backgroundSkyViewProducer: .pure(
+            backgroundSkyViewFactory: .pure(
                 BackgroundSkyView(
-                    viewModel: .mock(
+                    viewModel: .init(
                         state: BackgroundSkyViewState()
                     ),
                     context: BackgroundSkyViewContext(

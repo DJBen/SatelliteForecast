@@ -2,7 +2,7 @@
 
 The target architecture uses SwiftUI views, feature-owned Observation models, plain Swift domain logic, and explicitly injected services. No replacement architecture framework is being introduced.
 
-## First migration slice: Settings and the root view
+## Historical first migration slice: Settings and the root view
 
 - `AppSettings` is a main-actor Observation model owned by the loaded application view. Settings, root tab visibility, and the night overlay read the same instance. The two options remain session-scoped, preserving existing behavior.
 - `SettingsOverviewViewImpl` owns its navigation path with SwiftUI State. It receives settings and ordinary closures that construct its child views. Its action enum, projected view state, reducer, and reducer wiring are removed.
@@ -11,13 +11,19 @@ The target architecture uses SwiftUI views, feature-owned Observation models, pl
 - Settings composition still constructs legacy location and alarm destinations. Those dependencies are confined to the wiring target; their services and view implementations have not yet migrated.
 - Location selection changes domain state; the presented location view dismisses itself through SwiftUI. The reducer no longer pops a global Settings path, including when an action arrives with no location screen presented.
 
-## Next slices
+## Completion status (2026-09-14)
 
-1. **Completed:** move location and alarm screen state behind native interfaces, preserving shared location and notification behavior. Location search uses cancellation-aware async work with overlapping-request tests. Shared location and notification services still use the legacy store until their consumers migrate.
-2. **Overview completed:** Forecast now owns its loading and countdown state. Continue with detailed pass screens, which still use legacy prediction state and navigation.
-3. Move Sky calculations and bounded render caches into services with explicit execution and isolation boundaries. Profile CPU work, main-thread responsiveness, and memory.
-4. Migrate remaining navigation, onboarding, application lifecycle, debug, and notification coordination. Delete each obsolete action/reducer/adapter as its consumers move.
-5. Remove the global store and the SwiftRex/CombineRex/CombineRextensions package products only after their final consumers are gone. Enable complete concurrency checking and Swift 6 language mode incrementally per target.
+SwiftRex, CombineRex, CombineRextensions, the global `Store`/`AppState`/`AppAction`, reducers, middleware, projections, and the wiring package have been removed. No substitute Redux framework or generic event-dispatch runtime was added. The earlier sections below record the migration history rather than remaining dependencies.
+
+- `AppSession` composes services and coordinates application lifecycle. Its observable navigation, location, notification, settings, and debug objects have explicit responsibilities; it does not contain a global screen state tree.
+- Each remaining screen uses a concrete main-actor Observation model. Presentation belongs to SwiftUI bindings and dismiss actions. Small feature command enums describe local interactions; they are not broadcast to other screens.
+- `OrbitalService` serializes cache access, parsing, and CPU predictions off the main actor. Downloads are validated before atomic replacement, valid stale files survive network failures, and cancellation is cooperative. Detailed screens load independently. Predictions are owned by the requesting feature and superseded work cannot publish late results.
+- `ChartRenderer` isolates Core Graphics work. Chart models keep only the current rendered image, replacing earlier results instead of accumulating a global cache for every visited pass. The elevation chart receives the selected pass directly and calculates only the coarse snapshots it needs.
+- Sky Now retains adaptive satellite refresh intervals, cancels when inactive, and invalidates results on observer or time discontinuities.
+- `LocationService` owns Core Location and cancels superseded geocoding. `NotificationService` owns authorization, attachment generation, scheduling, cancellation, reconciliation, and persistence. App delegate callbacks buffer launch/deep-link events until composition is ready.
+- `ScreenFactory` and `ViewFactory` are typed view-building closures only, with no subscriptions, state routing, reducers, or middleware.
+
+The existing Swift language compatibility settings remain; this completes the architecture dependency removal, not a separate all-target Swift 6 language-mode migration.
 
 ## Working conventions
 
@@ -69,4 +75,21 @@ Twelve new tests cover overlapping location requests, independent satellite fail
 - Simulator verification: loaded ISS and Tiangong forecasts at San Francisco; changed simulated location to New York and verified different pass elevations/countdowns; opened the ISS pass list, then an individual pass with its chart and star map, and navigated back. A transient SQLite “vnode unlinked while in use” error after the test run cleared on a full app restart; the successful captures below were taken afterward.
 - Captures: [San Francisco overview](SimulatorChecks/forecast-san-francisco.jpg), [New York overview](SimulatorChecks/forecast-new-york.jpg), [ISS pass list](SimulatorChecks/forecast-details.jpg), [individual pass](SimulatorChecks/forecast-pass.jpg).
 
-Detailed pass/Sky screens, shared services and lifecycle coordination, and removal of the global store and SwiftRex dependencies remain subsequent migration work.
+This was the remaining work at the end of the third slice; it is now completed as described above.
+
+## Final migration verification
+
+Behavior tests now exercise the native services and feature models directly. Screenshot fixtures no longer construct a Redux store or invoke middleware. Their ephemeris browser uses an isolated empty directory matching the original fixture, so simulator downloads and relative timestamps cannot alter the captured screen. Baselines and comparison thresholds are unchanged.
+
+Additional tests cover independent pass-screen presentation, superseded observer results, prediction failure/retry, cache preservation, deep-link routing and startup buffering, bounded chart-image retention, cancellable satellite search, the Sky Now LEO filter, and clearing propagation progress after an observer changes.
+
+Final verification on iPhone 17 Pro / iOS 26.5:
+
+- `python3 scripts/test-screens.py --behavior-only` builds successfully and passes all 38 behavior/integration tests.
+- The full screenshot run passes 36 of 40 comparisons. The four remaining differences are the live MapKit globes in Pass Forecast and Mission Control, in light/dark mode, as documented above. The screenshot test method therefore still fails; no baselines or thresholds were changed.
+- Simulator checks: native ISS pass list and chart, satellite-category loading and ISS search, Sky Now loading/propagation with the LEO filter, alarm scheduling and sheet dismissal, alarm persistence after a full app relaunch, and deletion back to an empty alarm list. No test alarm remains scheduled.
+- Source, project, and package-lock searches find no SwiftRex, CombineRex, CombineRextensions, or legacy store/middleware protocol references. The Xcode project passes `plutil -lint`, and `git diff --check` is clean.
+
+Simulator captures: [pass list](SimulatorChecks/native-pass-list.jpg), [chart](SimulatorChecks/native-pass-chart.jpg), [scheduled alarm](SimulatorChecks/native-alarm-scheduled.jpg), [restored alarm](SimulatorChecks/native-alarm-restored.jpg), [deleted alarm](SimulatorChecks/native-alarm-deleted.jpg), [satellite search](SimulatorChecks/native-satellite-search.jpg), and [Sky Now](SimulatorChecks/native-sky-now.jpg).
+
+The simulator exposed failing TLS connections on the old `celestrak.com` category URLs. They now use the documented `celestrak.org` GP endpoint with an explicit TLE format ([CelesTrak documentation](https://celestrak.org/NORAD/documentation/gp-data-formats.php)). This retains the existing data format; adopting OMM for catalog identifiers beyond the TLE limit is a separate data-format migration.

@@ -19,23 +19,23 @@ public protocol SettingsOverviewView: View {}
 public struct SettingsOverviewViewImpl: SettingsOverviewView {
     @Bindable private var settings: AppSettings
     @State private var navigationPath = NavigationPath()
-    let observerCellViewProducer: () -> ObserverCell
-    let locationSettingsViewProducer: () -> LocationSettingsView
-    let alarmSettingsCellProducer: () -> AlarmSettingsCell
-    let alarmSettingsViewProducer: () -> AlarmSettingsView
+    let observerCellViewFactory: () -> ObserverCell
+    let locationSettingsViewFactory: () -> LocationSettingsView
+    let alarmSettingsCellFactory: () -> AlarmSettingsCell
+    let alarmSettingsViewFactory: () -> AlarmSettingsView
 
     public init(
         settings: AppSettings,
-        observerCellViewProducer: @escaping () -> ObserverCell,
-        locationSettingsViewProducer: @escaping () -> LocationSettingsView,
-        alarmSettingsCellProducer: @escaping () -> AlarmSettingsCell,
-        alarmSettingsViewProducer: @escaping () -> AlarmSettingsView
+        observerCellViewFactory: @escaping () -> ObserverCell,
+        locationSettingsViewFactory: @escaping () -> LocationSettingsView,
+        alarmSettingsCellFactory: @escaping () -> AlarmSettingsCell,
+        alarmSettingsViewFactory: @escaping () -> AlarmSettingsView
     ) {
         self.settings = settings
-        self.observerCellViewProducer = observerCellViewProducer
-        self.locationSettingsViewProducer = locationSettingsViewProducer
-        self.alarmSettingsCellProducer = alarmSettingsCellProducer
-        self.alarmSettingsViewProducer = alarmSettingsViewProducer
+        self.observerCellViewFactory = observerCellViewFactory
+        self.locationSettingsViewFactory = locationSettingsViewFactory
+        self.alarmSettingsCellFactory = alarmSettingsCellFactory
+        self.alarmSettingsViewFactory = alarmSettingsViewFactory
     }
 
     let items: [SettingsOverviewItem] = [
@@ -47,9 +47,9 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
     @ViewBuilder private func destination(for item: SettingsOverviewItem) -> some View {
         switch item {
         case .observer:
-            locationSettingsViewProducer()
+            locationSettingsViewFactory()
         case .alarms:
-            alarmSettingsViewProducer()
+            alarmSettingsViewFactory()
         case .ephemeridesManager:
             EphemeridesManagementView()
         }
@@ -222,7 +222,7 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                         case .observer:
                             Section {
                                 NavigationLink(value: SettingsOverviewObserverNavigation()) {
-                                    observerCellViewProducer()
+                                    observerCellViewFactory()
                                 }
                             } header: {
                                 sectionHeader(for: item)
@@ -230,7 +230,7 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                         case .alarms:
                             Section {
                                 NavigationLink(value: SettingsOverviewAlarmNavigation()) {
-                                    alarmSettingsCellProducer()
+                                    alarmSettingsCellFactory()
                                 }
                             } header: {
                                 sectionHeader(for: item)
@@ -256,12 +256,12 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                 .padding()
                 .navigationDestination(for: SettingsOverviewObserverNavigation.self) { _ in
                     LazyView {
-                        locationSettingsViewProducer()
+                        locationSettingsViewFactory()
                     }
                 }
                 .navigationDestination(for: SettingsOverviewAlarmNavigation.self) { _ in
                     LazyView {
-                        alarmSettingsViewProducer()
+                        alarmSettingsViewFactory()
                     }
                 }
                 .navigationDestination(for: EphemeridesManagerNavigation.self) { _ in
@@ -283,10 +283,10 @@ struct SettingsOverviewView_Previews: PreviewProvider {
     static var previews: some View {
         SettingsOverviewViewImpl(
             settings: AppSettings(),
-            observerCellViewProducer: { fatalError("Preview destination") },
-            locationSettingsViewProducer: { fatalError("Preview destination") },
-            alarmSettingsCellProducer: { fatalError("Preview destination") },
-            alarmSettingsViewProducer: { fatalError("Preview destination") }
+            observerCellViewFactory: { fatalError("Preview destination") },
+            locationSettingsViewFactory: { fatalError("Preview destination") },
+            alarmSettingsCellFactory: { fatalError("Preview destination") },
+            alarmSettingsViewFactory: { fatalError("Preview destination") }
         )
     }
 }

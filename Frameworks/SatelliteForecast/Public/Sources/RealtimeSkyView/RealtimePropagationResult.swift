@@ -8,7 +8,7 @@
 import Foundation
 @preconcurrency import SatelliteKit
 
-public struct RealtimePropagationResult {
+public struct RealtimePropagationResult: Sendable {
     public let noradIndex: UInt
     public let snapshot: SatelliteSnapshot
     public let satelliteInfo: SatelliteInfo

@@ -5,12 +5,10 @@
 //  Created by Ben Lu on 3/3/22.
 //
 
-@preconcurrency import CombineRex
 import SatelliteForecast
 @preconcurrency import SatelliteKit
 import SolarSystem
 import StarryNight
-import SwiftRex
 import SwiftUI
 
 public struct BackgroundSkyViewState {
@@ -56,7 +54,7 @@ public struct BackgroundSkyViewContext<ConstellationLabel: View, AnnotationView:
 
 /// A view that renders a alt-alz projection of background sky.
 public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>: View {
-    @ObservedObject var viewModel: ObservableViewModel<BackgroundSkyViewAction, BackgroundSkyViewState>
+    @State var viewModel: BackgroundSkyModel
     let context: BackgroundSkyViewContext<ConstellationLabel, AnnotationView>
 
     @State private var contentSize: CGSize = .zero
@@ -66,7 +64,7 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
     @Environment(\.colorScheme) var colorScheme
 
     public init(
-        viewModel: ObservableViewModel<BackgroundSkyViewAction, BackgroundSkyViewState>,
+        viewModel: BackgroundSkyModel,
         context: BackgroundSkyViewContext<ConstellationLabel, AnnotationView>
     ) {
         self.viewModel = viewModel
@@ -156,7 +154,7 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
 
                 self.contentSize = contentSize
 
-                viewModel.dispatch(
+                viewModel.send(
                     .requestRasterizedBackgroundSky(
                         size: contentSize,
                         quality: context.quality,
@@ -282,7 +280,7 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
         }
         .onChange(of: colorScheme) { _, _ in
             guard let julianDate = backgroundSkyJulianDate, contentSize.width > 0, contentSize.height > 0 else { return }
-            viewModel.dispatch(.requestRasterizedBackgroundSky(
+            viewModel.send(.requestRasterizedBackgroundSky(
                 size: contentSize, quality: context.quality, julianDate: julianDate,
                 key: BackgroundSkyKey(observer: context.observer, configs: context.configs, isDark: colorScheme == .dark),
                 traitCollection: UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))))
@@ -296,7 +294,7 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
                 return
             }
 
-            viewModel.dispatch(
+            viewModel.send(
                 .requestRasterizedBackgroundSky(
                     size: contentSize,
                     quality: context.quality,
@@ -318,7 +316,7 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
 struct BackgroundSkyView_Previews: PreviewProvider {
     static var previews: some View {
         BackgroundSkyView(
-            viewModel: .mock(
+            viewModel: .init(
                 state: .init()
             ),
             context: BackgroundSkyViewContext(

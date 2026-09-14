@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-@preconcurrency import CombineRex
 import SatelliteForecast
 @preconcurrency import SatelliteKit
 
@@ -46,14 +45,16 @@ public struct PassAlarmSettingsModalViewContext {
 
 /// A modal view for alarm settings of an individual pass
 public struct PassAlarmSettingsModalView: View {
-    @ObservedObject var viewModel: ObservableViewModel<PassAlarmSettingsModalViewAction, PassAlarmSettingsModalViewState>
+    @Environment(\.dismiss) private var dismiss
+    @State var viewModel: PassAlarmModel
+    private func send(_ action: PassAlarmSettingsModalViewAction) { viewModel.send(action); dismiss() }
     let context: PassAlarmSettingsModalViewContext
 
     @State var selectedTiming: PassNotification.Timing = .rise
     @State var offsetDuration: TimeInterval = 0
 
     public init(
-        viewModel: ObservableViewModel<PassAlarmSettingsModalViewAction, PassAlarmSettingsModalViewState>,
+        viewModel: PassAlarmModel,
         context: PassAlarmSettingsModalViewContext
     ) {
         self.viewModel = viewModel
@@ -157,7 +158,7 @@ public struct PassAlarmSettingsModalView: View {
         NavigationStack {
             VStack(alignment: .center) {
                 VStack(spacing: 0) {
-                    ForEach(enumerated: sortedTimings, id: \.self) { index, timing in
+                    ForEach(Array(sortedTimings.enumerated()), id: \.element) { index, timing in
                         timingCell(
                             timing,
                             isFirst: index == 0,
@@ -217,7 +218,7 @@ public struct PassAlarmSettingsModalView: View {
 
                 if isNotificationScheduled {
                     Button(role: .destructive) {
-                        viewModel.dispatch(
+                        send(
                             .unscheduleAlarm(
                                 context.passSnapshots.pass
                             )
@@ -243,7 +244,7 @@ public struct PassAlarmSettingsModalView: View {
                             timing: selectedTiming,
                             timeOffset: -offsetDuration
                         )
-                        viewModel.dispatch(
+                        send(
                             .scheduleAlarm(
                                 passNotification,
                                 passSnapshots: context.passSnapshots
@@ -271,7 +272,7 @@ public struct PassAlarmSettingsModalView: View {
                         NavigationBar.dismiss,
                         role: .cancel
                     ) {
-                        viewModel.dispatch(.dismissModal)
+                        send(.dismissModal)
                     }
                 }
             }
@@ -422,7 +423,7 @@ struct PassAlarmSettingsModalView_Previews: PreviewProvider {
         )
 
         PassAlarmSettingsModalView(
-            viewModel: .mock(
+            viewModel: .init(
                 state: PassAlarmSettingsModalViewState()
             ),
             context: PassAlarmSettingsModalViewContext(

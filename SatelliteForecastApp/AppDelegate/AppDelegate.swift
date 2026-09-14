@@ -9,7 +9,6 @@ import Foundation
 import os
 import UIKit
 import UserNotifications
-@preconcurrency import CombineRex
 import SwiftUI
 @preconcurrency import SatelliteKit
 import SatelliteForecast
@@ -20,23 +19,15 @@ import AppDelegateImpl
 fileprivate let logger = Logger(subsystem: "io.djben.appDelegate", category: "class")
 
 public class AppDelegate: NSObject, UIApplicationDelegate, AppDelegateActionDispatcher {
-    // Catalog loading is asynchronous. Preserve launch/token events until the store
-    // is ready instead of dropping events received during the loading screen.
-    public var dispatch: ((Store.ActionType) -> Void)? {
-        didSet {
-            guard let dispatch else { return }
-            let actions = pendingActions
-            pendingActions.removeAll()
-            actions.forEach(dispatch)
-        }
+    public var onLifecycle: ((AppDelegateAction) -> Void)? {
+        didSet { if let onLifecycle { let events = pendingLifecycle; pendingLifecycle = []; events.forEach(onLifecycle) } }
     }
-    private var pendingActions: [Store.ActionType] = []
+    public var onDeepLink: ((SatelliteCategory, UInt, LatLonAlt) -> Void)? {
+        didSet { if let onDeepLink { let links = pendingLinks; pendingLinks = []; links.forEach { onDeepLink($0.0, $0.1, $0.2) } } }
+    }
+    private var pendingLifecycle: [AppDelegateAction] = []
+    private var pendingLinks: [(SatelliteCategory, UInt, LatLonAlt)] = []
 
-    private func send(_ action: Store.ActionType) {
-        if let dispatch { dispatch(action) }
-        else { pendingActions.append(action) }
-    }
-    
     private lazy var implementation: AppDelegateImpl = {
         return AppDelegateImpl(actionDispatcher: self)
     }()
@@ -68,10 +59,13 @@ public class AppDelegate: NSObject, UIApplicationDelegate, AppDelegateActionDisp
     // MARK: - AppDelegateActionDispatcher
     
     public func dispatch(_ action: AppDelegateAction) {
-        send(.appDelegate(action))
+        if let onLifecycle { onLifecycle(action) } else { pendingLifecycle.append(action) }
     }
     
     public func dispatchNotificationAction(_ action: NotificationAction) {
-        send(.notification(action))
+        if case .deepLink(let category, let id, let observer, _) = action {
+            if let onDeepLink { onDeepLink(category, id, observer) }
+            else { pendingLinks.append((category, id, observer)) }
+        }
     }
 }

@@ -9,7 +9,7 @@ import BTree
 import UIKit
 
 /// Appearance belongs in the key: a dark image must never satisfy a light request.
-public struct SkyPathKey: Hashable {
+public struct SkyPathKey: Hashable, Sendable {
     public let pass: Pass
     public let isDark: Bool
     public init(pass: Pass, isDark: Bool) { self.pass = pass; self.isDark = isDark }

@@ -21,25 +21,6 @@ public struct NextPass: Equatable, Sendable {
     }
 }
 
-public struct SatelliteOverviewViewState: Equatable {
-    public var navigationState: NavigationState
-    public var observer: LatLonAlt?
-    public var julianDateOffset: Double = 0
-    public var authorizationStatus: CLAuthorizationStatus = .notDetermined
-    
-    public init(
-        navigationState: NavigationState = .init(),
-        observer: LatLonAlt? = nil,
-        julianDateOffset: Double = 0,
-        authorizationStatus: CLAuthorizationStatus = .notDetermined
-    ) {
-        self.navigationState = navigationState
-        self.observer = observer
-        self.julianDateOffset = julianDateOffset
-        self.authorizationStatus = authorizationStatus
-    }
-}
-
 public protocol SatelliteOverviewView: View {}
 
 public struct SatelliteOverviewViewContext {
@@ -60,20 +41,20 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
     let input: ForecastInput
     @Binding private var navigationPath: NavigationPath
     let context: SatelliteOverviewViewContext
-    let singleSatelliteWrappingViewProducer: (SingleSatelliteWrappingViewContext) -> SingleSatelliteWrappingView
+    let singleSatelliteWrappingViewFactory: (SingleSatelliteWrappingViewContext) -> SingleSatelliteWrappingView
 
     public init(
         model: ForecastModel,
         input: ForecastInput,
         navigationPath: Binding<NavigationPath>,
         context: SatelliteOverviewViewContext,
-        singleSatelliteWrappingViewProducer: @escaping (SingleSatelliteWrappingViewContext) -> SingleSatelliteWrappingView
+        singleSatelliteWrappingViewFactory: @escaping (SingleSatelliteWrappingViewContext) -> SingleSatelliteWrappingView
     ) {
         self.model = model
         self.input = input
         self._navigationPath = navigationPath
         self.context = context
-        self.singleSatelliteWrappingViewProducer = singleSatelliteWrappingViewProducer
+        self.singleSatelliteWrappingViewFactory = singleSatelliteWrappingViewFactory
     }
 
     public var body: some View {
@@ -122,7 +103,7 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                 .navigationBarHidden(true)
                 .navigationDestination(for: SpecialSatellite.self) { specialSatellite in
                     LazyView {
-                        singleSatelliteWrappingViewProducer(
+                        singleSatelliteWrappingViewFactory(
                             SingleSatelliteWrappingViewContext(
                                 selectedNoradIndex: specialSatellite.rawValue,
                                 julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + input.julianDateOffset),
@@ -178,7 +159,7 @@ struct SatelliteOverviewView_Previews: PreviewProvider {
                     Date().julianDate
                 }
             ),
-            singleSatelliteWrappingViewProducer: { _ in fatalError("Preview destination") }
+            singleSatelliteWrappingViewFactory: { _ in fatalError("Preview destination") }
         )
     }
 }

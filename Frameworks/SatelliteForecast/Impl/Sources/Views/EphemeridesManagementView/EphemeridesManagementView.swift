@@ -9,6 +9,8 @@ import SwiftUI
 import SatelliteForecast
 
 struct EphemeridesManagementView: View {
+    @Environment(\.ephemerisDirectory) private var directory
+
     @State private var resources: [EphemerideResource] = []
 
     init() {}
@@ -54,7 +56,7 @@ struct EphemeridesManagementView: View {
     }
 
     private func fetchEphemerideResources() throws -> [EphemerideResource] {
-        let temporaryDirectory = FileManager.default.temporaryDirectory
+        let temporaryDirectory = directory
         let fileNames = try FileManager.default.contentsOfDirectory(atPath: temporaryDirectory.path()).filter { ($0 as NSString).pathExtension == "txt" }
         let attributes = try fileNames.map { fileName in
             try FileManager.default.attributesOfItem(atPath: (temporaryDirectory.path() as NSString).appendingPathComponent(fileName))
@@ -86,7 +88,7 @@ struct EphemeridesManagementView: View {
                     }
                     .onDelete { indexSet in
                         let resourcesToDelete = Array(indexSet).map { resources[$0] }
-                        let temporaryDirectory = FileManager.default.temporaryDirectory
+                        let temporaryDirectory = directory
 
                         for resource in resourcesToDelete {
                             do {

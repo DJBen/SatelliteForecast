@@ -30,10 +30,10 @@ final class NativeArchitectureTests: XCTestCase {
         let root = RootView(
             selectedTab: .constant(.forecast), settings: settings,
             context: RootViewContext(starManager: AppStarCatalog(), julianDateProvider: { 0 }),
-            realtimeSkyViewProducer: { _ in EmptySky() },
-            satelliteOverviewViewProducer: { _ in EmptyForecast() },
-            satelliteCategoryViewProducer: { _ in EmptySatellites() },
-            settingsOverviewProducer: { EmptySettings() })
+            realtimeSkyViewFactory: { _ in EmptySky() },
+            satelliteOverviewViewFactory: { _ in EmptyForecast() },
+            satelliteCategoryViewFactory: { _ in EmptySatellites() },
+            settingsOverviewFactory: { EmptySettings() })
         let host = UIHostingController(rootView: root)
         let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.first as? UIWindowScene)
         let window = UIWindow(windowScene: scene)
@@ -89,37 +89,39 @@ final class NativeArchitectureTests: XCTestCase {
     }
 
     func testLocationSelectionDoesNotPopUnrelatedNavigation() {
-        var state = AppState()
-        state.navigationState.passPredictionNavigationPath.append("existing forecast")
-        state.navigationState.satelliteCategoryNavigationPath.append("existing category")
+        let navigation = AppNavigation()
+        let location = LocationService(openSettings: {})
+        navigation.forecastPath.append("existing forecast")
+        navigation.satelliteCategoryNavigationPath.append("existing category")
         let completion = MKLocalSearchCompletion()
         let placemark = MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: 37, longitude: -122))
         let selected = LocationResources.Selection.custom(completion, placemark)
         // Previously this action unconditionally removed an entry from Settings' global path,
         // trapping when dispatched without a presented location screen.
-        Store.reducer.reduce(.location(.selectLocation(selected)), &state)
-        guard case .custom = state.locationResources.selection else {
+        location.select(selected)
+        guard case .custom = location.resources.selection else {
             return XCTFail("Expected custom location selection")
         }
-        XCTAssertEqual(state.locationResources.location?.coordinate.latitude, 37)
-        XCTAssertEqual(state.locationResources.location?.coordinate.longitude, -122)
-        XCTAssertEqual(state.navigationState.passPredictionNavigationPath.count, 1)
-        XCTAssertEqual(state.navigationState.satelliteCategoryNavigationPath.count, 1)
+        XCTAssertEqual(location.resources.location?.coordinate.latitude, 37)
+        XCTAssertEqual(location.resources.location?.coordinate.longitude, -122)
+        XCTAssertEqual(navigation.forecastPath.count, 1)
+        XCTAssertEqual(navigation.satelliteCategoryNavigationPath.count, 1)
     }
 
     func testUnavailableCurrentLocationKeepsExistingSelection() {
-        var state = AppState()
+        let navigation = AppNavigation()
+        let location = LocationService(openSettings: {})
         let selected = LocationResources.Selection.custom(
             MKLocalSearchCompletion(),
             MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: 37, longitude: -122)))
-        state.locationResources.selection = selected
-        state.locationResources.currentLocation = nil
-        Store.reducer.reduce(.location(.selectLocation(.currentLocation)), &state)
-        guard case .custom = state.locationResources.selection else {
+        location.resources.selection = selected
+        location.resources.currentLocation = nil
+        location.select(.currentLocation)
+        guard case .custom = location.resources.selection else {
             return XCTFail("Expected custom location selection")
         }
-        XCTAssertEqual(state.locationResources.location?.coordinate.latitude, 37)
-        XCTAssertEqual(state.locationResources.location?.coordinate.longitude, -122)
+        XCTAssertEqual(location.resources.location?.coordinate.latitude, 37)
+        XCTAssertEqual(location.resources.location?.coordinate.longitude, -122)
     }
 }
 

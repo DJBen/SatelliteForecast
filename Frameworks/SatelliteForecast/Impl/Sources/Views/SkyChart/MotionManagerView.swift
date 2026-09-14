@@ -1,3 +1,4 @@
+import Combine
 //
 //  MotionManagerView.swift
 //  SatelliteForecastImpl

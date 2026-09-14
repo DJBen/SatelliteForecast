@@ -8,8 +8,6 @@
 import SwiftUI
 import SatelliteForecast
 @preconcurrency import SatelliteKit
-@preconcurrency import CombineRex
-@preconcurrency import CombineRextensions
 
 struct SatelliteData {
     let satelliteInfo: SatelliteInfo
@@ -19,16 +17,16 @@ struct SatelliteData {
 
 struct AllPassesOnboardingView: View {
     let onComplete: () -> Void
-    let skyChartProducer: ViewProducer<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>
+    let skyChartFactory: ViewFactory<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>
     
     @State private var satelliteData: Loadable<SatelliteData, Error> = .loading
     @State private var handTapOffset: CGPoint = CGPoint(x: 0, y: 0)
 
     init(onComplete: @escaping () -> Void,
-         skyChartProducer: ViewProducer<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>,
+         skyChartFactory: ViewFactory<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>,
          satelliteData: SatelliteData? = nil) {
         self.onComplete = onComplete
-        self.skyChartProducer = skyChartProducer
+        self.skyChartFactory = skyChartFactory
         _satelliteData = State(initialValue: satelliteData.map { .loaded($0) } ?? .loading)
     }
 
@@ -220,7 +218,7 @@ struct AllPassesOnboardingView: View {
                 observer: data.observer,
                 passSnapshots: data.selectedPass,
                 hasScheduledAlert: false,
-                skyChartProducer: skyChartProducer,
+                skyChartFactory: skyChartFactory,
                 julianDateOffset: 0,
                 starManager: StarManagerMock(),
                 julianDateProvider: { startDate.julianDate }

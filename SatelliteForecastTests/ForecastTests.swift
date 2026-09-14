@@ -1,4 +1,6 @@
 import XCTest
+import UIKit
+import BTree
 import SatelliteForecast
 import SatelliteKit
 @testable import SatelliteForecastImpl
@@ -170,6 +172,148 @@ final class ForecastTests: XCTestCase {
         }
         do { _ = try await task.value; XCTFail("Expected cancelled prediction") }
         catch is CancellationError { }
+    }
+
+    func testPassListRejectsSupersededObserver() async throws {
+        let lines = String(decoding: tle, as: UTF8.self).split(separator: "\n").map(String.init)
+        let info = try SatelliteInfo(elements: Elements(lines[0], lines[1], lines[2]))
+        let started = expectation(description: "First prediction started")
+        let finished = expectation(description: "Second prediction finished")
+        var pending: CheckedContinuation<SatelliteTrails, Error>?
+        let newObserver = LatLonAlt(40, -74, 0)
+        let model = PassListModel(load: { request in
+            if request.observer == self.observer {
+                return try await withCheckedThrowingContinuation { pending = $0; started.fulfill() }
+            }
+            finished.fulfill()
+            return SatelliteTrails(observer: request.observer, passSnapshots: [])
+        })
+        func request(_ observer: LatLonAlt) -> CalculatePassesParams {
+            .init(selectedNoradIndex: info.noradIndex, satelliteInfo: info, julianDateRange: date.julianDate...(date.julianDate + 1), observer: observer)
+        }
+        model.send(.calculatePasses(request(observer)))
+        await fulfillment(of: [started], timeout: 1)
+        model.send(.calculatePasses(request(newObserver)))
+        await fulfillment(of: [finished], timeout: 1)
+        pending?.resume(returning: SatelliteTrails(observer: observer, passSnapshots: []))
+        for _ in 0..<20 { await Task.yield() }
+        XCTAssertEqual(model.state.satelliteTrails[info.noradIndex]?.observer, newObserver)
+        XCTAssertNil(model.errorMessage)
+    }
+
+    func testPassListPublishesFailureAndCanRetry() async throws {
+        let lines = String(decoding: tle, as: UTF8.self).split(separator: "\n").map(String.init)
+        let info = try SatelliteInfo(elements: Elements(lines[0], lines[1], lines[2]))
+        let request = CalculatePassesParams(selectedNoradIndex: info.noradIndex, satelliteInfo: info, julianDateRange: date.julianDate...(date.julianDate + 1), observer: observer)
+        var failing = true
+        let model = PassListModel(load: { request in
+            if failing { throw Failure.offline }
+            return SatelliteTrails(observer: request.observer, passSnapshots: [])
+        })
+        model.send(.calculatePasses(request))
+        for _ in 0..<30 { await Task.yield() }
+        XCTAssertNotNil(model.errorMessage)
+        failing = false
+        model.send(.recalculatePasses(request))
+        for _ in 0..<30 { await Task.yield() }
+        XCTAssertNil(model.errorMessage)
+        XCTAssertNotNil(model.state.satelliteTrails[info.noradIndex]?.passSnapshots)
+    }
+
+    func testPassPresentationStateIsLocalToEachScreen() {
+        let first = PassModel(), second = PassModel()
+        first.send(.showAlarmConfiguration(true))
+        first.send(.showDetailPassView(true))
+        XCTAssertTrue(first.state.showAlarmConfigurationModal)
+        XCTAssertTrue(first.state.showsDetailPassView)
+        XCTAssertFalse(second.state.showAlarmConfigurationModal)
+        XCTAssertFalse(second.state.showsDetailPassView)
+    }
+
+    func testOrbitalServiceRejectsInvalidDownloadWithoutReplacingCache() async throws {
+        let folder = try cacheDirectory()
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let file = folder.appendingPathComponent("25544.txt")
+        try tle.write(to: file)
+        let service = OrbitalService(directory: folder, fetch: { _ in Data("bad response".utf8) })
+        let satellites = try await service.satellites(.iss, force: true)
+        XCTAssertEqual(satellites.map(\.noradIndex), [25544])
+        XCTAssertEqual(try Data(contentsOf: file), tle)
+    }
+
+    func testDeepLinkCarriesObserverAndDoesNotOverwriteOtherNavigation() {
+        let session = AppSession(catalog: AppStarCatalog())
+        session.navigation.forecastPath.append("existing forecast")
+        session.open(.brightest100, id: 20580, observer: observer)
+        XCTAssertEqual(session.navigation.tab, .satellites)
+        XCTAssertEqual(session.navigation.deepLink?.noradIndex, 20580)
+        XCTAssertEqual(session.navigation.deepLink?.observer, observer)
+        XCTAssertEqual(session.navigation.forecastPath.count, 1)
+    }
+
+    func testChartModelKeepsOnlyTheCurrentRenderedImage() async throws {
+        let fixture = try Fixture(catalog: AppStarCatalog())
+        let model = SkyChartModel()
+        for snapshots in fixture.passes.prefix(3) {
+            let key = SkyPathKey(pass: snapshots.pass, isDark: true)
+            model.send(.requestRasterizedSatellitePath(size: CGSize(width: 100, height: 100), quality: .preview, passSnapshots: snapshots, traitCollection: UITraitCollection(userInterfaceStyle: .dark)))
+            for _ in 0..<100 {
+                if model.state.resources.previewSatellitePaths[key] != nil { break }
+                try await Task.sleep(for: .milliseconds(10))
+            }
+            XCTAssertEqual(model.state.resources.previewSatellitePaths.count, 1)
+            XCTAssertEqual(model.state.resources.previewSatellitePaths[key]?.size, CGSize(width: 100, height: 100))
+        }
+    }
+
+    func testSkyNowLoadsOnlyLowEarthOrbitCandidates() async throws {
+        let folder = try cacheDirectory()
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let geostationary = String(decoding: tle, as: UTF8.self)
+            .replacingOccurrences(of: "25544", with: "40294")
+            .replacingOccurrences(of: "15.48954251", with: " 1.00270000")
+        let data = Data((String(decoding: tle, as: UTF8.self) + "\n" + geostationary).utf8)
+        let service = OrbitalService(directory: folder, fetch: { _ in data })
+        let model = RealtimeSkyModel(service: service)
+        model.send(.loadElements)
+        for _ in 0..<100 {
+            if model.state.satellites.content != nil { break }
+            try await Task.sleep(for: .milliseconds(10))
+        }
+        XCTAssertEqual(model.state.satellites.content?.map(\.noradIndex), [25544])
+    }
+
+    func testSatelliteSearchDoesNotPublishASupersededQuery() async throws {
+        let lines = String(decoding: tle, as: UTF8.self).split(separator: "\n").map(String.init)
+        let info = try SatelliteInfo(elements: Elements(lines[0], lines[1], lines[2]))
+        let model = SatelliteListModel(state: .init(satelliteInfo: [.iss: .loaded(Map([(info.noradIndex, info)]))]))
+        model.send(.searchSatellites("ISS", category: .iss))
+        model.send(.searchSatellites("not a satellite", category: .iss))
+        for _ in 0..<100 {
+            if model.state.filteredSatellites != nil { break }
+            try await Task.sleep(for: .milliseconds(10))
+        }
+        XCTAssertEqual(model.state.filteredSatellites?.count, 0)
+        model.send(.searchSatellites("", category: .iss))
+        XCTAssertNil(model.state.filteredSatellites)
+    }
+
+    func testSkyLocationChangeDoesNotLeavePredictionPermanentlyBusy() async {
+        let started = expectation(description: "Prediction started")
+        var pending: CheckedContinuation<[RealtimePropagationResult], Error>?
+        let model = RealtimeSkyModel(state: .init(observer: observer), predict: { _, _, _ in
+            try await withCheckedThrowingContinuation { pending = $0; started.fulfill() }
+        })
+        model.send(.propagateCurrentEphemerides([], observer: observer, julianDate: date.julianDate))
+        await fulfillment(of: [started], timeout: 1)
+        model.state.observer = LatLonAlt(40, -74, 0)
+        pending?.resume(returning: [])
+        for _ in 0..<100 {
+            if !model.state.resources.isPropagatingEphemerides { break }
+            await Task.yield()
+        }
+        XCTAssertFalse(model.state.resources.isPropagatingEphemerides)
+        XCTAssertTrue(model.state.resources.displayResults.isEmpty)
     }
 
     private func cacheDirectory() throws -> URL {

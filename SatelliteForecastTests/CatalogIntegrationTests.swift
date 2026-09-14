@@ -77,9 +77,23 @@ final class AppearanceIntegrationTests: XCTestCase {
         let delegate = AppDelegate()
         delegate.dispatch(.didRegisterForRemoteNotificationsWithDeviceToken(Data([1])))
         var count = 0
-        delegate.dispatch = { _ in count += 1 }
+        delegate.onLifecycle = { _ in count += 1 }
         XCTAssertEqual(count, 1)
         delegate.dispatch(.didRegisterForRemoteNotificationsWithDeviceToken(Data([2])))
         XCTAssertEqual(count, 2)
     }
+    func testNotificationDeepLinkIsBufferedUntilTheNativeSessionIsReady() {
+        let delegate = AppDelegate()
+        let observer = LatLonAlt(37, -122, 0)
+        delegate.dispatchNotificationAction(.deepLink(category: .iss, noradIndex: 25544, observer: observer, passIdentifier: "test"))
+        var received: [UInt] = []
+        delegate.onDeepLink = { _, id, location in
+            received.append(id)
+            XCTAssertEqual(location, observer)
+        }
+        XCTAssertEqual(received, [25544])
+        delegate.onDeepLink = { _, id, _ in received.append(id) }
+        XCTAssertEqual(received, [25544], "Buffered links are drained exactly once")
+    }
+
 }

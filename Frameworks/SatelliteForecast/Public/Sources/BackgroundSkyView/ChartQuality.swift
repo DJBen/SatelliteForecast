@@ -8,7 +8,7 @@
 import Foundation
 
 /// The sky chart quality. Use `full` for full screen display and `preview` for displaying in a list.
-public enum ChartQuality {
+public enum ChartQuality: Sendable {
     case detailed
     case full
     case preview

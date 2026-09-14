@@ -7,8 +7,6 @@
 
 import BTree
 import SwiftUI
-@preconcurrency import CombineRex
-@preconcurrency import CombineRextensions
 import SatelliteForecast
 @preconcurrency import SatelliteKit
 import StarryNight
@@ -44,18 +42,18 @@ public struct SingleSatelliteWrappingViewContext {
 }
 
 public struct SingleSatelliteWrappingView: View {
-    @ObservedObject var viewModel: ObservableViewModel<SingleSatelliteWrappingViewAction, SingleSatelliteWrappingViewState>
+    @State var viewModel: SatelliteDetailModel
     let context: SingleSatelliteWrappingViewContext
-    let allPassesViewProducer: ViewProducer<AllPassesViewContext, AllPassesView>
+    let allPassesViewFactory: ViewFactory<AllPassesViewContext, AllPassesView>
 
     public init(
-        viewModel: ObservableViewModel<SingleSatelliteWrappingViewAction, SingleSatelliteWrappingViewState>,
+        viewModel: SatelliteDetailModel,
         context: SingleSatelliteWrappingViewContext,
-        allPassesViewProducer: ViewProducer<AllPassesViewContext, AllPassesView>
+        allPassesViewFactory: ViewFactory<AllPassesViewContext, AllPassesView>
     ) {
         self.viewModel = viewModel
         self.context = context
-        self.allPassesViewProducer = allPassesViewProducer
+        self.allPassesViewFactory = allPassesViewFactory
     }
 
     private var satellite: Loadable<SatelliteInfo, ElementsLoaderError> {
@@ -91,7 +89,7 @@ public struct SingleSatelliteWrappingView: View {
 
     public var body: some View {
         satelliteContent { satelliteInfo in
-            allPassesViewProducer.view(
+            allPassesViewFactory.view(
                 AllPassesViewContext(
                     satelliteInfo: satelliteInfo,
                     julianDateRange: context.julianDateRange,
@@ -109,7 +107,7 @@ public struct SingleSatelliteWrappingView: View {
                     Button(
                         "Retry",
                         action: {
-                            viewModel.dispatch(
+                            viewModel.send(
                                 .loadSingleSatellite(
                                     .init(
                                         selectedNoradIndex: noradIndex,
@@ -127,7 +125,7 @@ public struct SingleSatelliteWrappingView: View {
         }
         .task {
             guard !SnapshotEnvironment.isEnabled else { return }
-            viewModel.dispatch(.loadSingleSatellite(.init(
+            viewModel.send(.loadSingleSatellite(.init(
                 selectedNoradIndex: context.selectedNoradIndex,
                 julianDateRange: context.julianDateRange,
                 observer: context.observer
@@ -141,7 +139,7 @@ public struct SingleSatelliteWrappingView: View {
 struct SingleSatelliteWrappingView_Previews: PreviewProvider {
     static var previews: some View {
         SingleSatelliteWrappingView(
-            viewModel: .mock(state: .init()),
+            viewModel: .init(state: .init()),
             context: SingleSatelliteWrappingViewContext(
                 selectedNoradIndex: 0,
                 julianDateRange: Date(daysSince1950: 1000).julianDate...Date(daysSince1950: 1002).julianDate,
@@ -149,7 +147,7 @@ struct SingleSatelliteWrappingView_Previews: PreviewProvider {
                 starManager: StarManagerMock(),
                 julianDateProvider: { Date(daysSince1950: 1001).julianDate }
             ),
-            allPassesViewProducer: .crash
+            allPassesViewFactory: .crash
         )
     }
 }

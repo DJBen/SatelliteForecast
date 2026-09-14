@@ -7,7 +7,7 @@
 
 @preconcurrency import SatelliteKit
 
-public struct CalculatePassesParams: CustomDebugStringConvertible {
+public struct CalculatePassesParams: CustomDebugStringConvertible, Sendable {
     public let selectedNoradIndex: UInt
     public let satelliteInfo: SatelliteInfo
     public let julianDateRange: ClosedRange<Double>

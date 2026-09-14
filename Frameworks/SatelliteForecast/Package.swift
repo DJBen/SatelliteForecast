@@ -14,17 +14,12 @@ let package = Package(
         .library(
             name: "SatelliteForecastImpl",
             targets: ["SatelliteForecastImpl"]),
-        .library(
-            name: "SatelliteForecastImplWiring",
-            targets: ["SatelliteForecastImplWiring"])
     ],
     dependencies: [
         .package(url: "https://github.com/markiv/SwiftUI-Shimmer.git", from: "1.5.1"),
         .package(url: "https://github.com/attaswift/BTree", from: "4.1.0"),
         .package(url: "https://github.com/pointfreeco/swift-custom-dump.git", from: "1.3.3"),
         .package(url: "https://github.com/DJBen/BTreeCustomDump.git", from: "1.0.0"),
-        .package(url: "https://github.com/SwiftRex/SwiftRex", from: "0.8.12"),
-        .package(url: "https://github.com/SwiftRex/CombineRextensions", branch: "master"),
         .package(
             url: "https://github.com/firebase/firebase-ios-sdk.git",
             .upToNextMajor(from: "12.0.0")
@@ -60,8 +55,6 @@ let package = Package(
             name: "SatelliteForecastImpl",
             dependencies: [
                 "SatelliteForecast",
-                .product(name: "CombineRex", package: "SwiftRex"),
-                "CombineRextensions",
                 "ActivityView",
                 "SwiftUIVisualEffects",
                 "Geohash",
@@ -85,18 +78,6 @@ let package = Package(
                 .swiftLanguageMode(.v5)
             ]
         ),
-        .target(
-            name: "SatelliteForecastImplWiring",
-            dependencies: [
-                "SatelliteForecast",
-                "SatelliteForecastImpl",
-                .product(name: "AppDelegate", package: "AppDelegate"),
-                .product(name: "SatelliteCatalog", package: "SatelliteCatalogPackage"),
-            ],
-            path: "ImplWiring/Sources",
-            swiftSettings: [
-                .swiftLanguageMode(.v5)
-            ]
-        )
+
     ],
 )

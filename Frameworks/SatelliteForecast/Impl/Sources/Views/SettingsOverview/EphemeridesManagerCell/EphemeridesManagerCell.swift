@@ -10,6 +10,8 @@ import SwiftUI
 public struct EphemeridesManagerCell: View {
     @Environment(\.colorScheme) private var colorScheme
 
+    @Environment(\.ephemerisDirectory) private var directory
+
     @State var resources: [EphemerideResource] = []
 
     init() {}
@@ -17,7 +19,7 @@ public struct EphemeridesManagerCell: View {
     private var background: some View { AppTheme.surface }
 
     private func fetchEphemerideResources() throws -> [EphemerideResource] {
-        let temporaryDirectory = FileManager.default.temporaryDirectory
+        let temporaryDirectory = directory
         let fileNames = try FileManager.default.contentsOfDirectory(atPath: temporaryDirectory.path()).filter { ($0 as NSString).pathExtension == "txt" }
         let attributes = try fileNames.map { fileName in
             try FileManager.default.attributesOfItem(atPath: (temporaryDirectory.path() as NSString).appendingPathComponent(fileName))

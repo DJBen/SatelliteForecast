@@ -16,11 +16,11 @@ extension SatelliteCategory {
         case .tianhe:
             return URL(string: "https://celestrak.org/NORAD/elements/gp.php?CATNR=48274&FORMAT=TLE")!
         case .brightest100:
-            return URL(string: "https://celestrak.com/NORAD/elements/gp.php?GROUP=visual&FORMAT=tle")!
+            return URL(string: "https://celestrak.org/NORAD/elements/gp.php?GROUP=visual&FORMAT=TLE")!
         case .last30DayLaunches:
-            return URL(string: "https://celestrak.com/NORAD/elements/gp.php?GROUP=last-30-days&FORMAT=tle")!
+            return URL(string: "https://celestrak.org/NORAD/elements/gp.php?GROUP=last-30-days&FORMAT=TLE")!
         case .active:
-            return URL(string: "https://celestrak.com/NORAD/elements/gp.php?GROUP=active&FORMAT=tle")!
+            return URL(string: "https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=TLE")!
         }
     }
 

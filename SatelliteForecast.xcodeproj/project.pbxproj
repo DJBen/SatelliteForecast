@@ -27,8 +27,8 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
 		ED776DE853A80A3B422B5B8E = { isa = PBXBuildFile; productRef = C1DE39390EC3F79195D32C4F; };
 		02964AA8E30FC09CEB7B2719 = { isa = XCSwiftPackageProductDependency; productName = SatelliteForecastImpl; };
 		E4E909809D4436B5C79D5B33 = { isa = PBXBuildFile; productRef = 02964AA8E30FC09CEB7B2719; };
-		D881348E087B0732CA89AF56 = { isa = XCSwiftPackageProductDependency; productName = SatelliteForecastImplWiring; };
-		F9DD970F02DDF961B3D0E6C3 = { isa = PBXBuildFile; productRef = D881348E087B0732CA89AF56; };
+
+
 		FF14714D42872DC8EF2642BE = { isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (B2F4B5B5F08C675DFC828325,); runOnlyForDeploymentPostprocessing = 0; };
 		C1CACD626BEC0ABD9DEA3A47 = { isa = PBXContainerItemProxy; containerPortal = EF9D82752661BBEF00616C97; proxyType = 1; remoteGlobalIDString = EF9D82802661BBF000616C97; remoteInfo = SatelliteForecastApp; };
 		3420B4DF652ABDF93CCB50CA = { isa = PBXTargetDependency; target = EF9D82802661BBF000616C97; targetProxy = C1CACD626BEC0ABD9DEA3A47; };
@@ -55,9 +55,7 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
 
 /* Begin PBXBuildFile section */
 		EF16811E27D00E28001BA9C3 /* Icons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EF9D827C2661BBF000616C97 /* Icons.xcassets */; };
-		EF81747A292A355700A2F225 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF817479292A355700A2F225 /* Store.swift */; };
 		EF81747F292A360500A2F225 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF81747D292A360500A2F225 /* AppDelegate.swift */; };
-		EF817486292A362B00A2F225 /* LocalElementsLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF817481292A362B00A2F225 /* LocalElementsLoader.swift */; };
 		EF817487292A362B00A2F225 /* tle-new.txt in Resources */ = {isa = PBXBuildFile; fileRef = EF817482292A362B00A2F225 /* tle-new.txt */; };
 		EF817488292A362B00A2F225 /* active.txt in Resources */ = {isa = PBXBuildFile; fileRef = EF817483292A362B00A2F225 /* active.txt */; };
 		EF817489292A362B00A2F225 /* Elements+Preview.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF817484292A362B00A2F225 /* Elements+Preview.swift */; };
@@ -66,33 +64,33 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
 		FC082B5F2E3617BD00DEEBBE /* AppDelegateImpl in Frameworks */ = {isa = PBXBuildFile; productRef = FC082B5E2E3617BD00DEEBBE /* AppDelegateImpl */; };
 		FC2930A52E43E9D900F838D9 /* SatelliteForecast in Frameworks */ = {isa = PBXBuildFile; productRef = FC2930A42E43E9D900F838D9 /* SatelliteForecast */; };
 		FC2930A72E43E9D900F838D9 /* SatelliteForecastImpl in Frameworks */ = {isa = PBXBuildFile; productRef = FC2930A62E43E9D900F838D9 /* SatelliteForecastImpl */; };
-		FC2930A92E43E9D900F838D9 /* SatelliteForecastImplWiring in Frameworks */ = {isa = PBXBuildFile; productRef = FC2930A82E43E9D900F838D9 /* SatelliteForecastImplWiring */; };
+
 		FC33BF512E546445006A6268 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = FC33BF502E546445006A6268 /* InfoPlist.xcstrings */; };
 		FC33BF542E546B64006A6268 /* SatelliteForecast in Frameworks */ = {isa = PBXBuildFile; productRef = FC33BF532E546B64006A6268 /* SatelliteForecast */; };
 		FC33BF562E546B64006A6268 /* SatelliteForecastImpl in Frameworks */ = {isa = PBXBuildFile; productRef = FC33BF552E546B64006A6268 /* SatelliteForecastImpl */; };
-		FC33BF582E546B64006A6268 /* SatelliteForecastImplWiring in Frameworks */ = {isa = PBXBuildFile; productRef = FC33BF572E546B64006A6268 /* SatelliteForecastImplWiring */; };
+
 		FC33BF5B2E567258006A6268 /* SatelliteForecast in Frameworks */ = {isa = PBXBuildFile; productRef = FC33BF5A2E567258006A6268 /* SatelliteForecast */; };
 		FC33BF5D2E567258006A6268 /* SatelliteForecastImpl in Frameworks */ = {isa = PBXBuildFile; productRef = FC33BF5C2E567258006A6268 /* SatelliteForecastImpl */; };
-		FC33BF5F2E567258006A6268 /* SatelliteForecastImplWiring in Frameworks */ = {isa = PBXBuildFile; productRef = FC33BF5E2E567258006A6268 /* SatelliteForecastImplWiring */; };
+
 		FC33BF622E567260006A6268 /* AppDelegateImpl in Frameworks */ = {isa = PBXBuildFile; productRef = FC33BF612E567260006A6268 /* AppDelegateImpl */; };
 		FC7A7E242DDEF1040026A8B9 /* SatelliteForecast in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E232DDEF1040026A8B9 /* SatelliteForecast */; };
 		FC7A7E262DDEF1040026A8B9 /* SatelliteForecastImpl in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E252DDEF1040026A8B9 /* SatelliteForecastImpl */; };
-		FC7A7E282DDEF1040026A8B9 /* SatelliteForecastImplWiring in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E272DDEF1040026A8B9 /* SatelliteForecastImplWiring */; };
+
 		FC7A7E2B2DDF0E9A0026A8B9 /* SatelliteForecast in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E2A2DDF0E9A0026A8B9 /* SatelliteForecast */; };
 		FC7A7E2D2DDF0E9A0026A8B9 /* SatelliteForecastImpl in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E2C2DDF0E9A0026A8B9 /* SatelliteForecastImpl */; };
-		FC7A7E2F2DDF0E9A0026A8B9 /* SatelliteForecastImplWiring in Frameworks */ = {isa = PBXBuildFile; productRef = FC7A7E2E2DDF0E9A0026A8B9 /* SatelliteForecastImplWiring */; };
+
 		FC7A7E382DDFC8190026A8B9 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FC7A7E372DDFC8190026A8B9 /* GoogleService-Info.plist */; };
 		FCAF57F62E4C8CBD00F1BB1E /* SatelliteForecast in Frameworks */ = {isa = PBXBuildFile; productRef = FCAF57F52E4C8CBD00F1BB1E /* SatelliteForecast */; };
 		FCAF57F82E4C8CBD00F1BB1E /* SatelliteForecastImpl in Frameworks */ = {isa = PBXBuildFile; productRef = FCAF57F72E4C8CBD00F1BB1E /* SatelliteForecastImpl */; };
-		FCAF57FA2E4C8CBD00F1BB1E /* SatelliteForecastImplWiring in Frameworks */ = {isa = PBXBuildFile; productRef = FCAF57F92E4C8CBD00F1BB1E /* SatelliteForecastImplWiring */; };
+
 		FCAF57FD2E4C934100F1BB1E /* SatelliteForecast in Frameworks */ = {isa = PBXBuildFile; productRef = FCAF57FC2E4C934100F1BB1E /* SatelliteForecast */; };
 		FCAF57FF2E4C934100F1BB1E /* SatelliteForecastImpl in Frameworks */ = {isa = PBXBuildFile; productRef = FCAF57FE2E4C934100F1BB1E /* SatelliteForecastImpl */; };
-		FCAF58012E4C934100F1BB1E /* SatelliteForecastImplWiring in Frameworks */ = {isa = PBXBuildFile; productRef = FCAF58002E4C934100F1BB1E /* SatelliteForecastImplWiring */; };
+
 		FCAF58042E4C934F00F1BB1E /* AppDelegateImpl in Frameworks */ = {isa = PBXBuildFile; productRef = FCAF58032E4C934F00F1BB1E /* AppDelegateImpl */; };
 		FCBDFAB02E4D6358002AEC96 /* AppDelegateImpl in Frameworks */ = {isa = PBXBuildFile; productRef = FCBDFAAF2E4D6358002AEC96 /* AppDelegateImpl */; };
 		FCBDFAB32E4D6362002AEC96 /* SatelliteForecast in Frameworks */ = {isa = PBXBuildFile; productRef = FCBDFAB22E4D6362002AEC96 /* SatelliteForecast */; };
 		FCBDFAB52E4D6362002AEC96 /* SatelliteForecastImpl in Frameworks */ = {isa = PBXBuildFile; productRef = FCBDFAB42E4D6362002AEC96 /* SatelliteForecastImpl */; };
-		FCBDFAB72E4D6362002AEC96 /* SatelliteForecastImplWiring in Frameworks */ = {isa = PBXBuildFile; productRef = FCBDFAB62E4D6362002AEC96 /* SatelliteForecastImplWiring */; };
+
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -110,9 +108,7 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
 
 /* Begin PBXFileReference section */
 		EF2EF4D727B11C0A000D5EC8 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		EF817479292A355700A2F225 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		EF81747D292A360500A2F225 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		EF817481292A362B00A2F225 /* LocalElementsLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalElementsLoader.swift; sourceTree = "<group>"; };
 		EF817482292A362B00A2F225 /* tle-new.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "tle-new.txt"; sourceTree = "<group>"; };
 		EF817483292A362B00A2F225 /* active.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = active.txt; sourceTree = "<group>"; };
 		EF817484292A362B00A2F225 /* Elements+Preview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Elements+Preview.swift"; sourceTree = "<group>"; };
@@ -131,12 +127,12 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FC7A7E282DDEF1040026A8B9 /* SatelliteForecastImplWiring in Frameworks */,
+
 				FC33BF622E567260006A6268 /* AppDelegateImpl in Frameworks */,
-				FCAF57FA2E4C8CBD00F1BB1E /* SatelliteForecastImplWiring in Frameworks */,
+
 				FCAF57FF2E4C934100F1BB1E /* SatelliteForecastImpl in Frameworks */,
-				FC33BF582E546B64006A6268 /* SatelliteForecastImplWiring in Frameworks */,
-				FC2930A92E43E9D900F838D9 /* SatelliteForecastImplWiring in Frameworks */,
+
+
 				FC082B5F2E3617BD00DEEBBE /* AppDelegateImpl in Frameworks */,
 				FC7A7E242DDEF1040026A8B9 /* SatelliteForecast in Frameworks */,
 				FCAF58042E4C934F00F1BB1E /* AppDelegateImpl in Frameworks */,
@@ -147,15 +143,15 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
 				FCBDFAB32E4D6362002AEC96 /* SatelliteForecast in Frameworks */,
 				FCAF57F82E4C8CBD00F1BB1E /* SatelliteForecastImpl in Frameworks */,
 				FCAF57FD2E4C934100F1BB1E /* SatelliteForecast in Frameworks */,
-				FC7A7E2F2DDF0E9A0026A8B9 /* SatelliteForecastImplWiring in Frameworks */,
+
 				FCBDFAB02E4D6358002AEC96 /* AppDelegateImpl in Frameworks */,
 				FC7A7E262DDEF1040026A8B9 /* SatelliteForecastImpl in Frameworks */,
-				FCAF58012E4C934100F1BB1E /* SatelliteForecastImplWiring in Frameworks */,
+
 				FCAF57F62E4C8CBD00F1BB1E /* SatelliteForecast in Frameworks */,
 				FC7A7E2B2DDF0E9A0026A8B9 /* SatelliteForecast in Frameworks */,
-				FC33BF5F2E567258006A6268 /* SatelliteForecastImplWiring in Frameworks */,
+
 				FCBDFAB52E4D6362002AEC96 /* SatelliteForecastImpl in Frameworks */,
-				FCBDFAB72E4D6362002AEC96 /* SatelliteForecastImplWiring in Frameworks */,
+
 				FC33BF5D2E567258006A6268 /* SatelliteForecastImpl in Frameworks */,
 				FC2930A52E43E9D900F838D9 /* SatelliteForecast in Frameworks */,
 				FC2930A72E43E9D900F838D9 /* SatelliteForecastImpl in Frameworks */,
@@ -176,7 +172,6 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
 		EF817480292A362B00A2F225 /* Preview Content */ = {
 			isa = PBXGroup;
 			children = (
-				EF817481292A362B00A2F225 /* LocalElementsLoader.swift */,
 				EF817482292A362B00A2F225 /* tle-new.txt */,
 				EF817483292A362B00A2F225 /* active.txt */,
 				EF817484292A362B00A2F225 /* Elements+Preview.swift */,
@@ -200,7 +195,6 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
 			children = (
 				FC7A7E3D2DDFD4EE0026A8B9 /* SatelliteForecastApp.entitlements */,
 				EF9D827A2661BBF000616C97 /* SatelliteForecastApp.swift */,
-				EF817479292A355700A2F225 /* Store.swift */,
 				EF817480292A362B00A2F225 /* Preview Content */,
 				EF81747B292A360500A2F225 /* AppDelegate */,
 				EF864272266DFFE9004F0AFA /* Info.plist */,
@@ -307,10 +301,8 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
 			buildActionMask = 2147483647;
 			files = (
 				EF81747F292A360500A2F225 /* AppDelegate.swift in Sources */,
-				EF817486292A362B00A2F225 /* LocalElementsLoader.swift in Sources */,
 				EF9D82A32661BBF100616C97 /* SatelliteForecastApp.swift in Sources */,
 				EF817489292A362B00A2F225 /* Elements+Preview.swift in Sources */,
-				EF81747A292A355700A2F225 /* Store.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -560,10 +552,7 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
 			isa = XCSwiftPackageProductDependency;
 			productName = SatelliteForecastImpl;
 		};
-		FC2930A82E43E9D900F838D9 /* SatelliteForecastImplWiring */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SatelliteForecastImplWiring;
-		};
+
 		FC33BF532E546B64006A6268 /* SatelliteForecast */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SatelliteForecast;
@@ -572,10 +561,7 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
 			isa = XCSwiftPackageProductDependency;
 			productName = SatelliteForecastImpl;
 		};
-		FC33BF572E546B64006A6268 /* SatelliteForecastImplWiring */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SatelliteForecastImplWiring;
-		};
+
 		FC33BF5A2E567258006A6268 /* SatelliteForecast */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SatelliteForecast;
@@ -584,10 +570,7 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
 			isa = XCSwiftPackageProductDependency;
 			productName = SatelliteForecastImpl;
 		};
-		FC33BF5E2E567258006A6268 /* SatelliteForecastImplWiring */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SatelliteForecastImplWiring;
-		};
+
 		FC33BF612E567260006A6268 /* AppDelegateImpl */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = AppDelegateImpl;
@@ -600,10 +583,7 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
 			isa = XCSwiftPackageProductDependency;
 			productName = SatelliteForecastImpl;
 		};
-		FC7A7E272DDEF1040026A8B9 /* SatelliteForecastImplWiring */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SatelliteForecastImplWiring;
-		};
+
 		FC7A7E2A2DDF0E9A0026A8B9 /* SatelliteForecast */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SatelliteForecast;
@@ -612,10 +592,7 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
 			isa = XCSwiftPackageProductDependency;
 			productName = SatelliteForecastImpl;
 		};
-		FC7A7E2E2DDF0E9A0026A8B9 /* SatelliteForecastImplWiring */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SatelliteForecastImplWiring;
-		};
+
 		FCAF57F52E4C8CBD00F1BB1E /* SatelliteForecast */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SatelliteForecast;
@@ -624,10 +601,7 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
 			isa = XCSwiftPackageProductDependency;
 			productName = SatelliteForecastImpl;
 		};
-		FCAF57F92E4C8CBD00F1BB1E /* SatelliteForecastImplWiring */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SatelliteForecastImplWiring;
-		};
+
 		FCAF57FC2E4C934100F1BB1E /* SatelliteForecast */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SatelliteForecast;
@@ -636,10 +610,7 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
 			isa = XCSwiftPackageProductDependency;
 			productName = SatelliteForecastImpl;
 		};
-		FCAF58002E4C934100F1BB1E /* SatelliteForecastImplWiring */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SatelliteForecastImplWiring;
-		};
+
 		FCAF58032E4C934F00F1BB1E /* AppDelegateImpl */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = AppDelegateImpl;
@@ -656,10 +627,7 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
 			isa = XCSwiftPackageProductDependency;
 			productName = SatelliteForecastImpl;
 		};
-		FCBDFAB62E4D6362002AEC96 /* SatelliteForecastImplWiring */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SatelliteForecastImplWiring;
-		};
+
 /* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = EF9D82752661BBEF00616C97 /* Project object */;

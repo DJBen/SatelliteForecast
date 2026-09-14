@@ -14,12 +14,3 @@ public enum BackgroundSkyViewAction {
 }
 
 extension BackgroundSkyViewAction: Equatable {}
-
-public enum BackgroundSkyViewOutput {
-    case rasterizedBackgroundSky(
-        UIImage,
-        quality: ChartQuality,
-        julianDate: Double,
-        key: BackgroundSkyKey
-    )
-}

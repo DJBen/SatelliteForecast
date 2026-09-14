@@ -34,7 +34,7 @@ extension SatelliteElevationGraph {
 
         var body: some View {
             HStack(alignment: .center, spacing: 0) {
-                ForEach(enumerated: state.xPercentDatePair, id: \.julianDate) { (index, pair) in
+                ForEach(Array(state.xPercentDatePair.enumerated()), id: \.element.julianDate) { (index, pair) in
                     VStack {
                         Text(
                             Self.timeFormatter.string(from: Date(julianDate: pair.julianDate))

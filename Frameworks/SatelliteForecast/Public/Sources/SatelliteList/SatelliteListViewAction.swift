@@ -26,11 +26,3 @@ public enum SatelliteListViewAction {
     case searchSatellites(String, category: SatelliteCategory)
     case retryLoadingSatelliteList(category: SatelliteCategory)
 }
-
-public enum SatelliteListViewOutput {
-    case filteredSatellites(
-        Map<UInt, SatelliteInfo>?,
-        searchText: String,
-        category: SatelliteCategory
-    )
-}
