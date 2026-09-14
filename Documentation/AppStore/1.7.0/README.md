@@ -36,3 +36,12 @@ If restoration is needed, upload the local `before/<locale>/` PNGs with `asc scr
 ## App fixes found during capture
 
 The graph footer previously mixed a 24-hour clock with AM/PM, producing labels such as “19:00 PM.” It now uses SwiftUI's locale-aware hour/minute format. The overview heading now reuses the existing localized forecast-tab label. These fixes are included in the replacement 1.7.0 build so store images match the binary. Brazilian Portuguese now translates “Evening,” and pass-card dates fall back to a compact localized numeric format when the longer date cannot fit. The compass's initial state is injectable for fixtures; its production default remains enabled.
+
+## Validation
+
+- All eight locale capture tests passed on iPhone 17 Pro Max / iOS 26.5; all 32 native PNGs were visually reviewed.
+- The 38 behavior tests passed on iPhone 17 Pro / iOS 26.5.
+- `capture-checksums.json` records dimensions and hashes of the final images. `upload-results.json` records Apple's replacement asset IDs.
+- The test plan was restored after capture. Existing regression baseline images were not modified.
+- Release archive and export succeeded for `io.djben.SatelliteForecast`, version 1.7.0, build 2.
+- All 32 replacement assets reached Apple’s `COMPLETE` state; remote order and MD5 checksums match the local files. The public App Store version remains a draft.
