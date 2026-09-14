@@ -10,12 +10,10 @@ import SwiftUI
 
 public struct LocationState {
     public var resources: LocationResources
-    public var navigationPath: NavigationPath
     public var fcmToken: String?
 
-    public init(resources: LocationResources, navigationPath: NavigationPath, fcmToken: String?) {
+    public init(resources: LocationResources, fcmToken: String?) {
         self.resources = resources
-        self.navigationPath = navigationPath
         self.fcmToken = fcmToken
     }
 }

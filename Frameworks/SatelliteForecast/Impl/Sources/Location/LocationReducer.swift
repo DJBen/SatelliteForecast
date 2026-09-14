@@ -24,8 +24,6 @@ extension Reducer where ActionType == LocationAction, StateType == LocationState
             }
             state.resources.selection = selection
 
-            // Dismiss location selector after completing the selection
-            state.navigationPath.removeLast()
         }
     }
 

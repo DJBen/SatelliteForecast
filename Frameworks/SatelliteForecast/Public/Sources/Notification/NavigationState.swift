@@ -18,10 +18,6 @@ public struct NavigationState {
     /// - Satellite categories
     /// Root / category / satellite /passes
     public var satelliteCategoryNavigationPath = NavigationPath()
-    /// The navigation path for the navigation stack within settings.
-    /// - Settings:
-    ///   Root / (Location | Alarm)
-    public var settingsNavigationPath: NavigationPath = .init()
     public var listNavigation: ListNavigation = .init()
     
     public init() {}

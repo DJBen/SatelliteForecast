@@ -45,8 +45,6 @@ extension EffectMiddleware where InputActionType == AppAction, OutputActionType 
                     customDump(satelliteListViewAction)
                 case .satelliteListOutput(let satelliteListViewOutput):
                     customDump(satelliteListViewOutput, maxDepth: 2)
-                case .settingsOverview(let settingsOverviewAction):
-                    customDump(settingsOverviewAction)
                 case .singleSatelliteWrappingView(let singleSatelliteWrappingViewAction):
                     customDump(singleSatelliteWrappingViewAction)
                 case .allPassesView(let allPassesViewAction):

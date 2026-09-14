@@ -1,48 +1,22 @@
-//
-//  SettingsOverviewView+Wiring.swift
-//  SatelliteForecast
-//
-//  Created by Ben Lu on 3/19/22.
-//
-
 @preconcurrency import CombineRex
-@preconcurrency import CombineRextensions
+import CombineRextensions
 import SatelliteForecast
 import SatelliteForecastImpl
 
-extension SettingsOverviewViewState: AppStateMappable {
-    public static func project(appState: AppState) -> SettingsOverviewViewState {
-        SettingsOverviewViewState(
-            navigationPath: appState.navigationState.settingsNavigationPath,
-            isNightModeOn: appState.isNightModeOn,
-            showExperimentalSkyNow: appState.showExperimentalSkyNow
-        )
-    }
-
-    public static func apply(appState: inout AppState, state: SettingsOverviewViewState) {
-        appState.navigationState.settingsNavigationPath = state.navigationPath
-        appState.isNightModeOn = state.isNightModeOn
-        appState.showExperimentalSkyNow = state.showExperimentalSkyNow
-    }
-}
-
+// Temporary composition boundary for destinations still backed by SwiftRex.
+// The Settings screen itself only receives native state and view closures.
 extension ViewProducer where Context == Void, ProducedView == SettingsOverviewViewImpl {
     public static func settingsOverview<S: StoreType>(
-        viewModel: S
-    ) -> ViewProducer where
-    S.ActionType == AppAction,
-    S.StateType == AppState {
-        ViewProducer<Context, ProducedView> { context in
+        viewModel: S,
+        settings: AppSettings
+    ) -> ViewProducer where S.ActionType == AppAction, S.StateType == AppState {
+        ViewProducer { _ in
             SettingsOverviewViewImpl(
-                viewModel: viewModel.projection(
-                    action: AppAction.settingsOverview,
-                    state: SettingsOverviewViewState.project(appState:)
-                )
-                .asObservableViewModel(initialState: .init(), emitsValue: .whenDifferent),
-                observerCellViewProducer: .observerCell(viewModel: viewModel),
-                locationSettingsViewProducer: .locationSettings(viewModel: viewModel),
-                alarmSettingsCellProducer: .alarmSettingsCell(viewModel: viewModel),
-                alarmSettingsViewProducer: .alarmSettingsView(viewModel: viewModel)
+                settings: settings,
+                observerCellViewProducer: { ViewProducer<Void, ObserverCell>.observerCell(viewModel: viewModel).view() },
+                locationSettingsViewProducer: { ViewProducer<Void, LocationSettingsView>.locationSettings(viewModel: viewModel).view() },
+                alarmSettingsCellProducer: { ViewProducer<Void, AlarmSettingsCell>.alarmSettingsCell(viewModel: viewModel).view() },
+                alarmSettingsViewProducer: { ViewProducer<Void, AlarmSettingsView>.alarmSettingsView(viewModel: viewModel).view() }
             )
         }
     }

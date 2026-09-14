@@ -27,7 +27,6 @@ public class Store: ReduxStoreBase<AppAction, AppState> {
         Reducer.elementsLoaderOutputReducer.lift(),
         Reducer.satelliteOverviewReducer.lift(),
         Reducer.satelliteCategoryReducer.lift(),
-        Reducer.settingsOverviewReducer.lift(),
         Reducer.satelliteListViewReducer.lift(),
         Reducer.satelliteListOutputReducer.lift(),
         Reducer.allPassesViewReducer.lift(),

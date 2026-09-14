@@ -47,12 +47,6 @@ public struct AppState: Equatable {
     /// The state of scheduled notifications.
     public var notificationResources: NotificationResources = NotificationResources()
 
-    /// If turned on, the entire view will be
-    public var isNightModeOn: Bool = false
-    
-    /// Shows Sky Now tab.
-    public var showExperimentalSkyNow: Bool = false
-
     /// The state of onboarding experience.
     public var onboardingState: OnboardingViewState = .init()
 

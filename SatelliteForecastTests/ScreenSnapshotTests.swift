@@ -77,6 +77,13 @@ final class ScreenSnapshotTests: XCTestCase {
             let baseline = try XCTUnwrap(UIImage(contentsOfFile: url.path), "Missing baseline: \(url.path). Record and review it explicitly.")
             XCTAssertEqual(baseline.size, image.size, name)
             let difference = try pixelDifference(baseline, image)
+            if difference >= 0.004 {
+                let failures = FileManager.default.temporaryDirectory.appendingPathComponent("SatelliteForecastSnapshotFailures")
+                try FileManager.default.createDirectory(at: failures, withIntermediateDirectories: true)
+                let actual = failures.appendingPathComponent(name + ".png")
+                try data.write(to: actual)
+                print("Snapshot actual: \(actual.path)")
+            }
             XCTAssertLessThan(difference, 0.004, "\(name): average pixel difference \(difference)")
         }
     }
@@ -121,7 +128,6 @@ struct Fixture {
         passes = try info.findPasses(observer: observer, coarseSnapshots: snapshots)
         var state = AppState()
         state.onboardingState.hasCompletedOnboarding = true
-        state.showExperimentalSkyNow = true
         state.locationResources = .init(authorizationStatus: .authorizedWhenInUse,
             currentLocation: CLLocation(latitude: observer.lat, longitude: observer.lon))
         state.elementsLoader.info[.iss] = .loaded(Map([(elements.noradIndex, info)]))
@@ -155,7 +161,7 @@ struct Fixture {
             ("07-pass", AnyView(NavigationStack { ViewProducer.passView(viewModel: store).view(.init(passIndex: 0, satelliteInfo: info, satelliteCommonName: "ISS (ZARYA)", category: .iss, julianDateRange: range, observer: observer, passSnapshots: pass, starManager: catalog, julianDateProvider: date)) })),
             ("08-detailed-sky", AnyView(ViewProducer.detailedPassView(viewModel: store).view(.init(satelliteInfo: info, category: .iss, julianDateRange: range, observer: observer, passSnapshots: pass, starManager: catalog, julianDateProvider: date)))),
             ("09-sky-now", AnyView(ViewProducer.realtimeSky(viewModel: store).view(.init(basicChartConfigs: .init(), backgroundSkyConfigs: .preset, satelliteMagToRadiusFunction: .default, starManager: catalog, julianDateProvider: { pass.pass.rise.julianDate })))),
-            ("10-settings", AnyView(ViewProducer.settingsOverview(viewModel: store).view())),
+            ("10-settings", AnyView(ViewProducer.settingsOverview(viewModel: store, settings: AppSettings(showExperimentalSkyNow: true)).view())),
             ("11-location", AnyView(NavigationStack { ViewProducer.locationSettings(viewModel: store).view() })),
             ("12-alarms", AnyView(NavigationStack { ViewProducer.alarmSettingsView(viewModel: store).view() })),
             ("13-pass-alarm", AnyView(ViewProducer.passAlarmSettings(viewModel: store).view(.init(satelliteName: "ISS (ZARYA)", category: .iss, passSnapshots: pass, observer: observer)))),
@@ -165,7 +171,7 @@ struct Fixture {
             ("18-ephemeris-text", AnyView(NavigationStack { EphemerideTextBrowserView(resource: textResource) })),
             ("19-pass-tutorial", AnyView(AllPassesOnboardingView(onComplete: {}, skyChartProducer: .skyChart(viewModel: store), satelliteData: SatelliteData(satelliteInfo: info, observer: observer, selectedPass: pass)))),
             ("20-debug", AnyView(DebugMenu(viewModel: .mock(state: DebugMenuState(trueJulianDate: now.julianDate, config: .init(), pendingNotifications: [], deliveredNotifications: [], fcmToken: nil))))),
-            ("16-night-mode", AnyView(ViewProducer.settingsOverview(viewModel: store).view().overlay(Color.red.blendMode(.plusDarker).allowsHitTesting(false)))),
+            ("16-night-mode", AnyView(ViewProducer.settingsOverview(viewModel: store, settings: AppSettings(showExperimentalSkyNow: true)).view().overlay(Color.red.blendMode(.plusDarker).allowsHitTesting(false)))),
         ]
     }
 }

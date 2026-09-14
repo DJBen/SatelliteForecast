@@ -5,15 +5,18 @@
 	};
 	objectVersion = 60;
 	objects = {
+        ABAB00000000000000000001 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeArchitectureTests.swift; sourceTree = "<group>"; };
+        ABAB00000000000000000002 = { isa = PBXBuildFile; fileRef = ABAB00000000000000000001; };
+
 45EAD84EC1E498F9043CCC5B = {isa = XCSwiftPackageProductDependency; productName = BTree; };
 B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043CCC5B; };
 		6127BE1146573B8CE8F34BB0 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogIntegrationTests.swift; sourceTree = "<group>"; };
 		35D1215843C8FF70B1AA2630 = { isa = PBXBuildFile; fileRef = 6127BE1146573B8CE8F34BB0; };
 		8CC843CE5AC3EB4F1840FF17 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenSnapshotTests.swift; sourceTree = "<group>"; };
 		C2EBBCEA2478DA05C079D64B = { isa = PBXBuildFile; fileRef = 8CC843CE5AC3EB4F1840FF17; };
-		4CAA9B7B6E4046B670A8096F = { isa = PBXGroup; children = (6127BE1146573B8CE8F34BB0, 8CC843CE5AC3EB4F1840FF17,); path = SatelliteForecastTests; sourceTree = "<group>"; };
+		4CAA9B7B6E4046B670A8096F = { isa = PBXGroup; children = (ABAB00000000000000000001, 6127BE1146573B8CE8F34BB0, 8CC843CE5AC3EB4F1840FF17,); path = SatelliteForecastTests; sourceTree = "<group>"; };
 		5B44CA0DEF45E3B359224C8E = { isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = SatelliteForecastTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		CB765A7A92AB8F06C42D59CF = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (35D1215843C8FF70B1AA2630, C2EBBCEA2478DA05C079D64B,); runOnlyForDeploymentPostprocessing = 0; };
+		CB765A7A92AB8F06C42D59CF = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (ABAB00000000000000000002, 35D1215843C8FF70B1AA2630, C2EBBCEA2478DA05C079D64B,); runOnlyForDeploymentPostprocessing = 0; };
 		C1DE39390EC3F79195D32C4F = { isa = XCSwiftPackageProductDependency; productName = SatelliteForecast; };
 		ED776DE853A80A3B422B5B8E = { isa = PBXBuildFile; productRef = C1DE39390EC3F79195D32C4F; };
 		02964AA8E30FC09CEB7B2719 = { isa = XCSwiftPackageProductDependency; productName = SatelliteForecastImpl; };

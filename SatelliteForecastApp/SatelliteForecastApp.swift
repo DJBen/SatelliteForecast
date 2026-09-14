@@ -60,6 +60,7 @@ struct SatelliteForecastApp: App {
 
 private struct LoadedSatelliteForecastView: View {
     let appDelegate: AppDelegate
+    @State private var settings = AppSettings()
     @StateObject var store: ObservableViewModel<Store.ActionType, Store.StateType>
     @Environment(\.scenePhase) private var scenePhase
     let motionManager: CMMotionManager
@@ -86,7 +87,8 @@ private struct LoadedSatelliteForecastView: View {
             Group {
                 if store.state.onboardingState.hasCompletedOnboarding {
                     ViewProducer.root(
-                        viewModel: store
+                        viewModel: store,
+                        settings: settings
                     )
                     .view(
                         RootViewContext(
@@ -136,7 +138,7 @@ private struct LoadedSatelliteForecastView: View {
             }
             .environment(\.motionManagerKey, motionManager)
             .overlay {
-                if store.state.isNightModeOn {
+                if settings.isNightModeOn {
                     Color(
                         uiColor: UIColor.red
                     )

@@ -5,9 +5,6 @@
 //  Created by Ben Lu on 3/5/22.
 //
 
-@preconcurrency import CombineRex
-@preconcurrency import CombineRextensions
-import SwiftRex
 import SwiftUI
 import SatelliteForecast
 import StarryNight
@@ -54,22 +51,25 @@ private let settingsTabText = NSLocalizedString(
 )
 
 public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewViewType: SatelliteOverviewView, SettingsOverViewViewType: SettingsOverviewView, SatelliteCategoryViewType: SatelliteCategoryView>: View {
-    @ObservedObject var viewModel: ObservableViewModel<RootViewAction, RootViewState>
+    @Binding private var selectedTab: SatelliteForecast.Tab
+    private let settings: AppSettings
     public let context: RootViewContext
-    public let realtimeSkyViewProducer: ViewProducer<RealtimeSkyViewContext, RealtimeSkyViewType>
-    public let satelliteOverviewViewProducer: ViewProducer<SatelliteOverviewViewContext, SatelliteOverviewViewType>
-    public let satelliteCategoryViewProducer: ViewProducer<SatelliteCategoryViewContext, SatelliteCategoryViewType>
-    public let settingsOverviewProducer: ViewProducer<Void, SettingsOverViewViewType>
+    public let realtimeSkyViewProducer: (RealtimeSkyViewContext) -> RealtimeSkyViewType
+    public let satelliteOverviewViewProducer: (SatelliteOverviewViewContext) -> SatelliteOverviewViewType
+    public let satelliteCategoryViewProducer: (SatelliteCategoryViewContext) -> SatelliteCategoryViewType
+    public let settingsOverviewProducer: () -> SettingsOverViewViewType
 
     public init(
-        viewModel: ObservableViewModel<RootViewAction, RootViewState>,
+        selectedTab: Binding<SatelliteForecast.Tab>,
+        settings: AppSettings,
         context: RootViewContext,
-        realtimeSkyViewProducer: ViewProducer<RealtimeSkyViewContext, RealtimeSkyViewType>,
-        satelliteOverviewViewProducer: ViewProducer<SatelliteOverviewViewContext, SatelliteOverviewViewType>,
-        satelliteCategoryViewProducer: ViewProducer<SatelliteCategoryViewContext, SatelliteCategoryViewType>,
-        settingsOverviewProducer: ViewProducer<Void, SettingsOverViewViewType>
+        realtimeSkyViewProducer: @escaping (RealtimeSkyViewContext) -> RealtimeSkyViewType,
+        satelliteOverviewViewProducer: @escaping (SatelliteOverviewViewContext) -> SatelliteOverviewViewType,
+        satelliteCategoryViewProducer: @escaping (SatelliteCategoryViewContext) -> SatelliteCategoryViewType,
+        settingsOverviewProducer: @escaping () -> SettingsOverViewViewType
     ) {
-        self.viewModel = viewModel
+        self._selectedTab = selectedTab
+        self.settings = settings
         self.context = context
         self.realtimeSkyViewProducer = realtimeSkyViewProducer
         self.satelliteOverviewViewProducer = satelliteOverviewViewProducer
@@ -92,7 +92,7 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
     private func isSelectedBinding(for tab: SatelliteForecast.Tab) -> Binding<Bool> {
         Binding<Bool>(
             get: {
-                viewModel.state.selectedTab == tab
+                selectedTab == tab
             },
             set: { _ in
 
@@ -101,15 +101,9 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
     }
 
     public var body: some View {
-        TabView(
-            selection: Binding<SatelliteForecast.Tab>.store(
-                viewModel,
-                state: \.selectedTab,
-                onChange: RootViewAction.selectTab
-            )
-        ) {
+        TabView(selection: $selectedTab) {
             SwiftUI.Tab(value: .forecast, role: nil) {
-                satelliteOverviewViewProducer.view(
+                satelliteOverviewViewProducer(
                     SatelliteOverviewViewContext(
                         starManager: context.starManager,
                         julianDateProvider: context.julianDateProvider
@@ -130,7 +124,7 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
             }
             
             SwiftUI.Tab(value: .satellites, role: nil) {
-                satelliteCategoryViewProducer.view(
+                satelliteCategoryViewProducer(
                     SatelliteCategoryViewContext(
                         starManager: context.starManager,
                         julianDateProvider: context.julianDateProvider
@@ -150,9 +144,9 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
                 )
             }
             
-            if viewModel.state.showExperimentalSkyNow {
+            if settings.showExperimentalSkyNow {
                 SwiftUI.Tab(value: .realtimeSky, role: nil) {
-                    realtimeSkyViewProducer.view(
+                    realtimeSkyViewProducer(
                         RealtimeSkyViewContext(
                             basicChartConfigs: .init(),
                             backgroundSkyConfigs: .preset,
@@ -177,7 +171,7 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
             }
 
             SwiftUI.Tab(value: .settings, role: nil) {
-                settingsOverviewProducer.view()
+                settingsOverviewProducer()
             } label: {
                 DynamicTabBarItemView(
                     isSelected: isSelectedBinding(for: .settings),
@@ -226,23 +220,16 @@ struct RootView_Previews: PreviewProvider {
 
     static var previews: some View {
         RootView(
-            viewModel: .mock(
-                state: .init(),
-                action: { action, _, state in
-                    switch action {
-                    case .selectTab(let tab):
-                        state.selectedTab = tab
-                    }
-                }
-            ),
+            selectedTab: .constant(.forecast),
+            settings: AppSettings(),
             context: RootViewContext(
                 starManager: StarManagerMock(),
                 julianDateProvider: { Date().julianDate }
             ),
-            realtimeSkyViewProducer: .pure(MockRealtimeSkyView()),
-            satelliteOverviewViewProducer: .pure(MockSatelliteOverviewView()),
-            satelliteCategoryViewProducer: .pure(MockSatelliteCategoryView()),
-            settingsOverviewProducer: .pure(MockSettingsView())
+            realtimeSkyViewProducer: { _ in MockRealtimeSkyView() },
+            satelliteOverviewViewProducer: { _ in MockSatelliteOverviewView() },
+            satelliteCategoryViewProducer: { _ in MockSatelliteCategoryView() },
+            settingsOverviewProducer: { MockSettingsView() }
         )
     }
 }

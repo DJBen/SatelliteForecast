@@ -86,6 +86,7 @@ fileprivate class SearchDebouncer: NSObject, ObservableObject {
 }
 
 public struct LocationSettingsView: View {
+    @Environment(\.dismiss) private var dismiss
     @ObservedObject var viewModel: ObservableViewModel<LocationAction, LocationSettingsViewState>
 
     public init(
@@ -209,7 +210,9 @@ public struct LocationSettingsView: View {
                 guard let nextLocationSelection = nextLocationSelection else {
                     fatalError()
                 }
+                guard nextLocationSelection != .currentLocation || viewModel.state.currentLocation != nil else { return }
                 viewModel.dispatch(.selectLocation(nextLocationSelection))
+                dismiss()
                 self.nextLocationSelection = nil
             }
         } message: {

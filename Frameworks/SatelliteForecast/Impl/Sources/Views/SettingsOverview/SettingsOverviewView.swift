@@ -5,29 +5,8 @@
 //  Created by Ben Lu on 3/19/22.
 //
 
-@preconcurrency import CombineRex
-@preconcurrency import CombineRextensions
 import SatelliteForecast
-import SwiftRex
 import SwiftUI
-
-public struct SettingsOverviewViewState {
-    public var navigationPath: NavigationPath = .init()
-    public var isNightModeOn: Bool = false
-    public var showExperimentalSkyNow: Bool = false
-
-    public init(
-        navigationPath: NavigationPath = .init(),
-        isNightModeOn: Bool = false,
-        showExperimentalSkyNow: Bool = false
-    ) {
-        self.navigationPath = navigationPath
-        self.isNightModeOn = isNightModeOn
-        self.showExperimentalSkyNow = showExperimentalSkyNow
-    }
-}
-
-extension SettingsOverviewViewState: Equatable {}
 
 struct SettingsOverviewAlarmNavigation: Equatable, Hashable, Codable {}
 
@@ -38,20 +17,21 @@ struct EphemeridesManagerNavigation: Equatable, Hashable, Codable {}
 public protocol SettingsOverviewView: View {}
 
 public struct SettingsOverviewViewImpl: SettingsOverviewView {
-    @ObservedObject var viewModel: ObservableViewModel<SettingsOverviewViewAction, SettingsOverviewViewState>
-    let observerCellViewProducer: ViewProducer<Void, ObserverCell>
-    let locationSettingsViewProducer: ViewProducer<Void, LocationSettingsView>
-    let alarmSettingsCellProducer: ViewProducer<Void, AlarmSettingsCell>
-    let alarmSettingsViewProducer: ViewProducer<Void, AlarmSettingsView>
+    @Bindable private var settings: AppSettings
+    @State private var navigationPath = NavigationPath()
+    let observerCellViewProducer: () -> ObserverCell
+    let locationSettingsViewProducer: () -> LocationSettingsView
+    let alarmSettingsCellProducer: () -> AlarmSettingsCell
+    let alarmSettingsViewProducer: () -> AlarmSettingsView
 
     public init(
-        viewModel: ObservableViewModel<SettingsOverviewViewAction, SettingsOverviewViewState>,
-        observerCellViewProducer: ViewProducer<Void, ObserverCell>,
-        locationSettingsViewProducer: ViewProducer<Void, LocationSettingsView>,
-        alarmSettingsCellProducer: ViewProducer<Void, AlarmSettingsCell>,
-        alarmSettingsViewProducer: ViewProducer<Void, AlarmSettingsView>
+        settings: AppSettings,
+        observerCellViewProducer: @escaping () -> ObserverCell,
+        locationSettingsViewProducer: @escaping () -> LocationSettingsView,
+        alarmSettingsCellProducer: @escaping () -> AlarmSettingsCell,
+        alarmSettingsViewProducer: @escaping () -> AlarmSettingsView
     ) {
-        self.viewModel = viewModel
+        self.settings = settings
         self.observerCellViewProducer = observerCellViewProducer
         self.locationSettingsViewProducer = locationSettingsViewProducer
         self.alarmSettingsCellProducer = alarmSettingsCellProducer
@@ -67,9 +47,9 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
     @ViewBuilder private func destination(for item: SettingsOverviewItem) -> some View {
         switch item {
         case .observer:
-            locationSettingsViewProducer.view()
+            locationSettingsViewProducer()
         case .alarms:
-            alarmSettingsViewProducer.view()
+            alarmSettingsViewProducer()
         case .ephemeridesManager:
             EphemeridesManagementView()
         }
@@ -117,17 +97,16 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
     }
 
     @ViewBuilder private var nightModeCell: some View {
-        Button(
-            store: viewModel,
-            action: .setNightMode(!viewModel.state.isNightModeOn)
-        ) { viewModel in
+        Button {
+            settings.isNightModeOn.toggle()
+        } label: {
             HStack {
-                Image(systemName: viewModel.state.isNightModeOn ? "moon.stars.fill" : "moon.stars")
+                Image(systemName: settings.isNightModeOn ? "moon.stars.fill" : "moon.stars")
                     .font(.headline)
                     .foregroundColor(Color(UIColor.label))
 
                 let text: String = {
-                    if viewModel.state.isNightModeOn {
+                    if settings.isNightModeOn {
                         return NSLocalizedString(
                             "SettingsOverviewView.nightModeCell.off.title",
                             tableName: nil,
@@ -174,17 +153,16 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
     }
 
     @ViewBuilder private var experimentalSkyNowCell: some View {
-        Button(
-            store: viewModel,
-            action: .setExperimentalSkyNow(!viewModel.state.showExperimentalSkyNow)
-        ) { viewModel in
+        Button {
+            settings.showExperimentalSkyNow.toggle()
+        } label: {
             HStack {
-                Image(systemName: viewModel.state.showExperimentalSkyNow ? "star.fill" : "star")
+                Image(systemName: settings.showExperimentalSkyNow ? "star.fill" : "star")
                     .font(.headline)
                     .foregroundColor(Color(UIColor.label))
 
                 let text: String = {
-                    if viewModel.state.showExperimentalSkyNow {
+                    if settings.showExperimentalSkyNow {
                         return NSLocalizedString(
                             "SettingsOverviewView.experimentalSkyNowCell.off.title",
                             tableName: nil,
@@ -232,15 +210,7 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
     }
 
     public var body: some View {
-        NavigationStack(
-            path: Binding<NavigationPath>(
-                get: {
-                    viewModel.state.navigationPath
-                }, set: { navigationPath in
-                    viewModel.dispatch(.navigate(navigationPath))
-                }
-            )
-        ) {
+        NavigationStack(path: $navigationPath) {
             ScrollView {
                 LazyVStack(
                     alignment: .leading,
@@ -252,7 +222,7 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                         case .observer:
                             Section {
                                 NavigationLink(value: SettingsOverviewObserverNavigation()) {
-                                    observerCellViewProducer.view()
+                                    observerCellViewProducer()
                                 }
                             } header: {
                                 sectionHeader(for: item)
@@ -260,7 +230,7 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                         case .alarms:
                             Section {
                                 NavigationLink(value: SettingsOverviewAlarmNavigation()) {
-                                    alarmSettingsCellProducer.view()
+                                    alarmSettingsCellProducer()
                                 }
                             } header: {
                                 sectionHeader(for: item)
@@ -286,12 +256,12 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                 .padding()
                 .navigationDestination(for: SettingsOverviewObserverNavigation.self) { _ in
                     LazyView {
-                        locationSettingsViewProducer.view()
+                        locationSettingsViewProducer()
                     }
                 }
                 .navigationDestination(for: SettingsOverviewAlarmNavigation.self) { _ in
                     LazyView {
-                        alarmSettingsViewProducer.view()
+                        alarmSettingsViewProducer()
                     }
                 }
                 .navigationDestination(for: EphemeridesManagerNavigation.self) { _ in
@@ -312,11 +282,11 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
 struct SettingsOverviewView_Previews: PreviewProvider {
     static var previews: some View {
         SettingsOverviewViewImpl(
-            viewModel: .mock(state: .init()),
-            observerCellViewProducer: .crash,
-            locationSettingsViewProducer: .crash,
-            alarmSettingsCellProducer: .crash,
-            alarmSettingsViewProducer: .crash
+            settings: AppSettings(),
+            observerCellViewProducer: { fatalError("Preview destination") },
+            locationSettingsViewProducer: { fatalError("Preview destination") },
+            alarmSettingsCellProducer: { fatalError("Preview destination") },
+            alarmSettingsViewProducer: { fatalError("Preview destination") }
         )
     }
 }
