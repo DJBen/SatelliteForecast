@@ -35,3 +35,35 @@ Screenshots use the actual native views with fixed date, location and orbital
 fixtures, in light and dark appearances. Video is frozen at a known frame for
 repeatability. The catalog is real StarryNight data. No notification scheduling,
 location authorization or live ephemeris download runs in the snapshot host.
+
+## Implemented
+
+- Introduced `AppTheme` for surfaces, accent, muted text, borders and warnings.
+- Unified forecast and category cards with 20-point corners, inset layouts and
+  visible headings. Reduced forecast video height to make room for pass details.
+- Fixed forecast countdowns that requested white text on a white card.
+- Replaced Settings' green, blue and purple gradients with consistent cards.
+- Fixed onboarding descriptions to remain legible over dark video in both themes.
+- Updated all eight chart/status color assets; adjusted spectral star colors for
+  light backgrounds without changing the stellar class mapping.
+- Made sky and satellite-path cache keys appearance-aware and request fresh
+  rendering when the system appearance changes. Rasterization now resolves
+  stellar colors under the requested trait collection.
+- Retained red night mode and checked its screenshots in both appearances.
+
+## Additional issue found by screenshots
+
+Mission Control mixed an injected historical date with the wall clock when
+building a ground-track range. The first screenshot run produced years of map
+points and exceeded 9 GB of memory. Both endpoints now derive from the injected
+date. The same historical fixture subsequently completed normally.
+
+## Scope of visual coverage
+
+The suite covers onboarding (both pages), forecast overview, categories,
+satellite list, pass forecast with map, pass detail, enlarged sky, Sky Now,
+settings, location, alarms, pass alarm configuration, ephemerides, selected star,
+night mode, Mission Control, raw ephemeris text, pass tutorial and debug menu.
+Captures show the initial viewport. System-owned share sheets, permission alerts,
+keyboard variants and every scrolled position are outside this baseline set.
+MapKit tile imagery is external and may vary independently of this app.

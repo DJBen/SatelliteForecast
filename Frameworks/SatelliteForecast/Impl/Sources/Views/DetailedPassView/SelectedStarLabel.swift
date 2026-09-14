@@ -30,7 +30,7 @@ struct SelectedStarLabel: View {
                         secondaryStarDescription
                     )
                     .font(.subheadline)
-                    .foregroundColor(Color(UIColor.secondaryLabel))
+                    .foregroundColor(AppTheme.muted)
                 }
 
                 Spacer()
@@ -39,27 +39,27 @@ struct SelectedStarLabel: View {
                     starInfo?.constellation?.localizedName ?? ""
                 )
                 .font(.headline)
-                .foregroundColor(Color(UIColor.secondaryLabel))
+                .foregroundColor(AppTheme.muted)
             }
 
             Text(
                 LocalizedStrings.magnitudeText(magnitude: star.magnitude)
             )
             .font(.body)
-            .foregroundColor(Color(UIColor.secondaryLabel))
+            .foregroundColor(AppTheme.muted)
 
             HStack(alignment: .firstTextBaseline, spacing: 16) {
                 Text(
                     LocalizedStrings.rightAscensionText(raDec: RADec(star.coordinate))
                 )
                 .font(.caption)
-                .foregroundColor(Color(UIColor.secondaryLabel))
+                .foregroundColor(AppTheme.muted)
 
                 Text(
                     LocalizedStrings.declinationText(raDec: RADec(star.coordinate))
                 )
                 .font(.caption)
-                .foregroundColor(Color(UIColor.secondaryLabel))
+                .foregroundColor(AppTheme.muted)
             }
         }
         .task(id: star.id) {

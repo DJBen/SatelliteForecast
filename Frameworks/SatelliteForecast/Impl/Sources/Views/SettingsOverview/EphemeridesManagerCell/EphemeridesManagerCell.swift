@@ -14,21 +14,7 @@ public struct EphemeridesManagerCell: View {
 
     init() {}
 
-    private var background: some View {
-        var colors = [UIColor.systemCyan, UIColor.systemBlue]
-
-        if colorScheme == .dark {
-            colors = colors.map { $0.darken(by: 0.3) }
-        } else {
-            colors = colors.map { $0.darken(by: -0.3) }
-        }
-
-        return LinearGradient(
-            gradient: Gradient(colors: colors.map(Color.init)),
-            startPoint: UnitPoint(x: 0, y: 0),
-            endPoint: UnitPoint(x: 1, y: 1)
-        )
-    }
+    private var background: some View { AppTheme.surface }
 
     private func fetchEphemerideResources() throws -> [EphemerideResource] {
         let temporaryDirectory = FileManager.default.temporaryDirectory
@@ -63,15 +49,16 @@ public struct EphemeridesManagerCell: View {
             Text(
                 EphemeridesManagerCell.description
             )
-            .font(.caption)
+            .font(.subheadline)
             .multilineTextAlignment(.leading)
-            .foregroundColor(Color(UIColor.secondaryLabel))
+            .foregroundColor(AppTheme.muted)
         }
         .padding()
         .background(background)
+        .overlay(RoundedRectangle(cornerRadius: AppTheme.cardRadius).stroke(AppTheme.border, lineWidth: 1))
         .clipShape(
             RoundedRectangle(
-                cornerRadius: 8,
+                cornerRadius: AppTheme.cardRadius,
                 style: .continuous
             )
         )

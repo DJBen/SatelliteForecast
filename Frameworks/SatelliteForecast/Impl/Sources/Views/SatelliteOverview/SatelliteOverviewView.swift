@@ -108,9 +108,13 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                 ScrollView {
                     LazyVStack(
                         alignment: .leading,
-                        spacing: 0,
+                        spacing: 20,
                         pinnedViews: []
                     ) {
+                        Text("Pass forecast", bundle: .module)
+                            .font(.largeTitle.bold())
+                            .foregroundStyle(.primary)
+                            .padding(.top, 8)
                         Section {
                             ForEach(
                                 [
@@ -134,6 +138,8 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                         }
                     }
                 }
+                .padding(.horizontal, 16)
+                .modifier(AppSurface())
                 .navigationBarTitle(
                     Text("Overview", bundle: .module),
                     displayMode: .inline
@@ -153,7 +159,7 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                     }
                 }
             }
-            .tint(Color(uiColor: .label))
+            .tint(AppTheme.accent)
             
             if viewModel.state.isMissingLocation {
                 HStack {

@@ -291,7 +291,8 @@ public struct DebugMenu: View {
                         Text(verbatim: "Delivered notifications")
                     }
                 }
-                .navigationTitle(Text(verbatim: "Debug Menu"))
+                .modifier(AppSurface())
+        .navigationTitle(Text(verbatim: "Debug Menu"))
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {

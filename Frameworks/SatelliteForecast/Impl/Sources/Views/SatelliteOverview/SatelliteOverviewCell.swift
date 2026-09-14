@@ -32,24 +32,24 @@ struct SatelliteOverviewCell: View {
             // Title section
             HStack {
                 Text(SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedTitle(satellite))
-                    .font(.title2)
+                    .font(.title3)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
                     .multilineTextAlignment(.leading)
                 Spacer()
                 Image(systemName: "chevron.right")
-                    .font(.title2)
+                    .font(.title3)
                     .fontWeight(.semibold)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(AppTheme.muted)
             }
             .padding(.vertical, 12)
             .padding(.horizontal, 16)
-            .background(Color(UIColor.systemBackground))
+            .background(AppTheme.surface)
             
             // Background video
             let videoName = satellite == .iss ? "iss" : "tiangong"
             AutoPlayVideoView(videoName: videoName, bundle: .module)
-                .frame(height: 225)
+                .frame(height: 184)
                 .clipped()
             
             // Pass information section
@@ -70,7 +70,7 @@ struct SatelliteOverviewCell: View {
                                     .lineLimit(1),
                                 currentDate: currentDate,
                                 julianDateOffset: julianDateOffset,
-                                isDarkBackground: true
+                                isDarkBackground: false
                             )
                         }
                         if let nextProminentPass = nextPass.nextProminentPass, let highestIlluminated = nextProminentPass.highestIlluminated {
@@ -81,13 +81,13 @@ struct SatelliteOverviewCell: View {
                                     .lineLimit(1),
                                 currentDate: currentDate,
                                 julianDateOffset: julianDateOffset,
-                                isDarkBackground: true
+                                isDarkBackground: false
                             )
                         }
                         if nextPass.nextVisiblePass == nil && nextPass.nextProminentPass == nil {
                             Text("No upcoming visible passes; check back after a few days!", bundle: .module)
                                 .font(.subheadline)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(AppTheme.muted)
                                 .multilineTextAlignment(.leading)
                         }
                     }
@@ -96,7 +96,7 @@ struct SatelliteOverviewCell: View {
                         Text(SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedDescription(satellite))
                             .font(.subheadline)
                             .multilineTextAlignment(.leading)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(AppTheme.muted)
                     } else {
                         HStack(spacing: 8) {
                             ProgressView()
@@ -104,27 +104,27 @@ struct SatelliteOverviewCell: View {
                                 .progressViewStyle(CircularProgressViewStyle())
                             Text("Loading pass information...", bundle: .module)
                                 .font(.subheadline)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(AppTheme.muted)
                         }
                     }
                 case .notLoaded:
                     Text(SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedDescription(satellite))
                         .font(.subheadline)
                         .multilineTextAlignment(.leading)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(AppTheme.muted)
                 }
             }
-            .padding(.vertical, 8)
+            .padding(.vertical, 16)
             .padding(.horizontal, 16)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color(UIColor.systemBackground))
+            .background(AppTheme.surface)
             .animation(.easeInOut(duration: 0.2), value: nextPassLoadingState)
         }
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: AppTheme.cardRadius, style: .continuous))
         .background(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(Color(UIColor.systemBackground))
-                .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
+            RoundedRectangle(cornerRadius: AppTheme.cardRadius, style: .continuous)
+                .fill(AppTheme.surface)
+                .overlay(RoundedRectangle(cornerRadius: AppTheme.cardRadius).stroke(AppTheme.border, lineWidth: 1))
         )
     }
 }
@@ -214,7 +214,7 @@ extension SatelliteOverviewCell {
                         .font(.subheadline)
                         .foregroundStyle(
                             LinearGradient(
-                                colors: [.cyan, .blue],
+                                colors: [AppTheme.accent, AppTheme.accent],
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
@@ -224,7 +224,7 @@ extension SatelliteOverviewCell {
                         .font(.subheadline)
                         .foregroundStyle(
                             LinearGradient(
-                                colors: [.orange, .pink],
+                                colors: [AppTheme.warning, AppTheme.warning],
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
@@ -232,7 +232,7 @@ extension SatelliteOverviewCell {
                 }
                 let countdownText = Text(durationFormatter.localizedString(fromTimeInterval: timeUntilRise))
                     .font(.subheadline.monospacedDigit())
-                    .foregroundColor(isDarkBackground ? .white : .secondary)
+                    .foregroundColor(isDarkBackground ? .white : AppTheme.muted)
                 (amOrPmText + countdownText)
                     .minimumScaleFactor(0.75)
                     .lineLimit(1)
@@ -244,7 +244,7 @@ extension SatelliteOverviewCell {
                 title
                     .font(.subheadline)
                     .fontWeight(.medium)
-                    .foregroundColor(isDarkBackground ? .white : .secondary)
+                    .foregroundColor(isDarkBackground ? .white : AppTheme.muted)
                 
                 Spacer()
                 

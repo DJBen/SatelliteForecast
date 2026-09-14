@@ -73,6 +73,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
     ) {
         self.viewModel = viewModel
         self.context = context
+        _julianDate = State(initialValue: context.julianDateProvider() + viewModel.state.julianDateOffset)
         self.backgroundSkyViewProducer = backgroundSkyViewProducer
     }
 
@@ -256,7 +257,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
             satellitePlotLabels
         )
         .onReceive(refreshTimer) { timerJulianDate in
-            self.julianDate = timerJulianDate + viewModel.state.julianDateOffset
+            self.julianDate = context.julianDateProvider() + viewModel.state.julianDateOffset
 
             guard viewModel.state.resources.isRealtimeSkyViewActive else {
                 return

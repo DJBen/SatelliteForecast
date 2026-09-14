@@ -69,10 +69,14 @@ public struct SatelliteCategoryViewImpl: SatelliteCategoryView {
                     spacing: 10,
                     pinnedViews: []
                 ) {
+                    Text("Satellites", bundle: .module)
+                        .font(.largeTitle.bold())
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.top, 8)
                     Section {
                         LazyVStack(
                             alignment: .leading,
-                            spacing: 12,
+                            spacing: 20,
                             pinnedViews: []
                         ) {
                             ForEach(
@@ -91,6 +95,8 @@ public struct SatelliteCategoryViewImpl: SatelliteCategoryView {
                     }
                 }
             }
+            .padding(.horizontal, 16)
+            .modifier(AppSurface())
             .navigationBarTitle(
                 Text(
                     "Satellite Categories",
@@ -122,7 +128,7 @@ public struct SatelliteCategoryViewImpl: SatelliteCategoryView {
                 }
             }
         }
-        .tint(Color(uiColor: .label))
+        .tint(AppTheme.accent)
     }
 }
 

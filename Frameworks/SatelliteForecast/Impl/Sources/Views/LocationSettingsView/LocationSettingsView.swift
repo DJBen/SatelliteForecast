@@ -175,6 +175,7 @@ public struct LocationSettingsView: View {
             placement: .navigationBarDrawer(displayMode: .always),
             prompt: Text("Enter address", bundle: .module)
         )
+        .modifier(AppSurface())
         .navigationTitle(Text("Select Location", bundle: .module))
         .onReceive(
             searchDebouncer.$debouncedSearchTerm

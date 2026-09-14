@@ -29,21 +29,7 @@ public struct AlarmSettingsCell: View {
 
     @Environment(\.colorScheme) private var colorScheme
 
-    private var background: some View {
-        var colors = [UIColor.systemMint, UIColor.systemGreen]
-        
-        if colorScheme == .dark {
-            colors = colors.map { $0.darken(by: 0.3) }
-        } else {
-            colors = colors.map { $0.darken(by: -0.3) }
-        }
-        
-        return LinearGradient(
-            gradient: Gradient(colors: colors.map(Color.init)),
-            startPoint: UnitPoint(x: 0, y: 0),
-            endPoint: UnitPoint(x: 1, y: 1)
-        )
-    }
+    private var background: some View { AppTheme.surface }
     
     public var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -62,15 +48,16 @@ public struct AlarmSettingsCell: View {
             Text(
                 AlarmSettingsCell.description(numberOfAlerts: viewModel.state.scheduledPassNotifications.count)
             )
-            .font(.caption)
+            .font(.subheadline)
             .multilineTextAlignment(.leading)
-            .foregroundColor(Color(UIColor.secondaryLabel))
+            .foregroundColor(AppTheme.muted)
         }
         .padding()
         .background(background)
+        .overlay(RoundedRectangle(cornerRadius: AppTheme.cardRadius).stroke(AppTheme.border, lineWidth: 1))
         .clipShape(
             RoundedRectangle(
-                cornerRadius: 8,
+                cornerRadius: AppTheme.cardRadius,
                 style: .continuous
             )
         )

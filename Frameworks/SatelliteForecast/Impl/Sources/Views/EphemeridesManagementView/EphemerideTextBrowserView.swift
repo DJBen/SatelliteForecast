@@ -27,13 +27,14 @@ struct EphemerideTextBrowserView: View {
                         failure.localizedDescription
                     )
                     .font(.body)
-                    .foregroundColor(Color(UIColor.secondaryLabel))
+                    .foregroundColor(AppTheme.muted)
                     .padding(.horizontal, 16)
                 }
             } else {
                 ProgressView("Loading...")
             }
         }
+        .modifier(AppSurface())
         .navigationTitle(resource.fileName)
         .toolbar {
             ToolbarItem(

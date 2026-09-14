@@ -58,6 +58,12 @@ public enum SkyChartTheme {
         spectralClass: String?,
         traitCollection: UITraitCollection
     ) -> UIColor {
+        if traitCollection.userInterfaceStyle != .dark {
+            let darkColor = starColor(spectralClass: spectralClass, traitCollection: UITraitCollection(userInterfaceStyle: .dark))
+            var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, alpha: CGFloat = 0
+            darkColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+            return UIColor(red: red * 0.45, green: green * 0.45, blue: blue * 0.45, alpha: alpha)
+        }
         guard let spectralClass = spectralClass?.uppercased().first else {
             // Default to white for missing spectral class
             return UIColor.white

@@ -197,7 +197,7 @@ public struct PassAlarmSettingsModalView: View {
                         systemName: "bell"
                     )
                     .font(.callout.weight(.semibold))
-                    .foregroundColor(Color(UIColor.secondaryLabel))
+                    .foregroundColor(AppTheme.muted)
 
                     Text(
                         Self.alarmLabelText(
@@ -210,7 +210,7 @@ public struct PassAlarmSettingsModalView: View {
                         )
                     )
                     .font(.callout.weight(.semibold))
-                    .foregroundColor(Color(UIColor.secondaryLabel))
+                    .foregroundColor(AppTheme.muted)
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 16)
@@ -262,7 +262,8 @@ public struct PassAlarmSettingsModalView: View {
                     .buttonStyle(.borderedProminent)
                 }
             }
-            .navigationTitle(Text(isNotificationScheduled ? NavigationBar.viewAlarmTitle : NavigationBar.title))
+            .modifier(AppSurface())
+        .navigationTitle(Text(isNotificationScheduled ? NavigationBar.viewAlarmTitle : NavigationBar.title))
             .navigationBarTitleDisplayMode(UIScreen.main.bounds.height > 700 ? .automatic : .inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

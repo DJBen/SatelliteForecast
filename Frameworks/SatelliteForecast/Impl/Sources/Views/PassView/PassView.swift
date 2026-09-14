@@ -176,7 +176,8 @@ public struct PassView: View {
                 Spacer(minLength: 10)
             }
             .clipShape(Rectangle())
-            .navigationTitle(Date(julianDate: context.passSnapshots.pass.rise.julianDate).formatted(date: .abbreviated, time: .shortened))
+            .modifier(AppSurface())
+        .navigationTitle(Date(julianDate: context.passSnapshots.pass.rise.julianDate).formatted(date: .abbreviated, time: .shortened))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(

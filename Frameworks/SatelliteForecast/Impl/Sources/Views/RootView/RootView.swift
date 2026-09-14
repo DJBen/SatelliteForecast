@@ -78,14 +78,15 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
 
         let navBarAppearance = UINavigationBarAppearance()
         navBarAppearance.configureWithOpaqueBackground()
+        navBarAppearance.backgroundColor = AppTheme.backgroundColor
         navBarAppearance.shadowImage = UIImage()
         navBarAppearance.shadowColor = .clear
         UINavigationBar.appearance().standardAppearance = navBarAppearance
         UINavigationBar.appearance().compactAppearance = navBarAppearance
         UINavigationBar.appearance().scrollEdgeAppearance = navBarAppearance
 
-        UITabBar.appearance().backgroundColor = UIColor.systemBackground
-        UITabBar.appearance().unselectedItemTintColor = UIColor.systemGray2
+        UITabBar.appearance().backgroundColor = AppTheme.surfaceColor
+        UITabBar.appearance().unselectedItemTintColor = AppTheme.mutedColor
     }
     
     private func isSelectedBinding(for tab: SatelliteForecast.Tab) -> Binding<Bool> {
@@ -191,7 +192,8 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
                 )
             }
         }
-        .tint(Color(uiColor: .label))
+        .tint(AppTheme.accent)
+        .background(AppTheme.background.ignoresSafeArea())
     }
 }
 

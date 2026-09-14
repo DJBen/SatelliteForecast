@@ -30,8 +30,9 @@ extension EffectMiddleware where
                     satellitePathRasterizationQueue.async {
                         let state = getState()
                         let dataSource = state.resources.dataSource(for: quality)
+                        let key = SkyPathKey(pass: passSnapshots.pass, isDark: traitCollection.userInterfaceStyle == .dark)
                         // Skip if image already generated.
-                        if let _ = dataSource[passSnapshots.pass] {
+                        if let _ = dataSource[key] {
 //                            logger.debug("\(pass.noradIndex)'s pass \(pass.rise.julianDate)->\(pass.set.julianDate) already rasterized, skipping.")
                             return
                         }
@@ -61,7 +62,7 @@ extension EffectMiddleware where
                                 .rasterizedSatellitePath(
                                     image,
                                     quality: quality,
-                                    pass: passSnapshots.pass
+                                    key: key
                                 )
                             )
                         }

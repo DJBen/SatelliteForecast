@@ -183,6 +183,7 @@ public struct SatelliteListView: View {
             },
             failedContentBuilder: failureView
         )
+        .modifier(AppSurface())
         .navigationTitle(Text("Satellites", bundle: .module))
         .searchable(
             text: $textObserver.searchText,

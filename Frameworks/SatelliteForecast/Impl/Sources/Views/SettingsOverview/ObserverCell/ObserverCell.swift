@@ -178,7 +178,7 @@ public struct ObserverCell: View {
         func body(content: Content) -> some View {
             content.font(.caption)
                 .multilineTextAlignment(.leading)
-                .foregroundColor(colorScheme == .light ? Color(UIColor.systemGray2) : Color(UIColor.systemGray4))
+                .foregroundColor(AppTheme.muted)
         }
     }
 
@@ -188,8 +188,7 @@ public struct ObserverCell: View {
                 .frame(height: 135)
 
             ZStack {
-                Color.clear
-                    .blurEffect()
+                AppTheme.surface
 
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
@@ -205,13 +204,13 @@ public struct ObserverCell: View {
                     if let secondaryLabelText = secondaryLabelText {
                         Text(secondaryLabelText)
                             .modifier(SecondaryLabelModifier())
-                            .vibrancyEffect()
+
                     }
 
                     if let coordinate = viewModel.state.locationResources.location?.coordinate {
                         Text(coordinate.formattedString)
                             .modifier(SecondaryLabelModifier())
-                            .vibrancyEffect()
+
                     }
                 }
                 .padding()
@@ -222,7 +221,7 @@ public struct ObserverCell: View {
         .background(background)
         .clipShape(
             RoundedRectangle(
-                cornerRadius: 8,
+                cornerRadius: AppTheme.cardRadius,
                 style: .continuous
             )
         )

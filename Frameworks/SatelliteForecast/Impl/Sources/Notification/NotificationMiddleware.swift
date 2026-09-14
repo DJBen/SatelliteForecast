@@ -81,7 +81,7 @@ Dependencies == Void {
                                     ),
                                     magToRadius: { CGFloat(3 * exp(-0.425 * $0)) }
                                 ),
-                                starManager: StarManagerMock()
+                                starManager: context.dependencies.starManager
                             )
 
                             SkyChartUtils.addRasterizedSatellitePassPath(

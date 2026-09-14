@@ -127,7 +127,7 @@ struct PassPreviewCell: View {
                                 HStack(spacing: 0) {
                                     Image(systemName: "arrow.up.to.line")
                                         .font(.subheadline)
-                                        .foregroundColor(Color(UIColor.secondaryLabel))
+                                        .foregroundColor(AppTheme.muted)
                                         .bold()
 
                                     Text(timeFormatter.string(from: Date(julianDate: pass.culmination.julianDate)))
@@ -135,9 +135,9 @@ struct PassPreviewCell: View {
                                         .foregroundColor(Color(UIColor.label))
                                         .bold()
                                         .shimmering(gradient: Gradient(colors: [
-                                            Color(UIColor.secondaryLabel),
+                                            AppTheme.muted,
                                             Color(UIColor.label),
-                                            Color(UIColor.secondaryLabel)
+                                            AppTheme.muted
                                         ]), bandSize: 0.5)
                                 }
                             }
@@ -157,7 +157,7 @@ struct PassPreviewCell: View {
                             HStack(spacing: 0) {
                                 Image(systemName: "arrow.up.to.line")
                                     .font(.subheadline)
-                                    .foregroundColor(Color(UIColor.secondaryLabel))
+                                    .foregroundColor(AppTheme.muted)
                                     .bold()
 
                                 Text(timeFormatter.string(from: Date(julianDate: pass.culmination.julianDate)))
@@ -165,9 +165,9 @@ struct PassPreviewCell: View {
                                     .foregroundColor(Color(UIColor.label))
                                     .bold()
                                     .shimmering(gradient: Gradient(colors: [
-                                        Color(UIColor.secondaryLabel),
+                                        AppTheme.muted,
                                         Color(UIColor.label),
-                                        Color(UIColor.secondaryLabel)
+                                        AppTheme.muted
                                     ]), bandSize: 0.5)
                             }
                         }
@@ -177,7 +177,7 @@ struct PassPreviewCell: View {
                                 HStack(spacing: 0) {
                                     Image(systemName: "arrow.up.to.line")
                                         .font(.subheadline)
-                                        .foregroundColor(Color(UIColor.secondaryLabel))
+                                        .foregroundColor(AppTheme.muted)
                                         .bold()
 
                                     Text(timeFormatter.string(from: Date(julianDate: pass.culmination.julianDate)))
@@ -185,9 +185,9 @@ struct PassPreviewCell: View {
                                         .foregroundColor(Color(UIColor.label))
                                         .bold()
                                         .shimmering(gradient: Gradient(colors: [
-                                            Color(UIColor.secondaryLabel),
+                                            AppTheme.muted,
                                             Color(UIColor.label),
-                                            Color(UIColor.secondaryLabel)
+                                            AppTheme.muted
                                         ]), bandSize: 0.5)
                                 }
                             }

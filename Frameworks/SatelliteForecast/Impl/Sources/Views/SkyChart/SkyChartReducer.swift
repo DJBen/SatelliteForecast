@@ -13,16 +13,16 @@ import SatelliteForecast
 extension Reducer where ActionType == SkyChartOutput, StateType == SkyChartViewState {
     public static let skyChartOutputReducer = Reducer.reduce { action, state in
         switch action {
-        case let .rasterizedSatellitePath(image, quality, pass):
+        case let .rasterizedSatellitePath(image, quality, key):
             switch quality {
             case .detailed:
-                state.resources.detailedSatellitePaths[pass] = image
+                state.resources.detailedSatellitePaths[key] = image
             case .full:
-                state.resources.rasterizedSatellitePaths[pass] = image
+                state.resources.rasterizedSatellitePaths[key] = image
             case .preview:
-                state.resources.previewSatellitePaths[pass] = image
+                state.resources.previewSatellitePaths[key] = image
             case .onboarding:
-                state.resources.onboardingSatellitePaths[pass] = image
+                state.resources.onboardingSatellitePaths[key] = image
             }
         }
     }

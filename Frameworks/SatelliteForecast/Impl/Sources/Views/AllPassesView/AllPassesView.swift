@@ -90,6 +90,7 @@ extension AllPassViewNavigation: Equatable, Hashable, Codable {
 }
 
 public struct AllPassesView: View {
+    @Environment(\.colorScheme) private var colorScheme
     struct Item: Equatable, Identifiable {
         let index: Int
         let passSnapshots: PassSnapshots
@@ -142,13 +143,14 @@ public struct AllPassesView: View {
         }
 
         let items = passSnapshotsList.enumerated().map { index, passSnapshots -> Item in
-            let rasterizedSatellitePath = viewModel.state.skyChartResources.previewSatellitePaths[passSnapshots.pass]
+            let rasterizedSatellitePath = viewModel.state.skyChartResources.previewSatellitePaths[SkyPathKey(pass: passSnapshots.pass, isDark: colorScheme == .dark)]
             let rasterizedBackgroundSky: UIImage?
             if let observer = context.observer {
                 rasterizedBackgroundSky = viewModel.state.backgroundSkyResources.previewBackgroundSkies[
                     BackgroundSkyKey(
                         observer: observer,
-                        configs: .preset
+                        configs: .preset,
+                        isDark: colorScheme == .dark
                     )
                 ]?[passSnapshots.pass.rise.julianDate.roundJulianDate(.toMins(1))]
             } else {
@@ -281,13 +283,13 @@ public struct AllPassesView: View {
                 } label: {
                     Image(systemName: "questionmark.circle")
                         .font(.subheadline)
-                        .foregroundColor(Color(UIColor.secondaryLabel))
+                        .foregroundColor(AppTheme.muted)
                 }
                 .accessibilityLabel(Text("Show help", bundle: .module, comment: "Accessibility label for help button"))
             }
             Text(AllPassesView.Section.VisiblePasses.headerCaption)
                 .font(.caption)
-                .foregroundColor(Color(UIColor.secondaryLabel))
+                .foregroundColor(AppTheme.muted)
         }
         .textCase(nil)
     }
@@ -299,7 +301,7 @@ public struct AllPassesView: View {
                 .foregroundColor(Color(UIColor.label))
             Text(AllPassesView.Section.InvisiblePasses.headerCaption)
                 .font(.caption)
-                .foregroundColor(Color(UIColor.secondaryLabel))
+                .foregroundColor(AppTheme.muted)
         }
         .textCase(nil)
     }
@@ -394,7 +396,7 @@ public struct AllPassesView: View {
                             Did you know? Space stations orbits earth 15 times a day, and maybe up to 5-7 times above your location, but most of the time it's either too bright or too dark to be seen.
                             """
                         )
-                        .foregroundColor(Color(UIColor.secondaryLabel))
+                        .foregroundColor(AppTheme.muted)
                         .font(.footnote)
                         .multilineTextAlignment(.leading)
                         .padding(EdgeInsets(top: 0, leading: 32, bottom: 0, trailing: 32))
@@ -433,6 +435,7 @@ public struct AllPassesView: View {
     public var body: some View {
         allPassesList
         .frame(maxWidth: .infinity)
+        .modifier(AppSurface())
         .navigationTitle(context.satelliteInfo.elements.commonName)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

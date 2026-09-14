@@ -1,6 +1,7 @@
 import XCTest
 import SwiftUI
 import CoreLocation
+import CoreMotion
 import BTree
 import CombineRex
 import CombineRextensions
@@ -27,6 +28,8 @@ final class ScreenSnapshotTests: XCTestCase {
         for style in [UIUserInterfaceStyle.light, .dark] {
             let fixture = try Fixture(catalog: catalog)
             for (name, view) in fixture.screens() {
+                let selected = ProcessInfo.processInfo.environment["SNAPSHOT_SCREEN"] ?? ""
+                if !selected.isEmpty && !selected.split(separator: ",").contains(where: { name.hasPrefix($0) }) { continue }
                 try await assertSnapshot(view, name: "\(name)-\(style == .dark ? "dark" : "light")", style: style)
             }
         }
@@ -34,6 +37,7 @@ final class ScreenSnapshotTests: XCTestCase {
 
     private func assertSnapshot(_ view: AnyView, name: String, style: UIUserInterfaceStyle) async throws {
         let host = UIHostingController(rootView: view
+            .environment(\.motionManagerKey, CMMotionManager())
             .environment(\.locale, Locale(identifier: "en_US"))
             .environment(\.timeZone, TimeZone(secondsFromGMT: 0)!)
             .environment(\.colorScheme, style == .dark ? .dark : .light)
@@ -94,7 +98,7 @@ final class ScreenSnapshotTests: XCTestCase {
 }
 
 @MainActor
-private struct Fixture {
+struct Fixture {
     let catalog: AppStarCatalog
     let now = Date(timeIntervalSince1970: 1622592000) // 2021-06-02, near the TLE epoch
     let observer = LatLonAlt(37.486743, -122.226560, 0)
@@ -150,7 +154,7 @@ private struct Fixture {
             ("06-pass-forecast", AnyView(NavigationStack { ViewProducer.allPassesView(viewModel: store).view(.init(satelliteInfo: info, julianDateRange: range, observer: observer, starManager: catalog, julianDateProvider: date)) })),
             ("07-pass", AnyView(NavigationStack { ViewProducer.passView(viewModel: store).view(.init(passIndex: 0, satelliteInfo: info, satelliteCommonName: "ISS (ZARYA)", category: .iss, julianDateRange: range, observer: observer, passSnapshots: pass, starManager: catalog, julianDateProvider: date)) })),
             ("08-detailed-sky", AnyView(ViewProducer.detailedPassView(viewModel: store).view(.init(satelliteInfo: info, category: .iss, julianDateRange: range, observer: observer, passSnapshots: pass, starManager: catalog, julianDateProvider: date)))),
-            ("09-sky-now", AnyView(ViewProducer.realtimeSky(viewModel: store).view(.init(basicChartConfigs: .init(), backgroundSkyConfigs: .preset, satelliteMagToRadiusFunction: .default, starManager: catalog, julianDateProvider: date)))),
+            ("09-sky-now", AnyView(ViewProducer.realtimeSky(viewModel: store).view(.init(basicChartConfigs: .init(), backgroundSkyConfigs: .preset, satelliteMagToRadiusFunction: .default, starManager: catalog, julianDateProvider: { pass.pass.rise.julianDate })))),
             ("10-settings", AnyView(ViewProducer.settingsOverview(viewModel: store).view())),
             ("11-location", AnyView(NavigationStack { ViewProducer.locationSettings(viewModel: store).view() })),
             ("12-alarms", AnyView(NavigationStack { ViewProducer.alarmSettingsView(viewModel: store).view() })),

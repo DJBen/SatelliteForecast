@@ -226,7 +226,7 @@ struct UCSSatCell: View {
 fileprivate extension View {
     func secondaryStyle() -> some View {
         font(.caption2)
-        .foregroundColor(Color(UIColor.secondaryLabel))
+        .foregroundColor(AppTheme.muted)
     }
 }
 

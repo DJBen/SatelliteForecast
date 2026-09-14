@@ -143,9 +143,9 @@ private struct OnboardingPageView: View {
                 LinearGradient(
                     gradient: Gradient(stops: [
                         Gradient.Stop(color: Color.clear, location: 0.0),
-                        Gradient.Stop(color: Color.clear, location: 0.7),
-                        Gradient.Stop(color: Color.black.opacity(0.5), location: 0.75),
-                        Gradient.Stop(color: Color.black.opacity(0.5), location: 1.0)
+                        Gradient.Stop(color: Color.black.opacity(0.10), location: 0.35),
+                        Gradient.Stop(color: Color.black.opacity(0.88), location: 0.75),
+                        Gradient.Stop(color: Color.black.opacity(0.88), location: 1.0)
                     ]),
                     startPoint: .top,
                     endPoint: .bottom
@@ -169,7 +169,7 @@ private struct OnboardingPageView: View {
                         Text(page.description)
                             .font(.headline)
                             .fontWeight(.medium)
-                            .foregroundStyle(Color(UIColor.secondaryLabel))
+                            .foregroundStyle(.white.opacity(0.85))
                             .multilineTextAlignment(.leading)
                             .lineLimit(nil)
                             .fixedSize(horizontal: false, vertical: true)
@@ -189,8 +189,8 @@ private struct OnboardingPageView: View {
                                 .foregroundColor(.black)
                                 .padding(.horizontal, 32)
                                 .padding(.vertical, 16)
-                                .background(Color.white)
-                                .cornerRadius(25)
+                                .background(Color(red: 0.44, green: 0.85, blue: 0.82))
+                                .cornerRadius(18)
                             }
                             .padding(.top, 8)
                     } else {

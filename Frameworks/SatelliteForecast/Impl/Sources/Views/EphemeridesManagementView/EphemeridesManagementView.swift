@@ -30,7 +30,7 @@ struct EphemeridesManagementView: View {
                             formattedModificationDate
                         )
                         .font(.subheadline)
-                        .foregroundColor(Color(UIColor.secondaryLabel))
+                        .foregroundColor(AppTheme.muted)
                     }
                 }
 
@@ -39,7 +39,7 @@ struct EphemeridesManagementView: View {
                         formattedSize
                     )
                     .font(.subheadline)
-                    .foregroundColor(Color(UIColor.secondaryLabel))
+                    .foregroundColor(AppTheme.muted)
                 }
 
                 if let comment = resource.comment {
@@ -75,7 +75,7 @@ struct EphemeridesManagementView: View {
                 Text(
                     EphemeridesManagementView.emptyText
                 )
-                .foregroundColor(Color(UIColor.secondaryLabel))
+                .foregroundColor(AppTheme.muted)
                 .padding(.horizontal, 16)
             } else {
                 List {
@@ -105,6 +105,7 @@ struct EphemeridesManagementView: View {
                 }
             }
         }
+        .modifier(AppSurface())
         .navigationTitle(Text("Ephemerides", bundle: .module))
         .task {
             self.resources = (try? fetchEphemerideResources()) ?? []

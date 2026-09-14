@@ -87,8 +87,8 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                     comment: "The section header of the alarms section in settings"
                 )
             )
-            .font(.headline.lowercaseSmallCaps().weight(.semibold))
-            .foregroundColor(Color(UIColor.secondaryLabel))
+            .font(.subheadline.weight(.semibold))
+            .foregroundColor(AppTheme.muted)
         case .observer:
             Text(
                 NSLocalizedString(
@@ -99,8 +99,8 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                     comment: "The section header of the observer section in settings"
                 )
             )
-            .font(.headline.lowercaseSmallCaps().weight(.semibold))
-            .foregroundColor(Color(UIColor.secondaryLabel))
+            .font(.subheadline.weight(.semibold))
+            .foregroundColor(AppTheme.muted)
         case .ephemeridesManager:
             Text(
                 NSLocalizedString(
@@ -111,8 +111,8 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                     comment: "The section header of the ephemerides manager section in settings"
                 )
             )
-            .font(.headline.lowercaseSmallCaps().weight(.semibold))
-            .foregroundColor(Color(UIColor.secondaryLabel))
+            .font(.subheadline.weight(.semibold))
+            .foregroundColor(AppTheme.muted)
         }
     }
 
@@ -156,7 +156,7 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
             }
             .padding()
             .background {
-                let colors = [UIColor.systemGray4, UIColor.systemGray5]
+                let colors = [AppTheme.surfaceColor, AppTheme.surfaceColor]
 
                 LinearGradient(
                     gradient: Gradient(colors: colors.map(Color.init)),
@@ -166,7 +166,7 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
             }
             .clipShape(
                 RoundedRectangle(
-                    cornerRadius: 8,
+                    cornerRadius: AppTheme.cardRadius,
                     style: .continuous
                 )
             )
@@ -214,7 +214,7 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
             }
             .padding()
             .background {
-                let colors = [UIColor.systemPurple, UIColor.systemBlue]
+                let colors = [AppTheme.surfaceColor, AppTheme.surfaceColor]
 
                 LinearGradient(
                     gradient: Gradient(colors: colors.map(Color.init)),
@@ -224,7 +224,7 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
             }
             .clipShape(
                 RoundedRectangle(
-                    cornerRadius: 8,
+                    cornerRadius: AppTheme.cardRadius,
                     style: .continuous
                 )
             )
@@ -244,7 +244,7 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
             ScrollView {
                 LazyVStack(
                     alignment: .leading,
-                    spacing: 10,
+                    spacing: 20,
                     pinnedViews: []
                 ) {
                     ForEach(items, id: \.self) { item in
@@ -300,6 +300,7 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                     }
                 }
             }
+            .modifier(AppSurface())
             .navigationBarTitle(Text("Settings", bundle: .module), displayMode: .inline)
             .navigationBarHidden(true)
         }

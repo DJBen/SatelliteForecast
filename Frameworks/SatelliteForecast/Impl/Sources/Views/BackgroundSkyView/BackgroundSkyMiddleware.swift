@@ -34,7 +34,8 @@ extension EffectMiddleware where InputActionType == BackgroundSkyViewAction, Out
                         if let _ = dataSource[key]?[julianDate] {
                             return
                         }
-                        let image = SkyChartUtils.rasterizedBackgroundSkyPath(
+                        var image: UIImage!
+                        traitCollection.performAsCurrent { image = SkyChartUtils.rasterizedBackgroundSkyPath(
                             params: BackgroundSkyRenderParams(
                                 rect: CGRect(origin: .zero, size: size),
                                 stars: {
@@ -63,7 +64,7 @@ extension EffectMiddleware where InputActionType == BackgroundSkyViewAction, Out
                                 magToRadius: key.configs.starMagToDisplayRadiusMappingFunction.apply
                             ),
                             starManager: context.dependencies
-                        )
+                        ) }
                         
                         //                            logger.debug("Rasterized background sky at observer coodinate \(String(describing: key.observer)) @ JD \(julianDate).")
                         

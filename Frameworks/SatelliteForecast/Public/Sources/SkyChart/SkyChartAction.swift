@@ -13,5 +13,5 @@ extension SkyChartAction: Equatable {}
 
 public enum SkyChartOutput {
     /// A satellite path is rasterized, or the rasterized image is read from the cache.
-    case rasterizedSatellitePath(UIImage, quality: ChartQuality, pass: Pass)
+    case rasterizedSatellitePath(UIImage, quality: ChartQuality, key: SkyPathKey)
 }

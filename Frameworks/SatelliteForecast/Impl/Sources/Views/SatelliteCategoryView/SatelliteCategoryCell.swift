@@ -28,11 +28,11 @@ struct SatelliteCategoryCell: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 0) {
             // Title section
             HStack {
                 Text(SatelliteCategoryCell.categoryLocalizedString(category))
-                    .font(.title2)
+                    .font(.title3)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
                     .multilineTextAlignment(.leading)
@@ -40,18 +40,21 @@ struct SatelliteCategoryCell: View {
                     .lineLimit(1)
                 Spacer()
                 Image(systemName: "chevron.right")
-                    .font(.title2)
+                    .font(.title3)
                     .fontWeight(.semibold)
                     .foregroundColor(.secondary)
             }
-            .padding(.horizontal, 16)
-            .background(Color(UIColor.systemBackground))
+            .padding(16)
+            .background(AppTheme.surface)
 
             // Background image
             background(category: category)
-                .frame(height: 168)
+                .frame(height: 156)
                 .clipped()
         }
+        .background(AppTheme.surface)
+        .clipShape(RoundedRectangle(cornerRadius: AppTheme.cardRadius))
+        .overlay(RoundedRectangle(cornerRadius: AppTheme.cardRadius).stroke(AppTheme.border, lineWidth: 1))
     }
 }
 

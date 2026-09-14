@@ -81,7 +81,8 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
         let images = viewModel.state.resources.dataSource(for: context.quality)[
             BackgroundSkyKey(
                 observer: context.observer,
-                configs: context.configs
+                configs: context.configs,
+                        isDark: colorScheme == .dark
             )
         ]
 
@@ -162,7 +163,8 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
                         julianDate: julianDate,
                         key: BackgroundSkyKey(
                             observer: context.observer,
-                            configs: context.configs
+                            configs: context.configs,
+                        isDark: colorScheme == .dark
                         ),
                         traitCollection: UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
                     )
@@ -278,6 +280,13 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
                 )
             }
         }
+        .onChange(of: colorScheme) { _, _ in
+            guard let julianDate = backgroundSkyJulianDate, contentSize.width > 0, contentSize.height > 0 else { return }
+            viewModel.dispatch(.requestRasterizedBackgroundSky(
+                size: contentSize, quality: context.quality, julianDate: julianDate,
+                key: BackgroundSkyKey(observer: context.observer, configs: context.configs, isDark: colorScheme == .dark),
+                traitCollection: UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))))
+        }
         .onChange(of: backgroundSkyJulianDate) { _, backgroundSkyJulianDateKey in
             guard !contentSize.width.isZero && !contentSize.height.isZero else {
                 return
@@ -294,7 +303,8 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
                     julianDate: backgroundSkyJulianDateKey,
                     key: BackgroundSkyKey(
                         observer: context.observer,
-                        configs: context.configs
+                        configs: context.configs,
+                        isDark: colorScheme == .dark
                     ),
                     traitCollection: UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))
                 )

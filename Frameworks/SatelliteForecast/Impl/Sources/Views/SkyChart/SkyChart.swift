@@ -143,13 +143,13 @@ public struct SkyChart<ConstellationLabel: View, BackgroundAnnotationView: View>
     private var rasterizedSatellitePath: UIImage? {
         switch context.quality {
         case .detailed:
-            return viewModel.state.resources.detailedSatellitePaths[context.passSnapshots.pass]
+            return viewModel.state.resources.detailedSatellitePaths[SkyPathKey(pass: context.passSnapshots.pass, isDark: colorScheme == .dark)]
         case .full:
-            return viewModel.state.resources.rasterizedSatellitePaths[context.passSnapshots.pass]
+            return viewModel.state.resources.rasterizedSatellitePaths[SkyPathKey(pass: context.passSnapshots.pass, isDark: colorScheme == .dark)]
         case .preview:
-            return viewModel.state.resources.previewSatellitePaths[context.passSnapshots.pass]
+            return viewModel.state.resources.previewSatellitePaths[SkyPathKey(pass: context.passSnapshots.pass, isDark: colorScheme == .dark)]
         case .onboarding:
-            return viewModel.state.resources.onboardingSatellitePaths[context.passSnapshots.pass]
+            return viewModel.state.resources.onboardingSatellitePaths[SkyPathKey(pass: context.passSnapshots.pass, isDark: colorScheme == .dark)]
         }
     }
 
@@ -169,6 +169,12 @@ public struct SkyChart<ConstellationLabel: View, BackgroundAnnotationView: View>
                 }
             }
             .modifier(SizeModifier())
+            .onChange(of: colorScheme) { _, _ in
+                guard contentSize.width > 0, contentSize.height > 0 else { return }
+                viewModel.dispatch(.requestRasterizedSatellitePath(
+                    size: contentSize, quality: context.quality, passSnapshots: context.passSnapshots,
+                    traitCollection: UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))))
+            }
             .onPreferenceChange(SizePreferenceKey.self) { contentSize in
 
                 guard !contentSize.width.isZero && !contentSize.height.isZero else {
@@ -398,7 +404,7 @@ struct SkyChart_Previews: PreviewProvider {
                     state: SkyChartViewState(
                         resources: SkyChartResources(
                             rasterizedSatellitePaths: [
-                                passSnapshots.pass: SkyChartUtils.rasterizedSatellitePassPath(
+                                SkyPathKey(pass: passSnapshots.pass, isDark: colorScheme == .dark): SkyChartUtils.rasterizedSatellitePassPath(
                                     params: SatellitePassPathRenderParams(
                                         rect: CGRect(origin: .zero, size: CGSize(width: 388, height: 805)),
                                         snapshotsDuringPass: passSnapshots.snapshots,
@@ -458,7 +464,7 @@ struct SkyChart_Previews: PreviewProvider {
                 state: SkyChartViewState(
                     resources: SkyChartResources(
                         rasterizedSatellitePaths: [
-                            passSnapshots2.pass: SkyChartUtils.rasterizedSatellitePassPath(
+                            SkyPathKey(pass: passSnapshots2.pass, isDark: false): SkyChartUtils.rasterizedSatellitePassPath(
                                 params: SatellitePassPathRenderParams(
                                     rect: CGRect(origin: .zero, size: CGSize(width: 388, height: 805)),
                                     snapshotsDuringPass: passSnapshots2.snapshots,

@@ -43,7 +43,7 @@ public struct AlarmSettingsView: View {
                     .font(.subheadline)
                     .minimumScaleFactor(0.75)
                     .lineLimit(1)
-                    .foregroundColor(Color(UIColor.secondaryLabel))
+                    .foregroundColor(AppTheme.muted)
             }
 
             if item.notification.timeOffset != 0 {
@@ -54,7 +54,7 @@ public struct AlarmSettingsView: View {
                     )
                 )
                 .font(.caption)
-                .foregroundColor(Color(UIColor.secondaryLabel))
+                .foregroundColor(AppTheme.muted)
             }
                         
             VStack(alignment: .leading, spacing: 4) {
@@ -78,14 +78,14 @@ public struct AlarmSettingsView: View {
                 VStack(spacing: 16) {
                     Image(systemName: "bell.circle")
                         .font(.title)
-                        .foregroundColor(Color(UIColor.secondaryLabel))
+                        .foregroundColor(AppTheme.muted)
                     Text(
                     """
                     Your alarms will appear here. Schedule an alarm by tapping the \(Image(systemName: "bell")) inside a pass.
                     """,
                     bundle: .module
                     )
-                    .foregroundColor(Color(UIColor.secondaryLabel))
+                    .foregroundColor(AppTheme.muted)
                     .multilineTextAlignment(.center)
                 }
                 .padding(
@@ -122,7 +122,8 @@ public struct AlarmSettingsView: View {
     }
     
     public var body: some View {
-        alarmList.navigationTitle(Text("Alarms", bundle: .module, comment: "Noun, as in alarm clock."))
+        alarmList.modifier(AppSurface())
+        .navigationTitle(Text("Alarms", bundle: .module, comment: "Noun, as in alarm clock."))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             EditButton()
