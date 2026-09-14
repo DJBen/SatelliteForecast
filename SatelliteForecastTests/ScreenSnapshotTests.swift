@@ -34,6 +34,72 @@ final class ScreenSnapshotTests: XCTestCase {
         }
     }
 
+    /// Full-resolution store captures are separate from regression baselines.
+    func testAppStoreScreenshots() async throws {
+        let env = ProcessInfo.processInfo.environment
+        guard let destination = env["STORE_SCREENSHOT_OUTPUT"] else { throw XCTSkip("Run scripts/capture-store-screenshots.py") }
+        let locale = env["STORE_SCREENSHOT_LOCALE"] ?? "en-US"
+        let previousTimeZone = NSTimeZone.default
+        NSTimeZone.default = TimeZone(identifier: "America/Los_Angeles")!
+        defer { NSTimeZone.default = previousTimeZone }
+        UserDefaults.standard.set(true, forKey: "hasCompletedAllPassesOnboarding")
+        UIView.setAnimationsEnabled(false)
+        defer { UIView.setAnimationsEnabled(true) }
+        let catalog = try await AppStarCatalog.load()
+        let fixtureURL = root.appendingPathComponent("SatelliteForecastTests/Fixtures/AppStore")
+        func tle(_ name: String) throws -> [String] {
+            try String(contentsOf: fixtureURL.appendingPathComponent(name), encoding: .utf8)
+                .split(whereSeparator: \.isNewline).map(String.init)
+        }
+        let now = ISO8601DateFormatter().date(from: "2026-09-14T08:00:00Z")!
+        let fixture = try Fixture(catalog: catalog, now: now, tle: tle("iss.tle"))
+        let tianhe = try tle("tiangong.tle")
+        let info = try SatelliteInfo(elements: Elements(tianhe[0], tianhe[1], tianhe[2]))
+        let snapshots = try info.generateSnapshots(observer: fixture.observer, julianDateRange: fixture.range)
+        let passes = try info.findPasses(observer: fixture.observer, coarseSnapshots: snapshots)
+        let featured = ["ja", "ko", "zh-Hans"].contains(locale) ? try Fixture(catalog: catalog, now: now, tle: tianhe) : fixture
+        let screens = fixture.storeScreens(tianhePasses: passes, featured: featured)
+        let selectedScreens = env["STORE_SCREENSHOT_SCREENS"]?.split(separator: ",").map(String.init)
+        let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.first as? UIWindowScene)
+        let folder = URL(fileURLWithPath: destination).appendingPathComponent(locale)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        let window = UIWindow(windowScene: scene)
+        window.frame = scene.screen.bounds
+        window.overrideUserInterfaceStyle = .dark
+        let host = StoreHostingController(rootView: AnyView(Color.clear))
+        window.rootViewController = host
+        window.makeKeyAndVisible()
+        defer { window.isHidden = true; window.rootViewController = nil }
+        for (name, view) in screens {
+            if let selectedScreens, !selectedScreens.contains(name) { continue }
+            host.rootView = AnyView(view.id(name)
+                .environment(\.motionManagerKey, CMMotionManager())
+                .environment(\.locale, Locale(identifier: locale))
+                .environment(\.timeZone, TimeZone(identifier: "America/Los_Angeles")!)
+                .environment(\.colorScheme, .dark)
+                .environment(\.dynamicTypeSize, .large)
+                .transaction { $0.animation = nil })
+            host.setNeedsStatusBarAppearanceUpdate()
+            host.view.frame = window.bounds
+            host.view.layoutIfNeeded()
+            // Allow actual MapKit tiles and actor-rendered star charts to finish.
+            try await Task.sleep(for: .seconds(name.hasPrefix("03") ? 12 : 4))
+            // The CLI captures the actual simulator screen, including native status/tab bars.
+            // Hosted unit tests cannot call XCUIScreen (it requires a UI-test runner).
+            let ready = folder.appendingPathComponent("capture-ready.txt")
+            let acknowledgement = folder.appendingPathComponent("capture-done.txt")
+            try? FileManager.default.removeItem(at: acknowledgement)
+            try name.write(to: ready, atomically: true, encoding: .utf8)
+            var captured = false
+            for _ in 0..<300 {
+                if FileManager.default.fileExists(atPath: acknowledgement.path) { captured = true; break }
+                try await Task.sleep(for: .milliseconds(200))
+            }
+            XCTAssertTrue(captured, "Capture runner did not acknowledge \(name)")
+            try? FileManager.default.removeItem(at: acknowledgement)
+        }
+    }
+
     private func assertSnapshot(_ view: AnyView, name: String, style: UIUserInterfaceStyle) async throws {
         let host = UIHostingController(rootView: view
             .environment(\.motionManagerKey, CMMotionManager())
@@ -106,7 +172,7 @@ final class ScreenSnapshotTests: XCTestCase {
 @MainActor
 struct Fixture {
     let catalog: AppStarCatalog
-    let now = Date(timeIntervalSince1970: 1622592000) // 2021-06-02, near the TLE epoch
+    let now: Date
     let observer = LatLonAlt(37.486743, -122.226560, 0)
     let info: SatelliteInfo
     let passes: [PassSnapshots]
@@ -116,9 +182,10 @@ struct Fixture {
     var factory: ScreenFactory { ScreenFactory(session: session) }
     var range: ClosedRange<Double> { now.julianDate...(now.julianDate + 7) }
 
-    init(catalog: AppStarCatalog) throws {
+    init(catalog: AppStarCatalog, now: Date = Date(timeIntervalSince1970: 1622592000), tle: [String]? = nil) throws {
         self.catalog = catalog
-        let elements = try Elements("ISS (ZARYA)",
+        self.now = now
+        let elements = try tle.map { try Elements($0[0], $0[1], $0[2]) } ?? Elements("ISS (ZARYA)",
             "1 25544U 98067A   21152.92855006  .00000952  00000-0  25634-4 0  9993",
             "2 25544  51.6442 295.0433 0002767  53.3435  75.5612 15.48954251286176")
         let textURL = FileManager.default.temporaryDirectory.appendingPathComponent("snapshot-ephemeris.tle")
@@ -167,4 +234,57 @@ struct Fixture {
             ("16-night-mode", AnyView(NativeSettingsView(session: session).overlay(Color.red.blendMode(.plusDarker).allowsHitTesting(false)))),
         ]
     }
+}
+
+private struct StoreOverview: SatelliteOverviewView { let content: AnyView; var body: some View { content } }
+
+extension Fixture {
+    func storeScreens(tianhePasses: [PassSnapshots], featured: Fixture) -> [(String, AnyView)] {
+        func next(_ passes: [PassSnapshots]) -> NextPass {
+            let visible = passes.first { $0.pass.visibility == .visible }
+            let prominent = passes.first { $0.pass.visibility == .visible && ($0.pass.highestIlluminated?.elev ?? 0) > 40 }
+            return NextPass(nextVisiblePass: visible?.pass, nextProminentPass: prominent?.pass)
+        }
+        let date = { now.julianDate }
+        let forecast = ForecastModel(client: .init(load: { _, _ in [] }, now: { now }), issNextPass: .loaded(next(passes)), tianheNextPass: .loaded(next(tianhePasses)))
+        let overview = AnyView(SatelliteOverviewViewImpl(model: forecast,
+            input: .init(observer: observer, authorizationStatus: .authorizedWhenInUse), navigationPath: .constant(NavigationPath()),
+            context: .init(starManager: catalog, julianDateProvider: date), singleSatelliteWrappingViewFactory: { factory.detail($0) }))
+        let info = featured.info
+        let trails = featured.trails
+        let passes = featured.passes
+        let category: SatelliteCategory = info.noradIndex == 25544 ? .iss : .tianhe
+        let passList = AnyView(NavigationStack {
+            Color.clear.navigationDestination(isPresented: .constant(true)) {
+                AllPassesView(viewModel: .init(state: .init(location: CLLocation(latitude: observer.lat, longitude: observer.lon), satelliteCategory: category, satelliteTrails: [info.noradIndex: trails])),
+                    context: .init(satelliteInfo: info, julianDateRange: range, observer: observer, starManager: catalog, julianDateProvider: date),
+                    skyChartFactory: ViewFactory { factory.sky($0) }, passViewFactory: ViewFactory { factory.pass($0) })
+            }
+        })
+        let pass = passes.first { $0.pass.visibility == .visible } ?? passes[0]
+        // Match the existing north-up chart screenshot with compass tracking off.
+        let passView = factory.pass(.init(passIndex: 0, satelliteInfo: info,
+            satelliteCommonName: info.noradIndex == 25544 ? "ISS (ZARYA)" : "CSS (TIANHE)", category: category,
+            julianDateRange: range, observer: observer, passSnapshots: pass, starManager: catalog, julianDateProvider: date), isCompassEnabled: false)
+        let detail = AnyView(NavigationStack {
+            Color.clear.navigationDestination(isPresented: .constant(true)) {
+                passView
+            }
+        })
+        func root(_ content: AnyView, tab: SatelliteForecast.Tab = .forecast) -> AnyView {
+            session.settings.showExperimentalSkyNow = false
+            return AnyView(RootView(selectedTab: .constant(tab), settings: session.settings,
+                context: .init(starManager: catalog, julianDateProvider: date),
+                realtimeSkyViewFactory: { RealtimeSkyViewImpl(viewModel: .init(state: .init(observer: observer)), context: $0, backgroundSkyViewFactory: ViewFactory { factory.background($0) }) },
+                satelliteOverviewViewFactory: { _ in StoreOverview(content: content) },
+                satelliteCategoryViewFactory: { SatelliteCategoryViewImpl(viewModel: .init(state: .init(observer: observer)), context: $0, listViewFactory: ViewFactory { factory.list($0) }) },
+                settingsOverviewFactory: { NativeSettingsView(session: session) }))
+        }
+        return [("01-forecast", root(overview)), ("02-pass-chart", root(detail)), ("03-pass-list", root(passList)), ("04-satellites", root(overview, tab: .satellites))]
+    }
+}
+
+private final class StoreHostingController: UIHostingController<AnyView> {
+    override var prefersStatusBarHidden: Bool { false }
+    override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 }

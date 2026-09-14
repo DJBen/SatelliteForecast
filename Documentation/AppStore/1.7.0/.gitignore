@@ -1,0 +1,3 @@
+before/
+screenshots/*.log
+screenshots/*/capture-*.txt
