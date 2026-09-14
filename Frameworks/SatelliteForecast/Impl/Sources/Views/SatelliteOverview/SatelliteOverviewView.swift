@@ -8,13 +8,10 @@
 import SatelliteForecast
 @preconcurrency import SatelliteKit
 import SwiftUI
-@preconcurrency import SwiftRex
-@preconcurrency import CombineRex
-@preconcurrency import CombineRextensions
 import CoreLocation
 import StarryNight
 
-public struct NextPass: Equatable {
+public struct NextPass: Equatable, Sendable {
     let nextVisiblePass: Pass?
     let nextProminentPass: Pass?
     
@@ -28,35 +25,17 @@ public struct SatelliteOverviewViewState: Equatable {
     public var navigationState: NavigationState
     public var observer: LatLonAlt?
     public var julianDateOffset: Double = 0
-    public var issNextPass: Loadable<NextPass, Error> = .notLoaded
-    public var tianheNextPass: Loadable<NextPass, Error> = .notLoaded
     public var authorizationStatus: CLAuthorizationStatus = .notDetermined
-    
-    public var isMissingLocation: Bool {
-        if observer == nil {
-            switch authorizationStatus {
-            case .notDetermined, .restricted, .denied:
-                return true
-            default:
-                return false
-            }
-        }
-        return false
-    }
     
     public init(
         navigationState: NavigationState = .init(),
         observer: LatLonAlt? = nil,
         julianDateOffset: Double = 0,
-        issNextPass: Loadable<NextPass, Error> = .loading,
-        tianheNextPass: Loadable<NextPass, Error> = .loading,
         authorizationStatus: CLAuthorizationStatus = .notDetermined
     ) {
         self.navigationState = navigationState
         self.observer = observer
         self.julianDateOffset = julianDateOffset
-        self.issNextPass = issNextPass
-        self.tianheNextPass = tianheNextPass
         self.authorizationStatus = authorizationStatus
     }
 }
@@ -77,33 +56,28 @@ public struct SatelliteOverviewViewContext {
 }
 
 public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
-    @ObservedObject var viewModel: ObservableViewModel<SatelliteOverviewViewAction, SatelliteOverviewViewState>
-    @State var currentDate: Date = Date()
-    @State private var timer: Timer?
+    let model: ForecastModel
+    let input: ForecastInput
+    @Binding private var navigationPath: NavigationPath
     let context: SatelliteOverviewViewContext
-    let singleSatelliteWrappingViewProducer: ViewProducer<SingleSatelliteWrappingViewContext, SingleSatelliteWrappingView>
+    let singleSatelliteWrappingViewProducer: (SingleSatelliteWrappingViewContext) -> SingleSatelliteWrappingView
 
     public init(
-        viewModel: ObservableViewModel<SatelliteOverviewViewAction, SatelliteOverviewViewState>,
+        model: ForecastModel,
+        input: ForecastInput,
+        navigationPath: Binding<NavigationPath>,
         context: SatelliteOverviewViewContext,
-        singleSatelliteWrappingViewProducer: ViewProducer<SingleSatelliteWrappingViewContext, SingleSatelliteWrappingView>
+        singleSatelliteWrappingViewProducer: @escaping (SingleSatelliteWrappingViewContext) -> SingleSatelliteWrappingView
     ) {
-        self.viewModel = viewModel
+        self.model = model
+        self.input = input
+        self._navigationPath = navigationPath
         self.context = context
-        _currentDate = State(initialValue: Date(julianDate: context.julianDateProvider()))
         self.singleSatelliteWrappingViewProducer = singleSatelliteWrappingViewProducer
     }
 
     public var body: some View {
-        NavigationStack(
-            path: Binding<NavigationPath>(
-                get: {
-                    viewModel.state.navigationState.passPredictionNavigationPath
-                }, set: { navigationPath in
-                    viewModel.dispatch(.navigate(navigationPath))
-                }
-            )
-        ) {
+        NavigationStack(path: $navigationPath) {
             VStack {
                 ScrollView {
                     LazyVStack(
@@ -126,18 +100,19 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                                 NavigationLink(value: SpecialSatellite(satellite)) {
                                     SatelliteOverviewCell(
                                         satellite: satellite,
-                                        nextPassLoadingState: satellite == .iss ? viewModel.state.issNextPass : viewModel.state.tianheNextPass,
-                                        currentDate: currentDate,
-                                        julianDateOffset: viewModel.state.julianDateOffset,
-                                        isMissingLocation: viewModel.state.isMissingLocation,
+                                        nextPassLoadingState: satellite == .iss ? model.issNextPass : model.tianheNextPass,
+                                        currentDate: model.currentDate,
+                                        julianDateOffset: input.julianDateOffset,
+                                        isMissingLocation: input.isMissingLocation,
                                     )
                                 }
                                 .id(satellite.rawValue)
-                                .animation(.easeInOut(duration: 0.3), value: currentDate)
+                                .animation(.easeInOut(duration: 0.3), value: model.currentDate)
                             }
                         }
                     }
                 }
+                .refreshable { await model.refresh(input) }
                 .padding(.horizontal, 16)
                 .modifier(AppSurface())
                 .navigationBarTitle(
@@ -147,11 +122,11 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                 .navigationBarHidden(true)
                 .navigationDestination(for: SpecialSatellite.self) { specialSatellite in
                     LazyView {
-                        singleSatelliteWrappingViewProducer.view(
+                        singleSatelliteWrappingViewProducer(
                             SingleSatelliteWrappingViewContext(
                                 selectedNoradIndex: specialSatellite.rawValue,
-                                julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
-                                observer: viewModel.state.observer,
+                                julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + input.julianDateOffset),
+                                observer: input.observer,
                                 starManager: context.starManager,
                                 julianDateProvider: context.julianDateProvider
                             )
@@ -161,7 +136,7 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
             }
             .tint(AppTheme.accent)
             
-            if viewModel.state.isMissingLocation {
+            if input.isMissingLocation {
                 HStack {
                     Image(systemName: "location.slash")
                         .symbolRenderingMode(.palette)
@@ -175,28 +150,9 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                 .padding(.vertical, 4)
             }
         }
-        .onAppear {
-            viewModel.dispatch(
-                .onAppear(
-                    julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
-                    observer: viewModel.state.observer
-                )
-            )
-            
+        .task(id: input) {
             guard !SnapshotEnvironment.isEnabled else { return }
-            // Invalidate existing timer if any
-            timer?.invalidate()
-            
-            // Create new timer to update currentDate every 10 seconds (less frequent to reduce layout thrashing)
-            timer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { _ in
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    currentDate = Date()
-                }
-            }
-        }
-        .onDisappear {
-            timer?.invalidate()
-            timer = nil
+            await model.run(input)
         }
     }
 }
@@ -213,16 +169,16 @@ struct ScrollOffsetPreferenceKey: PreferenceKey {
 struct SatelliteOverviewView_Previews: PreviewProvider {
     static var previews: some View {
         SatelliteOverviewViewImpl(
-            viewModel: .mock(
-                state: SatelliteOverviewViewState()
-            ),
+            model: ForecastModel(client: .init(load: { _, _ in [] })),
+            input: .init(),
+            navigationPath: .constant(NavigationPath()),
             context: SatelliteOverviewViewContext(
                 starManager: StarManagerMock(),
                 julianDateProvider: {
                     Date().julianDate
                 }
             ),
-            singleSatelliteWrappingViewProducer: .crash
+            singleSatelliteWrappingViewProducer: { _ in fatalError("Preview destination") }
         )
     }
 }

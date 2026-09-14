@@ -148,9 +148,13 @@ struct Fixture {
         let pass = passes.first { $0.pass.sunElevationAtTransit < -6 && ($0.pass.highestIlluminated?.elev ?? 0) > 10 } ?? passes[0]
         let date = { now.julianDate }
         let nextPass = NextPass(nextVisiblePass: pass.pass, nextProminentPass: pass.pass)
-        let overview = SatelliteOverviewViewImpl(viewModel: .mock(state: .init(observer: observer,
-            issNextPass: .loaded(nextPass), tianheNextPass: .loaded(nextPass), authorizationStatus: .authorizedWhenInUse)),
-            context: .init(starManager: catalog, julianDateProvider: date), singleSatelliteWrappingViewProducer: .singleSatelliteWrappingView(viewModel: store))
+        let forecast = ForecastModel(client: .init(load: { _, _ in [] }, now: { now }),
+                                     issNextPass: .loaded(nextPass), tianheNextPass: .loaded(nextPass))
+        let overview = SatelliteOverviewViewImpl(model: forecast,
+            input: .init(observer: observer, authorizationStatus: .authorizedWhenInUse),
+            navigationPath: .constant(NavigationPath()),
+            context: .init(starManager: catalog, julianDateProvider: date),
+            singleSatelliteWrappingViewProducer: { ViewProducer.singleSatelliteWrappingView(viewModel: store).view($0) })
         return [
             ("01-welcome", AnyView(OnboardingView(onComplete: {}))),
             ("02-predictions-intro", AnyView(OnboardingView(initialPage: 1, onComplete: {}))),

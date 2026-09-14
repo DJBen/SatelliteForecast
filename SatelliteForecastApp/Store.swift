@@ -79,10 +79,6 @@ public class Store: ReduxStoreBase<AppAction, AppState> {
                 )
             )
             .eraseToAnyMiddleware(),
-            EffectMiddleware.loadAfterLocationUpdate.lift(
-                outputAction: AppAction.elementsLoader
-            )
-            .eraseToAnyMiddleware(),
             EffectMiddleware.locationChainer.lift(),
             EffectMiddleware.locationToElementsPropagator.lift(),
             EffectMiddleware.locationToRealtimeSky.lift(),
@@ -99,7 +95,6 @@ public class Store: ReduxStoreBase<AppAction, AppState> {
             EffectMiddleware.elementsLoaderToSatelliteList.lift(),
             EffectMiddleware.selectSpecialSatelliteAfterElementsLoader.lift(),
             EffectMiddleware.rootViewElementsLoader.lift(),
-            EffectMiddleware.satelliteOverviewToElementLoader.lift(),
             EffectMiddleware.satelliteCategoryToElementLoader.lift(),
             EffectMiddleware.satelliteList.lift(),
             EffectMiddleware.satelliteListViewToElementPropagator.lift(),

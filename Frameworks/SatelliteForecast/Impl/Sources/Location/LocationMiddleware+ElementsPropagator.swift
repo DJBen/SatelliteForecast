@@ -23,33 +23,3 @@ extension EffectMiddleware where InputActionType == LocationAction, OutputAction
         }
     }
 }
-
-extension EffectMiddleware where InputActionType == AppAction, OutputActionType == ElementsLoaderAction, StateType == AppState, Dependencies == Void {
-    public static var loadAfterLocationUpdate: EffectMiddleware<AppAction, ElementsLoaderAction, AppState, Void> {
-        EffectMiddleware.onAction { action, _, getState in
-            switch action {
-            case .locationOutput(.locationChanged(let location)):
-                // If page is at first tab
-                let state = getState()
-                if state.navigationState.tab == .forecast && state.elementsPropagatorResources.satelliteTrails.isEmpty {
-                    let julianDateRange = JulianDateUtil.createJulianDateRange(now: Date().julianDate + state.debugMenu.effectiveOffset)
-                    return .sequence([SatelliteCategory.iss, .tianhe].map { category in
-                        .loadElements(
-                            category: category,
-                            fetchStrategy: .localWithin(21600 /* 6 hours */),
-                            calculatePass: ElementsLoaderCalculatePassParam(
-                                noradIndex: category.noradIndex!,
-                                dateRange: julianDateRange,
-                                observer: LatLonAlt(location: location)
-                            )
-                        )
-                    })
-                } else {
-                    return .doNothing
-                }
-            default:
-                return .doNothing
-            }
-        }
-    }
-}

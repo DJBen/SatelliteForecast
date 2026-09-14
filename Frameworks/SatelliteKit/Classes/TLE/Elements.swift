@@ -112,6 +112,24 @@ public extension Elements {
   ┃ generate one TLE (this struct) from the three lines of element info ..                           ┃
   ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛*/
     init(_ line0: String, _ line1: String, _ line2: String) throws {
+        guard line1.utf8.count >= 69, line2.utf8.count >= 69,
+              line1.utf8.allSatisfy({ $0 < 128 }), line2.utf8.allSatisfy({ $0 < 128 }),
+              line1.hasPrefix("1 "), line2.hasPrefix("2 ") else {
+            throw SatKitError.TLE(0, "Malformed TLE lines")
+        }
+        func readDouble(_ value: String) throws -> Double {
+            guard let number = Double(value.trimmingCharacters(in: .whitespaces)), number.isFinite else {
+                throw SatKitError.TLE(0, "Invalid numeric TLE field")
+            }
+            return number
+        }
+        func readInt(_ value: String) throws -> Int {
+            guard let number = Int(value.trimmingCharacters(in: .whitespaces)) else {
+                throw SatKitError.TLE(0, "Invalid integer TLE field")
+            }
+            return number
+        }
+
 
 /*╭╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╮
   ┆                                                                                                  ┆
@@ -150,6 +168,9 @@ public extension Elements {
         let lineOneBytes: [UInt8] = Array(line1.utf8)
 
         var stringlet = String(bytes: lineOneBytes[2...6], encoding: .utf8)!
+        guard stringlet.trimmingCharacters(in: .whitespaces).dropFirst().allSatisfy({ $0.isNumber }) else {
+            throw SatKitError.TLE(0, "Invalid NORAD identifier")
+        }
         self.noradIndex = alpha5ID(stringlet.trimmingCharacters(in: .whitespaces))
 
         self.tleClass = String(bytes: lineOneBytes[7...7], encoding: .utf8)!
@@ -163,23 +184,23 @@ public extension Elements {
         self.launchName = "\(launchYear < 57 ? 2000 : 1900 + launchYear)-" + launchPart
 
         stringlet = String(bytes: lineOneBytes[18...19], encoding: .utf8)!
-        let epochYear = Int(stringlet)!
+        let epochYear = try readInt(stringlet)
 
         stringlet = String(bytes: lineOneBytes[20...31], encoding: .utf8)!
-        self.t₀ = epochDays(year: (epochYear < 57 ? 2000 : 1900) + epochYear, days: Double(stringlet)!)
+        self.t₀ = epochDays(year: (epochYear < 57 ? 2000 : 1900) + epochYear, days: try readDouble(stringlet))
 
         stringlet = (lineOneBytes[53] == 32 ||
                      lineOneBytes[53] == 43 ? "+" : "-") + "." +
                     String(bytes: lineOneBytes[54...54], encoding: .utf8)! +
                     String(bytes: lineOneBytes[55...58], encoding: .utf8)! + "e" +
                     String(bytes: lineOneBytes[59...60], encoding: .utf8)!
-        self.dragCoeff = Double(stringlet)!
+        self.dragCoeff = try readDouble(stringlet)
 
         stringlet = String(bytes: lineOneBytes[62...62], encoding: .utf8)!
         self.ephemType = Int(stringlet) ?? 0
 
         stringlet = String(bytes: lineOneBytes[64...67], encoding: .utf8)!
-        self.tleNumber = Int(stringlet.trimmingCharacters(in: .whitespaces))!
+        self.tleNumber = try readInt(stringlet)
 
 /*╭╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╮
   ┆ 2 NNNNN NNN.NNNN NNN.NNNN NNNNNNN NNN.NNNN NNN.NNNN NN.NNNNNNNNNNNNNN                            ┆
@@ -202,30 +223,31 @@ public extension Elements {
         let lineTwoBytes: [UInt8] = Array(line2.utf8)
 
         stringlet = String(bytes: lineTwoBytes[2...6], encoding: .utf8)!
-        guard self.noradIndex == alpha5ID(stringlet.trimmingCharacters(in: .whitespaces)) else {
+        guard stringlet.trimmingCharacters(in: .whitespaces).dropFirst().allSatisfy({ $0.isNumber }),
+              self.noradIndex == alpha5ID(stringlet.trimmingCharacters(in: .whitespaces)) else {
             throw SatKitError.TLE(noradIndex, "Line1 and Line2 NORAD IDs don't match ..")
         }
 
         stringlet = String(bytes: lineTwoBytes[8...15], encoding: .utf8)!
-        self.i₀ = Double(stringlet.trimmingCharacters(in: .whitespaces))! * deg2rad
+        self.i₀ = try readDouble(stringlet) * deg2rad
 
         stringlet = String(bytes: lineTwoBytes[17...24], encoding: .utf8)!
-        self.Ω₀ = Double(stringlet.trimmingCharacters(in: .whitespaces))! * deg2rad
+        self.Ω₀ = try readDouble(stringlet) * deg2rad
 
         stringlet = "." + String(bytes: lineTwoBytes[26...32], encoding: .utf8)!
-        self.e₀ = Double(stringlet.replacingOccurrences(of: " ", with: "0"))!
+        self.e₀ = try readDouble(stringlet.replacingOccurrences(of: " ", with: "0"))
 
         stringlet = String(bytes: lineTwoBytes[34...41], encoding: .utf8)!
-        self.ω₀ = Double(stringlet.trimmingCharacters(in: .whitespaces))! * deg2rad
+        self.ω₀ = try readDouble(stringlet) * deg2rad
 
         stringlet = String(bytes: lineTwoBytes[43...50], encoding: .utf8)!
-        self.M₀ = Double(stringlet.trimmingCharacters(in: .whitespaces))! * deg2rad
+        self.M₀ = try readDouble(stringlet) * deg2rad
 
         stringlet = String(bytes: lineTwoBytes[52...62], encoding: .utf8)!
-        self.n₀ʹ = Double(stringlet.trimmingCharacters(in: .whitespaces))!
+        self.n₀ʹ = try readDouble(stringlet)
 
         stringlet = String(bytes: lineTwoBytes[63...67], encoding: .utf8)!
-        self.revNumber = Int(stringlet.trimmingCharacters(in: .whitespaces))!
+        self.revNumber = try readInt(stringlet)
 
         unKozai(self.n₀ʹ * (π/720.0))
 

@@ -6,17 +6,10 @@ public enum SatelliteOverviewViewAction {
         NavigationPath
     )
     
-    case onAppear(
-        julianDateRange: ClosedRange<Double>,
-        observer: LatLonAlt?
-    )
-
     case selectSatellite(
         specialSatellite: SpecialSatellite,
         julianDateRange: ClosedRange<Double>,
         observer: LatLonAlt?
     )
     
-    case deeplinkToLocationSelection
-    case showLocationSettings
 }

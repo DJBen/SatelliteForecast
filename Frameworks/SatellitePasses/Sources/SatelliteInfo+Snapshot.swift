@@ -110,7 +110,8 @@ extension SatelliteInfo {
             by: interval * TimeConstants.sec2day
         )
         .map { (julianDate) in
-            try generateSnapshot(
+            try Task.checkCancellation()
+            return try generateSnapshot(
                 julianDate: julianDate,
                 observer: observer
             )
@@ -265,6 +266,7 @@ extension SatelliteInfo {
         var passSnapshotsList = [PassSnapshots]()
 
         for index in coarseSnapshots.indices where index < coarseSnapshots.index(before: coarseSnapshots.endIndex) {
+            try Task.checkCancellation()
             let snapshot1 = coarseSnapshots[index]
             let snapshot2 = coarseSnapshots[coarseSnapshots.index(after: index)]
             

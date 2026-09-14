@@ -15,14 +15,8 @@ extension Reducer where ActionType == SatelliteOverviewViewAction, StateType == 
         switch action {
         case .navigate(let navigationPath):
             state.navigationState.passPredictionNavigationPath = navigationPath
-        case .onAppear:
-            break
         case .selectSatellite(let satellite, julianDateRange: _, observer: _):
             state.navigationState.passPredictionNavigationPath.append(satellite)
-        case .deeplinkToLocationSelection:
-            state.navigationState.tab = .settings
-        case .showLocationSettings:
-            break
         }
     }
 }

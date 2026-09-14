@@ -30,7 +30,7 @@ public struct LegacyRootView: View {
     let settings: AppSettings
     let context: RootViewContext
     let sky: ViewProducer<RealtimeSkyViewContext, RealtimeSkyViewImpl>
-    let forecast: ViewProducer<SatelliteOverviewViewContext, SatelliteOverviewViewImpl>
+    let forecast: ViewProducer<SatelliteOverviewViewContext, LegacyForecastView>
     let satellites: ViewProducer<SatelliteCategoryViewContext, SatelliteCategoryViewImpl>
     let settingsView: ViewProducer<Void, LegacySettingsView>
 

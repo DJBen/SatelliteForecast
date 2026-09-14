@@ -14,7 +14,7 @@ The target architecture uses SwiftUI views, feature-owned Observation models, pl
 ## Next slices
 
 1. **Completed:** move location and alarm screen state behind native interfaces, preserving shared location and notification behavior. Location search uses cancellation-aware async work with overlapping-request tests. Shared location and notification services still use the legacy store until their consumers migrate.
-2. Migrate Forecast state and loading to a main-actor feature model. Inject the prediction/catalog services and time source. Test cancellation, stale results, failures, and location changes before replacing the middleware chain.
+2. **Overview completed:** Forecast now owns its loading and countdown state. Continue with detailed pass screens, which still use legacy prediction state and navigation.
 3. Move Sky calculations and bounded render caches into services with explicit execution and isolation boundaries. Profile CPU work, main-thread responsiveness, and memory.
 4. Migrate remaining navigation, onboarding, application lifecycle, debug, and notification coordination. Delete each obsolete action/reducer/adapter as its consumers move.
 5. Remove the global store and the SwiftRex/CombineRex/CombineRextensions package products only after their final consumers are gone. Enable complete concurrency checking and Swift 6 language mode incrementally per target.
@@ -51,3 +51,22 @@ The two Mission Control comparisons fail because their live MapKit rendering dif
 Simulator captures: [search](SimulatorChecks/location-search.jpg), [confirmation](SimulatorChecks/location-confirmation.jpg), [selected location](SimulatorChecks/location-selected.jpg), [alarm edit mode](SimulatorChecks/alarms-edit.jpg).
 
 Remaining roadmap items are Forecast, Sky/cache isolation, shared service/lifecycle coordination, and final removal of the legacy store/packages. This slice does not claim those are complete.
+
+
+## Third slice: Forecast overview
+
+`ForecastModel` is a main-actor Observation model with injected loading, clock, and sleep dependencies. SwiftUI owns its task lifetime. ISS and Tiangong publish independently, with cancellation and generation checks rejecting superseded results. Countdown ticks reuse pass results; expensive predictions refresh hourly, on observer/debug-time changes, or on pull to refresh.
+
+`ForecastService` is an actor that owns orbital-data reads, validation, cache writes, and CPU prediction work. It shares the existing six-hour TLE cache filenames with legacy screens, validates downloads before atomic replacement, and falls back to valid stale data on network failure. Cancellation never triggers that fallback. Prediction loops now check cancellation, and malformed TLE lines/numeric fields throw instead of force-unwrapping downloaded input.
+
+`LegacyForecastView` only bridges shared location, debug offset, and navigation. The old overview loading middleware and location-triggered overview recalculation are removed. Detailed pass screens still use the legacy services; their wrapping view now explicitly starts its own load when opened, rather than relying on the overview to populate global state. Notification/deep-link routing remains in place.
+
+### Verification
+
+Twelve new tests cover overlapping location requests, independent satellite failures and recovery, missing location, cancellation, injected time and debug offsets, countdown expiration, hourly refresh, fresh-cache reuse, prediction parity, stale-cache preservation, malformed input, and prediction-loop cancellation. Screenshot fixtures use an injected native Forecast model without starting live loads.
+
+- Final iPhone 17 Pro / iOS 26.5 run: build succeeded, all 28 behavior/integration tests passed. The screenshot test method failed: 34 of 40 comparisons passed. Pass Forecast and Mission Control differ in live MapKit imagery; Ephemerides differs in relative modification-time labels (light/dark for each). Baselines and thresholds remain unchanged.
+- Simulator verification: loaded ISS and Tiangong forecasts at San Francisco; changed simulated location to New York and verified different pass elevations/countdowns; opened the ISS pass list, then an individual pass with its chart and star map, and navigated back. A transient SQLite “vnode unlinked while in use” error after the test run cleared on a full app restart; the successful captures below were taken afterward.
+- Captures: [San Francisco overview](SimulatorChecks/forecast-san-francisco.jpg), [New York overview](SimulatorChecks/forecast-new-york.jpg), [ISS pass list](SimulatorChecks/forecast-details.jpg), [individual pass](SimulatorChecks/forecast-pass.jpg).
+
+Detailed pass/Sky screens, shared services and lifecycle coordination, and removal of the global store and SwiftRex dependencies remain subsequent migration work.

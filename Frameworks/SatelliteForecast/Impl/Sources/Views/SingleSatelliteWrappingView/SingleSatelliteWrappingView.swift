@@ -125,6 +125,14 @@ public struct SingleSatelliteWrappingView: View {
                 }
             }
         }
+        .task {
+            guard !SnapshotEnvironment.isEnabled else { return }
+            viewModel.dispatch(.loadSingleSatellite(.init(
+                selectedNoradIndex: context.selectedNoradIndex,
+                julianDateRange: context.julianDateRange,
+                observer: context.observer
+            )))
+        }
     }
 }
 
