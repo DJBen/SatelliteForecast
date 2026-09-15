@@ -316,28 +316,3 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
         }
     }
 }
-
-#if DEBUG
-
-struct BackgroundSkyView_Previews: PreviewProvider {
-    static var previews: some View {
-        BackgroundSkyView(
-            viewModel: .init(
-                state: .init()
-            ),
-            context: BackgroundSkyViewContext(
-                observer: LatLonAlt(0, 0, 0),
-                basicChartConfigs: .init(),
-                configs: .preset,
-                quality: .full,
-                starManager: StarManagerMock(),
-                constellationLabel: { _ in EmptyView() },
-                annotationView: { _ in EmptyView() },
-                starTapped: { _ in }
-            )
-        )
-        .environment(\.backgroundSkyJulianDateKey, 0)
-    }
-}
-
-#endif

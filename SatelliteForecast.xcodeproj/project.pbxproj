@@ -56,10 +56,6 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
 /* Begin PBXBuildFile section */
 		EF16811E27D00E28001BA9C3 /* Icons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EF9D827C2661BBF000616C97 /* Icons.xcassets */; };
 		EF81747F292A360500A2F225 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF81747D292A360500A2F225 /* AppDelegate.swift */; };
-		EF817487292A362B00A2F225 /* tle-new.txt in Resources */ = {isa = PBXBuildFile; fileRef = EF817482292A362B00A2F225 /* tle-new.txt */; };
-		EF817488292A362B00A2F225 /* active.txt in Resources */ = {isa = PBXBuildFile; fileRef = EF817483292A362B00A2F225 /* active.txt */; };
-		EF817489292A362B00A2F225 /* Elements+Preview.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF817484292A362B00A2F225 /* Elements+Preview.swift */; };
-		EF81748A292A362B00A2F225 /* visual.txt in Resources */ = {isa = PBXBuildFile; fileRef = EF817485292A362B00A2F225 /* visual.txt */; };
 		EF9D82A32661BBF100616C97 /* SatelliteForecastApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9D827A2661BBF000616C97 /* SatelliteForecastApp.swift */; };
 		FC082B5F2E3617BD00DEEBBE /* AppDelegateImpl in Frameworks */ = {isa = PBXBuildFile; productRef = FC082B5E2E3617BD00DEEBBE /* AppDelegateImpl */; };
 		FC2930A52E43E9D900F838D9 /* SatelliteForecast in Frameworks */ = {isa = PBXBuildFile; productRef = FC2930A42E43E9D900F838D9 /* SatelliteForecast */; };
@@ -109,10 +105,6 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
 /* Begin PBXFileReference section */
 		EF2EF4D727B11C0A000D5EC8 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		EF81747D292A360500A2F225 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		EF817482292A362B00A2F225 /* tle-new.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "tle-new.txt"; sourceTree = "<group>"; };
-		EF817483292A362B00A2F225 /* active.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = active.txt; sourceTree = "<group>"; };
-		EF817484292A362B00A2F225 /* Elements+Preview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Elements+Preview.swift"; sourceTree = "<group>"; };
-		EF817485292A362B00A2F225 /* visual.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = visual.txt; sourceTree = "<group>"; };
 		EF864272266DFFE9004F0AFA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EF9D827A2661BBF000616C97 /* SatelliteForecastApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteForecastApp.swift; sourceTree = "<group>"; };
 		EF9D827C2661BBF000616C97 /* Icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Icons.xcassets; sourceTree = "<group>"; };
@@ -169,17 +161,6 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
 			path = AppDelegate;
 			sourceTree = "<group>";
 		};
-		EF817480292A362B00A2F225 /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				EF817482292A362B00A2F225 /* tle-new.txt */,
-				EF817483292A362B00A2F225 /* active.txt */,
-				EF817484292A362B00A2F225 /* Elements+Preview.swift */,
-				EF817485292A362B00A2F225 /* visual.txt */,
-			);
-			path = "Preview Content";
-			sourceTree = "<group>";
-		};
 		EF9D82742661BBEF00616C97 = {
 			isa = PBXGroup;
 			children = (
@@ -195,7 +176,6 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
 			children = (
 				FC7A7E3D2DDFD4EE0026A8B9 /* SatelliteForecastApp.entitlements */,
 				EF9D827A2661BBF000616C97 /* SatelliteForecastApp.swift */,
-				EF817480292A362B00A2F225 /* Preview Content */,
 				EF81747B292A360500A2F225 /* AppDelegate */,
 				EF864272266DFFE9004F0AFA /* Info.plist */,
 				FC33BF502E546445006A6268 /* InfoPlist.xcstrings */,
@@ -284,12 +264,9 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EF81748A292A362B00A2F225 /* visual.txt in Resources */,
 				FC33BF512E546445006A6268 /* InfoPlist.xcstrings in Resources */,
 				EF16811E27D00E28001BA9C3 /* Icons.xcassets in Resources */,
 				FC7A7E382DDFC8190026A8B9 /* GoogleService-Info.plist in Resources */,
-				EF817488292A362B00A2F225 /* active.txt in Resources */,
-				EF817487292A362B00A2F225 /* tle-new.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -302,7 +279,6 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
 			files = (
 				EF81747F292A360500A2F225 /* AppDelegate.swift in Sources */,
 				EF9D82A32661BBF100616C97 /* SatelliteForecastApp.swift in Sources */,
-				EF817489292A362B00A2F225 /* Elements+Preview.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -453,9 +429,7 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
 				CODE_SIGN_ENTITLEMENTS = SatelliteForecastApp/SatelliteForecastApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2;
-				DEVELOPMENT_ASSET_PATHS = "SatelliteForecastApp/Preview\\ Content";
 				DEVELOPMENT_TEAM = 52RD2GH5DP;
-				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/SatelliteForecastApp/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Space Station";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
@@ -483,9 +457,7 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
 				CODE_SIGN_ENTITLEMENTS = SatelliteForecastApp/SatelliteForecastApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2;
-				DEVELOPMENT_ASSET_PATHS = "SatelliteForecastApp/Preview\\ Content";
 				DEVELOPMENT_TEAM = 52RD2GH5DP;
-				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/SatelliteForecastApp/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Space Station";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";

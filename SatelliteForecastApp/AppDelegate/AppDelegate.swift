@@ -33,8 +33,8 @@ public class AppDelegate: NSObject, UIApplicationDelegate, AppDelegateActionDisp
     }()
     
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        // Solves the issue that preview is broken by Firebase
-        if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" || ProcessInfo.processInfo.environment["SATELLITE_SNAPSHOT_TESTS"] == "1" {
+        // Keep Firebase initialization out of the snapshot test host.
+        if ProcessInfo.processInfo.environment["SATELLITE_SNAPSHOT_TESTS"] == "1" {
             return true
         }
         

@@ -396,47 +396,6 @@ extension PassAlarmSettingsModalView {
     }
 }
 
-#if DEBUG
-
-struct PassAlarmSettingsModalView_Previews: PreviewProvider {
-    static var previews: some View {
-        let elements = try! Elements(
-            raw: """
-            ISS (ZARYA)
-            1 25544U 98067A   21155.08058252  .00001489  00000-0  35252-4 0  9997
-            2 25544  51.6446  47.5538 0003512  61.1482  91.5411 15.48950578286563
-            """
-        )
-        // 2000 Broadway, Redwood City, CA 94063
-        let observer = LatLonAlt(37.486743000691185, -122.22655970246515, 0)
-        // Date range
-        let startDate = Date(timeIntervalSinceReferenceDate: 20 * 365 * 86400)
-        let julianDateRange = startDate.advanced(by: -60 * 60 * 2).julianDate...startDate.advanced(by: 60 * 60 * 30).julianDate
-        let coarseSnapshots = try! SatelliteInfo(elements: elements).generateSnapshots(
-            observer: observer,
-            julianDateRange: julianDateRange,
-            interval: 60
-        )
-        let passSnapshotsList = try! SatelliteInfo(elements: elements).findPasses(
-            observer: observer,
-            coarseSnapshots: coarseSnapshots
-        )
-
-        PassAlarmSettingsModalView(
-            viewModel: .init(
-                state: PassAlarmSettingsModalViewState()
-            ),
-            context: PassAlarmSettingsModalViewContext(
-                satelliteName: "ISS (ZARYA)",
-                category: .iss,
-                passSnapshots: passSnapshotsList[0],
-                observer: LatLonAlt(37.486743000691185, -122.22655970246515, 0)
-            )
-        )
-    }
-}
-
-#endif
 
 extension View {
     /// Applies the given transform if the given condition evaluates to `true`.

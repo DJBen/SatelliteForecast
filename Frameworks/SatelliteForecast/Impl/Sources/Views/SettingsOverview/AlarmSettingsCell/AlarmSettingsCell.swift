@@ -78,13 +78,3 @@ extension AlarmSettingsCell {
         )
     }
 }
-
-#if DEBUG
-struct AlarmSettingsCell_Previews: PreviewProvider {
-    static var previews: some View {
-        AlarmSettingsCell(
-            numberOfAlerts: 0
-        )
-    }
-}
-#endif

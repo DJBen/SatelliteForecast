@@ -59,19 +59,3 @@ struct AllPassesLocationChangeWarning: View {
         return String(format: formatString, observerString, distanceString)
     }
 }
-
-struct AllPassesLocationChangeWarning_Previews: PreviewProvider {
-    static var previews: some View {
-        AllPassesLocationChangeWarning(
-            state: AllPassesLocationChangeWarningState(
-                observer: CLLocationCoordinate2D(latitude: 23, longitude: 110),
-                observerDescription: nil,
-                oldObserver: CLLocationCoordinate2D(latitude: 23.14, longitude: 111.0)
-            ),
-            onRecalculatePasses: {
-                
-            }
-        )
-        .previewLayout(.fixed(width: 250, height: 50))
-    }
-}

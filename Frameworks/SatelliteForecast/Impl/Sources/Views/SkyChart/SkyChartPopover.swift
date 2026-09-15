@@ -12,13 +12,3 @@ struct SkyChartPopover: View {
         Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
     }
 }
-
-#if DEBUG
-
-struct SkyChartPopover_Previews: PreviewProvider {
-    static var previews: some View {
-        SkyChartPopover()
-    }
-}
-
-#endif

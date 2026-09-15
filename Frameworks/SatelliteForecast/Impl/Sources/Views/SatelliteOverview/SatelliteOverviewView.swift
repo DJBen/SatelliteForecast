@@ -148,22 +148,3 @@ struct ScrollOffsetPreferenceKey: PreferenceKey {
         value = nextValue()
     }
 }
-
-#if DEBUG
-struct SatelliteOverviewView_Previews: PreviewProvider {
-    static var previews: some View {
-        SatelliteOverviewViewImpl(
-            model: ForecastModel(client: .init(load: { _, _ in [] })),
-            input: .init(),
-            navigationPath: .constant(NavigationPath()),
-            context: SatelliteOverviewViewContext(
-                starManager: StarManagerMock(),
-                julianDateProvider: {
-                    Date().julianDate
-                }
-            ),
-            singleSatelliteWrappingViewFactory: { _ in fatalError("Preview destination") }
-        )
-    }
-}
-#endif

@@ -205,20 +205,3 @@ struct SunlightIndicator: View, Equatable {
         }
     }
 }
-
-#if DEBUG
-struct SunlightIndicator_Previews: PreviewProvider {
-    static var previews: some View {
-        // 2000 Broadway, Redwood City, CA 94063
-        let observerCoordinate = LatLonAlt(37.486743000691185, -122.22655970246515, 0)
-        // Date range
-        let julianDateRange = Date().advanced(by: -60 * 60 * 2).julianDate...Date().advanced(by: 60 * 60 * 30).julianDate
-        let jdElevs = SunlightIndicator.sunElevations(julianDateRange: julianDateRange, observer: observerCoordinate)
-        let viewModel = SunlightIndicatorViewModel(
-            julianDateElevations: jdElevs
-        )
-        SunlightIndicator(viewModel: viewModel)
-            .previewLayout(.fixed(width: 320, height: 24))
-    }
-}
-#endif

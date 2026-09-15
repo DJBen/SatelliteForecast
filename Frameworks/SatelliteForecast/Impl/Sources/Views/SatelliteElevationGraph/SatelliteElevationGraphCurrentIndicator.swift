@@ -70,15 +70,3 @@ struct SatelliteElevationGraphCurrentIndicator: View {
         }
     }
 }
-
-#if DEBUG
-struct SatelliteElevationGraphCurrentIndicator_Previews: PreviewProvider {
-    static var previews: some View {
-        SatelliteElevationGraphCurrentIndicator(
-            percentageCoordinate: CGPoint(x: 0.3, y: 0.3),
-            currentJulianDate: Date().julianDate
-        )
-        .previewLayout(.fixed(width: 100, height: 100))
-    }
-}
-#endif

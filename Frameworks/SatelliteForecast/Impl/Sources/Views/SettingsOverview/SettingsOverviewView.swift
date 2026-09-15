@@ -281,19 +281,3 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
         }
     }
 }
-
-#if DEBUG
-
-struct SettingsOverviewView_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsOverviewViewImpl(
-            settings: AppSettings(),
-            observerCellViewFactory: { fatalError("Preview destination") },
-            locationSettingsViewFactory: { fatalError("Preview destination") },
-            alarmSettingsCellFactory: { fatalError("Preview destination") },
-            alarmSettingsViewFactory: { fatalError("Preview destination") }
-        )
-    }
-}
-
-#endif

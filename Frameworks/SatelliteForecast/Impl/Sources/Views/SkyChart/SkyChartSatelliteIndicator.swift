@@ -56,16 +56,3 @@ struct SkyChartSatelliteIndicator: View {
         }
     }
 }
-
-#if DEBUG
-struct SkyChartSatelliteIndicator_Previews: PreviewProvider {
-    static var previews: some View {
-        SkyChartSatelliteIndicator(
-            state: SkyChartSatelliteIndicatorState(
-                coordinate: AziEleDst(0, 30, 0)
-            )
-        )
-        .previewLayout(.fixed(width: 200, height: 200))
-    }
-}
-#endif

@@ -105,12 +105,3 @@ struct SkyChartDynamicIndicator: View {
             }
     }
 }
-
-#if DEBUG
-struct SkyChartDynamicIndicator_Previews: PreviewProvider {
-    static var previews: some View {
-        EmptyView()
-        .previewLayout(.fixed(width: 200, height: 200))
-    }
-}
-#endif

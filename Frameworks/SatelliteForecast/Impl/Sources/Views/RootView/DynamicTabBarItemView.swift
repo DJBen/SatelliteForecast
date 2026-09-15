@@ -31,31 +31,3 @@ struct DynamicTabBarItemView<Content, SelectedContent>: View where Content: View
         }
     }
 }
-
-#if DEBUG
-
-struct DynamicTabBarItemView_Previews: PreviewProvider {
-    static var previews: some View {
-        DynamicTabBarItemView(
-            isSelected: .constant(true),
-            content: {
-                Text(verbatim: "Should not show unselected 1")
-            },
-            selectedContent: {
-                Text(verbatim: "Should show selected 1")
-            }
-        )
-
-        DynamicTabBarItemView(
-            isSelected: .constant(false),
-            content: {
-                Text(verbatim: "Should show unselected 2")
-            },
-            selectedContent: {
-                Text(verbatim: "Should not show selected 2")
-            }
-        )
-    }
-}
-
-#endif

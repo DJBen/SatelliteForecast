@@ -178,14 +178,3 @@ extension LocationSettingsView {
         }
     }
 }
-
-
-#if DEBUG
-struct LocationSettingsView_Previews: PreviewProvider {
-    static var previews: some View {
-        LocationSettingsView(
-            state: .init(), selectLocation: { _ in }
-        )
-    }
-}
-#endif

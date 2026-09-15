@@ -18,13 +18,3 @@ public struct ConstellationLabel: View {
         .foregroundColor(.secondary)
     }
 }
-
-#if DEBUG
-
-struct ConstellationLabel_Previews: PreviewProvider {
-    static var previews: some View {
-        ConstellationLabel(text: "Hello")
-    }
-}
-
-#endif

@@ -82,23 +82,3 @@ extension LoadableView where LoadingView == ProgressView<EmptyView, EmptyView>, 
         )
     }
 }
-
-#if DEBUG
-
-struct LoadableView_Previews: PreviewProvider {
-    static var previews: some View {
-        LoadableView(
-            loadableContent: .loaded("Hello World")
-        ) { model in
-            Text(model)
-        }
-        
-        LoadableView(
-            loadableContent: Loadable<String, Never>.loading
-        ) { model in
-            Text(model)
-        }
-    }
-}
-
-#endif

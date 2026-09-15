@@ -116,13 +116,3 @@ struct TimeDurationPicker: UIViewRepresentable {
         }
     }
 }
-
-#if DEBUG
-
-struct TimeDurationPicker_Previews: PreviewProvider {
-    static var previews: some View {
-        TimeDurationPicker(duration: .constant(60.0 * 30.0))
-    }
-}
-
-#endif

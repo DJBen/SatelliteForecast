@@ -236,16 +236,3 @@ extension ObserverCell {
         )
     }
 }
-
-#if DEBUG
-struct ObserverCell_Previews: PreviewProvider {
-    static var previews: some View {
-        // 2000 Broadway, Redwood City, CA 94063
-        let location = CLLocation(latitude: 37.486743000691185, longitude: -122.22655970246515)
-        ObserverCell(resources: .init(authorizationStatus: .authorizedAlways, currentLocation: location))
-            .previewLayout(.fixed(width: 200, height: 200))
-        ObserverCell(resources: .init(authorizationStatus: .denied))
-            .previewLayout(.fixed(width: 200, height: 200))
-    }
-}
-#endif

@@ -69,10 +69,3 @@ struct SatelliteForecastWidget: Widget {
         .description("This is an example widget.")
     }
 }
-
-#Preview(as: .systemSmall) {
-    SatelliteForecastWidget()
-} timeline: {
-    SimpleEntry(date: .now, emoji: "😀")
-    SimpleEntry(date: .now, emoji: "🤩")
-}

@@ -133,23 +133,3 @@ public struct SingleSatelliteWrappingView: View {
         }
     }
 }
-
-#if DEBUG
-
-struct SingleSatelliteWrappingView_Previews: PreviewProvider {
-    static var previews: some View {
-        SingleSatelliteWrappingView(
-            viewModel: .init(state: .init()),
-            context: SingleSatelliteWrappingViewContext(
-                selectedNoradIndex: 0,
-                julianDateRange: Date(daysSince1950: 1000).julianDate...Date(daysSince1950: 1002).julianDate,
-                observer: nil,
-                starManager: StarManagerMock(),
-                julianDateProvider: { Date(daysSince1950: 1001).julianDate }
-            ),
-            allPassesViewFactory: .crash
-        )
-    }
-}
-
-#endif

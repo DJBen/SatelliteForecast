@@ -269,7 +269,3 @@ private struct OnboardingPageView: View {
         return 2
     }
 }
-
-#Preview {
-    OnboardingView(onComplete: {})
-}

@@ -43,18 +43,3 @@ extension SatelliteElevationGraph {
         }
     }
 }
-
-#if DEBUG
-struct SatelliteElevationGraph_DateFooter_Previews: PreviewProvider {
-    static var previews: some View {
-        SatelliteElevationGraph.DateFooter(
-            state: SatelliteElevationGraph.DateFooterState(
-                julianDateRange: Date().julianDate...Date().julianDate + 2,
-                configs: .init()
-            ),
-            width: 1000
-        )
-        .previewLayout(.fixed(width: 1000, height: 50))
-    }
-}
-#endif

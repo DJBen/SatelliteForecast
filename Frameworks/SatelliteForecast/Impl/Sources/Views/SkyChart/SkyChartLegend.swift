@@ -116,20 +116,3 @@ struct SkyChartLegend: View, Equatable {
             .overlay(azimuthMarkTexts)
     }
 }
-
-#if DEBUG
-
-struct SkyChartLegend_Previews: PreviewProvider {
-    static var previews: some View {
-        let observer = LatLonAlt(-27.1570, -109.4274, 0)
-
-        ForEach(ColorScheme.allCases, id: \.self) { colorScheme in
-            SkyChartLegend(
-                state: SkyChartLegendState(observer: observer),
-                configs: BasicChartConfigs()
-            )
-            .preferredColorScheme(colorScheme)
-        }
-    }
-}
-#endif

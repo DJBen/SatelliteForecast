@@ -220,7 +220,7 @@ struct AllPassesOnboardingView: View {
                 hasScheduledAlert: false,
                 skyChartFactory: skyChartFactory,
                 julianDateOffset: 0,
-                starManager: StarManagerMock(),
+                starManager: AppStarCatalog(),
                 julianDateProvider: { startDate.julianDate }
             )
             .frame(height: 135)

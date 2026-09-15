@@ -90,39 +90,3 @@ extension RealtimeSkySatelliteCell {
         return formatter.string(from: magnitude as NSNumber)!
     }
 }
-
-#if DEBUG
-
-struct RealtimeSkySatelliteCell_Previews: PreviewProvider {
-    struct Container {
-        @State var isFocused = false
-    }
-
-    static let container = Container()
-
-    static var previews: some View {
-        let elements = try! Elements(
-            raw: """
-            ISS (ZARYA)
-            1 25544U 98067A   21155.08058252  .00001489  00000-0  35252-4 0  9997
-            2 25544  51.6446  47.5538 0003512  61.1482  91.5411 15.48950578286563
-            """
-        )
-        // 2000 Broadway, Redwood City, CA 94063
-        let observer = LatLonAlt(37.486743000691185, -122.22655970246515, 0)
-        // Date range
-        let startDate = Date(timeIntervalSinceReferenceDate: 20 * 365 * 86400)
-        let satelliteInfo = try! SatelliteInfo(elements: elements)
-        RealtimeSkySatelliteCell(
-            isFocused: container.$isFocused,
-            satelliteInfo: satelliteInfo,
-            snapshot: try! SatelliteSnapshot(
-                satelliteInfo: satelliteInfo,
-                julianDate: startDate.julianDate,
-                observer: observer
-            )
-        )
-    }
-}
-
-#endif

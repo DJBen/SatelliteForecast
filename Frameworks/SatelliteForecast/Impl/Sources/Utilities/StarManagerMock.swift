@@ -1,1 +1,0 @@
-typealias StarManagerMock = AppStarCatalog

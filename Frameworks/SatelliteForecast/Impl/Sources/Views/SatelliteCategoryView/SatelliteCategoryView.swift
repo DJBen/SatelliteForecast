@@ -132,20 +132,3 @@ public struct SatelliteCategoryViewImpl: SatelliteCategoryView {
         .tint(AppTheme.accent)
     }
 }
-
-#if DEBUG
-struct SatelliteCategoryView_Previews: PreviewProvider {
-    static var previews: some View {
-        SatelliteCategoryViewImpl(
-            viewModel: .init(
-                state: SatelliteCategoryViewState()
-            ),
-            context: SatelliteCategoryViewContext(
-                starManager: StarManagerMock(),
-                julianDateProvider: { Date().julianDate }
-            ),
-            listViewFactory: .crash
-        )
-    }
-}
-#endif

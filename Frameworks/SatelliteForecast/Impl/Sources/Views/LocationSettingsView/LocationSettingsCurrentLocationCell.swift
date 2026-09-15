@@ -74,21 +74,3 @@ public struct LocationSettingsCurrentLocationCell: View {
         }
     }
 }
-
-#if DEBUG
-struct LocationSettingsCurrentLocationCell_Previews: PreviewProvider {
-    static var previews: some View {
-        LocationSettingsCurrentLocationCell(
-            currentLocation: nil,
-            currentLocationPlacemark: nil
-        )
-            .previewLayout(.fixed(width: 350, height: 50))
-
-        LocationSettingsCurrentLocationCell(
-            currentLocation: CLLocation(latitude: 32.123, longitude: 45.678),
-            currentLocationPlacemark: nil
-        )
-        .previewLayout(.fixed(width: 350, height: 50))
-    }
-}
-#endif

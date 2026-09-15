@@ -55,26 +55,3 @@ struct SatelliteForecastWidgetLiveActivity: Widget {
         }
     }
 }
-
-extension SatelliteForecastWidgetAttributes {
-    fileprivate static var preview: SatelliteForecastWidgetAttributes {
-        SatelliteForecastWidgetAttributes(name: "World")
-    }
-}
-
-extension SatelliteForecastWidgetAttributes.ContentState {
-    fileprivate static var smiley: SatelliteForecastWidgetAttributes.ContentState {
-        SatelliteForecastWidgetAttributes.ContentState(emoji: "😀")
-     }
-     
-     fileprivate static var starEyes: SatelliteForecastWidgetAttributes.ContentState {
-         SatelliteForecastWidgetAttributes.ContentState(emoji: "🤩")
-     }
-}
-
-#Preview("Notification", as: .content, using: SatelliteForecastWidgetAttributes.preview) {
-   SatelliteForecastWidgetLiveActivity()
-} contentStates: {
-    SatelliteForecastWidgetAttributes.ContentState.smiley
-    SatelliteForecastWidgetAttributes.ContentState.starEyes
-}
