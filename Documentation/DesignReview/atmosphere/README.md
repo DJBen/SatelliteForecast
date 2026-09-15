@@ -8,6 +8,10 @@ azimuth and elevation come from the existing ephemeris and chart projection.
 - Visible Sun: warm aureole, soft six-blade rays and faint colored reflections
   along the Sun–chart-center axis. Optical effects fade out at the horizon;
   atmospheric twilight remains until astronomical night.
+- The Moon’s disk and bloom receive the same chart-position scattering colors.
+  Scattering uses a screen blend so daylight haze preserves the sunlit surface
+  instead of painting over it. The opaque sky base stays behind the Moon, and
+  its label stays above the effect.
 - Night: the atmosphere becomes fully transparent below −18°.
 - Both app appearances use the same sky colors. Paths and labels remain above
   the atmosphere; the existing star-visibility preference remains respected.
@@ -26,3 +30,7 @@ then captures the real Sky Now view in light and dark appearance.
 Images live in `../after/atmosphere-*.png` alongside the existing regression
 baselines. Record explicitly with the repository's `SNAPSHOT_RECORD=after`
 test-plan option; ordinary test runs compare against these baselines.
+
+`testDaytimeMoonScreens` captures a daytime Moon above 30° with the Sun above
+25°, in both appearances. `testFloatingTabScreens` captures the actual tab
+container with forecast, pass-list and satellite content scrolled beneath it.

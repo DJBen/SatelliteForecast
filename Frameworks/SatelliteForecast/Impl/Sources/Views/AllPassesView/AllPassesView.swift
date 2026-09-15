@@ -321,25 +321,7 @@ public struct AllPassesView: View {
     }
 
     @ViewBuilder private var allPassesList: some View {
-        VStack(spacing: 0) {
-            if let locationChangeWarning = locationChangeWarning {
-                AllPassesLocationChangeWarning(
-                    state: locationChangeWarning,
-                    onRecalculatePasses: {
-                        viewModel.send(
-                            .recalculatePasses(
-                                .init(
-                                    selectedNoradIndex: context.satelliteInfo.noradIndex,
-                                    satelliteInfo: context.satelliteInfo,
-                                    julianDateRange: context.julianDateRange,
-                                    observer: LatLonAlt(locationChangeWarning.observer.latitude, locationChangeWarning.observer.longitude, 0)
-                                )
-                            )
-                        )
-                    }
-                )
-            }
-
+        Group {
             if let observer = context.observer {
                 let items = itemsByVisibility
                 let visiblePasses: [Item] = items?[.visible] ?? []
@@ -419,6 +401,25 @@ public struct AllPassesView: View {
                         .buttonStyle(.bordered)
                     }
                 }
+            }
+        }
+        .safeAreaInset(edge: .top, spacing: 0) {
+            if let locationChangeWarning = locationChangeWarning {
+                AllPassesLocationChangeWarning(
+                    state: locationChangeWarning,
+                    onRecalculatePasses: {
+                        viewModel.send(
+                            .recalculatePasses(
+                                .init(
+                                    selectedNoradIndex: context.satelliteInfo.noradIndex,
+                                    satelliteInfo: context.satelliteInfo,
+                                    julianDateRange: context.julianDateRange,
+                                    observer: LatLonAlt(locationChangeWarning.observer.latitude, locationChangeWarning.observer.longitude, 0)
+                                )
+                            )
+                        )
+                    }
+                )
             }
         }
     }

@@ -9,7 +9,6 @@ import BTree
 import SatelliteForecast
 @preconcurrency import SatelliteKit
 import SwiftUI
-import SwiftUIVisualEffects
 import StarryNight
 import CoreMotion
 
@@ -36,18 +35,18 @@ public struct PassView: View {
     @State var viewModel: PassModel
     @State var isCompassEnabled: Bool = true
 
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.timeZone) private var timeZone
+    @Environment(\.locale) private var locale
+
     var context: PassViewContext
-    var elevationGraphFactory: ViewFactory<SatelliteElevationGraphContext, SatelliteElevationGraph>
     var skyChartFactory: ViewFactory<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>
     var passAlarmSettingsFactory: ViewFactory<PassAlarmSettingsModalViewContext, PassAlarmSettingsModalView>
     var detailedPassViewFactory: ViewFactory<DetailPassViewContext, DetailedPassView>
 
-    @Environment(\.colorScheme) private var colorScheme
-
     public init(
         viewModel: PassModel,
         context: PassViewContext,
-        elevationGraphFactory: ViewFactory<SatelliteElevationGraphContext, SatelliteElevationGraph>,
         skyChartFactory: ViewFactory<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>,
         passAlarmSettingsFactory: ViewFactory<PassAlarmSettingsModalViewContext, PassAlarmSettingsModalView>,
         detailedPassViewFactory: ViewFactory<DetailPassViewContext, DetailedPassView>,
@@ -56,136 +55,149 @@ public struct PassView: View {
         self._isCompassEnabled = State(initialValue: isCompassEnabled)
         self.viewModel = viewModel
         self.context = context
-        self.elevationGraphFactory = elevationGraphFactory
         self.skyChartFactory = skyChartFactory
         self.passAlarmSettingsFactory = passAlarmSettingsFactory
         self.detailedPassViewFactory = detailedPassViewFactory
     }
     
-    @ViewBuilder private var compassButton: some View {
+    private var compassButton: some View {
         Button {
             isCompassEnabled.toggle()
         } label: {
-            Image(
-                systemName: isCompassEnabled ? "safari.fill" : "safari"
-            )
-            .symbolRenderingMode(.monochrome)
-            .resizable()
-            .frame(width: 24, height: 24)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 10)
+            HStack(spacing: 8) {
+                Image(systemName: isCompassEnabled ? "safari.fill" : "safari")
+                    .font(.body)
+                Text("Compass")
+                    .font(.subheadline.weight(.medium))
+                if isCompassEnabled {
+                    Image(systemName: "checkmark")
+                        .font(.caption.weight(.bold))
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 4)
+            .foregroundStyle(isCompassEnabled
+                ? (colorScheme == .dark ? AppTheme.background : Color.white)
+                : AppTheme.accent)
         }
-        .if(!isCompassEnabled) { button in
-            button.vibrancyEffect()
-            .background(
-                Color.clear.blurEffect()
-            )
-            .cornerRadius(8)
-            .blurEffectStyle(colorScheme == .light ? .systemMaterialLight : .systemMaterialDark)
-            .vibrancyEffectStyle(.fill)
-            .padding(8)
-        }
-        .if(isCompassEnabled) { button in
-            button.vibrancyEffect()
-            .background(
-                Color.clear.blurEffect()
-            )
-            .cornerRadius(8)
-            .blurEffectStyle(colorScheme == .light ? .systemMaterialDark : .systemMaterialLight)
-            .vibrancyEffectStyle(.fill)
-            .padding(8)
+        .accessibilityValue(isCompassEnabled ? "On" : "Off")
+        .accessibilityAddTraits(isCompassEnabled ? .isSelected : [])
+    }
+
+    private var chartControls: some View {
+        GlassEffectContainer(spacing: 16) {
+            HStack(spacing: 16) {
+                if isCompassEnabled {
+                    compassButton.buttonStyle(.glassProminent)
+                } else {
+                    compassButton.buttonStyle(.glass)
+                }
+
+                Button {
+                    viewModel.send(.showDetailPassView(true))
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "arrow.up.left.and.arrow.down.right")
+                            .font(.body)
+                        Text("Full screen")
+                            .font(.subheadline.weight(.medium))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 4)
+                }
+            }
+            .buttonStyle(.glass)
+            .buttonBorderShape(.roundedRectangle(radius: 16))
         }
     }
 
-    @ViewBuilder private func skyChart(in rect: CGRect) -> some View {
+    private func skyChart(in rect: CGRect) -> some View {
         MotionManagerView { deviceMotionResult in
-            ZStack(alignment: .bottom) {
-                ZStack(alignment: .top) {
-                    skyChartFactory.view(
-                        SkyChartContext(
-                            satelliteInfo: context.satelliteInfo,
-                            observer: context.observer,
-                            passSnapshots: context.passSnapshots,
-                            configs: .preset,
-                            quality: .full,
-                            starManager: context.starManager,
-                            julianDateProvider: context.julianDateProvider,
-                        )
+            VStack(spacing: 18) {
+                skyChartFactory.view(
+                    SkyChartContext(
+                        satelliteInfo: context.satelliteInfo,
+                        observer: context.observer,
+                        passSnapshots: context.passSnapshots,
+                        configs: .init(showPassInfoLabels: false),
+                        quality: .full,
+                        starManager: context.starManager,
+                        julianDateProvider: context.julianDateProvider
                     )
-                    .frame(height: min(rect.width, rect.height))
-                    .rotationEffect(
-                        isCompassEnabled ? .degrees(deviceMotionResult.content?.heading ?? 0) : .zero
-                    )
-                
-                    HStack {
-                        compassButton
-                        
-                        Spacer()
-                        
-                        Button {
-                            viewModel.send(.showDetailPassView(true))
-                        } label: {
-                            Image(
-                                systemName: "arrow.up.left.and.arrow.down.right"
-                            )
-                            .symbolRenderingMode(.monochrome)
-                            .resizable()
-                            .frame(width: 24, height: 24)
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 10)
-                        }
-                        .vibrancyEffect()
-                        .background(
-                            Color.clear.blurEffect()
-                        )
-                        .cornerRadius(8)
-                        .blurEffectStyle(colorScheme == .light ? .systemMaterialLight : .systemMaterialDark)
-                        .vibrancyEffectStyle(.fill)
-                        .padding(8)
+                )
+                .frame(width: max(0, min(rect.width, rect.height) - 32),
+                       height: max(0, min(rect.width, rect.height) - 32))
+                .rotationEffect(
+                    isCompassEnabled ? .degrees(deviceMotionResult.content?.heading ?? 0) : .zero
+                )
+                .overlay {
+                    if isCompassEnabled {
+                        DeviceOrientationGuidanceView(deviceMotionResult: deviceMotionResult)
+                            .padding(.horizontal, 20)
                     }
                 }
-                
-                if isCompassEnabled {
-                    DeviceOrientationGuidanceView(
-                        deviceMotionResult: deviceMotionResult,
-                    )
+
+                VStack(spacing: 20) {
+                    chartControls
+                    eventTable
                 }
+                .padding(.horizontal, 20)
             }
         }
+    }
+
+    private var eventTable: some View {
+        VStack(spacing: 0) {
+            ForEach(Array(PassTimelineEvent.events(for: context.passSnapshots.pass).enumerated()), id: \.offset) { index, event in
+                if index > 0 { Divider().padding(.leading, 48) }
+                HStack(spacing: 12) {
+                    ZStack {
+                        Circle().strokeBorder(.secondary.opacity(0.3), lineWidth: 1)
+                        Text("N").font(.system(size: 7, weight: .semibold)).offset(y: -13)
+                        Image(systemName: "location.north.fill")
+                            .font(.system(size: 16))
+                            .rotationEffect(.degrees(event.position.azim))
+                    }
+                    .frame(width: 36, height: 36)
+                    .foregroundStyle(.tint)
+                    .accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(event.title).font(.subheadline.weight(.medium))
+                        Text("\(Int(event.position.azim.rounded()) % 360)° azimuth · \(Int(event.position.elev.rounded()))° elevation")
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
+                    Spacer(minLength: 8)
+                    Text(Date(julianDate: event.position.julianDate), format: .dateTime.hour().minute().second())
+                        .font(.subheadline.monospacedDigit())
+                }
+                .padding(.vertical, 10)
+                .accessibilityElement(children: .combine)
+            }
+        }
+    }
+
+    private var passDateTitle: String {
+        Date(julianDate: context.passSnapshots.pass.rise.julianDate).formatted(
+            Date.FormatStyle(date: .abbreviated, time: .shortened, locale: locale, timeZone: timeZone))
     }
 
     public var body: some View {
         GeometryReader { geometry in
             let rect = geometry.frame(in: .local)
-            VStack(spacing: 20) {
-                elevationGraphFactory.view(
-                    SatelliteElevationGraphContext(
-                        satelliteInfo: context.satelliteInfo,
-                        selectedPassIndex: context.passIndex,
-                        julianDateRange: context.julianDateRange,
-                        observer: context.observer,
-                        configs: .init(),
-                        julianDateProvider: context.julianDateProvider,
-                        selectedPass: context.passSnapshots.pass
-                    )
-                )
-                .environment(\.julianDateRangeKey, context.julianDateRange)
-                .frame(minHeight: 150, idealHeight: 240, maxHeight: 275, alignment: .leading)
-
+            ScrollView {
                 skyChart(in: rect)
-
-                Spacer(minLength: 10)
+                    .padding(.top, 8)
+                    .padding(.bottom, 20)
             }
-            .clipShape(Rectangle())
             .modifier(AppSurface())
-        .navigationTitle(Date(julianDate: context.passSnapshots.pass.rise.julianDate).formatted(date: .abbreviated, time: .shortened))
+            .navigationTitle(passDateTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(
                     placement: .principal
                 ) {
                     VStack(alignment: .center, spacing: 4) {
-                        Text(Date(julianDate: context.passSnapshots.pass.rise.julianDate).formatted(date: .abbreviated, time: .shortened))
+                        Text(passDateTitle)
                             .font(.headline)
                             .frame(alignment: .center)
                             .multilineTextAlignment(.center)
@@ -348,10 +360,6 @@ struct PassView_Previews: PreviewProvider {
                 )
             ]
         )
-        let satelliteGraphState = SatelliteElevationGraphState(
-            satelliteElevationGraphResources: SatelliteElevationGraphResources(),
-            elementsPropagatorResources: elementPropagatorResources
-        )
         let skyChartState = SkyChartViewState(
             julianDateOffset: 0,
             resources: SkyChartResources(
@@ -372,27 +380,11 @@ struct PassView_Previews: PreviewProvider {
             starManager: StarManagerMock(),
             julianDateProvider: { Date().julianDate }
         )
-        let elevationGraphContext = SatelliteElevationGraphContext(
-            satelliteInfo: try! SatelliteInfo(elements: elements),
-            selectedPassIndex: 0,
-            julianDateRange: julianDateRange,
-            observer: observer,
-            configs: .init(),
-            julianDateProvider: { Date().julianDate }
-        )
         PassView(
             viewModel: .init(
                 state: PassViewState()
             ),
             context: context,
-            elevationGraphFactory: .pure(
-                SatelliteElevationGraph(
-                    viewModel: .init(
-                        state: satelliteGraphState
-                    ),
-                    context: elevationGraphContext
-                )
-            ),
             skyChartFactory: .pure(
                 SkyChart<EmptyView, EmptyView>(
                     viewModel: .init(
@@ -426,3 +418,32 @@ struct PassView_Previews: PreviewProvider {
     }
 }
 #endif
+
+/// A compact summary of the visible portion, with horizon events for nonvisible passes.
+struct PassTimelineEvent {
+    let title: String
+    let position: Pass.DatePosition
+
+    static func events(for pass: Pass) -> [Self] {
+        var start = pass.rise
+        var end = pass.set
+        if pass.visibility == .visible {
+            if !pass.illumination.initiallyIlluminated,
+               let change = pass.illumination.changes.first(where: {
+                   if case .exitsShadow = $0 { return true }; return false
+               }) {
+                start = change.datePosition
+            }
+            if let change = pass.illumination.changes.last,
+               case .entersShadow(let position) = change {
+                end = position
+            }
+        }
+        var events = [Self(title: start == pass.rise ? "Rises" : "Becomes visible", position: start)]
+        if pass.culmination.julianDate > start.julianDate && pass.culmination.julianDate < end.julianDate {
+            events.append(Self(title: "Culminates", position: pass.culmination))
+        }
+        events.append(Self(title: end == pass.set ? "Sets" : "Disappears", position: end))
+        return events
+    }
+}

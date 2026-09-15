@@ -5,7 +5,7 @@ let package = Package(
     name: "SatelliteForecastPackage", // Renamed to avoid conflict with target names
     defaultLocalization: "en",
     platforms: [
-        .iOS(.v18)
+        .iOS("26.0")
     ],
     products: [
         .library(

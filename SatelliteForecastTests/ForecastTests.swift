@@ -18,6 +18,44 @@ final class ForecastTests: XCTestCase {
             illumination: .init(initiallyIlluminated: true, changes: []), sunElevationAtTransit: -20)
     }
 
+    func testOrientationGuidanceAcceptsOnlyScreenFacingDown() {
+        XCTAssertTrue(DeviceOrientationGuidanceView.isAligned(gravityZ: 1))
+        XCTAssertTrue(DeviceOrientationGuidanceView.isAligned(gravityZ: 0.9))
+        XCTAssertFalse(DeviceOrientationGuidanceView.isAligned(gravityZ: 0.8))
+        XCTAssertFalse(DeviceOrientationGuidanceView.isAligned(gravityZ: 0))
+        XCTAssertFalse(DeviceOrientationGuidanceView.isAligned(gravityZ: -1))
+        XCTAssertFalse(DeviceOrientationGuidanceView.isAligned(gravityZ: .nan))
+    }
+
+    func testPassTimelineUsesHorizonForFullyLitAndDaylightPasses() {
+        let original = pass(at: date)
+        let events = PassTimelineEvent.events(for: original)
+        XCTAssertEqual(events.map(\.title), ["Rises", "Culminates", "Sets"])
+        XCTAssertEqual(events.map(\.position), [original.rise, original.culmination, original.set])
+        let daylight = Pass(noradIndex: original.noradIndex, rise: original.rise, set: original.set,
+            culmination: original.culmination,
+            illumination: .init(initiallyIlluminated: false, changes: [.exitsShadow(original.culmination)]),
+            sunElevationAtTransit: 20)
+        XCTAssertEqual(PassTimelineEvent.events(for: daylight).first?.position, original.rise)
+    }
+
+    func testPassTimelineUsesShadowBoundariesAndOmitsHiddenCulmination() {
+        let original = pass(at: date)
+        let appears = Pass.DatePosition(julianDate: original.rise.julianDate + 0.002, azim: 45, elev: 20)
+        let disappears = Pass.DatePosition(julianDate: original.rise.julianDate + 0.007, azim: 120, elev: 30)
+        func partial(start: Pass.DatePosition) -> Pass {
+            Pass(noradIndex: original.noradIndex, rise: original.rise, set: original.set,
+                culmination: original.culmination,
+                illumination: .init(initiallyIlluminated: false, changes: [.exitsShadow(start), .entersShadow(disappears)]),
+                sunElevationAtTransit: -20)
+        }
+        let events = PassTimelineEvent.events(for: partial(start: appears))
+        XCTAssertEqual(events.map(\.title), ["Becomes visible", "Culminates", "Disappears"])
+        XCTAssertEqual(events.map(\.position), [appears, original.culmination, disappears])
+        let late = Pass.DatePosition(julianDate: original.rise.julianDate + 0.006, azim: 100, elev: 40)
+        XCTAssertEqual(PassTimelineEvent.events(for: partial(start: late)).map(\.title), ["Becomes visible", "Disappears"])
+    }
+
     func testLocationChangeRejectsLateForecast() async {
         let started = expectation(description: "Old forecast started")
         var pending: CheckedContinuation<[Pass], Error>?

@@ -1,118 +1,103 @@
 import SwiftUI
 import CoreMotion
-import SatelliteKit
 import SatelliteForecast
 
-/// A view that guides the user to orient their device with the screen pointing down and camera pointing skyward
+/// A short, dismissible demonstration that stays with the chart it controls.
 struct DeviceOrientationGuidanceView: View {
     let deviceMotionResult: Loadable<CMDeviceMotion, Error>
-    @Environment(\.colorScheme) var colorScheme
-    
-    @State private var isCriteriaMet: Bool = false
-    @State private var shouldShow: Bool = true
-    
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var dismissed = false
+    @State private var hasAligned = false
+
+    // Positive device Z gravity means the screen faces down and the back faces up.
+    static func isAligned(gravityZ: Double) -> Bool {
+        gravityZ.isFinite && gravityZ >= cos(.pi / 6)
+    }
+
+    private var isAligned: Bool {
+        deviceMotionResult.content.map { Self.isAligned(gravityZ: $0.gravity.z) } ?? false
+    }
+
     var body: some View {
-        VStack(spacing: 8) {
-            HStack(spacing: 8) {
-                Text("Lift up your device towards the sky", bundle: .module)
-                    .font(.caption)
-                    .foregroundColor(Color(UIColor.label))
-                
-                if case .loaded(let motion) = deviceMotionResult {
-                    let pitch = motion.attitude.pitch * rad2deg
-                    let roll = motion.attitude.roll * rad2deg
-                    let progress = min(max(0, 1 - (abs(pitch) / 90)), max(0, 1 - (min(abs(roll - 180), abs(roll + 180)) / 30)))
-                    let currentCriteriaMet = abs(pitch) < 30 && min(abs(roll - 180), abs(roll + 180)) < 30
-                    
-                    ZStack {
-                        Circle()
-                            .stroke(Color.secondary.opacity(0.3), lineWidth: 2)
-                            .frame(width: 16, height: 16)
-                        
-                        Circle()
-                            .trim(from: 0, to: progress)
-                            .stroke(
-                                currentCriteriaMet ? Color.green : Color.orange,
-                                style: StrokeStyle(lineWidth: 2, lineCap: .round)
-                            )
-                            .frame(width: 16, height: 16)
-                            .rotationEffect(.degrees(-90))
-                            .animation(.easeInOut(duration: 0.2), value: progress)
-                        
-                        if currentCriteriaMet {
-                            Image(systemName: "checkmark")
-                                .font(.system(size: 8, weight: .bold))
-                                .foregroundColor(.green)
-                        }
-                    }
-                    .onChange(of: currentCriteriaMet, initial: true) { oldValue, newValue in
-                        if newValue != oldValue {
-                            isCriteriaMet = newValue
-                            
-                            if newValue {
-                                withAnimation(.easeOut(duration: 0.25)) {
-                                    shouldShow = false
-                                }
-                            } else {
-                                withAnimation(.easeIn(duration: 0.25)) {
-                                    shouldShow = true
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            
-            // Show detailed progress when device motion is available
-            if case .loaded(let motion) = deviceMotionResult {
-                let pitch = motion.attitude.pitch * rad2deg
-                let roll = motion.attitude.roll * rad2deg
-                
+        Group {
+            if !dismissed && !hasAligned && !isAligned {
                 HStack(spacing: 16) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        HStack {
-                            Text("Pitch:", bundle: .module, comment: "The attitude noun as in 'roll', 'pitch', 'yaw'")
-                                .font(.caption2)
-                                .foregroundColor(.secondary)
-                            Spacer()
-                            Text("\(Int(pitch))°", bundle: .module)
-                                .font(.caption2.monospacedDigit())
-                                .foregroundColor(abs(pitch) < 30 ? .green : .orange)
-                        }
-                        
-                        ProgressView(value: max(0, 1 - (abs(pitch) / 90)))
-                            .progressViewStyle(LinearProgressViewStyle(tint: abs(pitch) < 30 ? .green : .orange))
-                            .scaleEffect(y: 0.5)
+                    phoneDemonstration
+                        .frame(width: 64, height: 100)
+                        .accessibilityHidden(true)
+
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Lift your iPhone")
+                            .font(.headline)
+                        Text("Point the back toward the sky.")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
-                    
-                    VStack(alignment: .leading, spacing: 2) {
-                        HStack {
-                            Text("Roll:", bundle: .module, comment: "The attitude noun as in 'roll', 'pitch', 'yaw'")
-                                .font(.caption2)
-                                .foregroundColor(.secondary)
-                            Spacer()
-                            Text("\(Int(roll))°", bundle: .module)
-                                .font(.caption2.monospacedDigit())
-                                .foregroundColor(min(abs(roll - 180), abs(roll + 180)) < 30 ? .green : .orange)
-                        }
-                        
-                        ProgressView(value: max(0, 1 - (min(abs(roll - 180), abs(roll + 180)) / 30)))
-                            .progressViewStyle(LinearProgressViewStyle(tint: min(abs(roll - 180), abs(roll + 180)) < 30 ? .green : .orange))
-                            .scaleEffect(y: 0.5)
-                    }
+                    .padding(.trailing, 8)
                 }
-                .padding(.top, 4)
+                .padding(20)
+                .padding(.trailing, 8)
+                .frame(maxWidth: 310)
+                .glassEffect(.regular, in: .rect(cornerRadius: 26))
+                .overlay(alignment: .topTrailing) {
+                    Button {
+                        dismissed = true
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.secondary)
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Dismiss orientation guidance")
+                }
+                .transition(.opacity.combined(with: .scale(scale: 0.96)))
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-        .background(
-            Color.clear.blurEffect()
-                .cornerRadius(8)
-                .blurEffectStyle(colorScheme == .light ? .systemMaterialLight : .systemMaterialDark)
-                .vibrancyEffectStyle(.fill)
-        )
-        .padding(.horizontal, 32)
-        .opacity(shouldShow ? 1.0 : 0.0)
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.25), value: dismissed)
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.25), value: isAligned)
+        .onChange(of: isAligned, initial: true) { _, aligned in
+            if aligned { hasAligned = true }
+        }
+    }
+
+    @ViewBuilder private var phoneDemonstration: some View {
+        if reduceMotion || SnapshotEnvironment.isEnabled {
+            phone(lifted: true)
+        } else {
+            phone(lifted: false)
+                .phaseAnimator([false, true]) { _, lifted in
+                    phone(lifted: lifted)
+                } animation: { _ in
+                    .easeInOut(duration: 1.6)
+                }
+        }
+    }
+
+    private func phone(lifted: Bool) -> some View {
+        VStack(spacing: 10) {
+            Image(systemName: "arrow.up")
+                .font(.body.weight(.semibold))
+                .foregroundStyle(.tint)
+                .opacity(lifted ? 1 : 0.4)
+            RoundedRectangle(cornerRadius: 10)
+                .fill(.tint.opacity(0.12))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 10)
+                        .strokeBorder(.tint, lineWidth: 2)
+                }
+                .overlay(alignment: .top) {
+                    Capsule().fill(.tint).frame(width: 15, height: 4).padding(.top, 6)
+                }
+                .overlay {
+                    Image(systemName: "sparkles")
+                        .font(.title3).foregroundStyle(.tint)
+                }
+                .frame(width: 42, height: 72)
+                .rotation3DEffect(.degrees(lifted ? -12 : 65), axis: (x: 1, y: 0, z: 0), perspective: 0.5)
+                .offset(y: lifted ? -4 : 8)
+        }
     }
 }

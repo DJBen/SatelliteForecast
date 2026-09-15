@@ -46,12 +46,7 @@ public struct ScreenFactory {
     let model = PassModel(session: session)
     return PassView(
       viewModel: model, context: context,
-      elevationGraphFactory: ViewFactory { ElevationGraph in
-        SatelliteElevationGraph(
-          viewModel: ElevationGraphModel(
-            context: ElevationGraph, service: session.orbits, renderer: session.renderer),
-          context: ElevationGraph)
-      }, skyChartFactory: ViewFactory { sky($0) },
+      skyChartFactory: ViewFactory { sky($0) },
       passAlarmSettingsFactory: ViewFactory {
         PassAlarmSettingsModalView(
           viewModel: PassAlarmModel(

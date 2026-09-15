@@ -56,7 +56,7 @@ struct PlanetaryBodyView: View {
                     solarSystemBody: planetaryBody
                 ) { solarSystemBody, coordinate in
                     if planetaryBody == .moon {
-                        MoonDiskView(julianDate: referenceDate, observer: observer, radius: displayRadius)
+                        MoonDiskView(julianDate: referenceDate, observer: observer, radius: displayRadius, chartRect: rect)
                             .overlay(alignment: .leading) {
                                 if label == .text {
                                     Text("Moon", bundle: .module)

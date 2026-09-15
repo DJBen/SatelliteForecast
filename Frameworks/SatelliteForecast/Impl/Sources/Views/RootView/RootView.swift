@@ -39,7 +39,7 @@ private let realtimeSkyTabText = NSLocalizedString(
 private let forecastTabText = NSLocalizedString(
     "tabs.forecast.text",
     bundle: .module,
-    value: "Pass forecast",
+    value: "Passes",
     comment: "The title of the 'Forecast' tab of the root view."
 )
 
@@ -85,15 +85,8 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
         UINavigationBar.appearance().compactAppearance = navBarAppearance
         UINavigationBar.appearance().scrollEdgeAppearance = navBarAppearance
 
-        // Keep navigation on the canvas color; raised surfaces belong to content cards.
-        let tabBarAppearance = UITabBarAppearance()
-        tabBarAppearance.configureWithOpaqueBackground()
-        tabBarAppearance.backgroundColor = AppTheme.backgroundColor
-        tabBarAppearance.shadowColor = AppTheme.borderColor.withAlphaComponent(0.35)
-        UITabBar.appearance().standardAppearance = tabBarAppearance
-        UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
-        UITabBar.appearance().backgroundColor = AppTheme.backgroundColor
-        UITabBar.appearance().unselectedItemTintColor = AppTheme.mutedColor
+        // Let the system tab bar and scroll-edge effect composite over content.
+
     }
     
     private func isSelectedBinding(for tab: SatelliteForecast.Tab) -> Binding<Bool> {

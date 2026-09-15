@@ -200,6 +200,7 @@ struct MoonDiskView: View {
     let julianDate: Double
     let observer: LatLonAlt
     let radius: CGFloat
+    var chartRect: CGRect? = nil
     @State private var image: UIImage?
 
     var body: some View {
@@ -207,6 +208,30 @@ struct MoonDiskView: View {
             if let image {
                 Image(uiImage: image).resizable().interpolation(.high)
                     .frame(width: radius * 6, height: radius * 6)
+                    .overlay {
+                        if let chartRect {
+                            let point = SkyChartUtils.point(
+                                at: MoonAppearance.coordinate(julianDate: julianDate, observer: observer),
+                                rect: chartRect)
+                            // Sample the same chart-space scattering over both the
+                            // lunar surface and its bloom. The opaque sky base stays
+                            // behind the Moon; labels are added after this composite.
+                            SkyChartAtmosphere(
+                                sun: SkyChartAtmosphere.sun(observer: observer, julianDate: julianDate),
+                                showsSun: false, includesSkyBase: false)
+                                .frame(width: chartRect.width, height: chartRect.height)
+                                .offset(x: chartRect.midX - point.x, y: chartRect.midY - point.y)
+                                .frame(width: radius * 6, height: radius * 6)
+                                .mask {
+                                    Image(uiImage: image).resizable().interpolation(.high)
+                                        .frame(width: radius * 6, height: radius * 6)
+                                }
+                                // Scattered sky light adds to the lunar radiance;
+                                // source-over paint would erase the sunlit surface.
+                                .blendMode(.screen)
+                        }
+                    }
+                    .compositingGroup()
             }
             else { Color.clear }
         }

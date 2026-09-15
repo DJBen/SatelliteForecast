@@ -59,14 +59,14 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
 
     public var body: some View {
         NavigationStack(path: $navigationPath) {
-            VStack {
+            GeometryReader { geometry in
                 ScrollView {
                     LazyVStack(
                         alignment: .leading,
                         spacing: 20,
                         pinnedViews: []
                     ) {
-                        Text(NSLocalizedString("tabs.forecast.text", bundle: .module, value: "Pass forecast", comment: "Forecast screen title"))
+                        Text(NSLocalizedString("tabs.forecast.text", bundle: .module, value: "Passes", comment: "Forecast screen title"))
                             .font(.largeTitle.bold())
                             .foregroundStyle(.primary)
                             .padding(.top, 8)
@@ -95,6 +95,8 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                 }
                 .refreshable { await model.refresh(input) }
                 .padding(.horizontal, 16)
+                .contentMargins(.bottom, geometry.safeAreaInsets.bottom, for: .scrollContent)
+                .ignoresSafeArea(.container, edges: .bottom)
                 .modifier(AppSurface())
                 .navigationBarTitle(
                     Text("Overview", bundle: .module),
@@ -114,21 +116,22 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                         )
                     }
                 }
-            }
-            .tint(AppTheme.accent)
-            
-            if input.isMissingLocation {
-                HStack {
-                    Image(systemName: "location.slash")
-                        .symbolRenderingMode(.palette)
-                        .foregroundStyle(.red, Color(uiColor: .label))
-                        .font(.headline)
-                    Text("Location needed to calculate satellite passes. Your experience may be degraded.", bundle: .module)
+                .tint(AppTheme.accent)
+                .safeAreaInset(edge: .bottom, spacing: 0) {
+                    if input.isMissingLocation {
+                        HStack {
+                            Image(systemName: "location.slash")
+                                .symbolRenderingMode(.palette)
+                                .foregroundStyle(.red, Color(uiColor: .label))
+                                .font(.headline)
+                            Text("Location needed to calculate satellite passes. Your experience may be degraded.", bundle: .module)
+                        }
+                        .font(.footnote)
+                        .frame(maxWidth: .infinity)
+                        .padding(.horizontal)
+                        .padding(.vertical, 4)
+                    }
                 }
-                .font(.footnote)
-                .frame(maxWidth: .infinity)
-                .padding(.horizontal)
-                .padding(.vertical, 4)
             }
         }
         .task(id: input) {

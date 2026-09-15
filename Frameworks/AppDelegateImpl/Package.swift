@@ -5,7 +5,7 @@ let package = Package(
     name: "AppDelegateImplPackage",
     defaultLocalization: "en",
     platforms: [
-        .iOS(.v18)
+        .iOS("26.0")
     ],
     products: [
         .library(

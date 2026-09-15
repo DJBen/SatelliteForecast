@@ -60,67 +60,71 @@ public struct SatelliteCategoryViewImpl: SatelliteCategoryView {
                 }
             )
         ) {
-            ScrollView {
-                LazyVStack(
-                    alignment: .leading,
-                    spacing: 10,
-                    pinnedViews: []
-                ) {
-                    Text("Satellites", bundle: .module)
-                        .font(.largeTitle.bold())
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.top, 8)
-                    Section {
-                        LazyVStack(
-                            alignment: .leading,
-                            spacing: 20,
-                            pinnedViews: []
-                        ) {
-                            ForEach(
-                                [
-                                    SatelliteCategory.brightest100,
-                                    SatelliteCategory.active,
-                                    SatelliteCategory.last30DayLaunches
-                                ],
-                                id: \.self
-                            ) { category in
-                                NavigationLink(value: category) {
-                                    SatelliteCategoryCell(category: category)
+            GeometryReader { geometry in
+                ScrollView {
+                    LazyVStack(
+                        alignment: .leading,
+                        spacing: 10,
+                        pinnedViews: []
+                    ) {
+                        Text("Satellites", bundle: .module)
+                            .font(.largeTitle.bold())
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.top, 8)
+                        Section {
+                            LazyVStack(
+                                alignment: .leading,
+                                spacing: 20,
+                                pinnedViews: []
+                            ) {
+                                ForEach(
+                                    [
+                                        SatelliteCategory.brightest100,
+                                        SatelliteCategory.active,
+                                        SatelliteCategory.last30DayLaunches
+                                    ],
+                                    id: \.self
+                                ) { category in
+                                    NavigationLink(value: category) {
+                                        SatelliteCategoryCell(category: category)
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
-            .padding(.horizontal, 16)
-            .modifier(AppSurface())
-            .navigationBarTitle(
-                Text(
-                    "Satellite Categories",
-                    bundle: .module
-                ),
-                displayMode: .inline
-            )
-            .navigationBarHidden(true)
-            .navigationDestination(for: SatelliteCategory.self) { category in
-                LazyView {
-                    listViewFactory.view(
-                        SatelliteListViewContext(
-                            category: category,
-                            julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
-                            observer: viewModel.state.observer,
-                            starManager: context.starManager,
-                            julianDateProvider: context.julianDateProvider
-                        )
-                    )
-                    .onAppear {
-                        viewModel.send(
-                            .loadCategory(
-                                category,
+                .padding(.horizontal, 16)
+                .contentMargins(.bottom, geometry.safeAreaInsets.bottom, for: .scrollContent)
+                .ignoresSafeArea(.container, edges: .bottom)
+                .modifier(AppSurface())
+                .navigationBarTitle(
+                    Text(
+                        "Satellite Categories",
+                        bundle: .module
+                    ),
+                    displayMode: .inline
+                )
+                .navigationBarHidden(true)
+                .navigationDestination(for: SatelliteCategory.self) { category in
+                    LazyView {
+                        listViewFactory.view(
+                            SatelliteListViewContext(
+                                category: category,
                                 julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
-                                observer: viewModel.state.observer
+                                observer: viewModel.state.observer,
+                                starManager: context.starManager,
+                                julianDateProvider: context.julianDateProvider
                             )
                         )
+                        .onAppear {
+                            viewModel.send(
+                                .loadCategory(
+                                    category,
+                                    julianDateRange: JulianDateUtil.createJulianDateRange(now: context.julianDateProvider() + viewModel.state.julianDateOffset),
+                                    observer: viewModel.state.observer
+                                )
+                            )
+                        }
                     }
                 }
             }

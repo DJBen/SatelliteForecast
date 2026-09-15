@@ -77,6 +77,33 @@ final class ScreenSnapshotTests: XCTestCase {
         }
     }
 
+    func testDaytimeMoonScreens() async throws {
+        let catalog = try await AppStarCatalog.load()
+        let fixture = try Fixture(catalog: catalog)
+        let start = ISO8601DateFormatter().date(from: "2024-04-16T00:00:00Z")!.julianDate
+        let dates = (0..<96).map { start + Double($0) / 96 }
+        let time = try XCTUnwrap(dates.first {
+            let moon = MoonAppearance.Geometry(julianDate: $0, observer: fixture.observer)
+            return moon.sunElevation > 25 && moon.coordinate.elev > 30 && moon.illuminatedFraction > 0.4
+        })
+        for style in [UIUserInterfaceStyle.dark, .light] {
+            let view = RealtimeSkyViewImpl(viewModel: .init(state: .init(observer: fixture.observer)),
+                context: .init(basicChartConfigs: .init(), backgroundSkyConfigs: .preset,
+                    satelliteMagToRadiusFunction: .default, starManager: catalog, julianDateProvider: { time }),
+                backgroundSkyViewFactory: ViewFactory { fixture.factory.background($0) })
+            try await assertSnapshot(AnyView(view), name: "moon-daytime-\(style == .dark ? "dark" : "light")", style: style)
+        }
+    }
+
+    func testFloatingTabScreens() async throws {
+        let catalog = try await AppStarCatalog.load()
+        let fixture = try Fixture(catalog: catalog)
+        for (name, view) in fixture.storeScreens(tianhePasses: fixture.passes, featured: fixture)
+            where ["01-forecast", "03-pass-list", "04-satellites"].contains(name) {
+            try await assertSnapshot(view, name: "tabs-\(name)-scrolled", style: .dark, scrollDistance: 180)
+        }
+    }
+
     func testMoonPhaseScreens() async throws {
         let dates = [("Crescent · Earthshine", "2024-04-11T04:00:00Z"),
                      ("First quarter", "2024-04-16T04:00:00Z"),
@@ -188,7 +215,7 @@ final class ScreenSnapshotTests: XCTestCase {
         }
     }
 
-    private func assertSnapshot(_ view: AnyView, name: String, style: UIUserInterfaceStyle) async throws {
+    private func assertSnapshot(_ view: AnyView, name: String, style: UIUserInterfaceStyle, scrollDistance: CGFloat? = nil) async throws {
         let host = UIHostingController(rootView: view
             .environment(\.motionManagerKey, CMMotionManager())
             .environment(\.locale, Locale(identifier: "en_US"))
@@ -208,6 +235,20 @@ final class ScreenSnapshotTests: XCTestCase {
         // Allow SwiftUI layout, async star labels and UIKit navigation to settle.
         try await Task.sleep(for: .milliseconds(800))
         host.view.layoutIfNeeded()
+        if let scrollDistance {
+            func scrollViews(in view: UIView) -> [UIScrollView] {
+                (view as? UIScrollView).map { [$0] } ?? view.subviews.flatMap { scrollViews(in: $0) }
+            }
+            let scroll = try XCTUnwrap(scrollViews(in: host.view).filter {
+                !$0.isHidden && $0.bounds.height > 200
+            }.max { $0.bounds.height < $1.bounds.height })
+            XCTAssertGreaterThanOrEqual(scroll.convert(scroll.bounds, to: window).maxY,
+                                        window.bounds.maxY - 1, "Scroll viewport should extend behind the tab bar")
+            let bottom = scroll.contentSize.height - scroll.bounds.height + scroll.adjustedContentInset.bottom
+            scroll.setContentOffset(CGPoint(x: 0, y: max(-scroll.adjustedContentInset.top, min(bottom, scrollDistance))), animated: false)
+            try await Task.sleep(for: .milliseconds(500))
+            host.view.layoutIfNeeded()
+        }
         let format = UIGraphicsImageRendererFormat()
         format.scale = 1
         let image = UIGraphicsImageRenderer(size: size, format: format).image { _ in
@@ -307,6 +348,7 @@ struct Fixture {
             ("05-satellite-list", AnyView(NavigationStack { SatelliteListView(viewModel: .init(state: .init(satelliteInfo: [.brightest100: .loaded(Map([(info.noradIndex, info)]))])), context: .init(category: .brightest100, julianDateRange: range, observer: observer, starManager: catalog, julianDateProvider: date), allPassesViewFactory: ViewFactory { factory.passes($0) }) })),
             ("06-pass-forecast", AnyView(NavigationStack { AllPassesView(viewModel: .init(state: .init(location: CLLocation(latitude: observer.lat, longitude: observer.lon), satelliteTrails: [info.noradIndex: trails])), context: .init(satelliteInfo: info, julianDateRange: range, observer: observer, starManager: catalog, julianDateProvider: date), skyChartFactory: ViewFactory { factory.sky($0) }, passViewFactory: ViewFactory { factory.pass($0) }) })),
             ("07-pass", AnyView(NavigationStack { factory.pass(.init(passIndex: 0, satelliteInfo: info, satelliteCommonName: "ISS (ZARYA)", category: .iss, julianDateRange: range, observer: observer, passSnapshots: pass, starManager: catalog, julianDateProvider: date)) })),
+            ("07-pass-compass-off", AnyView(NavigationStack { factory.pass(.init(passIndex: 0, satelliteInfo: info, satelliteCommonName: "ISS (ZARYA)", category: .iss, julianDateRange: range, observer: observer, passSnapshots: pass, starManager: catalog, julianDateProvider: date), isCompassEnabled: false) })),
             ("08-detailed-sky", AnyView(DetailedPassView(context: .init(satelliteInfo: info, category: .iss, julianDateRange: range, observer: observer, passSnapshots: pass, starManager: catalog, julianDateProvider: date), skyChartFactory: ViewFactory { factory.sky($0) }))),
             ("09-sky-now", AnyView(RealtimeSkyViewImpl(viewModel: .init(state: .init(observer: observer)), context: .init(basicChartConfigs: .init(), backgroundSkyConfigs: .preset, satelliteMagToRadiusFunction: .default, starManager: catalog, julianDateProvider: { pass.pass.rise.julianDate }), backgroundSkyViewFactory: ViewFactory { factory.background($0) }))),
             ("10-settings", AnyView(NativeSettingsView(session: session))),

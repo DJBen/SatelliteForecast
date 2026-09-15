@@ -9,6 +9,7 @@ import SolarSystem
 struct SkyChartAtmosphere: View {
     let sun: AziEle
     let showsSun: Bool
+    var includesSkyBase: Bool = true
 
     static func sun(observer: LatLonAlt, julianDate: Double) -> AziEle {
         azel(time: Date(julianDate: julianDate), site: LatLon(observer),
@@ -36,7 +37,9 @@ struct SkyChartAtmosphere: View {
 
             // Give the sky its own dark base in both app appearances; otherwise
             // translucent twilight would expose a white ring in light mode.
-            context.fill(disk, with: .color(Color(red: 0.015, green: 0.025, blue: 0.075).opacity(presence)))
+            if includesSkyBase {
+                context.fill(disk, with: .color(Color(red: 0.015, green: 0.025, blue: 0.075).opacity(presence)))
+            }
 
             // Deep blue zenith, with a brighter, longer atmospheric path at the rim.
             context.fill(disk, with: .radialGradient(Gradient(stops: [
