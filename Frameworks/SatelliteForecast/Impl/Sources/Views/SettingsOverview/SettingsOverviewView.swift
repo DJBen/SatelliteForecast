@@ -251,6 +251,11 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                         nightModeCell
                     } header: {
                         EmptyView()
+                    } footer: {
+                        Link(destination: URL(string: "https://svs.gsfc.nasa.gov/4851/")!) {
+                            Text(verbatim: "Milky Way: NASA/Goddard SVS · ESA/Gaia/DPAC")
+                                .font(.caption2)
+                        }
                     }
                 }
                 .padding()

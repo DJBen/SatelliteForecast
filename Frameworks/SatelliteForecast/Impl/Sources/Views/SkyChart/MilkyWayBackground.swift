@@ -1,9 +1,10 @@
 import UIKit
+import ImageIO
 import simd
 import SatelliteKit
 
-/// A starless, illustrative diffuse sky in Galactic coordinates. This is not a
-/// photometric survey: only its celestial registration is astronomical.
+/// NASA/Goddard SVS Gaia background, without the separate bright-star layer.
+/// Faint source stars remain; this is not a model of observing visibility.
 enum MilkyWayBackground {
     // ICRS → Galactic rotation (Hipparcos canonical pole/node angles).
     // Reference: https://github.com/liberfa/erfa/blob/master/src/icrs2g.c
@@ -36,29 +37,66 @@ enum MilkyWayBackground {
         }
     }
 
-    /// Smooth, periodic texture on the celestial sphere: no points or baked-in stars.
-    static func radiance(_ direction: SIMD3<Double>) -> (intensity: Double, warmth: Double) {
-        let l = atan2(direction.y, direction.x)
-        let b = asin(max(-1, min(1, direction.z)))
-        let core = exp(-pow(l / 0.55, 2) - pow(b / 0.23, 2))
-        let broad = exp(-pow(b / 0.19, 2))
-        let narrow = exp(-pow(b / 0.075, 2))
-        // Integer longitude frequencies keep the ±π seam continuous.
-        let clouds = 0.70 + 0.16 * sin(9 * l + 13 * b + 1.8 * sin(3 * l))
-            + 0.09 * sin(23 * l - 31 * b + sin(7 * l))
-            + 0.05 * sin(47 * l + 67 * b)
-        let laneLatitude = b - 0.022 * sin(3 * l) - 0.012 * sin(11 * l)
-        let dust = exp(-pow(laneLatitude / 0.028, 2)) * (0.55 + 0.20 * cos(2 * l))
-        let glow = (0.20 * broad + 0.38 * narrow + 0.62 * core) * clouds * (1 - dust)
-        return (min(1, max(0, glow)), core)
+    /// NASA's Galactic plate carrée: center l=0, longitude increases leftward.
+    static func textureCoordinates(_ direction: SIMD3<Double>) -> SIMD2<Double> {
+        let u = 0.5 - atan2(direction.y, direction.x) / (2 * .pi)
+        return SIMD2(u - floor(u), 0.5 - asin(max(-1, min(1, direction.z))) / .pi)
     }
+
+    struct Texture {
+        let width: Int
+        let height: Int
+        let pixels: [UInt8]
+
+        init?(image: CGImage) {
+            let width = image.width
+            let height = image.height
+            self.width = width
+            self.height = height
+            var bytes = [UInt8](repeating: 0, count: width * height * 4)
+            let decoded = bytes.withUnsafeMutableBytes { buffer -> Bool in
+                guard let context = CGContext(data: buffer.baseAddress, width: width, height: height,
+                    bitsPerComponent: 8, bytesPerRow: width * 4,
+                    space: CGColorSpace(name: CGColorSpace.sRGB)!,
+                    bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { return false }
+                context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
+                return true
+            }
+            guard decoded else { return nil }
+            pixels = bytes
+        }
+
+        func sample(_ uv: SIMD2<Double>) -> SIMD3<Double> {
+            let x = (uv.x - floor(uv.x)) * Double(width) - 0.5
+            let y = max(0, min(Double(height - 1), uv.y * Double(height) - 0.5))
+            let x0 = Int(floor(x)), y0 = Int(floor(y))
+            let fx = x - floor(x), fy = y - floor(y)
+            func pixel(_ column: Int, _ row: Int) -> SIMD3<Double> {
+                let wrapped = (column % width + width) % width
+                let i = (min(row, height - 1) * width + wrapped) * 4
+                return SIMD3(Double(pixels[i]), Double(pixels[i + 1]), Double(pixels[i + 2])) / 255
+            }
+            let top = pixel(x0, y0) * (1 - fx) + pixel(x0 + 1, y0) * fx
+            let bottom = pixel(x0, y0 + 1) * (1 - fx) + pixel(x0 + 1, y0 + 1) * fx
+            return top * (1 - fy) + bottom * fy
+        }
+    }
+
+    // Lazy, immutable decode shared across renders. No I/O on animation frames.
+    static let texture: Texture? = {
+        guard let url = Bundle.module.url(forResource: "milkyway-galactic", withExtension: "jpg"),
+              let source = CGImageSourceCreateWithURL(url as CFURL, nil),
+              let image = CGImageSourceCreateImageAtIndex(source, 0, nil) else { return nil }
+        return Texture(image: image)
+    }()
 
     /// Bounded low-frequency raster. Rotation/zoom reuse the enclosing sky image;
     /// this runs with stars on ChartRenderer's actor, never per animation frame.
     static func image(size: CGSize, observer: LatLonAlt, julianDate: Double, dark: Bool) -> UIImage? {
-        guard size.width > 0, size.height > 0, julianDate.isFinite,
+        guard let texture, size.width.isFinite, size.height.isFinite,
+              size.width > 0, size.height > 0, julianDate.isFinite,
               observer.lat.isFinite, observer.lon.isFinite else { return nil }
-        let dimension = min(512, max(96, Int(max(size.width, size.height))))
+        let dimension = Int(min(512, max(96, max(size.width, size.height))))
         let scale = Double(dimension) / max(size.width, size.height)
         let width = max(1, Int(size.width * scale))
         let height = max(1, Int(size.height * scale))
@@ -70,10 +108,11 @@ enum MilkyWayBackground {
             for x in 0..<width {
                 let horizontal = SkyChartUtils.aziEle(at: CGPoint(x: Double(x) + 0.5, y: Double(y) + 0.5), in: rect)
                 guard horizontal.elev >= 0 else { continue }
-                let light = radiance(galactic(projection.equatorial(at: horizontal)))
-                let alpha = light.intensity * (dark ? 0.55 : 0.16)
-                let rgb = dark ? SIMD3(0.55 + 0.15 * light.warmth, 0.61 + 0.05 * light.warmth, 0.76 - 0.15 * light.warmth)
-                    : SIMD3(0.25, 0.30, 0.43)
+                let light = texture.sample(textureCoordinates(galactic(projection.equatorial(at: horizontal))))
+                let peak = max(light.x, max(light.y, light.z))
+                let alpha = peak * (dark ? 0.65 : 0.18)
+                // Convert black to transparency while preserving NASA's color ratios.
+                let rgb = dark ? light / max(peak, 1e-10) : SIMD3(0.25, 0.30, 0.43)
                 let i = (y * width + x) * 4
                 pixels[i] = UInt8(rgb.x * alpha * 255)
                 pixels[i + 1] = UInt8(rgb.y * alpha * 255)

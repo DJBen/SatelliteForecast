@@ -1,0 +1,7 @@
+Milky Way background: NASA/Goddard Space Flight Center Scientific Visualization Studio.
+Gaia DR2: ESA/Gaia/DPAC.
+Source: Deep Star Maps 2020, https://svs.gsfc.nasa.gov/4851/
+Asset: milkyway_2020_4k_gal.exr (Galactic coordinates, corrected January 2021).
+Adaptation: linear-light downsampling to 2048 × 1024, mild blur, sRGB JPEG encoding.
+The separate bright-star foreground is omitted; faint source stars remain.
+Reproduction: scripts/prepare-milky-way.sh

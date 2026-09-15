@@ -165,13 +165,32 @@ final class MilkyWayProjectionTests: XCTestCase {
         }
     }
 
-    func testDiffuseTextureIsPeriodicAndConcentratedOnPlane() {
-        let onPlane = MilkyWayBackground.radiance(SIMD3(1, 0, 0)).intensity
-        let atPole = MilkyWayBackground.radiance(SIMD3(0, 0, 1)).intensity
-        XCTAssertGreaterThan(onPlane, atPole + 0.1)
-        let left = MilkyWayBackground.radiance(SIMD3(-1, 1e-10, 0)).intensity
-        let right = MilkyWayBackground.radiance(SIMD3(-1, -1e-10, 0)).intensity
-        XCTAssertEqual(left, right, accuracy: 1e-8)
+    func testNASATextureRegistrationAndSeam() throws {
+        let uv = MilkyWayBackground.textureCoordinates
+        XCTAssertEqual(uv(SIMD3(1, 0, 0)), SIMD2(0.5, 0.5))
+        XCTAssertEqual(uv(SIMD3(0, 1, 0)), SIMD2(0.25, 0.5))
+        XCTAssertEqual(uv(SIMD3(0, -1, 0)), SIMD2(0.75, 0.5))
+        XCTAssertEqual(uv(SIMD3(0, 0, 1)).y, 0)
+        XCTAssertEqual(uv(SIMD3(0, 0, -1)).y, 1)
+        let texture = try XCTUnwrap(MilkyWayBackground.texture)
+        XCTAssertEqual(texture.width, 2048)
+        XCTAssertEqual(texture.height, 1024)
+        XCTAssertLessThan(simd_length(texture.sample(SIMD2(1 - 1e-10, 0.5)) - texture.sample(SIMD2(1e-10, 0.5))), 1e-6)
+        XCTAssertGreaterThan(simd_length(texture.sample(SIMD2(0.5, 0.45))), simd_length(texture.sample(SIMD2(0.5, 0))))
+    }
+
+    func testTextureDecodePreservesNorthAndSouthAndWrapsLongitude() throws {
+        let bytes: [UInt8] = [255, 0, 0, 255, 0, 255, 0, 255, 0, 0, 255, 255, 255, 255, 255, 255]
+        let provider = try XCTUnwrap(CGDataProvider(data: Data(bytes) as CFData))
+        let image = try XCTUnwrap(CGImage(width: 2, height: 2, bitsPerComponent: 8, bitsPerPixel: 32,
+            bytesPerRow: 8, space: CGColorSpace(name: CGColorSpace.sRGB)!,
+            bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue),
+            provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent))
+        let texture = try XCTUnwrap(MilkyWayBackground.Texture(image: image))
+        XCTAssertEqual(texture.sample(SIMD2(0.25, 0)), SIMD3(1, 0, 0))
+        XCTAssertEqual(texture.sample(SIMD2(0.25, 1)), SIMD3(0, 0, 1))
+        XCTAssertEqual(texture.sample(SIMD2(0, 0)), SIMD3(0.5, 0.5, 0))
+        XCTAssertEqual(texture.sample(SIMD2(1, 0)), texture.sample(SIMD2(0, 0)))
     }
 
     func testRasterIsBoundedTransparentOutsideHorizonAndDeterministic() throws {
