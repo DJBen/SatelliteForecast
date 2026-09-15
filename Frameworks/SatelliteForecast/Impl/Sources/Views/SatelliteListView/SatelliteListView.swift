@@ -126,31 +126,32 @@ public struct SatelliteListView: View {
             }
         }
         .navigationDestination(for: SatelliteListSelectedSatellite.self) { satellite in
-            LazyView {
+            satelliteDestination(satellite, in: satellites)
+        }
+        .listStyle(.insetGrouped)
+    }
+
+    // Navigation transitions can render a destination after the model starts reloading.
+    // Resolve against the same immutable catalog snapshot that supplied the tapped row.
+    func satelliteDestination(
+        _ satellite: SatelliteListSelectedSatellite,
+        in satellites: Map<UInt, SatelliteInfo>
+    ) -> some View {
+        LazyView {
+            if let satelliteInfo = satellites[satellite.noradIndex] {
                 allPassesViewFactory.view(
                     AllPassesViewContext(
-                        satelliteInfo: viewModel.state.satelliteInfo[context.category]!.content![satellite.noradIndex]!,
+                        satelliteInfo: satelliteInfo,
                         julianDateRange: context.julianDateRange,
                         observer: context.observer,
                         starManager: context.starManager,
                         julianDateProvider: context.julianDateProvider
                     )
                 )
-                .onAppear {
-                    viewModel.send(
-                        .loadSatellite(
-                            SatelliteListViewAction.SelectSatelliteParams(
-                                noradIndex: satellite.noradIndex,
-                                satelliteInfo: viewModel.state.satelliteInfo[context.category]!.content![satellite.noradIndex]!,
-                                julianDateRange: context.julianDateRange,
-                                observer: context.observer
-                            )
-                        )
-                    )
-                }
+            } else {
+                Text("The satellite is no longer available.", bundle: .module)
             }
         }
-        .listStyle(.insetGrouped)
     }
 
     private func failureView(_ error: Error) -> some View {

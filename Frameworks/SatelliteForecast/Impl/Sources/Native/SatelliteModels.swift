@@ -43,6 +43,8 @@ public final class SatelliteListModel {
     self.service = service
   }
   public func load(_ category: SatelliteCategory, force: Bool = false) {
+    // Returning from a pass screen should reuse the catalog that supplied its route.
+    if !force, state.satelliteInfo[category]?.content != nil { return }
     task?.cancel()
     state.satelliteInfo[category] = .loading
     task = Task { [weak self, service] in

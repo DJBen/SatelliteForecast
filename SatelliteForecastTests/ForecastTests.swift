@@ -1,5 +1,6 @@
 import XCTest
 import UIKit
+import SwiftUI
 import BTree
 import SatelliteForecast
 import SatelliteKit
@@ -319,6 +320,47 @@ final class ForecastTests: XCTestCase {
             try await Task.sleep(for: .milliseconds(10))
         }
         XCTAssertEqual(model.state.satellites.content?.map(\.noradIndex), [25544])
+    }
+
+    func testSatelliteDestinationSurvivesCatalogReloadAndRemoval() throws {
+        let lines = String(decoding: tle, as: UTF8.self).split(separator: "\n").map(String.init)
+        let info = try SatelliteInfo(elements: Elements(lines[0], lines[1], lines[2]))
+        let satellites = Map([(info.noradIndex, info)])
+        let model = SatelliteListModel(state: .init(satelliteInfo: [.iss: .loaded(satellites)]))
+        var rendered: SatelliteInfo?
+        let list = SatelliteListView(
+            viewModel: model,
+            context: .init(category: .iss, julianDateRange: date.julianDate...(date.julianDate + 1),
+                observer: nil, starManager: .init(), julianDateProvider: { self.date.julianDate }),
+            allPassesViewFactory: .init { context in
+                rendered = context.satelliteInfo
+                return AllPassesView(viewModel: .init(), context: context,
+                    skyChartFactory: .crash, passViewFactory: .crash)
+            })
+        let destination = list.satelliteDestination(.init(noradIndex: info.noradIndex), in: satellites)
+        // SwiftUI may evaluate the lazy destination while a pop transition reloads its parent.
+        for state: Loadable<Map<UInt, SatelliteInfo>, ElementsLoaderError> in [.loading, .loaded(Map())] {
+            model.state.satelliteInfo[.iss] = state
+            rendered = nil
+            let renderer = ImageRenderer(content: destination.frame(width: 402, height: 874))
+            _ = renderer.uiImage
+            XCTAssertEqual(rendered, info)
+        }
+        rendered = nil
+        let missing = list.satelliteDestination(.init(noradIndex: 0), in: satellites)
+        _ = ImageRenderer(content: missing).uiImage
+        XCTAssertNil(rendered)
+    }
+
+    func testReturningToSatelliteListKeepsLoadedCatalogButRetryReloads() throws {
+        let lines = String(decoding: tle, as: UTF8.self).split(separator: "\n").map(String.init)
+        let info = try SatelliteInfo(elements: Elements(lines[0], lines[1], lines[2]))
+        let model = SatelliteListModel(state: .init(satelliteInfo: [.iss: .loaded(Map([(info.noradIndex, info)]))]))
+        model.load(.iss)
+        XCTAssertEqual(model.state.satelliteInfo[.iss]?.content?[info.noradIndex], info)
+        model.load(.iss, force: true)
+        guard case .loading = model.state.satelliteInfo[.iss] else { return XCTFail("Retry must reload") }
+        model.cancel()
     }
 
     func testSatelliteSearchDoesNotPublishASupersededQuery() async throws {
