@@ -48,9 +48,12 @@ struct SatelliteCategoryCell: View {
             .background(AppTheme.surface)
 
             // Background image
-            background(category: category)
-                .frame(height: 156)
-                .clipped()
+            GeometryReader { geometry in
+                background(category: category)
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+                    .clipped()
+            }
+            .frame(height: 156)
         }
         .background(AppTheme.surface)
         .clipShape(RoundedRectangle(cornerRadius: AppTheme.cardRadius))
