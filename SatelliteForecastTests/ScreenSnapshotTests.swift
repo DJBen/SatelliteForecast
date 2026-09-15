@@ -34,6 +34,94 @@ final class ScreenSnapshotTests: XCTestCase {
         }
     }
 
+    /// Full native sky views at solar-elevation fixtures in both appearances.
+    func testAtmosphereScreens() async throws {
+        let catalog = try await AppStarCatalog.load()
+        let fixture = try Fixture(catalog: catalog)
+        let times = (0..<1440).map { fixture.now.julianDate + Double($0) / 1440 }
+        for (name, elevation, morning) in [("dawn", -3.0, true), ("dusk", -3.0, false),
+                                            ("sunset", 2.0, false), ("daylight", 30.0, false), ("night", -25.0, false)] {
+            let candidates = times.filter {
+                (SkyChartAtmosphere.sun(observer: fixture.observer, julianDate: $0).azim < 180) == morning
+            }
+            let date = try XCTUnwrap(candidates.min {
+                abs(SkyChartAtmosphere.sun(observer: fixture.observer, julianDate: $0).elev - elevation) <
+                abs(SkyChartAtmosphere.sun(observer: fixture.observer, julianDate: $1).elev - elevation)
+            })
+            let sun = SkyChartAtmosphere.sun(observer: fixture.observer, julianDate: date)
+            XCTAssertLessThan(abs(sun.elev - elevation), 0.3)
+            for style in [UIUserInterfaceStyle.dark, .light] {
+                let view = RealtimeSkyViewImpl(viewModel: .init(state: .init(observer: fixture.observer)),
+                    context: .init(basicChartConfigs: .init(), backgroundSkyConfigs: .preset,
+                        satelliteMagToRadiusFunction: .default, starManager: catalog, julianDateProvider: { date }),
+                    backgroundSkyViewFactory: ViewFactory { fixture.factory.background($0) })
+                try await assertSnapshot(AnyView(view), name: "atmosphere-\(name)-\(style == .dark ? "dark" : "light")", style: style)
+            }
+        }
+    }
+
+    func testAtmospherePassPath() async throws {
+        let catalog = try await AppStarCatalog.load()
+        let fixture = try Fixture(catalog: catalog)
+        let pass = try XCTUnwrap(fixture.passes.max {
+            $0.pass.sunElevationAtTransit < $1.pass.sunElevationAtTransit
+        })
+        for style in [UIUserInterfaceStyle.dark, .light] {
+            let view = NavigationStack {
+                fixture.factory.pass(.init(passIndex: 0, satelliteInfo: fixture.info,
+                    satelliteCommonName: "ISS (ZARYA)", category: .iss, julianDateRange: fixture.range,
+                    observer: fixture.observer, passSnapshots: pass, starManager: catalog,
+                    julianDateProvider: { fixture.now.julianDate }))
+            }
+            try await assertSnapshot(AnyView(view), name: "atmosphere-pass-\(style == .dark ? "dark" : "light")", style: style)
+        }
+    }
+
+    func testMoonPhaseScreens() async throws {
+        let dates = [("Crescent · Earthshine", "2024-04-11T04:00:00Z"),
+                     ("First quarter", "2024-04-16T04:00:00Z"),
+                     ("Full Moon", "2024-04-24T04:00:00Z"),
+                     ("Waning crescent", "2024-05-05T12:00:00Z")]
+        let observer = LatLonAlt(37.49, -122.23, 0)
+        let images = try dates.map { name, date in
+            let jd = ISO8601DateFormatter().date(from: date)!.julianDate
+            let geometry = MoonAppearance.Geometry(julianDate: jd, observer: observer)
+            return (name, try XCTUnwrap(MoonAppearance.image(geometry: geometry)), geometry.illuminatedFraction, try XCTUnwrap(MoonAppearance.photograph(geometry: geometry)))
+        }
+        let gallery = VStack(alignment: .leading, spacing: 12) {
+            Text("The Moon in your sky").font(.title2.bold())
+            Text("Surface detail · phase · Earthshine").font(.subheadline).foregroundStyle(.secondary)
+            ForEach(images.indices, id: \.self) { index in
+                HStack(spacing: 24) {
+                    Image(uiImage: images[index].1).resizable().frame(width: 96, height: 96)
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(images[index].0).font(.headline)
+                        Text("\(Int(images[index].2 * 100))% illuminated").font(.caption).foregroundStyle(.secondary)
+                        HStack {
+                            Image(uiImage: images[index].3).resizable().frame(width: 72, height: 72).frame(width: 24, height: 24)
+                            Text("Chart glow").font(.caption).foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            }
+            Text("Angles follow the north-up sky chart.\nTexture: NASA’s Scientific Visualization Studio.")
+                .font(.caption).foregroundStyle(.secondary)
+        }.padding(24).frame(maxWidth: .infinity, maxHeight: .infinity).background(Color.black)
+        try await assertSnapshot(AnyView(gallery), name: "moon-phases-dark", style: .dark)
+        let catalog = try await AppStarCatalog.load()
+        let fixture = try Fixture(catalog: catalog)
+        for (name, date) in [("moon-chart", dates[0].1), ("moon-chart-full", dates[2].1)] {
+            let time = ISO8601DateFormatter().date(from: date)!.julianDate
+            for style in [UIUserInterfaceStyle.dark, .light] {
+                let view = RealtimeSkyViewImpl(viewModel: .init(state: .init(observer: observer)),
+                    context: .init(basicChartConfigs: .init(), backgroundSkyConfigs: .preset,
+                        satelliteMagToRadiusFunction: .default, starManager: catalog, julianDateProvider: { time }),
+                    backgroundSkyViewFactory: ViewFactory { fixture.factory.background($0) })
+                try await assertSnapshot(AnyView(view), name: "\(name)-\(style == .dark ? "dark" : "light")", style: style)
+            }
+        }
+    }
+
     /// Full-resolution store captures are separate from regression baselines.
     func testAppStoreScreenshots() async throws {
         let env = ProcessInfo.processInfo.environment

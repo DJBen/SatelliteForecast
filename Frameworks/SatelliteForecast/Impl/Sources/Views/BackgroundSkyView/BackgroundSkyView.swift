@@ -261,6 +261,12 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
                     backgroundSky(
                         julianDate: backgroundSkyJulianDate
                     )
+                    .background {
+                        SkyChartAtmosphere(
+                            sun: SkyChartAtmosphere.sun(observer: context.observer, julianDate: backgroundSkyJulianDate),
+                            showsSun: context.configs.visibleBodies.contains(.sun)
+                        )
+                    }
                     .overlay(
                         planetaryBodiesView(julianDate: backgroundSkyJulianDate)
                     )

@@ -28,7 +28,9 @@ struct PlanetaryBodyView: View {
         solarSystemBody: SolarSystemBody,
         @ViewBuilder planetViewGenerator: @escaping (SolarSystemBody, AziEle) -> Content
     ) -> some View {
-        let aziElev = azel(
+        let aziElev = solarSystemBody == .moon
+            ? MoonAppearance.coordinate(julianDate: referenceDate, observer: observer)
+            : azel(
             time: Date(julianDate: referenceDate),
             site: LatLon(observer),
             cele: RADec(
@@ -53,17 +55,22 @@ struct PlanetaryBodyView: View {
                 planetView(
                     solarSystemBody: planetaryBody
                 ) { solarSystemBody, coordinate in
-                    planetaryBody.view(
-                        label: label,
-                        rect: rect,
-                        radius: displayRadius
-                    )
-                    .position(
-                        SkyChartUtils.point(
-                            at: coordinate,
-                            rect: rect
-                        )
-                    )
+                    if planetaryBody == .moon {
+                        MoonDiskView(julianDate: referenceDate, observer: observer, radius: displayRadius)
+                            .overlay(alignment: .leading) {
+                                if label == .text {
+                                    Text("Moon", bundle: .module)
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                        .fixedSize()
+                                        .offset(x: displayRadius * 2 + 3)
+                                }
+                            }
+                            .position(SkyChartUtils.point(at: coordinate, rect: rect))
+                    } else {
+                        planetaryBody.view(label: label, rect: rect, radius: displayRadius)
+                            .position(SkyChartUtils.point(at: coordinate, rect: rect))
+                    }
                 }
             }
         }
@@ -115,16 +122,8 @@ extension SolarSystemBody {
     private struct SunShapeModifier: ViewModifier {
         func body(content: Content) -> some View {
             content
-                .foregroundColor(.yellow)
-                .shadow(color: .yellow, radius: 12, x: 0.0, y: 0.0)
-        }
-    }
-
-    private struct MoonShapeModifier: ViewModifier {
-        func body(content: Content) -> some View {
-            content
-                .foregroundColor(.gray)
-                .shadow(color: .yellow.opacity(0.7), radius: 8, x: 0.0, y: 0.0)
+                .foregroundColor(Color(red: 1, green: 0.97, blue: 0.84))
+                .shadow(color: .orange.opacity(0.8), radius: 12, x: 0.0, y: 0.0)
         }
     }
 
@@ -174,22 +173,8 @@ extension SolarSystemBody {
                 }
             )
         case .moon:
-            view(
-                rect: rect,
-                label: label,
-                radius: radius,
-                shapeModifier: MoonShapeModifier(),
-                textLabel: {
-                    Text("Moon", bundle: .module)
-                        .font(.caption2)
-                        .foregroundColor(.blue)
-                },
-                symbol: {
-                    Text(verbatim: "☾")
-                        .font(.system(size: 8))
-                        .foregroundColor(.white)
-                }
-            )
+            // The observer-aware textured Moon is rendered by PlanetaryBodyView.
+            EmptyView()
         case .mercury:
             view(
                 rect: rect,

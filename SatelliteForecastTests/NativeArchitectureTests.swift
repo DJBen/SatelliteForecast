@@ -204,3 +204,68 @@ final class MilkyWayProjectionTests: XCTestCase {
         XCTAssertTrue(stride(from: 3, to: data.count, by: 4).contains { data[$0] > 0 })
     }
 }
+
+@MainActor
+final class MoonAppearanceTests: XCTestCase {
+    private func jd(_ iso: String) -> Double { ISO8601DateFormatter().date(from: iso)!.julianDate }
+
+    func testKnownLunarPhases() {
+        // Published 2024 phase instants, Fred Espenak's Sky Event Almanac.
+        let samples = [("2024-04-08T18:21:00Z", 0.0), ("2024-04-15T19:13:00Z", 0.5),
+                       ("2024-04-23T23:49:00Z", 1.0), ("2024-05-01T11:27:00Z", 0.5)]
+        for (date, fraction) in samples {
+            let moon = MoonAppearance.Geometry(julianDate: jd(date), observer: LatLonAlt(37.49, -122.23, 0))
+            XCTAssertEqual(moon.illuminatedFraction, fraction, accuracy: 0.035, date)
+        }
+    }
+
+    func testChartOrientationAcrossHemispheresAndPoles() {
+        let rect = CGRect(x: 0, y: 0, width: 400, height: 400)
+        let time = jd("2024-04-11T04:00:00Z")
+        for latitude in [-89.9, -33.9, 0, 37.49, 89.9] {
+            let site = LatLonAlt(latitude, -122.23, 0)
+            let moon = MoonAppearance.Geometry(julianDate: time, observer: site)
+            XCTAssertEqual(simd_length(moon.light), 1, accuracy: 1e-10)
+            XCTAssertEqual(simd_dot(moon.right, moon.down), 0, accuracy: 1e-10)
+            // Screen y points down, so right × down points away from the viewer.
+            XCTAssertEqual(simd_dot(simd_cross(moon.right, moon.down), moon.towardViewer), -1, accuracy: 1e-10)
+            // Project a small step along each computed icon axis. It must move
+            // right/down in the actual chart, including its east-left convention.
+            let direction = -moon.towardViewer
+            let origin = SkyChartUtils.point(at: moon.coordinate, rect: rect)
+            for (axis, horizontal) in [(moon.right, true), (moon.down, false)] {
+                let coordinate = azel(time: Date(julianDate: time), site: LatLon(site), cele: RADec(direction + axis * 1e-6))
+                let point = SkyChartUtils.point(at: coordinate, rect: rect)
+                XCTAssertGreaterThan(horizontal ? point.x - origin.x : point.y - origin.y, 0)
+            }
+            let body = moon.body
+            XCTAssertEqual(simd_determinant(body), 1, accuracy: 1e-10)
+            let earth = body.transpose * simd_normalize(-lunarCel(julianDays: time))
+            XCTAssertLessThan(abs(atan2(earth.y, earth.x) * rad2deg), 12, "Near side must face Earth")
+            XCTAssertLessThan(abs(asin(earth.z) * rad2deg), 10)
+        }
+    }
+
+    func testTextureRasterAndEarthshine() throws {
+        let texture = try XCTUnwrap(MoonAppearance.texture)
+        XCTAssertEqual(texture.width, 512)
+        XCTAssertEqual(texture.height, 256)
+        let time = jd("2024-04-11T04:00:00Z")
+        let night = MoonAppearance.Geometry(julianDate: time, observer: LatLonAlt(37.49, -122.23, 0))
+        let day = MoonAppearance.Geometry(julianDate: time, observer: LatLonAlt(37.49, 120, 0))
+        XCTAssertLessThan(night.sunElevation, -6)
+        XCTAssertGreaterThan(day.sunElevation, 2)
+        func pixels(_ geometry: MoonAppearance.Geometry) throws -> [UInt8] {
+            let image = try XCTUnwrap(MoonAppearance.image(geometry: geometry, dimension: 96)?.cgImage)
+            XCTAssertEqual(image.width, 96)
+            return Array(try XCTUnwrap(image.dataProvider?.data) as Data)
+        }
+        let dark = try pixels(night), bright = try pixels(day)
+        XCTAssertEqual(dark[3], 0, "Outside the lunar limb stays transparent")
+        let center = (48 * 96 + 48) * 4
+        XCTAssertGreaterThan(dark[center], 0, "Earthshine reveals the dark face")
+        XCTAssertLessThan(dark[center], 70, "Earthshine must remain faint")
+        XCTAssertEqual(bright[center + 3], 0, "Daytime sky shows through the unlit face")
+        XCTAssertEqual(dark, try pixels(night), "Deterministic raster")
+    }
+}

@@ -58,6 +58,7 @@ public struct SkyChart<ConstellationLabel: View, BackgroundAnnotationView: View>
     private func propagateBackgroundSkyJulianDateKey(_ julianDate: Double) {
         if (context.passSnapshots.pass.rise.julianDate..<context.passSnapshots.pass.set.julianDate).contains(julianDate) {
             backgroundSkyJulianDateKey = julianDate.roundJulianDate(.toMins(1))
+            return
         }
         backgroundSkyJulianDateKey = context.passSnapshots.pass.rise.julianDate.roundJulianDate(.toMins(1))
     }
@@ -213,9 +214,10 @@ public struct SkyChart<ConstellationLabel: View, BackgroundAnnotationView: View>
             )
         )
         .environment(\.backgroundSkyJulianDateKey, backgroundSkyJulianDateKey)
-        .background(
+        .overlay(
             satellitePath.overlay(loadingIndicator)
             .clipShape(Circle())
+            .allowsHitTesting(false)
         )
         .overlay(passInfoLabels)
         .overlay(

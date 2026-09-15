@@ -257,13 +257,13 @@ public enum SkyChartUtils {
         ctx.cgContext.addEllipse(in: CGRect(x: sunPoint.x - 7, y: sunPoint.y - 7, width: 14, height: 14))
         ctx.cgContext.drawPath(using: .fill)
 
-        let moonAziElev = azel(time: Date(julianDate: params.julianDate), site: LatLon(params.observer), cele: lunarGeo(julianDays: params.julianDate))
-        let moonPoint = Self.point(at: AziEle(moonAziElev.azim, moonAziElev.elev), rect: params.rect)
-        ctx.cgContext.setFillColor(UIColor.gray.cgColor)
-        ctx.cgContext.setShadow(offset: .zero, blur: 12, color: UIColor.systemYellow.cgColor)
-        ctx.cgContext.addEllipse(in: CGRect(x: moonPoint.x - 5, y: moonPoint.y - 5, width: 10, height: 10))
-
-        ctx.cgContext.fillPath()
+        let moon = MoonAppearance.Geometry(julianDate: params.julianDate, observer: params.observer)
+        if moon.coordinate.elev >= 0 {
+            let moonPoint = Self.point(at: moon.coordinate, rect: params.rect)
+            ctx.cgContext.setShadow(offset: .zero, blur: 0, color: nil)
+            MoonAppearance.photograph(geometry: moon, dimension: 48)?.draw(in:
+                CGRect(x: moonPoint.x - 15, y: moonPoint.y - 15, width: 30, height: 30))
+        }
 
         ctx.cgContext.restoreGState()
     }
