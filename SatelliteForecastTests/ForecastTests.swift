@@ -155,6 +155,54 @@ final class ForecastTests: XCTestCase {
         XCTAssertGreaterThan(requests.last!.dateRange.lowerBound, requests.first!.dateRange.lowerBound)
     }
 
+    func testColdForecastUsesBackendAndPersistsForOfflineLaunch() async throws {
+        let folder = try cacheDirectory().appendingPathComponent("nested")
+        defer { try? FileManager.default.removeItem(at: folder.deletingLastPathComponent()) }
+        let data = tle
+        let service = ForecastService(cacheDirectory: folder, fetch: { url in
+            guard url.host == "us-central1-pass-prediction.cloudfunctions.net",
+                  url.path == "/orbital_data", url.query == "category=25544" else {
+                throw ForecastServiceError.invalidResponse
+            }
+            return data
+        })
+        let info = try await service.satelliteInfo(for: .iss)
+        XCTAssertEqual(info.noradIndex, 25544)
+        let offline = OrbitalService(directory: folder, fetch: { _ in throw URLError(.notConnectedToInternet) })
+        let cached = try await offline.satellites(.iss, force: true)
+        XCTAssertEqual(cached.map(\.noradIndex), [25544])
+    }
+
+    func testOMMJSONSupportsSixDigitCatalogNumbersAndFractionalEpoch() throws {
+        let data = Data(#"[{"OBJECT_NAME":"NEW SAT","OBJECT_ID":"2026-001A","NORAD_CAT_ID":100001,"EPOCH":"2026-09-15T00:00:00.123456","ECCENTRICITY":0.001,"INCLINATION":51.6,"RA_OF_ASC_NODE":120,"ARG_OF_PERICENTER":20,"MEAN_ANOMALY":30,"MEAN_MOTION":15.5,"BSTAR":0.0001,"EPHEMERIS_TYPE":0,"ELEMENT_SET_NO":999,"REV_AT_EPOCH":1,"CLASSIFICATION_TYPE":"U"}]"#.utf8)
+        let elements = try OrbitalDataCache.elements(from: data)
+        XCTAssertEqual(elements.first?.noradIndex, 100001)
+        XCTAssertTrue(elements[0].n₀.isFinite)
+        let invalid = Data(String(decoding: data, as: UTF8.self).replacingOccurrences(of: "100001", with: "-1").utf8)
+        XCTAssertThrowsError(try OrbitalDataCache.elements(from: invalid))
+        XCTAssertThrowsError(try OrbitalDataCache.elements(from: Data("[]".utf8)))
+    }
+
+    func testAllCategoriesUseAllowlistedBackendDatasets() {
+        let pairs: [(SatelliteCategory, String)] = [(.iss, "25544"), (.tianhe, "48274"),
+            (.active, "active"), (.brightest100, "visual"), (.last30DayLaunches, "last-30-days")]
+        for (category, key) in pairs {
+            XCTAssertEqual(category.url.host, "us-central1-pass-prediction.cloudfunctions.net")
+            XCTAssertEqual(category.url.query, "category=\(key)")
+        }
+    }
+
+    func testWhitespaceResponseCannotReplaceCatalogCache() async throws {
+        let folder = try cacheDirectory()
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let file = folder.appendingPathComponent("25544.txt")
+        try tle.write(to: file)
+        let service = OrbitalService(directory: folder, fetch: { _ in Data("\n\n".utf8) })
+        let cached = try await service.satellites(.iss, force: true)
+        XCTAssertEqual(cached.map(\.noradIndex), [25544])
+        XCTAssertEqual(try Data(contentsOf: file), tle)
+    }
+
     func testFreshCacheAvoidsNetworkAndMatchesDomainPredictions() async throws {
         let folder = try cacheDirectory()
         defer { try? FileManager.default.removeItem(at: folder) }

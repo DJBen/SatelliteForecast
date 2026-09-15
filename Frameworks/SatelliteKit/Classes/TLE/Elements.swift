@@ -307,7 +307,7 @@ public extension Elements {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         self.commonName = try container.decode(String.self, forKey: .commonName)
-        self.noradIndex = UInt(try container.decode(Int.self, forKey: .noradIndex))
+        self.noradIndex = try container.decode(UInt.self, forKey: .noradIndex)
         self.launchName = try container.decode(String.self, forKey: .launchName)
         self.t₀ = try container.decode(Date.self, forKey: .t₀).daysSince1950
         self.e₀ = try container.decode(Double.self, forKey: .e₀)

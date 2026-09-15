@@ -7,9 +7,11 @@ public actor OrbitalService {
   private let directory: URL
   private let fetch: @Sendable (URL) async throws -> Data
   public init(
-    directory: URL = FileManager.default.temporaryDirectory,
+    directory: URL = OrbitalDataCache.directory,
     fetch: @escaping @Sendable (URL) async throws -> Data = { url in
-      let (data, response) = try await URLSession.shared.data(from: url)
+      var request = URLRequest(url: url)
+      request.timeoutInterval = 20
+      let (data, response) = try await URLSession.shared.data(for: request)
       guard let response = response as? HTTPURLResponse, (200..<300).contains(response.statusCode)
       else {
         throw ForecastServiceError.invalidResponse
@@ -18,6 +20,7 @@ public actor OrbitalService {
     }
   ) {
     self.directory = directory
+    try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     self.fetch = fetch
   }
 
@@ -28,12 +31,7 @@ public actor OrbitalService {
     let file = directory.appendingPathComponent(category.localFilename).appendingPathExtension(
       "txt")
     func parse(_ data: Data) throws -> [SatelliteInfo] {
-      guard let text = String(data: data, encoding: .utf8), !text.isEmpty else {
-        throw ForecastServiceError.invalidResponse
-      }
-      let lines = text.split(whereSeparator: \.isNewline)
-      guard lines.count.isMultiple(of: 3) else { throw ForecastServiceError.invalidResponse }
-      let elements = try Elements.load(chunk: text)
+      let elements = try OrbitalDataCache.elements(from: data)
       var newest: [UInt: Elements] = [:]
       for element in elements {
         try Task.checkCancellation()

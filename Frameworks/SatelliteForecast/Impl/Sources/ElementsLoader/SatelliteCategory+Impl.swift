@@ -10,18 +10,15 @@ import SatelliteForecast
 
 extension SatelliteCategory {
     public var url: URL {
+        let key: String
         switch self {
-        case .iss:
-            return URL(string: "https://celestrak.org/NORAD/elements/gp.php?CATNR=25544&FORMAT=TLE")!
-        case .tianhe:
-            return URL(string: "https://celestrak.org/NORAD/elements/gp.php?CATNR=48274&FORMAT=TLE")!
-        case .brightest100:
-            return URL(string: "https://celestrak.org/NORAD/elements/gp.php?GROUP=visual&FORMAT=TLE")!
-        case .last30DayLaunches:
-            return URL(string: "https://celestrak.org/NORAD/elements/gp.php?GROUP=last-30-days&FORMAT=TLE")!
-        case .active:
-            return URL(string: "https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=TLE")!
+        case .iss: key = "25544"
+        case .tianhe: key = "48274"
+        case .brightest100: key = "visual"
+        case .last30DayLaunches: key = "last-30-days"
+        case .active: key = "active"
         }
+        return URL(string: "https://us-central1-pass-prediction.cloudfunctions.net/orbital_data?category=\(key)")!
     }
 
     public var localFilename: String {

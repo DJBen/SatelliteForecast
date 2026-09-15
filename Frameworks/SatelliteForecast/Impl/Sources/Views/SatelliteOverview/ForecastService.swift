@@ -18,16 +18,19 @@ public actor ForecastService {
     private let fetch: @Sendable (URL) async throws -> Data
     private let now: @Sendable () -> Date
 
-    public init(cacheDirectory: URL = FileManager.default.temporaryDirectory,
+    public init(cacheDirectory: URL = OrbitalDataCache.directory,
                 now: @escaping @Sendable () -> Date = { Date() },
                 fetch: @escaping @Sendable (URL) async throws -> Data = { url in
-                    let (data, response) = try await URLSession.shared.data(from: url)
+                    var request = URLRequest(url: url)
+                    request.timeoutInterval = 20
+                    let (data, response) = try await URLSession.shared.data(for: request)
                     guard let response = response as? HTTPURLResponse, (200..<300).contains(response.statusCode) else {
                         throw ForecastServiceError.invalidResponse
                     }
                     return data
                 }) {
         self.cacheDirectory = cacheDirectory
+        try? FileManager.default.createDirectory(at: cacheDirectory, withIntermediateDirectories: true)
         self.now = now
         self.fetch = fetch
     }
@@ -71,14 +74,7 @@ public actor ForecastService {
     }
 
     private func parse(_ data: Data, satellite: SpecialSatellite) throws -> SatelliteInfo {
-        guard let text = String(data: data, encoding: .utf8) else {
-            throw ForecastServiceError.invalidResponse
-        }
-        let lines = text.split(whereSeparator: \.isNewline)
-        guard !lines.isEmpty, lines.count.isMultiple(of: 3) else {
-            throw ForecastServiceError.invalidResponse
-        }
-        guard let elements = try Elements.load(chunk: text)
+        guard let elements = try OrbitalDataCache.elements(from: data)
             .filter({ $0.noradIndex == satellite.rawValue })
             .max(by: { $0.t₀ < $1.t₀ }) else {
             throw ForecastServiceError.missingSatellite(satellite.rawValue)
