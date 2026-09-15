@@ -123,6 +123,8 @@ public struct SatelliteListView: View {
                 NavigationLink(value: SatelliteListSelectedSatellite(noradIndex: noradIndex)) {
                     SatelliteCell(info: satelliteInfo)
                 }
+                .listRowBackground(AppTheme.surface)
+                .listRowSeparatorTint(AppTheme.border)
             }
         }
         .navigationDestination(for: SatelliteListSelectedSatellite.self) { satellite in

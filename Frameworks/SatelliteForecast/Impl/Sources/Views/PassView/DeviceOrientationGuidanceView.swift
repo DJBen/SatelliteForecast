@@ -29,7 +29,7 @@ struct DeviceOrientationGuidanceView: View {
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Lift your iPhone")
                             .font(.headline)
-                        Text("Point the back toward the sky.")
+                        Text("Camera up. Screen down.")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                             .fixedSize(horizontal: false, vertical: true)
@@ -63,25 +63,57 @@ struct DeviceOrientationGuidanceView: View {
         }
     }
 
+    private struct LiftPose {
+        var angle: Double
+        var height: CGFloat
+        var arrowOpacity: Double
+        var saturation: Double
+
+        static let resting = LiftPose(angle: 65, height: 8, arrowOpacity: 0.4, saturation: 0.05)
+        static let overhead = LiftPose(angle: -70, height: -12, arrowOpacity: 1, saturation: 1)
+    }
+
     @ViewBuilder private var phoneDemonstration: some View {
         if reduceMotion || SnapshotEnvironment.isEnabled {
-            phone(lifted: true)
+            phone(pose: .overhead)
         } else {
-            phone(lifted: false)
-                .phaseAnimator([false, true]) { _, lifted in
-                    phone(lifted: lifted)
-                } animation: { _ in
-                    .easeInOut(duration: 1.6)
+            phone(pose: .resting)
+                .keyframeAnimator(initialValue: LiftPose.resting) { _, pose in
+                    phone(pose: pose)
+                } keyframes: { _ in
+                    // One uninterrupted lift, then an explicit timed hold.
+                    // Separate eased phases stop at upright, and a phase with
+                    // identical values can be skipped instead of holding.
+                    KeyframeTrack(\.angle) {
+                        CubicKeyframe(-70, duration: 1.7)
+                        LinearKeyframe(-70, duration: 1.0)
+                        MoveKeyframe(65)
+                    }
+                    KeyframeTrack(\.height) {
+                        CubicKeyframe(-12, duration: 1.7)
+                        LinearKeyframe(-12, duration: 1.0)
+                        MoveKeyframe(8)
+                    }
+                    KeyframeTrack(\.arrowOpacity) {
+                        LinearKeyframe(1, duration: 1.7)
+                        LinearKeyframe(1, duration: 1.0)
+                        MoveKeyframe(0.4)
+                    }
+                    KeyframeTrack(\.saturation) {
+                        LinearKeyframe(1, duration: 1.7)
+                        LinearKeyframe(1, duration: 1.0)
+                        MoveKeyframe(0.05)
+                    }
                 }
         }
     }
 
-    private func phone(lifted: Bool) -> some View {
+    private func phone(pose: LiftPose) -> some View {
         VStack(spacing: 10) {
             Image(systemName: "arrow.up")
                 .font(.body.weight(.semibold))
                 .foregroundStyle(.tint)
-                .opacity(lifted ? 1 : 0.4)
+                .opacity(pose.arrowOpacity)
             RoundedRectangle(cornerRadius: 10)
                 .fill(.tint.opacity(0.12))
                 .overlay {
@@ -96,8 +128,9 @@ struct DeviceOrientationGuidanceView: View {
                         .font(.title3).foregroundStyle(.tint)
                 }
                 .frame(width: 42, height: 72)
-                .rotation3DEffect(.degrees(lifted ? -12 : 65), axis: (x: 1, y: 0, z: 0), perspective: 0.5)
-                .offset(y: lifted ? -4 : 8)
+                .rotation3DEffect(.degrees(pose.angle), axis: (x: 1, y: 0, z: 0), perspective: 0.5)
+                .offset(y: pose.height)
         }
+        .saturation(pose.saturation)
     }
 }

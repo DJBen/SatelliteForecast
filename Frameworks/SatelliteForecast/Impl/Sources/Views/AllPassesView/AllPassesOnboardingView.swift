@@ -56,12 +56,12 @@ struct AllPassesOnboardingView: View {
                                 .padding(.trailing, 8)
                         }
                         .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color.gray.opacity(0.2))
+                            RoundedRectangle(cornerRadius: AppTheme.cardRadius)
+                                .fill(AppTheme.surface)
                         )
                         .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                            RoundedRectangle(cornerRadius: AppTheme.cardRadius)
+                                .stroke(AppTheme.border, lineWidth: 1)
                         )
                         .overlay(alignment: .bottomTrailing) {
                             Image(systemName: "hand.tap.fill")
@@ -133,6 +133,7 @@ struct AllPassesOnboardingView: View {
                 }
                 .padding(.horizontal, 16)
             }
+            .modifier(AppSurface())
             .navigationTitle(Text("Pass explained", bundle: .module, comment: "Onboarding title for explaining a satellite pass"))
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
