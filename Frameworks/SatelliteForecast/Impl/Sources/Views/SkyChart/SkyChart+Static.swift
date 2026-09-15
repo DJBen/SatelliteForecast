@@ -159,6 +159,15 @@ public enum SkyChartUtils {
         ctx.cgContext.fillPath()
         ctx.cgContext.restoreGState()
         
+        // Project diffuse Galactic light beneath the catalog stars and lines.
+        ctx.cgContext.saveGState()
+        ctx.cgContext.addEllipse(in: params.rect)
+        ctx.cgContext.clip()
+        MilkyWayBackground.image(size: params.rect.size, observer: params.observer,
+            julianDate: params.julianDate,
+            dark: UITraitCollection.current.userInterfaceStyle == .dark)?.draw(in: params.rect)
+        ctx.cgContext.restoreGState()
+
         // -- Constellations --
         
         ctx.cgContext.saveGState()
