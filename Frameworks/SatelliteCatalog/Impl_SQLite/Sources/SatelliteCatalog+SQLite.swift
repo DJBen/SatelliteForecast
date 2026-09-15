@@ -10,7 +10,8 @@ import SatelliteCatalog
 @preconcurrency import SQLite
 
 extension SatelliteCatalog {
-    static let DB = try! Connection(Bundle.module.path(forResource: "satellites", ofType: "sqlite")!)
+    // Bundled catalog data is immutable; never request write access inside the signed app.
+    static let DB = try! Connection(Bundle.module.path(forResource: "satellites", ofType: "sqlite")!, readonly: true)
 
     enum SatCatTable {
         static let tableName = Table("SatCat")
