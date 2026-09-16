@@ -560,3 +560,7 @@ The localized string for the status of a spare satellite */
 "Recorded pass" = "Запись пролёта";
 "Recorded ISS pass over San Francisco Bay" = "Запись пролёта МКС над заливом Сан-Франциско";
 "Pass preview unavailable" = "Просмотр пролёта недоступен";
+
+"Don't show again" = "Больше не показывать";
+
+"Watch onboarding again" = "Посмотреть введение ещё раз";

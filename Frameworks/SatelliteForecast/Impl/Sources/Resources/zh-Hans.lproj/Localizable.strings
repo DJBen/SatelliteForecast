@@ -560,3 +560,7 @@ The localized string for the status of a spare satellite */
 "Recorded pass" = "历史过境";
 "Recorded ISS pass over San Francisco Bay" = "国际空间站在旧金山湾上空的历史过境";
 "Pass preview unavailable" = "暂时无法预览过境";
+
+"Don't show again" = "不再显示";
+
+"Watch onboarding again" = "重新观看入门引导";

@@ -6,6 +6,10 @@ import SatelliteForecast
 struct DeviceOrientationGuidanceView: View {
     let deviceMotionResult: Loadable<CMDeviceMotion, Error>
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @AppStorage("hasDismissedOrientationGuidance") private var hasDismissedGuidance = false
+    @AppStorage("orientationGuidanceDismissalCount") private var dismissalCount = 0
+    @AppStorage("orientationGuidanceSuppressed") private var suppressed = false
+    @State private var expanded = false
     @State private var dismissed = false
     @State private var hasAligned = false
 
@@ -20,43 +24,79 @@ struct DeviceOrientationGuidanceView: View {
 
     var body: some View {
         Group {
-            if !dismissed && !hasAligned && !isAligned {
-                HStack(spacing: 16) {
-                    phoneDemonstration
-                        .frame(width: 64, height: 100)
-                        .accessibilityHidden(true)
-
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Lift your iPhone")
-                            .font(.headline)
-                        Text("Camera up. Screen down.")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    .padding(.trailing, 8)
-                }
-                .padding(20)
-                .padding(.trailing, 8)
-                .frame(maxWidth: 310)
-                .glassEffect(.regular, in: .rect(cornerRadius: 26))
-                .overlay(alignment: .topTrailing) {
+            if !suppressed && !dismissed && !hasAligned && !isAligned {
+                if hasDismissedGuidance && !expanded {
                     Button {
-                        dismissed = true
+                        expanded = true
                     } label: {
-                        Image(systemName: "xmark")
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(.secondary)
-                            .frame(width: 44, height: 44)
-                            .contentShape(Rectangle())
+                        phoneDemonstration
+                            .frame(width: 64, height: 100)
+                            .scaleEffect(0.65)
+                            .frame(width: 56, height: 88)
+                            .contentShape(RoundedRectangle(cornerRadius: 16))
+                            .accessibilityHidden(true)
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("Dismiss orientation guidance")
+                    .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 16))
+                    .accessibilityLabel("Lift your iPhone")
+                    .accessibilityHint("Show orientation guidance")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+                    .transition(.opacity)
+                } else {
+                    VStack(spacing: 16) {
+                        HStack(spacing: 16) {
+                            phoneDemonstration
+                                .frame(width: 64, height: 100)
+                                .accessibilityHidden(true)
+
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text("Lift your iPhone")
+                                    .font(.headline)
+                                Text("Camera up. Screen down.")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                            .padding(.trailing, 8)
+                        }
+                        if dismissalCount >= 2 {
+                            Button {
+                                suppressed = true
+                            } label: {
+                                Text("Don't show again", bundle: .module)
+                                    .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.glass)
+                        }
+                    }
+                    .padding(20)
+                    .padding(.trailing, 8)
+                    .frame(maxWidth: 310)
+                    .glassEffect(.regular, in: .rect(cornerRadius: 26))
+                    .overlay(alignment: .topTrailing) {
+                        Button {
+                            dismissalCount = min(dismissalCount + 1, 2)
+                            hasDismissedGuidance = true
+                            expanded = false
+                            dismissed = true
+                        } label: {
+                            Image(systemName: "xmark")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(.secondary)
+                                .frame(width: 44, height: 44)
+                                .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel("Dismiss orientation guidance")
+                    }
+                    .transition(.opacity.combined(with: .scale(scale: 0.96)))
                 }
-                .transition(.opacity.combined(with: .scale(scale: 0.96)))
             }
         }
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.25), value: hasDismissedGuidance)
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.25), value: expanded)
         .animation(reduceMotion ? nil : .easeInOut(duration: 0.25), value: dismissed)
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.25), value: suppressed)
         .animation(reduceMotion ? nil : .easeInOut(duration: 0.25), value: isAligned)
         .onChange(of: isAligned, initial: true) { _, aligned in
             if aligned { hasAligned = true }

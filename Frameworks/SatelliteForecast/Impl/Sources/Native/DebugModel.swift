@@ -39,9 +39,18 @@ public final class DebugModel {
       session?.hasCompletedOnboarding = false
       if case .resetOnboarding = action {
         UserDefaults.standard.set(false, forKey: "hasCompletedAllPassesOnboarding")
+        resetOrientationGuidance()
       }
     case .resetAllPassesOnboarding:
       UserDefaults.standard.set(false, forKey: "hasCompletedAllPassesOnboarding")
+    case .resetOrientationGuidance:
+      resetOrientationGuidance()
     }
   }
+  private func resetOrientationGuidance() {
+    for key in ["hasDismissedOrientationGuidance", "orientationGuidanceDismissalCount", "orientationGuidanceSuppressed"] {
+      UserDefaults.standard.removeObject(forKey: key)
+    }
+  }
+
 }

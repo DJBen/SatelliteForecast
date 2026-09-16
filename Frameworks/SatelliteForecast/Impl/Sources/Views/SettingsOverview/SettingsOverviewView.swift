@@ -19,6 +19,7 @@ public protocol SettingsOverviewView: View {}
 public struct SettingsOverviewViewImpl: SettingsOverviewView {
     @Bindable private var settings: AppSettings
     @State private var navigationPath = NavigationPath()
+    let watchOnboardingAgain: () -> Void
     let observerCellViewFactory: () -> ObserverCell
     let locationSettingsViewFactory: () -> LocationSettingsView
     let alarmSettingsCellFactory: () -> AlarmSettingsCell
@@ -26,12 +27,14 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
 
     public init(
         settings: AppSettings,
+        watchOnboardingAgain: @escaping () -> Void,
         observerCellViewFactory: @escaping () -> ObserverCell,
         locationSettingsViewFactory: @escaping () -> LocationSettingsView,
         alarmSettingsCellFactory: @escaping () -> AlarmSettingsCell,
         alarmSettingsViewFactory: @escaping () -> AlarmSettingsView
     ) {
         self.settings = settings
+        self.watchOnboardingAgain = watchOnboardingAgain
         self.observerCellViewFactory = observerCellViewFactory
         self.locationSettingsViewFactory = locationSettingsViewFactory
         self.alarmSettingsCellFactory = alarmSettingsCellFactory
@@ -93,62 +96,6 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
             )
             .font(.subheadline.weight(.semibold))
             .foregroundColor(AppTheme.muted)
-        }
-    }
-
-    @ViewBuilder private var nightModeCell: some View {
-        Button {
-            settings.isNightModeOn.toggle()
-        } label: {
-            HStack {
-                Image(systemName: settings.isNightModeOn ? "moon.stars.fill" : "moon.stars")
-                    .font(.headline)
-                    .foregroundColor(Color(UIColor.label))
-
-                let text: String = {
-                    if settings.isNightModeOn {
-                        return NSLocalizedString(
-                            "SettingsOverviewView.nightModeCell.off.title",
-                            tableName: nil,
-                            bundle: .module,
-                            value: "Turn off night mode",
-                            comment: "The title of the toggle that toggles night mode off in the settings view."
-                        )
-                    } else {
-                        return NSLocalizedString(
-                            "SettingsOverviewView.nightModeCell.on.title",
-                            tableName: nil,
-                            bundle: .module,
-                            value: "Turn on night mode",
-                            comment: "The title of the toggle that toggles night mode on in the settings view."
-                        )
-                    }
-                }()
-
-                Text(
-                    text
-                )
-                .font(.headline)
-                .foregroundColor(Color(UIColor.label))
-
-                Spacer()
-            }
-            .padding()
-            .background {
-                let colors = [AppTheme.surfaceColor, AppTheme.surfaceColor]
-
-                LinearGradient(
-                    gradient: Gradient(colors: colors.map(Color.init)),
-                    startPoint: UnitPoint(x: 0, y: 0),
-                    endPoint: UnitPoint(x: 1, y: 1)
-                )
-            }
-            .clipShape(
-                RoundedRectangle(
-                    cornerRadius: AppTheme.cardRadius,
-                    style: .continuous
-                )
-            )
         }
     }
 
@@ -248,7 +195,17 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
 
                     Section {
                         experimentalSkyNowCell
-                        nightModeCell
+                        Button(action: watchOnboardingAgain) {
+                            HStack {
+                                Image(systemName: "arrow.counterclockwise")
+                                Text("Watch onboarding again", bundle: .module)
+                                Spacer()
+                            }
+                            .font(.headline)
+                            .foregroundStyle(.primary)
+                            .padding()
+                            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppTheme.cardRadius))
+                        }
                     } header: {
                         EmptyView()
                     } footer: {

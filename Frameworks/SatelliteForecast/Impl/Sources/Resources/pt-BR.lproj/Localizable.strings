@@ -559,3 +559,7 @@ The localized string for the status of a spare satellite */
 "Recorded pass" = "Passagem registrada";
 "Recorded ISS pass over San Francisco Bay" = "Passagem registrada da ISS sobre a baía de São Francisco";
 "Pass preview unavailable" = "Prévia da passagem indisponível";
+
+"Don't show again" = "Não mostrar novamente";
+
+"Watch onboarding again" = "Ver a introdução novamente";

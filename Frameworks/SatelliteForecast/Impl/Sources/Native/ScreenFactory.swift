@@ -42,7 +42,7 @@ public struct ScreenFactory {
       viewModel: SatelliteListModel(service: session.orbits), context: context,
       allPassesViewFactory: ViewFactory { passes($0, category: context.category) })
   }
-  public func pass(_ context: PassViewContext, isCompassEnabled: Bool = true) -> PassView {
+  public func pass(_ context: PassViewContext, isCompassEnabled: Bool? = nil) -> PassView {
     let model = PassModel(session: session)
     return PassView(
       viewModel: model, context: context,
@@ -88,6 +88,7 @@ public struct NativeSettingsView: SettingsOverviewView {
   public var body: some View {
     SettingsOverviewViewImpl(
       settings: session.settings,
+      watchOnboardingAgain: { session.debug.send(.resetOnboarding) },
       observerCellViewFactory: { ObserverCell(resources: session.location.resources) },
       locationSettingsViewFactory: {
         LocationSettingsView(

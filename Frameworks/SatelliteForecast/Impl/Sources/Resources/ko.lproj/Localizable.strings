@@ -560,3 +560,7 @@ The localized string for the status of a spare satellite */
 "Recorded pass" = "기록된 통과";
 "Recorded ISS pass over San Francisco Bay" = "샌프란시스코만 상공의 ISS 통과 기록";
 "Pass preview unavailable" = "통과 미리보기를 사용할 수 없습니다";
+
+"Don't show again" = "다시 표시하지 않기";
+
+"Watch onboarding again" = "시작 안내 다시 보기";

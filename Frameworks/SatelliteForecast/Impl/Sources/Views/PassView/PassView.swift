@@ -33,7 +33,19 @@ extension PassViewState: Equatable {}
 /// The satellite detail view shows satellite passes and the sky chart during the first visible pass (if available).
 public struct PassView: View {
     @State var viewModel: PassModel
-    @State var isCompassEnabled: Bool = true
+    @AppStorage("passCompassEnabled") private var savedCompassEnabled = true
+    @State private var compassOverride: Bool?
+
+    private var isCompassEnabled: Bool {
+        get { compassOverride ?? savedCompassEnabled }
+        nonmutating set {
+            if compassOverride != nil {
+                compassOverride = newValue
+            } else {
+                savedCompassEnabled = newValue
+            }
+        }
+    }
 
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.timeZone) private var timeZone
@@ -50,9 +62,10 @@ public struct PassView: View {
         skyChartFactory: ViewFactory<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>,
         passAlarmSettingsFactory: ViewFactory<PassAlarmSettingsModalViewContext, PassAlarmSettingsModalView>,
         detailedPassViewFactory: ViewFactory<DetailPassViewContext, DetailedPassView>,
-        isCompassEnabled: Bool = true
+        isCompassEnabled: Bool? = nil
     ) {
-        self._isCompassEnabled = State(initialValue: isCompassEnabled)
+        // Explicit overrides keep snapshot fixtures independent of the saved preference.
+        self._compassOverride = State(initialValue: isCompassEnabled)
         self.viewModel = viewModel
         self.context = context
         self.skyChartFactory = skyChartFactory
@@ -130,10 +143,12 @@ public struct PassView: View {
                 .rotationEffect(
                     isCompassEnabled ? .degrees(deviceMotionResult.content?.heading ?? 0) : .zero
                 )
+                // Azimuth labels sit outside the circle, including after compass rotation.
+                .padding(.vertical, 20)
                 .overlay {
                     if isCompassEnabled {
                         DeviceOrientationGuidanceView(deviceMotionResult: deviceMotionResult)
-                            .padding(.horizontal, 20)
+                            .padding(.horizontal, 4)
                     }
                 }
 

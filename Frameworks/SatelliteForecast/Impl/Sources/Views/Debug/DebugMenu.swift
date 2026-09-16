@@ -227,6 +227,12 @@ public struct DebugMenu: View {
                         } label: {
                             Text(verbatim: "Reset Pass List Onboarding (includes Sky Chart Tutorial)")
                         }
+
+                        Button {
+                            viewModel.send(.resetOrientationGuidance)
+                        } label: {
+                            Text(verbatim: "Reset Lift Your iPhone Guidance")
+                        }
                     } header: {
                         Text(verbatim: "Onboarding")
                     }
