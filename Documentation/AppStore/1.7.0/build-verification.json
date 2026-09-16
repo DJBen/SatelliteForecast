@@ -1,0 +1,152 @@
+{
+  "build": {
+    "data": {
+      "type": "builds",
+      "id": "88251915-ba75-4b29-b587-c889c3486c54",
+      "attributes": {
+        "version": "4",
+        "uploadedDate": "2026-09-15T01:28:23-07:00",
+        "expirationDate": "2026-12-14T00:28:23-08:00",
+        "processingState": "VALID",
+        "minOsVersion": "26.0",
+        "usesNonExemptEncryption": false
+      },
+      "relationships": {
+        "app": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/builds/88251915-ba75-4b29-b587-c889c3486c54/relationships/app",
+            "related": "https://api.appstoreconnect.apple.com/v1/builds/88251915-ba75-4b29-b587-c889c3486c54/app"
+          }
+        },
+        "appEncryptionDeclaration": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/builds/88251915-ba75-4b29-b587-c889c3486c54/relationships/appEncryptionDeclaration",
+            "related": "https://api.appstoreconnect.apple.com/v1/builds/88251915-ba75-4b29-b587-c889c3486c54/appEncryptionDeclaration"
+          }
+        },
+        "appStoreVersion": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/builds/88251915-ba75-4b29-b587-c889c3486c54/relationships/appStoreVersion",
+            "related": "https://api.appstoreconnect.apple.com/v1/builds/88251915-ba75-4b29-b587-c889c3486c54/appStoreVersion"
+          }
+        },
+        "betaAppReviewSubmission": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/builds/88251915-ba75-4b29-b587-c889c3486c54/relationships/betaAppReviewSubmission",
+            "related": "https://api.appstoreconnect.apple.com/v1/builds/88251915-ba75-4b29-b587-c889c3486c54/betaAppReviewSubmission"
+          }
+        },
+        "betaBuildLocalizations": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/builds/88251915-ba75-4b29-b587-c889c3486c54/relationships/betaBuildLocalizations",
+            "related": "https://api.appstoreconnect.apple.com/v1/builds/88251915-ba75-4b29-b587-c889c3486c54/betaBuildLocalizations"
+          }
+        },
+        "betaGroups": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/builds/88251915-ba75-4b29-b587-c889c3486c54/relationships/betaGroups"
+          }
+        },
+        "buildBetaDetail": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/builds/88251915-ba75-4b29-b587-c889c3486c54/relationships/buildBetaDetail",
+            "related": "https://api.appstoreconnect.apple.com/v1/builds/88251915-ba75-4b29-b587-c889c3486c54/buildBetaDetail"
+          }
+        },
+        "diagnosticSignatures": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/builds/88251915-ba75-4b29-b587-c889c3486c54/relationships/diagnosticSignatures",
+            "related": "https://api.appstoreconnect.apple.com/v1/builds/88251915-ba75-4b29-b587-c889c3486c54/diagnosticSignatures"
+          }
+        },
+        "icons": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/builds/88251915-ba75-4b29-b587-c889c3486c54/relationships/icons",
+            "related": "https://api.appstoreconnect.apple.com/v1/builds/88251915-ba75-4b29-b587-c889c3486c54/icons"
+          }
+        },
+        "individualTesters": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/builds/88251915-ba75-4b29-b587-c889c3486c54/relationships/individualTesters",
+            "related": "https://api.appstoreconnect.apple.com/v1/builds/88251915-ba75-4b29-b587-c889c3486c54/individualTesters"
+          }
+        },
+        "perfPowerMetrics": {
+          "links": {
+            "related": "https://api.appstoreconnect.apple.com/v1/builds/88251915-ba75-4b29-b587-c889c3486c54/perfPowerMetrics"
+          }
+        },
+        "preReleaseVersion": {
+          "data": {
+            "id": "04baf597-2f6c-4ba3-aa1f-03bebb4418ba",
+            "type": "preReleaseVersions"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/builds/88251915-ba75-4b29-b587-c889c3486c54"
+      }
+    },
+    "links": {
+      "self": "https://api.appstoreconnect.apple.com/v1/builds/88251915-ba75-4b29-b587-c889c3486c54"
+    },
+    "included": [
+      {
+        "type": "preReleaseVersions",
+        "id": "04baf597-2f6c-4ba3-aa1f-03bebb4418ba",
+        "attributes": {
+          "version": "1.7.0",
+          "platform": "IOS"
+        }
+      }
+    ]
+  },
+  "beta": {
+    "data": {
+      "type": "buildBetaDetails",
+      "id": "88251915-ba75-4b29-b587-c889c3486c54",
+      "attributes": {
+        "autoNotifyEnabled": true,
+        "internalBuildState": "IN_BETA_TESTING",
+        "externalBuildState": "READY_FOR_BETA_SUBMISSION"
+      },
+      "relationships": {
+        "build": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/buildBetaDetails/88251915-ba75-4b29-b587-c889c3486c54/relationships/build",
+            "related": "https://api.appstoreconnect.apple.com/v1/buildBetaDetails/88251915-ba75-4b29-b587-c889c3486c54/build"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/buildBetaDetails/88251915-ba75-4b29-b587-c889c3486c54"
+      }
+    },
+    "links": {
+      "self": "https://api.appstoreconnect.apple.com/v1/builds/88251915-ba75-4b29-b587-c889c3486c54/buildBetaDetail"
+    }
+  },
+  "version": {
+    "id": "5b69ae32-46f7-49a8-a8bf-985b157ede19",
+    "versionString": "1.7.0",
+    "platform": "IOS",
+    "state": "PREPARE_FOR_SUBMISSION"
+  },
+  "behaviorTests": {
+    "passed": 55,
+    "failed": 0,
+    "simulator": "iPhone 17 Pro / iOS 26.5"
+  },
+  "sourceCommit": "4a7e911",
+  "releaseSourceHashes": {
+    "Frameworks/SatelliteForecast/Impl/Sources/Views/PassView/PassView.swift": "c099497cae0d6c166d6d95eb90cb6ba44b88f11a03fa8d68647327c919d8a187",
+    "Frameworks/SatelliteForecast/Impl/Sources/Resources/zh-Hans.lproj/Localizable.strings": "82a11ac963c53ed8c8f796eb158937815c0ff7ed5ece496e38c4ad037d2c7235",
+    "Frameworks/SatelliteForecast/Impl/Sources/Resources/ja.lproj/Localizable.strings": "47e2dd5c62ad719255f779360bd7071f6b78f9f62722f7a08b12ecabb427201e",
+    "Frameworks/SatelliteForecast/Impl/Sources/Resources/en.lproj/Localizable.strings": "34af463a31df9a5ece724fb6d544c4ecd40fbae9712f22cd8fc0ba1a18f56e77",
+    "Frameworks/SatelliteForecast/Impl/Sources/Resources/es.lproj/Localizable.strings": "417286aed6a5c262cd41c044725a93853eabb7b7d6716a2bed06f089210c2a07",
+    "Frameworks/SatelliteForecast/Impl/Sources/Resources/ko.lproj/Localizable.strings": "56115bfdd3d787d0202bfb261fcc6633b47e0273e90af932cdeafeea0359cf69",
+    "Frameworks/SatelliteForecast/Impl/Sources/Resources/pt-BR.lproj/Localizable.strings": "cc5987f3a8c3c4adc0e25a9cc4b96940793334e867043793a881b7736d236061",
+    "Frameworks/SatelliteForecast/Impl/Sources/Resources/ru.lproj/Localizable.strings": "1943f5fa7476decad1490998dca1f2707e53cd2cebf537e39f46e445cb0a8ed5",
+    "Frameworks/SatelliteForecast/Impl/Sources/Resources/fr.lproj/Localizable.strings": "5361a935d19cfdd379a3f9b33bb55ece5707d762a91f73032e813ccb7675367f"
+  }
+}

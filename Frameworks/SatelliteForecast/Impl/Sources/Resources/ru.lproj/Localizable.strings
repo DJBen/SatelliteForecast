@@ -540,3 +540,23 @@ The localized string for the status of a spare satellite */
 /* No comment provided by engineer. */
 "Your alarms will appear here. Schedule an alarm by tapping the %@ inside a pass." = "Ваши будильники появятся здесь. Запланируйте будильник, нажав на %@ внутри прохода.";
 
+
+/* Pass chart controls and event timeline */
+"Compass" = "Компас";
+"Full screen" = "На весь экран";
+"Rises" = "Восход";
+"Becomes visible" = "Становится видимым";
+"Culminates" = "Кульминация";
+"Disappears" = "Исчезает";
+"Sets" = "Заход";
+"%lld° azimuth · %lld° elevation" = "Азимут %lld° · Высота %lld°";
+
+/* Onboarding action */
+"Continue" = "Продолжить";
+
+/* Recorded onboarding pass */
+"ISS · San Francisco Bay" = "МКС · Залив Сан-Франциско";
+"Recorded pass · 40× replay" = "Запись пролёта · Скорость 40×";
+"Recorded pass" = "Запись пролёта";
+"Recorded ISS pass over San Francisco Bay" = "Запись пролёта МКС над заливом Сан-Франциско";
+"Pass preview unavailable" = "Просмотр пролёта недоступен";

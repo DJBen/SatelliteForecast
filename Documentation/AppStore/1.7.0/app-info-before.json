@@ -1,0 +1,117 @@
+{
+  "data": [
+    {
+      "type": "appInfoLocalizations",
+      "id": "01f2c0b9-e013-468e-8170-7621a2d2edee",
+      "attributes": {
+        "locale": "en-US",
+        "name": "Space Station Passes",
+        "subtitle": "Predict ISS, Tiangong passes",
+        "privacyPolicyUrl": "https://satellite-forecast.square.site/privacy-policy"
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appInfoLocalizations/01f2c0b9-e013-468e-8170-7621a2d2edee"
+      }
+    },
+    {
+      "type": "appInfoLocalizations",
+      "id": "7220f924-b0a9-47a8-a730-5692d95281e5",
+      "attributes": {
+        "locale": "zh-Hans",
+        "name": "天宫空间站过境",
+        "subtitle": "预测天宫、国际空间站过境",
+        "privacyPolicyUrl": "https://satellite-forecast.square.site/privacy-policy"
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appInfoLocalizations/7220f924-b0a9-47a8-a730-5692d95281e5"
+      }
+    },
+    {
+      "type": "appInfoLocalizations",
+      "id": "832a7a9b-1775-4e3d-88a6-7a1afbefecf2",
+      "attributes": {
+        "locale": "ko",
+        "name": "우주정거장 통과",
+        "subtitle": "ISS, 톈궁 통과 예측",
+        "privacyPolicyUrl": "https://satellite-forecast.square.site/privacy-policy"
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appInfoLocalizations/832a7a9b-1775-4e3d-88a6-7a1afbefecf2"
+      }
+    },
+    {
+      "type": "appInfoLocalizations",
+      "id": "0f72b78f-5979-4ebe-9c88-d3d1dd036e4f",
+      "attributes": {
+        "locale": "ru",
+        "name": "Космические пролёты",
+        "subtitle": "Прогноз МКС, Тяньгун",
+        "privacyPolicyUrl": "https://satellite-forecast.square.site/privacy-policy"
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appInfoLocalizations/0f72b78f-5979-4ebe-9c88-d3d1dd036e4f"
+      }
+    },
+    {
+      "type": "appInfoLocalizations",
+      "id": "a193542c-04c2-4220-81e0-061bee3edae1",
+      "attributes": {
+        "locale": "pt-BR",
+        "name": "Passagens Estações Espaciais",
+        "subtitle": "Passes ISS e Tiangong",
+        "privacyPolicyUrl": "https://satellite-forecast.square.site/privacy-policy"
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appInfoLocalizations/a193542c-04c2-4220-81e0-061bee3edae1"
+      }
+    },
+    {
+      "type": "appInfoLocalizations",
+      "id": "6921cff8-302e-4c1d-b066-9439cc5a9a66",
+      "attributes": {
+        "locale": "fr-FR",
+        "name": "Passages Station Spatiale",
+        "subtitle": "Passages ISS, Tiangong",
+        "privacyPolicyUrl": "https://satellite-forecast.square.site/privacy-policy"
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appInfoLocalizations/6921cff8-302e-4c1d-b066-9439cc5a9a66"
+      }
+    },
+    {
+      "type": "appInfoLocalizations",
+      "id": "a0ea8488-493d-4726-b780-a0c4a03138a9",
+      "attributes": {
+        "locale": "es-ES",
+        "name": "Estación Espacial",
+        "subtitle": "Pasos ISS, Tiangong",
+        "privacyPolicyUrl": "https://satellite-forecast.square.site/privacy-policy"
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appInfoLocalizations/a0ea8488-493d-4726-b780-a0c4a03138a9"
+      }
+    },
+    {
+      "type": "appInfoLocalizations",
+      "id": "c1d19d8f-6ea5-4afd-9316-79256628ee4e",
+      "attributes": {
+        "locale": "ja",
+        "name": "宇宙ステーション通過",
+        "subtitle": "ISS、天宮通過予測",
+        "privacyPolicyUrl": "https://satellite-forecast.square.site"
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appInfoLocalizations/c1d19d8f-6ea5-4afd-9316-79256628ee4e"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://api.appstoreconnect.apple.com/v1/appInfos/9ce7eb74-e3dc-46da-8807-2e852dc9a843/appInfoLocalizations"
+  },
+  "meta": {
+    "paging": {
+      "total": 8,
+      "limit": 50
+    }
+  }
+}

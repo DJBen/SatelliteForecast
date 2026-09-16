@@ -1,0 +1,287 @@
+{
+  "data": [
+    {
+      "type": "appStoreVersionLocalizations",
+      "id": "bac15137-37ef-440f-85f0-7f0506d3d207",
+      "attributes": {
+        "locale": "pt-BR",
+        "description": "Estação Espacial prevê os passes da ISS e Tiangong sobre você com infográficos úteis e muito mais.\n- Previsão de passagem: preveja passagens de satélites para ISS, Tiangong e mais de 4000 satélites sobre qualquer localização geográfica globalmente.\n- Mapa celeste: localize a trajetória da passagem do satélite com detalhado mapa estelar interativo.\n- Notificações: notificações oportunas para passagens da ISS e Tiangong; configure alarmes para passagens individuais de satélites, para não perder o momento.\n- Modo noturno: preserve sua visão noturna enquanto usa o aplicativo.\n- Céu em tempo real: Este é um recurso experimental que mostra todos os satélites atualmente passando sobre você.",
+        "keywords": "passes iss,passes tiangong,passes de satélites,satélite,astronomia",
+        "promotionalText": "Entusiastas do espaço: veja as próximas passagens da Estação Espacial Internacional e da Estação Espacial Chinesa Tiangong em sua localização e aproveite o momento!",
+        "supportUrl": "https://satellite-forecast.square.site"
+      },
+      "relationships": {
+        "appScreenshotSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/bac15137-37ef-440f-85f0-7f0506d3d207/relationships/appScreenshotSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/bac15137-37ef-440f-85f0-7f0506d3d207/appScreenshotSets"
+          }
+        },
+        "appPreviewSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/bac15137-37ef-440f-85f0-7f0506d3d207/relationships/appPreviewSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/bac15137-37ef-440f-85f0-7f0506d3d207/appPreviewSets"
+          }
+        },
+        "searchKeywords": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/bac15137-37ef-440f-85f0-7f0506d3d207/relationships/searchKeywords",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/bac15137-37ef-440f-85f0-7f0506d3d207/searchKeywords"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/bac15137-37ef-440f-85f0-7f0506d3d207"
+      }
+    },
+    {
+      "type": "appStoreVersionLocalizations",
+      "id": "53a9cd6a-f815-4b93-b5f5-6db8a507dc90",
+      "attributes": {
+        "locale": "fr-FR",
+        "description": "Station spatiale prédit les passages de l'ISS et de Tiangong au-dessus de vous avec des infographies utiles et bien plus encore.\n- Prédiction de passage : prévoyez les passages de l'ISS, de Tiangong et de plus de 4000 satellites sur n'importe quelle position géographique dans le monde.\n- Carte céleste : localisez avec précision la trajectoire du passage du satellite grâce à une carte stellaire interactive détaillée.\n- Notifications : recevez des alertes pour les passages de l'ISS et de Tiangong ; configurez des alarmes pour les passages de satellites individuels afin de ne pas manquer le moment.\n- Mode nuit : préservez votre vision nocturne pendant l'utilisation de l'application.\n- Ciel en temps réel : cette fonction expérimentale affiche tous les satellites qui passent actuellement au-dessus de vous.",
+        "keywords": "passages tiangong,passages iss,passages satellite,station spatiale,satellite,astronomie",
+        "promotionalText": "Consultez les prochains passages de la Station spatiale internationale et de la station spatiale chinoise Tiangong à votre emplacement et saisissez l’instant !",
+        "supportUrl": "https://satellite-forecast.square.site"
+      },
+      "relationships": {
+        "appScreenshotSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/53a9cd6a-f815-4b93-b5f5-6db8a507dc90/relationships/appScreenshotSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/53a9cd6a-f815-4b93-b5f5-6db8a507dc90/appScreenshotSets"
+          }
+        },
+        "appPreviewSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/53a9cd6a-f815-4b93-b5f5-6db8a507dc90/relationships/appPreviewSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/53a9cd6a-f815-4b93-b5f5-6db8a507dc90/appPreviewSets"
+          }
+        },
+        "searchKeywords": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/53a9cd6a-f815-4b93-b5f5-6db8a507dc90/relationships/searchKeywords",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/53a9cd6a-f815-4b93-b5f5-6db8a507dc90/searchKeywords"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/53a9cd6a-f815-4b93-b5f5-6db8a507dc90"
+      }
+    },
+    {
+      "type": "appStoreVersionLocalizations",
+      "id": "3863cd90-42b7-4003-93b0-84d988969f65",
+      "attributes": {
+        "locale": "ru",
+        "description": "Приложение \"Космические пролёты\" предсказывает пролёты МКС и Тяньгун над вами с полезными инфографиками и многим другим.\n- Прогноз пролётов: предсказывайте пролёты МКС, Тяньгун и более 4000 спутников над любой точкой мира.\n- Карта звёздного неба: точно определяйте траекторию пролёта спутника с помощью подробной интерактивной звёздной карты.\n- Уведомления: своевременные уведомления о пролётах МКС и Тяньгун; устанавливайте напоминания для отдельных пролётов спутников, чтобы не пропустить событие.\n- Ночной режим: сохраняйте ночное зрение при использовании приложения.\n- Небо в реальном времени: экспериментальная функция, показывающая все спутники, которые сейчас пролетают над вами.",
+        "keywords": "мкс,пролёты мкс,пролёты тяньгун,пролёты спутников,космическая станция,спутник,астрономия",
+        "promotionalText": "Любители космоса: смотрите ближайшие пролёты Международной космической станции и китайской станции Тяньгун над вашим местоположением и не упустите момент!",
+        "supportUrl": "https://satellite-forecast.square.site"
+      },
+      "relationships": {
+        "appScreenshotSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/3863cd90-42b7-4003-93b0-84d988969f65/relationships/appScreenshotSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/3863cd90-42b7-4003-93b0-84d988969f65/appScreenshotSets"
+          }
+        },
+        "appPreviewSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/3863cd90-42b7-4003-93b0-84d988969f65/relationships/appPreviewSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/3863cd90-42b7-4003-93b0-84d988969f65/appPreviewSets"
+          }
+        },
+        "searchKeywords": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/3863cd90-42b7-4003-93b0-84d988969f65/relationships/searchKeywords",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/3863cd90-42b7-4003-93b0-84d988969f65/searchKeywords"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/3863cd90-42b7-4003-93b0-84d988969f65"
+      }
+    },
+    {
+      "type": "appStoreVersionLocalizations",
+      "id": "4b1f5565-7b7c-4d6c-b5f2-3ed3d8a8bded",
+      "attributes": {
+        "locale": "ja",
+        "description": "宇宙ステーション通過は、便利なインフォグラフィックとさらなる機能でISSと天宮の通過を予測します。\n- 通過予測：世界中のあらゆる地理的位置でISS、天宮、および4000以上の衛星通過を予測します。\n- スカイチャート：詳細なインタラクティブ星図で衛星通過の軌跡を正確に特定します。\n- 通知：ISSと天宮通過のタイムリーな通知；個別の衛星通過にアラームを設定して、その瞬間を見逃すことはありません。\n- ナイトモード：アプリ使用中の夜間視力を保護します。\n- リアルタイムスカイ：現在あなたの上空を通過している全ての衛星を表示する実験的機能です。",
+        "keywords": "iss通過,天宮通過,衛星通過,衛星,天文学",
+        "promotionalText": "宇宙愛好家の皆様：お住まいの場所での国際宇宙ステーションと中国宇宙ステーション天宮の次の通過を確認し、その瞬間をお見逃しなく！",
+        "supportUrl": "https://satellite-forecast.square.site"
+      },
+      "relationships": {
+        "appScreenshotSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/4b1f5565-7b7c-4d6c-b5f2-3ed3d8a8bded/relationships/appScreenshotSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/4b1f5565-7b7c-4d6c-b5f2-3ed3d8a8bded/appScreenshotSets"
+          }
+        },
+        "appPreviewSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/4b1f5565-7b7c-4d6c-b5f2-3ed3d8a8bded/relationships/appPreviewSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/4b1f5565-7b7c-4d6c-b5f2-3ed3d8a8bded/appPreviewSets"
+          }
+        },
+        "searchKeywords": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/4b1f5565-7b7c-4d6c-b5f2-3ed3d8a8bded/relationships/searchKeywords",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/4b1f5565-7b7c-4d6c-b5f2-3ed3d8a8bded/searchKeywords"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/4b1f5565-7b7c-4d6c-b5f2-3ed3d8a8bded"
+      }
+    },
+    {
+      "type": "appStoreVersionLocalizations",
+      "id": "acfd7f9b-557b-4e0e-bb92-23678ee31ee3",
+      "attributes": {
+        "locale": "ko",
+        "description": "우주정거장 통과는 유용한 인포그래픽과 더 많은 기능으로 ISS와 톈궁의 통과를 예측합니다.\n- 통과 예측: 전 세계 어느 지역에서든 ISS, 톈궁 및 4000개 이상의 위성 통과를 예측합니다.\n- 하늘 차트: 상세한 대화형 별자리 차트로 위성 통과 궤적을 정확히 찾아냅니다.\n- 알림: ISS와 톈궁 통과에 대한 시기적절한 알림; 개별 위성 통과에 대한 알람을 설정하여 그 순간을 놓치지 않도록 합니다.\n- 야간 모드: 앱 사용 중 야간 시력을 보호합니다.\n- 실시간 하늘: 현재 여러분 위로 지나가는 모든 위성을 보여주는 실험적 기능입니다.",
+        "keywords": "iss 통과,톈궁 통과,위성 통과,위성,천문학",
+        "marketingUrl": "https://satellite-forecast.square.site",
+        "promotionalText": "우주 애호가 여러분: 여러분의 위치에서 국제우주정거장과 중국 우주정거장 톈궁의 다음 통과를 확인하고 그 순간을 놓치지 마세요!",
+        "supportUrl": "https://satellite-forecast.square.site"
+      },
+      "relationships": {
+        "appScreenshotSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/acfd7f9b-557b-4e0e-bb92-23678ee31ee3/relationships/appScreenshotSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/acfd7f9b-557b-4e0e-bb92-23678ee31ee3/appScreenshotSets"
+          }
+        },
+        "appPreviewSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/acfd7f9b-557b-4e0e-bb92-23678ee31ee3/relationships/appPreviewSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/acfd7f9b-557b-4e0e-bb92-23678ee31ee3/appPreviewSets"
+          }
+        },
+        "searchKeywords": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/acfd7f9b-557b-4e0e-bb92-23678ee31ee3/relationships/searchKeywords",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/acfd7f9b-557b-4e0e-bb92-23678ee31ee3/searchKeywords"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/acfd7f9b-557b-4e0e-bb92-23678ee31ee3"
+      }
+    },
+    {
+      "type": "appStoreVersionLocalizations",
+      "id": "82ed28b4-feb0-4f4c-9c1f-bd36d0f89d36",
+      "attributes": {
+        "locale": "en-US",
+        "description": "Space Station Passes predicts ISS and Tiangong passes over you with useful infographics and much more.\n- Pass prediction: predict satellite passes for ISS, Tiangong and 4000+ satellites over any geographical location globally.\n- Sky chart: pinpoint the trail of satellite pass with detailed interactive star chart.\n- Notifications: timely notifications for ISS and Tiangong passes; set alarm for individual satellite passes, so you won't miss the moment.\n- Night mode: preserve your night vision while using the app.\n- Realtime sky: This is an experimental feature that shows all the currently passing satellites above you.",
+        "keywords": "iss passes,tiangong passes,satellite passes,satellite,astronomy",
+        "promotionalText": "Space enthusiasts: view the next passes of International Space Station, and Chinese Space Station Tiangong at your location and seize the moment!",
+        "supportUrl": "https://satellite-forecast.square.site",
+        "whatsNew": "This update improves forecast loading and reliability, refreshes pass cards and navigation colors, and improves satellite search and pass alarm handling."
+      },
+      "relationships": {
+        "appScreenshotSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/82ed28b4-feb0-4f4c-9c1f-bd36d0f89d36/relationships/appScreenshotSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/82ed28b4-feb0-4f4c-9c1f-bd36d0f89d36/appScreenshotSets"
+          }
+        },
+        "appPreviewSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/82ed28b4-feb0-4f4c-9c1f-bd36d0f89d36/relationships/appPreviewSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/82ed28b4-feb0-4f4c-9c1f-bd36d0f89d36/appPreviewSets"
+          }
+        },
+        "searchKeywords": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/82ed28b4-feb0-4f4c-9c1f-bd36d0f89d36/relationships/searchKeywords",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/82ed28b4-feb0-4f4c-9c1f-bd36d0f89d36/searchKeywords"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/82ed28b4-feb0-4f4c-9c1f-bd36d0f89d36"
+      }
+    },
+    {
+      "type": "appStoreVersionLocalizations",
+      "id": "f564d8c4-4e04-4fcc-b8a0-e7910f3e703d",
+      "attributes": {
+        "locale": "es-ES",
+        "description": "Estación Espacial predice los pasos de la ISS y Tiangong sobre usted con infografías útiles y mucho más.\n- Predicción de paso: prediga los pasos de la ISS, Tiangong y más de 4000 satélites sobre cualquier ubicación geográfica globalmente.\n- Carta celeste: localice con precisión la trayectoria del paso del satélite con un detallado mapa estelar interactivo.\n- Notificaciones: reciba alertas oportunas para los pasos de la ISS y Tiangong; configure alarmas para pasos individuales de satélites, para no perderse el momento.\n- Modo nocturno: preserve su visión nocturna mientras usa la aplicación.\n- Cielo en tiempo real: esta es una función experimental que muestra todos los satélites que actualmente están pasando sobre usted.",
+        "keywords": "pasos tiangong,pasos iss,pasos de satélite,estación espacial,satélite,astronomía",
+        "promotionalText": "¡Consulten los próximos pasos de la Estación Espacial Internacional y la Estación Espacial China Tiangong en su ubicación y aprovechen el momento!",
+        "supportUrl": "https://satellite-forecast.square.site"
+      },
+      "relationships": {
+        "appScreenshotSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/f564d8c4-4e04-4fcc-b8a0-e7910f3e703d/relationships/appScreenshotSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/f564d8c4-4e04-4fcc-b8a0-e7910f3e703d/appScreenshotSets"
+          }
+        },
+        "appPreviewSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/f564d8c4-4e04-4fcc-b8a0-e7910f3e703d/relationships/appPreviewSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/f564d8c4-4e04-4fcc-b8a0-e7910f3e703d/appPreviewSets"
+          }
+        },
+        "searchKeywords": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/f564d8c4-4e04-4fcc-b8a0-e7910f3e703d/relationships/searchKeywords",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/f564d8c4-4e04-4fcc-b8a0-e7910f3e703d/searchKeywords"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/f564d8c4-4e04-4fcc-b8a0-e7910f3e703d"
+      }
+    },
+    {
+      "type": "appStoreVersionLocalizations",
+      "id": "db6b1eec-d1f9-4676-9a86-e978abccda6e",
+      "attributes": {
+        "locale": "zh-Hans",
+        "description": "天宫追踪提供中国天宫空间站和国际空间站和过境预测，配有实用的信息图表等更多功能。\n- 过境预测：预测国际空间站、天宫号和4000多颗卫星在全球任何地理位置的过境情况。\n- 星空图：通过详细的交互式星图精确定位卫星过境轨迹。\n- 通知：及时获取国际空间站和天宫号过境的通知；为单个卫星过境设置闹钟，不错过观测良机。\n- 夜间模式：使用应用程序时保护您的夜视能力。\n- 实时天空：这是一项实验性功能，显示当前所有正在您上空通过的卫星。",
+        "keywords": "天宫,国际空间站,天宫空间站,国际空间站过境,卫星过境,空间站,卫星,天文",
+        "promotionalText": "目睹中国天宫空间站和国际空间站和在您所在位置头顶的下一次过境！",
+        "supportUrl": "https://satellite-forecast.square.site"
+      },
+      "relationships": {
+        "appScreenshotSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/db6b1eec-d1f9-4676-9a86-e978abccda6e/relationships/appScreenshotSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/db6b1eec-d1f9-4676-9a86-e978abccda6e/appScreenshotSets"
+          }
+        },
+        "appPreviewSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/db6b1eec-d1f9-4676-9a86-e978abccda6e/relationships/appPreviewSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/db6b1eec-d1f9-4676-9a86-e978abccda6e/appPreviewSets"
+          }
+        },
+        "searchKeywords": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/db6b1eec-d1f9-4676-9a86-e978abccda6e/relationships/searchKeywords",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/db6b1eec-d1f9-4676-9a86-e978abccda6e/searchKeywords"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/db6b1eec-d1f9-4676-9a86-e978abccda6e"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersions/5b69ae32-46f7-49a8-a8bf-985b157ede19/appStoreVersionLocalizations"
+  },
+  "meta": {
+    "paging": {
+      "total": 8,
+      "limit": 50
+    }
+  }
+}

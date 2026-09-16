@@ -1,0 +1,418 @@
+{
+  "appId": "1578649430",
+  "versionId": "5b69ae32-46f7-49a8-a8bf-985b157ede19",
+  "version": "1.7.0",
+  "displayType": "APP_IPHONE_67",
+  "width": 1320,
+  "height": 2868,
+  "locales": {
+    "en-US": {
+      "localizationId": "82ed28b4-feb0-4f4c-9c1f-bd36d0f89d36",
+      "setId": "7c7f7869-b84c-4bf9-859a-abaaa57ef1d8",
+      "featuredSatellite": "ISS",
+      "screenshots": [
+        {
+          "slot": "01-forecast",
+          "id": "1b6a75ee-1659-4aaf-b538-42f7b4cbfba7",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-07-25 at 01.52.51.png",
+          "checksum": "94d46cc1bdb7f6b1d8b6467315d05a49",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/04/77/c9/0477c92a-2e40-2dd5-9ad8-5be2231e80dd/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-07-25_at_01.52.51.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        },
+        {
+          "slot": "02-pass-chart",
+          "id": "f44cde53-366b-4954-99f6-ecef7e2ae963",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-08-22 at 01.37.01.png",
+          "checksum": "1d6c9cfd7f2876ad7b5b48d9e1299f4a",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/66/09/70/66097011-cd28-2ed3-1867-5fc5424f1dc1/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-08-22_at_01.37.01.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        },
+        {
+          "slot": "03-pass-list",
+          "id": "f8e8d7b8-6301-4aa6-a830-81631e4d10bd",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-08-22 at 01.36.48.png",
+          "checksum": "d4b204eee695d16929247444d6d75e4a",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/5a/b5/49/5ab5493f-97c4-3a26-a02c-2ab6f1b7d9d4/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-08-22_at_01.36.48.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        },
+        {
+          "slot": "04-satellites",
+          "id": "f0110cd8-7b5c-428b-a840-459f4bf028f9",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-08-17 at 02.33.20.png",
+          "checksum": "da408aae5eb0be5dd533d0b62deee246",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/e7/0d/fe/e70dfecc-36ff-7237-12ce-bbbab6b9eb13/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-08-17_at_02.33.20.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        }
+      ]
+    },
+    "fr-FR": {
+      "localizationId": "53a9cd6a-f815-4b93-b5f5-6db8a507dc90",
+      "setId": "3daa1808-16a9-4ec5-8173-a1519d35ef9e",
+      "featuredSatellite": "ISS",
+      "screenshots": [
+        {
+          "slot": "01-forecast",
+          "id": "f336c3ca-81d9-4e0a-b487-a683a13330d5",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-07-25 at 01.53.09.png",
+          "checksum": "e0d56dd1aa6d1ead10f92143428792bc",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/e0/da/52/e0da5251-6d4c-2bca-8b4e-c7b518f00a5f/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-07-25_at_01.53.09.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        },
+        {
+          "slot": "02-pass-chart",
+          "id": "1a324ec5-695f-4730-aa28-cc7d80946b75",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-08-22 at 01.37.52.png",
+          "checksum": "86fe2b746bc0785e0dd91332088274af",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/cf/3d/3a/cf3d3a37-7da6-d36a-cc39-334b3077c2d9/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-08-22_at_01.37.52.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        },
+        {
+          "slot": "03-pass-list",
+          "id": "30dec6d8-aa3c-4baa-9e81-89bd1aac3c01",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-08-22 at 01.37.45.png",
+          "checksum": "2f682a9a43cf5f66a56221e00f717f0b",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/d4/e5/89/d4e589a7-c4a2-e8cc-47b4-02e3edda569d/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-08-22_at_01.37.45.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        },
+        {
+          "slot": "04-satellites",
+          "id": "62f48daa-a495-4171-813e-5a2a8171faf1",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-08-17 at 02.32.50.png",
+          "checksum": "6de1ad27c124051f0b6daba1d70b1877",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/8d/82/3c/8d823c9f-bce8-2192-c8fb-7d28db63bfaf/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-08-17_at_02.32.50.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        }
+      ]
+    },
+    "es-ES": {
+      "localizationId": "f564d8c4-4e04-4fcc-b8a0-e7910f3e703d",
+      "setId": "b1a37f11-8ee8-4b2e-b882-863d8a9f10fa",
+      "featuredSatellite": "ISS",
+      "screenshots": [
+        {
+          "slot": "01-forecast",
+          "id": "b19c0dc5-ce15-4011-b044-29456c6340b5",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-07-25 at 02.01.55.png",
+          "checksum": "dc598d3081dc33ae931c7a06878984e8",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/a2/26/bb/a226bb44-7f70-90de-aba4-954c416a9e36/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-07-25_at_02.01.55.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        },
+        {
+          "slot": "02-pass-chart",
+          "id": "ef3efbdf-cc7b-4ae8-9704-6cbf4ed1ee84",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-08-14 at 01.34.15.png",
+          "checksum": "f5fb018ff42f4ff6dbe313c1052e68aa",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/5c/b8/03/5cb80328-527a-41ae-e485-4547a6aa69f5/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-08-14_at_01.34.15.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        },
+        {
+          "slot": "03-pass-list",
+          "id": "6e679efd-3775-466c-a3af-8e635f554e7d",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-08-14 at 01.34.11.png",
+          "checksum": "863c9b2c7e8951f037b71bc271168616",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/21/1e/03/211e037e-c2a6-a88c-d5be-04467a74dec7/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-08-14_at_01.34.11.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        },
+        {
+          "slot": "04-satellites",
+          "id": "77e94276-e1f3-44d1-b67e-b58f1125b85c",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-08-17 at 02.34.59.png",
+          "checksum": "8317cef30a7300fcf6573a3b115761c4",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/da/1a/d3/da1ad35c-a548-e53d-be64-7c76148c3d24/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-08-17_at_02.34.59.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        }
+      ]
+    },
+    "pt-BR": {
+      "localizationId": "bac15137-37ef-440f-85f0-7f0506d3d207",
+      "setId": "462112ab-cfb4-48ca-a760-fdc43e49a343",
+      "featuredSatellite": "ISS",
+      "screenshots": [
+        {
+          "slot": "01-forecast",
+          "id": "1e1c6899-0e06-41a9-b473-dca9161e85fb",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-07-25 at 01.30.48.png",
+          "checksum": "2bdff9f01b8e8dd9df0e42a5c20d7a32",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/21/13/8f/21138fe9-df09-6141-05db-2610d6338b80/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-07-25_at_01.30.48.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        },
+        {
+          "slot": "02-pass-chart",
+          "id": "74c381b5-7867-48cf-8311-9ee22fc0beda",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-08-14 at 01.33.10.png",
+          "checksum": "3881cf4c5c583507c927e9f19befcea7",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/ea/23/26/ea2326b6-d2a6-43e1-4a92-b4038090b045/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-08-14_at_01.33.10.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        },
+        {
+          "slot": "03-pass-list",
+          "id": "9ab56914-1ec6-458a-a271-f9dd570aeab2",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-08-14 at 01.33.06.png",
+          "checksum": "70732b2eac39dfe3fa32311afe67be24",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/fc/65/6c/fc656c53-1b67-9dad-08bd-47c81fbb66fd/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-08-14_at_01.33.06.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        },
+        {
+          "slot": "04-satellites",
+          "id": "4f7770d7-2d65-4ee9-b743-d44997086950",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-08-17 at 02.34.07.png",
+          "checksum": "274f741d2eb60e0c5599419b3d6b3c5a",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/1f/cf/46/1fcf4626-04fe-451e-918d-0867cef380bd/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-08-17_at_02.34.07.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        }
+      ]
+    },
+    "ru": {
+      "localizationId": "3863cd90-42b7-4003-93b0-84d988969f65",
+      "setId": "3c4befd4-57f2-473d-afd9-33d5b8ed2633",
+      "featuredSatellite": "ISS",
+      "screenshots": [
+        {
+          "slot": "01-forecast",
+          "id": "a7329c5c-5185-419d-86f2-3d3cb9a4931b",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-08-08 at 21.31.04.png",
+          "checksum": "08c925b4de700dcddeec3b6b98943c87",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/f3/c7/95/f3c79536-4c49-b29e-bfff-0cf7c980fb5b/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-08-08_at_21.31.04.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        },
+        {
+          "slot": "02-pass-chart",
+          "id": "a3fc6512-9aae-43d1-8c1d-5d61bbdeccb3",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-08-14 at 01.33.47.png",
+          "checksum": "720007b340d08ff398320a706ff9455a",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/8c/85/7f/8c857f54-afac-7820-4006-3b33bf5af926/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-08-14_at_01.33.47.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        },
+        {
+          "slot": "03-pass-list",
+          "id": "ccf97333-c850-4418-a80c-5ee31299d4d7",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-08-14 at 01.33.39.png",
+          "checksum": "ab457313ecd450e1979d0a823947e5a0",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/39/45/4f/39454fb8-5e74-2b8a-b366-cb7c9af9a7a5/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-08-14_at_01.33.39.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        },
+        {
+          "slot": "04-satellites",
+          "id": "376b2140-0fec-4104-916a-fb559b5dec71",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-08-17 at 02.34.15.png",
+          "checksum": "2deda18f43c7cbcdd82bcde63c172408",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/41/6e/53/416e53c2-6a23-f61b-ac7e-ba55333be864/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-08-17_at_02.34.15.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        }
+      ]
+    },
+    "ja": {
+      "localizationId": "4b1f5565-7b7c-4d6c-b5f2-3ed3d8a8bded",
+      "setId": "fcb107a7-b66d-4585-87ab-81496e86a787",
+      "featuredSatellite": "Tiangong",
+      "screenshots": [
+        {
+          "slot": "01-forecast",
+          "id": "58604571-b10c-4ff9-9991-21ba1fc0aa9b",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-08-21 at 00.19.03.png",
+          "checksum": "765100f11a81a7b50dbbae33102d533d",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/04/30/53/0430535e-a06f-d903-daaf-20787a96acc1/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-08-21_at_00.19.03.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        },
+        {
+          "slot": "02-pass-chart",
+          "id": "a112fcad-d193-4ae3-9a0e-515934ccf02d",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-08-21 at 00.19.16.png",
+          "checksum": "9a2c68db984636a38b362fd7e0465597",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/87/8c/2a/878c2a9f-e44c-a37e-d918-1990593343ed/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-08-21_at_00.19.16.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        },
+        {
+          "slot": "03-pass-list",
+          "id": "019ffa22-a48d-4a85-8aec-7c9ad9d8611b",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-08-21 at 00.19.12.png",
+          "checksum": "6638f1d1dcee8d1f415c51f3ca69f263",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/89/45/f7/8945f7b6-a922-bc4d-743c-d9af85e587e4/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-08-21_at_00.19.12.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        },
+        {
+          "slot": "04-satellites",
+          "id": "4cbbfd7b-2bb8-4a8a-9e2f-06c718c7eb36",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-08-21 at 00.19.06.png",
+          "checksum": "bf4f3b80952503f7b28cd22df3c5c0b1",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/f9/71/f3/f971f346-c52d-49c6-7310-00b664b955a0/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-08-21_at_00.19.06.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        }
+      ]
+    },
+    "ko": {
+      "localizationId": "acfd7f9b-557b-4e0e-bb92-23678ee31ee3",
+      "setId": "89d556e6-df32-4999-bc67-75708898a0fb",
+      "featuredSatellite": "Tiangong",
+      "screenshots": [
+        {
+          "slot": "01-forecast",
+          "id": "7997648a-7226-4488-97ae-6204d336e6f9",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-08-21 at 00.09.42.png",
+          "checksum": "0a1c028dc85793026f780454fc665bb8",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/fd/8d/7d/fd8d7d86-7523-ca35-a681-7f0111f6a3f2/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-08-21_at_00.09.42.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        },
+        {
+          "slot": "02-pass-chart",
+          "id": "52e7823a-ac2b-4584-a183-c2c86626b39a",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-08-21 at 00.09.28.png",
+          "checksum": "d6846e89cd8d054071c42e5f83cd8ad6",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/86/dc/48/86dc48a7-3866-44be-7ea8-dfd3e4dc0357/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-08-21_at_00.09.28.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        },
+        {
+          "slot": "03-pass-list",
+          "id": "248715ed-834e-4588-b4fa-97f90b31c0ae",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-08-21 at 00.09.21.png",
+          "checksum": "b033d1c6ae93e9fc2f51c64191a81213",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/59/0c/a4/590ca41e-8501-12ef-3e3b-b2ed40c6924f/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-08-21_at_00.09.21.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        },
+        {
+          "slot": "04-satellites",
+          "id": "c9e608d5-79c6-4fcc-bfb5-fcceafa6d253",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-08-21 at 00.09.37.png",
+          "checksum": "c20bd5e5bf64a2a7135173f2f3d5f365",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/d8/54/f8/d854f8f2-1273-0658-e375-0aefbca92ac5/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-08-21_at_00.09.37.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        }
+      ]
+    },
+    "zh-Hans": {
+      "localizationId": "db6b1eec-d1f9-4676-9a86-e978abccda6e",
+      "setId": "401fb0c0-e403-46bf-b70b-8dcd3c513d7b",
+      "featuredSatellite": "Tiangong",
+      "screenshots": [
+        {
+          "slot": "01-forecast",
+          "id": "c96f3230-2413-430f-b80e-31292a15457b",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-07-25 at 01.53.21.png",
+          "checksum": "8cb2a48e4e10b6a515cab7a838490f92",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/3e/1a/1a/3e1a1ace-9ecf-a162-31d6-f025cb587b4d/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-07-25_at_01.53.21.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        },
+        {
+          "slot": "02-pass-chart",
+          "id": "31478989-b137-4226-b7b7-1f1aa3445882",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-08-14 at 01.32.36.png",
+          "checksum": "fd452e288e9f3bd91702b091b4824fcf",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/c1/40/38/c1403845-f7f1-88ef-fb03-1d9c444b95db/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-08-14_at_01.32.36.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        },
+        {
+          "slot": "03-pass-list",
+          "id": "02ff28e8-6aad-48af-9c92-933f2b761ac9",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-08-14 at 01.31.36.png",
+          "checksum": "cc3dad7b9ce106d4cce0ca4d2002960d",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/d1/25/94/d1259438-6c1c-aaf8-de82-268de13575f1/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-08-14_at_01.31.36.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        },
+        {
+          "slot": "04-satellites",
+          "id": "36950fc4-fa53-426c-b6ed-38615f4a1d49",
+          "fileName": "Simulator Screenshot - iPhone 16 Pro Max - 2025-08-16 at 00.05.23.png",
+          "checksum": "6ebdf799fc69d9fe634176ae77d38fe2",
+          "imageAsset": {
+            "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/e8/75/40/e875405a-224c-884e-9c29-80aa51ca7c37/Simulator_Screenshot_-_iPhone_16_Pro_Max_-_2025-08-16_at_00.05.23.png/{w}x{h}bb.{f}",
+            "width": 1320,
+            "height": 2868
+          }
+        }
+      ]
+    }
+  }
+}

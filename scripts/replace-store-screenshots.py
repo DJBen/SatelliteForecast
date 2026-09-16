@@ -16,7 +16,9 @@ root = args.release_dir.resolve()
 manifest = json.loads((root / 'existing-inventory.json').read_text())
 
 def asc(*arguments):
-    result = subprocess.run(['asc', *arguments], capture_output=True, text=True, check=True)
+    result = subprocess.run(['asc', *arguments], capture_output=True, text=True)
+    if result.returncode:
+        raise RuntimeError(f'asc {arguments[0]} {arguments[1]} failed: {result.stderr.strip()} {result.stdout.strip()}')
     return json.loads(result.stdout)
 
 def screenshots(entry):
@@ -49,10 +51,21 @@ for locale, entry in manifest['locales'].items():
             raise RuntimeError(f'{locale}: matching screenshots have not finished processing')
         print(f'{locale}: already matches', flush=True)
         continue
-    if [s['id'] for s in current] != [s['id'] for s in entry['screenshots']]:
+    original_ids = [s['id'] for s in entry['screenshots']]
+    current_checksums = [s['attributes'].get('sourceFileChecksum') for s in current]
+    current_names = [s['attributes'].get('fileName') for s in current]
+    if [s['id'] for s in current] == original_ids:
+        mode = '--replace'
+    elif (0 < len(current) < len(files)
+          and current_checksums == checksums[:len(current)]
+          and current_names == [p.name for p in files[:len(current)]]
+          and all(s['attributes'].get('assetDeliveryState', {}).get('state') == 'COMPLETE' for s in current)):
+        # A previous upload may have stopped after a verified prefix. Preserve it.
+        mode = '--skip-existing'
+    else:
         raise RuntimeError(f'{locale}: remote screenshots changed since inventory; re-inspect before replacing')
-    plans.append((locale, entry, folder, checksums))
-    print(f'{locale}: replace 4 {manifest["displayType"]} images', flush=True)
+    plans.append((locale, entry, folder, checksums, mode))
+    print(f'{locale}: {"resume" if mode == "--skip-existing" else "replace"} 4 {manifest["displayType"]} images', flush=True)
 
 if not args.apply:
     print('Validation complete. No App Store assets changed. Pass --apply after visual review.')
@@ -60,9 +73,9 @@ if not args.apply:
 
 results_path = root / 'upload-results.json'
 results = json.loads(results_path.read_text()) if results_path.exists() else {}
-for locale, entry, folder, checksums in plans:
+for locale, entry, folder, checksums, mode in plans:
     result = asc('screenshots', 'upload', '--version-localization', entry['localizationId'], '--path', str(folder),
-                 '--device-type', manifest['displayType'], '--replace')
+                 '--device-type', manifest['displayType'], mode)
     results[locale] = result
     results_path.write_text(json.dumps(results, indent=2) + '\n')
     for attempt in range(30):

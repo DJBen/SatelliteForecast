@@ -540,3 +540,23 @@ The localized string for the status of a spare satellite */
 /* No comment provided by engineer. */
 "Your alarms will appear here. Schedule an alarm by tapping the %@ inside a pass." = "Sus alarmas aparecerán aquí. Programe una alarma tocando %@ dentro de un pase.";
 
+
+/* Pass chart controls and event timeline */
+"Compass" = "Brújula";
+"Full screen" = "Pantalla completa";
+"Rises" = "Sale";
+"Becomes visible" = "Se hace visible";
+"Culminates" = "Culmina";
+"Disappears" = "Desaparece";
+"Sets" = "Se pone";
+"%lld° azimuth · %lld° elevation" = "Acimut %lld° · Elevación %lld°";
+
+/* Onboarding action */
+"Continue" = "Continuar";
+
+/* Recorded onboarding pass */
+"ISS · San Francisco Bay" = "ISS · Bahía de San Francisco";
+"Recorded pass · 40× replay" = "Paso grabado · Reproducción 40×";
+"Recorded pass" = "Paso grabado";
+"Recorded ISS pass over San Francisco Bay" = "Paso grabado de la ISS sobre la bahía de San Francisco";
+"Pass preview unavailable" = "Vista previa no disponible";

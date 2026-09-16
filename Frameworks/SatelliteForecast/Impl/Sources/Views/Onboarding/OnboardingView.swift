@@ -29,13 +29,16 @@ public struct OnboardingView: View {
     @State private var currentPage = 0
     @State private var videoPlaybackTimes: [String: CMTime] = [:]
     let onComplete: () -> Void
+    let session: AppSession
     
-    public init(initialPage: Int = 0, onComplete: @escaping () -> Void) {
+    public init(session: AppSession, initialPage: Int = 0, onComplete: @escaping () -> Void) {
+        self.session = session
         self.onComplete = onComplete
         _currentPage = State(initialValue: min(max(initialPage, 0), 1))
     }
     
     public var body: some View {
+        let isReplayActive = currentPage == 1
         let pages: [OnboardingPage] = [
             OnboardingPage(
                 title: NSLocalizedString("Welcome to Space Station Passes", bundle: .module, comment: "Onboarding page 1 title"),
@@ -46,15 +49,15 @@ public struct OnboardingView: View {
             OnboardingPage(
                 title: NSLocalizedString("Predictions for You", bundle: .module, comment: "Onboarding page 2 title"),
                 description: NSLocalizedString("Get accurate pass predictions for your location. We'll notify you when viewing opportunities arise.", bundle: .module, comment: "Onboarding page 2 description"),
-                videoName: "pass_demo",
-                videoExtension: "mov",
+                videoName: "",
+                videoExtension: "",
                 customView: { geometry in
                     AnyView(
-                        VStack {
-                            FlippingCityText()
-                                .padding(.top, geometry.safeAreaInsets.top + 60)
-                            Spacer()
-                        }
+                        OnboardingPassAnimation(session: session, isActive: isReplayActive)
+                            .frame(height: geometry.size.height * 0.58)
+                            .padding(.horizontal, 24)
+                            .padding(.top, geometry.safeAreaInsets.top + 48)
+                            .frame(maxHeight: .infinity, alignment: .top)
                     )
                 }
             ),
@@ -66,6 +69,11 @@ public struct OnboardingView: View {
                     page: pages[index],
                     isLastPage: index == pages.count - 1,
                     onComplete: onComplete,
+                    onContinue: {
+                        withAnimation {
+                            currentPage = min(index + 1, pages.count - 1)
+                        }
+                    },
                     videoPlaybackTimes: $videoPlaybackTimes
                 )
                 .tag(index)
@@ -83,6 +91,7 @@ private struct OnboardingPageView: View {
     let page: OnboardingPage
     let isLastPage: Bool
     let onComplete: () -> Void
+    let onContinue: () -> Void
     @Binding var videoPlaybackTimes: [String: CMTime]
     
     @State private var player: AVPlayer?
@@ -131,14 +140,6 @@ private struct OnboardingPageView: View {
                     .ignoresSafeArea(.all)
                 }
                 
-                // Custom view overlay (if present)
-                if let customView = page.customView {
-                    customView(geometry)
-                        .frame(width: geometry.size.width, height: geometry.size.height)
-                        .ignoresSafeArea(.all)
-                        .clipped()
-                }
-                
                 // Linear gradient overlay for better text readability
                 LinearGradient(
                     gradient: Gradient(stops: [
@@ -152,6 +153,14 @@ private struct OnboardingPageView: View {
                 )
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .ignoresSafeArea(.all)
+                // Custom view overlay (if present)
+                if let customView = page.customView {
+                    customView(geometry)
+                        .frame(width: geometry.size.width, height: geometry.size.height)
+                        .ignoresSafeArea(.all)
+                        .clipped()
+                }
+
             }
             
             // Content overlay
@@ -176,35 +185,23 @@ private struct OnboardingPageView: View {
                     }
                     .padding(.horizontal, 32)
                     
-                    if isLastPage {
-                            Button(action: onComplete) {
-                                HStack {
-                                    Text("Get Started", bundle: .module)
-                                        .font(.headline)
-                                        .fontWeight(.semibold)
-                                    
-                                    Image(systemName: "arrow.right")
-                                        .font(.headline)
-                                }
-                                .foregroundColor(.black)
-                                .padding(.horizontal, 32)
-                                .padding(.vertical, 16)
-                                .background(Color(red: 0.44, green: 0.85, blue: 0.82))
-                                .cornerRadius(18)
-                            }
-                            .padding(.top, 8)
-                    } else {
+                    Button(action: isLastPage ? onComplete : onContinue) {
                         HStack {
-                            Text("Swipe to continue", bundle: .module)
-                                .font(.subheadline)
-                                .foregroundColor(.white.opacity(0.8))
-                            
-                            Image(systemName: "chevron.right")
-                                .font(.caption)
-                                .foregroundColor(.white.opacity(0.8))
+                            Text(isLastPage ? "Get Started" : "Continue", bundle: .module)
+                            if isLastPage {
+                                Image(systemName: "arrow.right")
+                            }
                         }
-                        .padding(.horizontal, 32)
+                        .font(.headline.weight(.semibold))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
                     }
+                    .buttonStyle(.glass)
+                    .buttonBorderShape(.capsule)
+                    .controlSize(.large)
+                    .foregroundStyle(.white)
+                    .environment(\.colorScheme, .dark)
+                    .padding(.horizontal, 32)
                 }
                 .padding(.bottom, 48)
             }

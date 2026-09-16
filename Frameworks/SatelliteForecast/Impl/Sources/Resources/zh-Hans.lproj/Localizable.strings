@@ -540,3 +540,23 @@ The localized string for the status of a spare satellite */
 /* No comment provided by engineer. */
 "Your alarms will appear here. Schedule an alarm by tapping the %@ inside a pass." = "您的提醒将在此处显示。通过点击过境中的 %@ 来设置提醒。";
 
+
+/* Pass chart controls and event timeline */
+"Compass" = "指南针";
+"Full screen" = "全屏";
+"Rises" = "升起";
+"Becomes visible" = "开始可见";
+"Culminates" = "到达最高点";
+"Disappears" = "消失";
+"Sets" = "落下";
+"%lld° azimuth · %lld° elevation" = "方位角 %lld° · 仰角 %lld°";
+
+/* Onboarding action */
+"Continue" = "继续";
+
+/* Recorded onboarding pass */
+"ISS · San Francisco Bay" = "国际空间站 · 旧金山湾";
+"Recorded pass · 40× replay" = "历史过境 · 40倍速回放";
+"Recorded pass" = "历史过境";
+"Recorded ISS pass over San Francisco Bay" = "国际空间站在旧金山湾上空的历史过境";
+"Pass preview unavailable" = "暂时无法预览过境";

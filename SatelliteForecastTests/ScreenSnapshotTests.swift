@@ -15,6 +15,16 @@ final class ScreenSnapshotTests: XCTestCase {
     private let size = CGSize(width: 402, height: 874)
     private let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
 
+    func testRecordedOnboardingPass() throws {
+        let example = try OnboardingPassExample.load()
+        XCTAssertEqual(example.pass.pass.highestIlluminated?.elev ?? 0, 55.6, accuracy: 1)
+        XCTAssertEqual(example.pass.pass.rise.julianDate,
+                       Date(timeIntervalSince1970: 1789011297).julianDate, accuracy: 3.0 / 86400)
+        XCTAssertTrue(example.samples.contains { $0.isIlluminated })
+        XCTAssertTrue(example.samples.contains { !$0.isIlluminated })
+        XCTAssertGreaterThan(example.samples.count, 300)
+    }
+
     func testAllScreensLightAndDark() async throws {
         UserDefaults.standard.set(true, forKey: "hasCompletedAllPassesOnboarding")
         NSTimeZone.default = TimeZone(secondsFromGMT: 0)!
@@ -166,13 +176,20 @@ final class ScreenSnapshotTests: XCTestCase {
             try String(contentsOf: fixtureURL.appendingPathComponent(name), encoding: .utf8)
                 .split(whereSeparator: \.isNewline).map(String.init)
         }
-        let now = ISO8601DateFormatter().date(from: "2026-09-14T08:00:00Z")!
+        let now = ISO8601DateFormatter().date(from: "2026-09-10T01:00:00Z")!
         let fixture = try Fixture(catalog: catalog, now: now, tle: tle("iss.tle"))
         let tianhe = try tle("tiangong.tle")
         let info = try SatelliteInfo(elements: Elements(tianhe[0], tianhe[1], tianhe[2]))
         let snapshots = try info.generateSnapshots(observer: fixture.observer, julianDateRange: fixture.range)
         let passes = try info.findPasses(observer: fixture.observer, coarseSnapshots: snapshots)
         let featured = ["ja", "ko", "zh-Hans"].contains(locale) ? try Fixture(catalog: catalog, now: now, tle: tianhe) : fixture
+        let candidates = try [fixture, Fixture(catalog: catalog, now: now, tle: tianhe)]
+        let report = candidates.flatMap { candidate in
+            candidate.passes.filter { $0.pass.visibility == .visible }.map { p in
+                "\(candidate.info.noradIndex) \(Date(julianDate: p.pass.rise.julianDate)) elevation=\(p.pass.highestIlluminated?.elev ?? 0)"
+            }
+        }.joined(separator: "\n")
+        try report.write(to: URL(fileURLWithPath: destination).appendingPathComponent("pass-candidates.txt"), atomically: true, encoding: .utf8)
         let screens = fixture.storeScreens(tianhePasses: passes, featured: featured)
         let selectedScreens = env["STORE_SCREENSHOT_SCREENS"]?.split(separator: ",").map(String.init)
         let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.first as? UIWindowScene)
@@ -198,7 +215,7 @@ final class ScreenSnapshotTests: XCTestCase {
             host.view.frame = window.bounds
             host.view.layoutIfNeeded()
             // Allow actual MapKit tiles and actor-rendered star charts to finish.
-            try await Task.sleep(for: .seconds(name.hasPrefix("03") ? 12 : 4))
+            try await Task.sleep(for: .seconds(name.hasPrefix("02") || name.hasPrefix("03") ? 15 : 4))
             // The CLI captures the actual simulator screen, including native status/tab bars.
             // Hosted unit tests cannot call XCUIScreen (it requires a UI-test runner).
             let ready = folder.appendingPathComponent("capture-ready.txt")
@@ -233,7 +250,7 @@ final class ScreenSnapshotTests: XCTestCase {
         host.view.setNeedsLayout()
         host.view.layoutIfNeeded()
         // Allow SwiftUI layout, async star labels and UIKit navigation to settle.
-        try await Task.sleep(for: .milliseconds(800))
+        try await Task.sleep(for: .milliseconds(name.hasPrefix("02-predictions-intro") ? 2500 : 800))
         host.view.layoutIfNeeded()
         if let scrollDistance {
             func scrollViews(in view: UIView) -> [UIScrollView] {
@@ -341,8 +358,8 @@ struct Fixture {
             context: .init(starManager: catalog, julianDateProvider: date),
             singleSatelliteWrappingViewFactory: { factory.detail($0) })
         return [
-            ("01-welcome", AnyView(OnboardingView(onComplete: {}))),
-            ("02-predictions-intro", AnyView(OnboardingView(initialPage: 1, onComplete: {}))),
+            ("01-welcome", AnyView(OnboardingView(session: session, onComplete: {}))),
+            ("02-predictions-intro", AnyView(OnboardingView(session: session, initialPage: 1, onComplete: {}))),
             ("03-forecast", AnyView(overview)),
             ("04-satellites", AnyView(SatelliteCategoryViewImpl(viewModel: .init(state: .init(observer: observer)), context: .init(starManager: catalog, julianDateProvider: date), listViewFactory: ViewFactory { factory.list($0) }))),
             ("05-satellite-list", AnyView(NavigationStack { SatelliteListView(viewModel: .init(state: .init(satelliteInfo: [.brightest100: .loaded(Map([(info.noradIndex, info)]))])), context: .init(category: .brightest100, julianDateRange: range, observer: observer, starManager: catalog, julianDateProvider: date), allPassesViewFactory: ViewFactory { factory.passes($0) }) })),
@@ -372,7 +389,7 @@ extension Fixture {
     func storeScreens(tianhePasses: [PassSnapshots], featured: Fixture) -> [(String, AnyView)] {
         func next(_ passes: [PassSnapshots]) -> NextPass {
             let visible = passes.first { $0.pass.visibility == .visible }
-            let prominent = passes.first { $0.pass.visibility == .visible && ($0.pass.highestIlluminated?.elev ?? 0) > 40 }
+            let prominent = passes.first { $0.pass.visibility == .visible && ($0.pass.highestIlluminated?.elev ?? 0) > 45 }
             return NextPass(nextVisiblePass: visible?.pass, nextProminentPass: prominent?.pass)
         }
         let date = { now.julianDate }
@@ -391,7 +408,10 @@ extension Fixture {
                     skyChartFactory: ViewFactory { factory.sky($0) }, passViewFactory: ViewFactory { factory.pass($0) })
             }
         })
-        let pass = passes.first { $0.pass.visibility == .visible } ?? passes[0]
+        // Feature the strongest genuinely illuminated arc in the forecast window.
+        let pass = passes.filter { $0.pass.visibility == .visible && $0.pass.sunElevationAtTransit < -10 }.max {
+            ($0.pass.highestIlluminated?.elev ?? 0) < ($1.pass.highestIlluminated?.elev ?? 0)
+        } ?? passes[0]
         // Match the existing north-up chart screenshot with compass tracking off.
         let passView = factory.pass(.init(passIndex: 0, satelliteInfo: info,
             satelliteCommonName: info.noradIndex == 25544 ? "ISS (ZARYA)" : "CSS (TIANHE)", category: category,

@@ -66,7 +66,7 @@ private struct LoadedSatelliteForecastView: View {
     var body: some View {
         Group {
             if session.hasCompletedOnboarding { NativeRootView(session: session) }
-            else { OnboardingView { session.completeOnboarding() } }
+            else { OnboardingView(session: session) { session.completeOnboarding() } }
         }
         .sheet(isPresented: Binding(get: { session.debug.config.isDebugMenuVisible }, set: { session.debug.config.isDebugMenuVisible = $0 })) { DebugMenu(viewModel: session.debug) }
         .onAppear {

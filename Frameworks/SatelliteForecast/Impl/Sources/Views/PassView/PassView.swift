@@ -67,7 +67,7 @@ public struct PassView: View {
             HStack(spacing: 8) {
                 Image(systemName: isCompassEnabled ? "safari.fill" : "safari")
                     .font(.body)
-                Text("Compass")
+                Text("Compass", bundle: .module)
                     .font(.subheadline.weight(.medium))
                 if isCompassEnabled {
                     Image(systemName: "checkmark")
@@ -99,7 +99,7 @@ public struct PassView: View {
                     HStack(spacing: 8) {
                         Image(systemName: "arrow.up.left.and.arrow.down.right")
                             .font(.body)
-                        Text("Full screen")
+                        Text("Full screen", bundle: .module)
                             .font(.subheadline.weight(.medium))
                     }
                     .frame(maxWidth: .infinity)
@@ -162,8 +162,8 @@ public struct PassView: View {
                     .foregroundStyle(.tint)
                     .accessibilityHidden(true)
                     VStack(alignment: .leading, spacing: 3) {
-                        Text(event.title).font(.subheadline.weight(.medium))
-                        Text("\(Int(event.position.azim.rounded()) % 360)° azimuth · \(Int(event.position.elev.rounded()))° elevation")
+                        Text(LocalizedStringKey(event.title), bundle: .module).font(.subheadline.weight(.medium))
+                        Text("\(Int(event.position.azim.rounded()) % 360)° azimuth · \(Int(event.position.elev.rounded()))° elevation", bundle: .module)
                             .font(.caption).foregroundStyle(.secondary)
                     }
                     Spacer(minLength: 8)

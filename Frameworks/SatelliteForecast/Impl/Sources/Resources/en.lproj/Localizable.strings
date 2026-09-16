@@ -1,0 +1,20 @@
+
+/* Pass chart controls and event timeline */
+"Compass" = "Compass";
+"Full screen" = "Full screen";
+"Rises" = "Rises";
+"Becomes visible" = "Becomes visible";
+"Culminates" = "Culminates";
+"Disappears" = "Disappears";
+"Sets" = "Sets";
+"%lld° azimuth · %lld° elevation" = "%lld° azimuth · %lld° elevation";
+
+/* Onboarding action */
+"Continue" = "Continue";
+
+/* Recorded onboarding pass */
+"ISS · San Francisco Bay" = "ISS · San Francisco Bay";
+"Recorded pass · 40× replay" = "Recorded pass · 40× replay";
+"Recorded pass" = "Recorded pass";
+"Recorded ISS pass over San Francisco Bay" = "Recorded ISS pass over San Francisco Bay";
+"Pass preview unavailable" = "Pass preview unavailable";

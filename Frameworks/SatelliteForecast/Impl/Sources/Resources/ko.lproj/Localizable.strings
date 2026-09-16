@@ -540,3 +540,23 @@ The localized string for the status of a spare satellite */
 /* No comment provided by engineer. */
 "Your alarms will appear here. Schedule an alarm by tapping the %@ inside a pass." = "여기에 알람이 표시됩니다. 통과 내에서 %@를 탭하여 알람을 예약하세요.";
 
+
+/* Pass chart controls and event timeline */
+"Compass" = "나침반";
+"Full screen" = "전체 화면";
+"Rises" = "떠오름";
+"Becomes visible" = "보이기 시작";
+"Culminates" = "최고점";
+"Disappears" = "사라짐";
+"Sets" = "짐";
+"%lld° azimuth · %lld° elevation" = "방위각 %lld° · 고도 %lld°";
+
+/* Onboarding action */
+"Continue" = "계속";
+
+/* Recorded onboarding pass */
+"ISS · San Francisco Bay" = "ISS · 샌프란시스코만";
+"Recorded pass · 40× replay" = "기록된 통과 · 40배속 재생";
+"Recorded pass" = "기록된 통과";
+"Recorded ISS pass over San Francisco Bay" = "샌프란시스코만 상공의 ISS 통과 기록";
+"Pass preview unavailable" = "통과 미리보기를 사용할 수 없습니다";

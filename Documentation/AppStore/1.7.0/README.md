@@ -1,48 +1,44 @@
-# App Store screenshots for 1.7.0
+# App Store screenshots and release 1.7.0 (build 4)
 
-The existing App Store draft contained four `APP_IPHONE_67` images per locale at 1320 × 2868 pixels. `existing-inventory.json` records the original IDs, order, filenames, checksums, and Apple image URLs. The local `before/` directory is a backup of all 32 downloaded originals (excluded from Git); `index.html` compares each original with its replacement.
+## Marketing choices
 
-| Slot | Screen | Route |
-| --- | --- | --- |
-| 01 | Forecast overview | Pass forecast tab |
-| 02 | Individual pass chart | Pass forecast → station → visible pass |
-| 03 | Pass list and globe | Pass forecast → station |
-| 04 | Satellite categories | Satellites tab |
+The previous captures chose the first visible pass: ISS at 17° and Tiangong at 28°. The original 2025 ISS screenshot had a stronger 47° illuminated arc and showed a shadow transition. The new set keeps that emphasis on useful observing information while showing the redesigned sky chart, Milky Way, event timeline, station cards, pass list, and satellite catalog.
 
-The original Japanese, Korean, and Simplified Chinese sets feature Tiangong in slots 02/03. English, French, Spanish, Brazilian Portuguese, and Russian feature the ISS. This choice and the slot order are preserved.
+The new fixture starts September 9, 2026 at 18:00 America/Los_Angeles (`2026-09-10T01:00:00Z`), at the same observer (37.486743, −122.226560). It uses the saved September 13 ISS and Tiangong TLEs and the app's real propagation, with no fabricated passes. These are reproducible illustrative captures using historical orbital data, not live forecasts.
 
-## Reproduce
+For the detail screen, choose the highest illuminated visible pass with the Sun below −10°. This selects ISS on September 9 at about 20:34 (56°) and Tiangong on September 10 at about 20:27 (87°). The higher 84° ISS candidate was rejected because twilight caused the app to hide its stars. The overview and pass list retain chronological predictions. The fixture's prominent-pass threshold matches production at greater than 45°.
 
-Run `python3 scripts/capture-store-screenshots.py` from the repository root. Use `--locales en-US ja` for a locale subset or `--screens 03-pass-list` to recapture one slot. The default device is iPhone 17 Pro Max / iOS 26.5, with the same 1320 × 2868 output dimensions as the previous iPhone 16 Pro Max screenshots. Captures are native simulator PNGs, without resizing or compositing.
+## Screens and languages
 
-The hosted XCTest fixture supplies:
+| Slot | Screen |
+| --- | --- |
+| 01 | Forecast overview |
+| 02 | Individual pass and event timeline |
+| 03 | Pass list and globe |
+| 04 | Satellite categories |
 
-- A fixed instant, `2026-09-14T08:00:00Z`, and the America/Los_Angeles timezone.
-- A fixed observer at 37.486743, −122.226560, altitude 0 km.
-- Separate saved CelesTrak ISS and Tiangong TLEs with September 13, 2026 epochs, under `SatelliteForecastTests/Fixtures/AppStore/`.
-- Real orbital propagation and pass selection from those TLEs. The chart uses the first visible pass, rather than an invented orbit or prediction.
-- North-up chart orientation via the normal compass-off state. No physical sensor readings are required.
-- Frozen video frames using the existing snapshot environment, plus fixed 9:41 status bar, battery and Wi-Fi indicators.
-- Separate app launches for each locale, including Foundation language/region settings, in addition to SwiftUI locale and timezone values.
+English, French, Spanish, Brazilian Portuguese and Russian feature ISS. Japanese, Korean and Simplified Chinese feature Tiangong. All captures are native 1320 × 2868 simulator PNGs for the existing `APP_IPHONE_67` slot, without resizing or marketing composites.
 
-The test exposes each completed screen through a ready/acknowledgement file. The CLI captures the simulator display and checks the PNG signature and exact dimensions before acknowledging it. The regular regression snapshots use a separate directory and are not rerecorded by this workflow. MapKit still downloads real map tiles; the map camera/clock are fixed, but Apple imagery is not guaranteed to be byte-identical between runs. Visually inspect the globe before upload.
+`index.html` compares the original store set, the previous capture, and this set. `before/` and `round-2/` are local image backups excluded from Git; previous captures also remain in Git history. `original-inventory.json` preserves the initial store inventory; `existing-inventory.json` records the assets immediately before this replacement.
 
-## Replace draft screenshots
+## Reproduce and upload
 
-Review `index.html`, then run `python3 scripts/replace-store-screenshots.py` for validation only. Add `--apply` to upload the reviewed replacements. The script checks all locales before mutation, requires the draft to remain in `PREPARE_FOR_SUBMISSION`, rejects unexpected remote changes, and verifies screenshot order, checksums, and Apple's `COMPLETE` delivery state. It targets only the version and existing display type in the inventory.
+Run `python3 scripts/capture-store-screenshots.py`. Use `--locales en-US ja` or `--screens 02-pass-chart` for a subset. Captures use iPhone 17 Pro Max / iOS 26.5, fixed 9:41 status indicators, north-up compass-off charts, frozen video frames and separate language/region launches. The runner restores the test plan. Charts and maps get 15 seconds to settle; Apple map imagery is external and must be visually reviewed.
 
-If restoration is needed, upload the local `before/<locale>/` PNGs with `asc screenshots upload --version-localization <inventory localizationId> --path <backup directory> --device-type APP_IPHONE_67 --replace`.
+`python3 scripts/replace-store-screenshots.py` validates the assets. Add `--apply` to upload. The script requires the inventoried draft to remain `PREPARE_FOR_SUBMISSION`, checks for remote changes, and verifies Apple's delivery state, order and MD5 checksums. If an upload stops after a verified prefix of the new set, rerunning safely resumes with `--skip-existing`; unexpected remote changes still stop the run. `upload-results.json` and `capture-checksums.json` record delivery evidence.
 
-## App fixes found during capture
+## Matching app fix
 
-The graph footer previously mixed a 24-hour clock with AM/PM, producing labels such as “19:00 PM.” It now uses SwiftUI's locale-aware hour/minute format. The overview heading now reuses the existing localized forecast-tab label. These fixes are included in the replacement 1.7.0 build so store images match the binary. Brazilian Portuguese now translates “Evening,” and pass-card dates fall back to a compact localized numeric format when the longer date cannot fit. The compass's initial state is injectable for fixtures; its production default remains enabled.
+Build 4 localizes the new Compass, Full screen, event names, azimuth and elevation labels in all eight store languages. The screenshot timing and selection changes are test-fixture-only. Build 3 was uploaded before visual review caught those missing translations; build 4 supersedes it.
 
-## Validation
+## Validation and upload status
 
-- All eight locale capture tests passed on iPhone 17 Pro Max / iOS 26.5; all 32 native PNGs were visually reviewed.
-- The 38 behavior tests passed on iPhone 17 Pro / iOS 26.5.
-- `capture-checksums.json` records dimensions and hashes of the final images. `upload-results.json` records Apple's replacement asset IDs.
-- The test plan was restored after capture. Existing regression baseline images were not modified.
-- Release archive and export succeeded for `io.djben.SatelliteForecast`, version 1.7.0, build 2.
-- All 32 replacement assets reached Apple’s `COMPLETE` state; remote order and MD5 checksums match the local files. The public App Store version remains a draft.
-- Build 2 (`5d4d6101-82a0-49ab-8452-5492dc85c355`) processed as `VALID` and is `READY_FOR_BETA_TESTING` in the First Light internal TestFlight group.
+- All 55 behavior tests passed on iPhone 17 Pro / iOS 26.5.
+- Release archive and IPA export succeeded for `io.djben.SatelliteForecast`, version 1.7.0, build 4.
+- Build `88251915-ba75-4b29-b587-c889c3486c54` processed as `VALID`, is `IN_BETA_TESTING` internally, and is attached to the 1.7.0 App Store draft.
+- All eight translation resource files passed `plutil -lint`.
+- All eight localized capture tests passed. All 32 images were visually reviewed and verified at 1320 × 2868.
+- All 32 replacement screenshots reached Apple's `COMPLETE` state, with remote order and MD5 checksums matching local files. The initial English upload stopped after two assets; the remaining two were resumed and the complete set reverified.
+- `capture-checksums.json`, `upload-results.json` and `build-verification.json` retain the final evidence.
+- The test plan was restored, regression snapshot baselines were not changed, and `git diff --check` passed.
+- The App Store version remains `PREPARE_FOR_SUBMISSION`; build 4 and screenshots are uploaded without submitting the public release for review.

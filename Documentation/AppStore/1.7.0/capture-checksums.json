@@ -1,6 +1,6 @@
 {
   "version": "1.7.0",
-  "buildNumber": "2",
+  "buildNumber": "4",
   "captureDevice": "iPhone 17 Pro Max",
   "runtime": "iOS 26.5",
   "dimensions": [
@@ -11,177 +11,177 @@
     "en-US": [
       {
         "fileName": "01-forecast.png",
-        "md5": "be0d013d5514226caf8b9d8cd3fc1c4b",
-        "sha256": "fe47a3bc07b651c1bad1bc8f91263e6299e1df2a5fbbc78cea56f8e60f25a557"
+        "md5": "50633f4546b9dd2740d2e88b032ab0b7",
+        "sha256": "3b80806fb8596d44aae22036bfa5ffe2f29325994211f1ea664e21a0bbb85164"
       },
       {
         "fileName": "02-pass-chart.png",
-        "md5": "f80e1e727674c88e13e1743c07285536",
-        "sha256": "7dab1dc2707c6f68d864901de2b03334fde2d613459cc103e922626a5a8f836f"
+        "md5": "d8ff52600b813db31b36d9275d0ed36e",
+        "sha256": "4b867624bd792a52c78c6c2a461ee678098828e60fd35abcb98f82809d4af1af"
       },
       {
         "fileName": "03-pass-list.png",
-        "md5": "4bb00807b46c06048482b96fba61ab1b",
-        "sha256": "85fc62d2e12b28f10a8c65872057049f787ba29a5947f5509ac84397f891a922"
+        "md5": "b6090b3f7f0592b2cb0dd8cc26908a75",
+        "sha256": "8da36a417299223ebd6e151afacc0298175271ab6e8c22e86dd7e97df9ff91ea"
       },
       {
         "fileName": "04-satellites.png",
-        "md5": "bf59fdf57eb3220c470703135a7fec1a",
-        "sha256": "cae899204f4e431ec66681acce3124290e10dd557ee499d0fcddc6a9cededcd7"
+        "md5": "5340bda51408be1379baf89f022e5774",
+        "sha256": "294a4312157968b31e34b2378bce14639d08645d880367458032f82e2bd79a55"
       }
     ],
     "fr-FR": [
       {
         "fileName": "01-forecast.png",
-        "md5": "40a274d37186957e9684ac2acb605f9e",
-        "sha256": "4f8b01c2fa67c35a8280080e281cf0ddb109011fcee24d864094b02f3afaff7a"
+        "md5": "cf23ac9e7babf6e14f9d34540c5aa10b",
+        "sha256": "ee7f9770e9a181a61f43e99e9cda66ff38be7525f46c5044733c30ecc4665e05"
       },
       {
         "fileName": "02-pass-chart.png",
-        "md5": "f4a8b6157c15d38ef70d05806a8b17d0",
-        "sha256": "56603d2f07478a2cd557489013507020ad3efc0af79955a1cf296c31d5999309"
+        "md5": "62842ea4dfe406549a918440765a2de2",
+        "sha256": "f04213f9bbce95f8f73b2042d8e34a51bc1b90c2e33a4bef6c4daeb203ac1a6e"
       },
       {
         "fileName": "03-pass-list.png",
-        "md5": "5d53b4378bd92cf12bf50b56cdaa9d81",
-        "sha256": "19e10fef48ee05e98d365191e6acb46fbd8794c9884a2af0633a792facea1d78"
+        "md5": "ade6209c7debfbb96aba9e4b8ee1e515",
+        "sha256": "1056fc3f36ad97de560287ad7752773220ff2d2c8a6775c46359d41b9f8d6be3"
       },
       {
         "fileName": "04-satellites.png",
-        "md5": "7bc901399ed204626a4108dde5fcba53",
-        "sha256": "88ca13f93f77db5cd690859b5c45bb13bc6eb1314350dc6aaea79d5d43f5a27f"
+        "md5": "0c6545ea4a361d1136e5eae3332de7b9",
+        "sha256": "50a9ac115788d708ca4e0269e93826c745bd9aaa0c9441f3d01d10c4115ae334"
       }
     ],
     "es-ES": [
       {
         "fileName": "01-forecast.png",
-        "md5": "b86908eff3e209951d83da185dd1e6f0",
-        "sha256": "aac4649950097d9dac7b7da8c481b5f4befa8be4dce45bf41156f61e90d7f13d"
+        "md5": "590788ec90dad860b8acc90971c392b7",
+        "sha256": "89191700eab3eb84b165a2b37ff74e11759bbb37c1094add03e0475993b56e86"
       },
       {
         "fileName": "02-pass-chart.png",
-        "md5": "9e40d4982c21d042deec257ec6cd746d",
-        "sha256": "8308480217caa2355881249c0f2accdfd782ca3bcd0eb369fa4b6de86e1ecd99"
+        "md5": "47187cff6d66034982cafcadc21c748e",
+        "sha256": "6d126fff42c0c2d09192f3fa763e054c5f536f4abee1efda590a5fb7b0b3f85f"
       },
       {
         "fileName": "03-pass-list.png",
-        "md5": "ddda543acc8ee3b57bf3b8a24031e21a",
-        "sha256": "2a4dc1416516edc8556c7f1973a8631c409e839d3fac73e900473197afd6d639"
+        "md5": "b6882ea7a11501267a84e30b83d25b3c",
+        "sha256": "c0d69400bd6ef11b2c2a2f34b76895d4c538efc4091c42fc684e79f8331f8469"
       },
       {
         "fileName": "04-satellites.png",
-        "md5": "df91d86a963563fb6668d9efba1eef9a",
-        "sha256": "9fc718673d59ec9ced52226751d1fc6cea73c66beab66a11702f756a4e7a0ed5"
+        "md5": "fbd7fe43575df38c978026243fc6c054",
+        "sha256": "47b63cca9fc763b7261a435a8b6ff0baf29aef9a71a4e3029ddc5a07b699fb18"
       }
     ],
     "pt-BR": [
       {
         "fileName": "01-forecast.png",
-        "md5": "d6ec3b5bb4576bb6039cd113e9b08f8c",
-        "sha256": "d8aabf4c82f656be39836c5a09f7ec5c5902d8028a66f344b027876dc88d7562"
+        "md5": "a764412b9137d504195fe614d1e5fd94",
+        "sha256": "51cac75ee64a9324a3f8d0fdfed332adc4410fbacc908880bf25c706d156b802"
       },
       {
         "fileName": "02-pass-chart.png",
-        "md5": "e598646335c985c4e99302c45586e868",
-        "sha256": "d0bcdd553b537b08eaf8530a4a1ec6922b6af124e9690becdab16870501fb79a"
+        "md5": "46a8b76498d0b8961c329f8d4eeb7260",
+        "sha256": "ddf7464439e7c7662fce72dca565134aa6915bef71934a49190521a42e0bb854"
       },
       {
         "fileName": "03-pass-list.png",
-        "md5": "a0c69bdc3e5dec97d1044ce736a27368",
-        "sha256": "5628ad5d3fe94c3aa8d3e8e6a012bfaf1fce9b471183dc80f760330039b5585e"
+        "md5": "cba8fbf4c60da7a0880fcb7a5ed97ad7",
+        "sha256": "b8ac8ea9622cbefba24a2ab85ddc62bc37dece735fbe5a9f5f0fa8f39d3fec6b"
       },
       {
         "fileName": "04-satellites.png",
-        "md5": "8e50fa09facc48c4a6390067c096d569",
-        "sha256": "bd4dbd98edf04701de5558b024cc91d8fff8a0aaf0fb66c11ceb9b365e5f6714"
+        "md5": "5b8db07d7e681a2a9fe763ff3897f0be",
+        "sha256": "b0bf1c450e7f94ef2cc97ccf2179d0705554a66a754b6830ee6f53eaca6be114"
       }
     ],
     "ru": [
       {
         "fileName": "01-forecast.png",
-        "md5": "1926e437fa66659d60528107ffbc5323",
-        "sha256": "1540f70e951274998e5ed609392b1c731517541bb4b3cd2a9ef93486c095ab47"
+        "md5": "a272f34ac1e998434dd9595c03a40a0b",
+        "sha256": "cdd74a51acaa70cbfab3a042de83dcc6af51ac6d0d98ddaf06d054ef9335e46e"
       },
       {
         "fileName": "02-pass-chart.png",
-        "md5": "161465e2918d4e36782aaa11e6454964",
-        "sha256": "7f073b37d9c082ad93e695b04e5168b601bc98d6215f5b41da88805de4517f7b"
+        "md5": "9be99cfbdd1f1b7c5a6af0e89469c00a",
+        "sha256": "733ec2c26307c275af2aaeb165b75b3ce2ebe30f00bde546de30fa2a707ad942"
       },
       {
         "fileName": "03-pass-list.png",
-        "md5": "814ff6a9f418294f4efafad1a9713b4e",
-        "sha256": "06203f4d6154289bdcb3a9bca7d202a3210f21d345a98a6c9fdcbcd9196a2025"
+        "md5": "8d9ea1b981683661e1ec0548920fe104",
+        "sha256": "47e7e8ba323d933daa122ff41456c888f12c09718a23fe9e8ece0669007480b9"
       },
       {
         "fileName": "04-satellites.png",
-        "md5": "2f84525a004361bdf673232ae9f4eeae",
-        "sha256": "a56ac4b8da0d9a855b68a0951bab98088c8d1336ccede24104170f911f80a5be"
+        "md5": "68a5d331c673ccf1e65a6ae28a4a5c84",
+        "sha256": "00faa2762342f18072a68107ba43e39d973bdf8bd71628783a620e6729f2d255"
       }
     ],
     "ja": [
       {
         "fileName": "01-forecast.png",
-        "md5": "19350102cb6c26eb8641b2aa6d616956",
-        "sha256": "f5793f91ee9226f3c4230f7d176b04b89fbe19045c74ad66de4623a787a6debd"
+        "md5": "38c9d96f8e2f3229ab2543e0aaa92952",
+        "sha256": "6d695e4a24dae4dcf5ccaeedcf2092c2f799d4b32d5adcd6c17c479b6df65253"
       },
       {
         "fileName": "02-pass-chart.png",
-        "md5": "08a51e26ad6ab5e259a380e25d2d85aa",
-        "sha256": "5093ae634eabe174e9e48cddd3681419fff90440b72ff6fdb4975e488799e271"
+        "md5": "0703f5c9be519915ed705023ee77fb55",
+        "sha256": "c371af026eb95f94bb6be5df0a40a674ccbeb3e66177522c6120a572eb8b2bd4"
       },
       {
         "fileName": "03-pass-list.png",
-        "md5": "0c60ee75c184c72e40eb0bb5d332492e",
-        "sha256": "02010e33120ddc40ae18be64ec3ccda4bfa5a1f0a081f291ae4ea2083b233adf"
+        "md5": "db03a1e0a1db964b3de0ddd8fb52de9d",
+        "sha256": "f6c11cc865c180e9a978c3339b048ed21ab6dcceb807fd6b3bf02d1e033b1406"
       },
       {
         "fileName": "04-satellites.png",
-        "md5": "4929cc1293409e25b35c1ee4fd8e7ed1",
-        "sha256": "b138503472216629fe6fc1789c3431b28b9db0d6d89e6c18401d05450849c382"
+        "md5": "8953d8ee497a889180b9b72859e957d5",
+        "sha256": "49be2336140f2e634174cfd8c1cd4f1a639301ab5a86c71563c1168d68483ce0"
       }
     ],
     "ko": [
       {
         "fileName": "01-forecast.png",
-        "md5": "beaf28ef876e2bc5153939ca2d888805",
-        "sha256": "0a0bd536c6b53968534ef730b5a92ba01f768867c3afd01248d08daab9264435"
+        "md5": "46628fb69c2f611c4ae51e04b5a7de31",
+        "sha256": "197ba4d54cdab08cca0f5317de980ce5c27ea7a771911e736d8ed1dc934e46f9"
       },
       {
         "fileName": "02-pass-chart.png",
-        "md5": "bd212e5f6cc4dd86873e8f86ab0f91bc",
-        "sha256": "3eb4447b537686aa8a31bfebd2143d5488273223724f3543f08d7d01971fde98"
+        "md5": "2ca3c6219460f7e0a74c9f828960e189",
+        "sha256": "cff8878aa712e8735112a1e4e3ec018ec5a5b7368fb60dcd2ffa2af895c7f4c2"
       },
       {
         "fileName": "03-pass-list.png",
-        "md5": "ac3da735ff5410f8cff1842b4547b828",
-        "sha256": "84863db7d3d3038aac921ae0dd072d5ff661d840b503e33870e1e01b3b491547"
+        "md5": "3680413273cea1f5478ea7714c2f175b",
+        "sha256": "b860361987dad3f475b5ba3e1af0e59a68a8860f1b99a8cf78508b39fbd4ef6e"
       },
       {
         "fileName": "04-satellites.png",
-        "md5": "28bc1d7ca9616de3ddecc66ffdc595c9",
-        "sha256": "e988251aa3b46b542d322ca8726c4abf86c78e33292d9f3de3c55baa4d7f95e5"
+        "md5": "0e42c197731c773947b9a650f8657071",
+        "sha256": "c13165c1881167704edc59a664f4629173bee3a2b13518581ead99da3bb64d00"
       }
     ],
     "zh-Hans": [
       {
         "fileName": "01-forecast.png",
-        "md5": "883ed7c58e3981c98953bec247fa6461",
-        "sha256": "0c700ebef7c0333cfe45b51da39666a4df68a53942915b8109eeaf3e93c9a4b3"
+        "md5": "e7cd8a01d1d366303548a2ec8247ffb8",
+        "sha256": "c662cce9c12f591028fd0ec398f30ca342f0d52b243a68e5cce61ad4039e51df"
       },
       {
         "fileName": "02-pass-chart.png",
-        "md5": "463513ebfac79cc04d1a743dafade933",
-        "sha256": "4f3dabb36b6892baee7e8273e7595ce20fea3b96609936f0d791c1b4e7ba63b0"
+        "md5": "3d7f21ea32ff4c7274f85dec8e146019",
+        "sha256": "bf31af306c939945034023c35d91aa223db6e8dfa6bb207038a1595dcb2f7161"
       },
       {
         "fileName": "03-pass-list.png",
-        "md5": "3243f3416edddb64c0bcf29d46b855f8",
-        "sha256": "ec964dee303f5b448643c7596ba2fceb9ce157a56fe12481d05a497d82dadf22"
+        "md5": "925394f5a530546eb6386eaefad14b3a",
+        "sha256": "d99da793618c178ce208310781b3a08e489295d877e852892cf3dc7713276f04"
       },
       {
         "fileName": "04-satellites.png",
-        "md5": "a2068573af8f598ef197421fd1cd5db1",
-        "sha256": "b454e8ad4487548d33e5c9dd2d389ff37afcad4c8030084a3dc84dfa13f3f480"
+        "md5": "1852085fbbe948cd57092836a989d59f",
+        "sha256": "c0b2c3c81a4df0b2fce5857b069891afd347fe6243e558e63b3d73d8acd2536d"
       }
     ]
   }
