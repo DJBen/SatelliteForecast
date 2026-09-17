@@ -149,6 +149,7 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                 }
             }
         }
+        .environment(\.passNavigationPath, $navigationPath)
         .modifier(CompactHeightLayout())
         .task(id: input) {
             guard !SnapshotEnvironment.isEnabled else { return }

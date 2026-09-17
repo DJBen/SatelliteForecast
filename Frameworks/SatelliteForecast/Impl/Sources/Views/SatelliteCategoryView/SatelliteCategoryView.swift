@@ -129,6 +129,10 @@ public struct SatelliteCategoryViewImpl: SatelliteCategoryView {
                 }
             }
         }
+        .environment(\.passNavigationPath, Binding(
+            get: { viewModel.state.navigationPath },
+            set: { viewModel.send(.navigate($0)) }
+        ))
         .modifier(CompactHeightLayout())
         .tint(AppTheme.accent)
     }

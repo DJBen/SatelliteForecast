@@ -91,6 +91,7 @@ extension AllPassViewNavigation: Equatable, Hashable, Codable {
 public struct AllPassesView: View {
     @AppStorage("hasCompletedAllPassesOnboarding") private var hasOpenedVisiblePass = false
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.passNavigationPath) private var navigationPath
     struct Item: Equatable, Identifiable {
         let index: Int
         let passSnapshots: PassSnapshots
@@ -118,7 +119,6 @@ public struct AllPassesView: View {
         }
     }
 
-    @State private var selectedInvisiblePass: AllPassViewNavigation?
     @State var viewModel: PassListModel
 
     let context: AllPassesViewContext
@@ -285,8 +285,15 @@ public struct AllPassesView: View {
             ForEach(Array(stride(from: 0, to: items.count, by: 2)), id: \.self) { start in
                 HStack(alignment: .top, spacing: 12) {
                     ForEach(Array(items[start..<min(start + 2, items.count)])) { item in
+                        // Both cards append to the owning stack, like visible-pass links.
+                        // Separate Buttons also prevent List from activating both links in a row.
                         Button {
-                            selectedInvisiblePass = AllPassViewNavigation(passIndex: item.index, passSnapshots: item.passSnapshots)
+                            guard let navigationPath else {
+                                assertionFailure("Pass grid requires its owning navigation path")
+                                return
+                            }
+                            navigationPath.wrappedValue.append(AllPassViewNavigation(
+                                passIndex: item.index, passSnapshots: item.passSnapshots))
                         } label: {
                             previewCell(item, observer: observer)
                         }
@@ -394,9 +401,6 @@ public struct AllPassesView: View {
                     }
                 }
                 .navigationDestination(for: AllPassViewNavigation.self) { navigation in
-                    passDestination(navigation, observer: observer)
-                }
-                .navigationDestination(item: $selectedInvisiblePass) { navigation in
                     passDestination(navigation, observer: observer)
                 }
             } else {

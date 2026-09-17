@@ -107,3 +107,16 @@ struct CompactHeightLayout: ViewModifier {
         }
     }
 }
+
+/// Lets independent buttons in a List row push values onto the owning stack.
+/// Avoids a second, item-driven presentation state for the invisible-pass grid.
+private struct PassNavigationPathKey: EnvironmentKey {
+    static let defaultValue: Binding<NavigationPath>? = nil
+}
+
+extension EnvironmentValues {
+    var passNavigationPath: Binding<NavigationPath>? {
+        get { self[PassNavigationPathKey.self] }
+        set { self[PassNavigationPathKey.self] = newValue }
+    }
+}

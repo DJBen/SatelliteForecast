@@ -17,6 +17,47 @@ final class ScreenSnapshotTests: XCTestCase {
     private var size: CGSize { isSEReview ? CGSize(width: 375, height: 667) : CGSize(width: 402, height: 874) }
     private let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
 
+    /// Opt-in interactive fixture for native navigation gestures (driven by the simulator CLI).
+    /// Create /tmp/satellite-pass-navigation-review before running this test; remove it to finish.
+    func testInteractivePassNavigation() async throws {
+        let marker = "/tmp/satellite-pass-navigation-review"
+        guard FileManager.default.fileExists(atPath: marker) else {
+            throw XCTSkip("Interactive navigation review was not requested")
+        }
+        UserDefaults.standard.set(true, forKey: "hasCompletedAllPassesOnboarding")
+        UserDefaults.standard.set(false, forKey: "passCompassEnabled")
+        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let invisible = fixture.passes.filter { $0.pass.visibility != .visible }
+        XCTAssertGreaterThan(invisible.count, 2)
+        let trails = SatelliteTrails(observer: fixture.observer, snapshots: fixture.trails.snapshots,
+            passSnapshots: Array(invisible.prefix(4)))
+        let navigation = PassNavigationReviewState()
+        let path = Binding(get: { navigation.path }, set: { navigation.path = $0 })
+        let view = NavigationStack(path: path) {
+            AllPassesView(viewModel: .init(state: .init(location: CLLocation(latitude: fixture.observer.lat, longitude: fixture.observer.lon),
+                satelliteTrails: [fixture.info.noradIndex: trails])),
+                context: .init(satelliteInfo: fixture.info, julianDateRange: fixture.range,
+                    observer: fixture.observer, starManager: fixture.catalog, julianDateProvider: { fixture.now.julianDate }),
+                skyChartFactory: ViewFactory { fixture.factory.sky($0) }, passViewFactory: ViewFactory { fixture.factory.pass($0) })
+        }
+        let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.first as? UIWindowScene)
+        let window = UIWindow(windowScene: scene)
+        window.overrideUserInterfaceStyle = .dark
+        let host = UIHostingController(rootView: view.environment(\.passNavigationPath, path).environment(\.colorScheme, .dark).environment(\.motionManagerKey, CMMotionManager()))
+        window.rootViewController = host
+        window.makeKeyAndVisible()
+        defer { window.isHidden = true; window.rootViewController = nil }
+        try "ready".write(toFile: marker + "-ready", atomically: true, encoding: .utf8)
+        for _ in 0..<1500 {
+            if !FileManager.default.fileExists(atPath: marker) {
+                XCTAssertEqual(navigation.path.count, 0, "Back navigation must restore the list without leftover destinations")
+                return
+            }
+            try await Task.sleep(for: .milliseconds(200))
+        }
+        XCTFail("Interactive review timed out")
+    }
+
     func testPointSourceRenderingReview() async throws {
         let mapping = BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction.self
         for scale: CGFloat in [0.75, 1, 1.35] {
@@ -658,4 +699,9 @@ extension Fixture {
 private final class StoreHostingController: UIHostingController<AnyView> {
     override var prefersStatusBarHidden: Bool { false }
     override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
+}
+
+@MainActor @Observable
+private final class PassNavigationReviewState {
+    var path = NavigationPath()
 }
