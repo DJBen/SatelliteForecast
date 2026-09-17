@@ -18,7 +18,7 @@ Dark-mode interactive fixture on iPhone 17 Pro Max simulator, iOS 26.5:
 
 The 31 ForecastTests also pass, including pass presentation state, timeline, and navigation-related coverage. The device Debug build succeeded and was installed and launched on Sihao’s iPhone.
 
-The exact iOS 27 flash did not reproduce on the installed iOS 26.5 simulator. The route inconsistency is removed, but final confirmation of that OS-specific transition requires retrying on the connected iPhone. The updated device build is installed for that check.
+The exact iOS 27 flash did not reproduce on the installed iOS 26.5 simulator. After installing the updated build on the connected iPhone, the user confirmed on September 17, 2026 that the swipe bug is gone.
 
 ## Repeat the interactive check
 
