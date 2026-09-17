@@ -1,0 +1,6 @@
+Date-based rendering review (UTC; observer degrees)
+2020-venus-dusk: 2020-04-28T03:39:00Z, observer LatLonAlt(lat: 37.49, lon: -122.23, alt: 0.0), Sun -9.007475694447953, Venus altitude 29.08235305050754, magnitude -4.744551015010359
+2023-venus-dawn: 2023-09-19T13:11:00Z, observer LatLonAlt(lat: 37.49, lon: -122.23, alt: 0.0), Sun -9.023569309048117, Venus altitude 28.022461737627665, magnitude -4.769251468865813
+2025-winter-night: 2025-01-10T19:31:00Z, observer LatLonAlt(lat: 51.51, lon: -0.13, alt: 0.0), Sun -29.93944927417586, Venus altitude 8.43076401177526, magnitude -4.526814520074138
+2026-venus-dusk: 2026-09-16T02:47:00Z, observer LatLonAlt(lat: 37.49, lon: -122.23, alt: 0.0), Sun -7.053439412407389, Venus altitude 7.378409849973493, magnitude -4.770127860570761
+2028-southern-night: 2028-07-10T09:52:00Z, observer LatLonAlt(lat: -33.87, lon: 151.21, alt: 0.0), Sun -35.069404212095705, Venus altitude -66.34503888660143, magnitude -4.692344713423695

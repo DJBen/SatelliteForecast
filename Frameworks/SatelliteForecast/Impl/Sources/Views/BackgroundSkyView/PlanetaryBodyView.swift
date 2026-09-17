@@ -57,20 +57,21 @@ struct PlanetaryBodyView: View {
                 planetView(
                     solarSystemBody: planetaryBody
                 ) { solarSystemBody, coordinate in
+                    let labelOnLeft = SkyChartUtils.point(at: coordinate, rect: rect).x > rect.midX
                     if planetaryBody == .moon {
                         MoonDiskView(julianDate: referenceDate, observer: observer, radius: displayRadius, chartRect: rect)
-                            .overlay(alignment: .leading) {
+                            .overlay(alignment: labelOnLeft ? .trailing : .leading) {
                                 if label == .text {
                                     Text("Moon", bundle: .module)
                                         .font(.caption2)
                                         .foregroundColor(.secondary)
                                         .fixedSize()
-                                        .offset(x: displayRadius * 2 + 3)
+                                        .offset(x: (labelOnLeft ? -1 : 1) * (displayRadius * 2 + 3))
                                 }
                             }
                             .position(SkyChartUtils.point(at: coordinate, rect: rect))
                     } else {
-                        planetaryBody.view(label: label, rect: rect, radius: displayRadius)
+                        planetaryBody.view(label: label, rect: rect, radius: displayRadius, labelOnLeft: labelOnLeft, magnitude: planetaryBody.apparentMagnitude(julianDay: referenceDate) ?? 0)
                             .position(SkyChartUtils.point(at: coordinate, rect: rect))
                     }
                 }
@@ -80,11 +81,12 @@ struct PlanetaryBodyView: View {
 }
 
 extension SolarSystemBody {
-    @ViewBuilder private func view<ShapeModifier: ViewModifier, TextLabel: View, Symbol: View> (
+    @ViewBuilder private func view<TextLabel: View, Symbol: View> (
         rect: CGRect,
         label: BackgroundSkyConfigs.PlantaryBodyLabel,
         radius: CGFloat,
-        shapeModifier: ShapeModifier,
+        labelOnLeft: Bool,
+        magnitude: Double,
         @ViewBuilder textLabel: () -> TextLabel,
         @ViewBuilder symbol: () -> Symbol
     ) -> some View {
@@ -98,39 +100,23 @@ extension SolarSystemBody {
                     cg.fillEllipse(in: CGRect(x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2))
                 } else {
                     SkyChartTheme.drawPointSource(in: cg, at: center, radius: radius,
-                        color: UIColor(named: "star", in: .module, compatibleWith: nil)!)
+                        color: UIColor(named: "star", in: .module, compatibleWith: nil)!, magnitude: magnitude)
                 }
             }
         }
         .frame(width: radius * 4, height: radius * 4)
 
 
-
-        path.overlay(alignment: .leading) {
+        path.overlay(alignment: labelOnLeft ? .trailing : .leading) {
             switch label {
             case .text:
-                textLabel().fixedSize().offset(x: radius * 3 + 3)
+                textLabel().fixedSize().offset(x: (labelOnLeft ? -1 : 1) * (radius * 3 + 3))
             case .symbol:
                 // Keep symbols beside the point so they cannot obscure its core.
-                symbol().fixedSize().offset(x: radius * 3 + 2)
+                symbol().fixedSize().offset(x: (labelOnLeft ? -1 : 1) * (radius * 3 + 2))
             }
         }
 
-    }
-
-    private struct SunShapeModifier: ViewModifier {
-        func body(content: Content) -> some View {
-            content
-                .foregroundColor(Color(red: 1, green: 0.97, blue: 0.84))
-                .shadow(color: .orange.opacity(0.8), radius: 12, x: 0.0, y: 0.0)
-        }
-    }
-
-    private struct PlanetsShapeModifier: ViewModifier {
-        func body(content: Content) -> some View {
-            content
-                .foregroundColor(Color("star", bundle: .module))
-        }
     }
 
     fileprivate func visible(sunElevation: Double) -> Bool {
@@ -151,7 +137,9 @@ extension SolarSystemBody {
     @ViewBuilder fileprivate func view(
         label: BackgroundSkyConfigs.PlantaryBodyLabel,
         rect: CGRect,
-        radius: CGFloat
+        radius: CGFloat,
+        labelOnLeft: Bool,
+        magnitude: Double
     ) -> some View {
         switch self {
         case .sun:
@@ -159,7 +147,8 @@ extension SolarSystemBody {
                 rect: rect,
                 label: label,
                 radius: radius,
-                shapeModifier: SunShapeModifier(),
+                labelOnLeft: labelOnLeft,
+                magnitude: magnitude,
                 textLabel: {
                     Text("Sun", bundle: .module)
                         .font(.caption2)
@@ -179,7 +168,8 @@ extension SolarSystemBody {
                 rect: rect,
                 label: label,
                 radius: radius,
-                shapeModifier: PlanetsShapeModifier(),
+                labelOnLeft: labelOnLeft,
+                magnitude: magnitude,
                 textLabel: {
                     Text("Mercury", bundle: .module)
                         .font(.caption2)
@@ -187,7 +177,7 @@ extension SolarSystemBody {
                 },
                 symbol: {
                     Text(verbatim: "☿")
-                        .font(.system(size: 5))
+                        .font(.system(size: 9))
                         .foregroundColor(.white)
                 }
             )
@@ -196,7 +186,8 @@ extension SolarSystemBody {
                 rect: rect,
                 label: label,
                 radius: radius,
-                shapeModifier: PlanetsShapeModifier(),
+                labelOnLeft: labelOnLeft,
+                magnitude: magnitude,
                 textLabel: {
                     Text("Venus", bundle: .module)
                         .font(.caption2)
@@ -204,7 +195,7 @@ extension SolarSystemBody {
                 },
                 symbol: {
                     Text(verbatim: "♀")
-                        .font(.system(size: 7))
+                        .font(.system(size: 9))
                         .foregroundColor(.white)
                 }
             )
@@ -213,7 +204,8 @@ extension SolarSystemBody {
                 rect: rect,
                 label: label,
                 radius: radius,
-                shapeModifier: PlanetsShapeModifier(),
+                labelOnLeft: labelOnLeft,
+                magnitude: magnitude,
                 textLabel: {
                     Text("Mars", bundle: .module)
                         .font(.caption2)
@@ -221,7 +213,7 @@ extension SolarSystemBody {
                 },
                 symbol: {
                     Text(verbatim: "♂")
-                        .font(.system(size: 6))
+                        .font(.system(size: 9))
                         .foregroundColor(.white)
                 }
             )
@@ -230,7 +222,8 @@ extension SolarSystemBody {
                 rect: rect,
                 label: label,
                 radius: radius,
-                shapeModifier: PlanetsShapeModifier(),
+                labelOnLeft: labelOnLeft,
+                magnitude: magnitude,
                 textLabel: {
                     Text("Jupiter", bundle: .module)
                         .font(.caption2)
@@ -238,7 +231,7 @@ extension SolarSystemBody {
                 },
                 symbol: {
                     Text(verbatim: "♃")
-                        .font(.system(size: 6))
+                        .font(.system(size: 9))
                         .foregroundColor(.white)
                 }
             )
@@ -247,7 +240,8 @@ extension SolarSystemBody {
                 rect: rect,
                 label: label,
                 radius: radius,
-                shapeModifier: PlanetsShapeModifier(),
+                labelOnLeft: labelOnLeft,
+                magnitude: magnitude,
                 textLabel: {
                     Text("Saturn", bundle: .module)
                         .font(.caption2)
@@ -255,7 +249,7 @@ extension SolarSystemBody {
                 },
                 symbol: {
                     Text(verbatim: "♄")
-                        .font(.system(size: 4))
+                        .font(.system(size: 9))
                         .foregroundColor(.white)
                 }
             )

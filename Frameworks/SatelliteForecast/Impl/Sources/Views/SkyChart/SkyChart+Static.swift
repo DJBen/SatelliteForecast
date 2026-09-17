@@ -227,7 +227,7 @@ public enum SkyChartUtils {
             ctx.cgContext.setFillColor(starColor.cgColor)
             
             // Draw individual star
-            SkyChartTheme.drawPointSource(in: ctx.cgContext, at: point, radius: radius, color: starColor)
+            SkyChartTheme.drawPointSource(in: ctx.cgContext, at: point, radius: radius, color: starColor, magnitude: star.magnitude)
         }
         ctx.cgContext.restoreGState()
         

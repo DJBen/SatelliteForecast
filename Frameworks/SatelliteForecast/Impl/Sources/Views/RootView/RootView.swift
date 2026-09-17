@@ -150,7 +150,7 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
                         RealtimeSkyViewContext(
                             basicChartConfigs: .init(),
                             backgroundSkyConfigs: .preset,
-                            satelliteMagToRadiusFunction: .default,
+                            satelliteMagToRadiusFunction: .satellite,
                             starManager: context.starManager,
                             julianDateProvider: context.julianDateProvider
                         )

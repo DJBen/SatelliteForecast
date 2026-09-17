@@ -58,9 +58,13 @@ final class ScreenSnapshotTests: XCTestCase {
                     context: .init(basicChartConfigs: .init(), backgroundSkyConfigs: configs,
                         satelliteMagToRadiusFunction: .default, starManager: catalog, julianDateProvider: { date }),
                     backgroundSkyViewFactory: ViewFactory { fixture.factory.background($0) })
-                try await assertSnapshot(AnyView(view), name: "point-source-\(name)-\(configuration)-dark", style: .dark)
+                try await assertSnapshot(AnyView(view
+                    .frame(width: configuration == "compact" ? 210 : 338)
+                    .frame(maxWidth: .infinity)), name: "point-source-\(name)-\(configuration)-dark", style: .dark)
             }
         }
+        let detail = try XCTUnwrap(fixture.screens().first { $0.0 == "08-detailed-sky" }?.1)
+        try await assertSnapshot(detail, name: "point-source-2021-detailed-pass-dark", style: .dark)
         let folder = root.appendingPathComponent("Documentation/DesignReview/PointSources")
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
         try report.write(to: folder.appendingPathComponent("moments.txt"), atomically: true, encoding: .utf8)

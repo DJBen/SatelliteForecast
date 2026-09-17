@@ -45,6 +45,11 @@ public struct BackgroundSkyConfigs: Equatable, Hashable, Sendable {
             return scale * min(3.2, 0.55 + 0.8 * sqrt(log1p(8 * flux)))
         }
 
+        /// Satellite markers retain their existing sizing independently of the sky background.
+        public static let satellite = StarMagToDisplayRadiusMappingFunction(id: "satellite") { mag in
+            min(12, max(exp(mag * -0.38) * 2.5, 0))
+        }
+
         public static let `default`: StarMagToDisplayRadiusMappingFunction = {
             StarMagToDisplayRadiusMappingFunction(id: "default") { mag in
                 pointSourceRadius(magnitude: mag)
