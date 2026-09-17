@@ -19,21 +19,26 @@ private let durationFormatter: RelativeDateTimeFormatter = {
 }()
 
 struct SatelliteOverviewCell: View {
+    @Environment(\.compactHeightLayout) private var compactHeight
     let satellite: SatelliteCategory
     let nextPassLoadingState: Loadable<NextPass, Error>
     let currentDate: Date
     let julianDateOffset: Double
     let isMissingLocation: Bool
+    var locationLabel: SatelliteLocationLabel? = nil
 
     var body: some View {
         VStack(spacing: 0) {
             // Title section
             HStack {
-                Text(SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedTitle(satellite))
-                    .font(.title3)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.primary)
-                    .multilineTextAlignment(.leading)
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedTitle(satellite))
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.primary)
+                        .multilineTextAlignment(.leading)
+                    locationLabel
+                }
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.title3)
@@ -47,7 +52,7 @@ struct SatelliteOverviewCell: View {
             // Background video
             let videoName = satellite == .iss ? "iss" : "tiangong"
             AutoPlayVideoView(videoName: videoName, bundle: .module)
-                .frame(height: 184)
+                .frame(height: 184 * (compactHeight ? 0.85 : 1))
                 .clipped()
             
             // Pass information section

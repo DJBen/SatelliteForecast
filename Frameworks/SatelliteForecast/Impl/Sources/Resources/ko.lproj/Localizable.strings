@@ -564,3 +564,54 @@ The localized string for the status of a spare satellite */
 "Don't show again" = "다시 표시하지 않기";
 
 "Watch onboarding again" = "시작 안내 다시 보기";
+
+/* Satellite geographic context */
+/* Current subsatellite location. %@ is a standalone geographic name; avoid grammatical inflection of inserted names. */
+"geography.over" = "%@ 상공";
+/* %1$@ is a sea/ocean; %2$@ is a nearby country/territory. Keep both placeholders; reorder as needed. */
+"geography.waterNear" = "%1$@ · %2$@ 인근";
+/* No named marine region was found. %@ is a nearby country/territory, not the country being flown over. */
+"geography.near" = "%@ 인근";
+/* Shown and spoken when current satellite geography cannot be resolved. */
+"geography.unavailable" = "위치 정보 없음";
+/* Optional detailed description, not currently displayed on home. */
+"geography.landDetail" = "육지 상공 · 지상 궤적 보기";
+/* %@ is the standalone name of the country/territory with the nearest coast. */
+"geography.coast" = "%@ 해안 인근";
+/* Optional detail: %1$@ is a localized number in km; %2$@ is the direction FROM the nearest coast TO the satellite; %3$@ is its country/territory. Use standalone noun labels to avoid declension. */
+"geography.distance" = "약 %1$@ km · %2$@ · 가장 가까운 해안: %3$@";
+/* Standalone compass direction, used in the optional distance detail. */
+"geography.north" = "북쪽";
+/* Standalone compass direction, used in the optional distance detail. */
+"geography.northeast" = "북동쪽";
+/* Standalone compass direction, used in the optional distance detail. */
+"geography.east" = "동쪽";
+/* Standalone compass direction, used in the optional distance detail. */
+"geography.southeast" = "남동쪽";
+/* Standalone compass direction, used in the optional distance detail. */
+"geography.south" = "남쪽";
+/* Standalone compass direction, used in the optional distance detail. */
+"geography.southwest" = "남서쪽";
+/* Standalone compass direction, used in the optional distance detail. */
+"geography.west" = "서쪽";
+/* Standalone compass direction, used in the optional distance detail. */
+"geography.northwest" = "북서쪽";
+
+/* Familiar country names and first-level administrative regions. */
+/* Country short name, used only for this ISO country code. */
+"geography.country.US" = "미국";
+/* Country short name, used only for this ISO country code. */
+"geography.country.AE" = "UAE";
+/* Country short name, used only for this ISO country code. */
+"geography.country.GB" = "영국";
+/* %1$@ is a state/province/region; %2$@ is its country. Reorder for natural local usage. */
+"geography.subdivision" = "%2$@ · %1$@";
+
+/* Pass list: best illuminated time, approximate visible minutes, and alarm accessibility. */
+"Best view" = "관측 최적 시간";
+"Visible for %@ min" = "%@분 동안 관측 가능";
+"Visible for less than 1 min" = "관측 가능 시간 1분 미만";
+"Alarm scheduled" = "알람 설정됨";
+
+/* Elevation at the best visible point, rounded to a whole degree. */
+"%lld\u00b0 above horizon" = "지평선 위 %lld°";

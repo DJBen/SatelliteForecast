@@ -37,6 +37,13 @@ public struct SatelliteOverviewViewContext {
 }
 
 public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
+    @Environment(\.locale) private var locale
+    @AppStorage("hasCompletedHomeOnboarding") private var hasOpenedStation = false
+
+    static func stationOrder(for locale: Locale) -> [SatelliteCategory] {
+        locale.language.languageCode?.identifier == "zh" ? [.tianhe, .iss] : [.iss, .tianhe]
+    }
+
     let model: ForecastModel
     let input: ForecastInput
     @Binding private var navigationPath: NavigationPath
@@ -72,10 +79,7 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                             .padding(.top, 8)
                         Section {
                             ForEach(
-                                [
-                                    SatelliteCategory.iss,
-                                    SatelliteCategory.tianhe
-                                ],
+                                Self.stationOrder(for: locale),
                                 id: \.self
                             ) { satellite in
                                 NavigationLink(value: SpecialSatellite(satellite)) {
@@ -85,7 +89,17 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                                         currentDate: model.currentDate,
                                         julianDateOffset: input.julianDateOffset,
                                         isMissingLocation: input.isMissingLocation,
+                                        locationLabel: SatelliteLocationLabel(
+                                            julianDateProvider: context.julianDateProvider,
+                                            julianDateOffset: input.julianDateOffset,
+                                            loadSatellite: { try await model.satelliteInfo(for: satellite == .iss ? .iss : .tianhe) }
+                                        )
                                     )
+                                }
+                                .overlay {
+                                    if !hasOpenedStation, satellite == Self.stationOrder(for: locale).first {
+                                        DiscoveryGlow().padding(2)
+                                    }
                                 }
                                 .id(satellite.rawValue)
                                 .animation(.easeInOut(duration: 0.3), value: model.currentDate)
@@ -115,6 +129,7 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                             )
                         )
                     }
+                    .onAppear { hasOpenedStation = true }
                 }
                 .tint(AppTheme.accent)
                 .safeAreaInset(edge: .bottom, spacing: 0) {
@@ -134,6 +149,7 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                 }
             }
         }
+        .modifier(CompactHeightLayout())
         .task(id: input) {
             guard !SnapshotEnvironment.isEnabled else { return }
             await model.run(input)

@@ -223,6 +223,12 @@ public struct DebugMenu: View {
                         }
 
                         Button {
+                            viewModel.send(.resetHomeOnboarding)
+                        } label: {
+                            Text(verbatim: "Reset Home Screen Onboarding")
+                        }
+
+                        Button {
                             viewModel.send(.resetAllPassesOnboarding)
                         } label: {
                             Text(verbatim: "Reset Pass List Onboarding (includes Sky Chart Tutorial)")

@@ -1,0 +1,323 @@
+{
+  "en-US": {
+    "data": {
+      "type": "appStoreVersionLocalizations",
+      "id": "5eb900d0-402c-436e-8720-9070833fe590",
+      "attributes": {
+        "locale": "en-US",
+        "description": "Know when to look up—and where to look.\n\nSpace Station Passes helps you spot the International Space Station, Tiangong, and other satellites from your chosen location. Plan your next observation with pass forecasts, interactive sky charts, and reminders.\n\n• Find your next visible pass: See upcoming passes, their timing, and how high each satellite will appear above the horizon.\n\n• Follow the path across the sky: Explore interactive charts with stars, constellations, the Milky Way, and the Moon.\n\n• Know the key moments: Check when a satellite rises, reaches its highest visible point, and disappears from view.\n\n• Set a reminder: Schedule an alert for the pass you want to watch.\n\n• Explore beyond the space stations: Browse thousands of satellites, including bright satellites and recent launches.\n\nAn optional experimental realtime sky view is available in Settings.",
+        "keywords": "satellite,tracker,astronomy,stargazing,sky,chart,orbit,alert,reminder,overhead,spotting",
+        "promotionalText": "Spot the ISS and Tiangong overhead. Find visible passes, follow their paths across the stars, and set reminders for your next observation.",
+        "supportUrl": "https://satellite-forecast.square.site",
+        "whatsNew": "• See where each space station is flying, with country flags and familiar geographic names.\n• Explore redesigned pass lists with larger sky charts and clearer viewing times.\n• Get started with gentle highlights and a sky-chart video on your first visible pass.\n• Enjoy improved layouts on smaller iPhones."
+      },
+      "relationships": {
+        "appScreenshotSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/5eb900d0-402c-436e-8720-9070833fe590/relationships/appScreenshotSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/5eb900d0-402c-436e-8720-9070833fe590/appScreenshotSets"
+          }
+        },
+        "appPreviewSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/5eb900d0-402c-436e-8720-9070833fe590/relationships/appPreviewSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/5eb900d0-402c-436e-8720-9070833fe590/appPreviewSets"
+          }
+        },
+        "searchKeywords": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/5eb900d0-402c-436e-8720-9070833fe590/relationships/searchKeywords",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/5eb900d0-402c-436e-8720-9070833fe590/searchKeywords"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/5eb900d0-402c-436e-8720-9070833fe590"
+      }
+    },
+    "links": {
+      "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/5eb900d0-402c-436e-8720-9070833fe590"
+    }
+  },
+  "fr-FR": {
+    "data": {
+      "type": "appStoreVersionLocalizations",
+      "id": "a8e381a0-6738-4f83-b4e9-5e19cba7616a",
+      "attributes": {
+        "locale": "fr-FR",
+        "description": "Sachez quand lever les yeux et où regarder.\n\nPassages Station Spatiale vous aide à repérer la Station spatiale internationale, Tiangong et d’autres satellites depuis le lieu de votre choix. Préparez votre prochaine observation avec des prévisions de passage, des cartes célestes interactives et des rappels.\n\n• Trouvez le prochain passage visible : consultez les horaires et la hauteur des satellites au-dessus de l’horizon.\n\n• Suivez leur trajectoire dans le ciel : explorez des cartes interactives avec les étoiles, les constellations, la Voie lactée et la Lune.\n\n• Identifiez les moments clés : découvrez quand un satellite se lève, atteint son point visible le plus haut et disparaît.\n\n• Configurez un rappel : programmez une alerte pour le passage que vous souhaitez observer.\n\n• Explorez au-delà des stations spatiales : parcourez des milliers de satellites, dont les plus brillants et les lancements récents.\n\nUne vue expérimentale du ciel en temps réel peut être activée dans les réglages.",
+        "keywords": "satellite,suivi,astronomie,étoiles,ciel,carte,orbite,alerte,rappel,observation",
+        "promotionalText": "Repérez l’ISS et Tiangong au-dessus de vous. Découvrez les passages visibles, suivez leur trajectoire parmi les étoiles et préparez votre observation avec un rappel.",
+        "supportUrl": "https://satellite-forecast.square.site",
+        "whatsNew": "• Découvrez où survole chaque station spatiale grâce aux drapeaux et aux noms de lieux familiers.\n• Explorez les listes de passages repensées, avec des cartes du ciel plus grandes et des horaires plus clairs.\n• Laissez-vous guider par des mises en évidence discrètes et une vidéo lors de votre premier passage visible.\n• Profitez d’une présentation améliorée sur les petits iPhone."
+      },
+      "relationships": {
+        "appScreenshotSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/a8e381a0-6738-4f83-b4e9-5e19cba7616a/relationships/appScreenshotSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/a8e381a0-6738-4f83-b4e9-5e19cba7616a/appScreenshotSets"
+          }
+        },
+        "appPreviewSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/a8e381a0-6738-4f83-b4e9-5e19cba7616a/relationships/appPreviewSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/a8e381a0-6738-4f83-b4e9-5e19cba7616a/appPreviewSets"
+          }
+        },
+        "searchKeywords": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/a8e381a0-6738-4f83-b4e9-5e19cba7616a/relationships/searchKeywords",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/a8e381a0-6738-4f83-b4e9-5e19cba7616a/searchKeywords"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/a8e381a0-6738-4f83-b4e9-5e19cba7616a"
+      }
+    },
+    "links": {
+      "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/a8e381a0-6738-4f83-b4e9-5e19cba7616a"
+    }
+  },
+  "es-ES": {
+    "data": {
+      "type": "appStoreVersionLocalizations",
+      "id": "285c9955-3136-47cc-b7bc-0e8fce75eb4e",
+      "attributes": {
+        "locale": "es-ES",
+        "description": "Descubre cuándo mirar al cielo y hacia dónde.\n\nEstación Espacial te ayuda a localizar la Estación Espacial Internacional, Tiangong y otros satélites desde el lugar que elijas. Prepara tu próxima observación con pronósticos de pasos, mapas celestes interactivos y recordatorios.\n\n• Encuentra el próximo paso visible: consulta los horarios y la altura que alcanzará cada satélite sobre el horizonte.\n\n• Sigue su trayectoria por el cielo: explora mapas interactivos con estrellas, constelaciones, la Vía Láctea y la Luna.\n\n• Conoce los momentos clave: comprueba cuándo sale un satélite, alcanza su punto visible más alto y desaparece.\n\n• Configura un recordatorio: programa una alerta para el paso que quieras observar.\n\n• Explora más allá de las estaciones espaciales: descubre miles de satélites, incluidos los más brillantes y los lanzamientos recientes.\n\nPuedes activar una vista experimental del cielo en tiempo real en Ajustes.",
+        "keywords": "satélite,seguimiento,astronomía,estrellas,cielo,mapa,órbita,alerta,recordatorio,observación",
+        "promotionalText": "Localiza la ISS y Tiangong sobre ti. Consulta los pasos visibles, sigue su trayectoria entre las estrellas y configura recordatorios para tu próxima observación.",
+        "supportUrl": "https://satellite-forecast.square.site",
+        "whatsNew": "• Descubre por dónde vuela cada estación espacial, con banderas y nombres de lugares conocidos.\n• Explora las listas de pasos rediseñadas, con mapas del cielo más grandes y horarios más claros.\n• Empieza con indicaciones discretas y un vídeo del mapa del cielo al abrir tu primer paso visible.\n• Disfruta de un diseño mejorado en los iPhone más pequeños."
+      },
+      "relationships": {
+        "appScreenshotSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/285c9955-3136-47cc-b7bc-0e8fce75eb4e/relationships/appScreenshotSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/285c9955-3136-47cc-b7bc-0e8fce75eb4e/appScreenshotSets"
+          }
+        },
+        "appPreviewSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/285c9955-3136-47cc-b7bc-0e8fce75eb4e/relationships/appPreviewSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/285c9955-3136-47cc-b7bc-0e8fce75eb4e/appPreviewSets"
+          }
+        },
+        "searchKeywords": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/285c9955-3136-47cc-b7bc-0e8fce75eb4e/relationships/searchKeywords",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/285c9955-3136-47cc-b7bc-0e8fce75eb4e/searchKeywords"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/285c9955-3136-47cc-b7bc-0e8fce75eb4e"
+      }
+    },
+    "links": {
+      "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/285c9955-3136-47cc-b7bc-0e8fce75eb4e"
+    }
+  },
+  "pt-BR": {
+    "data": {
+      "type": "appStoreVersionLocalizations",
+      "id": "38b9ac78-da27-4aef-95ef-6ac5541f3cbe",
+      "attributes": {
+        "locale": "pt-BR",
+        "description": "Saiba quando olhar para o céu — e para onde olhar.\n\nPassagens Estações Espaciais ajuda você a avistar a Estação Espacial Internacional, Tiangong e outros satélites a partir do local que escolher. Planeje sua próxima observação com previsões de passagens, mapas celestes interativos e lembretes.\n\n• Encontre a próxima passagem visível: veja os horários e a altura que cada satélite alcançará acima do horizonte.\n\n• Acompanhe a trajetória pelo céu: explore mapas interativos com estrelas, constelações, a Via Láctea e a Lua.\n\n• Conheça os momentos importantes: confira quando o satélite surge no horizonte, atinge seu ponto visível mais alto e desaparece.\n\n• Defina um lembrete: programe um alerta para a passagem que você quer observar.\n\n• Explore além das estações espaciais: descubra milhares de satélites, incluindo os mais brilhantes e os lançamentos recentes.\n\nUma visualização experimental do céu em tempo real pode ser ativada nos ajustes.",
+        "keywords": "satélite,rastreamento,astronomia,estrelas,céu,mapa,órbita,alerta,lembrete,observação",
+        "promotionalText": "Veja a ISS e Tiangong no céu. Encontre passagens visíveis, acompanhe suas trajetórias entre as estrelas e defina lembretes para sua próxima observação.",
+        "supportUrl": "https://satellite-forecast.square.site",
+        "whatsNew": "• Veja por onde cada estação espacial está passando, com bandeiras e nomes de lugares conhecidos.\n• Explore as listas de passagens renovadas, com mapas do céu maiores e horários mais claros.\n• Comece com destaques discretos e um vídeo do mapa do céu ao abrir sua primeira passagem visível.\n• Aproveite um layout melhorado em iPhones menores."
+      },
+      "relationships": {
+        "appScreenshotSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/38b9ac78-da27-4aef-95ef-6ac5541f3cbe/relationships/appScreenshotSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/38b9ac78-da27-4aef-95ef-6ac5541f3cbe/appScreenshotSets"
+          }
+        },
+        "appPreviewSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/38b9ac78-da27-4aef-95ef-6ac5541f3cbe/relationships/appPreviewSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/38b9ac78-da27-4aef-95ef-6ac5541f3cbe/appPreviewSets"
+          }
+        },
+        "searchKeywords": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/38b9ac78-da27-4aef-95ef-6ac5541f3cbe/relationships/searchKeywords",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/38b9ac78-da27-4aef-95ef-6ac5541f3cbe/searchKeywords"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/38b9ac78-da27-4aef-95ef-6ac5541f3cbe"
+      }
+    },
+    "links": {
+      "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/38b9ac78-da27-4aef-95ef-6ac5541f3cbe"
+    }
+  },
+  "ru": {
+    "data": {
+      "type": "appStoreVersionLocalizations",
+      "id": "77ca72ea-19d6-437c-9995-5ded3bcd5f47",
+      "attributes": {
+        "locale": "ru",
+        "description": "Узнайте, когда поднять глаза к небу и куда смотреть.\n\n«Космические пролёты» помогает увидеть Международную космическую станцию, Тяньгун и другие спутники из выбранного вами места. Планируйте наблюдения с прогнозами пролётов, интерактивными картами неба и напоминаниями.\n\n• Найдите следующий видимый пролёт: узнайте время пролёта и высоту спутника над горизонтом.\n\n• Проследите путь по небу: изучайте интерактивные карты со звёздами, созвездиями, Млечным Путём и Луной.\n\n• Узнайте ключевые моменты: посмотрите, когда спутник восходит, достигает наивысшей видимой точки и исчезает из виду.\n\n• Настройте напоминание: установите оповещение о пролёте, который хотите наблюдать.\n\n• Откройте для себя больше спутников: просматривайте тысячи объектов, включая яркие спутники и недавние запуски.\n\nВ настройках можно включить экспериментальный вид неба в реальном времени.",
+        "keywords": "спутник,трекер,астрономия,орбита,небо,уведомления",
+        "promotionalText": "Наблюдайте МКС и Тяньгун над вами. Находите видимые пролёты, следите за траекторией среди звёзд и настраивайте напоминания о следующем наблюдении.",
+        "supportUrl": "https://satellite-forecast.square.site",
+        "whatsNew": "• Узнавайте, над каким местом летит космическая станция, по флагам стран и знакомым географическим названиям.\n• Обновлённые списки пролётов: более крупные карты неба и понятное время наблюдения.\n• Ненавязчивая подсветка поможет начать, а при первом открытии видимого пролёта появится обучающее видео.\n• Улучшен интерфейс для небольших iPhone."
+      },
+      "relationships": {
+        "appScreenshotSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/77ca72ea-19d6-437c-9995-5ded3bcd5f47/relationships/appScreenshotSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/77ca72ea-19d6-437c-9995-5ded3bcd5f47/appScreenshotSets"
+          }
+        },
+        "appPreviewSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/77ca72ea-19d6-437c-9995-5ded3bcd5f47/relationships/appPreviewSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/77ca72ea-19d6-437c-9995-5ded3bcd5f47/appPreviewSets"
+          }
+        },
+        "searchKeywords": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/77ca72ea-19d6-437c-9995-5ded3bcd5f47/relationships/searchKeywords",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/77ca72ea-19d6-437c-9995-5ded3bcd5f47/searchKeywords"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/77ca72ea-19d6-437c-9995-5ded3bcd5f47"
+      }
+    },
+    "links": {
+      "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/77ca72ea-19d6-437c-9995-5ded3bcd5f47"
+    }
+  },
+  "ja": {
+    "data": {
+      "type": "appStoreVersionLocalizations",
+      "id": "f6d90571-4581-4cb6-bf65-f86bb6217aba",
+      "attributes": {
+        "locale": "ja",
+        "description": "いつ、どの方角を見上げればよいかがわかります。\n\n「宇宙ステーション通過」は、選んだ場所から国際宇宙ステーション、天宮、その他の衛星を見つけるお手伝いをします。通過予測、インタラクティブな星図、リマインダーで、次の観測を計画しましょう。\n\n• 次の観測できる通過を探す：通過時刻と、衛星が地平線からどれくらい高く見えるかを確認できます。\n\n• 星空を横切る軌跡をたどる：星、星座、天の川、月を表示するインタラクティブな星図を探索できます。\n\n• 大切なタイミングを知る：衛星が昇る時刻、見えている間の最高点に達する時刻、見えなくなる時刻を確認できます。\n\n• リマインダーを設定する：観測したい通過に通知を設定できます。\n\n• 宇宙ステーション以外も探す：明るい衛星や最近打ち上げられた衛星など、数千の衛星を調べられます。\n\n設定では、実験的なリアルタイムの星空表示を有効にできます。",
+        "keywords": "衛星,追跡,星空,星図,観測,軌道,通知,リマインダー,天体観測",
+        "promotionalText": "頭上を通過するISSと天宮を見つけましょう。観測できる通過を調べ、星空を横切る軌跡を確認し、次の観測に向けてリマインダーを設定できます。",
+        "supportUrl": "https://satellite-forecast.square.site",
+        "whatsNew": "• 国旗や身近な地名で、宇宙ステーションがどこを飛んでいるか確認できます。\n• 通過一覧を刷新。星図が大きくなり、観測時刻も分かりやすくなりました。\n• やさしいハイライトで操作をご案内。初めて観測可能な通過を開くと、星図の使い方を動画で確認できます。\n• 小さなiPhoneでも使いやすいレイアウトに改善しました。"
+      },
+      "relationships": {
+        "appScreenshotSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/f6d90571-4581-4cb6-bf65-f86bb6217aba/relationships/appScreenshotSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/f6d90571-4581-4cb6-bf65-f86bb6217aba/appScreenshotSets"
+          }
+        },
+        "appPreviewSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/f6d90571-4581-4cb6-bf65-f86bb6217aba/relationships/appPreviewSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/f6d90571-4581-4cb6-bf65-f86bb6217aba/appPreviewSets"
+          }
+        },
+        "searchKeywords": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/f6d90571-4581-4cb6-bf65-f86bb6217aba/relationships/searchKeywords",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/f6d90571-4581-4cb6-bf65-f86bb6217aba/searchKeywords"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/f6d90571-4581-4cb6-bf65-f86bb6217aba"
+      }
+    },
+    "links": {
+      "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/f6d90571-4581-4cb6-bf65-f86bb6217aba"
+    }
+  },
+  "ko": {
+    "data": {
+      "type": "appStoreVersionLocalizations",
+      "id": "47b8d784-40af-4503-bf48-f84d938f484f",
+      "attributes": {
+        "locale": "ko",
+        "description": "언제 하늘을 올려다보고 어느 방향을 봐야 할지 알아보세요.\n\n우주정거장 통과는 선택한 위치에서 국제우주정거장, 톈궁 및 다른 위성을 찾도록 도와줍니다. 통과 예측, 대화형 별지도, 알림으로 다음 관측을 계획하세요.\n\n• 다음 관측 가능한 통과 찾기: 통과 시각과 위성이 지평선 위로 얼마나 높이 올라오는지 확인하세요.\n\n• 하늘을 가로지르는 경로 확인하기: 별, 별자리, 은하수, 달이 표시되는 대화형 별지도를 살펴보세요.\n\n• 주요 순간 알아보기: 위성이 떠오르고, 보이는 구간에서 가장 높은 지점에 도달하고, 시야에서 사라지는 시각을 확인하세요.\n\n• 알림 설정하기: 관측하고 싶은 통과에 맞춰 알림을 예약하세요.\n\n• 우주정거장 너머로 탐색하기: 밝은 위성과 최근 발사된 위성을 포함한 수천 개의 위성을 살펴보세요.\n\n설정에서 실험적인 실시간 하늘 보기를 켤 수 있습니다.",
+        "keywords": "위성,추적,천문학,별자리,별지도,궤도,알림,관측,하늘",
+        "marketingUrl": "https://satellite-forecast.square.site",
+        "promotionalText": "머리 위를 지나는 ISS와 톈궁을 찾아보세요. 관측 가능한 통과와 별 사이의 이동 경로를 확인하고 다음 관측을 위한 알림을 설정하세요.",
+        "supportUrl": "https://satellite-forecast.square.site",
+        "whatsNew": "• 국기와 익숙한 지명으로 우주정거장이 어디를 지나고 있는지 확인하세요.\n• 더 큰 별자리 지도와 명확한 관측 시각으로 통과 목록을 새롭게 구성했습니다.\n• 은은한 강조 표시로 사용법을 안내하며, 관측 가능한 통과를 처음 열면 별자리 지도 안내 영상이 재생됩니다.\n• 작은 iPhone에서도 보기 편하도록 화면을 개선했습니다."
+      },
+      "relationships": {
+        "appScreenshotSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/47b8d784-40af-4503-bf48-f84d938f484f/relationships/appScreenshotSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/47b8d784-40af-4503-bf48-f84d938f484f/appScreenshotSets"
+          }
+        },
+        "appPreviewSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/47b8d784-40af-4503-bf48-f84d938f484f/relationships/appPreviewSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/47b8d784-40af-4503-bf48-f84d938f484f/appPreviewSets"
+          }
+        },
+        "searchKeywords": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/47b8d784-40af-4503-bf48-f84d938f484f/relationships/searchKeywords",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/47b8d784-40af-4503-bf48-f84d938f484f/searchKeywords"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/47b8d784-40af-4503-bf48-f84d938f484f"
+      }
+    },
+    "links": {
+      "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/47b8d784-40af-4503-bf48-f84d938f484f"
+    }
+  },
+  "zh-Hans": {
+    "data": {
+      "type": "appStoreVersionLocalizations",
+      "id": "71b01ecf-445e-4c6a-9bd1-5715f8f45375",
+      "attributes": {
+        "locale": "zh-Hans",
+        "description": "知道何时抬头，也知道朝哪里看。\n\n天宫空间站过境帮助您在所选地点寻找天宫空间站、国际空间站及其他卫星。通过过境预测、交互式星图和提醒，提前规划下一次观测。\n\n• 寻找下一次可见过境：查看过境时间，了解卫星将在地平线上方升到多高。\n\n• 追随划过星空的轨迹：探索包含恒星、星座、银河和月亮的交互式星图。\n\n• 掌握关键时刻：了解卫星何时升起、何时到达可见轨迹的最高点，以及何时消失在视野中。\n\n• 设置观测提醒：为想看的过境安排提醒。\n\n• 探索空间站以外的卫星：浏览数千颗卫星，包括明亮卫星和近期发射的卫星。\n\n您还可以在设置中开启实验性的实时星空视图。",
+        "keywords": "卫星,追踪,星图,观星,天文,轨道,提醒,观测,星空,月相",
+        "promotionalText": "下一次空间站过境，提前准备。查看天宫和国际空间站的可见过境时间与星空轨迹，设置提醒，把握观测时机。",
+        "supportUrl": "https://satellite-forecast.square.site",
+        "whatsNew": "• 通过国旗和熟悉的地名，了解空间站正飞越哪里。\n• 全新过境列表，星图更大，观测时间更清晰。\n• 柔和的高亮引导你开始使用，首次打开可见过境时会播放星图教学视频。\n• 中文界面优先显示天宫空间站，并优化了小屏 iPhone 的布局。"
+      },
+      "relationships": {
+        "appScreenshotSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/71b01ecf-445e-4c6a-9bd1-5715f8f45375/relationships/appScreenshotSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/71b01ecf-445e-4c6a-9bd1-5715f8f45375/appScreenshotSets"
+          }
+        },
+        "appPreviewSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/71b01ecf-445e-4c6a-9bd1-5715f8f45375/relationships/appPreviewSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/71b01ecf-445e-4c6a-9bd1-5715f8f45375/appPreviewSets"
+          }
+        },
+        "searchKeywords": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/71b01ecf-445e-4c6a-9bd1-5715f8f45375/relationships/searchKeywords",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/71b01ecf-445e-4c6a-9bd1-5715f8f45375/searchKeywords"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/71b01ecf-445e-4c6a-9bd1-5715f8f45375"
+      }
+    },
+    "links": {
+      "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/71b01ecf-445e-4c6a-9bd1-5715f8f45375"
+    }
+  }
+}

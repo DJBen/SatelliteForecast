@@ -11,6 +11,99 @@ import simd
 
 @MainActor
 final class NativeArchitectureTests: XCTestCase {
+    func testOfflineGeographicContext() async throws {
+        let lookup = GeographicRegionLookup()
+        for (latitude, longitude, name) in [(48.85, 2.35, "France"),
+                                            (35.68, 139.69, "Japan"),
+                                            (-18.14, 178.44, "Fiji"),
+                                            (1.35, 103.82, "Singapore")] {
+            let result = await lookup.summary(latitude: latitude, longitude: longitude)
+            XCTAssertEqual(result?.name, name)
+            XCTAssertEqual(result?.isWater, false)
+            XCTAssertNotNil(result?.flag)
+            XCTAssertEqual(result?.compactDescription(locale: Locale(identifier: "en")), "Over \(name)")
+        }
+        let ocean = await lookup.summary(latitude: 0, longitude: -140)
+        XCTAssertTrue(ocean?.name.contains("Pacific") == true)
+        XCTAssertTrue(ocean?.detail(locale: Locale(identifier: "en")).contains("km") == true)
+        XCTAssertNil(ocean?.flag)
+        XCTAssertFalse(ocean?.compactDescription(locale: Locale(identifier: "en")).contains("km") == true)
+        let japan = await lookup.summary(latitude: 35.68, longitude: 139.69)
+        XCTAssertEqual(japan?.flag, "🇯🇵")
+        let east = await lookup.summary(latitude: 0, longitude: 180)
+        let west = await lookup.summary(latitude: 0, longitude: -180)
+        XCTAssertEqual(east, west)
+        let wrapped = await lookup.summary(latitude: 0, longitude: 220)
+        XCTAssertEqual(wrapped, ocean)
+        let invalid = await lookup.summary(latitude: .nan, longitude: 0)
+        XCTAssertNil(invalid)
+    }
+
+    func testGeographicLocalization() async throws {
+        let lookup = GeographicRegionLookup()
+        let japanResult = await lookup.summary(latitude: 35.68, longitude: 139.69)
+        let japan = try XCTUnwrap(japanResult)
+        let expected = ["en": "Over Japan", "fr": "À la verticale : Japon",
+                        "es": "Sobre: Japón", "pt-BR": "Sobre: Japão",
+                        "ru": "Под спутником: Япония", "ja": "日本の上空",
+                        "ko": "일본 상공", "zh-Hans": "日本上空"]
+        for (language, text) in expected {
+            let locale = Locale(identifier: language)
+            XCTAssertEqual(japan.compactDescription(locale: locale), text)
+            XCTAssertEqual(japan.flag, "🇯🇵")
+            XCTAssertFalse(GeographicLocalization.text("unavailable", locale: locale).contains("geography."))
+        }
+        XCTAssertEqual(japan.compactDescription(locale: Locale(identifier: "fr-CA")), expected["fr"])
+        XCTAssertEqual(japan.compactDescription(locale: Locale(identifier: "pt_BR")), expected["pt-BR"])
+        XCTAssertEqual(japan.compactDescription(locale: Locale(identifier: "de-DE")), expected["en"])
+        let englishOnly = GeographicRegionLookup.Place(names: ["en": "Example Sea"], countryCode: nil)
+        XCTAssertEqual(englishOnly.name(locale: Locale(identifier: "ru")), "Example Sea")
+        let near = GeographicRegionLookup.Summary(place: englishOnly, isWater: true,
+            nearestLand: japan.place, distanceKilometers: 200, bearingDegrees: 90)
+        XCTAssertEqual(near.compactDescription(locale: Locale(identifier: "ja")), "Example Sea・日本付近")
+        XCTAssertFalse(near.compactDescription(locale: Locale(identifier: "fr")).contains("200"))
+        let fallback = GeographicRegionLookup.Summary(place: nil, isWater: false,
+            nearestLand: japan.place, distanceKilometers: 10, bearingDegrees: 0)
+        XCTAssertEqual(fallback.compactDescription(locale: Locale(identifier: "ko")), "일본 인근")
+        let distant = GeographicRegionLookup.Summary(place: englishOnly, isWater: true,
+            nearestLand: japan.place, distanceKilometers: 1234, bearingDegrees: 90)
+        XCTAssertTrue(distant.detail(locale: Locale(identifier: "ru")).contains("восток"))
+        XCTAssertTrue(distant.detail(locale: Locale(identifier: "ru")).contains("км"))
+        let pacificResult = await lookup.summary(latitude: 0, longitude: -140)
+        let pacific = try XCTUnwrap(pacificResult)
+        XCTAssertEqual(pacific.compactDescription(locale: Locale(identifier: "zh-CN")), "太平洋上空")
+    }
+
+    func testSubdivisionsAndShortCountryNames() async throws {
+        let lookup = GeographicRegionLookup()
+        for (lat, lon, expected, flag) in [
+            (34.05, -118.24, "Over California, US", "🇺🇸"),
+            (30.27, -97.74, "Over Texas, US", "🇺🇸"),
+            (43.65, -79.38, "Over Ontario, Canada", "🇨🇦"),
+            (-27.47, 153.02, "Over Queensland, Australia", "🇦🇺"),
+            (19.08, 72.88, "Over Maharashtra, India", "🇮🇳"),
+            (25.20, 55.27, "Over UAE", "🇦🇪"),
+            (51.51, -0.13, "Over UK", "🇬🇧")
+        ] {
+            let result = await lookup.summary(latitude: lat, longitude: lon)
+            XCTAssertEqual(result?.compactDescription(locale: Locale(identifier: "en")), expected)
+            XCTAssertEqual(result?.flag, flag)
+        }
+        let california = await lookup.summary(latitude: 34.05, longitude: -118.24)
+        XCTAssertEqual(california?.compactDescription(locale: Locale(identifier: "fr")), "À la verticale : Californie, USA")
+        XCTAssertEqual(california?.compactDescription(locale: Locale(identifier: "zh-Hans")), "美国·加利福尼亚州上空")
+        // Offshore proximity still refers to a country, not an inland state boundary.
+        let country = GeographicRegionLookup.Place(names: ["en": "United States of America"], countryCode: "US")
+        let sea = GeographicRegionLookup.Place(names: ["en": "Pacific Ocean"], countryCode: nil)
+        let offshore = GeographicRegionLookup.Summary(place: sea, isWater: true,
+            nearestLand: country, distanceKilometers: 200, bearingDegrees: 90)
+        XCTAssertEqual(offshore.compactDescription(locale: Locale(identifier: "en")), "Pacific Ocean · near US")
+        XCTAssertEqual(country.countryName(locale: Locale(identifier: "ru")), "США")
+        let fallback = GeographicRegionLookup.Summary(place: country, isWater: false,
+            nearestLand: nil, distanceKilometers: nil, bearingDegrees: nil)
+        XCTAssertEqual(fallback.compactDescription(locale: Locale(identifier: "en")), "Over US")
+    }
+
     func testRootTabVisibilityUpdatesWithoutLegacyStore() async throws {
         // Root configures application-wide UIKit appearance. Restore it so this test
         // cannot change the independent screen snapshot fixtures that run afterward.

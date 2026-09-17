@@ -564,3 +564,54 @@ The localized string for the status of a spare satellite */
 "Don't show again" = "No volver a mostrar";
 
 "Watch onboarding again" = "Volver a ver la introducción";
+
+/* Satellite geographic context */
+/* Current subsatellite location. %@ is a standalone geographic name; avoid grammatical inflection of inserted names. */
+"geography.over" = "Sobre: %@";
+/* %1$@ is a sea/ocean; %2$@ is a nearby country/territory. Keep both placeholders; reorder as needed. */
+"geography.waterNear" = "%1$@ · cerca de: %2$@";
+/* No named marine region was found. %@ is a nearby country/territory, not the country being flown over. */
+"geography.near" = "Cerca de: %@";
+/* Shown and spoken when current satellite geography cannot be resolved. */
+"geography.unavailable" = "Ubicación no disponible";
+/* Optional detailed description, not currently displayed on home. */
+"geography.landDetail" = "Sobre tierra · Explorar la trayectoria terrestre";
+/* %@ is the standalone name of the country/territory with the nearest coast. */
+"geography.coast" = "Cerca de la costa: %@";
+/* Optional detail: %1$@ is a localized number in km; %2$@ is the direction FROM the nearest coast TO the satellite; %3$@ is its country/territory. Use standalone noun labels to avoid declension. */
+"geography.distance" = "Aprox. %1$@ km · %2$@ · costa más cercana: %3$@";
+/* Standalone compass direction, used in the optional distance detail. */
+"geography.north" = "norte";
+/* Standalone compass direction, used in the optional distance detail. */
+"geography.northeast" = "noreste";
+/* Standalone compass direction, used in the optional distance detail. */
+"geography.east" = "este";
+/* Standalone compass direction, used in the optional distance detail. */
+"geography.southeast" = "sureste";
+/* Standalone compass direction, used in the optional distance detail. */
+"geography.south" = "sur";
+/* Standalone compass direction, used in the optional distance detail. */
+"geography.southwest" = "suroeste";
+/* Standalone compass direction, used in the optional distance detail. */
+"geography.west" = "oeste";
+/* Standalone compass direction, used in the optional distance detail. */
+"geography.northwest" = "noroeste";
+
+/* Familiar country names and first-level administrative regions. */
+/* Country short name, used only for this ISO country code. */
+"geography.country.US" = "EE. UU.";
+/* Country short name, used only for this ISO country code. */
+"geography.country.AE" = "EAU";
+/* Country short name, used only for this ISO country code. */
+"geography.country.GB" = "Reino Unido";
+/* %1$@ is a state/province/region; %2$@ is its country. Reorder for natural local usage. */
+"geography.subdivision" = "%1$@, %2$@";
+
+/* Pass list: best illuminated time, approximate visible minutes, and alarm accessibility. */
+"Best view" = "Mejor momento";
+"Visible for %@ min" = "Visible durante %@ min";
+"Visible for less than 1 min" = "Visible menos de 1 min";
+"Alarm scheduled" = "Alarma programada";
+
+/* Elevation at the best visible point, rounded to a whole degree. */
+"%lld\u00b0 above horizon" = "%lld° sobre el horizonte";

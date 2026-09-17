@@ -9,6 +9,7 @@ import SatelliteForecast
 import SwiftUI
 
 struct SatelliteCategoryCell: View {
+    @Environment(\.compactHeightLayout) private var compactHeight
     let category: SatelliteCategory
 
     @ViewBuilder private func background(category: SatelliteCategory) -> some View {
@@ -53,7 +54,7 @@ struct SatelliteCategoryCell: View {
                     .frame(width: geometry.size.width, height: geometry.size.height)
                     .clipped()
             }
-            .frame(height: 156)
+            .frame(height: 156 * (compactHeight ? 0.85 : 1))
         }
         .background(AppTheme.surface)
         .clipShape(RoundedRectangle(cornerRadius: AppTheme.cardRadius))

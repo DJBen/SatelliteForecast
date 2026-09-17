@@ -36,9 +36,18 @@ public struct BackgroundSkyConfigs: Equatable, Hashable, Sendable {
             self.apply = apply
         }
 
+        /// Magnitude gives flux, not angular diameter. A Gaussian point source's
+        /// visible radius grows with sqrt(log(flux)); compress it for a phone chart.
+        /// The floor preserves faint-star legibility and the ceiling bounds Venus.
+        public static func pointSourceRadius(magnitude: Double, scale: CGFloat = 1) -> CGFloat {
+            let magnitude = magnitude.isFinite ? min(30, max(-30, magnitude)) : 6
+            let flux = pow(10, -0.4 * magnitude)
+            return scale * min(3.2, 0.55 + 0.8 * sqrt(log1p(8 * flux)))
+        }
+
         public static let `default`: StarMagToDisplayRadiusMappingFunction = {
             StarMagToDisplayRadiusMappingFunction(id: "default") { mag in
-                min(12, max(exp(mag * -0.38) * 2.5, 0))
+                pointSourceRadius(magnitude: mag)
             }
         }()
     }
@@ -145,7 +154,7 @@ public struct SkyChartConfigs: Equatable, Hashable, Sendable {
             backgroundSkyConfigs: BackgroundSkyConfigs(
                 stars: .limitedMagnitude(2.8),
                 starMagToDisplayRadiusMappingFunction: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction(id: "preview", apply: { mag in
-                    min(8, max(exp(mag * -0.325) * 1.4, 0))
+                    BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction.pointSourceRadius(magnitude: mag, scale: 0.75)
                 }),
                 showConstellationLines: false,
                 visibleBodies: [.sun, .moon, .venus, .jupiter],

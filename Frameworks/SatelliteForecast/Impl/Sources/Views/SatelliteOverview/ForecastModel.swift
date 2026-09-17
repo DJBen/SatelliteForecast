@@ -22,17 +22,21 @@ public struct ForecastInput: Equatable {
 @MainActor
 public struct ForecastClient {
     public var load: @MainActor (SpecialSatellite, ForecastRequest) async throws -> [Pass]
+    public var satelliteInfo: @MainActor (SpecialSatellite) async throws -> SatelliteInfo?
     public var now: @MainActor () -> Date
     public var sleep: @MainActor (Duration) async throws -> Void
     public init(load: @escaping @MainActor (SpecialSatellite, ForecastRequest) async throws -> [Pass],
+                satelliteInfo: @escaping @MainActor (SpecialSatellite) async throws -> SatelliteInfo? = { _ in nil },
                 now: @escaping @MainActor () -> Date = { Date() },
                 sleep: @escaping @MainActor (Duration) async throws -> Void = { try await Task.sleep(for: $0) }) {
         self.load = load
+        self.satelliteInfo = satelliteInfo
         self.now = now
         self.sleep = sleep
     }
     public static func live(service: ForecastService) -> Self {
-        Self(load: { try await service.passes(for: $0, request: $1) })
+        Self(load: { try await service.passes(for: $0, request: $1) },
+             satelliteInfo: { try await service.satelliteInfo(for: $0) })
     }
 }
 
@@ -54,6 +58,10 @@ public final class ForecastModel {
         self.currentDate = client.now()
         self.issNextPass = issNextPass
         self.tianheNextPass = tianheNextPass
+    }
+
+    func satelliteInfo(for satellite: SpecialSatellite) async throws -> SatelliteInfo? {
+        try await client.satelliteInfo(satellite)
     }
 
     /// The view owns this task. Countdown updates use the injected clock; expensive

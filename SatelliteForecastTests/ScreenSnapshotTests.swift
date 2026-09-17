@@ -7,13 +7,162 @@ import BTree
 import SatelliteForecast
 @testable import SatelliteForecastImpl
 import SatelliteKit
+import SolarSystem
 
 /// Native view snapshots at a fixed phone size, locale, timezone and orbital epoch.
 /// No live store middleware, location permissions, notifications or network loaders.
 @MainActor
 final class ScreenSnapshotTests: XCTestCase {
-    private let size = CGSize(width: 402, height: 874)
+    private let isSEReview = ProcessInfo.processInfo.environment["SNAPSHOT_DEVICE"] == "se3"
+    private var size: CGSize { isSEReview ? CGSize(width: 375, height: 667) : CGSize(width: 402, height: 874) }
     private let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
+
+    func testPointSourceRenderingReview() async throws {
+        let mapping = BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction.self
+        for scale: CGFloat in [0.75, 1, 1.35] {
+            let radii = stride(from: -30.0, through: 30.0, by: 0.1).map {
+                mapping.pointSourceRadius(magnitude: $0, scale: scale)
+            }
+            XCTAssertTrue(radii.allSatisfy { $0.isFinite && $0 >= 0.55 * scale && $0 <= 3.2 * scale })
+            XCTAssertTrue(zip(radii, radii.dropFirst()).allSatisfy { $0 >= $1 })
+        }
+        let catalog = try await AppStarCatalog.load()
+        let fixture = try Fixture(catalog: catalog)
+        let cases: [(String, String, LatLonAlt, Double, Bool)] = [
+            ("2020-venus-dusk", "2020-04-28T00:00:00Z", LatLonAlt(37.49, -122.23, 0), -9, false),
+            ("2023-venus-dawn", "2023-09-19T00:00:00Z", LatLonAlt(37.49, -122.23, 0), -9, true),
+            ("2025-winter-night", "2025-01-10T00:00:00Z", LatLonAlt(51.51, -0.13, 0), -30, false),
+            ("2026-venus-dusk", "2026-09-16T00:00:00Z", LatLonAlt(37.49, -122.23, 0), -7, false),
+            ("2028-southern-night", "2028-07-10T00:00:00Z", LatLonAlt(-33.87, 151.21, 0), -35, false)
+        ]
+        var report = "Date-based rendering review (UTC; observer degrees)\n"
+        for (name, iso, observer, elevation, morning) in cases {
+            let start = try XCTUnwrap(ISO8601DateFormatter().date(from: iso)).julianDate
+            let candidates = (0..<1440).map { start + Double($0) / 1440 }.filter {
+                (SkyChartAtmosphere.sun(observer: observer, julianDate: $0).azim < 180) == morning
+            }
+            let date = try XCTUnwrap(candidates.min {
+                abs(SkyChartAtmosphere.sun(observer: observer, julianDate: $0).elev - elevation) <
+                abs(SkyChartAtmosphere.sun(observer: observer, julianDate: $1).elev - elevation)
+            })
+            let venus = azel(time: Date(julianDate: date), site: LatLon(observer), cele: RADec(SolarSystemBody.venus.eci(julianDay: date)))
+            if name.contains("venus") { XCTAssertGreaterThan(venus.elev, 0) }
+            report += "\(name): \(ISO8601DateFormatter().string(from: Date(julianDate: date))), observer \(observer), Sun \(SkyChartAtmosphere.sun(observer: observer, julianDate: date).elev), Venus altitude \(venus.elev), magnitude \(SolarSystemBody.venus.apparentMagnitude(julianDay: date) ?? 0)\n"
+            for (configuration, configs) in [("standard", BackgroundSkyConfigs.preset),
+                ("compact", SkyChartConfigs.preview.backgroundSkyConfigs),
+                ("dense", BackgroundSkyConfigs(stars: .limitedMagnitude(6),
+                    starMagToDisplayRadiusMappingFunction: .init(id: "review-detail") {
+                        mapping.pointSourceRadius(magnitude: $0, scale: 1.35)
+                    }))] {
+                let view = RealtimeSkyViewImpl(viewModel: .init(state: .init(observer: observer)),
+                    context: .init(basicChartConfigs: .init(), backgroundSkyConfigs: configs,
+                        satelliteMagToRadiusFunction: .default, starManager: catalog, julianDateProvider: { date }),
+                    backgroundSkyViewFactory: ViewFactory { fixture.factory.background($0) })
+                try await assertSnapshot(AnyView(view), name: "point-source-\(name)-\(configuration)-dark", style: .dark)
+            }
+        }
+        let folder = root.appendingPathComponent("Documentation/DesignReview/PointSources")
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        try report.write(to: folder.appendingPathComponent("moments.txt"), atomically: true, encoding: .utf8)
+    }
+
+    func testGeographicLocalizationGallery() async throws {
+        let lookup = GeographicRegionLookup()
+        let landResult = await lookup.summary(latitude: 34.05, longitude: -118.24)
+        let oceanResult = await lookup.summary(latitude: 0, longitude: -140)
+        let land = try XCTUnwrap(landResult)
+        let ocean = try XCTUnwrap(oceanResult)
+        // Presentation fixture: exercise all names and nearby-country grammar together.
+        let nearby = GeographicRegionLookup.Summary(place: ocean.place, isWater: true,
+            nearestLand: land.place, distanceKilometers: 200, bearingDegrees: 90)
+        for style in [UIUserInterfaceStyle.dark] {
+            let view = VStack(alignment: .leading, spacing: 12) {
+                ForEach(["en", "fr", "es", "pt-BR", "ru", "ja", "ko", "zh-Hans"], id: \.self) { language in
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(language).font(.caption.bold()).foregroundStyle(.primary)
+                        GeographicLocationCaption(summary: land)
+                        GeographicLocationCaption(summary: nearby)
+                        GeographicLocationCaption(summary: nil)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .environment(\.locale, Locale(identifier: language))
+                }
+            }
+            .padding(20)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .background(AppTheme.background)
+            try await assertSnapshot(AnyView(view), name: "geography-localization-\(style == .dark ? "dark" : "light")", style: style)
+        }
+    }
+
+    func testPassListLayoutReview() async throws {
+        UserDefaults.standard.set(true, forKey: "hasCompletedAllPassesOnboarding")
+        NSTimeZone.default = TimeZone(secondsFromGMT: 0)!
+        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let view = try XCTUnwrap(fixture.screens().first { $0.0 == "06-pass-forecast" }?.1)
+        let visibleCount = fixture.passes.filter { $0.pass.visibility == .visible }.count
+        for style in [UIUserInterfaceStyle.dark] {
+            let appearance = style == .dark ? "dark" : "light"
+            try await assertSnapshot(view, name: "06-pass-forecast-\(appearance)", style: style)
+            try await assertSnapshot(view, name: "pass-list-visible-\(appearance)", style: style,
+                scrollDistance: 180, checkFullHeight: false)
+            try await assertSnapshot(view, name: "pass-list-invisible-\(appearance)", style: style,
+                scrollDistance: CGFloat(visibleCount) * (isSEReview ? 192 : 224.5) + 510, checkFullHeight: false)
+        }
+    }
+
+    func testHomeDiscovery() async throws {
+        let defaults = UserDefaults.standard
+        let previous = defaults.object(forKey: "hasCompletedHomeOnboarding")
+        defer { defaults.set(previous, forKey: "hasCompletedHomeOnboarding") }
+        defaults.set(false, forKey: "hasCompletedHomeOnboarding")
+        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let home = try XCTUnwrap(fixture.screens().first { $0.0 == "03-forecast" }?.1)
+        for language in ["en", "zh-Hans"] {
+            try await assertSnapshot(AnyView(home.environment(\.locale, Locale(identifier: language))),
+                name: "home-discovery-\(language)-dark", style: .dark)
+        }
+        XCTAssertFalse(defaults.bool(forKey: "hasCompletedHomeOnboarding"))
+        for language in ["zh", "zh-Hans", "zh-Hant", "zh-TW", "zh-HK"] {
+            XCTAssertEqual(SatelliteOverviewViewImpl.stationOrder(for: Locale(identifier: language)), [.tianhe, .iss])
+        }
+        for language in ["en", "fr", "ja", "ko", "ru", "es", "pt-BR"] {
+            XCTAssertEqual(SatelliteOverviewViewImpl.stationOrder(for: Locale(identifier: language)), [.iss, .tianhe])
+        }
+        defaults.set(true, forKey: "hasCompletedHomeOnboarding")
+        DebugModel().send(.resetHomeOnboarding)
+        XCTAssertFalse(defaults.bool(forKey: "hasCompletedHomeOnboarding"))
+    }
+
+    func testPassDiscoveryGlow() async throws {
+        let defaults = UserDefaults.standard
+        let previous = defaults.object(forKey: "hasCompletedAllPassesOnboarding")
+        defer { defaults.set(previous, forKey: "hasCompletedAllPassesOnboarding") }
+        defaults.set(false, forKey: "hasCompletedAllPassesOnboarding")
+        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let view = try XCTUnwrap(fixture.screens().first { $0.0 == "06-pass-forecast" }?.1)
+        try await assertSnapshot(view, name: "pass-discovery-glow-dark", style: .dark,
+            scrollDistance: 180, checkFullHeight: false)
+        XCTAssertFalse(defaults.bool(forKey: "hasCompletedAllPassesOnboarding"),
+            "Viewing the list must not consume the first visible-pass tutorial")
+    }
+
+    func testFirstVisiblePassVideo() async throws {
+        let defaults = UserDefaults.standard
+        let previous = defaults.object(forKey: "hasCompletedAllPassesOnboarding")
+        defer { defaults.set(previous, forKey: "hasCompletedAllPassesOnboarding") }
+        defaults.set(false, forKey: "hasCompletedAllPassesOnboarding")
+        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let detail = try XCTUnwrap(fixture.screens().first { $0.0 == "07-pass-compass-off" }?.1)
+        try await assertSnapshot(AnyView(detail.modifier(FirstVisiblePassTutorial(isVisible: false))),
+            name: "tutorial-invisible-pass-dark", style: .dark, expectedModal: false)
+        XCTAssertFalse(defaults.bool(forKey: "hasCompletedAllPassesOnboarding"))
+        try await assertSnapshot(AnyView(detail.modifier(FirstVisiblePassTutorial(isVisible: true))),
+            name: "tutorial-first-visible-pass-dark", style: .dark, expectedModal: true)
+        XCTAssertTrue(defaults.bool(forKey: "hasCompletedAllPassesOnboarding"))
+        try await assertSnapshot(AnyView(detail.modifier(FirstVisiblePassTutorial(isVisible: true))),
+            name: "tutorial-returning-visible-pass-dark", style: .dark, expectedModal: false)
+    }
 
     func testRecordedOnboardingPass() throws {
         let example = try OnboardingPassExample.load()
@@ -34,7 +183,7 @@ final class ScreenSnapshotTests: XCTestCase {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent("snapshot-empty-" + UUID().uuidString)
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: directory) }
-        for style in [UIUserInterfaceStyle.light, .dark] {
+        for style in [UIUserInterfaceStyle.dark] {
             let fixture = try Fixture(catalog: catalog)
             for (name, view) in fixture.screens() {
                 let selected = ProcessInfo.processInfo.environment["SNAPSHOT_SCREEN"] ?? ""
@@ -165,8 +314,21 @@ final class ScreenSnapshotTests: XCTestCase {
         guard let destination = env["STORE_SCREENSHOT_OUTPUT"] else { throw XCTSkip("Run scripts/capture-store-screenshots.py") }
         let locale = env["STORE_SCREENSHOT_LOCALE"] ?? "en-US"
         let previousTimeZone = NSTimeZone.default
-        NSTimeZone.default = TimeZone(identifier: "America/Los_Angeles")!
+        let locations: [String: (String, Double, Double, String)] = [
+            "en-US": ("US", 37.486743, -122.226560, "America/Los_Angeles"),
+            "fr-FR": ("FR", 45.764, 4.8357, "Europe/Paris"),
+            "es-ES": ("ES", 40.4168, -3.7038, "Europe/Madrid"),
+            "pt-BR": ("BR", -23.5505, -46.6333, "America/Sao_Paulo"),
+            "ru": ("RU", 48.708, 44.5133, "Europe/Volgograd"),
+            "ja": ("JP", 35.6762, 139.6503, "Asia/Tokyo"),
+            "ko": ("KR", 37.5665, 126.978, "Asia/Seoul"),
+            "zh-Hans": ("CN", 31.2304, 121.4737, "Asia/Shanghai")
+        ]
+        let location = try XCTUnwrap(locations[locale])
+        let timeZone = TimeZone(identifier: location.3)!
+        NSTimeZone.default = timeZone
         defer { NSTimeZone.default = previousTimeZone }
+        UserDefaults.standard.set(true, forKey: "hasCompletedHomeOnboarding")
         UserDefaults.standard.set(true, forKey: "hasCompletedAllPassesOnboarding")
         UIView.setAnimationsEnabled(false)
         defer { UIView.setAnimationsEnabled(true) }
@@ -176,21 +338,59 @@ final class ScreenSnapshotTests: XCTestCase {
             try String(contentsOf: fixtureURL.appendingPathComponent(name), encoding: .utf8)
                 .split(whereSeparator: \.isNewline).map(String.init)
         }
-        let now = ISO8601DateFormatter().date(from: "2026-09-10T01:00:00Z")!
-        let fixture = try Fixture(catalog: catalog, now: now, tle: tle("iss.tle"))
-        let tianhe = try tle("tiangong.tle")
-        let info = try SatelliteInfo(elements: Elements(tianhe[0], tianhe[1], tianhe[2]))
-        let snapshots = try info.generateSnapshots(observer: fixture.observer, julianDateRange: fixture.range)
-        let passes = try info.findPasses(observer: fixture.observer, coarseSnapshots: snapshots)
-        let featured = ["ja", "ko", "zh-Hans"].contains(locale) ? try Fixture(catalog: catalog, now: now, tle: tianhe) : fixture
-        let candidates = try [fixture, Fixture(catalog: catalog, now: now, tle: tianhe)]
-        let report = candidates.flatMap { candidate in
-            candidate.passes.filter { $0.pass.visibility == .visible }.map { p in
-                "\(candidate.info.noradIndex) \(Date(julianDate: p.pass.rise.julianDate)) elevation=\(p.pass.highestIlluminated?.elev ?? 0)"
+        let issTLE = try tle("iss.tle")
+        let tianheTLE = try tle("tiangong.tle")
+        let selectedTLE = locale == "zh-Hans" ? tianheTLE : issTLE
+        let satellite = Satellite(withTLE: try Elements(selectedTLE[0], selectedTLE[1], selectedTLE[2]))
+        let start = ISO8601DateFormatter().date(from: "2026-09-10T01:00:00Z")!.julianDate
+        var candidates: [(Double, Double)] = []
+        for offset in stride(from: 0.0, to: 3 * 86400, by: 45) {
+            let date = start + offset / 86400
+            let point = try satellite.geoPosition(julianDays: date)
+            let deltaLongitude = (point.lon - location.2 + 540).truncatingRemainder(dividingBy: 360) - 180
+            let distance = pow(point.lat - location.1, 2) + pow(deltaLongitude * cos(location.1 * .pi / 180), 2)
+            candidates.append((date, distance))
+        }
+        var homeDate: Double?
+        var geography = ""
+        for candidate in candidates.sorted(by: { $0.1 < $1.1 }).prefix(100) {
+            let point = try satellite.geoPosition(julianDays: candidate.0)
+            if let summary = await GeographicRegionLookup.shared.summary(latitude: point.lat, longitude: point.lon),
+               !summary.isWater, summary.place?.countryCode == location.0 {
+                homeDate = candidate.0
+                geography = summary.compactDescription(locale: Locale(identifier: locale))
+                break
             }
-        }.joined(separator: "\n")
-        try report.write(to: URL(fileURLWithPath: destination).appendingPathComponent("pass-candidates.txt"), atomically: true, encoding: .utf8)
-        let screens = fixture.storeScreens(tianhePasses: passes, featured: featured)
+        }
+        let now = Date(julianDate: try XCTUnwrap(homeDate, "No real overflight found for \(locale)"))
+        let observer = LatLonAlt(location.1, location.2, 0)
+        let fixture = try Fixture(catalog: catalog, now: now, tle: issTLE, observer: observer)
+        let tiangong = try Fixture(catalog: catalog, now: now, tle: tianheTLE, observer: observer)
+        var bestPass: PassSnapshots?
+        for dayOffset in [0.0, -7.0, 7.0] {
+            let search = try Fixture(catalog: catalog, now: Date(julianDate: start + dayOffset),
+                tle: selectedTLE, observer: observer)
+            for pass in search.passes where pass.pass.visibility == .visible && pass.pass.sunElevationAtTransit < -10 {
+                if (pass.pass.highestIlluminated?.elev ?? 0) > (bestPass?.pass.highestIlluminated?.elev ?? 0) {
+                    bestPass = pass
+                }
+            }
+            if (bestPass?.pass.highestIlluminated?.elev ?? 0) > 55 { break }
+        }
+        let best = try XCTUnwrap(bestPass)
+        XCTAssertGreaterThan(best.pass.highestIlluminated?.elev ?? 0, 45, "Choose a spectacular dark-sky pass")
+        let featured = try Fixture(catalog: catalog,
+            now: Date(julianDate: best.pass.rise.julianDate - 1.0 / 24), tle: selectedTLE, observer: observer)
+        let report: [String: Any] = ["locale": locale, "country": location.0,
+            "homeDateUTC": ISO8601DateFormatter().string(from: now), "geography": geography,
+            "observerLatitude": observer.lat, "observerLongitude": observer.lon,
+            "timeZone": location.3, "featuredNORAD": featured.info.noradIndex,
+            "passForecastDateUTC": ISO8601DateFormatter().string(from: featured.now),
+            "featuredPassUTC": ISO8601DateFormatter().string(from: Date(julianDate: best.pass.rise.julianDate)),
+            "elevation": best.pass.highestIlluminated?.elev ?? 0]
+        try JSONSerialization.data(withJSONObject: report, options: [.prettyPrinted, .sortedKeys])
+            .write(to: URL(fileURLWithPath: destination).appendingPathComponent("selection-\(locale).json"))
+        let screens = fixture.storeScreens(tianhePasses: tiangong.passes, tianheInfo: tiangong.info, featured: featured)
         let selectedScreens = env["STORE_SCREENSHOT_SCREENS"]?.split(separator: ",").map(String.init)
         let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.first as? UIWindowScene)
         let folder = URL(fileURLWithPath: destination).appendingPathComponent(locale)
@@ -207,7 +407,7 @@ final class ScreenSnapshotTests: XCTestCase {
             host.rootView = AnyView(view.id(name)
                 .environment(\.motionManagerKey, CMMotionManager())
                 .environment(\.locale, Locale(identifier: locale))
-                .environment(\.timeZone, TimeZone(identifier: "America/Los_Angeles")!)
+                .environment(\.timeZone, timeZone)
                 .environment(\.colorScheme, .dark)
                 .environment(\.dynamicTypeSize, .large)
                 .transaction { $0.animation = nil })
@@ -232,7 +432,7 @@ final class ScreenSnapshotTests: XCTestCase {
         }
     }
 
-    private func assertSnapshot(_ view: AnyView, name: String, style: UIUserInterfaceStyle, scrollDistance: CGFloat? = nil) async throws {
+    private func assertSnapshot(_ view: AnyView, name: String, style: UIUserInterfaceStyle, scrollDistance: CGFloat? = nil, checkFullHeight: Bool = true, expectedModal: Bool? = nil) async throws {
         let host = UIHostingController(rootView: view
             .environment(\.motionManagerKey, CMMotionManager())
             .environment(\.locale, Locale(identifier: "en_US"))
@@ -250,7 +450,7 @@ final class ScreenSnapshotTests: XCTestCase {
         host.view.setNeedsLayout()
         host.view.layoutIfNeeded()
         // Allow SwiftUI layout, async star labels and UIKit navigation to settle.
-        try await Task.sleep(for: .milliseconds(name.hasPrefix("02-predictions-intro") ? 2500 : 800))
+        try await Task.sleep(for: .milliseconds((name.hasPrefix("02-predictions-intro") || name.hasPrefix("tutorial-")) ? 2500 : 800))
         host.view.layoutIfNeeded()
         if let scrollDistance {
             func scrollViews(in view: UIView) -> [UIScrollView] {
@@ -259,17 +459,27 @@ final class ScreenSnapshotTests: XCTestCase {
             let scroll = try XCTUnwrap(scrollViews(in: host.view).filter {
                 !$0.isHidden && $0.bounds.height > 200
             }.max { $0.bounds.height < $1.bounds.height })
-            XCTAssertGreaterThanOrEqual(scroll.convert(scroll.bounds, to: window).maxY,
-                                        window.bounds.maxY - 1, "Scroll viewport should extend behind the tab bar")
+            if checkFullHeight {
+                XCTAssertGreaterThanOrEqual(scroll.convert(scroll.bounds, to: window).maxY,
+                                            window.bounds.maxY - 1, "Scroll viewport should extend behind the tab bar")
+            }
             let bottom = scroll.contentSize.height - scroll.bounds.height + scroll.adjustedContentInset.bottom
             scroll.setContentOffset(CGPoint(x: 0, y: max(-scroll.adjustedContentInset.top, min(bottom, scrollDistance))), animated: false)
             try await Task.sleep(for: .milliseconds(500))
             host.view.layoutIfNeeded()
         }
+        if let expectedModal {
+            XCTAssertEqual(host.presentedViewController != nil, expectedModal,
+                "Only the first visible pass should present the tutorial video")
+        }
         let format = UIGraphicsImageRendererFormat()
         format.scale = 1
         let image = UIGraphicsImageRenderer(size: size, format: format).image { _ in
-            host.view.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
+            if expectedModal == true {
+                window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
+            } else {
+                host.view.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
+            }
         }
         window.isHidden = true
         window.rootViewController = nil
@@ -278,10 +488,14 @@ final class ScreenSnapshotTests: XCTestCase {
         attachment.lifetime = .keepAlways
         add(attachment)
         let mode = ProcessInfo.processInfo.environment["SNAPSHOT_RECORD"] ?? ""
-        let folder = root.appendingPathComponent("Documentation/DesignReview/\(mode == "before" ? "before" : "after")")
+        let baseFolder = root.appendingPathComponent(name.hasPrefix("point-source-") ? "Documentation/DesignReview/PointSources" : "Documentation/DesignReview/\(mode == "before" ? "before" : "after")")
+        let folder = isSEReview ? baseFolder.appendingPathComponent("se3") : baseFolder
         let url = folder.appendingPathComponent(name + ".png")
         let data = try XCTUnwrap(image.pngData())
-        if mode == "before" || mode == "after" {
+        // Playback timing is intentionally live. Assert modal presentation above,
+        // and keep a review capture instead of pixel-comparing video frames.
+        if expectedModal == true, mode != "before", mode != "after" { return }
+        if mode == "before" || mode == "after" || name.hasPrefix("point-source-") {
             try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
             try data.write(to: url)
         } else {
@@ -319,7 +533,7 @@ final class ScreenSnapshotTests: XCTestCase {
 struct Fixture {
     let catalog: AppStarCatalog
     let now: Date
-    let observer = LatLonAlt(37.486743, -122.226560, 0)
+    let observer: LatLonAlt
     let info: SatelliteInfo
     let passes: [PassSnapshots]
     let textResource: EphemerideResource
@@ -328,7 +542,8 @@ struct Fixture {
     var factory: ScreenFactory { ScreenFactory(session: session) }
     var range: ClosedRange<Double> { now.julianDate...(now.julianDate + 7) }
 
-    init(catalog: AppStarCatalog, now: Date = Date(timeIntervalSince1970: 1622592000), tle: [String]? = nil) throws {
+    init(catalog: AppStarCatalog, now: Date = Date(timeIntervalSince1970: 1622592000), tle: [String]? = nil, observer: LatLonAlt = LatLonAlt(37.486743, -122.226560, 0)) throws {
+        self.observer = observer
         self.catalog = catalog
         self.now = now
         let elements = try tle.map { try Elements($0[0], $0[1], $0[2]) } ?? Elements("ISS (ZARYA)",
@@ -350,7 +565,8 @@ struct Fixture {
         let pass = passes.first { $0.pass.sunElevationAtTransit < -6 && ($0.pass.highestIlluminated?.elev ?? 0) > 10 } ?? passes[0]
         let date = { now.julianDate }
         let nextPass = NextPass(nextVisiblePass: pass.pass, nextProminentPass: pass.pass)
-        let forecast = ForecastModel(client: .init(load: { _, _ in [] }, now: { now }),
+        let forecast = ForecastModel(client: .init(load: { _, _ in [] },
+                                     satelliteInfo: { satellite in satellite == .iss ? self.info : nil }, now: { now }),
                                      issNextPass: .loaded(nextPass), tianheNextPass: .loaded(nextPass))
         let overview = SatelliteOverviewViewImpl(model: forecast,
             input: .init(observer: observer, authorizationStatus: .authorizedWhenInUse),
@@ -376,7 +592,6 @@ struct Fixture {
             ("15-star-detail", AnyView(NavigationStack { SelectedStarLabel(starManager: catalog, star: catalog.brightestStars()[0]).padding().navigationTitle("Star details") })),
             ("17-mission-control", AnyView(MissionControlView(satelliteInfo: info, julianDateProvider: date, julianDateOffset: 0, userLocation: CLLocation(latitude: observer.lat, longitude: observer.lon)))),
             ("18-ephemeris-text", AnyView(NavigationStack { EphemerideTextBrowserView(resource: textResource) })),
-            ("19-pass-tutorial", AnyView(AllPassesOnboardingView(onComplete: {}, skyChartFactory: ViewFactory { factory.sky($0) }, satelliteData: SatelliteData(satelliteInfo: info, observer: observer, selectedPass: pass)))),
             ("20-debug", AnyView(DebugMenu(viewModel: .init(state: DebugMenuState(trueJulianDate: now.julianDate, config: .init(), pendingNotifications: [], deliveredNotifications: [], fcmToken: nil))))),
             ("16-night-mode", AnyView(NativeSettingsView(session: session).overlay(Color.red.blendMode(.plusDarker).allowsHitTesting(false)))),
         ]
@@ -386,36 +601,38 @@ struct Fixture {
 private struct StoreOverview: SatelliteOverviewView { let content: AnyView; var body: some View { content } }
 
 extension Fixture {
-    func storeScreens(tianhePasses: [PassSnapshots], featured: Fixture) -> [(String, AnyView)] {
+    func storeScreens(tianhePasses: [PassSnapshots], tianheInfo: SatelliteInfo? = nil, featured: Fixture) -> [(String, AnyView)] {
         func next(_ passes: [PassSnapshots]) -> NextPass {
             let visible = passes.first { $0.pass.visibility == .visible }
             let prominent = passes.first { $0.pass.visibility == .visible && ($0.pass.highestIlluminated?.elev ?? 0) > 45 }
             return NextPass(nextVisiblePass: visible?.pass, nextProminentPass: prominent?.pass)
         }
         let date = { now.julianDate }
-        let forecast = ForecastModel(client: .init(load: { _, _ in [] }, now: { now }), issNextPass: .loaded(next(passes)), tianheNextPass: .loaded(next(tianhePasses)))
+        let forecast = ForecastModel(client: .init(load: { _, _ in [] },
+                                     satelliteInfo: { satellite in satellite == .iss ? self.info : tianheInfo }, now: { now }), issNextPass: .loaded(next(passes)), tianheNextPass: .loaded(next(tianhePasses)))
         let overview = AnyView(SatelliteOverviewViewImpl(model: forecast,
             input: .init(observer: observer, authorizationStatus: .authorizedWhenInUse), navigationPath: .constant(NavigationPath()),
             context: .init(starManager: catalog, julianDateProvider: date), singleSatelliteWrappingViewFactory: { factory.detail($0) }))
+        let passObserver = featured.observer
+        let passRange = featured.range
+        let passDate = { featured.now.julianDate }
         let info = featured.info
         let trails = featured.trails
         let passes = featured.passes
         let category: SatelliteCategory = info.noradIndex == 25544 ? .iss : .tianhe
         let passList = AnyView(NavigationStack {
             Color.clear.navigationDestination(isPresented: .constant(true)) {
-                AllPassesView(viewModel: .init(state: .init(location: CLLocation(latitude: observer.lat, longitude: observer.lon), satelliteCategory: category, satelliteTrails: [info.noradIndex: trails])),
-                    context: .init(satelliteInfo: info, julianDateRange: range, observer: observer, starManager: catalog, julianDateProvider: date),
+                AllPassesView(viewModel: .init(state: .init(location: CLLocation(latitude: passObserver.lat, longitude: passObserver.lon), satelliteCategory: category, satelliteTrails: [info.noradIndex: trails])),
+                    context: .init(satelliteInfo: info, julianDateRange: passRange, observer: passObserver, starManager: catalog, julianDateProvider: passDate),
                     skyChartFactory: ViewFactory { factory.sky($0) }, passViewFactory: ViewFactory { factory.pass($0) })
             }
         })
         // Feature the strongest genuinely illuminated arc in the forecast window.
-        let pass = passes.filter { $0.pass.visibility == .visible && $0.pass.sunElevationAtTransit < -10 }.max {
-            ($0.pass.highestIlluminated?.elev ?? 0) < ($1.pass.highestIlluminated?.elev ?? 0)
-        } ?? passes[0]
+        let pass = passes.first { $0.pass.visibility == .visible && $0.pass.sunElevationAtTransit < -10 } ?? passes[0]
         // Match the existing north-up chart screenshot with compass tracking off.
         let passView = factory.pass(.init(passIndex: 0, satelliteInfo: info,
             satelliteCommonName: info.noradIndex == 25544 ? "ISS (ZARYA)" : "CSS (TIANHE)", category: category,
-            julianDateRange: range, observer: observer, passSnapshots: pass, starManager: catalog, julianDateProvider: date), isCompassEnabled: false)
+            julianDateRange: passRange, observer: passObserver, passSnapshots: pass, starManager: catalog, julianDateProvider: passDate), isCompassEnabled: false)
         let detail = AnyView(NavigationStack {
             Color.clear.navigationDestination(isPresented: .constant(true)) {
                 passView

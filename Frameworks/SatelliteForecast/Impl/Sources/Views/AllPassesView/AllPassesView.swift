@@ -76,7 +76,8 @@ public struct AllPassesViewState {
 
 extension AllPassesViewState: Equatable {}
 
-struct AllPassViewNavigation {
+struct AllPassViewNavigation: Identifiable {
+    var id: Int { passIndex }
     let passIndex: Int
     let passSnapshots: PassSnapshots
 }
@@ -88,6 +89,7 @@ extension AllPassViewNavigation: Equatable, Hashable, Codable {
 }
 
 public struct AllPassesView: View {
+    @AppStorage("hasCompletedAllPassesOnboarding") private var hasOpenedVisiblePass = false
     @Environment(\.colorScheme) private var colorScheme
     struct Item: Equatable, Identifiable {
         let index: Int
@@ -116,6 +118,7 @@ public struct AllPassesView: View {
         }
     }
 
+    @State private var selectedInvisiblePass: AllPassViewNavigation?
     @State var viewModel: PassListModel
 
     let context: AllPassesViewContext
@@ -237,18 +240,17 @@ public struct AllPassesView: View {
                             passSnapshots: item.passSnapshots
                         )
                     ) {
-                        PassPreviewCell(
-                            satelliteInfo: context.satelliteInfo,
-                            observer: observer,
-                            passSnapshots: item.passSnapshots,
-                            hasScheduledAlert: item.hasScheduledAlert,
-                            skyChartFactory: skyChartFactory,
-                            julianDateOffset: viewModel.state.julianDateOffset,
-                            starManager: context.starManager,
-                            julianDateProvider: context.julianDateProvider
-                        )
+                        previewCell(item, observer: observer)
                     }
-                    .frame(height: 135)
+                    .modifier(VisiblePassRowHeight())
+                    .overlay {
+                        if !hasOpenedVisiblePass, item.index == items.first?.index,
+                           item.passSnapshots.pass.visibility == .visible {
+                            DiscoveryGlow()
+                                .padding(.horizontal, -14)
+                                .padding(.vertical, -12)
+                        }
+                    }
                     .listRowBackground(AppTheme.surface)
                     .id(item.id)
                     .swipeActions(
@@ -268,6 +270,53 @@ public struct AllPassesView: View {
             }
             .listRowBackground(AppTheme.surface)
         }
+    }
+
+    private func previewCell(_ item: Item, observer: LatLonAlt) -> some View {
+        PassPreviewCell(satelliteInfo: context.satelliteInfo, observer: observer,
+            passSnapshots: item.passSnapshots, hasScheduledAlert: item.hasScheduledAlert,
+            skyChartFactory: skyChartFactory, julianDateOffset: viewModel.state.julianDateOffset,
+            starManager: context.starManager, julianDateProvider: context.julianDateProvider)
+    }
+
+    @ViewBuilder private func invisiblePassGrid(_ items: [Item]?, observer: LatLonAlt) -> some View {
+        if let items, !items.isEmpty {
+            // Each pair is its own List row, keeping the long forecast lazily rendered.
+            ForEach(Array(stride(from: 0, to: items.count, by: 2)), id: \.self) { start in
+                HStack(alignment: .top, spacing: 12) {
+                    ForEach(Array(items[start..<min(start + 2, items.count)])) { item in
+                        Button {
+                            selectedInvisiblePass = AllPassViewNavigation(passIndex: item.index, passSnapshots: item.passSnapshots)
+                        } label: {
+                            previewCell(item, observer: observer)
+                        }
+                        .buttonStyle(.plain)
+                        .frame(maxWidth: .infinity)
+                    }
+                    if start + 1 == items.count {
+                        Color.clear.frame(maxWidth: .infinity).accessibilityHidden(true)
+                    }
+                }
+                .listRowInsets(EdgeInsets(top: 6, leading: 0, bottom: 6, trailing: 0))
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
+            }
+        } else {
+            passesList(items, observer: observer)
+        }
+    }
+
+    private func passDestination(_ navigation: AllPassViewNavigation, observer: LatLonAlt) -> some View {
+        LazyView {
+            passViewFactory.view(
+                PassViewContext(passIndex: navigation.passIndex, satelliteInfo: context.satelliteInfo,
+                    satelliteCommonName: satelliteCommonName, category: viewModel.state.satelliteCategory,
+                    julianDateRange: context.julianDateRange, observer: observer,
+                    passSnapshots: navigation.passSnapshots, starManager: context.starManager,
+                    julianDateProvider: context.julianDateProvider)
+            )
+        }
+        .modifier(FirstVisiblePassTutorial(isVisible: navigation.passSnapshots.pass.visibility == .visible))
     }
 
     private var visiblePassHeader: some View {
@@ -324,8 +373,12 @@ public struct AllPassesView: View {
         Group {
             if let observer = context.observer {
                 let items = itemsByVisibility
-                let visiblePasses: [Item] = items?[.visible] ?? []
-                let invisiblePasses: [Item] = (items?[.daylight] ?? []) + (items?[.unlit] ?? [])
+                let visiblePasses: [Item]? = items.map { $0[.visible] ?? [] }
+                let invisiblePasses: [Item]? = items.map {
+                    (($0[.daylight] ?? []) + ($0[.unlit] ?? [])).sorted {
+                        $0.passSnapshots.pass.rise.julianDate < $1.passSnapshots.pass.rise.julianDate
+                    }
+                }
 
                 SwiftUI.List {
                     SwiftUI.Section(header: mapHeader()) {
@@ -337,25 +390,14 @@ public struct AllPassesView: View {
                     }
 
                     SwiftUI.Section(header: invisiblePassHeader) {
-                        passesList(invisiblePasses, observer: observer)
+                        invisiblePassGrid(invisiblePasses, observer: observer)
                     }
                 }
-                .navigationDestination(for: AllPassViewNavigation.self) { allPassViewNavigation in
-                    LazyView {
-                        passViewFactory.view(
-                            PassViewContext(
-                                passIndex: allPassViewNavigation.passIndex,
-                                satelliteInfo: context.satelliteInfo,
-                                satelliteCommonName: satelliteCommonName,
-                                category: viewModel.state.satelliteCategory,
-                                julianDateRange: context.julianDateRange,
-                                observer: observer,
-                                passSnapshots: allPassViewNavigation.passSnapshots,
-                                starManager: context.starManager,
-                                julianDateProvider: context.julianDateProvider,
-                            )
-                        )
-                    }
+                .navigationDestination(for: AllPassViewNavigation.self) { navigation in
+                    passDestination(navigation, observer: observer)
+                }
+                .navigationDestination(item: $selectedInvisiblePass) { navigation in
+                    passDestination(navigation, observer: observer)
                 }
             } else {
                 VStack(spacing: 32) {
@@ -436,6 +478,7 @@ public struct AllPassesView: View {
     
     public var body: some View {
         allPassesList
+        .modifier(CompactHeightLayout())
         .frame(maxWidth: .infinity)
         .modifier(AppSurface())
         .navigationTitle(context.satelliteInfo.elements.commonName)
@@ -466,9 +509,6 @@ public struct AllPassesView: View {
             if let observer = context.observer {
                 viewModel.send(.calculatePasses(.init(selectedNoradIndex: context.satelliteInfo.noradIndex, satelliteInfo: context.satelliteInfo, julianDateRange: context.julianDateRange, observer: observer)))
             }
-            guard !SnapshotEnvironment.isEnabled, !UserDefaults.standard.bool(forKey: "hasCompletedAllPassesOnboarding") else { return }
-            do { try await Task.sleep(for: .seconds(2)); try Task.checkCancellation() } catch { return }
-            if !UserDefaults.standard.bool(forKey: "hasCompletedAllPassesOnboarding") { viewModel.send(.showOnboarding(true)) }
         }
         .onDisappear { viewModel.cancel() }
         .overlay(alignment: .center) {
@@ -478,21 +518,11 @@ public struct AllPassesView: View {
         }
         .fullScreenCover(isPresented: Binding<Bool>(
             get: { viewModel.state.showsOnboarding },
-            set: { isPresented in
-                // If the sheet is being dismissed (isPresented = false) and we haven't completed onboarding yet,
-                // mark it as completed since the user has seen it
-                if !isPresented && viewModel.state.showsOnboarding && !UserDefaults.standard.bool(forKey: "hasCompletedAllPassesOnboarding") {
-                    viewModel.send(.completeOnboarding)
-                }
-                viewModel.send(.showOnboarding(isPresented))
-            }
+            set: { viewModel.send(.showOnboarding($0)) }
         )) {
-            AllPassesOnboardingView(
-                onComplete: {
-                    viewModel.send(.completeOnboarding)
-                },
-                skyChartFactory: skyChartFactory
-            )
+            PassTutorialVideo {
+                viewModel.send(.showOnboarding(false))
+            }
         }
     }
 
@@ -610,4 +640,14 @@ extension AllPassesView {
         }
     }
 
+}
+
+private struct VisiblePassRowHeight: ViewModifier {
+    @Environment(\.compactHeightLayout) private var compactHeight
+    @ScaledMetric(relativeTo: .body) private var regularHeight: CGFloat = 202.5
+    @ScaledMetric(relativeTo: .body) private var compactRowHeight: CGFloat = 170
+
+    func body(content: Content) -> some View {
+        content.frame(height: compactHeight ? compactRowHeight : regularHeight)
+    }
 }

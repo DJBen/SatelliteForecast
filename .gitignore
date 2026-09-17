@@ -100,3 +100,7 @@ iOSInjectionProject/
 ._.DS_Store
 **/.DS_Store
 **/._.DS_Store
+
+# Local tooling caches and reports
+__pycache__/
+/.asc/

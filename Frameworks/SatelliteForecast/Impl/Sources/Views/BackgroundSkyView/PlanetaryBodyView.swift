@@ -20,6 +20,8 @@ struct PlanetaryBodyView: View {
     let sunElevation: Double
 
     var displayRadius: CGFloat {
+        // Sun and Moon are resolved disks, independent of point-source photometry.
+        if planetaryBody == .sun || planetaryBody == .moon { return 12 }
         let apparentMagnitude = planetaryBody.apparentMagnitude(julianDay: referenceDate)
         return magFunction.apply(apparentMagnitude ?? 0)
     }
@@ -87,36 +89,33 @@ extension SolarSystemBody {
         @ViewBuilder symbol: () -> Symbol
     ) -> some View {
 
-        let path = Path { path in
-            path.addArc(
-                center: CGPoint(x: rect.midX, y: rect.midY),
-                radius: radius,
-                startAngle: Angle(degrees: 0),
-                endAngle: Angle(degrees: 360),
-                clockwise: false
-            )
-        }
-        .fill()
-        .modifier(shapeModifier)
-
-        switch label {
-        case .text:
-            HStack(spacing: 0) {
-                path
-                textLabel(
-                )
-                .offset(x: radius + 2)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
-
-        case .symbol:
-            ZStack {
-                path
-                symbol(
-                )
-                .frame(alignment: .center)
+        let path = Canvas { context, size in
+            context.withCGContext { cg in
+                let center = CGPoint(x: size.width / 2, y: size.height / 2)
+                if self == .sun {
+                    cg.setFillColor(UIColor(red: 1, green: 0.97, blue: 0.84, alpha: 1).cgColor)
+                    cg.setShadow(offset: .zero, blur: 12, color: UIColor.orange.withAlphaComponent(0.8).cgColor)
+                    cg.fillEllipse(in: CGRect(x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2))
+                } else {
+                    SkyChartTheme.drawPointSource(in: cg, at: center, radius: radius,
+                        color: UIColor(named: "star", in: .module, compatibleWith: nil)!)
+                }
             }
         }
+        .frame(width: radius * 4, height: radius * 4)
+
+
+
+        path.overlay(alignment: .leading) {
+            switch label {
+            case .text:
+                textLabel().fixedSize().offset(x: radius * 3 + 3)
+            case .symbol:
+                // Keep symbols beside the point so they cannot obscure its core.
+                symbol().fixedSize().offset(x: radius * 3 + 2)
+            }
+        }
+
     }
 
     private struct SunShapeModifier: ViewModifier {
@@ -247,7 +246,7 @@ extension SolarSystemBody {
             view(
                 rect: rect,
                 label: label,
-                radius: 2,
+                radius: radius,
                 shapeModifier: PlanetsShapeModifier(),
                 textLabel: {
                     Text("Saturn", bundle: .module)

@@ -38,9 +38,12 @@ public final class DebugModel {
       UserDefaults.standard.set(false, forKey: "hasCompletedOnboarding")
       session?.hasCompletedOnboarding = false
       if case .resetOnboarding = action {
+        UserDefaults.standard.set(false, forKey: "hasCompletedHomeOnboarding")
         UserDefaults.standard.set(false, forKey: "hasCompletedAllPassesOnboarding")
         resetOrientationGuidance()
       }
+    case .resetHomeOnboarding:
+      UserDefaults.standard.set(false, forKey: "hasCompletedHomeOnboarding")
     case .resetAllPassesOnboarding:
       UserDefaults.standard.set(false, forKey: "hasCompletedAllPassesOnboarding")
     case .resetOrientationGuidance:

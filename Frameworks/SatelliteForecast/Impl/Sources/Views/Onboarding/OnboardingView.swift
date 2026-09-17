@@ -80,6 +80,7 @@ public struct OnboardingView: View {
             }
         }
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
+        .modifier(CompactHeightLayout())
         .background(Color.black)
         .foregroundColor(.white)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -88,6 +89,7 @@ public struct OnboardingView: View {
 }
 
 private struct OnboardingPageView: View {
+    @Environment(\.compactHeightLayout) private var compactHeight
     let page: OnboardingPage
     let isLastPage: Bool
     let onComplete: () -> Void
@@ -194,7 +196,7 @@ private struct OnboardingPageView: View {
                         }
                         .font(.headline.weight(.semibold))
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 8)
+                        .padding(.vertical, compactHeight ? 0 : 8)
                     }
                     .buttonStyle(.glass)
                     .buttonBorderShape(.capsule)

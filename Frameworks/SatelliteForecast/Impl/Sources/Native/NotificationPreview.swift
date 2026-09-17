@@ -40,7 +40,7 @@ actor NotificationPreview {
                 traitCollection: traitCollection
               )
             ),
-            magToRadius: { CGFloat(3 * exp(-0.425 * $0)) }
+            magToRadius: { BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction.pointSourceRadius(magnitude: $0) }
           ),
           starManager: catalog
         )

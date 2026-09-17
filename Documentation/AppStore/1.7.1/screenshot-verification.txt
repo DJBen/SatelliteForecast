@@ -1,0 +1,9 @@
+ru: already matches
+ja: already matches
+en-US: already matches
+pt-BR: already matches
+zh-Hans: already matches
+fr-FR: already matches
+es-ES: already matches
+ko: already matches
+Validation complete. No App Store assets changed. Pass --apply after visual review.

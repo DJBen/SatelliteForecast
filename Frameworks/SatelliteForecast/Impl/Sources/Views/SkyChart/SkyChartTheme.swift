@@ -10,6 +10,21 @@ import UIKit
 import StarryNight
 
 public enum SkyChartTheme {
+    /// Soft, compact point-spread profile shared by stars and unresolved planets.
+    /// Radii are chart points; spectral color is retained through the halo.
+    static func drawPointSource(in context: CGContext, at point: CGPoint, radius: CGFloat, color: UIColor) {
+        guard radius.isFinite, radius > 0 else { return }
+        let radius = min(radius, 4.32)
+        let colors = [color.withAlphaComponent(0.95).cgColor,
+                      color.withAlphaComponent(0.85).cgColor,
+                      color.withAlphaComponent(0.16).cgColor,
+                      color.withAlphaComponent(0).cgColor] as CFArray
+        guard let gradient = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(),
+                                        colors: colors, locations: [0, 0.3, 0.6, 1]) else { return }
+        context.drawRadialGradient(gradient, startCenter: point, startRadius: 0,
+                                   endCenter: point, endRadius: radius * 1.8, options: [])
+    }
+
     public static func starColor(
         traitCollection: UITraitCollection
     ) -> UIColor {

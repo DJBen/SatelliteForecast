@@ -1,0 +1,266 @@
+{
+  "en-US": {
+    "versionLocalizationId": "5eb900d0-402c-436e-8720-9070833fe590",
+    "setId": "fbe2978e-c567-40a4-95fd-59ceddf26d2b",
+    "displayType": "APP_IPHONE_67",
+    "total": 4,
+    "uploaded": 4,
+    "results": [
+      {
+        "fileName": "01-forecast.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/en-US/01-forecast.png",
+        "assetId": "ae581990-0882-4440-ac5f-604118559902",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "02-pass-chart.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/en-US/02-pass-chart.png",
+        "assetId": "b0596b5c-530d-481d-8520-b8ac0a313a99",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "03-pass-list.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/en-US/03-pass-list.png",
+        "assetId": "7dfc96cf-cb1d-46ca-ab8a-7b068bc3ae19",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "04-satellites.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/en-US/04-satellites.png",
+        "assetId": "c46fe2f8-5007-45b8-86bd-cefcd0ec8e0e",
+        "state": "COMPLETE"
+      }
+    ]
+  },
+  "fr-FR": {
+    "versionLocalizationId": "a8e381a0-6738-4f83-b4e9-5e19cba7616a",
+    "setId": "2a27e552-35c3-4fb3-851e-15d2f146cc5d",
+    "displayType": "APP_IPHONE_67",
+    "total": 4,
+    "uploaded": 4,
+    "results": [
+      {
+        "fileName": "01-forecast.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/fr-FR/01-forecast.png",
+        "assetId": "3d7a8cfa-7e34-4d08-9439-a6c595954f27",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "02-pass-chart.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/fr-FR/02-pass-chart.png",
+        "assetId": "974ce6af-5566-4785-813a-8efa0c3e70a8",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "03-pass-list.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/fr-FR/03-pass-list.png",
+        "assetId": "b50bfef7-5549-4393-8d93-b1f4682126ff",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "04-satellites.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/fr-FR/04-satellites.png",
+        "assetId": "ccc3ed2e-0104-4c19-b50f-8b20beca6510",
+        "state": "COMPLETE"
+      }
+    ]
+  },
+  "es-ES": {
+    "versionLocalizationId": "285c9955-3136-47cc-b7bc-0e8fce75eb4e",
+    "setId": "f7c8710a-9f09-4b4b-9242-784d8fc83bf7",
+    "displayType": "APP_IPHONE_67",
+    "total": 4,
+    "uploaded": 4,
+    "results": [
+      {
+        "fileName": "01-forecast.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/es-ES/01-forecast.png",
+        "assetId": "381aee74-739e-470b-978e-440653efc60f",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "02-pass-chart.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/es-ES/02-pass-chart.png",
+        "assetId": "4e1ce144-52c3-4d01-9281-865421ab08e8",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "03-pass-list.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/es-ES/03-pass-list.png",
+        "assetId": "321f4519-2015-4e37-8510-e46c1e45efca",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "04-satellites.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/es-ES/04-satellites.png",
+        "assetId": "4e90da12-b6d0-43e8-9320-73315fdaf3a1",
+        "state": "COMPLETE"
+      }
+    ]
+  },
+  "ru": {
+    "versionLocalizationId": "77ca72ea-19d6-437c-9995-5ded3bcd5f47",
+    "setId": "4d44ef15-d351-4cec-a8ed-e64fce62a52a",
+    "displayType": "APP_IPHONE_67",
+    "total": 4,
+    "uploaded": 4,
+    "results": [
+      {
+        "fileName": "01-forecast.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/ru/01-forecast.png",
+        "assetId": "6afec416-15a5-40a6-b8c4-005618a1b787",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "02-pass-chart.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/ru/02-pass-chart.png",
+        "assetId": "a02f5082-a855-4603-92fd-72a1390dd0a6",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "03-pass-list.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/ru/03-pass-list.png",
+        "assetId": "dbc16948-ab74-4a3d-b0da-eac7580d9773",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "04-satellites.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/ru/04-satellites.png",
+        "assetId": "a5ada509-1292-4a77-a04f-7f1cd72a6159",
+        "state": "COMPLETE"
+      }
+    ]
+  },
+  "pt-BR": {
+    "versionLocalizationId": "38b9ac78-da27-4aef-95ef-6ac5541f3cbe",
+    "setId": "1896072b-a50b-4599-88af-3134e0a1f1a2",
+    "displayType": "APP_IPHONE_67",
+    "total": 4,
+    "uploaded": 4,
+    "results": [
+      {
+        "fileName": "01-forecast.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/pt-BR/01-forecast.png",
+        "assetId": "87f41b46-519f-45a0-a67b-1f763f4b044c",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "02-pass-chart.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/pt-BR/02-pass-chart.png",
+        "assetId": "a8970264-8e32-417a-8104-7c31a4ae5188",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "03-pass-list.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/pt-BR/03-pass-list.png",
+        "assetId": "e04baefa-cadb-4260-b77a-991d5f811244",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "04-satellites.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/pt-BR/04-satellites.png",
+        "assetId": "0e6f69b8-932f-4bea-82ee-5c8bae639352",
+        "state": "COMPLETE"
+      }
+    ]
+  },
+  "ja": {
+    "versionLocalizationId": "f6d90571-4581-4cb6-bf65-f86bb6217aba",
+    "setId": "8a633c21-1396-4e9c-970f-bca1fa5490eb",
+    "displayType": "APP_IPHONE_67",
+    "total": 4,
+    "uploaded": 4,
+    "results": [
+      {
+        "fileName": "01-forecast.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/ja/01-forecast.png",
+        "assetId": "9d104ca4-08ca-4ece-a337-7798b2f96348",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "02-pass-chart.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/ja/02-pass-chart.png",
+        "assetId": "2726b1fb-8d73-4d8c-a133-4b01afdf2ee6",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "03-pass-list.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/ja/03-pass-list.png",
+        "assetId": "f4ed3b05-ec0d-4999-a2eb-31cf54718b37",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "04-satellites.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/ja/04-satellites.png",
+        "assetId": "27f2db9c-1ad8-4836-b0b9-80499c92559d",
+        "state": "COMPLETE"
+      }
+    ]
+  },
+  "zh-Hans": {
+    "versionLocalizationId": "71b01ecf-445e-4c6a-9bd1-5715f8f45375",
+    "setId": "eab1dc39-5efa-4ab4-9c84-dafc51b52504",
+    "displayType": "APP_IPHONE_67",
+    "total": 4,
+    "uploaded": 4,
+    "results": [
+      {
+        "fileName": "01-forecast.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/zh-Hans/01-forecast.png",
+        "assetId": "dd30279c-ee13-42e6-b45c-ddb85b7fe65d",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "02-pass-chart.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/zh-Hans/02-pass-chart.png",
+        "assetId": "0d2dd18d-5267-4429-abec-656cccd4cd60",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "03-pass-list.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/zh-Hans/03-pass-list.png",
+        "assetId": "814c1739-f0e2-4603-96e6-a7b67354d1f0",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "04-satellites.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/zh-Hans/04-satellites.png",
+        "assetId": "9778bafd-5177-4391-abea-509733d84f2f",
+        "state": "COMPLETE"
+      }
+    ]
+  },
+  "ko": {
+    "versionLocalizationId": "47b8d784-40af-4503-bf48-f84d938f484f",
+    "setId": "fb09d6a9-aa79-423a-8dc8-4b252fd584e7",
+    "displayType": "APP_IPHONE_67",
+    "total": 4,
+    "uploaded": 4,
+    "results": [
+      {
+        "fileName": "01-forecast.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/ko/01-forecast.png",
+        "assetId": "deee273c-4f39-468a-b956-d6c82a3f554e",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "02-pass-chart.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/ko/02-pass-chart.png",
+        "assetId": "317ae74b-ef68-42a0-8d8a-0e93f1009c01",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "03-pass-list.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/ko/03-pass-list.png",
+        "assetId": "c48509a8-ad7f-4bea-a0b9-a454492c7418",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "04-satellites.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.7.1/screenshots/ko/04-satellites.png",
+        "assetId": "9556148d-87be-408f-97aa-8af9cd60539e",
+        "state": "COMPLETE"
+      }
+    ]
+  }
+}

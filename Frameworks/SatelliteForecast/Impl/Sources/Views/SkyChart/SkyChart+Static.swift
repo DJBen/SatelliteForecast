@@ -227,7 +227,7 @@ public enum SkyChartUtils {
             ctx.cgContext.setFillColor(starColor.cgColor)
             
             // Draw individual star
-            ctx.cgContext.fillEllipse(in: CGRect(x: point.x - radius, y: point.y - radius, width: radius * 2, height: radius * 2))
+            SkyChartTheme.drawPointSource(in: ctx.cgContext, at: point, radius: radius, color: starColor)
         }
         ctx.cgContext.restoreGState()
         

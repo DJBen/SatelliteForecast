@@ -11,6 +11,7 @@ from pathlib import Path
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--release-dir', type=Path, default=Path(__file__).resolve().parents[1] / 'Documentation/AppStore/1.7.0')
 parser.add_argument('--apply', action='store_true')
+parser.add_argument('--locales', nargs='+', help='Validate or upload only these locale codes')
 args = parser.parse_args()
 root = args.release_dir.resolve()
 manifest = json.loads((root / 'existing-inventory.json').read_text())
@@ -35,7 +36,11 @@ if version_data.get('state', version_data.get('attributes', {}).get('appStoreSta
     raise RuntimeError('Version is no longer a prepare-for-submission draft')
 
 plans = []
+if args.locales and set(args.locales) - set(manifest['locales']):
+    raise RuntimeError('Unknown locale requested')
 for locale, entry in manifest['locales'].items():
+    if args.locales and locale not in args.locales:
+        continue
     folder = root / 'screenshots' / locale
     files = sorted(folder.glob('*.png'))
     if [p.stem for p in files] != [s['slot'] for s in entry['screenshots']]:

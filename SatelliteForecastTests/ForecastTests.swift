@@ -19,6 +19,25 @@ final class ForecastTests: XCTestCase {
             illumination: .init(initiallyIlluminated: true, changes: []), sunElevationAtTransit: -20)
     }
 
+    func testPassPreviewSummarizesVisibleSegmentsAndBestTime() {
+        let original = pass(at: date)
+        let shadow = Pass.DatePosition(julianDate: original.rise.julianDate + 0.002, azim: 45, elev: 40)
+        let light = Pass.DatePosition(julianDate: original.rise.julianDate + 0.008, azim: 135, elev: 20)
+        let split = Pass(noradIndex: original.noradIndex, rise: original.rise, set: original.set,
+            culmination: original.culmination,
+            illumination: .init(initiallyIlluminated: true, changes: [.entersShadow(shadow), .exitsShadow(light)]),
+            sunElevationAtTransit: -20)
+        XCTAssertEqual(PassPreviewCell.bestViewTime(for: split), shadow.julianDate)
+        XCTAssertEqual(PassPreviewCell.visibleDurationSeconds(for: split), 345.6, accuracy: 0.01)
+        XCTAssertEqual(PassPreviewCell.bestViewTime(for: original), original.culmination.julianDate)
+        XCTAssertEqual(PassPreviewCell.visibleDurationSeconds(for: original), 864, accuracy: 0.01)
+        let unlit = Pass(noradIndex: original.noradIndex, rise: original.rise, set: original.set,
+            culmination: original.culmination, illumination: .init(initiallyIlluminated: false, changes: []),
+            sunElevationAtTransit: -20)
+        XCTAssertEqual(PassPreviewCell.visibleDurationSeconds(for: unlit), 0)
+        XCTAssertEqual(PassPreviewCell.bestViewTime(for: unlit), unlit.culmination.julianDate)
+    }
+
     func testOrientationGuidanceAcceptsOnlyScreenFacingDown() {
         XCTAssertTrue(DeviceOrientationGuidanceView.isAligned(gravityZ: 1))
         XCTAssertTrue(DeviceOrientationGuidanceView.isAligned(gravityZ: 0.9))

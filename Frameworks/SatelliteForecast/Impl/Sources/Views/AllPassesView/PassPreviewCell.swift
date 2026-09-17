@@ -1,35 +1,7 @@
-//
-//  PassPreviewCell.swift
-//  SatelliteForecastImpl
-//
-//  Created by Ben Lu on 6/15/21.
-//
-
-import BTree
 import SwiftUI
 import SatelliteForecast
-import Shimmer
 @preconcurrency import SatelliteKit
 import StarryNight
-
-private let dateFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .medium
-    formatter.timeStyle = .none
-    return formatter
-}()
-
-private let timeFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.setLocalizedDateFormatFromTemplate("H:mm:ss")
-    return formatter
-}()
-
-private let numberFormatter: NumberFormatter = {
-    let formatter = NumberFormatter()
-    formatter.maximumFractionDigits = 1
-    return formatter
-}()
 
 struct PassPreviewCell: View {
     var satelliteInfo: SatelliteInfo
@@ -41,206 +13,121 @@ struct PassPreviewCell: View {
     var starManager: AppStarCatalog
     var julianDateProvider: () -> Double
 
-    var snapshots: [SatelliteSnapshot] {
-        passSnapshots.snapshots
-    }
-    
-    var notableSnapshots: NotableSnapshots {
-        passSnapshots.notableSnapshots
-    }
-    
-    var pass: Pass {
-        passSnapshots.pass
-    }
+    @Environment(\.compactHeightLayout) private var compactHeight
+    @Environment(\.locale) private var locale
 
-    @Environment(\.colorScheme) var colorScheme
+    private var pass: Pass { passSnapshots.pass }
+    private var bestDate: Date { Date(julianDate: Self.bestViewTime(for: pass)) }
 
-    @ViewBuilder private var starRatingView: some View {
-        HStack(spacing: 0) {
-            Image(systemName: "star.fill")
-                .if(notableSnapshots.visibleCulminationElevation < 30, transform: { $0.hidden() })
-            Image(systemName: "star.fill")
-                .if(notableSnapshots.visibleCulminationElevation < 45, transform: { $0.hidden() })
-            Image(systemName: "star.fill")
-                .if(notableSnapshots.visibleCulminationElevation < 75, transform: { $0.hidden() })
-        }
-        .foregroundStyle(
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(red: 230 / 255, green: 158 / 255, blue: 25 / 255),
-                    Color(red: 239 / 255, green: 193 / 255, blue: 108 / 255)
-                ]),
-                startPoint: .leading,
-                endPoint: .trailing
-            )
+    private var chart: some View {
+        skyChartFactory.view(
+            SkyChartContext(satelliteInfo: satelliteInfo, observer: observer,
+                passSnapshots: passSnapshots, configs: .preview, quality: .onboarding,
+                starManager: starManager, julianDateProvider: julianDateProvider)
         )
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
 
     var body: some View {
-        GeometryReader { geometry in
-            let shortEdge = min(geometry.size.width, geometry.size.height)
-            
-            HStack(alignment: .top, spacing: 4) {
-                HStack(alignment: .top) {
-                    // Column 1: Day light and elevation
-                    if geometry.size.width >= 320 {
-                        VStack(alignment: .leading) {
-                            Text(PassPreviewCell.titleForPassVisibility(pass.visibility))
+        if pass.visibility == .visible {
+            GeometryReader { geometry in
+                HStack(spacing: 16) {
+                    let chartSize = min(190, geometry.size.width * 0.47) * 1.1
+                    chart
+                        .frame(width: chartSize, height: chartSize)
+                    VStack(alignment: .leading, spacing: 7) {
+                        HStack(alignment: .firstTextBaseline, spacing: 5) {
+                            Text(bestDate, format: .dateTime.month(.abbreviated).day().year())
                                 .font(.headline)
-                                .foregroundColor(Color(UIColor.label))
-                            if notableSnapshots.visibleCulminationElevation > 0 {
-                                Text(verbatim: "∠\(numberFormatter.string(from: NSNumber(value: notableSnapshots.visibleCulminationElevation))!)°")
-                                    .font(.body)
-                                    .foregroundColor(Color(UIColor.label))
-                            }
+                                .fixedSize(horizontal: false, vertical: true)
                             if hasScheduledAlert {
-                                Spacer(minLength: 8)
                                 Image(systemName: "bell.fill")
-                                    .font(.title3)
-                                    .foregroundColor(Color(UIColor.label))
+                                    .font(.caption2)
+                                    .foregroundStyle(AppTheme.accent)
+                                    .accessibilityLabel(Text("Alarm scheduled", bundle: .module))
                             }
                         }
-                        .frame(width: 80)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(bestDate, format: .dateTime.hour().minute())
+                                .font(.system(.title2, design: .rounded, weight: .semibold))
+                                .foregroundStyle(AppTheme.accent)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        Text(Self.visibleDurationText(for: pass, locale: locale))
+                            .font(.subheadline)
+                            .foregroundStyle(AppTheme.muted)
+                            .fixedSize(horizontal: false, vertical: true)
+                        Spacer(minLength: 8)
+                        Text(Self.relativeDate(pass: pass, referenceDate: julianDateProvider() + julianDateOffset))
+                            .font(.subheadline)
+                            .foregroundStyle(AppTheme.muted)
                     }
-
-                    VStack(alignment: .leading) {
-                        ViewThatFits(in: .horizontal) {
-                            Text(dateFormatter.string(from: Date(julianDate: pass.rise.julianDate)))
-                                .fixedSize()
-                            Text(Date(julianDate: pass.rise.julianDate), format: .dateTime.year().month(.twoDigits).day(.twoDigits))
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.8)
-                        }
-                            .font(.headline)
-                            .padding([.bottom], 1)
-                            .foregroundColor(Color(UIColor.label))
-
-                        if let exitsShadowJulianDate = notableSnapshots.exitsShadow?.first.julianDate {
-                            HStack(spacing: 0) {
-                                Image(systemName: "eye")
-                                    .font(.subheadline)
-                                    .foregroundColor(AppTheme.muted)
-                                
-                                Text(timeFormatter.string(from: Date(julianDate: exitsShadowJulianDate)))
-                                    .font(.subheadline)
-                                    .foregroundColor(AppTheme.muted)
-                            }
-                            if exitsShadowJulianDate < pass.culmination.julianDate && exitsShadowJulianDate < pass.set.julianDate {
-                                HStack(spacing: 0) {
-                                    Image(systemName: "arrow.up.to.line")
-                                        .font(.subheadline)
-                                        .foregroundColor(AppTheme.muted)
-                                        .bold()
-
-                                    Text(timeFormatter.string(from: Date(julianDate: pass.culmination.julianDate)))
-                                        .font(.subheadline)
-                                        .foregroundColor(Color(UIColor.label))
-                                        .bold()
-                                        .shimmering(gradient: Gradient(colors: [
-                                            AppTheme.muted,
-                                            Color(UIColor.label),
-                                            AppTheme.muted
-                                        ]), bandSize: 0.5)
-                                }
-                            }
-                        } else {
-                            HStack(spacing: 0) {
-                                Image(systemName: "arrow.up")
-                                    .font(.subheadline)
-                                    .foregroundColor(AppTheme.muted)
-
-                                Text(timeFormatter.string(from: Date(julianDate: pass.rise.julianDate)))
-                                    .font(.subheadline)
-                                    .foregroundColor(AppTheme.muted)
-                            }
-                        }
-                        
-                        if notableSnapshots.exitsShadow?.first.julianDate == nil && notableSnapshots.entersShadow?.first.julianDate == nil {
-                            HStack(spacing: 0) {
-                                Image(systemName: "arrow.up.to.line")
-                                    .font(.subheadline)
-                                    .foregroundColor(AppTheme.muted)
-                                    .bold()
-
-                                Text(timeFormatter.string(from: Date(julianDate: pass.culmination.julianDate)))
-                                    .font(.subheadline)
-                                    .foregroundColor(Color(UIColor.label))
-                                    .bold()
-                                    .shimmering(gradient: Gradient(colors: [
-                                        AppTheme.muted,
-                                        Color(UIColor.label),
-                                        AppTheme.muted
-                                    ]), bandSize: 0.5)
-                            }
-                        }
-
-                        if let entersShadowJulianDate = notableSnapshots.entersShadow?.first.julianDate {
-                            if entersShadowJulianDate > pass.culmination.julianDate && entersShadowJulianDate < pass.set.julianDate {
-                                HStack(spacing: 0) {
-                                    Image(systemName: "arrow.up.to.line")
-                                        .font(.subheadline)
-                                        .foregroundColor(AppTheme.muted)
-                                        .bold()
-
-                                    Text(timeFormatter.string(from: Date(julianDate: pass.culmination.julianDate)))
-                                        .font(.subheadline)
-                                        .foregroundColor(Color(UIColor.label))
-                                        .bold()
-                                        .shimmering(gradient: Gradient(colors: [
-                                            AppTheme.muted,
-                                            Color(UIColor.label),
-                                            AppTheme.muted
-                                        ]), bandSize: 0.5)
-                                }
-                            }
-                            HStack(spacing: 0) {
-                                Image(systemName: "eye.slash")
-                                    .font(.subheadline)
-                                    .foregroundColor(AppTheme.muted)
-
-                                Text(timeFormatter.string(from: Date(julianDate: entersShadowJulianDate)))
-                                    .font(.subheadline)
-                                    .foregroundColor(AppTheme.muted)
-                            }
-                        } else {
-                            HStack(spacing: 0) {
-                                Image(systemName: "arrow.down")
-                                    .font(.subheadline)
-                                    .foregroundColor(AppTheme.muted)
-                                
-                                Text(timeFormatter.string(from: Date(julianDate: pass.set.julianDate)))
-                                    .font(.subheadline)
-                                    .foregroundColor(AppTheme.muted)
-                            }
-                        }
-                        
-                        Spacer(minLength: 4)
-                        
-                        starRatingView.padding(.bottom, 4)
-                        
-                        Text(PassPreviewCell.relativeDate(pass: pass, referenceDate: julianDateProvider() + julianDateOffset))
-                            .font(.caption)
-                            .foregroundColor(AppTheme.muted)
-                    }
-                    .frame(width: 120)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                    .padding(.vertical, compactHeight ? 8 : 12)
                 }
+                .frame(maxHeight: .infinity)
+            }
+            .foregroundStyle(.primary)
+            .accessibilityElement(children: .combine)
+        } else {
+            VStack(spacing: 8) {
+                chart.aspectRatio(1, contentMode: .fit)
+                VStack(spacing: 3) {
+                    Text(bestDate, format: .dateTime.month(.abbreviated).day().year())
+                        .font(.subheadline.weight(.medium))
+                    Text(bestDate, format: .dateTime.hour().minute())
+                        .font(.subheadline)
+                        .foregroundStyle(AppTheme.muted)
+                }
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(12)
+            .frame(maxWidth: .infinity)
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppTheme.cardRadius))
+            .overlay {
+                RoundedRectangle(cornerRadius: AppTheme.cardRadius)
+                    .strokeBorder(AppTheme.border, lineWidth: 0.5)
+            }
+            .foregroundStyle(.primary)
+            .accessibilityElement(children: .combine)
+        }
+    }
 
-                skyChartFactory.view(
-                    SkyChartContext(
-                        satelliteInfo: satelliteInfo,
-                        observer: observer,
-                        passSnapshots: passSnapshots,
-                        configs: .preview,
-                        quality: .onboarding,
-                        starManager: starManager,
-                        julianDateProvider: julianDateProvider
-                    )
-                )
-                // Prevent consuming the tap events
-                .allowsHitTesting(false)
-                .frame(width: shortEdge, height: shortEdge)
+    static func bestViewTime(for pass: Pass) -> Double {
+        (pass.visibility == .visible ? pass.highestIlluminated : nil)?.julianDate ?? pass.culmination.julianDate
+    }
+
+    /// Sunlit time above the horizon. Preserve each illumination segment rather
+    /// than counting shadow gaps between the first and last visible moments.
+    static func visibleDurationSeconds(for pass: Pass) -> Double {
+        guard pass.visibility == .visible else { return 0 }
+        var start = pass.rise.julianDate
+        var illuminated = pass.illumination.initiallyIlluminated
+        var duration = 0.0
+        for change in pass.illumination.changes {
+            let end = min(pass.set.julianDate, max(start, change.datePosition.julianDate))
+            if illuminated { duration += end - start }
+            start = end
+            switch change {
+            case .entersShadow: illuminated = false
+            case .exitsShadow: illuminated = true
             }
         }
+        if illuminated { duration += max(0, pass.set.julianDate - start) }
+        return duration * TimeConstants.day2sec
+    }
+
+    static func visibleDurationText(for pass: Pass, locale: Locale) -> String {
+        let seconds = visibleDurationSeconds(for: pass)
+        if seconds < 60 {
+            return NSLocalizedString("Visible for less than 1 min", bundle: .module, comment: "A short visible satellite pass")
+        }
+        let minutes = max(1, Int((seconds / 60).rounded()))
+        return String(format: NSLocalizedString("Visible for %@ min", bundle: .module,
+            comment: "%@ is the approximate visible duration in minutes, formatted for the locale"),
+            minutes.formatted(.number.locale(locale)))
     }
 }
 

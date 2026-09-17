@@ -1,0 +1,42 @@
+{
+  "ru": {
+    "before": "спутник,трекер,астрономия,орбита,небо,уведомления",
+    "after": "iss,tiangong,спутник,трекер,астрономия,орбита,небо,уведомления",
+    "characters": 62
+  },
+  "ja": {
+    "before": "衛星,追跡,星空,星図,観測,軌道,通知,リマインダー,天体観測",
+    "after": "iss,tiangong,衛星,追跡,星空,星図,観測,軌道,通知,リマインダー,天体観測",
+    "characters": 45
+  },
+  "en-US": {
+    "before": "satellite,tracker,astronomy,stargazing,sky,chart,orbit,alert,reminder,overhead,spotting",
+    "after": "iss,tiangong,satellite,tracker,astronomy,stargazing,sky,chart,orbit,alert,reminder,overhead,spotting",
+    "characters": 100
+  },
+  "pt-BR": {
+    "before": "satélite,rastreamento,astronomia,estrelas,céu,mapa,órbita,alerta,lembrete,observação",
+    "after": "iss,tiangong,satélite,rastreamento,astronomia,estrelas,céu,mapa,órbita,alerta,lembrete,observação",
+    "characters": 97
+  },
+  "zh-Hans": {
+    "before": "卫星,追踪,星图,观星,天文,轨道,提醒,观测,星空,月相",
+    "after": "天宫,iss,tiangong,国际空间站,卫星,追踪,星图,观星,天文,轨道,提醒,观测,星空,月相",
+    "characters": 51
+  },
+  "fr-FR": {
+    "before": "satellite,suivi,astronomie,étoiles,ciel,carte,orbite,alerte,rappel,observation",
+    "after": "iss,tiangong,satellite,suivi,astronomie,étoiles,ciel,carte,orbite,alerte,rappel,observation",
+    "characters": 91
+  },
+  "es-ES": {
+    "before": "satélite,seguimiento,astronomía,estrellas,cielo,mapa,órbita,alerta,recordatorio,observación",
+    "after": "iss,tiangong,satélite,seguimiento,astronomía,estrellas,cielo,mapa,alerta,recordatorio,observación",
+    "characters": 97
+  },
+  "ko": {
+    "before": "위성,추적,천문학,별자리,별지도,궤도,알림,관측,하늘",
+    "after": "iss,tiangong,위성,추적,천문학,별자리,별지도,궤도,알림,관측,하늘",
+    "characters": 42
+  }
+}

@@ -129,6 +129,7 @@ public struct SatelliteCategoryViewImpl: SatelliteCategoryView {
                 }
             }
         }
+        .modifier(CompactHeightLayout())
         .tint(AppTheme.accent)
     }
 }

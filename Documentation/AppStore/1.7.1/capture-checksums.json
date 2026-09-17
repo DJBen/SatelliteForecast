@@ -1,0 +1,55 @@
+{
+  "version": "1.7.1",
+  "width": 1320,
+  "height": 2868,
+  "screenshots": {
+    "en-US": {
+      "01-forecast.png": "d682e193d8ecdf7abd544dfbb04e7033",
+      "02-pass-chart.png": "a8e162aff4ece71a3b79211768df5abc",
+      "03-pass-list.png": "2c43b2adc90382919f30a287b5a9dfc6",
+      "04-satellites.png": "ebc68b71705d31293019e63b8c6c1712"
+    },
+    "es-ES": {
+      "01-forecast.png": "2f19c3b5e7d3db13a596767d5a812cf7",
+      "02-pass-chart.png": "8cdecf3432954e4327721f4cb9230ed9",
+      "03-pass-list.png": "164c7fde2453b30d460e308b79336111",
+      "04-satellites.png": "fbd7fe43575df38c978026243fc6c054"
+    },
+    "fr-FR": {
+      "01-forecast.png": "ac5de29da4f45c73c87cde23a131f4bf",
+      "02-pass-chart.png": "47167930f40eb99dd59e383bda83a79d",
+      "03-pass-list.png": "0fb4629d997aa6b382c10c5d4e527373",
+      "04-satellites.png": "a5db89e4d288f5e76c1d1b6ada6d8f1d"
+    },
+    "ja": {
+      "01-forecast.png": "365ab26fed17942758c3501f93739062",
+      "02-pass-chart.png": "f2da19bf6b7c17dfcfbe81d1767ffddf",
+      "03-pass-list.png": "fd0d350d19fb43cecd32c8246d09b6d3",
+      "04-satellites.png": "78fb16de1bfec8076fe3271af5aafde1"
+    },
+    "ko": {
+      "01-forecast.png": "235c328ad12222a8d62cac46c0217c81",
+      "02-pass-chart.png": "fcda4d33454572f175f07d829742efbb",
+      "03-pass-list.png": "1f275083bf18a99a5260913998cf45db",
+      "04-satellites.png": "602f0fa4cc0e924493acb5348f7298be"
+    },
+    "pt-BR": {
+      "01-forecast.png": "ee40352f035be122be5a5fd6944c5db6",
+      "02-pass-chart.png": "cc076ae3d3e9b8ed0d3c23194b0e93da",
+      "03-pass-list.png": "6092cdbca41cc74b01fd5e03f886cb49",
+      "04-satellites.png": "5b8db07d7e681a2a9fe763ff3897f0be"
+    },
+    "ru": {
+      "01-forecast.png": "c9e091220c65bbfcf8472470f8b8992c",
+      "02-pass-chart.png": "a16d523c7efd710df49d215400cb65e1",
+      "03-pass-list.png": "63536e16b066224413f61c149f3f206d",
+      "04-satellites.png": "a2b4d1aea2d757c16524493a5dcf6df7"
+    },
+    "zh-Hans": {
+      "01-forecast.png": "58fb2f6fbe8107671f40ed1e3033caf4",
+      "02-pass-chart.png": "bb8adfcac7b55127ce5866725f5163d2",
+      "03-pass-list.png": "1b207951660c351936d6a7664f75aa5e",
+      "04-satellites.png": "af6dc83b97efae6367ab759e113b438b"
+    }
+  }
+}

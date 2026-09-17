@@ -86,3 +86,24 @@ extension EnvironmentValues {
         set { self[SelectedBackgroundStarKey.self] = newValue }
     }
 }
+
+// Screen-level geometry keeps compact layouts independent of device model.
+private struct CompactHeightKey: EnvironmentKey {
+    static let defaultValue = false
+}
+
+extension EnvironmentValues {
+    var compactHeightLayout: Bool {
+        get { self[CompactHeightKey.self] }
+        set { self[CompactHeightKey.self] = newValue }
+    }
+}
+
+struct CompactHeightLayout: ViewModifier {
+    func body(content: Content) -> some View {
+        GeometryReader { geometry in
+            content.environment(\.compactHeightLayout,
+                geometry.size.height + geometry.safeAreaInsets.top + geometry.safeAreaInsets.bottom < 740)
+        }
+    }
+}

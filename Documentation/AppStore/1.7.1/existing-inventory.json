@@ -1,0 +1,250 @@
+{
+  "appId": "1578649430",
+  "versionId": "793583a0-c404-43d4-abef-34c034f6f77b",
+  "version": "1.7.1",
+  "displayType": "APP_IPHONE_67",
+  "width": 1320,
+  "height": 2868,
+  "locales": {
+    "ru": {
+      "localizationId": "77ca72ea-19d6-437c-9995-5ded3bcd5f47",
+      "setId": "4d44ef15-d351-4cec-a8ed-e64fce62a52a",
+      "screenshots": [
+        {
+          "slot": "01-forecast",
+          "id": "0548de52-df29-469c-bc7d-b4ad40a28725",
+          "fileName": "01-forecast.png",
+          "checksum": "a272f34ac1e998434dd9595c03a40a0b"
+        },
+        {
+          "slot": "02-pass-chart",
+          "id": "339f4f5c-c8e7-4f1d-87b8-33fd89e5d287",
+          "fileName": "02-pass-chart.png",
+          "checksum": "9be99cfbdd1f1b7c5a6af0e89469c00a"
+        },
+        {
+          "slot": "03-pass-list",
+          "id": "a03cf5d2-95d5-4c14-b05f-b43671e76bce",
+          "fileName": "03-pass-list.png",
+          "checksum": "8d9ea1b981683661e1ec0548920fe104"
+        },
+        {
+          "slot": "04-satellites",
+          "id": "507ecac3-48f7-495a-8036-b6aeebc4c8db",
+          "fileName": "04-satellites.png",
+          "checksum": "68a5d331c673ccf1e65a6ae28a4a5c84"
+        }
+      ]
+    },
+    "ja": {
+      "localizationId": "f6d90571-4581-4cb6-bf65-f86bb6217aba",
+      "setId": "8a633c21-1396-4e9c-970f-bca1fa5490eb",
+      "screenshots": [
+        {
+          "slot": "01-forecast",
+          "id": "cd9aad6f-3c8f-47f6-b760-13bae6b013a8",
+          "fileName": "01-forecast.png",
+          "checksum": "38c9d96f8e2f3229ab2543e0aaa92952"
+        },
+        {
+          "slot": "02-pass-chart",
+          "id": "0e627317-247f-40b3-a09f-921105af7eb0",
+          "fileName": "02-pass-chart.png",
+          "checksum": "0703f5c9be519915ed705023ee77fb55"
+        },
+        {
+          "slot": "03-pass-list",
+          "id": "83a32fda-5d24-4d14-b86a-cd0dbb366b89",
+          "fileName": "03-pass-list.png",
+          "checksum": "db03a1e0a1db964b3de0ddd8fb52de9d"
+        },
+        {
+          "slot": "04-satellites",
+          "id": "ad38bcf5-789f-4aa4-aadd-4a4ce71ac318",
+          "fileName": "04-satellites.png",
+          "checksum": "8953d8ee497a889180b9b72859e957d5"
+        }
+      ]
+    },
+    "en-US": {
+      "localizationId": "5eb900d0-402c-436e-8720-9070833fe590",
+      "setId": "fbe2978e-c567-40a4-95fd-59ceddf26d2b",
+      "screenshots": [
+        {
+          "slot": "01-forecast",
+          "id": "f92ed6ae-b586-4588-b08e-8da8a99d8ddb",
+          "fileName": "01-forecast.png",
+          "checksum": "50633f4546b9dd2740d2e88b032ab0b7"
+        },
+        {
+          "slot": "02-pass-chart",
+          "id": "9c69c34f-47db-412d-bf6c-6ad35a877068",
+          "fileName": "02-pass-chart.png",
+          "checksum": "d8ff52600b813db31b36d9275d0ed36e"
+        },
+        {
+          "slot": "03-pass-list",
+          "id": "60a8a8df-2e2b-4da9-87ed-eca429832ac3",
+          "fileName": "03-pass-list.png",
+          "checksum": "b6090b3f7f0592b2cb0dd8cc26908a75"
+        },
+        {
+          "slot": "04-satellites",
+          "id": "d3ed7c55-7619-43b7-961c-1cf47cbbb853",
+          "fileName": "04-satellites.png",
+          "checksum": "5340bda51408be1379baf89f022e5774"
+        }
+      ]
+    },
+    "pt-BR": {
+      "localizationId": "38b9ac78-da27-4aef-95ef-6ac5541f3cbe",
+      "setId": "1896072b-a50b-4599-88af-3134e0a1f1a2",
+      "screenshots": [
+        {
+          "slot": "01-forecast",
+          "id": "5e2042aa-9358-474a-b8ae-06ef0fdb92b7",
+          "fileName": "01-forecast.png",
+          "checksum": "a764412b9137d504195fe614d1e5fd94"
+        },
+        {
+          "slot": "02-pass-chart",
+          "id": "f73ff5fa-9e82-423f-977c-7542bad283f8",
+          "fileName": "02-pass-chart.png",
+          "checksum": "46a8b76498d0b8961c329f8d4eeb7260"
+        },
+        {
+          "slot": "03-pass-list",
+          "id": "fea06cb4-fce9-4737-a39e-87ecfe488310",
+          "fileName": "03-pass-list.png",
+          "checksum": "cba8fbf4c60da7a0880fcb7a5ed97ad7"
+        },
+        {
+          "slot": "04-satellites",
+          "id": "6e7e2e58-c0c8-43bc-843f-8841dfcd7558",
+          "fileName": "04-satellites.png",
+          "checksum": "5b8db07d7e681a2a9fe763ff3897f0be"
+        }
+      ]
+    },
+    "zh-Hans": {
+      "localizationId": "71b01ecf-445e-4c6a-9bd1-5715f8f45375",
+      "setId": "eab1dc39-5efa-4ab4-9c84-dafc51b52504",
+      "screenshots": [
+        {
+          "slot": "01-forecast",
+          "id": "68f1cdf6-50f6-4459-b90c-7daeb6ae190f",
+          "fileName": "01-forecast.png",
+          "checksum": "e7cd8a01d1d366303548a2ec8247ffb8"
+        },
+        {
+          "slot": "02-pass-chart",
+          "id": "588ceb7b-d7a7-4123-bc94-cf917209521b",
+          "fileName": "02-pass-chart.png",
+          "checksum": "3d7f21ea32ff4c7274f85dec8e146019"
+        },
+        {
+          "slot": "03-pass-list",
+          "id": "3d929845-27ce-4d3f-818f-861b22c6466c",
+          "fileName": "03-pass-list.png",
+          "checksum": "925394f5a530546eb6386eaefad14b3a"
+        },
+        {
+          "slot": "04-satellites",
+          "id": "2f46f80d-b56f-4e8a-8e3c-df30769a3289",
+          "fileName": "04-satellites.png",
+          "checksum": "1852085fbbe948cd57092836a989d59f"
+        }
+      ]
+    },
+    "fr-FR": {
+      "localizationId": "a8e381a0-6738-4f83-b4e9-5e19cba7616a",
+      "setId": "2a27e552-35c3-4fb3-851e-15d2f146cc5d",
+      "screenshots": [
+        {
+          "slot": "01-forecast",
+          "id": "92313d92-9b3d-403b-b6ea-1407178e63b5",
+          "fileName": "01-forecast.png",
+          "checksum": "cf23ac9e7babf6e14f9d34540c5aa10b"
+        },
+        {
+          "slot": "02-pass-chart",
+          "id": "a582761b-cece-43cc-8303-1be1f9216672",
+          "fileName": "02-pass-chart.png",
+          "checksum": "62842ea4dfe406549a918440765a2de2"
+        },
+        {
+          "slot": "03-pass-list",
+          "id": "19fd2bae-304d-480d-babf-f6fd51cf1935",
+          "fileName": "03-pass-list.png",
+          "checksum": "ade6209c7debfbb96aba9e4b8ee1e515"
+        },
+        {
+          "slot": "04-satellites",
+          "id": "aee1a39b-f57b-4475-950c-d5e0c79e8e81",
+          "fileName": "04-satellites.png",
+          "checksum": "0c6545ea4a361d1136e5eae3332de7b9"
+        }
+      ]
+    },
+    "es-ES": {
+      "localizationId": "285c9955-3136-47cc-b7bc-0e8fce75eb4e",
+      "setId": "f7c8710a-9f09-4b4b-9242-784d8fc83bf7",
+      "screenshots": [
+        {
+          "slot": "01-forecast",
+          "id": "718afc84-3d31-4854-879c-d7d7675a9755",
+          "fileName": "01-forecast.png",
+          "checksum": "590788ec90dad860b8acc90971c392b7"
+        },
+        {
+          "slot": "02-pass-chart",
+          "id": "9775a13a-286b-44fd-8843-917aadbef7ea",
+          "fileName": "02-pass-chart.png",
+          "checksum": "47187cff6d66034982cafcadc21c748e"
+        },
+        {
+          "slot": "03-pass-list",
+          "id": "9fa5a8d1-a334-43ca-abb0-8c5b47006ca0",
+          "fileName": "03-pass-list.png",
+          "checksum": "b6882ea7a11501267a84e30b83d25b3c"
+        },
+        {
+          "slot": "04-satellites",
+          "id": "6bdf32e4-3ba6-46ec-813e-5af8f91f46f4",
+          "fileName": "04-satellites.png",
+          "checksum": "fbd7fe43575df38c978026243fc6c054"
+        }
+      ]
+    },
+    "ko": {
+      "localizationId": "47b8d784-40af-4503-bf48-f84d938f484f",
+      "setId": "fb09d6a9-aa79-423a-8dc8-4b252fd584e7",
+      "screenshots": [
+        {
+          "slot": "01-forecast",
+          "id": "1ad1ca9b-7f54-47ca-8bf2-435a33a9dfb5",
+          "fileName": "01-forecast.png",
+          "checksum": "46628fb69c2f611c4ae51e04b5a7de31"
+        },
+        {
+          "slot": "02-pass-chart",
+          "id": "511b109d-5949-4155-9bab-ba9ac2f84c9e",
+          "fileName": "02-pass-chart.png",
+          "checksum": "2ca3c6219460f7e0a74c9f828960e189"
+        },
+        {
+          "slot": "03-pass-list",
+          "id": "90af2c7f-b98b-4b02-9b64-8d2006bb34d5",
+          "fileName": "03-pass-list.png",
+          "checksum": "3680413273cea1f5478ea7714c2f175b"
+        },
+        {
+          "slot": "04-satellites",
+          "id": "f39b972a-db0d-4a60-bc2f-964c63848d53",
+          "fileName": "04-satellites.png",
+          "checksum": "0e42c197731c773947b9a650f8657071"
+        }
+      ]
+    }
+  }
+}

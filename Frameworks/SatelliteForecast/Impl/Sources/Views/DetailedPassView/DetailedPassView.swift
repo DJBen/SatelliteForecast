@@ -32,7 +32,7 @@ public struct DetailedPassView: View {
         let magFunc = BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction(
             id: "detail"
         ) { mag in
-            min(16, max(exp(mag * -0.38) * 4.5, 0))
+            BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction.pointSourceRadius(magnitude: mag, scale: 1.35)
         }
 
         NavigationStack {

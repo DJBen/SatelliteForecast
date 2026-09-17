@@ -564,3 +564,54 @@ The localized string for the status of a spare satellite */
 "Don't show again" = "不再显示";
 
 "Watch onboarding again" = "重新观看入门引导";
+
+/* Satellite geographic context */
+/* Current subsatellite location. %@ is a standalone geographic name; avoid grammatical inflection of inserted names. */
+"geography.over" = "%@上空";
+/* %1$@ is a sea/ocean; %2$@ is a nearby country/territory. Keep both placeholders; reorder as needed. */
+"geography.waterNear" = "%1$@ · %2$@附近";
+/* No named marine region was found. %@ is a nearby country/territory, not the country being flown over. */
+"geography.near" = "%@附近";
+/* Shown and spoken when current satellite geography cannot be resolved. */
+"geography.unavailable" = "位置信息不可用";
+/* Optional detailed description, not currently displayed on home. */
+"geography.landDetail" = "陆地上空 · 查看地面轨迹";
+/* %@ is the standalone name of the country/territory with the nearest coast. */
+"geography.coast" = "%@沿岸附近";
+/* Optional detail: %1$@ is a localized number in km; %2$@ is the direction FROM the nearest coast TO the satellite; %3$@ is its country/territory. Use standalone noun labels to avoid declension. */
+"geography.distance" = "约%1$@公里 · %2$@ · 最近海岸：%3$@";
+/* Standalone compass direction, used in the optional distance detail. */
+"geography.north" = "北";
+/* Standalone compass direction, used in the optional distance detail. */
+"geography.northeast" = "东北";
+/* Standalone compass direction, used in the optional distance detail. */
+"geography.east" = "东";
+/* Standalone compass direction, used in the optional distance detail. */
+"geography.southeast" = "东南";
+/* Standalone compass direction, used in the optional distance detail. */
+"geography.south" = "南";
+/* Standalone compass direction, used in the optional distance detail. */
+"geography.southwest" = "西南";
+/* Standalone compass direction, used in the optional distance detail. */
+"geography.west" = "西";
+/* Standalone compass direction, used in the optional distance detail. */
+"geography.northwest" = "西北";
+
+/* Familiar country names and first-level administrative regions. */
+/* Country short name, used only for this ISO country code. */
+"geography.country.US" = "美国";
+/* Country short name, used only for this ISO country code. */
+"geography.country.AE" = "阿联酋";
+/* Country short name, used only for this ISO country code. */
+"geography.country.GB" = "英国";
+/* %1$@ is a state/province/region; %2$@ is its country. Reorder for natural local usage. */
+"geography.subdivision" = "%2$@·%1$@";
+
+/* Pass list: best illuminated time, approximate visible minutes, and alarm accessibility. */
+"Best view" = "最佳观测时间";
+"Visible for %@ min" = "可见约%@分钟";
+"Visible for less than 1 min" = "可见时间少于1分钟";
+"Alarm scheduled" = "已设置提醒";
+
+/* Elevation at the best visible point, rounded to a whole degree. */
+"%lld\u00b0 above horizon" = "地平线上方%lld°";
