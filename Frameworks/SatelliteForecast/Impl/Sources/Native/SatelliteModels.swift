@@ -48,20 +48,28 @@ public final class SatelliteListModel {
     task?.cancel()
     state.satelliteInfo[category] = .loading
     task = Task { [weak self, service] in
+      let metric = AppAnalytics.Operation("load_catalog", screen: .satellites)
+      defer { metric.finish("cancelled") }
       do {
         let info = try await service.satellites(category, force: force)
         try Task.checkCancellation()
+        metric.finish(info.isEmpty ? "empty" : "success", count: info.count)
         self?.state.satelliteInfo[category] = .loaded(
           info.reduce(into: Map<UInt, SatelliteInfo>()) { $0[$1.noradIndex] = $1 })
         self?.filter(category)
       } catch {
-        if !Task.isCancelled { self?.state.satelliteInfo[category] = .failed(.wrapError(error)) }
+        if !Task.isCancelled && !(error is CancellationError) {
+          metric.finish("failure", reason: "load_failed")
+          self?.state.satelliteInfo[category] = .failed(.wrapError(error))
+        }
       }
     }
   }
   public func send(_ action: SatelliteListViewAction) {
     switch action {
-    case .retryLoadingSatelliteList(let category): load(category, force: true)
+    case .retryLoadingSatelliteList(let category):
+      AppAnalytics.event("retry_tapped", screen: .satellites)
+      load(category, force: true)
     case .searchSatellites(let text, let category):
       query = text
       filter(category)
@@ -138,11 +146,19 @@ public final class RealtimeSkyModel {
       loadTask?.cancel()
       local.satellites = .loading
       loadTask = Task { [weak self, service] in
+        let metric = AppAnalytics.Operation("load_sky_catalog", screen: .skyNow)
+        defer { metric.finish("cancelled") }
         do {
           let found = try await service.satellites(.active)
           try Task.checkCancellation()
+          metric.finish(found.isEmpty ? "empty" : "success", count: found.count)
           self?.local.satellites = .loaded(found.filter { $0.elements.orbitTypeByAltitude == .leo })
-        } catch { if !Task.isCancelled { self?.local.satellites = .failed(.wrapError(error)) } }
+        } catch {
+          if !Task.isCancelled && !(error is CancellationError) {
+            metric.finish("failure", reason: "load_failed")
+            self?.local.satellites = .failed(.wrapError(error))
+          }
+        }
       }
     case .setRealtimeSkyViewActive(let active):
       local.resources.isRealtimeSkyViewActive = active

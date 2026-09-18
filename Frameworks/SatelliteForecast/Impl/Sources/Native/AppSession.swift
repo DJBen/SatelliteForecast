@@ -49,16 +49,17 @@ public final class AppSession {
     }
   }
   public func completeOnboarding() {
+    AppAnalytics.event("onboarding_completed", screen: .onboarding)
     hasCompletedOnboarding = true
     UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
   }
-  public func schedule(_ notification: PassNotification, snapshots: PassSnapshots) {
+  public func schedule(_ notification: PassNotification, snapshots: PassSnapshots, fromAlarmSetup: Bool = false) {
     let id = UUID()
     alarmTasks[id] = Task { [weak self] in
       guard let self else { return }
       await notifications.schedule(
         notification, snapshots: snapshots, catalog: catalog, offset: debug.config.effectiveOffset,
-        rapid: debug.config.rapidNotificationDelivery)
+        rapid: debug.config.rapidNotificationDelivery, fromAlarmSetup: fromAlarmSetup)
       alarmTasks[id] = nil
     }
   }
@@ -85,6 +86,7 @@ public final class AppSession {
     }
   }
   public func open(_ category: SatelliteCategory, id: UInt, observer: LatLonAlt) {
+    AppAnalytics.event("notification_opened", screen: .passes)
     navigation.tab = category == .iss || category == .tianhe ? .forecast : .satellites
     navigation.deepLink = SatelliteDeepLink(category: category, noradIndex: id, observer: observer)
   }

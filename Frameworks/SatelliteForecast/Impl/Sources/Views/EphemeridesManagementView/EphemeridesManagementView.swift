@@ -109,6 +109,7 @@ struct EphemeridesManagementView: View {
         }
         .modifier(AppSurface())
         .navigationTitle(Text("Ephemerides", bundle: .module))
+        .analyticsScreen(.ephemerides)
         .task {
             self.resources = (try? fetchEphemerideResources()) ?? []
         }

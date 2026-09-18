@@ -80,6 +80,10 @@ public struct OnboardingView: View {
             }
         }
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
+        .analyticsScreen(.onboarding)
+        .onChange(of: currentPage, initial: true) { _, page in
+            AppAnalytics.event("onboarding_step", screen: .onboarding, parameters: ["step": page + 1])
+        }
         .modifier(CompactHeightLayout())
         .background(Color.black)
         .foregroundColor(.white)

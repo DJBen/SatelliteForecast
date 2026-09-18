@@ -235,6 +235,7 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
             .modifier(AppSurface())
             .navigationBarTitle(Text("Settings", bundle: .module), displayMode: .inline)
             .navigationBarHidden(true)
+        .analyticsScreen(.settings)
         }
     }
 }

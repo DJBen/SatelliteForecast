@@ -206,6 +206,7 @@ public struct PassView: View {
             }
             .modifier(AppSurface())
             .navigationTitle(passDateTitle)
+        .analyticsScreen(.passDetail)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(

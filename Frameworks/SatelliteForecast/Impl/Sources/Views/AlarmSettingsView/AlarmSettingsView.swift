@@ -114,6 +114,7 @@ public struct AlarmSettingsView: View {
     public var body: some View {
         alarmList.modifier(AppSurface())
         .navigationTitle(Text("Alarms", bundle: .module, comment: "Noun, as in alarm clock."))
+        .analyticsScreen(.alarms)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             EditButton()

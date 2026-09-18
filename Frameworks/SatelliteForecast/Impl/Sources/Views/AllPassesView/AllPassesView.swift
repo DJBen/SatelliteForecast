@@ -486,6 +486,7 @@ public struct AllPassesView: View {
         .frame(maxWidth: .infinity)
         .modifier(AppSurface())
         .navigationTitle(context.satelliteInfo.elements.commonName)
+        .analyticsScreen(.passes)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {

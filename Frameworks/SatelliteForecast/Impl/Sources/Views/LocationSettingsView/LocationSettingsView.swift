@@ -124,6 +124,7 @@ public struct LocationSettingsView: View {
         )
         .modifier(AppSurface())
         .navigationTitle(Text("Select Location", bundle: .module))
+        .analyticsScreen(.location)
         .task(id: search.query) { await search.search() }
         .onDisappear { search.cancel() }
         .overlay(alignment: .bottom) {

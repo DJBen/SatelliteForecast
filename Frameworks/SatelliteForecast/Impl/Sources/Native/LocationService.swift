@@ -33,9 +33,11 @@ public final class LocationService: NSObject, CLLocationManagerDelegate {
   }
   public func select(_ selection: LocationResources.Selection) {
     if selection == .currentLocation && resources.currentLocation == nil {
+      AppAnalytics.event("flow_blocked", screen: .location, parameters: ["reason": "current_location_unavailable"])
       openSettings()
       return
     }
+    AppAnalytics.event("location_selected", screen: .location, parameters: ["method": selection == .currentLocation ? "device" : "custom"])
     resources.selection = selection
     persist()
   }

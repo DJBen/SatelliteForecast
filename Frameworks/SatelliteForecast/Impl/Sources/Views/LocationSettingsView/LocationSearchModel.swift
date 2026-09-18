@@ -109,16 +109,23 @@ public final class LocationSearchModel {
         isSearching = !requestedQuery.isEmpty
         defer { if generation == searchGeneration { isSearching = false } }
         guard !requestedQuery.isEmpty else { return }
+        var metric: AppAnalytics.Operation?
+        defer { metric?.finish("cancelled") }
         do {
             try await client.debounce()
             try Task.checkCancellation()
+            metric = AppAnalytics.Operation("location_search", screen: .location)
             let found = try await client.suggestions(requestedQuery)
             try Task.checkCancellation()
             guard generation == searchGeneration, requestedQuery == query.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
+            metric?.finish(found.isEmpty ? "empty" : "success", count: found.count)
             results = found
         } catch {
             guard generation == searchGeneration, requestedQuery == query.trimmingCharacters(in: .whitespacesAndNewlines), !Task.isCancelled else { return }
-            if !(error is CancellationError) { errorMessage = error.localizedDescription }
+            if !(error is CancellationError) {
+                metric?.finish("failure", reason: "search_failed")
+                errorMessage = error.localizedDescription
+            }
         }
     }
 
@@ -136,14 +143,20 @@ public final class LocationSearchModel {
         errorMessage = nil
         isResolving = true
         defer { if generation == resolutionGeneration { isResolving = false } }
+        let metric = AppAnalytics.Operation("location_resolve", screen: .location)
+        defer { metric.finish("cancelled") }
         do {
             let placemark = try await client.resolve(completion)
             try Task.checkCancellation()
             guard generation == resolutionGeneration, requestedQuery == query else { return }
+            metric.finish("success")
             pendingSelection = .custom(completion, placemark)
         } catch {
             guard generation == resolutionGeneration, requestedQuery == query, !Task.isCancelled else { return }
-            if !(error is CancellationError) { errorMessage = error.localizedDescription }
+            if !(error is CancellationError) {
+                metric.finish("failure", reason: "resolve_failed")
+                errorMessage = error.localizedDescription
+            }
         }
     }
 

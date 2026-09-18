@@ -188,6 +188,7 @@ public struct SatelliteListView: View {
         .onDisappear { viewModel.cancel() }
         .modifier(AppSurface())
         .navigationTitle(Text("Satellites", bundle: .module))
+        .analyticsScreen(.satellites)
         .searchable(
             text: $textObserver.searchText,
             placement: .navigationBarDrawer(displayMode: .always),

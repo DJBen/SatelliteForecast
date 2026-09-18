@@ -23,13 +23,17 @@ public final class SatelliteDetailModel {
       task?.cancel()
       state.elementsLoader.info[category] = .loading
       task = Task { [weak self, service] in
+        let metric = AppAnalytics.Operation("load_station", screen: .passes)
+        defer { metric.finish("cancelled") }
         do {
           let info = try await service.satellites(category)
           try Task.checkCancellation()
+          metric.finish(info.isEmpty ? "empty" : "success", count: info.count)
           self?.state.elementsLoader.info[category] = .loaded(
             info.reduce(into: Map<UInt, SatelliteInfo>()) { $0[$1.noradIndex] = $1 })
         } catch {
-          if !Task.isCancelled {
+          if !Task.isCancelled && !(error is CancellationError) {
+            metric.finish("failure", reason: "load_failed")
             self?.state.elementsLoader.info[category] = .failed(.wrapError(error))
           }
         }
@@ -90,11 +94,20 @@ public final class PassListModel {
       errorMessage = nil
       local.satelliteTrails = [:]
       task = Task { [weak self, load] in
+        let metric = AppAnalytics.Operation("calculate_passes", screen: .passes)
+        defer { metric.finish("cancelled") }
         do {
           let trails = try await load(params)
           try Task.checkCancellation()
+          let count = trails.passSnapshots?.count ?? 0
+          metric.finish(count == 0 ? "empty" : "success", count: count)
           self?.local.satelliteTrails = [params.selectedNoradIndex: trails]
-        } catch { if !Task.isCancelled { self?.errorMessage = error.localizedDescription } }
+        } catch {
+          if !Task.isCancelled && !(error is CancellationError) {
+            metric.finish("failure", reason: "calculation_failed")
+            self?.errorMessage = error.localizedDescription
+          }
+        }
       }
     case .scheduleNotification(let notification, let snapshots):
       session?.schedule(notification, snapshots: snapshots)
@@ -157,7 +170,7 @@ public final class PassAlarmModel {
     switch action {
     case .dismissModal: break
     case .scheduleAlarm(let notification, let snapshots):
-      session?.schedule(notification, snapshots: snapshots)
+      session?.schedule(notification, snapshots: snapshots, fromAlarmSetup: true)
     case .unscheduleAlarm(let pass): session?.notifications.cancel([pass.notificationIdentifier])
     }
   }

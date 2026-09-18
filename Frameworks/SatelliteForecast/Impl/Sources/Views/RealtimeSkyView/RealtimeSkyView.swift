@@ -353,6 +353,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
                 Text("Location not available", bundle: .module)
             }
             .navigationTitle(Self.Navigation.title)
+        .analyticsScreen(.skyNow)
             .navigationBarTitleDisplayMode(.inline)
         }
         .onAppear {

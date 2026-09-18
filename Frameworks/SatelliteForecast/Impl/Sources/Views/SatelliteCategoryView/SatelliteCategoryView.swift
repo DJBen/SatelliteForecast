@@ -105,6 +105,7 @@ public struct SatelliteCategoryViewImpl: SatelliteCategoryView {
                     displayMode: .inline
                 )
                 .navigationBarHidden(true)
+        .analyticsScreen(.categories)
                 .navigationDestination(for: SatelliteCategory.self) { category in
                     LazyView {
                         listViewFactory.view(

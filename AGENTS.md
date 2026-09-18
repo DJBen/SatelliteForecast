@@ -10,3 +10,8 @@
 - Reuse [the reviewed screenshot moments](Documentation/AppStore/ScreenshotMoments.md) for locale-specific geography and impressive passes. Preserve each moment's TLEs, observer location, and time zone; regenerate and visually verify when inputs change.
 - Use a new version-specific evidence directory and explicitly pass it to the capture/upload scripts. Their historical defaults must not overwrite an earlier release.
 - Keep the guide and moment catalog updated with useful discoveries after future releases. Distinguish internal TestFlight availability, App Review submission, and public release in status reports.
+
+# Product analytics
+
+- Read [the analytics metric catalog](Documentation/Analytics.md) when changing screens, loading flows, onboarding, location selection, or alarms. Keep event semantics, conversion definitions, and measurement boundaries documented there.
+- Reuse `AppAnalytics` and stable screen names. Never log coordinates, search text, tokens, notification identifiers, or raw error messages. Keep tests and routine Debug runs out of custom production telemetry.

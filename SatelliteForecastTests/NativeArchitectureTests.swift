@@ -362,3 +362,34 @@ final class MoonAppearanceTests: XCTestCase {
         XCTAssertEqual(dark, try pixels(night), "Deterministic raster")
     }
 }
+
+
+@MainActor
+final class AnalyticsTests: XCTestCase {
+    func testOperationHasOneTerminalOutcomeAndDuration() {
+        var events: [(String, AppAnalytics.Screen, [String: Any])] = []
+        let operation = AppAnalytics.Operation("calculate_passes", screen: .passes) {
+            events.append(($0, $1, $2))
+        }
+        operation.finish("success", count: 3)
+        operation.finish("cancelled") // Deferred cleanup must not overwrite success.
+        XCTAssertEqual(events.map { $0.0 }, ["operation_started", "operation_finished"])
+        XCTAssertTrue(events.allSatisfy { $0.1 == .passes })
+        XCTAssertEqual(events[1].2["outcome"] as? String, "success")
+        XCTAssertEqual(events[1].2["result_count"] as? Int, 3)
+        XCTAssertGreaterThanOrEqual(events[1].2["duration_ms"] as? Double ?? -1, 0)
+        XCTAssertEqual(Set(events[1].2.keys), ["operation", "outcome", "duration_ms", "result_count"])
+    }
+
+    func testBlockedAndCancelledAreNotSuccess() {
+        for outcome in ["blocked", "cancelled", "failure", "empty"] {
+            var terminal: [String: Any] = [:]
+            let operation = AppAnalytics.Operation("schedule_alarm", screen: .alarmSetup) { name, _, values in
+                if name == "operation_finished" { terminal = values }
+            }
+            operation.finish(outcome, reason: outcome == "blocked" ? "notification_permission_denied" : nil)
+            XCTAssertEqual(terminal["outcome"] as? String, outcome)
+            XCTAssertNil(terminal["result_count"])
+        }
+    }
+}

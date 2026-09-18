@@ -79,6 +79,7 @@ public struct DetailedPassView: View {
                             }
                         )
                     )
+                    .analyticsScreen(.skyDetail)
                     .environment(\.selectedBackgroundStarKey, selectedBackgroundStar)
                     .frame(width: 1000, height: 1000)
                 }

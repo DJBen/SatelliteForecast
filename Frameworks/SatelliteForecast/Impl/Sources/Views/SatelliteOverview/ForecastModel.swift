@@ -89,7 +89,10 @@ public final class ForecastModel {
         passes = [:]
         issNextPass = .loading
         tianheNextPass = .loading
-        guard let observer = input.observer else { return }
+        guard let observer = input.observer else {
+            AppAnalytics.event("flow_blocked", screen: .forecast, parameters: ["reason": "missing_location"])
+            return
+        }
         let request = ForecastRequest(observer: observer,
             dateRange: JulianDateUtil.createJulianDateRange(now: currentDate.julianDate + input.julianDateOffset))
         async let iss: Void = load(.iss, request: request, generation: requestGeneration, offset: input.julianDateOffset)
@@ -98,14 +101,18 @@ public final class ForecastModel {
     }
 
     private func load(_ satellite: SpecialSatellite, request: ForecastRequest, generation expected: Int, offset: Double) async {
+        let metric = AppAnalytics.Operation(satellite == .iss ? "forecast_iss" : "forecast_tiangong", screen: .forecast)
+        defer { metric.finish("cancelled") }
         do {
             let found = try await client.load(satellite, request)
             try Task.checkCancellation()
             guard expected == generation else { return }
+            metric.finish(found.isEmpty ? "empty" : "success", count: found.count)
             passes[satellite] = found
             updateNextPasses(offset: offset)
         } catch {
             guard expected == generation, !Task.isCancelled, !(error is CancellationError) else { return }
+            metric.finish("failure", reason: "load_failed")
             if satellite == .iss { issNextPass = .failed(error) }
             else { tianheNextPass = .failed(error) }
         }

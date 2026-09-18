@@ -44,6 +44,9 @@ public final class NotificationService {
     }
   }
   public func cancel(_ ids: [String]) {
+    if scheduled.contains(where: { ids.contains($0.id) }) {
+      AppAnalytics.event("alarm_cancelled", screen: .alarms)
+    }
     revision += 1
     center.removePendingNotificationRequests(withIdentifiers: ids)
     for item in scheduled where ids.contains(item.id) {
@@ -55,10 +58,14 @@ public final class NotificationService {
   }
   public func schedule(
     _ notification: PassNotification, snapshots: PassSnapshots, catalog: AppStarCatalog,
-    offset: Double = 0, rapid: Bool = false
+    offset: Double = 0, rapid: Bool = false, fromAlarmSetup: Bool = false
   ) async {
+    let source: AppAnalytics.Screen = fromAlarmSetup ? .alarmSetup : .passes
+    let metric = AppAnalytics.Operation("schedule_alarm", screen: source)
+    defer { metric.finish("cancelled") }
     do {
       guard try await center.requestAuthorization(options: [.alert, .sound, .badge]) else {
+        metric.finish("blocked", reason: "notification_permission_denied")
         errorMessage = "Notifications are disabled. Enable them in Settings to schedule an alarm."
         return
       }
@@ -66,6 +73,7 @@ public final class NotificationService {
         rapid
         ? 10 : (notification.alertJulianDate - Date().julianDate - offset) * TimeConstants.day2sec
       guard seconds > 0 else {
+        metric.finish("blocked", reason: "alert_time_passed")
         errorMessage = "This alert time has already passed."
         return
       }
@@ -100,6 +108,11 @@ public final class NotificationService {
         with: ScheduledPassNotification(
           id: notification.pass.notificationIdentifier, notification: notification))
       persist()
-    } catch is CancellationError {} catch { errorMessage = error.localizedDescription }
+      metric.finish("success")
+      AppAnalytics.event("alarm_scheduled", screen: source)
+    } catch is CancellationError {} catch {
+      metric.finish("failure", reason: "scheduling_failed")
+      errorMessage = error.localizedDescription
+    }
   }
 }

@@ -107,7 +107,10 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                         }
                     }
                 }
-                .refreshable { await model.refresh(input) }
+                .refreshable {
+                    AppAnalytics.event("refresh_requested", screen: .forecast)
+                    await model.refresh(input)
+                }
                 .padding(.horizontal, 16)
                 .contentMargins(.bottom, geometry.safeAreaInsets.bottom, for: .scrollContent)
                 .ignoresSafeArea(.container, edges: .bottom)
@@ -117,6 +120,7 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                     displayMode: .inline
                 )
                 .navigationBarHidden(true)
+        .analyticsScreen(.forecast)
                 .navigationDestination(for: SpecialSatellite.self) { specialSatellite in
                     LazyView {
                         singleSatelliteWrappingViewFactory(
