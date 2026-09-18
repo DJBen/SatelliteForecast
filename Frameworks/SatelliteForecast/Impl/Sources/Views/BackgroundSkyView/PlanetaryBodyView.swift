@@ -112,8 +112,11 @@ extension SolarSystemBody {
             case .text:
                 textLabel().fixedSize().offset(x: (labelOnLeft ? -1 : 1) * (radius * 3 + 3))
             case .symbol:
-                // Keep symbols beside the point so they cannot obscure its core.
-                symbol().fixedSize().offset(x: (labelOnLeft ? -1 : 1) * (radius * 3 + 2))
+                // Compact charts already show recognizable Sun and Moon disks.
+                // A second symbol beside a disk looks like another celestial object.
+                if self != .sun && self != .moon {
+                    symbol().fixedSize().offset(x: (labelOnLeft ? -1 : 1) * (radius * 3 + 2))
+                }
             }
         }
 
