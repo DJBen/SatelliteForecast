@@ -1,0 +1,42 @@
+{
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "venv",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local",
+        "**/*.ipynb",
+        "__pycache__",
+        "*.md"
+      ],
+      "runtime": "python313"
+    },
+    {
+      "source": "orbital_functions",
+      "codebase": "orbital-cache",
+      "runtime": "python313",
+      "ignore": [
+        "venv",
+        ".git",
+        "__pycache__",
+        "test_cache.py"
+      ]
+    }
+  ],
+  "emulators": {
+    "functions": {
+      "port": 5001
+    },
+    "firestore": {
+      "port": 8080
+    },
+    "ui": {
+      "enabled": true
+    },
+    "singleProjectMode": true
+  }
+}

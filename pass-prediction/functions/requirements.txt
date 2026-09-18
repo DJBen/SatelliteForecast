@@ -1,0 +1,10 @@
+firebase_functions~=0.4.3
+firebase-admin~=6.9.0
+google-cloud-tasks~=2.19.2
+google-auth~=2.40.1
+
+sgp4==2.24
+astropy==7.0.2
+astroplan==0.10.1
+astropy-iers-data
+pygeohash==1.2.0
