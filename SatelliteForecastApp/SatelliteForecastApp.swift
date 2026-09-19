@@ -28,16 +28,17 @@ struct SatelliteForecastApp: App {
                     LoadedSatelliteForecastView(starManager: catalog, appDelegate: appDelegate)
                 } else if let loadError {
                     ContentUnavailableView {
-                        Label("Unable to load the sky catalog", systemImage: "star.slash")
+                        Label(AppLocalization.text("Unable to load the sky catalog"), systemImage: "star.slash")
                     } description: {
                         Text(loadError)
                     } actions: {
-                        Button("Try again") { loadAttempt += 1 }
+                        Button(AppLocalization.text("Try again")) { loadAttempt += 1 }
                     }
                 } else {
-                    ProgressView("Loading the sky…")
+                    ProgressView(AppLocalization.text("Loading the sky…"))
                 }
             }
+            .onOpenURL { appDelegate.open($0) }
             .task(id: loadAttempt) {
                 guard catalog == nil, ProcessInfo.processInfo.environment["SATELLITE_SNAPSHOT_TESTS"] != "1" else { return }
                 loadError = nil
@@ -71,7 +72,11 @@ private struct LoadedSatelliteForecastView: View {
         .sheet(isPresented: Binding(get: { session.debug.config.isDebugMenuVisible }, set: { session.debug.config.isDebugMenuVisible = $0 })) { DebugMenu(viewModel: session.debug) }
         .onAppear {
             appDelegate.onLifecycle = { session.handle($0) }
-            appDelegate.onDeepLink = { session.open($0, id: $1, observer: $2) }
+            appDelegate.onDeepLink = { session.open($0, id: $1, observer: $2, passTime: $3) }
+            appDelegate.onURL = { link in
+                session.open(link.category, id: link.noradIndex, observer: link.observer,
+                    passTime: link.passTime, fromNotification: false)
+            }
             session.location.start()
         }
         .onChange(of: scenePhase) { old, new in session.handle(.scenePhaseDidChange(old, new)) }

@@ -1,0 +1,2 @@
+"ElementsLoaderError.unexpectedMimeType.description" = "Unexpected mime type %@ found for satellite elements.";
+"ElementsLoaderError.expired.format" = "Ephemerides last modified at %@ has expired. Max duration is %d seconds.";

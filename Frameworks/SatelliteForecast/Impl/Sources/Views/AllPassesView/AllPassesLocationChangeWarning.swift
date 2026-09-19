@@ -26,7 +26,7 @@ struct AllPassesLocationChangeWarning: View {
             Text(localizedString)
                 .font(.caption)
 
-            Button("Recalculate using new location", action: onRecalculatePasses)
+            Button(AppLocalization.text("Recalculate using new location"), action: onRecalculatePasses)
                 .font(.footnote.bold())
         }
         .padding(16)

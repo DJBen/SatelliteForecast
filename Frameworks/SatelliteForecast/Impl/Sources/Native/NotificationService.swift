@@ -66,7 +66,7 @@ public final class NotificationService {
     do {
       guard try await center.requestAuthorization(options: [.alert, .sound, .badge]) else {
         metric.finish("blocked", reason: "notification_permission_denied")
-        errorMessage = "Notifications are disabled. Enable them in Settings to schedule an alarm."
+        errorMessage = AppLocalization.text("Notifications are disabled. Enable them in Settings to schedule an alarm.")
         return
       }
       let seconds =
@@ -74,7 +74,7 @@ public final class NotificationService {
         ? 10 : (notification.alertJulianDate - Date().julianDate - offset) * TimeConstants.day2sec
       guard seconds > 0 else {
         metric.finish("blocked", reason: "alert_time_passed")
-        errorMessage = "This alert time has already passed."
+        errorMessage = AppLocalization.text("This alert time has already passed.")
         return
       }
       let content = UNMutableNotificationContent()
@@ -84,6 +84,7 @@ public final class NotificationService {
       content.userInfo = [
         "satelliteCategory": notification.category.rawValue,
         "noradIndex": String(notification.pass.noradIndex),
+        "passTime": String(Date(julianDate: notification.pass.culmination.julianDate).timeIntervalSince1970),
         "observer": try JSONEncoder().encode(notification.observer),
       ]
       // Attachment failure must not prevent an otherwise valid alarm.

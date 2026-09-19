@@ -17,7 +17,7 @@ enum LocalizedStrings {
             let nowFormat = NSLocalizedString(
                 "Notification.upcomingPass.title.now",
                 tableName: nil,
-                bundle: .main,
+                bundle: .module,
                 value: "%1$@ is rising now",
                 comment: "The title for the satellite pass notification."
             )
@@ -25,7 +25,7 @@ enum LocalizedStrings {
             let futureFormat = NSLocalizedString(
                 "Notification.upcomingPass.title.future",
                 tableName: nil,
-                bundle: .main,
+                bundle: .module,
                 value: "%1$@ will rise in %2$@",
                 comment: "The title for the satellite pass notification."
             )
@@ -55,7 +55,7 @@ enum LocalizedStrings {
             let nowFormat = NSLocalizedString(
                 "Notification.upcomingPass.description.now",
                 tableName: nil,
-                bundle: .main,
+                bundle: .module,
                 value: "Rising now from %1$@ and sets into %2$@.",
                 comment: "The description for the satellite pass notification."
             )
@@ -63,7 +63,7 @@ enum LocalizedStrings {
             let futureFormat = NSLocalizedString(
                 "Notification.upcomingPass.description.future",
                 tableName: nil,
-                bundle: .main,
+                bundle: .module,
                 value: "Will rise in %1$@ from %2$@ and sets into %3$@.",
                 comment: "The description for the satellite pass notification."
             )
@@ -92,7 +92,7 @@ enum LocalizedStrings {
             let entirelyVisibleFormat = NSLocalizedString(
                 "Notification.upcomingPass.description.passVisibilityDescription.entirelyVisible",
                 tableName: nil,
-                bundle: .main,
+                bundle: .module,
                 value: "The entirety of the pass is illuminated up to %.1f degrees of elevation.",
                 comment: "The pass description in the notification."
             )
@@ -100,7 +100,7 @@ enum LocalizedStrings {
             let partiallyVisibleFormat = NSLocalizedString(
                 "Notification.upcomingPass.description.passVisibilityDescription.partiallyVisible",
                 tableName: nil,
-                bundle: .main,
+                bundle: .module,
                 value: "The pass is partially visible up to %.1f degrees of elevation.",
                 comment: "The pass description in the notification."
             )
@@ -108,7 +108,7 @@ enum LocalizedStrings {
             let daytimeFormat = NSLocalizedString(
                 "Notification.upcomingPass.description.passVisibilityDescription.daytime",
                 tableName: nil,
-                bundle: .main,
+                bundle: .module,
                 value: "The pass has up to %.1f degrees of elevation. It may be too bright for the satellite to be visible, though.",
                 comment: "The pass description in the notification."
             )
@@ -116,7 +116,7 @@ enum LocalizedStrings {
             let unlitFormat = NSLocalizedString(
                 "Notification.upcomingPass.description.passVisibilityDescription.unlit",
                 tableName: nil,
-                bundle: .main,
+                bundle: .module,
                 value: "The pass has up to %.1f degrees of elevation. Under earth's shadow, it will be too dim to be visible.",
                 comment: "The pass description in the notification."
             )
@@ -124,7 +124,7 @@ enum LocalizedStrings {
             let format = NSLocalizedString(
                 "Notification.upcomingPass.description.format",
                 tableName: nil,
-                bundle: .main,
+                bundle: .module,
                 value: "%@ %@",
                 comment: "The concatenation format of pass description in the notification."
             )
@@ -164,7 +164,7 @@ enum LocalizedStrings {
         static let title = NSLocalizedString(
             "SettingsOverviewView.title",
             tableName: nil,
-            bundle: .main,
+            bundle: .module,
             value: "Settings",
             comment: "The title for settings"
         )
@@ -177,7 +177,7 @@ enum LocalizedStrings {
                 return NSLocalizedString(
                     "SatelliteListView.sectionHeader.category.brightest100",
                     tableName: nil,
-                    bundle: .main,
+                    bundle: .module,
                     value: "Brightest 100 satellites",
                     comment: "The section header for the brightest 100 satellites"
                 )
@@ -185,7 +185,7 @@ enum LocalizedStrings {
                 return NSLocalizedString(
                     "SatelliteListView.sectionHeader.category.last30DayLaunches",
                     tableName: nil,
-                    bundle: .main,
+                    bundle: .module,
                     value: "Launches in the past 30 days",
                     comment: "The section header for launches in the past 30 days"
                 )
@@ -193,7 +193,7 @@ enum LocalizedStrings {
                 return NSLocalizedString(
                     "SatelliteListView.sectionHeader.category.active",
                     tableName: nil,
-                    bundle: .main,
+                    bundle: .module,
                     value: "All active satellites",
                     comment: "The section header for all active satellites"
                 )

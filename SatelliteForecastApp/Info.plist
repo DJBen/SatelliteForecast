@@ -10,6 +10,11 @@
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleURLTypes</key>
+    <array><dict>
+        <key>CFBundleURLName</key><string>SatelliteForecast</string>
+        <key>CFBundleURLSchemes</key><array><string>satelliteforecast</string></array>
+    </dict></array>
 	<key>CFBundleDisplayName</key>
 	<string>Space Station</string>
 	<key>CFBundleExecutable</key>
@@ -30,6 +35,8 @@
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSMotionUsageDescription</key>
+	<string>Use your device orientation to look around the planetarium sky.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Space stations move fast, and passes above you are short; your location is required to calculate passes.</string>
 	<key>UIApplicationSceneManifest</key>

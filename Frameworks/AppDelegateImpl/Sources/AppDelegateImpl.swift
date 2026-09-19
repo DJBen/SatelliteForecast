@@ -100,26 +100,15 @@ public class AppDelegateImpl: NSObject, AppDelegateProtocol, MessagingHandlerPro
                 break
             case UNNotificationDefaultActionIdentifier:
                 let userInfo = response.notification.request.content.userInfo
-                guard let noradIndex = (userInfo["noradIndex"] as? String).flatMap(UInt.init),
-                      let satelliteCategory = (userInfo["satelliteCategory"] as? String).flatMap(SatelliteCategory.init(rawValue:)) else {
-                    break
-                }
-                
-                let observer: LatLonAlt
-                if let anObserver = (userInfo["observer"] as? Data).flatMap({ try? JSONDecoder().decode(LatLonAlt.self, from: $0) }) {
-                    observer = anObserver
-                } else if let lat = (userInfo["lat"] as? String).flatMap(Double.init), let lon = (userInfo["lon"] as? String).flatMap(Double.init), let alt = (userInfo["alt"] as? String).flatMap(Double.init) {
-                    observer = LatLonAlt(lat, lon, alt)
-                } else {
-                    break
-                }
-                
+                guard let link = SatelliteDeepLink(userInfo: userInfo) else { break }
+
                 actionDispatcher.dispatchNotificationAction(
                     .deepLink(
-                        category: satelliteCategory,
-                        noradIndex: noradIndex,
-                        observer: observer,
-                        passIdentifier: response.notification.request.identifier
+                        category: link.category,
+                        noradIndex: link.noradIndex,
+                        observer: link.observer,
+                        passIdentifier: response.notification.request.identifier,
+                        passTime: link.passTime
                     )
                 )
             default:

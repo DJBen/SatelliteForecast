@@ -88,8 +88,8 @@ public enum ForecastServiceError: LocalizedError {
     case missingSatellite(UInt)
     public var errorDescription: String? {
         switch self {
-        case .invalidResponse: return "Unable to download orbital data. Please try again."
-        case .missingSatellite(let id): return "The orbital data does not contain satellite \(id)."
+        case .invalidResponse: return AppLocalization.text("Unable to download orbital data. Please try again.")
+        case .missingSatellite(let id): return AppLocalization.format("The orbital data does not contain satellite %@.", String(id))
         }
     }
 }

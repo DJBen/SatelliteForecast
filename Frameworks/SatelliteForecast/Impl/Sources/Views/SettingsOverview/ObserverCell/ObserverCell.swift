@@ -132,13 +132,13 @@ public struct ObserverCell: View {
             if let placemark = locationResources.placemark {
                 return placemark.formattedString
             } else {
-                return "You have declined sharing the location."
+                return AppLocalization.text("You have declined sharing the location.")
             }
         case .restricted, .notDetermined:
             if let placemark = locationResources.placemark {
                 return placemark.formattedString
             } else {
-                return "Location access is restricted."
+                return AppLocalization.text("Location access is restricted.")
             }
         @unknown default:
             return nil

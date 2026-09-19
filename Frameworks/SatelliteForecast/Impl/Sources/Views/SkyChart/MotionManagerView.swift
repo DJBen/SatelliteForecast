@@ -68,7 +68,7 @@ public struct MotionManagerView<Content: View>: View {
             }
         } else {
             // Motion manager not injected in environment
-            Text(verbatim: "Motion manager not injected in environment")
+            Text("Motion unavailable · Drag to explore the sky", bundle: .module)
         }
     }
 }

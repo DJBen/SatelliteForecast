@@ -38,7 +38,7 @@ public struct LocationSearchClient {
 
 private enum SearchError: LocalizedError {
     case noLocation
-    var errorDescription: String? { "No location was found for this address. Please try another result." }
+    var errorDescription: String? { AppLocalization.text("No location was found for this address. Please try another result.") }
 }
 
 /// One completer per request prevents callbacks from an old query becoming a new query's results.

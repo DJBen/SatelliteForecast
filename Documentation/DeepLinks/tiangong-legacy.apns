@@ -1,0 +1,15 @@
+{
+  "aps": {
+    "alert": {
+      "title": "TIANGONG deep link test",
+      "body": "Open the satellite pass list"
+    },
+    "category": "PASS",
+    "sound": "default"
+  },
+  "noradIndex": "48274",
+  "satelliteCategory": "tianhe",
+  "lat": "37.49",
+  "lon": "-122.23",
+  "alt": "0"
+}

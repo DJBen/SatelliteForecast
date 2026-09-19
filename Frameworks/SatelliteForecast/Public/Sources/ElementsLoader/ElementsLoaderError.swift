@@ -37,7 +37,7 @@ public enum ElementsLoaderError: Error, LocalizedError {
             let format = NSLocalizedString(
                 "ElementsLoaderError.unexpectedMimeType.description",
                 tableName: nil,
-                bundle: .main,
+                bundle: .module,
                 value: "Unexpected mime type %@ found for satellite elements.",
                 comment: "Description for ElementsLoaderError.unexpectedMimeType"
             )
@@ -46,7 +46,7 @@ public enum ElementsLoaderError: Error, LocalizedError {
             let format = NSLocalizedString(
                 "ElementsLoaderError.expired.format",
                 tableName: nil,
-                bundle: .main,
+                bundle: .module,
                 value: "Ephemerides last modified at %@ has expired. Max duration is %d seconds.",
                 comment: "Description for ElementsLoaderError.expired"
             )

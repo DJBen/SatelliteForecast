@@ -128,7 +128,7 @@ public struct LocationSettingsView: View {
         .task(id: search.query) { await search.search() }
         .onDisappear { search.cancel() }
         .overlay(alignment: .bottom) {
-            if search.isResolving { ProgressView("Finding location…").padding().background(.regularMaterial) }
+            if search.isResolving { ProgressView(AppLocalization.text("Finding location…")).padding().background(.regularMaterial) }
         }
         .alert(
             Text("Location change", bundle: .module),
@@ -140,11 +140,11 @@ public struct LocationSettingsView: View {
             ),
             presenting: search.pendingSelection
         ) { selection in
-            Button("No", role: .cancel) {
+            Button(AppLocalization.text("No"), role: .cancel) {
                 search.pendingSelection = nil
             }
 
-            Button("Confirm", role: .none) {
+            Button(AppLocalization.text("Confirm"), role: .none) {
                 guard selection != .currentLocation || state.currentLocation != nil else { return }
                 selectLocation(selection)
                 dismiss()

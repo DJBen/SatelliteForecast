@@ -38,8 +38,8 @@ struct DeviceOrientationGuidanceView: View {
                     }
                     .buttonStyle(.plain)
                     .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 16))
-                    .accessibilityLabel("Lift your iPhone")
-                    .accessibilityHint("Show orientation guidance")
+                    .accessibilityLabel(AppLocalization.text("Lift your iPhone"))
+                    .accessibilityHint(AppLocalization.text("Show orientation guidance"))
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
                     .transition(.opacity)
                 } else {
@@ -50,9 +50,10 @@ struct DeviceOrientationGuidanceView: View {
                                 .accessibilityHidden(true)
 
                             VStack(alignment: .leading, spacing: 6) {
-                                Text("Lift your iPhone")
+                                Text("Lift your iPhone", bundle: .module)
                                     .font(.headline)
-                                Text("Camera up. Screen down.")
+                                    .fixedSize(horizontal: false, vertical: true)
+                                Text("Camera up. Screen down.", bundle: .module)
                                     .font(.subheadline)
                                     .foregroundStyle(.secondary)
                                     .fixedSize(horizontal: false, vertical: true)
@@ -87,7 +88,7 @@ struct DeviceOrientationGuidanceView: View {
                                 .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
-                        .accessibilityLabel("Dismiss orientation guidance")
+                        .accessibilityLabel(AppLocalization.text("Dismiss orientation guidance"))
                     }
                     .transition(.opacity.combined(with: .scale(scale: 0.96)))
                 }

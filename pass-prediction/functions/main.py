@@ -17,6 +17,7 @@ from common.firestore_helpers import store_transits, previous_scan_end_time
 from common.satellite import find_visible_satellite_transits
 from common.description import describe_transit, describe_prominent_transit, get_localized_satellite_title
 from common.cloud_storage import download_tle_file
+from common.deep_link import pass_time_data
 
 app = initialize_app()
 
@@ -128,7 +129,7 @@ def _get_user_data(push_token):
         logger.error(f"Error fetching user data for {push_token}: {e}")
         return None
 
-def _send_fcm_notification(push_token, title, body, sat_id=None, observer_data=None):
+def _send_fcm_notification(push_token, title, body, sat_id=None, observer_data=None, transit=None):
     """
     Sends FCM notification and handles common error cases.
     Returns tuple of (success, error_response) where error_response is None if successful.
@@ -166,7 +167,8 @@ def _send_fcm_notification(push_token, title, body, sat_id=None, observer_data=N
                 "satelliteCategory": satellite_category,
                 "lat": str(observer_data["lat"]),
                 "lon": str(observer_data["lon"]),
-                "alt": str(observer_data["alt"])
+                "alt": str(observer_data["alt"]),
+                **pass_time_data(transit)
             }
         
         message = messaging.Message(**message_config)
@@ -369,7 +371,7 @@ def notify(request):
         title = get_localized_satellite_title(sat_id, locale=locale, is_rising=True)
 
         # Send FCM notification
-        success, error_response = _send_fcm_notification(push_token, title, describe_transit(transit, tz_offset, locale), sat_id, observer_data)
+        success, error_response = _send_fcm_notification(push_token, title, describe_transit(transit, tz_offset, locale), sat_id, observer_data, transit=transit)
         if not success:
             return error_response
 
@@ -418,7 +420,7 @@ def notify_prominent(request):
         title = get_localized_satellite_title(sat_id, locale=locale, is_rising=False)
         
         # Send FCM notification
-        success, error_response = _send_fcm_notification(push_token, title, describe_prominent_transit(sat_id, transit, tz_offset, locale), sat_id, observer_data)
+        success, error_response = _send_fcm_notification(push_token, title, describe_prominent_transit(sat_id, transit, tz_offset, locale), sat_id, observer_data, transit=transit)
         if not success:
             return error_response
 

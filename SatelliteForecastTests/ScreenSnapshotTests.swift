@@ -488,6 +488,48 @@ final class ScreenSnapshotTests: XCTestCase {
         }
     }
 
+    /// Locale-driven Text lookup, at a narrow phone width, including the optional dismissal action.
+    func testLocalizedOrientationGuidance() async throws {
+        let defaults = UserDefaults.standard
+        let keys = ["hasDismissedOrientationGuidance", "orientationGuidanceDismissalCount", "orientationGuidanceSuppressed"]
+        let previous = keys.map { defaults.object(forKey: $0) }
+        defer {
+            for (key, value) in zip(keys, previous) {
+                if let value { defaults.set(value, forKey: key) } else { defaults.removeObject(forKey: key) }
+            }
+        }
+        defaults.set(false, forKey: keys[0])
+        defaults.set(2, forKey: keys[1])
+        defaults.set(false, forKey: keys[2])
+        let folder = root.appendingPathComponent("Documentation/Localization")
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        for locale in ["en", "fr", "es", "pt-BR", "ru", "zh-Hans", "ja", "ko"] {
+            let view = DeviceOrientationGuidanceView(deviceMotionResult: .notLoaded)
+                .frame(width: 375, height: 440)
+                .background(Color.black)
+                .environment(\.locale, Locale(identifier: locale))
+                .environment(\.colorScheme, .dark)
+            let host = UIHostingController(rootView: view)
+            let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.first as? UIWindowScene)
+            let window = UIWindow(windowScene: scene)
+            window.frame = CGRect(x: 0, y: 0, width: 375, height: 440)
+            window.overrideUserInterfaceStyle = .dark
+            window.rootViewController = host
+            window.makeKeyAndVisible()
+            host.view.frame = window.bounds
+            try await Task.sleep(for: .milliseconds(250))
+            host.view.layoutIfNeeded()
+            let format = UIGraphicsImageRendererFormat()
+            format.scale = 1
+            let image = UIGraphicsImageRenderer(size: window.bounds.size, format: format).image { _ in
+                host.view.drawHierarchy(in: host.view.bounds, afterScreenUpdates: true)
+            }
+            try XCTUnwrap(image.pngData()).write(to: folder.appendingPathComponent("guidance-\(locale)-dark.png"))
+            window.isHidden = true
+            window.rootViewController = nil
+        }
+    }
+
     private func assertSnapshot(_ view: AnyView, name: String, style: UIUserInterfaceStyle, scrollDistance: CGFloat? = nil, checkFullHeight: Bool = true, expectedModal: Bool? = nil, record: Bool = false) async throws {
         let host = UIHostingController(rootView: view
             .environment(\.motionManagerKey, CMMotionManager())

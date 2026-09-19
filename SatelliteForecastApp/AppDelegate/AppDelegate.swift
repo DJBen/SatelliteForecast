@@ -22,11 +22,19 @@ public class AppDelegate: NSObject, UIApplicationDelegate, AppDelegateActionDisp
     public var onLifecycle: ((AppDelegateAction) -> Void)? {
         didSet { if let onLifecycle { let events = pendingLifecycle; pendingLifecycle = []; events.forEach(onLifecycle) } }
     }
-    public var onDeepLink: ((SatelliteCategory, UInt, LatLonAlt) -> Void)? {
-        didSet { if let onDeepLink { let links = pendingLinks; pendingLinks = []; links.forEach { onDeepLink($0.0, $0.1, $0.2) } } }
+    public var onDeepLink: ((SatelliteCategory, UInt, LatLonAlt, Date?) -> Void)? {
+        didSet { if let onDeepLink { let links = pendingLinks; pendingLinks = []; links.forEach { onDeepLink($0.0, $0.1, $0.2, $0.3) } } }
+    }
+    public var onURL: ((SatelliteDeepLink) -> Void)? {
+        didSet { if let onURL { let links = pendingURLs; pendingURLs = []; links.forEach(onURL) } }
+    }
+    private var pendingURLs: [SatelliteDeepLink] = []
+    public func open(_ url: URL) {
+        guard let link = SatelliteDeepLink(url: url) else { return }
+        if let onURL { onURL(link) } else { pendingURLs.append(link) }
     }
     private var pendingLifecycle: [AppDelegateAction] = []
-    private var pendingLinks: [(SatelliteCategory, UInt, LatLonAlt)] = []
+    private var pendingLinks: [(SatelliteCategory, UInt, LatLonAlt, Date?)] = []
 
     private lazy var implementation: AppDelegateImpl = {
         return AppDelegateImpl(actionDispatcher: self)
@@ -63,9 +71,9 @@ public class AppDelegate: NSObject, UIApplicationDelegate, AppDelegateActionDisp
     }
     
     public func dispatchNotificationAction(_ action: NotificationAction) {
-        if case .deepLink(let category, let id, let observer, _) = action {
-            if let onDeepLink { onDeepLink(category, id, observer) }
-            else { pendingLinks.append((category, id, observer)) }
+        if case .deepLink(let category, let id, let observer, _, let time) = action {
+            if let onDeepLink { onDeepLink(category, id, observer, time) }
+            else { pendingLinks.append((category, id, observer, time)) }
         }
     }
 }

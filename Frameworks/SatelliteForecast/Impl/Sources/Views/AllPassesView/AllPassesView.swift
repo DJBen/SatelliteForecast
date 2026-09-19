@@ -193,7 +193,7 @@ public struct AllPassesView: View {
                     .unscheduleNotification(pass: item.passSnapshots.pass)
                 )
             } label: {
-                Label("Cancel alarm", systemImage: "bell.slash.fill")
+                Label(AppLocalization.text("Cancel alarm"), systemImage: "bell.slash.fill")
             }
             .tint(.red)
         } else {
@@ -518,7 +518,7 @@ public struct AllPassesView: View {
         .onDisappear { viewModel.cancel() }
         .overlay(alignment: .center) {
             if let error = viewModel.errorMessage {
-                ContentUnavailableView { Label("Unable to calculate passes", systemImage: "exclamationmark.triangle") } description: { Text(error) }
+                ContentUnavailableView { Label(AppLocalization.text("Unable to calculate passes"), systemImage: "exclamationmark.triangle") } description: { Text(error) }
             }
         }
         .fullScreenCover(isPresented: Binding<Bool>(

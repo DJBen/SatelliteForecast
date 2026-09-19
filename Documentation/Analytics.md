@@ -47,7 +47,7 @@ Every event includes `screen`.
 | `operation_finished` | `operation`, `outcome`, `duration_ms`; optional `result_count`, `reason` | One terminal outcome per started operation during normal task completion/cancellation |
 | `alarm_scheduled` | — | OS notification center accepts an alarm and local state is persisted; screen is `passes` for a quick alarm or `alarm_setup` for the configuration sheet |
 | `alarm_cancelled` | — | Explicit cancellation removes an existing scheduled alarm; `screen=alarms` denotes the alarm-management domain, not necessarily the visible screen |
-| `notification_opened` | — | AppSession accepts a notification deep link; this does not guarantee the destination loaded |
+| `notification_opened` | — | AppSession accepts a notification deep link; this does not guarantee the destination loaded. External URL opens are excluded |
 
 Onboarding replay counts and rescheduling the same alarm count as actions, not new installations or unique reminders. Filter to first events per user/session when answering activation questions. `flow_blocked` may repeat on new forecast inputs; use affected sessions rather than raw event count as the friction denominator.
 
@@ -95,7 +95,7 @@ Suggested analyses:
 | Is location a blocker? | Sessions with `flow_blocked` → `screen_view(location)` → `location_selected`; break down `location_search` / `location_resolve` terminal outcomes |
 | Which loads fail or return nothing? | Per screen + operation, failure or empty outcomes divided by success + empty + failure finishes; report blocked/cancelled separately |
 | Which screens feel slow? | Median and p95 `duration_ms` by operation, successful outcome, app version, OS and device; show sample counts |
-| Do reminders bring users back? | `notification_opened` → `screen_view(passes)` → `screen_view(pass_detail)` |
+| Do reminders bring users back? | `notification_opened` → `screen_view(pass_detail)` for timed links; legacy links may visit `screen_view(passes)` first |
 
 Use ordered, session-scoped funnels (or an explicitly chosen conversion window), counting users/sessions rather than dividing unrelated event totals. A missing downstream event indicates observed drop-off, not proof of a usability defect. Forecasts, pass calculations and location search can legitimately be empty.
 
@@ -117,3 +117,11 @@ References: [Firebase screen views](https://firebase.google.com/docs/analytics/s
 - 47 targeted tests passed: AnalyticsTests, ForecastTests, LocationSearchTests, and NativeArchitectureTests.
 - Runtime Firebase logs confirmed Analytics 12.4.0 startup and collection enabled. Receipt in the remote Firebase DebugView and GA4 console definitions/key events were not verified or configured from this workspace.
 - Firebase debug mode was disabled again after the runtime check; the app was relaunched for review.
+
+## Timed notification deep links
+
+Notifications with `passTime` open the matching `pass_detail` screen directly;
+older payloads open `passes`. Do not require a `passes` screen event when measuring
+notification-to-detail conversion. URL links use the same destination screens but
+do not emit `notification_opened`. Link parsing and pass matching add no telemetry
+parameters; coordinates, times, URLs, and identifiers remain excluded.

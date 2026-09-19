@@ -175,6 +175,60 @@
           }
         }
       }
+    },
+    "NSMotionUsageDescription" : {
+      "comment" : "Explain device motion use for sky orientation.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use your device orientation to look around the planetarium sky."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les mouvements de votre iPhone permettent d’orienter la vue du ciel lorsque vous regardez autour de vous."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El movimiento de tu iPhone permite orientar la vista del cielo cuando miras a tu alrededor."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O movimento do seu iPhone orienta a vista do céu enquanto você olha ao redor."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Движения iPhone используются для управления обзором неба."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "根据 iPhone 的移动调整星空视角，帮助您探索周围的天空。"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iPhoneの動きに合わせて星空の表示方向を変え、周囲の空を見渡せるようにします。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iPhone의 움직임에 맞춰 하늘 화면의 방향을 조정하여 주변 하늘을 둘러볼 수 있습니다."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

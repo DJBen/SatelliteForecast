@@ -16,13 +16,6 @@ public final class AppNavigation {
   public var deepLink: SatelliteDeepLink?
   public init() {}
 }
-public struct SatelliteDeepLink: Identifiable {
-  public let id = UUID()
-  public let category: SatelliteCategory
-  public let noradIndex: UInt
-  public let observer: LatLonAlt
-}
-
 @MainActor @Observable
 public final class AppSession {
   public let location: LocationService
@@ -85,10 +78,10 @@ public final class AppSession {
       }
     }
   }
-  public func open(_ category: SatelliteCategory, id: UInt, observer: LatLonAlt) {
-    AppAnalytics.event("notification_opened", screen: .passes)
+  public func open(_ category: SatelliteCategory, id: UInt, observer: LatLonAlt, passTime: Date? = nil, fromNotification: Bool = true) {
+    if fromNotification { AppAnalytics.event("notification_opened", screen: .passes) }
     navigation.tab = category == .iss || category == .tianhe ? .forecast : .satellites
-    navigation.deepLink = SatelliteDeepLink(category: category, noradIndex: id, observer: observer)
+    navigation.deepLink = SatelliteDeepLink(category: category, noradIndex: id, observer: observer, passTime: passTime)
   }
   private func updateRegistration(_ token: String) {
     #if targetEnvironment(simulator)
