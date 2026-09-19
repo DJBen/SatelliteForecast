@@ -35,6 +35,7 @@ public struct PassView: View {
     @State var viewModel: PassModel
     @AppStorage("passCompassEnabled") private var savedCompassEnabled = true
     @State private var compassOverride: Bool?
+    @State private var showsPlanetarium = false
 
     private var isCompassEnabled: Bool {
         get { compassOverride ?? savedCompassEnabled }
@@ -82,6 +83,8 @@ public struct PassView: View {
                     .font(.body)
                 Text("Compass", bundle: .module)
                     .font(.subheadline.weight(.medium))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
                 if isCompassEnabled {
                     Image(systemName: "checkmark")
                         .font(.caption.weight(.bold))
@@ -99,7 +102,7 @@ public struct PassView: View {
 
     private var chartControls: some View {
         GlassEffectContainer(spacing: 16) {
-            HStack(spacing: 16) {
+            HStack(spacing: 10) {
                 if isCompassEnabled {
                     compassButton.buttonStyle(.glassProminent)
                 } else {
@@ -118,6 +121,15 @@ public struct PassView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 4)
                 }
+                Button {
+                    showsPlanetarium = true
+                } label: {
+                    Label("3D", systemImage: "cube.transparent")
+                        .font(.subheadline.weight(.semibold))
+                        .padding(.vertical, 4)
+                }
+                .accessibilityLabel(AppLocalization.text("Open 3D planetarium"))
+                .accessibilityIdentifier("pass.planetarium")
             }
             .buttonStyle(.glass)
             .buttonBorderShape(.roundedRectangle(radius: 16))
@@ -168,7 +180,7 @@ public struct PassView: View {
                 HStack(spacing: 12) {
                     ZStack {
                         Circle().strokeBorder(.secondary.opacity(0.3), lineWidth: 1)
-                        Text("N").font(.system(size: 7, weight: .semibold)).offset(y: -13)
+                        Text("Compass.northAbbreviation", bundle: .module).font(.system(size: 7, weight: .semibold)).offset(y: -13)
                         Image(systemName: "location.north.fill")
                             .font(.system(size: 16))
                             .rotationEffect(.degrees(event.position.azim))
@@ -244,6 +256,9 @@ public struct PassView: View {
                     }
                 }
             }
+        }
+        .fullScreenCover(isPresented: $showsPlanetarium) {
+            PlanetariumView(context: context)
         }
         .fullScreenCover(
             isPresented: $viewModel.state.showAlarmConfigurationModal,

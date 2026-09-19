@@ -1,0 +1,67 @@
+Planetarium rendering
+
+Star billboard optics, magnitude/exposure model, spectral colors and wavelengths
+adapted from DJBen/StarryNight, Planetarium/Metal/StarRenderer.swift and
+Planetarium/Metal/StarShaders.metal. Camera layering and tiered rendering inspired
+by the same project. https://github.com/DJBen/StarryNight/tree/master/Planetarium
+
+Copyright (c) 2021 Ben Lu <sihao@squareup.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+Landscape: original procedural Metal mountains and lake. The low, periodic
+ridge is illustrative, not terrain for the observer's actual location.
+View-dependent Fresnel reflection, filtered directional gravity waves, and a shallow bed
+replace the former ground panorama; no landscape bitmap is used.
+Bright-star diffraction accents are artistic camera optics, not stellar structure.
+Optical reference: https://science.nasa.gov/asset/webb/webbs-diffraction-spikes/
+
+Planetarium Milky Way: NASA/Goddard Space Flight Center Scientific Visualization
+Studio; Gaia DR2: ESA/Gaia/DPAC. https://svs.gsfc.nasa.gov/4851/
+Source: https://svs.gsfc.nasa.gov/vis/a000000/a004800/a004851/milkyway_2020_16k_gal.exr
+SHA-256: ee023f03e99466b3829117c15a001269ba32a3fecb6012d0b2d41f201c955351
+Galactic coordinates, corrected January 2021; no separate bright-star layer.
+Native 16384 × 8192, linear-to-sRGB conversion, no blur or upscaling.
+Two 8192 × 8192 ASTC 6×6 sRGB tiles, each with 14 linear-light mip levels.
+KTX 1 containers keep native 16K detail within an 8K GPU texture limit;
+approximately 76 MiB total compressed storage. Tile boundaries wrap in shader.
+The low-resolution chart texture is intentionally separate and unchanged.
+Reproduction: scripts/prepare-planetarium-textures.py (ARM astcenc 5.7.0).
+
+Lunar albedo: existing NASA resource; see bundled lunar credits.
+
+Water rendering research references (original shader implementation):
+GPU Gems, Chapter 1: Effective Water Simulation from Physical Models.
+https://developer.nvidia.com/gpugems/gpugems/part-i-natural-effects/chapter-1-effective-water-simulation-physical-models
+Bruneton, Neyret, Holzschuch: Real-time Realistic Ocean Lighting (2010).
+https://morpho.inrialpes.fr/Publications/2010/BNH10/
+
+Selection-card planet maps: Solar System Scope / INOVE, based on NASA imagery.
+https://www.solarsystemscope.com/textures/
+CC BY 4.0: https://creativecommons.org/licenses/by/4.0/
+Downloaded 2K maps and resized to 512 x 256 for small Metal globes:
+Mercury, Venus Atmosphere, Earth Day Map and Clouds, Mars, Jupiter, Saturn,
+Uranus and Neptune. Source filenames: 2k_<name>.jpg in the texture download
+folder; bundled derivatives use the planet-icon- prefix. Planet colors and
+unmapped areas are artistic approximations as documented by the author.
+Rotation periods: NASA Planetary Fact Sheet (hours, signed for retrograde).
+https://nssdc.gsfc.nasa.gov/planetary/factsheet/
+Earth's thumbnail uses the requested exact 24-hour / 10-second normalization.
+Venus displays opaque sulfuric-acid clouds; its illustrative cloud texture
+rotates with the body, not a separate atmospheric superrotation simulation.

@@ -615,3 +615,57 @@ The localized string for the status of a spare satellite */
 
 /* Elevation at the best visible point, rounded to a whole degree. */
 "%lld\u00b0 above horizon" = "지평선 위 %lld°";
+
+/* Guidance, navigation, errors and planetarium accessibility */
+"Lift your iPhone" = "iPhone을 들어 올리세요";
+"Camera up. Screen down." = "카메라는 위로, 화면은 아래로 향하게 하세요.";
+"Show orientation guidance" = "방향 안내 보기";
+"Dismiss orientation guidance" = "방향 안내 닫기";
+"Close" = "닫기";
+"Done" = "완료";
+"OK" = "확인";
+"Constellation labels" = "별자리 이름";
+"Constellation lines" = "별자리 선";
+"Gyroscope" = "자이로스코프";
+"Find satellite" = "위성을 화면 중앙에 표시";
+"Sky options" = "하늘 설정";
+"Motion unavailable · Drag to explore the sky" = "동작 감지 사용 불가 · 드래그하여 하늘 탐색";
+"Dismiss selection" = "선택 해제";
+"Pause preview" = "미리보기 일시 정지";
+"Play preview" = "미리보기 재생";
+"Pass preview time" = "통과 미리보기 시간";
+"Live" = "실시간";
+"Planetarium unavailable" = "천체 투영 기능을 사용할 수 없습니다";
+"Open 3D planetarium" = "3D 천체 투영 화면 열기";
+"Unable to calculate passes" = "통과를 계산할 수 없습니다";
+"Unable to open pass" = "통과를 열 수 없습니다";
+"Unable to schedule alarm" = "알람을 설정할 수 없습니다";
+"View all passes" = "모든 통과 보기";
+"This pass could not be found at the requested time. You can retry or view all passes." = "요청한 시간의 통과를 찾을 수 없습니다. 다시 시도하거나 모든 통과를 확인하세요.";
+"Notifications are disabled. Enable them in Settings to schedule an alarm." = "알림이 꺼져 있습니다. 알람을 설정하려면 설정에서 알림을 켜세요.";
+"This alert time has already passed." = "이 알림 시간은 이미 지났습니다.";
+"Unable to download orbital data. Please try again." = "궤도 데이터를 다운로드할 수 없습니다. 다시 시도하세요.";
+"The orbital data does not contain satellite %@." = "궤도 데이터에 위성 %@이(가) 없습니다.";
+"No location was found for this address. Please try another result." = "이 주소의 위치를 찾을 수 없습니다. 다른 검색 결과를 선택하세요.";
+"Unable to load the sky catalog" = "천체 목록을 불러올 수 없습니다";
+"Try again" = "다시 시도";
+"Loading the sky…" = "하늘을 불러오는 중…";
+"Metal is unavailable on this device." = "이 기기에서는 Metal을 사용할 수 없습니다.";
+"Unable to load the sky textures." = "하늘 텍스처를 불러올 수 없습니다.";
+"3D sky. Drag to look around, pinch to zoom, tap a star or planet for details." = "3D 하늘입니다. 드래그하여 둘러보고, 두 손가락으로 확대하거나 축소하고, 별이나 행성을 탭하여 자세히 보세요.";
+"Sun · Our nearest star" = "태양 · 우리에게 가장 가까운 별";
+"Planet · %.2f AU from Earth" = "행성 · 지구에서 %.2f AU";
+"Moon · %.0f%% illuminated" = "달 · 밝은 부분 %.0f%%";
+"Star · magnitude %.1f" = "별 · %.1f등급";
+"Star %@" = "별 %@";
+"%.0f° azimuth · %.0f° altitude" = "방위각 %.0f° · 고도 %.0f°";
+
+"You have declined sharing the location." = "위치 공유를 거부했습니다.";
+"Location access is restricted." = "위치 접근이 제한되어 있습니다.";
+"Finding location…" = "위치를 찾는 중…";
+"The satellite is no longer available." = "이 위성은 더 이상 사용할 수 없습니다.";
+
+/* Compact compass and station labels */
+"Compass.northAbbreviation" = "북";
+"Station.iss.short" = "국제우주정거장";
+"Station.tiangong.short" = "톈궁";

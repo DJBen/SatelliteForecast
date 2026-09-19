@@ -69,14 +69,14 @@ public struct NativeForecastView: SatelliteOverviewView {
     _model = State(initialValue: ForecastModel(client: .live(service: ForecastService())))
   }
   public var body: some View {
-    SatelliteOverviewViewImpl(
+    @Bindable var navigation = session.navigation
+    return SatelliteOverviewViewImpl(
       model: model,
       input: .init(
         observer: session.location.resources.location.map(LatLonAlt.init),
         julianDateOffset: session.debug.config.effectiveOffset,
         authorizationStatus: session.location.resources.authorizationStatus),
-      navigationPath: Binding(
-        get: { session.navigation.forecastPath }, set: { session.navigation.forecastPath = $0 }),
+      navigationPath: $navigation.forecastPath,
       context: context,
       singleSatelliteWrappingViewFactory: { ScreenFactory(session: session).detail($0) })
   }

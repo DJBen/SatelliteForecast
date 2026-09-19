@@ -615,3 +615,57 @@ The localized string for the status of a spare satellite */
 
 /* Elevation at the best visible point, rounded to a whole degree. */
 "%lld\u00b0 above horizon" = "地平线上方%lld°";
+
+/* Guidance, navigation, errors and planetarium accessibility */
+"Lift your iPhone" = "举起 iPhone";
+"Camera up. Screen down." = "摄像头朝上，屏幕朝下。";
+"Show orientation guidance" = "显示方向指引";
+"Dismiss orientation guidance" = "关闭方向指引";
+"Close" = "关闭";
+"Done" = "完成";
+"OK" = "好";
+"Constellation labels" = "星座名称";
+"Constellation lines" = "星座连线";
+"Gyroscope" = "陀螺仪";
+"Find satellite" = "定位卫星";
+"Sky options" = "星空选项";
+"Motion unavailable · Drag to explore the sky" = "运动感应不可用 · 拖动以探索星空";
+"Dismiss selection" = "关闭所选对象";
+"Pause preview" = "暂停预览";
+"Play preview" = "播放预览";
+"Pass preview time" = "过境预览时间";
+"Live" = "实时";
+"Planetarium unavailable" = "天象馆不可用";
+"Open 3D planetarium" = "打开 3D 天象馆";
+"Unable to calculate passes" = "无法计算过境";
+"Unable to open pass" = "无法打开过境详情";
+"Unable to schedule alarm" = "无法设置提醒";
+"View all passes" = "查看所有过境";
+"This pass could not be found at the requested time. You can retry or view all passes." = "未找到指定时间的过境。您可以重试或查看所有过境。";
+"Notifications are disabled. Enable them in Settings to schedule an alarm." = "通知已关闭。请在“设置”中开启通知以设置提醒。";
+"This alert time has already passed." = "此提醒时间已过。";
+"Unable to download orbital data. Please try again." = "无法下载轨道数据，请重试。";
+"The orbital data does not contain satellite %@." = "轨道数据中不包含卫星 %@。";
+"No location was found for this address. Please try another result." = "未找到此地址的位置，请尝试其他搜索结果。";
+"Unable to load the sky catalog" = "无法加载星空目录";
+"Try again" = "重试";
+"Loading the sky…" = "正在加载星空…";
+"Metal is unavailable on this device." = "此设备不支持 Metal。";
+"Unable to load the sky textures." = "无法加载星空纹理。";
+"3D sky. Drag to look around, pinch to zoom, tap a star or planet for details." = "3D 星空。拖动以环顾四周，双指捏合以缩放，轻点恒星或行星以查看详情。";
+"Sun · Our nearest star" = "太阳 · 离我们最近的恒星";
+"Planet · %.2f AU from Earth" = "行星 · 距地球 %.2f 天文单位";
+"Moon · %.0f%% illuminated" = "月球 · 照亮比例 %.0f%%";
+"Star · magnitude %.1f" = "恒星 · 星等 %.1f";
+"Star %@" = "恒星 %@";
+"%.0f° azimuth · %.0f° altitude" = "方位角 %.0f° · 高度角 %.0f°";
+
+"You have declined sharing the location." = "您已拒绝共享位置。";
+"Location access is restricted." = "位置访问受到限制。";
+"Finding location…" = "正在查找位置…";
+"The satellite is no longer available." = "该卫星已不可用。";
+
+/* Compact compass and station labels */
+"Compass.northAbbreviation" = "北";
+"Station.iss.short" = "国际空间站";
+"Station.tiangong.short" = "天宫";

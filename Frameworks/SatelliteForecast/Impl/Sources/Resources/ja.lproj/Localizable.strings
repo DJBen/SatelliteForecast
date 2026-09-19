@@ -615,3 +615,57 @@ The localized string for the status of a spare satellite */
 
 /* Elevation at the best visible point, rounded to a whole degree. */
 "%lld\u00b0 above horizon" = "地平線から%lld°";
+
+/* Guidance, navigation, errors and planetarium accessibility */
+"Lift your iPhone" = "iPhoneを持ち上げてください";
+"Camera up. Screen down." = "カメラを上に、画面を下に。";
+"Show orientation guidance" = "向きのガイドを表示";
+"Dismiss orientation guidance" = "向きのガイドを閉じる";
+"Close" = "閉じる";
+"Done" = "完了";
+"OK" = "OK";
+"Constellation labels" = "星座名";
+"Constellation lines" = "星座線";
+"Gyroscope" = "ジャイロスコープ";
+"Find satellite" = "衛星を中央に表示";
+"Sky options" = "星空の設定";
+"Motion unavailable · Drag to explore the sky" = "モーションを利用できません · ドラッグして星空を探索";
+"Dismiss selection" = "選択を解除";
+"Pause preview" = "プレビューを一時停止";
+"Play preview" = "プレビューを再生";
+"Pass preview time" = "通過プレビューの時刻";
+"Live" = "現在";
+"Planetarium unavailable" = "プラネタリウムを利用できません";
+"Open 3D planetarium" = "3Dプラネタリウムを開く";
+"Unable to calculate passes" = "通過を計算できません";
+"Unable to open pass" = "通過を開けません";
+"Unable to schedule alarm" = "アラームを設定できません";
+"View all passes" = "すべての通過を表示";
+"This pass could not be found at the requested time. You can retry or view all passes." = "指定された時刻の通過が見つかりませんでした。再試行するか、すべての通過を表示してください。";
+"Notifications are disabled. Enable them in Settings to schedule an alarm." = "通知がオフになっています。アラームを設定するには「設定」で通知をオンにしてください。";
+"This alert time has already passed." = "この通知の時刻はすでに過ぎています。";
+"Unable to download orbital data. Please try again." = "軌道データをダウンロードできません。もう一度お試しください。";
+"The orbital data does not contain satellite %@." = "軌道データに衛星%@が含まれていません。";
+"No location was found for this address. Please try another result." = "この住所の位置が見つかりませんでした。別の検索結果をお試しください。";
+"Unable to load the sky catalog" = "星空カタログを読み込めません";
+"Try again" = "再試行";
+"Loading the sky…" = "星空を読み込み中…";
+"Metal is unavailable on this device." = "このデバイスではMetalを利用できません。";
+"Unable to load the sky textures." = "星空のテクスチャを読み込めません。";
+"3D sky. Drag to look around, pinch to zoom, tap a star or planet for details." = "3Dの星空。ドラッグで見回し、ピンチで拡大・縮小、星や惑星をタップして詳細を表示します。";
+"Sun · Our nearest star" = "太陽 · 私たちに最も近い恒星";
+"Planet · %.2f AU from Earth" = "惑星 · 地球から%.2f天文単位";
+"Moon · %.0f%% illuminated" = "月 · 輝面比%.0f%%";
+"Star · magnitude %.1f" = "恒星 · %.1f等級";
+"Star %@" = "恒星%@";
+"%.0f° azimuth · %.0f° altitude" = "方位角%.0f° · 高度%.0f°";
+
+"You have declined sharing the location." = "位置情報の共有が許可されていません。";
+"Location access is restricted." = "位置情報へのアクセスが制限されています。";
+"Finding location…" = "位置を検索中…";
+"The satellite is no longer available." = "この衛星は現在利用できません。";
+
+/* Compact compass and station labels */
+"Compass.northAbbreviation" = "北";
+"Station.iss.short" = "ISS";
+"Station.tiangong.short" = "天宮";

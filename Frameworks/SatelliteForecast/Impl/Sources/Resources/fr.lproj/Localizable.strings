@@ -615,3 +615,57 @@ The localized string for the status of a spare satellite */
 
 /* Elevation at the best visible point, rounded to a whole degree. */
 "%lld\u00b0 above horizon" = "%lld° au-dessus de l’horizon";
+
+/* Guidance, navigation, errors and planetarium accessibility */
+"Lift your iPhone" = "Levez votre iPhone";
+"Camera up. Screen down." = "Caméra vers le haut. Écran vers le bas.";
+"Show orientation guidance" = "Afficher les conseils d’orientation";
+"Dismiss orientation guidance" = "Fermer les conseils d’orientation";
+"Close" = "Fermer";
+"Done" = "Terminé";
+"OK" = "OK";
+"Constellation labels" = "Noms des constellations";
+"Constellation lines" = "Lignes des constellations";
+"Gyroscope" = "Gyroscope";
+"Find satellite" = "Centrer sur le satellite";
+"Sky options" = "Options du ciel";
+"Motion unavailable · Drag to explore the sky" = "Mouvements indisponibles · Faites glisser pour explorer le ciel";
+"Dismiss selection" = "Fermer la sélection";
+"Pause preview" = "Mettre l’aperçu en pause";
+"Play preview" = "Lire l’aperçu";
+"Pass preview time" = "Heure de l’aperçu du passage";
+"Live" = "En direct";
+"Planetarium unavailable" = "Planétarium indisponible";
+"Open 3D planetarium" = "Ouvrir le planétarium 3D";
+"Unable to calculate passes" = "Impossible de calculer les passages";
+"Unable to open pass" = "Impossible d’ouvrir le passage";
+"Unable to schedule alarm" = "Impossible de programmer l’alarme";
+"View all passes" = "Voir tous les passages";
+"This pass could not be found at the requested time. You can retry or view all passes." = "Ce passage est introuvable à l’heure demandée. Réessayez ou consultez tous les passages.";
+"Notifications are disabled. Enable them in Settings to schedule an alarm." = "Les notifications sont désactivées. Activez-les dans Réglages pour programmer une alarme.";
+"This alert time has already passed." = "L’heure de cette alerte est déjà passée.";
+"Unable to download orbital data. Please try again." = "Impossible de télécharger les données orbitales. Veuillez réessayer.";
+"The orbital data does not contain satellite %@." = "Les données orbitales ne contiennent pas le satellite %@.";
+"No location was found for this address. Please try another result." = "Aucun lieu trouvé pour cette adresse. Essayez un autre résultat.";
+"Unable to load the sky catalog" = "Impossible de charger le catalogue du ciel";
+"Try again" = "Réessayer";
+"Loading the sky…" = "Chargement du ciel…";
+"Metal is unavailable on this device." = "Metal n’est pas disponible sur cet appareil.";
+"Unable to load the sky textures." = "Impossible de charger les textures du ciel.";
+"3D sky. Drag to look around, pinch to zoom, tap a star or planet for details." = "Ciel en 3D. Faites glisser pour regarder autour de vous, pincez pour zoomer et touchez une étoile ou une planète pour en savoir plus.";
+"Sun · Our nearest star" = "Soleil · Notre étoile la plus proche";
+"Planet · %.2f AU from Earth" = "Planète · À %.2f UA de la Terre";
+"Moon · %.0f%% illuminated" = "Lune · Éclairée à %.0f%%";
+"Star · magnitude %.1f" = "Étoile · Magnitude %.1f";
+"Star %@" = "Étoile %@";
+"%.0f° azimuth · %.0f° altitude" = "Azimut %.0f° · Hauteur %.0f°";
+
+"You have declined sharing the location." = "Vous avez refusé de partager votre position.";
+"Location access is restricted." = "L’accès à la position est restreint.";
+"Finding location…" = "Recherche du lieu…";
+"The satellite is no longer available." = "Ce satellite n’est plus disponible.";
+
+/* Compact compass and station labels */
+"Compass.northAbbreviation" = "N";
+"Station.iss.short" = "ISS";
+"Station.tiangong.short" = "Tiangong";

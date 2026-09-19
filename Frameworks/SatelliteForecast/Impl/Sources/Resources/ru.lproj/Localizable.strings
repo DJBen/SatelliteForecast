@@ -615,3 +615,57 @@ The localized string for the status of a spare satellite */
 
 /* Elevation at the best visible point, rounded to a whole degree. */
 "%lld\u00b0 above horizon" = "%lld° над горизонтом";
+
+/* Guidance, navigation, errors and planetarium accessibility */
+"Lift your iPhone" = "Поднимите iPhone";
+"Camera up. Screen down." = "Камера вверх. Экран вниз.";
+"Show orientation guidance" = "Показать подсказку об ориентации";
+"Dismiss orientation guidance" = "Закрыть подсказку об ориентации";
+"Close" = "Закрыть";
+"Done" = "Готово";
+"OK" = "ОК";
+"Constellation labels" = "Названия созвездий";
+"Constellation lines" = "Линии созвездий";
+"Gyroscope" = "Гироскоп";
+"Find satellite" = "Найти спутник";
+"Sky options" = "Настройки неба";
+"Motion unavailable · Drag to explore the sky" = "Датчик движения недоступен · Проведите пальцем для обзора неба";
+"Dismiss selection" = "Снять выделение";
+"Pause preview" = "Приостановить просмотр";
+"Play preview" = "Запустить просмотр";
+"Pass preview time" = "Время просмотра пролёта";
+"Live" = "Сейчас";
+"Planetarium unavailable" = "Планетарий недоступен";
+"Open 3D planetarium" = "Открыть 3D-планетарий";
+"Unable to calculate passes" = "Не удалось рассчитать пролёты";
+"Unable to open pass" = "Не удалось открыть пролёт";
+"Unable to schedule alarm" = "Не удалось установить напоминание";
+"View all passes" = "Все пролёты";
+"This pass could not be found at the requested time. You can retry or view all passes." = "Не удалось найти пролёт в указанное время. Повторите попытку или посмотрите все пролёты.";
+"Notifications are disabled. Enable them in Settings to schedule an alarm." = "Уведомления отключены. Включите их в настройках, чтобы установить напоминание.";
+"This alert time has already passed." = "Время этого напоминания уже прошло.";
+"Unable to download orbital data. Please try again." = "Не удалось загрузить орбитальные данные. Повторите попытку.";
+"The orbital data does not contain satellite %@." = "В орбитальных данных нет спутника %@.";
+"No location was found for this address. Please try another result." = "Для этого адреса не найдено местоположение. Выберите другой результат.";
+"Unable to load the sky catalog" = "Не удалось загрузить каталог неба";
+"Try again" = "Повторить";
+"Loading the sky…" = "Загрузка неба…";
+"Metal is unavailable on this device." = "Metal недоступен на этом устройстве.";
+"Unable to load the sky textures." = "Не удалось загрузить текстуры неба.";
+"3D sky. Drag to look around, pinch to zoom, tap a star or planet for details." = "Трёхмерное небо. Проведите пальцем для обзора, сведите или разведите пальцы для изменения масштаба. Нажмите на звезду или планету, чтобы узнать больше.";
+"Sun · Our nearest star" = "Солнце · Ближайшая к нам звезда";
+"Planet · %.2f AU from Earth" = "Планета · %.2f а. е. от Земли";
+"Moon · %.0f%% illuminated" = "Луна · Освещено %.0f%%";
+"Star · magnitude %.1f" = "Звезда · Звёздная величина %.1f";
+"Star %@" = "Звезда %@";
+"%.0f° azimuth · %.0f° altitude" = "Азимут %.0f° · Высота %.0f°";
+
+"You have declined sharing the location." = "Вы запретили доступ к геопозиции.";
+"Location access is restricted." = "Доступ к геопозиции ограничен.";
+"Finding location…" = "Поиск местоположения…";
+"The satellite is no longer available." = "Этот спутник больше недоступен.";
+
+/* Compact compass and station labels */
+"Compass.northAbbreviation" = "С";
+"Station.iss.short" = "МКС";
+"Station.tiangong.short" = "Тяньгун";

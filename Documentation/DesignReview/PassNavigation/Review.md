@@ -29,3 +29,21 @@ xcodebuildmcp simulator test --scheme SatelliteForecastApp --project-path Satell
 ```
 
 The test hosts an offline fixture with four invisible passes and no visible passes. Wait for `/tmp/satellite-pass-navigation-review-ready` to be updated. Tap each first-row card separately, swipe left, and return. Finish on the list and remove the marker to complete the test. Without the marker, the interactive test is skipped.
+
+## Home return animation (September 17, 2026)
+
+Reproduced the pass-list Back button cutting directly to Home in the running
+app. Replaced the manually constructed forecast-path binding in
+`NativeForecastView` with the projected binding from `@Bindable AppNavigation`.
+The path still belongs to the same session; SwiftUI now handles its native
+navigation transition through the observable binding.
+
+Rebuilt and reran on iPhone 17 Pro Max / iOS 26.5 in dark mode. Reviewed
+recordings frame by frame: the original Back action has no intermediate slide
+frames, while the updated action slides the pass list right and Home into view.
+Also verified pass detail → pass list via edge swipe, and pass list → Home via
+edge swipe. The app remains running on Home.
+
+- [Before](home-back-before-dark.mp4)
+- [Back button after](home-back-after-dark.mp4)
+- [Edge swipe after](home-back-swipe-dark.mp4)

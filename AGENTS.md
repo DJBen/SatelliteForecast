@@ -3,6 +3,7 @@
 - Always capture and review app screenshots in dark mode.
 - Do not spend time capturing, reviewing, or fixing light-mode appearance unless the user explicitly requests it.
 - Set the simulator to dark mode before visual inspection.
+- After every app code change, rebuild and rerun the app in the simulator so the updated version is available for review.
 
 # App Store Connect releases
 

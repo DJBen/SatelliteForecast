@@ -58,6 +58,17 @@ final class ScreenSnapshotTests: XCTestCase {
         XCTFail("Interactive review timed out")
     }
 
+    func testPlanetariumEntranceDark() async throws {
+        let savedCompass = UserDefaults.standard.object(forKey: "passCompassEnabled")
+        UserDefaults.standard.set(true, forKey: "passCompassEnabled")
+        defer { UserDefaults.standard.set(savedCompass, forKey: "passCompassEnabled") }
+        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        for (name, view) in fixture.screens() where name.hasPrefix("07-pass") {
+            try await assertSnapshot(view, name: name + "-dark", style: .dark,
+                record: FileManager.default.fileExists(atPath: "/tmp/satellite-planetarium-record"))
+        }
+    }
+
     func testPointSourceRenderingReview() async throws {
         let mapping = BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction.self
         for scale: CGFloat in [0.75, 1, 1.35] {
@@ -477,7 +488,7 @@ final class ScreenSnapshotTests: XCTestCase {
         }
     }
 
-    private func assertSnapshot(_ view: AnyView, name: String, style: UIUserInterfaceStyle, scrollDistance: CGFloat? = nil, checkFullHeight: Bool = true, expectedModal: Bool? = nil) async throws {
+    private func assertSnapshot(_ view: AnyView, name: String, style: UIUserInterfaceStyle, scrollDistance: CGFloat? = nil, checkFullHeight: Bool = true, expectedModal: Bool? = nil, record: Bool = false) async throws {
         let host = UIHostingController(rootView: view
             .environment(\.motionManagerKey, CMMotionManager())
             .environment(\.locale, Locale(identifier: "en_US"))
@@ -540,7 +551,7 @@ final class ScreenSnapshotTests: XCTestCase {
         // Playback timing is intentionally live. Assert modal presentation above,
         // and keep a review capture instead of pixel-comparing video frames.
         if expectedModal == true, mode != "before", mode != "after" { return }
-        if mode == "before" || mode == "after" || name.hasPrefix("point-source-") {
+        if record || mode == "before" || mode == "after" || name.hasPrefix("point-source-") {
             try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
             try data.write(to: url)
         } else {
