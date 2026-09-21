@@ -45,7 +45,6 @@ class CacheTests(unittest.TestCase):
         with self.assertRaises(RuntimeError): refresh(client, session)
         self.assertEqual(client.bucket.return_value.blob.return_value.upload_from_string.call_count, 4)
 
-if __name__ == '__main__': unittest.main()
 
 class EndpointTests(unittest.TestCase):
     def setUp(self):
@@ -79,3 +78,22 @@ class EndpointTests(unittest.TestCase):
             response = self.call('category=25544')
             self.assertEqual(response.status_code, 503)
             self.assertEqual(response.headers['Cache-Control'], 'no-store')
+
+
+class ScheduledRefreshTests(unittest.TestCase):
+    def test_fractional_scheduler_timestamp_reaches_refresh(self):
+        from flask import Flask, request
+        from unittest.mock import patch
+        import main
+        app = Flask(__name__)
+        with app.test_request_context('/', method='POST', headers={
+            'X-CloudScheduler-ScheduleTime': '2026-09-20T23:17:00.244034-07:00',
+            'X-CloudScheduler-JobName': 'orbital-refresh-regression',
+        }), patch.object(main, 'refresh') as refresh_cache:
+            response = main.refresh_orbital_cache(request)
+        self.assertEqual(response.status_code, 200)
+        refresh_cache.assert_called_once_with()
+
+
+if __name__ == '__main__':
+    unittest.main()

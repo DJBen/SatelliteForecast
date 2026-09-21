@@ -7,17 +7,18 @@ from firebase_functions.firestore_fn import (
     Change
 )
 from firebase_functions import https_fn, logger, options, scheduler_fn
-import os
+import hashlib
 from google.cloud import tasks_v2
 import google.auth
 import datetime
 import pygeohash as geohash
 
-from common.firestore_helpers import store_transits, previous_scan_end_time
+from common.prediction_pipeline import enqueue_region, region_for_user, refresh_region
 from common.satellite import find_visible_satellite_transits
 from common.description import describe_transit, describe_prominent_transit, get_localized_satellite_title
-from common.cloud_storage import download_tle_file
 from common.deep_link import pass_time_data
+from common.delivery import claim_delivery, finish_delivery
+from common.prediction_pipeline import utc
 
 app = initialize_app()
 
@@ -27,68 +28,6 @@ _, PROJECT_ID = google.auth.default()
 # Initialize Cloud Tasks client once
 cloud_task_client = tasks_v2.CloudTasksClient()
 db = firestore.client() # Initialize Firestore client once
-
-def _calculate_geohash_5(lat, lon):
-    """
-    Calculate a 5-character geohash from latitude and longitude coordinates.
-    
-    Args:
-        lat (float): Latitude in degrees
-        lon (float): Longitude in degrees
-    
-    Returns:
-        str: 5-character geohash string
-    """
-    try:
-        return geohash.encode(lat, lon, precision=5)
-    except Exception as e:
-        logger.error(f"Error calculating geohash for lat={lat}, lon={lon}: {e}")
-        return None
-
-def _validate_notification_request(request):
-    """
-    Validates the incoming notification request and extracts common data.
-    Returns tuple of (data, task_name, error_response) where error_response is None if valid.
-    """
-    from flask import jsonify
-    
-    if request.method != "POST":
-        return None, None, (jsonify({"error": "Method not allowed"}), 405)
-
-    data = request.get_json(silent=True)
-    logger.info("Received notification data", data=data)
-
-    task_name = request.headers.get("X-CloudTasks-TaskName")
-    required_fields = ["push_token", "transit", "sat_id", "tz_offset"]
-    if not data or not all(field in data for field in required_fields):
-        logger.warn("Missing required fields in notify request", received_data=data)
-        return None, None, (jsonify({"error": "Missing required fields. Need: push_token, transit, sat_id, tz_offset"}), 400)
-
-    return data, task_name, None
-
-def _delete_firestore_task(push_token, task_name, collection_name):
-    """
-    Deletes the corresponding Firestore task document.
-    """
-    if not task_name or not db:
-        return
-        
-    try:
-        tasks_ref = db.collection(collection_name).document(push_token).collection('tasks')
-        query = tasks_ref.where("task_id", "==", task_name).limit(1)
-        docs = query.stream()
-        
-        doc_deleted = False
-        for doc in docs:
-            doc.reference.delete()
-            doc_deleted = True
-            logger.info(f"Successfully deleted Firestore record for task {task_name} for user {push_token}")
-        
-        if not doc_deleted:
-            logger.warn(f"Firestore record for task {task_name} not found for user {push_token}. Might have been already processed or deleted.")
-
-    except Exception as e:
-        logger.warn(f"Error deleting Firestore record for task {task_name} for user {push_token}: {e}")
 
 def _get_satellite_category(sat_id):
     """
@@ -101,35 +40,7 @@ def _get_satellite_category(sat_id):
     else:
         return "satellite"
 
-def _get_user_data(push_token):
-    """
-    Fetches user data from Firestore including location and locale.
-    Returns dict with lat, lon, alt, locale or None if not found/error.
-    """
-    try:
-        user_doc = db.collection('users').document(push_token).get()
-        if user_doc.exists:
-            user_data = user_doc.to_dict()
-            lat = user_data.get('lat')
-            lon = user_data.get('lon')
-            alt = user_data.get('alt')
-            locale = user_data.get('locale', 'en')  # Default to 'en' if not specified
-            
-            if lat is not None and lon is not None and alt is not None:
-                return {
-                    "lat": float(lat),
-                    "lon": float(lon),
-                    "alt": float(alt),
-                    "locale": locale
-                }
-        
-        logger.warn(f"Could not fetch complete location data for user {push_token}")
-        return None
-    except Exception as e:
-        logger.error(f"Error fetching user data for {push_token}: {e}")
-        return None
-
-def _send_fcm_notification(push_token, title, body, sat_id=None, observer_data=None, transit=None):
+def _send_fcm_notification(push_token, title, body, sat_id=None, observer_data=None, transit=None, collapse_id=None):
     """
     Sends FCM notification and handles common error cases.
     Returns tuple of (success, error_response) where error_response is None if successful.
@@ -159,7 +70,8 @@ def _send_fcm_notification(push_token, title, body, sat_id=None, observer_data=N
             )
             
             message_config["apns"] = messaging.APNSConfig(
-                payload=apns_payload
+                payload=apns_payload,
+                headers={"apns-collapse-id": collapse_id} if collapse_id else None
             )
 
             message_config["data"] = {
@@ -173,404 +85,168 @@ def _send_fcm_notification(push_token, title, body, sat_id=None, observer_data=N
         
         message = messaging.Message(**message_config)
         response = messaging.send(message)
-        logger.info(f"Successfully sent FCM message to {push_token}: {response}")
+        logger.info("fcm_accepted")
         return True, None
     except messaging.UnregisteredError:
-        logger.warn(f"Push token {push_token} is unregistered. Consider removing it from the user's profile.")
-        return False, (jsonify({"error": f"Push token {push_token} is unregistered."}), 410)
+        logger.info("fcm_unregistered")
+        return False, (jsonify({"error": "Device is unregistered"}), 410)
     except Exception as e:
-        logger.error(f"Error sending FCM message to {push_token}: {e}")
-        return False, (jsonify({"error": f"Failed to send FCM message: {str(e)}"}), 500)
+        logger.error("fcm_send_failed", error_type=type(e).__name__)
+        return False, (jsonify({"error": "FCM send failed"}), 500)
 
-@on_document_written(document="users/{push_token}", timeout_sec=300, memory=options.MemoryOption.MB_512)
+@on_document_written(document="users/{push_token}", timeout_sec=60)
 def on_user_location_change(event: Event[Change]) -> None:
-    """
-    Triggers when a document in the 'users' collection is created or updated.
-    Document name is the push token.
-    The document should contain fields 'lat', 'lon', 'alt' for location data.
-    The 'geoHash5' field is optional and will be calculated from coordinates if missing.
-    Enqueues a Cloud Task with the user's push token and location data, if either
-    - User is newly created
-    - User's geoHash5 has changed
-
-    View logs at https://cloudlogging.app.goo.gl/crdYz1YG9pKaUh919
-    """
-    push_token = event.params["push_token"]
-    
-    # Get the new data after the write
+    """Keep app writes fast; queue deduplicated regional work instead of computing inline."""
     if event.data is None or event.data.after is None or not event.data.after.exists:
-        print(f"Document for {push_token} was deleted or does not exist after event.")
         return
-
-    new_data = event.data.after.to_dict()
-    if not new_data:
-        print(f"Document data is empty for {push_token}.")
+    data = event.data.after.to_dict() or {}
+    region = region_for_user(data)
+    if not region or data.get('notifications_disabled'):
         return
+    if data.get('geoHash5') != region:
+        event.data.after.reference.update({'geoHash5': region})
+    enqueue_region(cloud_task_client, PROJECT_ID, region)
 
-    new_lat = new_data.get("lat")
-    new_lon = new_data.get("lon")
-    new_alt = new_data.get("alt")
-    new_geohash_5 = new_data.get("geoHash5")
 
-    if new_lat is None or new_lon is None or new_alt is None:
-        print(f"Missing required location data (lat, lon, alt) for {push_token} in new data.")
-        return
-    
-    # Calculate geoHash5 if missing
-    if new_geohash_5 is None:
-        new_geohash_5 = _calculate_geohash_5(new_lat, new_lon)
-        if new_geohash_5 is None:
-            print(f"Failed to calculate geoHash5 for {push_token} with lat={new_lat}, lon={new_lon}.")
-            return
-        print(f"Calculated missing geoHash5 for {push_token}: {new_geohash_5}")
+@https_fn.on_request(invoker='private', timeout_sec=540, memory=options.MemoryOption.GB_1,
+                     concurrency=1, max_instances=20)
+def process_prediction_region(request):
+    if request.method != 'POST':
+        return ('Method not allowed', 405)
+    data = request.get_json(silent=True) or {}
+    region = data.get('region', '')
+    if not isinstance(region, str) or len(region) != 5 or any(c not in '0123456789bcdefghjkmnpqrstuvwxyz' for c in region):
+        return ('Invalid region', 400)
+    try:
+        updated = refresh_region(db, region, find_visible_satellite_transits)
+        logger.info('prediction_region_completed', updated_satellites=updated)
+        return ('OK', 200)
+    except Exception as error:
+        logger.error('prediction_region_failed', error_type=type(error).__name__)
+        return ('Prediction refresh failed', 503)
 
-    # Determine if this is a new user or location change
-    is_new_user = event.data.before is None or not event.data.before.exists
-    location_changed = False
-    
-    if not is_new_user:
-        old_data = event.data.before.to_dict()
-        if not old_data:
-            print(f"Old document data is empty for {push_token}, treating as new user.")
-            is_new_user = True
-        else:
-            old_geohash_5 = old_data.get("geoHash5")
-            # Calculate old geohash if missing
-            if old_geohash_5 is None:
-                old_lat = old_data.get("lat")
-                old_lon = old_data.get("lon")
-                if old_lat is not None and old_lon is not None:
-                    old_geohash_5 = _calculate_geohash_5(old_lat, old_lon)
-                    print(f"Calculated missing old geoHash5 for {push_token}: {old_geohash_5}")
-            
-            if old_geohash_5 != new_geohash_5:
-                print(f"geoHash5 changed for {push_token}: {old_geohash_5} -> {new_geohash_5}")
-                location_changed = True
-            else:
-                print(f"geoHash5 did not change for {push_token} ({new_geohash_5}). Checking scan coverage.")
-    
-    if is_new_user:
-        print(f"User {push_token} is newly created.")
-    
-    # Process each satellite
-    any_computation_needed = False
-    computation_reasons = []
+
+def _deliver_notification(request, prominent=False):
+    from flask import jsonify
+    if request.method != 'POST':
+        return ('Method not allowed', 405)
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict) or not all(k in data for k in ('push_token', 'sat_id', 'transit', 'tz_offset')):
+        return ('Invalid notification request', 400)
+    token, sat_id = data['push_token'], data['sat_id']
+    if not isinstance(token, str) or '/' in token or sat_id not in ('25544', '48274'):
+        return ('Invalid notification request', 400)
     now = datetime.datetime.now(datetime.timezone.utc)
-    
-    for sat_id in ["25544", "48274"]:
-        needs_computation = False
-        sat_reason = ""
-        start_time_dt = now
-        
-        if is_new_user:
-            needs_computation = True
-            sat_reason = "new user"
-        elif location_changed:
-            needs_computation = True
-            sat_reason = f"location changed to {new_geohash_5}"
-        else:
-            # Check scan coverage for existing user at same location
-            last_scan_end = previous_scan_end_time(db, sat_id, new_geohash_5)
-            
-            if last_scan_end is None:
-                needs_computation = True
-                sat_reason = f"no previous scan found for satellite {sat_id}"
+    collection = 'scheduled_prominent_notifications' if prominent else 'scheduled_notifications'
+    records = db.collection(collection).document(token).collection('tasks')
+    task_id = (request.headers.get('X-CloudTasks-TaskName') or '').split('/')[-1]
+    notification_id = data.get('notification_id')
+    if notification_id and (not isinstance(notification_id, str) or '/' in notification_id):
+        return ('Invalid notification request', 400)
+    ref = records.document(notification_id) if notification_id else None
+    if ref is None and task_id:
+        matches = list(records.where('task_id', '==', task_id).limit(1).stream())
+        ref = matches[0].reference if matches else records.document('legacy_' + hashlib.sha256(task_id.encode()).hexdigest())
+    if ref is None:
+        # Preserve existing manual diagnostics, but give them a durable receipt too.
+        key = hashlib.sha256((sat_id + str(data['transit']) + str(prominent)).encode()).hexdigest()
+        ref, task_id = records.document('manual_' + key), key
+    try:
+        decision = claim_delivery(db.transaction(), ref, task_id, now)
+        if decision in ('done', 'superseded'):
+            return jsonify({'status': decision}), 200
+        if decision == 'busy':
+            return ('Delivery already in progress', 503)
+        user_ref = db.collection('users').document(token)
+        user = user_ref.get().to_dict() or {}
+        region = region_for_user(user)
+        reason = None
+        if not region or user.get('notifications_disabled'):
+            reason = 'device_unavailable'
+        elif data.get('geo_hash_5') and region != data['geo_hash_5']:
+            reason = 'location_changed'
+        transit = data['transit']
+        if reason is None and data.get('cache_schema') == 2:
+            current = db.collection('prediction_cache').document(f'{sat_id}_{region}').collection('records').document(data['pass_id']).get()
+            if not current.exists:
+                reason = 'pass_removed'
             else:
-                # Convert Firestore Timestamp to datetime if needed
-                if hasattr(last_scan_end, 'to_pydatetime'):
-                    last_scan_end_dt = last_scan_end.to_pydatetime()
-                else:
-                    last_scan_end_dt = last_scan_end
-                
-                # Check if scan end time is less than 2 days away in the future
-                delta = last_scan_end_dt - now
-                if delta.total_seconds() > 0 and delta.days < 2:
-                    # Scan coverage expires soon, extend it
-                    needs_computation = True
-                    sat_reason = f"scan coverage expires in {delta.days} days (< 2 days)"
-                    start_time_dt = last_scan_end_dt
-                elif delta.total_seconds() <= 0:
-                    # Scan coverage has already expired
-                    needs_computation = True
-                    sat_reason = f"scan coverage expired {abs(delta.days)} days ago"
-                    start_time_dt = last_scan_end_dt
-                else:
-                    logger.info(f"Scan coverage for satellite {sat_id} and location {new_geohash_5} is good for {delta.days} more days.")
-        
-        if not needs_computation:
-            continue
-            
-        any_computation_needed = True
-        computation_reasons.append(f"{sat_id}: {sat_reason}")
-        
-        end_time_dt = start_time_dt + datetime.timedelta(days=7)
-        start_time_str = start_time_dt.isoformat()
-        end_time_str = end_time_dt.isoformat()
+                transit = current.to_dict()['transit']
+        if reason is None:
+            peak = utc(transit['culmination']['time'])
+            elevation = float(transit.get('visible_culmination_elev', 0))
+            if peak <= now:
+                reason = 'pass_expired'
+            elif elevation < (60 if prominent else 20):
+                reason = 'pass_no_longer_qualifies'
+            elif not prominent and peak - now > datetime.timedelta(minutes=15):
+                reason = 'pass_time_changed'
+            elif prominent and transit.get('visible_above_10_deg_duration_sec', 0) < 180:
+                reason = 'pass_no_longer_qualifies'
+        if reason:
+            finish_delivery(ref, 'skipped', now, reason)
+            logger.info('notification_skipped', reason=reason)
+            return jsonify({'status': 'skipped'}), 200
+        locale = user.get('locale', 'en')
+        offset = int(user.get('tzOffset', data['tz_offset']))
+        title = get_localized_satellite_title(sat_id, locale=locale, is_rising=not prominent)
+        body = describe_prominent_transit(sat_id, transit, offset, locale) if prominent else describe_transit(transit, offset, locale)
+        observer = {key: float(user.get(key, 0)) for key in ('lat', 'lon', 'alt')}
+        success, error_response = _send_fcm_notification(token, title, body, sat_id, observer,
+            transit=transit, collapse_id=hashlib.sha256(ref.path.encode()).hexdigest())
+        if success:
+            finish_delivery(ref, 'sent', now)
+            return jsonify({'status': 'sent'}), 200
+        if error_response[1] == 410:
+            user_ref.update({'notifications_disabled': True, 'notification_disabled_reason': 'unregistered'})
+            finish_delivery(ref, 'unregistered', now)
+            return jsonify({'status': 'unregistered'}), 200
+        ref.set({'status': 'planned', 'lease_until': None}, merge=True)
+        return error_response
+    except Exception as error:
+        logger.error('notification_delivery_failed', error_type=type(error).__name__)
+        return ('Notification delivery failed', 500)
 
-        tle_result = download_tle_file(sat_id)
-        if tle_result is None:
-            logger.error(f"Could not retrieve TLE for satellite {sat_id}. Skipping.")
-            continue
-        line1, line2 = tle_result
-
-        transits = find_visible_satellite_transits(
-            line1, line2,
-            new_lat, new_lon, new_alt,
-            start_time_str=start_time_str,
-            end_time_str=end_time_str,
-        )
-
-        if isinstance(transits, dict) and "error" in transits:
-            logger.error(f"Error finding transits for {sat_id}: {transits['error']}. Skipping.")
-            continue
-        logger.info(f"Found {len(transits)} transits for satellite {sat_id}")
-        store_transits(db, sat_id, new_geohash_5, end_time_dt, transits)
-    
-    if any_computation_needed:
-        print(f"Computed passes for {push_token} because: {', '.join(computation_reasons)}")
-    else:
-        print(f"No computation needed for {push_token}. All scan coverage is sufficient.")
 
 @https_fn.on_request()
 def notify(request):
-    """
-    Firebase Function to handle /notify endpoint. Accepts POST requests with JSON body containing
-    'push_token', 'title', 'body', and optional 'data'.
-    Deletes the corresponding Firestore scheduled notification document if X-CloudTasks-TaskName is present.
-    Sends an FCM notification to the user.
-    """
-    from flask import jsonify
-    from firebase_admin import messaging
+    return _deliver_notification(request)
 
-    try:
-        data, task_name, error_response = _validate_notification_request(request)
-        if error_response:
-            return error_response
-
-        push_token = data["push_token"]
-        sat_id = data["sat_id"]
-        transit = data["transit"]
-        tz_offset = data["tz_offset"]
-
-        # Delete the task from Firestore if task_name is present
-        _delete_firestore_task(push_token, task_name, 'scheduled_notifications')
-
-        # Get user data including location and locale
-        user_data = _get_user_data(push_token)
-        if user_data:
-            observer_data = {
-                "lat": user_data["lat"],
-                "lon": user_data["lon"], 
-                "alt": user_data["alt"]
-            }
-            locale = user_data["locale"]
-        else:
-            observer_data = None
-            locale = "en"  # Default to English if user data not found
-
-        title = get_localized_satellite_title(sat_id, locale=locale, is_rising=True)
-
-        # Send FCM notification
-        success, error_response = _send_fcm_notification(push_token, title, describe_transit(transit, tz_offset, locale), sat_id, observer_data, transit=transit)
-        if not success:
-            return error_response
-
-        return jsonify({"status": "success", "message": "Notification processed and sent"}), 200
-    except Exception as e:
-        logger.error(f"Error in /notify endpoint: {e}")
-        return jsonify({"error": f"Error processing request: {str(e)}"}), 500
 
 @https_fn.on_request()
 def notify_prominent(request):
-    """
-    Firebase Function to handle /notify_prominent endpoint. Accepts POST requests with JSON body containing
-    'push_token', 'sat_id', 'transit', and 'tz_offset'.
-    Deletes the corresponding Firestore scheduled notification document if X-CloudTasks-TaskName is present.
-    Sends an FCM notification to the user.
-    """
-    from flask import jsonify
-    from firebase_admin import messaging
+    return _deliver_notification(request, prominent=True)
 
-    try:
-        data, task_name, error_response = _validate_notification_request(request)
-        if error_response:
-            return error_response
 
-        push_token = data["push_token"]
-        sat_id = data["sat_id"]
-        transit = data["transit"]
-        tz_offset = data["tz_offset"]
-
-        # Delete the task from Firestore if task_name is present
-        _delete_firestore_task(push_token, task_name, 'scheduled_prominent_notifications')
-
-        # Get user data including location and locale
-        user_data = _get_user_data(push_token)
-        if user_data:
-            observer_data = {
-                "lat": user_data["lat"],
-                "lon": user_data["lon"], 
-                "alt": user_data["alt"]
-            }
-            locale = user_data["locale"]
-        else:
-            observer_data = None
-            locale = "en"  # Default to English if user data not found
-
-        title = get_localized_satellite_title(sat_id, locale=locale, is_rising=False)
-        
-        # Send FCM notification
-        success, error_response = _send_fcm_notification(push_token, title, describe_prominent_transit(sat_id, transit, tz_offset, locale), sat_id, observer_data, transit=transit)
-        if not success:
-            return error_response
-
-        return jsonify({"status": "success", "message": "Notification processed and sent"}), 200
-    except Exception as e:
-        logger.error(f"Error in /notify_prominent endpoint: {e}")
-        return jsonify({"error": f"Error processing request: {str(e)}"}), 500
-
-@scheduler_fn.on_schedule(schedule="0 0 */3 * *", timeout_sec=1800, memory=options.MemoryOption.GB_1)
+@scheduler_fn.on_schedule(schedule="*/15 * * * *", timeout_sec=540,
+                          memory=options.MemoryOption.MB_512, max_instances=1,
+                          retry_count=2, min_backoff_seconds=60)
 def refresh_all_user_transits(event) -> None:
-    """
-    Scheduled function that runs every 3 days at 00:00 UTC.
-    Goes through all users in the 'users' collection and computes satellite transits
-    for users who have 'lat', 'lon', and 'alt' fields present.
-    Only computes if the previous scan end time is not already 2+ days in the future.
-    
-    View logs at https://cloudlogging.app.goo.gl/crdYz1YG9pKaUh919
-    """
-    try:
-        logger.info("Starting scheduled refresh of all user transits")
-        
-        page_size = 100
-        cursor = None
-        total_users_processed = 0
-        total_computations_performed = 0
-        
-        while True:
-            # Query a batch of users
-            users_query = db.collection('users').select(['lat', 'lon', 'alt', 'geoHash5']).limit(page_size)
-            
-            if cursor:
-                users_query = users_query.start_after(cursor)
-                
-            user_docs = list(users_query.stream())
-            
-            if not user_docs:
-                logger.info(f"Finished processing all users. Total: {total_users_processed}, Computations: {total_computations_performed}")
-                break  # No more users to process
-
-            # Process the batch
-            for user_doc in user_docs:
-                try:
-                    user_data = user_doc.to_dict()
-                    push_token = user_doc.id
-                    
-                    # Check if user has required location data
-                    lat = user_data.get('lat')
-                    lon = user_data.get('lon')  
-                    alt = user_data.get('alt')
-                    geohash_5 = user_data.get('geoHash5')
-                    
-                    if lat is None or lon is None or alt is None:
-                        logger.info(f"Skipping user {push_token} - missing location data")
-                        continue
-                    
-                    # Calculate geoHash5 if missing
-                    if geohash_5 is None:
-                        geohash_5 = _calculate_geohash_5(lat, lon)
-                        if geohash_5 is None:
-                            logger.warn(f"Failed to calculate geoHash5 for user {push_token}")
-                            continue
-                        logger.info(f"Calculated missing geoHash5 for user {push_token}: {geohash_5}")
-                    
-                    # Check if computation is needed for each satellite
-                    user_computation_needed = False
-                    computation_reasons = []
-                    now = datetime.datetime.now(datetime.timezone.utc)
-                    
-                    for sat_id in ["25544", "48274"]:
-                        needs_computation = False
-                        sat_reason = ""
-                        start_time_dt = now
-                        
-                        # Check scan coverage
-                        last_scan_end = previous_scan_end_time(db, sat_id, geohash_5)
-                        
-                        if last_scan_end is None:
-                            needs_computation = True
-                            sat_reason = f"no previous scan found for satellite {sat_id}"
-                            start_time_dt = now
-                        else:
-                            # Convert Firestore Timestamp to datetime if needed
-                            if hasattr(last_scan_end, 'to_pydatetime'):
-                                last_scan_end_dt = last_scan_end.to_pydatetime()
-                            else:
-                                last_scan_end_dt = last_scan_end
-                            
-                            # Calculate time difference between scan end and now
-                            delta = last_scan_end_dt - now
-                            
-                            if delta.total_seconds() > 0 and delta.total_seconds() >= (2 * 24 * 3600):
-                                # Scan coverage is at least 2 days in the future, skip
-                                logger.info(f"Scan coverage for satellite {sat_id} and user {push_token} is good for {delta.days} more days (>= 2 days).")
-                                needs_computation = False
-                            elif delta.total_seconds() > 0 and delta.total_seconds() < (2 * 24 * 3600):
-                                # Scan coverage expires within 2 days, extend from scan_end_time
-                                needs_computation = True
-                                sat_reason = f"scan coverage expires in {delta.total_seconds() / (24 * 3600):.1f} days (< 2 days)"
-                                start_time_dt = last_scan_end_dt
-                            else:
-                                # Scan coverage has already expired, start from now
-                                needs_computation = True
-                                sat_reason = f"scan coverage expired {abs(delta.total_seconds()) / (24 * 3600):.1f} days ago"
-                                start_time_dt = now
-                        
-                        if not needs_computation:
-                            continue
-                            
-                        user_computation_needed = True
-                        computation_reasons.append(f"{sat_id}: {sat_reason}")
-                        
-                        end_time_dt = start_time_dt + datetime.timedelta(days=3)  # 3 days forward as requested
-                        start_time_str = start_time_dt.isoformat()
-                        end_time_str = end_time_dt.isoformat()
-
-                        tle_result = download_tle_file(sat_id)
-                        if tle_result is None:
-                            logger.error(f"Could not retrieve TLE for satellite {sat_id}. Skipping.")
-                            continue
-                        line1, line2 = tle_result
-
-                        transits = find_visible_satellite_transits(
-                            line1, line2,
-                            lat, lon, alt,
-                            start_time_str=start_time_str,
-                            end_time_str=end_time_str,
-                        )
-
-                        if isinstance(transits, dict) and "error" in transits:
-                            logger.error(f"Error finding transits for {sat_id}: {transits['error']}. Skipping.")
-                            continue
-                        logger.info(f"Found {len(transits)} transits for satellite {sat_id} for user {push_token}")
-                        store_transits(db, sat_id, geohash_5, end_time_dt, transits)
-                    
-                    if user_computation_needed:
-                        logger.info(f"Computed passes for user {push_token} because: {', '.join(computation_reasons)}")
-                        total_computations_performed += 1
-                    else:
-                        logger.info(f"No computation needed for user {push_token}. All scan coverage is sufficient.")
-                    
-                    total_users_processed += 1
-                    
-                except Exception as user_error:
-                    logger.error(f"Error processing user {push_token}: {user_error}")
-                    continue
-
-            # Set the cursor for the next page
-            cursor = user_docs[-1]
-            logger.info(f"Processed batch of {len(user_docs)} users. Total processed so far: {total_users_processed}")
-
-    except Exception as e:
-        logger.error(f"Error in scheduled refresh_all_user_transits function: {e}")
-        raise
+    """Only enumerate and enqueue; independent region failures cannot block other users."""
+    regions = set()
+    users = 0
+    queued = 0
+    cursor = None
+    while True:
+        query = db.collection('users').select(['lat', 'lon', 'geoHash5', 'notifications_disabled']).order_by('__name__').limit(250)
+        if cursor:
+            query = query.start_after(cursor)
+        docs = list(query.stream())
+        if not docs:
+            break
+        for doc in docs:
+            users += 1
+            data = doc.to_dict()
+            region = region_for_user(data)
+            if not region or data.get('notifications_disabled'):
+                continue
+            if data.get('geoHash5') != region:
+                doc.reference.update({'geoHash5': region})
+            if region not in regions:
+                queued += int(enqueue_region(cloud_task_client, PROJECT_ID, region))
+                regions.add(region)
+        cursor = docs[-1]
+    db.collection('backend_health').document('prediction_dispatch').set({
+        'completed_at': firestore.SERVER_TIMESTAMP, 'users': users,
+        'regions': len(regions), 'queued': queued})
+    logger.info('prediction_dispatch_completed', users=users, regions=len(regions), queued=queued)

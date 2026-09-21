@@ -23,13 +23,36 @@ the local start time, direction, highest illuminated elevation, and approximate
 viewing duration. The start is the later of reaching 10° elevation and leaving
 Earth's shadow. Clear-sky wording avoids promising visibility regardless of weather.
 Exact local times avoid ambiguous “tonight” labels; copy does not infer an overhead
-pass from its duration. Scheduling and delivery behavior are unchanged.
+pass from its duration. Alert eligibility remains unchanged; scheduling and delivery reliability are
+described in the architecture guide.
 
 Run the notification copy regression tests without Firebase credentials:
 
 ```sh
-python3 -m unittest discover -s tests -p 'test_*.py' -v
+uv venv --python 3.13 functions/venv
+uv pip install --python functions/venv/bin/python -r functions/requirements.txt
+functions/venv/bin/python -m unittest discover -s tests -p 'test_*.py' -v
 ```
+
+### Scheduled refresh reliability
+
+Both function codebases pin Firebase Functions 0.6.0. The previous 0.4.x
+scheduler wrapper rejected fractional seconds in `X-CloudScheduler-ScheduleTime`
+and returned HTTP 500 before either refresh handler ran. Keep the scheduler
+timestamp regression tests when upgrading the SDK. Astropy 7.0.2 also requires
+the pinned NumPy version; newer NumPy releases removed APIs it imports.
+
+Prediction work now runs in bounded regional Cloud Tasks. Changed orbital data,
+aging calculations, or expiring coverage trigger a fresh seven-day scan from
+the current time. See [the architecture and operations guide](ARCHITECTURE.md)
+for the queue, atomic cache, delivery receipts, and 15-minute reconciliation flow.
+
+After deploying refresh changes, run the orbital refresh first and verify new
+object update times in `gs://pass-prediction_tle`, then run the global transit
+refresh. A successful Scheduler dispatch alone does not prove the work finished:
+check function HTTP status and completion logs. Existing transit coverage can
+remain valid according to its scan end even when it used old orbital data;
+the v2 worker automatically invalidates those records when the TLE content changes.
 
 The migration on 2026-09-17 includes commit
 `57dd71b9b8f117e6fbcfd00619b7b299ecb18d83` from `codex/robust-orbital-cache`,
