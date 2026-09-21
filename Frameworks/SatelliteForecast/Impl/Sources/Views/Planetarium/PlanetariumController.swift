@@ -455,6 +455,11 @@ struct PlanetariumSatelliteTrack {
     }
     private func equatorial(_ v: SIMD3<Float>) -> SIMD3<Float> { v.x * east + v.y * zenith - v.z * north }
 
+    private func starIsVisible(_ star: Star, direction: SIMD3<Float>) -> Bool {
+        PlanetariumStarVisibility.isVisible(magnitude: star.magnitude, altitude: direction.y,
+            fieldOfView: fieldOfView, daylight: renderer?.uniforms.effects.x ?? 0)
+    }
+
     private func updateStarRegion(force: Bool = false) {
         guard let renderer else { return }
         let eq = equatorial(forward)
@@ -506,6 +511,7 @@ struct PlanetariumSatelliteTrack {
             let retained = starLabelCandidates.filter { starLabelLayout.retainedIDs.contains($0.id) }
             let ranked = Array(source.filter {
                 $0.magnitude.isFinite && $0.magnitude > -10 &&
+                starIsVisible($0, direction: local(SIMD3<Float>(simd_normalize($0.coordinate)))) &&
                 projected(local(SIMD3<Float>(simd_normalize($0.coordinate))), margin: -24) != nil
             }.sorted {
                 $0.magnitude == $1.magnitude ? $0.id < $1.id : $0.magnitude < $1.magnitude
@@ -648,13 +654,14 @@ struct PlanetariumSatelliteTrack {
         }
         visibleStarLabelCount = 0
         visibleStarLabelIDs = []
-        if showLabels && renderer.uniforms.sun.w < 0 {
+        if showLabels {
             updateStarLabelCandidates()
             let budget = fieldOfView > 70 ? 3 : (fieldOfView > 35 ? 5 : 7)
             var labelDirections: [Int: SIMD3<Float>] = [:]
             let candidates = starLabelCandidates.compactMap { star -> PlanetariumLabelLayout.Candidate? in
                 guard let texture = starLabelTextures[star.id] else { return nil }
                 let direction = local(SIMD3<Float>(simd_normalize(star.coordinate)))
+                guard starIsVisible(star, direction: direction) else { return nil }
                 let offset = Float(0.032 * fieldOfView / 65)
                 let labelDirection = simd_normalize(direction - up * offset)
                 guard let center = projected(labelDirection) else { return nil }
@@ -968,8 +975,8 @@ struct PlanetariumSatelliteTrack {
         var bestStar: Star?
         var bestBody: Body?
         for star in renderedStars {
-            let direction = local(SIMD3<Float>(star.coordinate))
-            guard let p = projected(direction), (renderer?.uniforms.effects.x ?? 0) < 0.85 else { continue }
+            let direction = local(SIMD3<Float>(simd_normalize(star.coordinate)))
+            guard starIsVisible(star, direction: direction), let p = projected(direction) else { continue }
             let distance = hypot(p.x - point.x, p.y - point.y)
             if distance < bestDistance { bestDistance = distance; bestStar = star }
         }

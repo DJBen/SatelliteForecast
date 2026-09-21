@@ -220,7 +220,9 @@ vertex Raster star_vertex(uint id [[vertex_id]], uint instance [[instance_id]],
     // The same flux/Gaussian optics, with subdued altitude-dependent scintillation.
     float flicker=1.0-importance*(0.025+0.075*exp(-max(d.y,0.0)*5.0))*(0.5+0.5*sin(u.effects.z*4+phase));
     float extinction=exp(-0.16/max(0.08,d.y));
-    float multiplier=flux*exposure*flicker*extinction*(1-u.effects.x)*(1.15+importance*2.8);
+    // Match PlanetariumStarVisibility: scintillation must not change eligibility.
+    float steadyIntensity=flux*exposure*extinction*(1-u.effects.x)*(1.15+importance*2.8);
+    float multiplier=steadyIntensity*flicker;
     float size=omega*sqrt(max(0.01,-0.5*log(1.0/255.0/max(multiplier,0.004))));
     o.position=project(d,u);
     // Original sensor-pixel calibration, normalized at 1000 drawable pixels.
@@ -229,7 +231,7 @@ vertex Raster star_vertex(uint id [[vertex_id]], uint instance [[instance_id]],
     float radius=importance>0.01 ? max(pixels,flarePixels) : pixels;
     size*=radius/pixels;
     o.position.xy+=billboardQuad[id]*radius*2.0/u.viewport.xy*o.position.w;
-    if(d.y<0 || behindGround(d) || multiplier<0.004) o.position=float4(2,2,2,1);
+    if(d.y<0 || behindGround(d) || steadyIntensity<0.004) o.position=float4(2,2,2,1);
     o.uv=billboardQuad[id]*0.5+0.5;
     o.color=float4(star.colorWavelength.rgb,1);
     o.optics=float4(omega,size,multiplier,importance*(1-u.effects.x)*extinction);

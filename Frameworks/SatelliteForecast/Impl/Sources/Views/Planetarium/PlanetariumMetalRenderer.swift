@@ -31,6 +31,20 @@ struct PlanetariumStarInstance {
         }
     }
 }
+
+/// Keep in sync with the steady intensity and culling threshold in star_vertex.
+/// Scintillation affects appearance, but must not flicker labels or tap targets.
+enum PlanetariumStarVisibility {
+    static func isVisible(magnitude: Double, altitude: Float, fieldOfView: Double, daylight: Float) -> Bool {
+        guard magnitude.isFinite, altitude >= 0 else { return false }
+        let flux = pow(10.0, -0.4 * magnitude)
+        let exposure = 2.8 * pow(max(1, 105 / max(fieldOfView, 1e-4)), 1.75)
+        let importance = 1 - SkyChartAtmosphere.transition(-0.5, 3.5, magnitude)
+        let extinction = exp(-0.16 / max(0.08, Double(altitude)))
+        let intensity = flux * exposure * extinction * Double(1 - daylight) * (1.15 + importance * 2.8)
+        return intensity >= 0.004
+    }
+}
 struct PlanetariumLineVertex {
     var position: SIMD4<Float>
     var color: SIMD4<Float>

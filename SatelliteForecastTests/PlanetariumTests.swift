@@ -1276,6 +1276,101 @@ extension PlanetariumTests {
         print("Water GPU validation: horizon mean error = \(horizonError) / 255")
     }
 
+    func testGPUStarVisibilityMatchesDaylightAndZoom() async throws {
+        let view = MTKView(frame: CGRect(x: 0, y: 0, width: 240, height: 480))
+        view.overrideUserInterfaceStyle = .dark
+        let renderer = try PlanetariumMetalRenderer(view: view)
+        view.isPaused = true
+        renderer.uniforms.forward = SIMD4(0.6, 0.8, 0, 0)
+        renderer.uniforms.right = SIMD4(0, 0, 1, 0)
+        renderer.uniforms.up = SIMD4(-0.8, 0.6, 0, 0)
+        renderer.uniforms.sun = SIMD4(0, 0.15, -0.99, 9)
+        let size = CGSize(width: 240, height: 480)
+        for (magnitude, daylight, fov, visible) in [
+            (0.0, Float(0.9), 65.0, true),
+            (6.0, Float(0.9), 65.0, false),
+            (6.0, Float(0.9), 10.0, true),
+            (0.0, Float(1), 10.0, false),
+            (6.0, Float(0), 65.0, true)
+        ] {
+            renderer.uniforms.effects.x = daylight
+            renderer.uniforms.viewport.w = Float(fov)
+            renderer.setBrightStars([])
+            let empty = try pixels(await renderer.snapshot(size: size, scale: 1))
+            renderer.setBrightStars([Star(id: 1, magnitude: magnitude,
+                coordinate: SIMD3(0.8, 0.6, 0), spectralClass: "G")])
+            let rendered = try pixels(await renderer.snapshot(size: size, scale: 1))
+            XCTAssertEqual(empty != rendered, visible, "GPU visibility for mag \(magnitude), daylight \(daylight), FOV \(fov)")
+            XCTAssertEqual(PlanetariumStarVisibility.isVisible(magnitude: magnitude, altitude: 0.8,
+                fieldOfView: fov, daylight: daylight), visible)
+        }
+    }
+
+    func testDaytimeStarLabelsAndSelectionMatchRendering() async throws {
+        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let pass = try XCTUnwrap(fixture.passes.first)
+        let date = try XCTUnwrap((0..<288).map { fixture.now.julianDate + Double($0) / 288 }.first {
+            let sun = SkyChartAtmosphere.sun(observer: fixture.observer, julianDate: $0)
+            return sun.elev > 8 && sun.elev < 10
+        })
+        let star = try XCTUnwrap(fixture.catalog.namedBrightStars.first {
+            let position = azel(time: Date(julianDate: date), site: LatLon(fixture.observer),
+                cele: RADec(PlanetariumEquatorialFrame(date: date).ofDate($0.coordinate)))
+            return $0.magnitude < 2 && position.elev > 25 && position.elev < 75
+        })
+        let controller = PlanetariumController()
+        controller.view.frame = CGRect(x: 0, y: 0, width: 440, height: 956)
+        controller.view.overrideUserInterfaceStyle = .dark
+        controller.configure(context: .init(passIndex: 0, satelliteInfo: fixture.info, satelliteCommonName: "ISS",
+            category: .iss, julianDateRange: fixture.range, observer: fixture.observer, passSnapshots: pass,
+            starManager: fixture.catalog, julianDateProvider: { date }), julianDate: date)
+        defer { controller.stop() }
+        controller.setMotionEnabled(false)
+        controller.setOverlays(labels: true, lines: false)
+        controller.view.isPaused = true
+        let renderer = try XCTUnwrap(controller.renderer)
+        XCTAssertGreaterThan(renderer.uniforms.sun.w, 0)
+        XCTAssertGreaterThan(renderer.uniforms.effects.x, 0.85, "Exercise the former daytime tap cutoff")
+        let position = azel(time: Date(julianDate: date), site: LatLon(fixture.observer),
+            cele: RADec(PlanetariumEquatorialFrame(date: date).ofDate(star.coordinate)))
+        controller.pointCamera(azimuth: position.azim, elevation: position.elev)
+        for _ in 0..<30 {
+            renderer.beforeDraw?()
+            if controller.visibleStarLabelIDs.contains(star.id) { break }
+            try await Task.sleep(for: .milliseconds(100))
+        }
+        XCTAssertTrue(controller.visibleStarLabelIDs.contains(star.id), "A rendered daytime star must be eligible for a name")
+        controller.select(at: CGPoint(x: 220, y: 478))
+        for _ in 0..<100 where controller.selection == nil { try await Task.sleep(for: .milliseconds(10)) }
+        XCTAssertEqual(controller.selection?.id, "star-\(star.id)")
+        XCTAssertFalse(try XCTUnwrap(controller.selection).name.isEmpty)
+        let directory = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
+            .appendingPathComponent("Documentation/DesignReview/Planetarium/DaytimeStars")
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        // Let the label's entrance animation finish before recording evidence.
+        try await Task.sleep(for: .milliseconds(500))
+        let image = try await renderer.snapshot(size: CGSize(width: 1320, height: 2868), scale: 3)
+        try image.pngData()!.write(to: directory.appendingPathComponent("daytime-star-selected-dark.png"))
+        let camera = ["date": date, "azimuth": position.azim, "elevation": position.elev, "fov": controller.fieldOfView]
+        try JSONEncoder().encode(camera).write(to: directory.appendingPathComponent("camera.json"))
+        controller.setOverlays(labels: false, lines: false)
+        renderer.beforeDraw?()
+        XCTAssertEqual(controller.visibleStarLabelCount, 0)
+        controller.clearSelection()
+        controller.select(at: CGPoint(x: 220, y: 478))
+        for _ in 0..<100 where controller.selection == nil { try await Task.sleep(for: .milliseconds(10)) }
+        XCTAssertEqual(controller.selection?.id, "star-\(star.id)", "Hiding labels must not disable selection")
+
+        controller.clearSelection()
+        controller.setOverlays(labels: true, lines: false)
+        renderer.uniforms.effects.x = 1
+        renderer.beforeDraw?()
+        XCTAssertEqual(controller.visibleStarLabelCount, 0, "Fully faded stars must not leave labels")
+        controller.select(at: CGPoint(x: 220, y: 478))
+        try await Task.sleep(for: .milliseconds(200))
+        XCTAssertNil(controller.selection, "Fully faded stars must not leave invisible tap targets")
+    }
+
     func testGPUStarNameVisibility() async throws {
         let fixture = try Fixture(catalog: await AppStarCatalog.load())
         let pass = try XCTUnwrap(fixture.passes.first { $0.pass.visibility == .visible && $0.pass.sunElevationAtTransit < -10 })
@@ -1346,7 +1441,7 @@ extension PlanetariumTests {
         controller.setOverlays(labels: true, lines: true)
         for hour in 1...24 {
             let next = date + Double(hour) / 24
-            if SkyChartAtmosphere.sun(observer: fixture.observer, julianDate: next).elev > 10 {
+            if SkyChartAtmosphere.sun(observer: fixture.observer, julianDate: next).elev >= 12 {
                 controller.updateTime(next)
                 renderer.beforeDraw?()
                 XCTAssertEqual(controller.visibleStarLabelCount, 0)
