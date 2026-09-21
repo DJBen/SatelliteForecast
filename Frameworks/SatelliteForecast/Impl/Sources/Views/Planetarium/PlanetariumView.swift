@@ -11,6 +11,7 @@ struct PlanetariumView: View {
     @StateObject private var controller = PlanetariumController()
     @AppStorage("planetariumLabels") private var labels = true
     @AppStorage("planetariumLines") private var lines = true
+    @AppStorage("planetariumFPS") private var showFPS = false
 
     init(context: PassViewContext, controller: PlanetariumController? = nil) {
         self.context = context
@@ -53,6 +54,8 @@ struct PlanetariumView: View {
                         Menu {
                             Toggle(AppLocalization.text("Constellation labels"), systemImage: "textformat", isOn: $labels)
                             Toggle(AppLocalization.text("Constellation lines"), systemImage: "star", isOn: $lines)
+                            Toggle(AppLocalization.text("Show FPS"), systemImage: "speedometer", isOn: $showFPS)
+                                .accessibilityIdentifier("planetarium.showFPS")
                         } label: {
                             Image(systemName: "ellipsis")
                                 .frame(width: 44, height: 44)
@@ -88,23 +91,56 @@ struct PlanetariumView: View {
                 ContentUnavailableView(AppLocalization.text("Planetarium unavailable"), systemImage: "sparkles", description: Text(error)).allowsHitTesting(false)
             }
         }
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            if showFPS, let monitor = controller.renderer?.frameRate {
+                PlanetariumFPSReadout(monitor: monitor)
+            }
+        }
         .foregroundStyle(.white).tint(.cyan).preferredColorScheme(.dark)
         .onAppear {
             controller.configure(context: context, julianDate: (context.passSnapshots.pass.rise.julianDate + context.passSnapshots.pass.set.julianDate) / 2)
             controller.setOverlays(labels: labels, lines: lines)
             controller.setActive(true)
             controller.setMotionEnabled(true)
+            controller.renderer?.frameRate.setEnabled(showFPS)
         }
-        .onDisappear { controller.stop() }
+        .onDisappear {
+            controller.renderer?.frameRate.setEnabled(false)
+            controller.stop()
+        }
         .onChange(of: labels) { _, _ in controller.setOverlays(labels: labels, lines: lines) }
         .onChange(of: lines) { _, _ in controller.setOverlays(labels: labels, lines: lines) }
+        .onChange(of: showFPS) { _, value in
+            controller.renderer?.frameRate.setEnabled(value)
+        }
         .onChange(of: scenePhase) { _, phase in
             controller.setActive(phase == .active)
+            controller.renderer?.frameRate.setEnabled(showFPS && phase == .active)
         }
 
     }
 
 
+}
+
+private struct PlanetariumFPSReadout: View {
+    @ObservedObject var monitor: PlanetariumFrameRate
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Text("FPS")
+                .foregroundStyle(.secondary)
+            Text(monitor.framesPerSecond.map { String(format: "%.0f", $0) } ?? "—")
+                .monospacedDigit()
+        }
+        .font(.caption2.weight(.medium))
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 4)
+        .background(.ultraThinMaterial)
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("planetarium.fps")
+        .allowsHitTesting(false)
+    }
 }
 
 private struct PlanetariumSurface: UIViewRepresentable {

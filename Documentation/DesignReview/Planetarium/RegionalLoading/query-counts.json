@@ -1,0 +1,66 @@
+[
+  {
+    "allSkyAdditionalStars": 74559,
+    "aspect": 0.46,
+    "fieldOfView": 44,
+    "loadedAdditionalStars": 534,
+    "queriedCells": 270,
+    "visibleAdditionalStars": 279
+  },
+  {
+    "allSkyAdditionalStars": 74559,
+    "aspect": 0.46,
+    "fieldOfView": 24,
+    "loadedAdditionalStars": 918,
+    "queriedCells": 124,
+    "visibleAdditionalStars": 395
+  },
+  {
+    "allSkyAdditionalStars": 74559,
+    "aspect": 2.2,
+    "fieldOfView": 24,
+    "loadedAdditionalStars": 2598,
+    "queriedCells": 318,
+    "visibleAdditionalStars": 1554
+  },
+  {
+    "allSkyAdditionalStars": 74559,
+    "aspect": 0.46,
+    "fieldOfView": 20,
+    "loadedAdditionalStars": 1012,
+    "queriedCells": 84,
+    "visibleAdditionalStars": 290
+  },
+  {
+    "allSkyAdditionalStars": 74559,
+    "aspect": 2.2,
+    "fieldOfView": 20,
+    "loadedAdditionalStars": 3119,
+    "queriedCells": 222,
+    "visibleAdditionalStars": 1588
+  },
+  {
+    "allSkyAdditionalStars": 74559,
+    "aspect": 0.46,
+    "fieldOfView": 1,
+    "loadedAdditionalStars": 210,
+    "queriedCells": 15,
+    "visibleAdditionalStars": 0
+  },
+  {
+    "allSkyAdditionalStars": 74559,
+    "aspect": 2.2,
+    "fieldOfView": 1,
+    "loadedAdditionalStars": 252,
+    "queriedCells": 18,
+    "visibleAdditionalStars": 4
+  },
+  {
+    "allSkyAdditionalStars": 74559,
+    "aspect": 0.46,
+    "fieldOfView": 24,
+    "loadedAdditionalStars": 1128,
+    "queriedCells": 124,
+    "visibleAdditionalStars": 454
+  }
+]

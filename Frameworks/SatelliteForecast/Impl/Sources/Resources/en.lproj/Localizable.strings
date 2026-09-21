@@ -330,3 +330,6 @@
 /* Pass chart destinations */
 "Chart" = "Chart";
 "Planetarium" = "Planetarium";
+
+/* Planetarium frame rate overlay */
+"Show FPS" = "Show FPS";

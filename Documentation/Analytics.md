@@ -161,3 +161,7 @@ fixtures and add no production network or telemetry flow.
 Century-range planetarium validation and IAU precession introduce no screen or
 analytics events. Reference ephemerides are offline test data; application
 calculations remain local and preserve all existing measurement boundaries.
+
+The optional planetarium FPS readout uses local Metal presentation timestamps. It sends no telemetry and changes no screen names, events, or measurement boundaries.
+
+Planetarium deep-star loading queries local indexed H3 cells on a dedicated actor. Region keys, camera directions, star IDs, cache statistics, and FPS remain local rendering state; no new analytics operations or per-region events are emitted. The existing `load_sky_catalog` operation still measures satellite catalog loading, not these star queries.

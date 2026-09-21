@@ -689,3 +689,6 @@ The localized string for the status of a spare satellite */
 /* Pass chart destinations */
 "Chart" = "성도";
 "Planetarium" = "플라네타륨";
+
+/* Planetarium frame rate overlay */
+"Show FPS" = "FPS 표시";

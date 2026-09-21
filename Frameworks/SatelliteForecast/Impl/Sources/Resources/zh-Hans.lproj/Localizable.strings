@@ -689,3 +689,6 @@ The localized string for the status of a spare satellite */
 /* Pass chart destinations */
 "Chart" = "星图";
 "Planetarium" = "天象馆";
+
+/* Planetarium frame rate overlay */
+"Show FPS" = "显示 FPS";

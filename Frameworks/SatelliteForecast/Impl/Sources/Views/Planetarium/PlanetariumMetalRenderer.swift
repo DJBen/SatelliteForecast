@@ -1,6 +1,40 @@
 import MetalKit
 import simd
 import StarryNight
+import Combine
+
+/// Presentation timestamps measure displayed frames, excluding skipped draws and snapshots.
+/// Only the small FPS readout observes this state; the sky UI does not refresh per frame.
+@MainActor final class PlanetariumFrameRate: ObservableObject {
+    @Published private(set) var framesPerSecond: Double?
+    private(set) var enabled = false
+    private var enabledSince = 0.0
+    private var firstTimestamp: Double?
+    private var lastTimestamp = 0.0
+    private var intervals = 0
+
+    func setEnabled(_ enabled: Bool, now: Double = CACurrentMediaTime()) {
+        self.enabled = enabled
+        enabledSince = now
+        firstTimestamp = nil
+        lastTimestamp = 0
+        intervals = 0
+        framesPerSecond = nil
+    }
+
+    func recordPresentation(at timestamp: Double) {
+        guard enabled, timestamp.isFinite, timestamp > 0, timestamp >= enabledSince,
+              timestamp > lastTimestamp else { return }
+        lastTimestamp = timestamp
+        guard let firstTimestamp else { self.firstTimestamp = timestamp; return }
+        intervals += 1
+        let elapsed = timestamp - firstTimestamp
+        guard elapsed >= 1 else { return }
+        framesPerSecond = Double(intervals) / elapsed
+        self.firstTimestamp = timestamp
+        intervals = 0
+    }
+}
 
 struct PlanetariumUniforms {
     var right = SIMD4<Float>(1, 0, 0, 0)
@@ -107,6 +141,7 @@ struct PlanetariumStarTiers {
 }
 
 @MainActor final class PlanetariumMetalRenderer: NSObject, MTKViewDelegate {
+    let frameRate = PlanetariumFrameRate()
     let device: MTLDevice
     let queue: MTLCommandQueue
     private let backgroundPipeline: MTLRenderPipelineState
@@ -190,6 +225,11 @@ struct PlanetariumStarTiers {
     }
     private var faintCellBuffers: [String: MTLBuffer] = [:]
     private var activeFaintCellBuffers: [MTLBuffer] = []
+    private var regionalBuffers: [PlanetariumStarRegionKey: (buffer: MTLBuffer?, stamp: Int)] = [:]
+    private var activeRegionalBuffers: [MTLBuffer] = []
+    private var regionalBufferClock = 0
+    private(set) var regionalUploadCount = 0
+    var regionalBufferCount: Int { regionalBuffers.count }
     private(set) var starCellUploadCount = 0
 
     func resetStarCellCache() {
@@ -198,6 +238,33 @@ struct PlanetariumStarTiers {
         faintCellBuffers.removeAll()
         activeFaintCellBuffers.removeAll()
         starCellUploadCount = 0
+        regionalBuffers.removeAll()
+        activeRegionalBuffers.removeAll()
+        regionalUploadCount = 0
+    }
+
+    func setRegionalStars(_ regions: [PlanetariumStarRegion]) {
+        let active = Set(regions.map(\.key))
+        activeRegionalBuffers = regions.compactMap { region in
+            regionalBufferClock += 1
+            if let cached = regionalBuffers[region.key] {
+                regionalBuffers[region.key] = (cached.buffer, regionalBufferClock)
+                return cached.buffer
+            }
+            let uploaded = buffer(region.stars.map(PlanetariumStarInstance.init))
+            regionalBuffers[region.key] = (uploaded, regionalBufferClock)
+            if uploaded != nil { regionalUploadCount += 1 }
+            return uploaded
+        }
+        // Pin active buffers, retain only a bounded recent history. Metal command
+        // buffers retain evicted resources until their in-flight draws complete.
+        var bytes = regionalBuffers.values.reduce(0) { $0 + ($1.buffer?.length ?? 0) }
+        let evictable = regionalBuffers.filter { !active.contains($0.key) }.sorted { $0.value.stamp < $1.value.stamp }
+        for entry in evictable {
+            guard regionalBuffers.count > 256 || bytes > 4 * 1024 * 1024 else { break }
+            bytes -= entry.value.buffer?.length ?? 0
+            regionalBuffers.removeValue(forKey: entry.key)
+        }
     }
     func setFaintStarCells(_ cells: [PlanetariumStarTiers.Cell], limit: Double) {
         faintBuffer = nil
@@ -232,6 +299,23 @@ struct PlanetariumStarTiers {
                scale: Float(view.drawableSize.width / max(1, view.bounds.width)),
                time: Float(CACurrentMediaTime() - startTime))
         encoder.endEncoding()
+        if frameRate.enabled {
+            let monitor = frameRate
+            #if targetEnvironment(simulator)
+            // Simulator Metal does not expose drawable presentation callbacks.
+            // Count completed screen frames there; snapshots still do not count.
+            command.addCompletedHandler { [weak monitor] command in
+                guard command.status == .completed else { return }
+                let timestamp = CACurrentMediaTime()
+                Task { @MainActor in monitor?.recordPresentation(at: timestamp) }
+            }
+            #else
+            drawable.addPresentedHandler { [weak monitor] drawable in
+                let timestamp = drawable.presentedTime
+                Task { @MainActor in monitor?.recordPresentation(at: timestamp) }
+            }
+            #endif
+        }
         command.present(drawable)
         let semaphore = inFlight
         command.addCompletedHandler { _ in semaphore.signal() }
@@ -251,7 +335,7 @@ struct PlanetariumStarTiers {
         encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 6)
         encoder.setVertexBytes(&u, length: MemoryLayout<PlanetariumUniforms>.stride, index: 1)
         encoder.setRenderPipelineState(starPipeline)
-        for buffer in [brightBuffer, faintBuffer].compactMap({ $0 }) + activeFaintCellBuffers {
+        for buffer in [brightBuffer, faintBuffer].compactMap({ $0 }) + activeFaintCellBuffers + activeRegionalBuffers {
             encoder.setVertexBuffer(buffer, offset: 0, index: 0)
             encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 6,
                 instanceCount: buffer.length / MemoryLayout<PlanetariumStarInstance>.stride)

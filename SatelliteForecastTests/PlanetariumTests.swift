@@ -337,6 +337,26 @@ final class PlanetariumTests: XCTestCase {
 
 @MainActor
 extension PlanetariumTests {
+    func testFrameRateCountsPresentedFramesAndResets() {
+        let monitor = PlanetariumFrameRate()
+        monitor.recordPresentation(at: 1)
+        XCTAssertNil(monitor.framesPerSecond, "Hidden readout does no sampling")
+        monitor.setEnabled(true, now: 1)
+        for frame in 0...60 { monitor.recordPresentation(at: 1 + Double(frame) / 60) }
+        XCTAssertEqual(monitor.framesPerSecond ?? 0, 60, accuracy: 0.01)
+        // Half as many presentations over the next second must report 30, not the display's target rate.
+        for frame in 1...30 { monitor.recordPresentation(at: 2 + Double(frame) / 30) }
+        XCTAssertEqual(monitor.framesPerSecond ?? 0, 30, accuracy: 0.01)
+        monitor.setEnabled(false, now: 3)
+        monitor.recordPresentation(at: 4)
+        XCTAssertNil(monitor.framesPerSecond)
+        monitor.setEnabled(true, now: 10)
+        monitor.recordPresentation(at: 5) // Late callback from the prior session.
+        for frame in 0...60 { monitor.recordPresentation(at: 10 + Double(frame) / 60) }
+        XCTAssertEqual(monitor.framesPerSecond ?? 0, 60, accuracy: 0.01,
+            "Resuming must discard the background interval and old callbacks")
+    }
+
     func testMetalPipelinesAndTexturesLoad() throws {
         let controller = PlanetariumController()
         XCTAssertNil(controller.errorMessage)
@@ -1584,5 +1604,192 @@ extension PlanetariumTests {
             }
         }
         XCTFail("Expected a daytime epoch")
+    }
+}
+
+extension PlanetariumTests {
+    private func regionalViewport(longitude: Double, latitude: Double, roll: Double = 0,
+                                  fov: Double = 20, aspect: Double = 0.46) -> PlanetariumStarViewport {
+        let a = longitude * .pi / 180, e = latitude * .pi / 180, r = roll * .pi / 180
+        let forward = SIMD3<Float>(Float(cos(e)*cos(a)), Float(cos(e)*sin(a)), Float(sin(e)))
+        let right = SIMD3<Float>(Float(-sin(a)), Float(cos(a)), 0)
+        let up = simd_cross(forward, right)
+        return .init(forward: forward, right: right * Float(cos(r)) + up * Float(sin(r)),
+                     up: up * Float(cos(r)) - right * Float(sin(r)), fieldOfView: fov, aspect: aspect)
+    }
+
+    func testRegionalQueriesCoverViewportAndDeduplicate() async throws {
+        // Full-sky loading is an independent TEST oracle, never the production deep-loading path.
+        let all = try await StarCatalog().snapshot(maximumMagnitude: 9).stars.filter { $0.magnitude > 6.5 }
+        let catalog = PlanetariumRegionalStarCatalog()
+        let cases: [(Double, Double, Double, Double, Double, Double)] = [
+            (0, 0, 0, 44, 0.46, 7.5), (359.9, 0, 30, 24, 0.46, 9),
+            (179.9, 0, 70, 24, 2.2, 9), (0, 90, 0, 20, 0.46, 9),
+            (130, -90, 130, 20, 2.2, 9), (47, 89.9, 90, 1, 0.46, 9),
+            (280, -89.9, 35, 1, 2.2, 9), (125, 45, 47, 24, 0.46, 9)
+        ]
+        var measurements: [[String: Double]] = []
+        for (longitude, latitude, roll, fov, aspect, limit) in cases {
+            let viewport = regionalViewport(longitude: longitude, latitude: latitude, roll: roll, fov: fov, aspect: aspect)
+            let keys = try await catalog.regions(in: viewport.padded(), magnitude: limit)
+            XCTAssertEqual(Set(keys).count, keys.count)
+            XCTAssertLessThan(keys.count, 1000, "A viewport must not request the whole sky")
+            var loaded: [Star] = []
+            for offset in stride(from: 0, to: keys.count, by: 8) {
+                loaded += try await catalog.load(Array(keys[offset..<min(offset + 8, keys.count)])).flatMap(\.stars)
+            }
+            let ids = Set(loaded.map(\.id))
+            XCTAssertEqual(ids.count, loaded.count, "Cells and magnitude layers must not duplicate stars")
+            XCTAssertTrue(loaded.allSatisfy { $0.magnitude > 6.5 && $0.magnitude <= limit })
+            // Independent pinhole projection; do not reuse the region intersection predicate.
+            let expected = all.filter { star in
+                guard star.magnitude <= limit else { return false }
+                let d = simd_normalize(star.coordinate), z = simd_dot(d, viewport.forward)
+                return z > 0 && abs(simd_dot(d, viewport.right)) <= z * tan(viewport.horizontalHalfAngle) &&
+                    abs(simd_dot(d, viewport.up)) <= z * tan(viewport.verticalHalfAngle)
+            }
+            XCTAssertTrue(Set(expected.map(\.id)).isSubset(of: ids), "Missing viewport stars at \(longitude), \(latitude), roll \(roll)")
+            measurements.append(["loadedAdditionalStars": Double(loaded.count), "visibleAdditionalStars": Double(expected.count), "allSkyAdditionalStars": Double(all.count), "queriedCells": Double(keys.count), "fieldOfView": fov, "aspect": aspect])
+            print("REGIONAL stars: loaded=\(loaded.count) visible=\(expected.count) global=\(all.count) cells=\(keys.count) FOV=\(fov)")
+        }
+        try JSONEncoder().encode(measurements).write(to: URL(fileURLWithPath: "/tmp/satellite-regional-loading.json"))
+        // Target a real faint star at telescope zoom and exactly on viewport edges/corners.
+        let target = try XCTUnwrap(all.first { $0.magnitude > 8 })
+        let d = simd_normalize(target.coordinate)
+        let longitude = atan2(d.y, d.x) * 180 / .pi, latitude = asin(d.z) * 180 / .pi
+        for offset in [-0.004, 0.0, 0.004] {
+            let view = regionalViewport(longitude: longitude + offset, latitude: latitude, fov: 0.01, aspect: 2.2)
+            let keys = try await catalog.regions(in: view, magnitude: 9)
+            let stars = try await catalog.load(keys).flatMap(\.stars)
+            XCTAssertTrue(stars.contains { $0.id == target.id }, "Sub-cell fields of view must retain stars")
+        }
+    }
+
+    func testRegionalCacheCancellationAndBounds() async throws {
+        let catalog = PlanetariumRegionalStarCatalog(cellBudget: 32, starBudget: 1000)
+        let view = regionalViewport(longitude: 0, latitude: 30, fov: 10)
+        let keys = try await catalog.regions(in: view, magnitude: 9)
+        let firstKeys = Array(keys.prefix(8))
+        let first = try await catalog.load(firstKeys)
+        let queryCount = await catalog.queryCount
+        let repeatLoad = try await catalog.load(firstKeys)
+        let repeatedQueries = await catalog.queryCount
+        XCTAssertEqual(first.flatMap(\.stars).map(\.id), repeatLoad.flatMap(\.stars).map(\.id))
+        XCTAssertEqual(queryCount, repeatedQueries, "Revisiting cached (including empty) cells does no SQLite reads")
+        let cancelled = Task {
+            withUnsafeCurrentTask { $0?.cancel() }
+            return try await catalog.load(keys)
+        }
+        do { _ = try await cancelled.value; XCTFail("Cancelled requests must stop before querying") }
+        catch is CancellationError { }
+        let afterCancellation = await catalog.queryCount
+        XCTAssertEqual(afterCancellation, queryCount)
+        for longitude in stride(from: 0.0, through: 300, by: 60) {
+            let region = try await catalog.regions(in: regionalViewport(longitude: longitude, latitude: 0), magnitude: 9)
+            _ = try await catalog.load(region)
+        }
+        let cellCount = await catalog.cachedCellCount, starCount = await catalog.cachedStarCount
+        XCTAssertLessThanOrEqual(cellCount, 32)
+        XCTAssertLessThanOrEqual(starCount, 1000)
+    }
+
+    func testRegionalViewportReuseCoversRollZoomAndSeams() throws {
+        let index = try PlanetariumStarRegionIndex()
+        XCTAssertEqual(index.cells.count, 122 + 842 + 5882)
+        XCTAssertEqual(Set(index.cells.map(\.id)).count, index.cells.count)
+        for latitude in [-90.0, 0, 90] {
+            let view = regionalViewport(longitude: 359.9, latitude: latitude, fov: 20)
+            let padded = view.padded()
+            XCTAssertTrue(padded.contains(view))
+            XCTAssertTrue(padded.contains(regionalViewport(longitude: 0.1, latitude: latitude, fov: 20)))
+            XCTAssertFalse(padded.contains(regionalViewport(longitude: 359.9, latitude: latitude, roll: 90, fov: 20)))
+            XCTAssertFalse(padded.contains(regionalViewport(longitude: 359.9, latitude: latitude, fov: 30)))
+            let rotated = regionalViewport(longitude: 359.9, latitude: latitude, roll: 90, fov: 20)
+            XCTAssertTrue(rotated.padded().contains(rotated))
+        }
+    }
+}
+
+@MainActor
+extension PlanetariumTests {
+    func testRegionalControllerRejectsObsoleteLoads() async throws {
+        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let pass = try XCTUnwrap(fixture.passes.first)
+        let controller = PlanetariumController()
+        controller.view.frame = CGRect(x: 0, y: 0, width: 440, height: 956)
+        controller.configure(context: .init(passIndex: 0, satelliteInfo: fixture.info, satelliteCommonName: "ISS",
+            category: .iss, julianDateRange: fixture.range, observer: fixture.observer, passSnapshots: pass,
+            starManager: fixture.catalog, julianDateProvider: { fixture.now.julianDate }), julianDate: fixture.now.julianDate)
+        defer { controller.stop() }
+        controller.setMotionEnabled(false)
+        controller.view.isPaused = true
+        controller.zoom(by: 10 / controller.fieldOfView)
+        for azimuth in stride(from: 0.0, through: 300, by: 30) {
+            controller.pointCamera(azimuth: azimuth, elevation: 40)
+            controller.renderer?.beforeDraw?()
+            await Task.yield()
+        }
+        controller.pointCamera(azimuth: 200, elevation: 45)
+        controller.renderer?.beforeDraw?()
+        for _ in 0..<300 {
+            if !controller.requestedStarRegions.isEmpty && controller.loadedStarRegions == Set(controller.requestedStarRegions) { break }
+            try await Task.sleep(for: .milliseconds(20))
+        }
+        XCTAssertFalse(controller.requestedStarRegions.isEmpty)
+        XCTAssertEqual(controller.loadedStarRegions, Set(controller.requestedStarRegions), "Only the final camera request can publish")
+        XCTAssertEqual(controller.renderedStarIDs.count, Set(controller.renderedStarIDs).count)
+        let renderer = try XCTUnwrap(controller.renderer)
+        let u = renderer.uniforms
+        func eq(_ v: SIMD4<Float>) -> SIMD3<Float> {
+            v.x * SIMD3(u.east.x, u.east.y, u.east.z) + v.y * SIMD3(u.zenith.x, u.zenith.y, u.zenith.z)
+                - v.z * SIMD3(u.north.x, u.north.y, u.north.z)
+        }
+        let finalView = PlanetariumStarViewport(forward: eq(u.forward), right: eq(u.right), up: eq(u.up),
+            fieldOfView: controller.fieldOfView, aspect: 440.0 / 956)
+        let expectedKeys = try await controller.regionalCatalog.regions(in: finalView.padded(), magnitude: 9)
+        XCTAssertEqual(Set(expectedKeys), controller.loadedStarRegions, "The last camera, not a cancelled camera, supplies the cells")
+        let uploads = renderer.regionalUploadCount
+        for _ in 0..<30 { renderer.beforeDraw?() }
+        XCTAssertEqual(renderer.regionalUploadCount, uploads, "Steady views do not upload again")
+        controller.setActive(false)
+        controller.setActive(true)
+        controller.zoom(by: 65 / controller.fieldOfView)
+        renderer.beforeDraw?()
+        try await Task.sleep(for: .milliseconds(200))
+        XCTAssertTrue(controller.loadedStarRegions.isEmpty)
+        XCTAssertTrue(controller.requestedStarRegions.isEmpty, "Zooming out after resume must remove deeper tiers")
+    }
+}
+
+@MainActor
+extension PlanetariumTests {
+    func testGPURegionalBuffersMatchFlatRenderingAndEvict() async throws {
+        let view = MTKView(frame: CGRect(x: 0, y: 0, width: 240, height: 480))
+        view.overrideUserInterfaceStyle = .dark
+        let renderer = try PlanetariumMetalRenderer(view: view)
+        view.isPaused = true
+        renderer.uniforms.forward = SIMD4(0.6, 0.8, 0, 0)
+        renderer.uniforms.right = SIMD4(0, 0, 1, 0)
+        renderer.uniforms.up = SIMD4(-0.8, 0.6, 0, 0)
+        renderer.uniforms.viewport.w = 10
+        let size = CGSize(width: 240, height: 480)
+        let star = Star(id: 1, magnitude: 7, coordinate: SIMD3(0.8, 0.6, 0), spectralClass: "G")
+        renderer.setFaintStars([star])
+        let flat = try await renderer.snapshot(size: size, scale: 1)
+        renderer.setFaintStars([])
+        let region = PlanetariumStarRegion(key: .init(cell: 1, magnitude: 9), stars: [star])
+        renderer.setRegionalStars([region])
+        let cached = try await renderer.snapshot(size: size, scale: 1)
+        XCTAssertEqual(try pixels(flat), try pixels(cached), "Regional buffers must preserve the exact star rendering")
+        let uploads = renderer.regionalUploadCount
+        renderer.setRegionalStars([])
+        renderer.setRegionalStars([region])
+        XCTAssertEqual(renderer.regionalUploadCount, uploads)
+        for id in 2...300 {
+            renderer.setRegionalStars([.init(key: .init(cell: UInt64(id), magnitude: 9), stars: [star])])
+        }
+        XCTAssertLessThanOrEqual(renderer.regionalBufferCount, 256)
+        let afterEviction = try await renderer.snapshot(size: size, scale: 1)
+        XCTAssertEqual(try pixels(flat), try pixels(afterEviction), "Eviction must never remove an active draw buffer")
     }
 }

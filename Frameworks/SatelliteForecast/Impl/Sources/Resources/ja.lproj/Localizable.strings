@@ -689,3 +689,6 @@ The localized string for the status of a spare satellite */
 /* Pass chart destinations */
 "Chart" = "星図";
 "Planetarium" = "プラネタリウム";
+
+/* Planetarium frame rate overlay */
+"Show FPS" = "FPS を表示";

@@ -102,12 +102,21 @@ struct PlanetariumSatelliteTrack {
     private var lastMoonTextureDate = -Double.infinity
     private var tiers = PlanetariumStarTiers(stars: [])
     private var renderedStars: [Star] = []
+    private var renderedStarIDSet: Set<Int> = []
     private var lastRegionForward = SIMD3<Float>(repeating: 0)
-    private var lastTier = -1.0
     private var lastRegionDiagonal = -Double.infinity
     private var activeStarCells: [Int] = []
     private var lastAspect = 0.0
-    private var loadedDeepCatalog = false
+    let regionalCatalog = PlanetariumRegionalStarCatalog()
+    private var requestedViewport: PlanetariumStarViewport?
+    private var requestedMagnitude = 0.0
+    private var regionGeneration = 0
+    private var nextRegionRetry = 0.0
+    private var baseRenderedStars: [Star] = []
+    private var regionalStars: [PlanetariumStarRegionKey: PlanetariumStarRegion] = [:]
+    private(set) var requestedStarRegions: [PlanetariumStarRegionKey] = []
+    var loadedStarRegions: Set<PlanetariumStarRegionKey> { Set(regionalStars.keys) }
+    var renderedStarIDs: [Int] { renderedStars.map(\.id) }
     private var lastMotionTrailDate = -Double.infinity
     private var lastSkyDate = -Double.infinity
     private var lastMoonOrbitDate = -Double.infinity
@@ -466,30 +475,83 @@ struct PlanetariumSatelliteTrack {
         let aspect = max(0.1, view.bounds.width / max(1, view.bounds.height))
         let tier = PlanetariumStarTiers.magnitudeLimit(fieldOfView: fieldOfView)
         let diagonal = atan(tan(fieldOfView * .pi / 360) * sqrt(1 + aspect * aspect))
-        guard force || tier != lastTier || abs(aspect - lastAspect) > 0.01 ||
+        if force || abs(aspect - lastAspect) > 0.01 ||
                 abs(diagonal - lastRegionDiagonal) > 2 * .pi / 180 ||
-                simd_dot(eq, lastRegionForward) < cos(3 * .pi / 180) else { return }
-        let cells = tiers.visibleCells(forward: eq, diagonalHalfAngle: Float(diagonal))
-        let ids = cells.map(\.id)
-        if force || ids != activeStarCells || tier != lastTier {
-            renderedStars = tiers.bright + cells.flatMap { $0.stars(at: tier) }
-            renderer.setFaintStarCells(cells, limit: tier)
-            activeStarCells = ids
+                simd_dot(eq, lastRegionForward) < cos(3 * .pi / 180) {
+            let cells = tiers.visibleCells(forward: eq, diagonalHalfAngle: Float(diagonal))
+            let ids = cells.map(\.id)
+            if force || ids != activeStarCells {
+                baseRenderedStars = tiers.bright + cells.flatMap { $0.stars(at: 6.5) }
+                renderer.setFaintStarCells(cells, limit: 6.5)
+                activeStarCells = ids
+                refreshRegionalRendering()
+            }
+            lastRegionForward = eq; lastAspect = aspect; lastRegionDiagonal = diagonal
         }
-        lastRegionForward = eq; lastTier = tier; lastAspect = aspect; lastRegionDiagonal = diagonal
-        if tier > 6.5 && !loadedDeepCatalog && catalogTask == nil {
-            catalogTask = Task { [weak self] in
-                do {
-                    let snapshot = try await StarCatalog().snapshot(maximumMagnitude: 9)
+        updateRegionalStars(viewport: .init(forward: eq, right: equatorial(right), up: equatorial(up),
+            fieldOfView: fieldOfView, aspect: aspect), magnitude: tier)
+    }
+
+    private func refreshRegionalRendering() {
+        let cells = requestedStarRegions.compactMap { regionalStars[$0] }
+        renderedStars = baseRenderedStars + cells.flatMap(\.stars)
+        renderedStarIDSet = Set(renderedStars.map(\.id))
+        renderer?.setRegionalStars(cells)
+    }
+
+    private func updateRegionalStars(viewport: PlanetariumStarViewport, magnitude: Double) {
+        guard context != nil, active else { return }
+        if magnitude <= 6.5 {
+            if requestedViewport != nil || !requestedStarRegions.isEmpty {
+                regionGeneration += 1
+                catalogTask?.cancel(); catalogTask = nil
+                requestedViewport = nil
+                requestedStarRegions = []; regionalStars = [:]
+                refreshRegionalRendering()
+            }
+            return
+        }
+        // The old padded frustum may be reused only while it contains ALL four new
+        // viewport corners. This covers zoom, aspect, roll, poles and rapid panning.
+        if requestedMagnitude == magnitude, requestedViewport?.contains(viewport) == true { return }
+        guard animationClock() >= nextRegionRetry else { return }
+        regionGeneration += 1
+        let generation = regionGeneration
+        catalogTask?.cancel()
+        let padded = viewport.padded()
+        requestedViewport = padded
+        if requestedMagnitude != magnitude {
+            requestedStarRegions = []; regionalStars = [:]
+            refreshRegionalRendering()
+        }
+        requestedMagnitude = magnitude
+        let catalog = regionalCatalog
+        catalogTask = Task { [weak self] in
+            do {
+                let keys = try await catalog.regions(in: padded, magnitude: magnitude)
+                try Task.checkCancellation()
+                guard let self, self.regionGeneration == generation else { return }
+                let wanted = Set(keys)
+                self.requestedStarRegions = keys
+                self.regionalStars = self.regionalStars.filter { wanted.contains($0.key) }
+                self.refreshRegionalRendering()
+                let missing = keys.filter { self.regionalStars[$0] == nil }
+                // Small batches let the actor observe cancellation between reads and
+                // progressively publish brighter levels / central cells first.
+                for start in stride(from: 0, to: missing.count, by: 8) {
+                    let batch = try await catalog.load(Array(missing[start..<min(start + 8, missing.count)]))
                     try Task.checkCancellation()
-                    guard let self else { return }
-                    self.tiers = PlanetariumStarTiers(stars: snapshot.stars)
-                    self.renderer?.resetStarCellCache()
-                    self.activeStarCells = []
-                    self.loadedDeepCatalog = true
-                    self.catalogTask = nil
-                    self.updateStarRegion(force: true)
-                } catch { self?.catalogTask = nil }
+                    guard self.regionGeneration == generation else { return }
+                    for cell in batch { self.regionalStars[cell.key] = cell }
+                    self.refreshRegionalRendering()
+                    await Task.yield()
+                }
+                if self.regionGeneration == generation { self.catalogTask = nil }
+            } catch {
+                guard let self, self.regionGeneration == generation else { return }
+                self.catalogTask = nil
+                self.requestedViewport = nil
+                self.nextRegionRetry = self.animationClock() + 2
             }
         }
     }
@@ -508,7 +570,9 @@ struct PlanetariumSatelliteTrack {
         if now - lastStarLabelRefresh >= 0.15 {
             lastStarLabelRefresh = now
             let source = fieldOfView > 70 ? context.starManager.namedBrightStars : renderedStars
-            let retained = starLabelCandidates.filter { starLabelLayout.retainedIDs.contains($0.id) }
+            let retained = starLabelCandidates.filter {
+                renderedStarIDSet.contains($0.id) && starLabelLayout.retainedIDs.contains($0.id)
+            }
             let ranked = Array(source.filter {
                 $0.magnitude.isFinite && $0.magnitude > -10 &&
                 starIsVisible($0, direction: local(SIMD3<Float>(simd_normalize($0.coordinate)))) &&
@@ -659,7 +723,7 @@ struct PlanetariumSatelliteTrack {
             let budget = fieldOfView > 70 ? 3 : (fieldOfView > 35 ? 5 : 7)
             var labelDirections: [Int: SIMD3<Float>] = [:]
             let candidates = starLabelCandidates.compactMap { star -> PlanetariumLabelLayout.Candidate? in
-                guard let texture = starLabelTextures[star.id] else { return nil }
+                guard renderedStarIDSet.contains(star.id), let texture = starLabelTextures[star.id] else { return nil }
                 let direction = local(SIMD3<Float>(simd_normalize(star.coordinate)))
                 guard starIsVisible(star, direction: direction) else { return nil }
                 let offset = Float(0.032 * fieldOfView / 65)
@@ -880,7 +944,12 @@ struct PlanetariumSatelliteTrack {
 
     func setActive(_ active: Bool) {
         self.active = active
-        if !active { stopPanMomentum() }
+        if !active {
+            stopPanMomentum()
+            regionGeneration += 1
+            catalogTask?.cancel(); catalogTask = nil
+            requestedViewport = nil
+        }
         view.isPaused = !active
         setMotionEnabled(motionEnabled)
     }
