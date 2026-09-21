@@ -669,3 +669,23 @@ The localized string for the status of a spare satellite */
 "Compass.northAbbreviation" = "N";
 "Station.iss.short" = "ISS";
 "Station.tiangong.short" = "Tiangong";
+
+"Now" = "Maintenant";
+
+"Preview" = "Aperçu";
+
+"Time mode" = "Mode temporel";
+
+"Moon of %@ · %.0f km radius" = "Lune de %@ · rayon de %.0f km";
+
+"Follow Device" = "Suivre l’appareil";
+
+"On" = "Activé";
+
+"Off" = "Désactivé";
+
+"Move your device to explore the sky. Drag to turn off." = "Déplacez l’appareil pour explorer le ciel. Faites glisser pour désactiver.";
+
+/* Pass chart destinations */
+"Chart" = "Carte";
+"Planetarium" = "Planétarium";

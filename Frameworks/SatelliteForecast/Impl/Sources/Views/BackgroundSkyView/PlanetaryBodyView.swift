@@ -63,7 +63,7 @@ struct PlanetaryBodyView: View {
                             .overlay(alignment: labelOnLeft ? .trailing : .leading) {
                                 if label == .text {
                                     Text("Moon", bundle: .module)
-                                        .font(.caption2)
+                                        .font(.system(.caption2, design: .serif))
                                         .foregroundColor(.secondary)
                                         .fixedSize()
                                         .offset(x: (labelOnLeft ? -1 : 1) * (displayRadius * 2 + 3))
@@ -154,7 +154,7 @@ extension SolarSystemBody {
                 magnitude: magnitude,
                 textLabel: {
                     Text("Sun", bundle: .module)
-                        .font(.caption2)
+                        .font(.system(.caption2, design: .serif))
                         .foregroundColor(.orange)
                 },
                 symbol: {
@@ -175,7 +175,7 @@ extension SolarSystemBody {
                 magnitude: magnitude,
                 textLabel: {
                     Text("Mercury", bundle: .module)
-                        .font(.caption2)
+                        .font(.system(.caption2, design: .serif))
                         .foregroundColor(.yellow)
                 },
                 symbol: {
@@ -193,7 +193,7 @@ extension SolarSystemBody {
                 magnitude: magnitude,
                 textLabel: {
                     Text("Venus", bundle: .module)
-                        .font(.caption2)
+                        .font(.system(.caption2, design: .serif))
                         .foregroundColor(.orange)
                 },
                 symbol: {
@@ -211,7 +211,7 @@ extension SolarSystemBody {
                 magnitude: magnitude,
                 textLabel: {
                     Text("Mars", bundle: .module)
-                        .font(.caption2)
+                        .font(.system(.caption2, design: .serif))
                         .foregroundColor(.red)
                 },
                 symbol: {
@@ -229,7 +229,7 @@ extension SolarSystemBody {
                 magnitude: magnitude,
                 textLabel: {
                     Text("Jupiter", bundle: .module)
-                        .font(.caption2)
+                        .font(.system(.caption2, design: .serif))
                         .foregroundColor(.pink)
                 },
                 symbol: {
@@ -247,7 +247,7 @@ extension SolarSystemBody {
                 magnitude: magnitude,
                 textLabel: {
                     Text("Saturn", bundle: .module)
-                        .font(.caption2)
+                        .font(.system(.caption2, design: .serif))
                         .foregroundColor(.purple)
                 },
                 symbol: {

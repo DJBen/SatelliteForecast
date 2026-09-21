@@ -1,0 +1,37 @@
+ AGENTS.md                                          |   1 +
+ Documentation/Analytics.md                         |  22 +
+ Documentation/AppStore/PublishingGuide.md          |  11 +
+ Documentation/AppStore/ScreenshotMoments.md        |   6 +
+ .../Daytime/daytime-overlays-hidden-dark-ui.png    | Bin 34087 -> 34151 bytes
+ .../SelectionGlobes/globe-materials-dark.png       | Bin 229887 -> 228171 bytes
+ Documentation/Planetarium.md                       | 323 ++++++++++
+ .../Impl/Sources/Resources/PlanetariumCredits.txt  |  12 +
+ .../Sources/Resources/PlanetariumShaders.metal     | 120 +++-
+ .../Sources/Resources/en.lproj/Localizable.strings |  20 +
+ .../Sources/Resources/es.lproj/Localizable.strings |  20 +
+ .../Sources/Resources/fr.lproj/Localizable.strings |  20 +
+ .../Sources/Resources/ja.lproj/Localizable.strings |  20 +
+ .../Sources/Resources/ko.lproj/Localizable.strings |  20 +
+ .../Resources/pt-BR.lproj/Localizable.strings      |  20 +
+ .../Sources/Resources/ru.lproj/Localizable.strings |  20 +
+ .../Resources/zh-Hans.lproj/Localizable.strings    |  20 +
+ .../Impl/Sources/Utilities/AppStarCatalog.swift    |  16 +-
+ .../BackgroundSkyView/BackgroundSkyView.swift      |  46 ++
+ .../Views/BackgroundSkyView/MoonAppearance.swift   |  20 +-
+ .../BackgroundSkyView/PlanetaryBodyView.swift      |  14 +-
+ .../DetailedPassView/ConstellationLabel.swift      |   2 +-
+ .../Views/DetailedPassView/SelectedStarLabel.swift |   4 +-
+ .../Impl/Sources/Views/PassView/PassView.swift     |  64 +-
+ .../Views/Planetarium/PlanetariumController.swift  | 710 +++++++++++++++++++--
+ .../Views/Planetarium/PlanetariumGlobe.swift       |  73 ++-
+ .../Planetarium/PlanetariumMetalRenderer.swift     |  63 +-
+ .../Views/Planetarium/PlanetariumView.swift        | 257 +++++---
+ .../Views/SkyChart/MilkyWayBackground.swift        |  35 +-
+ SatelliteForecast.xcodeproj/project.pbxproj        |   8 +-
+ SatelliteForecast.xctestplan                       |  16 +-
+ .../NativeArchitectureTests.swift                  |  23 +-
+ SatelliteForecastTests/PlanetariumTests.swift      | 680 +++++++++++++++++++-
+ SatelliteForecastTests/ScreenSnapshotTests.swift   |  69 +-
+ scripts/capture-store-screenshots.py               |   5 +-
+ scripts/replace-store-screenshots.py               |   6 +-
+ 36 files changed, 2479 insertions(+), 287 deletions(-)

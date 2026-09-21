@@ -10,6 +10,225 @@ import SolarSystem
 @testable import SatelliteForecastImpl
 
 final class PlanetariumTests: XCTestCase {
+    func testCenturyPlanetGeometryAgainstHorizons() throws {
+        let folder = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
+            .appendingPathComponent("Documentation/DesignReview/Planetarium/CenturyAccuracy")
+        let rows = try JSONDecoder().decode([[Double]].self, from: Data(contentsOf: folder.appendingPathComponent("monthly-reference.json")))
+        XCTAssertEqual(rows.count, 7*2401)
+        let bodies: [Int:SolarSystemBody] = [199:.mercury,299:.venus,499:.mars,599:.jupiter,699:.saturn,799:.uranus,899:.neptune]
+        let ratios: [Int:Double] = [199:2438.26/2440.53,299:1,499:3376.2/3396.19,599:66854/71492,699:54364/60268,799:24973/25559,899:24341/24764]
+        var report: [String:[String:Double]] = [:]
+        for row in rows {
+            let id = Int(row[0]), date = row[1], body = try XCTUnwrap(bodies[Int(row[0])])
+            let g = PlanetariumPlanetAppearance.geometry(body: body, date: date)
+            let frame = PlanetariumEquatorialFrame(date: date)
+            let direction = simd_normalize(frame.ofDate(SIMD3<Double>(g.direction)))
+            let pole = frame.ofDate(SIMD3<Double>(g.pole))
+            let north = simd_normalize(SIMD3<Double>(0,0,1)-direction*direction.z)
+            let east = simd_normalize(simd_cross(SIMD3<Double>(0,0,1),direction))
+            let angle = atan2(simd_dot(pole,east),simd_dot(pole,north))*180 / .pi
+            let angleError = abs((angle-row[5]+540).truncatingRemainder(dividingBy:360)-180)
+            let latitude = atan(tan(row[3] * .pi/180)*pow(ratios[id]!,2))*180 / .pi
+            let openingError = abs(Double(g.appearance.opening)*180 / .pi-latitude)
+            let phaseError = abs(Double(g.appearance.illuminatedFraction)*100-row[2])
+            let ra = row[6] * .pi/180, dec = row[7] * .pi/180
+            let expected = SIMD3(cos(dec)*cos(ra),cos(dec)*sin(ra),sin(dec))
+            let positionError = atan2(simd_length(simd_cross(SIMD3<Double>(g.direction),expected)),simd_dot(SIMD3<Double>(g.direction),expected))*180 / .pi
+            XCTAssertLessThan(phaseError,0.02,"\(body) \(date) phase percentage points")
+            XCTAssertLessThan(openingError,0.01,"\(body) \(date) opening degrees")
+            XCTAssertLessThan(angleError,0.06,"\(body) \(date) pole angle degrees")
+            XCTAssertLessThan(positionError,0.02,"\(body) \(date) astrometric position degrees")
+            if body == .saturn {
+                XCTAssertLessThan(openingError,0.001)
+                XCTAssertLessThan(angleError,0.005)
+            }
+            var result = report[String(describing: body)] ?? [:]
+            for (key,value) in [("phasePercentagePoints",phaseError),("openingDegrees",openingError),("poleAngleDegrees",angleError),("positionDegrees",positionError)] {
+                if value > (result[key] ?? -1) { result[key] = value; result[key+"JD"] = date }
+            }
+            report[String(describing: body)] = result
+        }
+        try JSONSerialization.data(withJSONObject: report,options:[.prettyPrinted,.sortedKeys]).write(to: folder.appendingPathComponent("measured-errors.json"))
+    }
+
+
+    func testPlanetPhaseAndPoleAgainstHorizons() throws {
+        // Independent JPL Horizons observer tables (Earth center, quantities
+        // 10/14/16/17/24, queried 2026-09-20); angles are true-of-date.
+        let fixtures: [(SolarSystemBody, Double, Float, Float, Float, Float)] = [
+            (.mercury,2458999.5,49.32356,2.702886,355.5955,265.65),
+            (.mercury,2459360.5,17.68447,2.996113,351.7093,264.24),
+            (.venus,2458999.5,0.86624,-2.438388,353.2608,252.24),
+            (.venus,2459360.5,96.18081,-1.452403,355.0444,263.65),
+            (.venus,2461303.5,24.70668,7.081113,20.1461,297.39),
+            (.saturn,2458999.5,99.83800,24.841684,6.7600,77.28),
+            (.saturn,2460757.5,99.99279,0.051359,4.6449,54.91),
+            (.saturn,2461303.5,99.97953,-9.739151,3.1337,76.81)
+        ]
+        for (body,date,percent,latitude,poleAngle,sunAngle) in fixtures {
+            let g = PlanetariumPlanetAppearance.geometry(body: body, date: date)
+            XCTAssertEqual(g.appearance.illuminatedFraction*100, percent, accuracy: 0.12, "\(body) \(date)")
+            let ratio: Float = body == .saturn ? 54364/60268 : 1
+            let opening = atan(tan(latitude * .pi/180)*ratio*ratio)*180 / .pi
+            XCTAssertEqual(g.appearance.opening*180 / .pi, opening, accuracy: 0.12, "\(body)")
+            let north = simd_normalize(SIMD3<Float>(0,0,1)-g.direction*g.direction.z)
+            let east = simd_normalize(simd_cross(SIMD3<Float>(0,0,1),g.direction))
+            let angle = atan2(simd_dot(g.pole,east),simd_dot(g.pole,north))*180 / .pi
+            let delta = (angle-poleAngle+540).truncatingRemainder(dividingBy: 360)-180
+            XCTAssertEqual(delta, 0, accuracy: 0.35, "\(body) position angle")
+            let relativeSun = atan2(-g.appearance.sunDirection.x,g.appearance.sunDirection.y)*180 / .pi
+            let sunDelta = (relativeSun+poleAngle-sunAngle+720+180).truncatingRemainder(dividingBy: 360)-180
+            XCTAssertEqual(sunDelta, 0, accuracy: 0.4, "\(body) bright limb")
+        }
+    }
+
+    @MainActor
+    func testGPUPhysicalPlanetPhasesAndRings() throws {
+        let directory = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
+            .appendingPathComponent("Documentation/DesignReview/Planetarium/PhysicalPhases")
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        func image(_ body: SolarSystemBody, _ appearance: PlanetariumPlanetAppearance) throws -> UIImage {
+            let texture = try XCTUnwrap(PlanetariumGlobeRenderer.skyTexture(body: body, appearance: appearance))
+            let w = texture.width, h = texture.height
+            var bytes = [UInt8](repeating: 0, count: w*h*4)
+            texture.getBytes(&bytes, bytesPerRow: w*4, from: MTLRegionMake2D(0,0,w,h), mipmapLevel: 0)
+            let provider = try XCTUnwrap(CGDataProvider(data: Data(bytes) as CFData))
+            let cg = try XCTUnwrap(CGImage(width: w, height: h, bitsPerComponent: 8, bitsPerPixel: 32, bytesPerRow: w*4,
+                space: CGColorSpace(name: CGColorSpace.sRGB)!, bitmapInfo: [.byteOrder32Little,CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedFirst.rawValue)],
+                provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent))
+            return UIImage(cgImage: cg)
+        }
+        // Independent area oracle: sphere illumination must occupy (1+cos phase)/2
+        // of the projected disk, with no permanently illuminated night hemisphere.
+        for cosine: Float in [-0.8,0,0.8] {
+            let rendered = try image(.venus, .init(opening: 0, sunDirection: SIMD3(sqrt(1-cosine*cosine),0,cosine)))
+            let bytes = try pixels(rendered)
+            var disk = 0, lit = 0
+            for i in stride(from: 0, to: bytes.count, by: 4) where bytes[i+3] > 250 {
+                disk += 1
+                if max(bytes[i],max(bytes[i+1],bytes[i+2])) > 8 { lit += 1 }
+            }
+            XCTAssertEqual(Double(lit)/Double(disk), Double((1+cosine)/2), accuracy: 0.015)
+        }
+        let faceOn = try image(.saturn, .init(opening: .pi/2, sunDirection: SIMD3(0,0,1)))
+        let bytes = try pixels(faceOn)
+        let row = 256, width = 512
+        // Globe radius is 102.4px; outer A-ring is 232.4px. The old 1.91 ratio
+        // would have ended before x=460, which must now lie inside the A ring.
+        XCTAssertGreaterThan(bytes[(row*width+475)*4+3], 100)
+        XCTAssertLessThan(bytes[(row*width+493)*4+3], 5)
+        XCTAssertLessThan(bytes[(row*width+460)*4+3], 40, "Cassini division remains distinct")
+        let cases: [(String,SolarSystemBody,Double)] = [
+            ("Venus crescent · 2026-09-20",.venus,2461303.5),
+            ("Venus thin crescent · 2020-05-30",.venus,2458999.5),
+            ("Venus gibbous · 2021-05-26",.venus,2459360.5),
+            ("Mercury half · 2020-05-30",.mercury,2458999.5),
+            ("Saturn open · 2020-05-30",.saturn,2458999.5),
+            ("Saturn edge-on · 2025-03-23",.saturn,2460757.5),
+            ("Saturn south face · 2026-09-20",.saturn,2461303.5),
+            ("Mars · 2026-09-20",.mars,2461303.5)
+        ]
+        let images = try cases.map { try image($0.1, PlanetariumPlanetAppearance.geometry(body: $0.1,date: $0.2).appearance) }
+        let format = UIGraphicsImageRendererFormat(); format.scale = 1
+        let gallery = UIGraphicsImageRenderer(size: CGSize(width: 1200,height: 660), format: format).image { ctx in
+            UIColor.black.setFill(); ctx.fill(CGRect(x: 0,y: 0,width: 1200,height: 660))
+            for (i,image) in images.enumerated() {
+                let x = (i%4)*300, y = (i/4)*330
+                image.draw(in: CGRect(x: x,y: y,width: 300,height: 300))
+                cases[i].0.draw(at: CGPoint(x: x+8,y: y+305),withAttributes: [.foregroundColor:UIColor.white,.font:UIFont.systemFont(ofSize: 13)])
+            }
+        }
+        try gallery.pngData()!.write(to: directory.appendingPathComponent("phases-and-rings-dark.png"))
+    }
+
+
+    func testStarLabelStabilityAndCollisionHysteresis() {
+        var layout = PlanetariumLabelLayout()
+        let bounds = CGRect(x: 0, y: 0, width: 440, height: 956)
+        func candidate(_ id: Int, _ x: CGFloat) -> PlanetariumLabelLayout.Candidate {
+            .init(id: id, rect: CGRect(x: x, y: 300, width: 60, height: 18))
+        }
+        XCTAssertTrue(layout.layout([candidate(1, 100)], bounds: bounds, obstacles: [], budget: 1, time: 0).isEmpty)
+        XCTAssertEqual(layout.layout([candidate(1, 100)], bounds: bounds, obstacles: [], budget: 1, time: 0.3).map(\.id), [1])
+        // A brighter newcomer and small camera jitter cannot steal a readable incumbent's slot.
+        for frame in 1...240 {
+            let x = 100 + CGFloat(sin(Double(frame) * 0.2)) * 3
+            let placed = layout.layout([candidate(2, 220), candidate(1, x)], bounds: bounds, obstacles: [], budget: 1, time: 0.3 + Double(frame)/60)
+            XCTAssertEqual(placed.map(\.id), [1])
+        }
+        // Hard obstruction hides immediately; near-boundary jitter cannot flash it back on.
+        let obstacle = CGRect(x: 150, y: 290, width: 50, height: 40)
+        XCTAssertTrue(layout.layout([candidate(1, 100)], bounds: bounds, obstacles: [obstacle], budget: 1, time: 5).isEmpty)
+        for frame in 1...120 {
+            let x: CGFloat = frame.isMultiple(of: 2) ? 81 : 91
+            XCTAssertTrue(layout.layout([candidate(1, x)], bounds: bounds, obstacles: [obstacle], budget: 1, time: 5 + Double(frame)/60).isEmpty)
+        }
+        _ = layout.layout([candidate(1, 60)], bounds: bounds, obstacles: [obstacle], budget: 1, time: 8)
+        XCTAssertEqual(layout.layout([candidate(1, 60)], bounds: bounds, obstacles: [obstacle], budget: 1, time: 8.3).map(\.id), [1])
+        // Exhaust a moving dense field: labels always fit and never overlap.
+        layout.reset()
+        for frame in 0...600 {
+            let candidates = (0..<24).map { candidate($0, CGFloat($0 * 19) + CGFloat(sin(Double(frame)/20) * 30)) }
+            let placed = layout.layout(candidates, bounds: bounds, obstacles: [obstacle], budget: 7, time: Double(frame)/60)
+            XCTAssertLessThanOrEqual(placed.count, 7)
+            for (index, label) in placed.enumerated() {
+                XCTAssertTrue(bounds.contains(label.rect))
+                XCTAssertFalse(label.rect.intersects(obstacle))
+                for other in placed.dropFirst(index + 1) { XCTAssertFalse(label.rect.intersects(other.rect)) }
+            }
+        }
+    }
+
+    func testBrightStarNamesAreCachedAndMagnitudeRanked() async throws {
+        let catalog = try await AppStarCatalog.load()
+        let named = catalog.namedBrightStars
+        XCTAssertEqual(named.count, 50)
+        XCTAssertEqual(Set(named.map(\.id)).count, 50)
+        XCTAssertEqual(named.first?.info?.properName, "Sirius")
+        XCTAssertTrue(named.contains { $0.info?.properName == "Vega" })
+        XCTAssertTrue(zip(named, named.dropFirst()).allSatisfy { $0.magnitude <= $1.magnitude })
+        let expected = catalog.snapshot.stars.filter { $0.magnitude > -10 }
+            .sorted { $0.magnitude == $1.magnitude ? $0.id < $1.id : $0.magnitude < $1.magnitude }.prefix(50)
+        XCTAssertEqual(named.map(\.id), expected.map(\.id))
+        XCTAssertTrue(named.allSatisfy { !($0.info?.displayName?.isEmpty ?? true) })
+    }
+
+    func testNaturalMoonHorizonsInterpolation() throws {
+        // Independent Horizons UT / ICRF / geocentric LT query at the midpoint,
+        // compared with interpolation between two separately requested samples.
+        let table = try MoonEphemeris.parse("""
+        $$SOE
+        2459372.500000000, A.D. 2021-Jun-07 00:00:00.0000,  6.170799068299342E+08, -3.020735862566011E+08, -1.429758388362553E+08, -1.944186593362829E+01,  9.601064862595550E-01, -4.970527534005629E-01,
+        2459372.511057292, A.D. 2021-Jun-07 00:15:55.3500,  6.170616547842402E+08, -3.020726557636695E+08, -1.429763018482131E+08, -1.876968415403061E+01,  9.924527750557601E-01, -4.699866938363697E-01,
+        $$EOE
+        """)
+        let position = try XCTUnwrap(MoonEphemeris.interpolate(table, at: 2459372.505528646))
+        let expected = SIMD3<Double>(6.170707005309910e8, -3.020731248745871e8, -1.429760735755105e8)
+        XCTAssertLessThan(simd_length(position - expected), 1) // < 1 km at Io
+        XCTAssertNil(MoonEphemeris.interpolate(table, at: 2459372.4))
+        XCTAssertNil(MoonEphemeris.interpolate(table, at: 2459373))
+        XCTAssertThrowsError(try MoonEphemeris.parse("API error"))
+        XCTAssertThrowsError(try MoonEphemeris.parse("$$SOE\n1, date, nan, 0, 0, 0, 0, 0,\n$$EOE"))
+        XCTAssertEqual(Set(PlanetariumMoon.all.map(\.id)).count, 21)
+        XCTAssertEqual(PlanetariumMoon.all.filter { $0.parent == .saturn }.count, 8)
+    }
+
+    func testNaturalMoonLiveEphemerides() async throws {
+        guard FileManager.default.fileExists(atPath: "/tmp/moon-ephemeris-validation") else { throw XCTSkip("Opt-in Horizons integration") }
+        for moon in PlanetariumMoon.all {
+            let data = try await MoonEphemerisStore.shared.load(moon, date: 2459372.5)
+            let position = try XCTUnwrap(MoonEphemeris.interpolate(data.moon, at: 2459372.5))
+            let parent = try XCTUnwrap(MoonEphemeris.interpolate(data.parent, at: 2459372.5))
+            XCTAssertGreaterThan(simd_length(position-parent), moon.parentRadius)
+            XCTAssertLessThan(simd_length(position-parent), 5_000_000)
+            let dates = data.orbitDates(period: moon.period)
+            XCTAssertEqual(dates.last! - dates.first!, moon.period, accuracy: 1e-8)
+            XCTAssertEqual(data.moon.count, 193)
+            XCTAssertEqual(data.parent.count, 193)
+            XCTAssertTrue(data.contains(2459372.5))
+        }
+    }
+
     func testOffscreenStationBearing() {
         func bearing(_ d: SIMD3<Float>) -> Double? {
             PlanetariumGeometry.offscreenBearing(cameraDirection: d, aspect: 0.5, tangent: 0.6)
@@ -170,6 +389,327 @@ extension PlanetariumTests {
         XCTAssertEqual(renderer.uniforms.forward, manual, "Manual pointing cancels the camera animation")
     }
 
+    func testPanningNearPoles() throws {
+        let controller = PlanetariumController()
+        defer { controller.stop() }
+        controller.view.frame = CGRect(x: 0, y: 0, width: 440, height: 956)
+        let renderer = try XCTUnwrap(controller.renderer)
+        for elevation in [-89.5, -89, 0, 89, 89.5] {
+            controller.pointCamera(azimuth: 125, elevation: elevation)
+            let before = renderer.uniforms.right
+            controller.panBy(CGPoint(x: 20, y: 0))
+            let f = renderer.uniforms.forward
+            let angles = PlanetariumGeometry.angles(SIMD3(f.x, f.y, f.z))
+            XCTAssertEqual(PlanetariumGeometry.shortestTurn(from: 125, to: angles.azimuth),
+                           -20 * controller.fieldOfView / 956, accuracy: 0.002)
+            XCTAssertLessThan(simd_distance(before, renderer.uniforms.right), 0.03, "No polar spin amplification")
+            controller.panBy(CGPoint(x: 0, y: elevation < 0 ? -200 : 200))
+            let clampedRight = renderer.uniforms.right
+            controller.panBy(CGPoint(x: 0, y: elevation < 0 ? -200 : 200))
+            XCTAssertLessThan(simd_distance(clampedRight, renderer.uniforms.right), 0.00001, "Dragging across pole must not flip azimuth")
+            XCTAssertTrue(renderer.uniforms.forward.x.isFinite)
+        }
+    }
+
+    func testPanMomentum() throws {
+        func coast(fps: Int) throws -> SIMD4<Float> {
+            let controller = PlanetariumController()
+            defer { controller.stop() }
+            controller.view.frame = CGRect(x: 0, y: 0, width: 440, height: 956)
+            let renderer = try XCTUnwrap(controller.renderer)
+            var time = 0.0
+            controller.animationClock = { time }
+            controller.pointCamera(azimuth: 359, elevation: 25)
+            controller.panBy(CGPoint(x: 10, y: 5))
+            let start = renderer.uniforms.forward
+            controller.finishPan(velocity: CGPoint(x: 900, y: 180))
+            XCTAssertTrue(controller.isPanningWithMomentum)
+            for frame in 1...(fps * 2) {
+                time = Double(frame) / Double(fps)
+                controller.updateNavigation()
+            }
+            XCTAssertGreaterThan(simd_distance(start, renderer.uniforms.forward), 0.1)
+            XCTAssertFalse(controller.isPanningWithMomentum, "Coasting settles")
+            return renderer.uniforms.forward
+        }
+        XCTAssertLessThan(simd_distance(try coast(fps: 30), try coast(fps: 120)), 0.002,
+                          "Coast distance is stable across refresh rates")
+        let controller = PlanetariumController()
+        defer { controller.stop() }
+        controller.view.frame = CGRect(x: 0, y: 0, width: 440, height: 956)
+        var time = 0.0
+        controller.animationClock = { time }
+        controller.panBy(.zero)
+        controller.finishPan(velocity: CGPoint(x: 800, y: 0))
+        controller.panBy(.zero)
+        XCTAssertFalse(controller.isPanningWithMomentum, "New drag stops old inertia")
+        controller.finishPan(velocity: CGPoint(x: 800, y: 0))
+        controller.zoom(by: 0.8)
+        XCTAssertFalse(controller.isPanningWithMomentum)
+        controller.finishPan(velocity: CGPoint(x: 800, y: 0))
+        controller.setMotionEnabled(true)
+        XCTAssertFalse(controller.isPanningWithMomentum)
+        controller.setMotionEnabled(false)
+        controller.finishPan(velocity: CGPoint(x: 800, y: 0))
+        controller.setActive(false)
+        XCTAssertFalse(controller.isPanningWithMomentum)
+        controller.setActive(true)
+        controller.finishPan(velocity: CGPoint(x: 800, y: 0))
+        time += 1
+        controller.updateNavigation()
+        XCTAssertFalse(controller.isPanningWithMomentum, "No jump after a stalled frame")
+    }
+
+    func testDeviceFollowLowPassResponseAndJitter() throws {
+        func direction(_ degrees: Double) -> SIMD3<Float> {
+            SIMD3(Float(sin(degrees * .pi / 180)), 0, -Float(cos(degrees * .pi / 180)))
+        }
+        func heading(_ pose: simd_quatf) -> Double {
+            let f = pose.act(SIMD3<Float>(0, 0, -1))
+            return Double(atan2(f.x, -f.z)) * 180 / .pi
+        }
+        var responses: [Double] = []
+        for rate in [30, 60, 120] {
+            var filter = PlanetariumMotionFilter()
+            _ = filter.update(forward: direction(0), up: SIMD3(0, 1, 0), timestamp: 0)
+            var result: simd_quatf?
+            for sample in 1...rate {
+                result = filter.update(forward: direction(90), up: SIMD3(0, 1, 0), timestamp: Double(sample)/Double(rate))
+                let angle = heading(try XCTUnwrap(result))
+                XCTAssertGreaterThan(angle, 0)
+                XCTAssertLessThan(angle, 90)
+            }
+            responses.append(heading(try XCTUnwrap(result)))
+        }
+        XCTAssertEqual(responses[0], 90 * (1 - exp(-4)), accuracy: 0.01)
+        XCTAssertEqual(responses[0], responses[1], accuracy: 0.01)
+        XCTAssertEqual(responses[1], responses[2], accuracy: 0.01)
+        var filter = PlanetariumMotionFilter()
+        var inputPower = 0.0, outputPower = 0.0
+        for sample in 0...240 {
+            let time = Double(sample)/60
+            let input = sin(time * 2 * .pi * 8) // 1° hand tremor at 8 Hz
+            let pose = try XCTUnwrap(filter.update(forward: direction(input), up: SIMD3(0, 1, 0), timestamp: time))
+            if sample > 60 { inputPower += input * input; outputPower += pow(heading(pose), 2) }
+        }
+        XCTAssertLessThan(sqrt(outputPower/inputPower), 0.15)
+        filter.reset()
+        _ = filter.update(forward: direction(359), up: SIMD3(0, 1, 0), timestamp: 0)
+        let north = try XCTUnwrap(filter.update(forward: direction(1), up: SIMD3(0, 1, 0), timestamp: 1/60))
+        XCTAssertLessThan(abs(heading(north)), 1.01, "Follow the short path across north")
+        let resumed = try XCTUnwrap(filter.update(forward: direction(90), up: SIMD3(0, 1, 0), timestamp: 2))
+        XCTAssertEqual(heading(resumed), 90, accuracy: 0.001)
+        XCTAssertNil(filter.update(forward: .zero, up: .zero, timestamp: 3))
+        filter.reset()
+        let zenith = try XCTUnwrap(filter.update(forward: SIMD3(0, 1, 0), up: SIMD3(0, 0, 1), timestamp: 4))
+        XCTAssertLessThan(simd_distance(zenith.act(SIMD3(0, 0, -1)), SIMD3(0, 1, 0)), 0.00001)
+    }
+
+    func testMotionToManualHandoff() throws {
+        XCTAssertNotNil(UIImage(systemName: "location.north.line"))
+        XCTAssertNotNil(UIImage(systemName: "location.north.line.fill"))
+        let controller = PlanetariumController()
+        defer { controller.stop() }
+        controller.view.frame = CGRect(x: 0, y: 0, width: 440, height: 956)
+        let renderer = try XCTUnwrap(controller.renderer)
+        controller.setMotionEnabled(true)
+        let direction = PlanetariumGeometry.direction(azimuth: 125, elevation: 35)
+        let right = simd_normalize(simd_cross(direction, SIMD3<Float>(0, 1, 0)))
+        let upright = simd_normalize(simd_cross(right, direction))
+        controller.updateMotionOrientation(forward: direction, screenUp: upright * 0.8 + right * 0.6)
+        let before = renderer.uniforms
+        controller.panBy(.zero)
+        XCTAssertFalse(controller.motionEnabled)
+        XCTAssertLessThan(simd_distance(before.forward, renderer.uniforms.forward), 0.00001)
+        XCTAssertLessThan(simd_distance(SIMD4(upright, 0), renderer.uniforms.up), 0.00001, "Dragging levels the device tilt")
+        controller.panBy(CGPoint(x: 30, y: 15))
+        let manual = renderer.uniforms
+        XCTAssertGreaterThan(simd_distance(before.forward, manual.forward), 0.01)
+        controller.updateMotionOrientation(forward: SIMD3(0, 0, -1), screenUp: SIMD3(0, 1, 0))
+        XCTAssertEqual(renderer.uniforms.forward, manual.forward, "Late motion updates cannot override the drag")
+        controller.setActive(false)
+        controller.setActive(true)
+        XCTAssertFalse(controller.motionEnabled, "Returning to the app must not reenable motion after a drag")
+        controller.setMotionEnabled(true)
+        controller.setActive(false)
+        XCTAssertTrue(controller.motionEnabled, "Background suspension preserves the requested mode")
+        controller.setActive(true)
+        controller.updateMotionOrientation(forward: direction, screenUp: upright)
+        XCTAssertTrue(controller.motionEnabled)
+        XCTAssertLessThan(simd_distance(renderer.uniforms.forward, SIMD4(direction, 0)), 0.00001)
+    }
+
+    func testSatelliteTrackAndMarkerAgree() async throws {
+        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let pass = try XCTUnwrap(fixture.passes.max { $0.pass.culmination.elev < $1.pass.culmination.elev }).pass
+        let track = try PlanetariumSatelliteTrack(info: fixture.info, observer: fixture.observer,
+                                                  range: pass.rise.julianDate...pass.set.julianDate)
+        let vertices = track.vertices
+        XCTAssertEqual(vertices.count, (track.samples.count - 1) * 2)
+        XCTAssertNil(track.sample(at: pass.rise.julianDate - 1))
+        for index in stride(from: 0, to: track.samples.count - 1, by: 7) {
+            let a = track.samples[index], b = track.samples[index + 1]
+            XCTAssertLessThanOrEqual((b.date-a.date)*86400, 1.001)
+            for t: Float in [0, 0.25, 0.5, 0.75, 1] {
+                let date = a.date + Double(t) * (b.date-a.date)
+                let marker = try XCTUnwrap(track.sample(at: date))
+                let v0 = vertices[index*2].position, v1 = vertices[index*2+1].position
+                let expected = simd_normalize(SIMD3(v0.x,v0.y,v0.z)*(1-t)+SIMD3(v1.x,v1.y,v1.z)*t)
+                XCTAssertLessThan(simd_distance(marker.direction, expected), 0.000001,
+                                  "Marker lies on the actual rendered segment, including intermediate times")
+                let truth = try fixture.info.generateSnapshot(julianDate: date, observer: fixture.observer)
+                let actual = PlanetariumGeometry.direction(azimuth: truth.position.azim, elevation: truth.position.elev)
+                XCTAssertLessThan(simd_distance(marker.direction, actual), 0.00003,
+                                  "Shared track stays close to independently propagated orbit")
+            }
+        }
+    }
+
+    func testPreviewTrackingAndContinuousSkyRotation() async throws {
+        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let pass = try XCTUnwrap(fixture.passes.first { $0.pass.visibility == .visible })
+        let date = pass.pass.culmination.julianDate
+        let controller = PlanetariumController()
+        controller.view.frame = CGRect(x: 0, y: 0, width: 440, height: 956)
+        controller.configure(context: .init(passIndex: 0, satelliteInfo: fixture.info, satelliteCommonName: "ISS",
+            category: .iss, julianDateRange: fixture.range, observer: fixture.observer, passSnapshots: pass,
+            starManager: fixture.catalog, julianDateProvider: { date }), julianDate: date)
+        defer { controller.stop() }
+        controller.setMotionEnabled(false)
+        controller.view.isPaused = true
+        let renderer = try XCTUnwrap(controller.renderer)
+        let initialEast = renderer.uniforms.east
+        controller.updateTime(date + 0.1 / 86400)
+        XCTAssertGreaterThan(simd_distance(initialEast, renderer.uniforms.east), 0.000001,
+                             "The sky must advance within the old ten-second update interval")
+
+        let star = try XCTUnwrap(fixture.catalog.namedBrightStars.first {
+            let p = azel(time: Date(julianDate: date), site: LatLon(fixture.observer), cele: RADec(PlanetariumEquatorialFrame(date: date).ofDate($0.coordinate)))
+            return p.elev > 25 && p.elev < 65
+        })
+        controller.updateTime(date)
+        let position = azel(time: Date(julianDate: date), site: LatLon(fixture.observer), cele: RADec(PlanetariumEquatorialFrame(date: date).ofDate(star.coordinate)))
+        controller.pointCamera(azimuth: position.azim, elevation: position.elev)
+        controller.select(at: CGPoint(x: 220, y: 478))
+        for _ in 0..<100 where controller.selection == nil { try await Task.sleep(for: .milliseconds(10)) }
+        XCTAssertEqual(controller.selection?.id, "star-\(star.id)")
+        controller.panBy(CGPoint(x: 65, y: 45))
+        let anchor = try XCTUnwrap(controller.selectedScreenPosition)
+        XCTAssertGreaterThan(abs(anchor.x - 220), 20)
+        for seconds in [0.2, 2.0, 11.0, 60.0, -30.0] {
+            controller.updateTime(date + seconds / 86400, trackingSelection: true)
+            let point = try XCTUnwrap(controller.selectedScreenPosition)
+            XCTAssertEqual(point.x, anchor.x, accuracy: 0.1)
+            XCTAssertEqual(point.y, anchor.y, accuracy: 0.1)
+        }
+        controller.clearSelection()
+        var clock = 100.0
+        controller.animationClock = { clock }
+        controller.setPreviewPlayback(playing: true, date: date, end: date + 30 / 86400)
+        let before = renderer.uniforms.east
+        clock += 1.0 / 60
+        renderer.beforeDraw?()
+        XCTAssertGreaterThan(simd_distance(before, renderer.uniforms.east), 0.000001)
+        XCTAssertEqual(try XCTUnwrap(controller.previewDate), date + (10.0 / 60) / 86400, accuracy: 1e-8)
+        clock += 10
+        renderer.beforeDraw?()
+        XCTAssertEqual(try XCTUnwrap(controller.previewDate), date + 30 / 86400, accuracy: 1e-8)
+        controller.setPreviewPlayback(playing: false, date: date, end: date + 30 / 86400)
+        XCTAssertNil(controller.previewDate)
+
+        for hour in 0..<24 {
+            let lunarDate = date + Double(hour) / 24
+            let moon = MoonAppearance.coordinate(julianDate: lunarDate, observer: fixture.observer)
+            guard moon.elev > 25 && moon.elev < 70 else { continue }
+            controller.updateTime(lunarDate)
+            controller.pointCamera(azimuth: moon.azim, elevation: moon.elev)
+            controller.select(at: CGPoint(x: 220, y: 478))
+            XCTAssertEqual(controller.selection?.planet, .moon)
+            controller.zoom(by: 1 / controller.fieldOfView)
+            controller.panBy(CGPoint(x: 50, y: -30))
+            let moonAnchor = try XCTUnwrap(controller.selectedScreenPosition)
+            for step in 1...120 {
+                controller.updateTime(lunarDate + Double(step) / 60 / 86400, trackingSelection: true)
+                let point = try XCTUnwrap(controller.selectedScreenPosition)
+                XCTAssertEqual(point.x, moonAnchor.x, accuracy: 0.5)
+                XCTAssertEqual(point.y, moonAnchor.y, accuracy: 0.5)
+            }
+            let folder = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
+                .appendingPathComponent("Documentation/DesignReview/Planetarium/PreviewTracking")
+            try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+            let image = try await renderer.snapshot(size: CGSize(width: 1320, height: 2868), scale: 3)
+            try image.pngData()!.write(to: folder.appendingPathComponent("tracked-moon-dark.png"))
+            return
+        }
+        XCTFail("Fixture must include an above-horizon Moon")
+    }
+
+    func testMoonSelectionCanBeReplacedInHostedView() async throws {
+        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let pass = try XCTUnwrap(fixture.passes.first { $0.pass.visibility == .visible })
+        let context = PassViewContext(passIndex: 0, satelliteInfo: fixture.info, satelliteCommonName: "ISS",
+            category: .iss, julianDateRange: fixture.range, observer: fixture.observer, passSnapshots: pass,
+            starManager: fixture.catalog, julianDateProvider: { pass.pass.culmination.julianDate })
+        let controller = PlanetariumController()
+        let host = UIHostingController(rootView: PlanetariumView(context: context, controller: controller)
+            .environment(\.colorScheme, .dark))
+        let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.first as? UIWindowScene)
+        let window = UIWindow(windowScene: scene)
+        window.frame = CGRect(x: 0, y: 0, width: 440, height: 956)
+        window.overrideUserInterfaceStyle = .dark
+        window.rootViewController = host
+        window.makeKeyAndVisible()
+        defer { controller.stop(); window.isHidden = true; window.rootViewController = nil }
+        try await Task.sleep(for: .milliseconds(300))
+        controller.setMotionEnabled(false)
+        for hour in 0..<24 {
+            let date = pass.pass.culmination.julianDate + Double(hour) / 24
+            let moon = MoonAppearance.coordinate(julianDate: date, observer: fixture.observer)
+            guard moon.elev > 25 && moon.elev < 70,
+                  SkyChartAtmosphere.sun(observer: fixture.observer, julianDate: date).elev < -8 else { continue }
+            controller.updateTime(date)
+            controller.pointCamera(azimuth: moon.azim, elevation: moon.elev)
+            let center = CGPoint(x: controller.view.bounds.midX, y: controller.view.bounds.midY)
+            controller.select(at: center)
+            XCTAssertEqual(controller.selection?.planet, .moon)
+            try await Task.sleep(for: .milliseconds(300))
+            let target = window.hitTest(controller.view.convert(center, to: window), with: nil)
+            XCTAssertTrue(target === controller.view || target?.isDescendant(of: controller.view) == true,
+                          "Sky taps must reach Metal with the Moon card visible; got \(String(describing: target))")
+            let star = try XCTUnwrap(fixture.catalog.namedBrightStars.first {
+                let p = azel(time: Date(julianDate: date), site: LatLon(fixture.observer), cele: RADec(PlanetariumEquatorialFrame(date: date).ofDate($0.coordinate)))
+                return p.elev > 25 && p.elev < 70
+            })
+            let p = azel(time: Date(julianDate: date), site: LatLon(fixture.observer), cele: RADec(PlanetariumEquatorialFrame(date: date).ofDate(star.coordinate)))
+            controller.pointCamera(azimuth: p.azim, elevation: p.elev)
+            controller.select(at: center)
+            for _ in 0..<100 where controller.selection?.planet != nil { try await Task.sleep(for: .milliseconds(10)) }
+            XCTAssertEqual(controller.selection?.id, "star-\(star.id)")
+            // Repeat without dismissing the card, at close zoom with playback running.
+            controller.setPreviewPlayback(playing: true, date: date, end: date + 60 / 86400)
+            controller.zoom(by: 1 / controller.fieldOfView)
+            for _ in 0..<3 {
+                let now = try XCTUnwrap(controller.previewDate)
+                let lunar = MoonAppearance.coordinate(julianDate: now, observer: fixture.observer)
+                controller.pointCamera(azimuth: lunar.azim, elevation: lunar.elev)
+                controller.select(at: center)
+                XCTAssertEqual(controller.selection?.planet, .moon)
+                try await Task.sleep(for: .milliseconds(100))
+                let starDate = try XCTUnwrap(controller.previewDate)
+                let starPosition = azel(time: Date(julianDate: starDate),
+                    site: LatLon(fixture.observer), cele: RADec(PlanetariumEquatorialFrame(date: starDate).ofDate(star.coordinate)))
+                controller.pointCamera(azimuth: starPosition.azim, elevation: starPosition.elev)
+                controller.select(at: center)
+                for _ in 0..<100 where controller.selection?.planet != nil {
+                    try await Task.sleep(for: .milliseconds(10))
+                }
+                XCTAssertEqual(controller.selection?.id, "star-\(star.id)")
+            }
+            return
+        }
+        XCTFail("Need a night-time Moon fixture")
+    }
+
     func testSelectingCatalogStarAndMoon() async throws {
         let catalog = try await AppStarCatalog.load()
         let fixture = try Fixture(catalog: catalog)
@@ -181,16 +721,19 @@ extension PlanetariumTests {
             category: .iss, julianDateRange: fixture.range, observer: fixture.observer, passSnapshots: pass,
             starManager: catalog, julianDateProvider: { date }), julianDate: date)
         defer { controller.stop() }
+        let renderer = try XCTUnwrap(controller.renderer)
+        XCTAssertEqual(renderer.motionTrailPointCount, 0, "Unselected planets and Moon have no trail")
         let star = try XCTUnwrap(catalog.snapshot.stars.first { star in
-            let position = azel(time: Date(julianDate: date), site: LatLon(fixture.observer), cele: RADec(star.coordinate))
+            let position = azel(time: Date(julianDate: date), site: LatLon(fixture.observer), cele: RADec(PlanetariumEquatorialFrame(date: date).ofDate(star.coordinate)))
             return star.magnitude < 3 && position.elev > 20 && position.elev < 75
         })
-        let coordinate = azel(time: Date(julianDate: date), site: LatLon(fixture.observer), cele: RADec(star.coordinate))
+        let coordinate = azel(time: Date(julianDate: date), site: LatLon(fixture.observer), cele: RADec(PlanetariumEquatorialFrame(date: date).ofDate(star.coordinate)))
         controller.pointCamera(azimuth: coordinate.azim, elevation: coordinate.elev)
         controller.select(at: CGPoint(x: 220, y: 478))
         XCTAssertNil(controller.selection, "No provisional star card before metadata is ready")
         for _ in 0..<100 where controller.selection == nil { try await Task.sleep(for: .milliseconds(10)) }
         XCTAssertEqual(controller.selection?.id, "star-\(star.id)")
+        XCTAssertEqual(renderer.motionTrailPointCount, 0, "A star selection must not reveal planetary trails")
         let resolved = controller.selection
         controller.select(at: CGPoint(x: 220, y: 478))
         XCTAssertEqual(controller.selection, resolved, "Keep the ready card during a replacement lookup")
@@ -199,6 +742,21 @@ extension PlanetariumTests {
         XCTAssertNil(controller.selection, "Cancelled lookup must not resurrect a dismissed card")
         controller.clearSelection()
         XCTAssertNil(controller.selection)
+        let candidates: [SolarSystemBody] = [.mercury, .venus, .mars, .jupiter, .saturn, .uranus, .neptune]
+        var testedPlanet = false
+        for body in candidates {
+            let position = azel(time: Date(julianDate: date), site: LatLon(fixture.observer), cele: RADec(body.eci(julianDay: date)))
+            guard position.elev > 10 else { continue }
+            controller.pointCamera(azimuth: position.azim, elevation: position.elev)
+            controller.select(at: CGPoint(x: 220, y: 478))
+            XCTAssertEqual(controller.selection?.planet, body)
+            XCTAssertEqual(renderer.motionTrailPointCount, 2920, "Only one selected planet's annual trail")
+            controller.clearSelection()
+            XCTAssertEqual(renderer.motionTrailPointCount, 0)
+            testedPlanet = true
+            break
+        }
+        XCTAssertTrue(testedPlanet, "Fixture must exercise a visible planet")
         // Find a lunar epoch above the horizon without depending on today's sky.
         for hour in 0..<24 {
             let lunarDate = date + Double(hour) / 24
@@ -209,6 +767,11 @@ extension PlanetariumTests {
                 controller.select(at: CGPoint(x: 220, y: 478))
                 XCTAssertEqual(controller.selection?.name, "Moon")
                 XCTAssertTrue(controller.selection?.detail.contains("illuminated") == true)
+                XCTAssertEqual(renderer.motionTrailPointCount, 2688, "Only the selected Moon trail")
+                controller.clearSelection()
+                XCTAssertEqual(renderer.motionTrailPointCount, 0, "Dismissal clears the trail immediately")
+                controller.updateTime(lunarDate + 0.01)
+                XCTAssertEqual(renderer.motionTrailPointCount, 0, "Time refresh must not restore hidden trails")
                 return
             }
         }
@@ -253,14 +816,42 @@ extension PlanetariumTests {
             controller.zoom(by: 0.35)
             controller.select(at: CGPoint(x: controller.view.bounds.midX, y: controller.view.bounds.midY))
         }
+        if let name = try? String(contentsOfFile: "/tmp/planetarium-system", encoding: .utf8),
+           let body = SolarSystemBody.allCases.first(where: { String(describing: $0) == name.trimmingCharacters(in: .whitespacesAndNewlines) }) {
+            let date = (pass.pass.rise.julianDate + pass.pass.set.julianDate) / 2
+            let observerAU = PlanetariumEquatorialFrame(date: date).j2000(geo2eci(julianDays: date, geodetic: fixture.observer)) / 149597870.7
+            let direction = PlanetariumPlanetAppearance.geometry(body: body, date: date, observerAU: observerAU).direction
+            let coordinate = azel(time: Date(julianDate: date), site: LatLon(fixture.observer), cele: RADec(PlanetariumEquatorialFrame(date: date).ofDate(SIMD3<Double>(direction))))
+            controller.setMotionEnabled(false)
+            controller.pointCamera(azimuth: coordinate.azim, elevation: coordinate.elev)
+            controller.zoom(by: 0.3 / controller.fieldOfView)
+            controller.select(at: CGPoint(x: controller.view.bounds.midX, y: controller.view.bounds.midY))
+        }
+        var reviewDate = (pass.pass.rise.julianDate + pass.pass.set.julianDate) / 2
         try "ready".write(toFile: marker + "-ready", atomically: true, encoding: .utf8)
         for _ in 0..<3000 {
             if !FileManager.default.fileExists(atPath: marker) { return }
+            let positions = controller.visibleNaturalMoonPositions.mapValues { ["x": $0.x, "y": $0.y] }
+            if let json = try? JSONEncoder().encode(positions) {
+                try? json.write(to: URL(fileURLWithPath: "/tmp/planetarium-moons-visible.json"), options: .atomic)
+            }
             let commandURL = URL(fileURLWithPath: "/tmp/planetarium-camera.json")
             if let data = try? Data(contentsOf: commandURL),
                let values = try? JSONSerialization.jsonObject(with: data) as? [String: Double] {
                 controller.setMotionEnabled(false)
-                controller.pointCamera(azimuth: values["azimuth"] ?? 90, elevation: values["elevation"] ?? 5)
+                if let date = values["date"] { reviewDate = date; controller.updateTime(date) }
+                if let index = values["bodyIndex"], Int(index) >= 0, Int(index) < SolarSystemBody.allCases.count {
+                    let body = SolarSystemBody.allCases[Int(index)]
+                    let epoch = PlanetariumEquatorialFrame(date: reviewDate)
+                    let observerAU = epoch.j2000(geo2eci(julianDays: reviewDate, geodetic: fixture.observer)) / 149597870.7
+                    let direction = body == .sun ? PlanetariumPlanetAppearance.sunDirection(date: reviewDate) : PlanetariumPlanetAppearance.geometry(body: body, date: reviewDate, observerAU: observerAU).direction
+                    let coordinate = azel(time: Date(julianDate: reviewDate), site: LatLon(fixture.observer), cele: RADec(epoch.ofDate(SIMD3<Double>(direction))))
+                    controller.pointCamera(azimuth: coordinate.azim, elevation: coordinate.elev)
+                    controller.select(at: CGPoint(x: controller.view.bounds.midX, y: controller.view.bounds.midY))
+                }
+                if let azimuth = values["azimuth"] {
+                    controller.pointCamera(azimuth: azimuth, elevation: values["elevation"] ?? 5)
+                }
                 if let fov = values["fov"] { controller.zoom(by: fov / controller.fieldOfView) }
                 try? FileManager.default.removeItem(at: commandURL)
             }
@@ -333,6 +924,86 @@ extension PlanetariumTests {
         XCTAssertLessThan(try difference(baseline, crossing), 2, "Near-plane crossing remains a narrow stroke")
     }
 
+    func testObservedPlanetInclinationsAndSkyChartBackground() async throws {
+        let directory = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
+            .appendingPathComponent("Documentation/DesignReview/Planetarium/ObservedInclinations")
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let bodies: [SolarSystemBody] = [.mercury, .venus, .mars, .jupiter, .saturn, .uranus, .neptune]
+        let date = 2461302.5 // 2026-09-19
+        var images: [UIImage] = []
+        for body in bodies {
+            let direction = SIMD3<Float>(simd_normalize(body.eci(julianDay: date)))
+            let pole = PlanetariumPlanetOrientation.pole(body, at: date)
+            XCTAssertEqual(simd_length(pole), 1, accuracy: 0.00001)
+            let opening = PlanetariumPlanetOrientation.opening(pole: pole, direction: direction)
+            XCTAssertTrue(opening.isFinite)
+            let texture = try XCTUnwrap(PlanetariumGlobeRenderer.skyTexture(body: body, opening: opening))
+            let dimension = texture.width
+            var bytes = [UInt8](repeating: 0, count: dimension*dimension*4)
+            texture.getBytes(&bytes, bytesPerRow: dimension*4, from: MTLRegionMake2D(0, 0, dimension, dimension), mipmapLevel: 0)
+            let provider = try XCTUnwrap(CGDataProvider(data: Data(bytes) as CFData))
+            let cg = try XCTUnwrap(CGImage(width: dimension, height: dimension, bitsPerComponent: 8, bitsPerPixel: 32, bytesPerRow: dimension*4,
+                space: CGColorSpace(name: CGColorSpace.sRGB)!, bitmapInfo: [.byteOrder32Little, CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedFirst.rawValue)],
+                provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent))
+            images.append(UIImage(cgImage: cg))
+        }
+        XCTAssertEqual(PlanetariumPlanetOrientation.opening(pole: SIMD3(0,1,0), direction: SIMD3(0,0,1)), 0)
+        XCTAssertEqual(PlanetariumPlanetOrientation.opening(pole: SIMD3(0,0,1), direction: SIMD3(0,0,-1)), .pi/2)
+        // Saturn's equinox should be almost edge-on; 2017's rings were wide open.
+        func saturnOpening(_ jd: Double) -> Float {
+            PlanetariumPlanetOrientation.opening(pole: PlanetariumPlanetOrientation.pole(.saturn, at: jd),
+                direction: SIMD3<Float>(simd_normalize(SolarSystemBody.saturn.eci(julianDay: jd))))
+        }
+        XCTAssertLessThan(abs(saturnOpening(2460757.5)), 0.02)
+        XCTAssertGreaterThan(abs(saturnOpening(2458028.5)), 0.4)
+        let format = UIGraphicsImageRendererFormat(); format.scale = 1
+        let gallery = UIGraphicsImageRenderer(size: CGSize(width: 1024, height: 600), format: format).image { ctx in
+            UIColor.black.setFill(); ctx.fill(CGRect(x: 0, y: 0, width: 1024, height: 600))
+            for (i, image) in images.enumerated() {
+                let x = (i % 4)*256, y = (i / 4)*300
+                image.draw(in: CGRect(x: x, y: y, width: 256, height: 256))
+                String(describing: bodies[i]).draw(at: CGPoint(x: x+20, y: y+260), withAttributes: [.foregroundColor: UIColor.white])
+            }
+        }
+        try gallery.pngData()!.write(to: directory.appendingPathComponent("planet-openings-2026-dark.png"))
+        let background = try XCTUnwrap(MilkyWayBackground.image(size: CGSize(width: 512, height: 512),
+            observer: LatLonAlt(37.49, -122.23, 0), julianDate: 2459372.8, dark: true))
+        let chart = UIGraphicsImageRenderer(size: CGSize(width: 512, height: 512), format: format).image { ctx in
+            UIColor.black.setFill(); ctx.fill(CGRect(x: 0, y: 0, width: 512, height: 512))
+            background.draw(at: .zero)
+        }
+        try chart.pngData()!.write(to: directory.appendingPathComponent("sky-chart-background-dark.png"))
+    }
+
+    func testGPUPlanetNightSidePreservesDaytimeAtmosphere() async throws {
+        let view = MTKView(frame: CGRect(x: 0,y: 0,width: 256,height: 256))
+        let renderer = try PlanetariumMetalRenderer(view: view)
+        view.isPaused = true
+        let direction = simd_normalize(SIMD3<Float>(0,1,-1))
+        renderer.uniforms.forward = SIMD4(direction,0)
+        renderer.uniforms.up = SIMD4(simd_normalize(SIMD3<Float>(0,1,1)),0)
+        renderer.uniforms.right = SIMD4(1,0,0,0)
+        renderer.uniforms.sun = SIMD4(simd_normalize(SIMD3<Float>(1,1,1)),45)
+        renderer.uniforms.effects.x = 1
+        let size = CGSize(width: 256,height: 256)
+        let background = try await renderer.snapshot(size: size, scale: 1)
+        let texture = try XCTUnwrap(PlanetariumGlobeRenderer.skyTexture(body: .venus,
+            appearance: .init(opening: 0,sunDirection: SIMD3(0,0,-1))))
+        var sprite = PlanetariumSprite(positionSize: SIMD4(direction,160))
+        sprite.options = SIMD4(0,1,0,2)
+        renderer.sprites = [(sprite,texture)]
+        let planet = try await renderer.snapshot(size: size, scale: 1)
+        let a = try pixels(background), b = try pixels(planet)
+        for y in 124..<132 {
+            for x in 124..<132 {
+                for channel in 0..<3 {
+                    let i = (y*256+x)*4+channel
+                    XCTAssertEqual(Double(a[i]), Double(b[i]), accuracy: 2, "Daytime atmosphere remains in front of the unlit disk")
+                }
+            }
+        }
+    }
+
     func testGPUPlanetGlobes() async throws {
         let bodies: [SolarSystemBody] = [.mercury, .venus, .earth, .mars, .jupiter, .saturn, .uranus, .neptune]
         var thumbnails: [UIImage] = []
@@ -384,6 +1055,194 @@ extension PlanetariumTests {
         try XCTUnwrap(gallery.pngData()).write(to: directory.appendingPathComponent("globe-materials-dark.png"))
     }
 
+    func testGPUStarTwinkleStability() async throws {
+        let view = MTKView(frame: CGRect(x: 0, y: 0, width: 240, height: 480))
+        let renderer = try PlanetariumMetalRenderer(view: view)
+        view.isPaused = true
+        renderer.uniforms.forward = SIMD4(0.6, 0.8, 0, 0)
+        renderer.uniforms.right = SIMD4(0, 0, 1, 0)
+        renderer.uniforms.up = SIMD4(-0.8, 0.6, 0, 0)
+        let size = CGSize(width: 240, height: 480)
+        let faint = Star(id: 1, magnitude: 6, coordinate: SIMD3(0.8, 0.6, 0), spectralClass: "G")
+        let empty = try await renderer.snapshot(size: size, scale: 1, time: 0)
+        renderer.setFaintStars([faint])
+        let first = try await renderer.snapshot(size: size, scale: 1, time: 0)
+        let later = try await renderer.snapshot(size: size, scale: 1, time: 0.37)
+        XCTAssertNotEqual(try pixels(empty), try pixels(first), "The test star must actually render")
+        XCTAssertEqual(try pixels(first), try pixels(later), "Unresolved faint stars must stay steady")
+        renderer.setFaintStars([])
+        let bright = Star(id: 2, magnitude: 0, coordinate: SIMD3(0.8, 0.6, 0), spectralClass: "G")
+        let hidden = Star(id: 3, magnitude: 0, coordinate: SIMD3(-0.8, -0.6, 0), spectralClass: "G")
+        renderer.setBrightStars([bright])
+        let before = try await renderer.snapshot(size: size, scale: 1, time: 0)
+        let twinkled = try await renderer.snapshot(size: size, scale: 1, time: 0.37)
+        XCTAssertNotEqual(try pixels(before), try pixels(twinkled), "Bright-star scintillation remains subtle but active")
+        renderer.setBrightStars([hidden, bright])
+        let reordered = try await renderer.snapshot(size: size, scale: 1, time: 0.37)
+        XCTAssertEqual(try pixels(twinkled), try pixels(reordered), "Culling must not reset a star's twinkle phase")
+    }
+
+    func testGPUFlowingBodyTrails() async throws {
+        let view = MTKView(frame: CGRect(x: 0, y: 0, width: 600, height: 400))
+        let renderer = try PlanetariumMetalRenderer(view: view)
+        view.isPaused = true
+        renderer.uniforms.east = SIMD4(1, 0, 0, 0)
+        renderer.uniforms.zenith = SIMD4(0, 1, 0, 0)
+        let samples: [(SIMD3<Float>, Double)?] = (-30...30).map {
+            (simd_normalize(SIMD3(Float($0) / 50, 0.2, 1)), Double($0))
+        }
+        let vertices = PlanetariumController.flowingTrail(samples, color: SIMD3(0.75, 0.83, 0.96))
+        XCTAssertEqual(vertices.count, 120)
+        XCTAssertEqual(vertices.first?.profile.z, -30)
+        XCTAssertEqual(vertices.last?.profile.z, 30)
+        let baseline = try await renderer.snapshot(size: CGSize(width: 600, height: 400))
+        renderer.setMotionTrails(vertices)
+        let first = try await renderer.snapshot(size: CGSize(width: 600, height: 400), time: 0)
+        let second = try await renderer.snapshot(size: CGSize(width: 600, height: 400), time: 0.7)
+        XCTAssertGreaterThan(try difference(first, second), 0.005, "Highlight animates")
+        let a = try pixels(baseline), b = try pixels(first)
+        func coveredColumns(_ range: Range<Int>) -> Int {
+            range.filter { x in
+                (0..<400).contains { y in
+                    (0..<3).contains { c in abs(Int(a[(y*600+x)*4+c])-Int(b[(y*600+x)*4+c])) > 8 }
+                }
+            }.count
+        }
+        XCTAssertGreaterThan(coveredColumns(140..<290), coveredColumns(310..<460) * 2,
+                             "Past is continuous; future has separated dots")
+        renderer.setMotionTrails([])
+        let cleared = try await renderer.snapshot(size: CGSize(width: 600, height: 400))
+        XCTAssertLessThan(try difference(baseline, cleared), 0.001)
+        let folder = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().appendingPathComponent("Documentation/DesignReview/Planetarium/BodyTrailFlow")
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        try first.pngData()!.write(to: folder.appendingPathComponent("past-solid-future-dotted.png"))
+        let broken = PlanetariumController.flowingTrail([samples[0], samples[1], nil, samples[3], samples[4]], color: SIMD3(repeating: 1))
+        XCTAssertEqual(broken.count, 4, "Never connect across an occultation")
+    }
+
+    func testGPUCachedStarCells() async throws {
+        let catalog = try await AppStarCatalog.load()
+        let tiers = PlanetariumStarTiers(stars: catalog.snapshot.stars)
+        let view = MTKView(frame: CGRect(x: 0, y: 0, width: 440, height: 880))
+        let renderer = try PlanetariumMetalRenderer(view: view)
+        view.isPaused = true
+        XCTAssertEqual(view.preferredFramesPerSecond, 60)
+        let cells = tiers.visibleCells(forward: SIMD3(0, 0, 1), diagonalHalfAngle: 0.6)
+        let stars = cells.flatMap { $0.stars(at: 6.5) }
+        XCTAssertFalse(stars.isEmpty)
+        renderer.setFaintStars(stars)
+        let original = try await renderer.snapshot(size: CGSize(width: 440, height: 880))
+        renderer.setFaintStarCells(cells, limit: 6.5)
+        let cached = try await renderer.snapshot(size: CGSize(width: 440, height: 880))
+        XCTAssertLessThan(try difference(original, cached), 0.002, "Caching preserves star rendering")
+        let uploads = renderer.starCellUploadCount
+        XCTAssertGreaterThan(uploads, 0)
+        renderer.setFaintStarCells(cells, limit: 6.5)
+        renderer.setFaintStarCells([], limit: 6.5)
+        renderer.setFaintStarCells(cells, limit: 6.5)
+        XCTAssertEqual(renderer.starCellUploadCount, uploads, "Revisiting sky cells does not reallocate/upload stars")
+        for cell in tiers.cells {
+            for limit in [6.5, 7.5, 9.0] {
+                XCTAssertEqual(cell.stars(at: limit).map(\.id), cell.stars.filter { $0.magnitude <= limit }.map(\.id))
+            }
+        }
+    }
+
+    func testCameraUpdatesDoNotInvalidateScreen() throws {
+        let controller = PlanetariumController()
+        defer { controller.stop() }
+        var updates = 0
+        let subscription = controller.objectWillChange.sink { updates += 1 }
+        defer { subscription.cancel() }
+        controller.zoom(by: 0.9)
+        controller.panBy(CGPoint(x: 20, y: 10))
+        controller.navigation.bearing = 0.5
+        controller.selectionState.value = .init(id: "test", name: "test", detail: "", coordinates: "")
+        XCTAssertEqual(updates, 0, "Camera, arrow, and card updates must not invalidate the entire screen")
+    }
+
+    func testGPUCloseGalaxyGrain() async throws {
+        let view = MTKView(frame: CGRect(x: 0, y: 0, width: 440, height: 880))
+        let renderer = try PlanetariumMetalRenderer(view: view)
+        view.isPaused = true
+        renderer.uniforms.zenith = SIMD4(-0.05487556, -0.87343709, -0.48383502, 0)
+        renderer.uniforms.east = SIMD4(0.49410943, -0.44482963, 0.74698224, 0)
+        renderer.uniforms.north = SIMD4(-0.86766615, -0.19807637, 0.45598378, 0)
+        let d = PlanetariumGeometry.direction(azimuth: 90, elevation: 65)
+        let right = simd_normalize(simd_cross(d, SIMD3<Float>(0, 1, 0)))
+        renderer.uniforms.forward = SIMD4(d, 0)
+        renderer.uniforms.right = SIMD4(right, 0)
+        renderer.uniforms.up = SIMD4(simd_normalize(simd_cross(right, d)), 0)
+        renderer.uniforms.viewport.z = tan(8 * .pi / 360)
+        renderer.uniforms.viewport.w = 8
+        let image = try await renderer.snapshot(size: CGSize(width: 440, height: 880), scale: 1)
+        let bytes = try pixels(image)
+        var grain = 0.0, count = 0.0
+        for y in 2..<878 { for x in 2..<438 { for c in 0..<3 {
+            func value(_ x: Int, _ y: Int) -> Double { Double(bytes[(y*440+x)*4+c]) }
+            let mean = (value(x-2,y)+value(x+2,y)+value(x,y-2)+value(x,y+2))*0.25
+            grain += abs(value(x,y)-mean); count += 1
+        }}}
+        let label = (try? String(contentsOfFile: "/tmp/galaxy-grain-label", encoding: .utf8).trimmingCharacters(in: .whitespacesAndNewlines)) ?? "smooth"
+        let folder = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().appendingPathComponent("Documentation/DesignReview/Planetarium/GalaxyGrain")
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        try image.pngData()!.write(to: folder.appendingPathComponent("\(label)-8-degrees-dark.png"))
+        try JSONSerialization.data(withJSONObject: ["fineGrain":grain/count]).write(to: folder.appendingPathComponent("\(label)-metrics.json"))
+        print("Close galaxy spatial grain: \(grain/count)")
+        // Original unfiltered close-up measured 1.176; keep magnified grain suppressed.
+        XCTAssertLessThan(grain/count, 0.25)
+    }
+
+    func testGPUMilkyWaySamplingStability() async throws {
+        let view = MTKView(frame: CGRect(x: 0, y: 0, width: 240, height: 480))
+        let renderer = try PlanetariumMetalRenderer(view: view)
+        view.isPaused = true
+        // Place the galactic plane high above the horizon. No catalog stars,
+        // atmosphere animation, water, labels, or sprites contaminate the metric.
+        renderer.uniforms.zenith = SIMD4(-0.05487556, -0.87343709, -0.48383502, 0)
+        renderer.uniforms.east = SIMD4(0.49410943, -0.44482963, 0.74698224, 0)
+        renderer.uniforms.north = SIMD4(-0.86766615, -0.19807637, 0.45598378, 0)
+        let folder = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().appendingPathComponent("Documentation/DesignReview/Planetarium/GalaxyStability")
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        let label = (try? String(contentsOfFile: "/tmp/milkyway-filter-label", encoding: .utf8).trimmingCharacters(in: .whitespacesAndNewlines)) ?? "filtered"
+        let size = CGSize(width: 240, height: 480)
+        var residual = 0.0, spatial = 0.0
+        var previousError: [Int]?
+        for frame in 0..<8 {
+            let direction = PlanetariumGeometry.direction(azimuth: 90 + Double(frame)*0.025, elevation: 65)
+            let right = simd_normalize(simd_cross(direction, SIMD3<Float>(0, 1, 0)))
+            renderer.uniforms.forward = SIMD4(direction, 0)
+            renderer.uniforms.right = SIMD4(right, 0)
+            renderer.uniforms.up = SIMD4(simd_normalize(simd_cross(right, direction)), 0)
+            renderer.uniforms.viewport.z = tan(65 * .pi / 360)
+            let native = try await renderer.snapshot(size: size, scale: 1, time: Float(frame))
+            let high = try await renderer.snapshot(size: CGSize(width: 960, height: 1920), scale: 4, time: Float(frame))
+            let format = UIGraphicsImageRendererFormat(); format.scale = 1; format.opaque = true
+            let reference = UIGraphicsImageRenderer(size: size, format: format).image { context in
+                context.cgContext.interpolationQuality = .high
+                high.draw(in: CGRect(origin: .zero, size: size))
+            }
+            let a = try pixels(native), b = try pixels(reference)
+            let error = a.indices.filter { $0 % 4 != 3 }.map { Int(a[$0])-Int(b[$0]) }
+            spatial += error.reduce(0.0) { $0 + Double(abs($1)) } / Double(error.count)
+            if let previousError {
+                residual += zip(error, previousError).reduce(0.0) { $0 + Double(abs($1.0-$1.1)) } / Double(error.count)
+            }
+            previousError = error
+            if frame == 0 {
+                try native.pngData()!.write(to: folder.appendingPathComponent("\(label)-native-dark.png"))
+                try reference.pngData()!.write(to: folder.appendingPathComponent("\(label)-reference-dark.png"))
+                let held = try await renderer.snapshot(size: size, scale: 1, time: 30)
+                XCTAssertEqual(try difference(native, held), 0, "The galaxy itself must not fluctuate with time")
+            }
+        }
+        let metrics = ["spatialError": spatial/8, "temporalResidual": residual/7]
+        try JSONSerialization.data(withJSONObject: metrics, options: .prettyPrinted).write(to: folder.appendingPathComponent("\(label)-metrics.json"))
+        print("Milky Way sampling metrics: \(metrics)")
+        XCTAssertLessThan(spatial/8, 0.42, "Filtering should remain close to a supersampled image")
+        XCTAssertLessThan(residual/7, 0.21, "Subpixel camera motion must not revive unresolved grain")
+    }
+
     func testGPUWaterSamplingAndTemporalStability() async throws {
         let view = MTKView(frame: CGRect(x: 0, y: 0, width: 300, height: 600))
         let renderer = try PlanetariumMetalRenderer(view: view)
@@ -415,6 +1274,86 @@ extension PlanetariumTests {
         try saveReview(first, "10-water-native-sampling")
         try saveReview(downsampled, "11-water-supersampled")
         print("Water GPU validation: horizon mean error = \(horizonError) / 255")
+    }
+
+    func testGPUStarNameVisibility() async throws {
+        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let pass = try XCTUnwrap(fixture.passes.first { $0.pass.visibility == .visible && $0.pass.sunElevationAtTransit < -10 })
+        let date = pass.pass.culmination.julianDate
+        let controller = PlanetariumController()
+        controller.view.frame = CGRect(x: 0, y: 0, width: 440, height: 956)
+        controller.configure(context: .init(passIndex: 0, satelliteInfo: fixture.info, satelliteCommonName: "ISS",
+            category: .iss, julianDateRange: fixture.range, observer: fixture.observer, passSnapshots: pass,
+            starManager: fixture.catalog, julianDateProvider: { date }), julianDate: date)
+        defer { controller.stop() }
+        controller.setMotionEnabled(false)
+        controller.setOverlays(labels: true, lines: true)
+        controller.view.isPaused = true
+        let renderer = try XCTUnwrap(controller.renderer)
+        let star = try XCTUnwrap(fixture.catalog.namedBrightStars.first {
+            let c = azel(time: Date(julianDate: date), site: LatLon(fixture.observer), cele: RADec(PlanetariumEquatorialFrame(date: date).ofDate($0.coordinate)))
+            return c.elev > 25 && c.elev < 75
+        })
+        let position = azel(time: Date(julianDate: date), site: LatLon(fixture.observer), cele: RADec(PlanetariumEquatorialFrame(date: date).ofDate(star.coordinate)))
+        controller.pointCamera(azimuth: position.azim, elevation: position.elev)
+        controller.zoom(by: 20 / controller.fieldOfView)
+        for _ in 0..<15 {
+            renderer.beforeDraw?()
+            try await Task.sleep(for: .milliseconds(100))
+        }
+        let close = try await renderer.snapshot(size: CGSize(width: 1320, height: 2868), scale: 3)
+        XCTAssertGreaterThan(controller.visibleStarLabelCount, 0)
+        XCTAssertLessThanOrEqual(controller.visibleStarLabelCount, 7)
+        let folder = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
+            .appendingPathComponent("Documentation/DesignReview/Planetarium/Typography")
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        try close.pngData()!.write(to: folder.appendingPathComponent("zoomed-star-names-dark.png"))
+        // A small viewport with none of the global top 50 must still name its own bright stars.
+        let topIDs = Set(fixture.catalog.namedBrightStars.map(\.id))
+        let localStar = try XCTUnwrap(fixture.catalog.snapshot.stars.first {
+            guard !topIDs.contains($0.id), $0.magnitude > 3, $0.magnitude < 5 else { return false }
+            let p = azel(time: Date(julianDate: date), site: LatLon(fixture.observer), cele: RADec(PlanetariumEquatorialFrame(date: date).ofDate($0.coordinate)))
+            return p.elev > 30 && p.elev < 70
+        })
+        let localPosition = azel(time: Date(julianDate: date), site: LatLon(fixture.observer), cele: RADec(PlanetariumEquatorialFrame(date: date).ofDate(localStar.coordinate)))
+        controller.pointCamera(azimuth: localPosition.azim, elevation: localPosition.elev)
+        controller.zoom(by: 0.5 / controller.fieldOfView)
+        for _ in 0..<30 {
+            renderer.beforeDraw?()
+            if controller.visibleStarLabelIDs.contains(localStar.id) { break }
+            try await Task.sleep(for: .milliseconds(100))
+        }
+        XCTAssertTrue(controller.visibleStarLabelIDs.contains(localStar.id),
+                      "Zoom must label locally bright stars outside the global top 50")
+        XCTAssertLessThanOrEqual(controller.visibleStarLabelCount, 7)
+        // Exercise the actual renderer/candidate refresh, not only the layout helper.
+        // Small moving viewports must retain their central readable star across refreshes.
+        for frame in 0..<120 {
+            let jitter = sin(Double(frame) * 0.18) * 0.002
+            controller.pointCamera(azimuth: localPosition.azim + jitter, elevation: localPosition.elev + jitter)
+            renderer.beforeDraw?()
+            XCTAssertTrue(controller.visibleStarLabelIDs.contains(localStar.id), "A readable incumbent flickered during camera jitter")
+            try await Task.sleep(for: .milliseconds(20))
+        }
+        let localImage = try await renderer.snapshot(size: CGSize(width: 1320, height: 2868), scale: 3)
+        try localImage.pngData()!.write(to: folder.appendingPathComponent("viewport-star-names-dark.png"))
+        controller.zoom(by: 100 / controller.fieldOfView)
+        renderer.beforeDraw?()
+        XCTAssertLessThanOrEqual(controller.visibleStarLabelCount, 3)
+        controller.setOverlays(labels: false, lines: false)
+        renderer.beforeDraw?()
+        XCTAssertEqual(controller.visibleStarLabelCount, 0)
+        controller.setOverlays(labels: true, lines: true)
+        for hour in 1...24 {
+            let next = date + Double(hour) / 24
+            if SkyChartAtmosphere.sun(observer: fixture.observer, julianDate: next).elev > 10 {
+                controller.updateTime(next)
+                renderer.beforeDraw?()
+                XCTAssertEqual(controller.visibleStarLabelCount, 0)
+                return
+            }
+        }
+        XCTFail("Fixture must include daylight")
     }
 
     func testGPUZoomRotationOverlaysAndSatelliteTime() async throws {
@@ -477,14 +1416,14 @@ extension PlanetariumTests {
         settle()
         let wrapped = try await renderer.snapshot(size: size, scale: 1)
         XCTAssertLessThan(try difference(north, wrapped), 0.02, "360° camera wrap is continuous")
-        controller.zoom(by: 0.0001)
-        XCTAssertEqual(controller.fieldOfView, 12)
+        controller.zoom(by: 0.000001)
+        XCTAssertEqual(controller.fieldOfView, 0.005)
         _ = try await renderer.snapshot(size: size, scale: 1)
-        controller.zoom(by: 10000)
+        controller.zoom(by: 100000)
         XCTAssertEqual(controller.fieldOfView, 100)
-        controller.setActive(false, gyroscope: true)
+        controller.setActive(false)
         XCTAssertTrue(controller.view.isPaused)
-        controller.setActive(true, gyroscope: false)
+        controller.setActive(true)
         XCTAssertFalse(controller.view.isPaused)
         controller.stop()
         XCTAssertTrue(controller.view.isPaused)

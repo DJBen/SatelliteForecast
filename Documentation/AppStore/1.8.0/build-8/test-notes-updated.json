@@ -1,0 +1,194 @@
+{
+  "en-US": {
+    "data": {
+      "type": "betaBuildLocalizations",
+      "id": "f740bda0-5d56-4148-bb5b-d7d237eb3b4b",
+      "attributes": {
+        "locale": "en-US",
+        "whatsNew": "Explore the sky in a new immersive 3D planetarium.\n\u2022 Follow the ISS and Tiangong with animated paths and pass previews.\n\u2022 Discover stars, constellations, the Moon, planets, and their major moons.\n\u2022 Move your phone to follow the sky, or pan and zoom to explore.\n\u2022 Enjoy detailed planetary surfaces, a glowing Milky Way, and a peaceful nighttime horizon."
+      },
+      "relationships": {
+        "build": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/f740bda0-5d56-4148-bb5b-d7d237eb3b4b/relationships/build",
+            "related": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/f740bda0-5d56-4148-bb5b-d7d237eb3b4b/build"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/f740bda0-5d56-4148-bb5b-d7d237eb3b4b"
+      }
+    },
+    "links": {
+      "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/f740bda0-5d56-4148-bb5b-d7d237eb3b4b"
+    }
+  },
+  "fr-FR": {
+    "data": {
+      "type": "betaBuildLocalizations",
+      "id": "74c054c3-b6a4-46e3-924c-e4c712cc02a8",
+      "attributes": {
+        "locale": "fr-FR",
+        "whatsNew": "Explorez le ciel dans un nouveau plan\u00e9tarium immersif en 3D.\n\u2022 Suivez l\u2019ISS et Tiangong avec des trajectoires anim\u00e9es et des aper\u00e7us de passages.\n\u2022 D\u00e9couvrez les \u00e9toiles, les constellations, la Lune, les plan\u00e8tes et leurs principales lunes.\n\u2022 Orientez votre t\u00e9l\u00e9phone vers le ciel, ou explorez en faisant glisser et en zoomant.\n\u2022 Admirez des surfaces plan\u00e9taires d\u00e9taill\u00e9es, la Voie lact\u00e9e et un paisible horizon nocturne."
+      },
+      "relationships": {
+        "build": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/74c054c3-b6a4-46e3-924c-e4c712cc02a8/relationships/build",
+            "related": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/74c054c3-b6a4-46e3-924c-e4c712cc02a8/build"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/74c054c3-b6a4-46e3-924c-e4c712cc02a8"
+      }
+    },
+    "links": {
+      "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/74c054c3-b6a4-46e3-924c-e4c712cc02a8"
+    }
+  },
+  "es-ES": {
+    "data": {
+      "type": "betaBuildLocalizations",
+      "id": "506fb166-1d4d-4075-a4d6-a5b57476323c",
+      "attributes": {
+        "locale": "es-ES",
+        "whatsNew": "Explora el cielo en un nuevo planetario inmersivo en 3D.\n\u2022 Sigue la ISS y Tiangong con trayectorias animadas y vistas previas de sus pasos.\n\u2022 Descubre estrellas, constelaciones, la Luna, los planetas y sus lunas principales.\n\u2022 Mueve el tel\u00e9fono para seguir el cielo, o arrastra y ampl\u00eda para explorar.\n\u2022 Disfruta de superficies planetarias detalladas, la V\u00eda L\u00e1ctea y un tranquilo horizonte nocturno."
+      },
+      "relationships": {
+        "build": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/506fb166-1d4d-4075-a4d6-a5b57476323c/relationships/build",
+            "related": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/506fb166-1d4d-4075-a4d6-a5b57476323c/build"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/506fb166-1d4d-4075-a4d6-a5b57476323c"
+      }
+    },
+    "links": {
+      "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/506fb166-1d4d-4075-a4d6-a5b57476323c"
+    }
+  },
+  "pt-BR": {
+    "data": {
+      "type": "betaBuildLocalizations",
+      "id": "5922d452-b397-426d-8df6-55c9ed537036",
+      "attributes": {
+        "locale": "pt-BR",
+        "whatsNew": "Explore o c\u00e9u em um novo planet\u00e1rio imersivo em 3D.\n\u2022 Acompanhe a ISS e a Tiangong com trajet\u00f3rias animadas e pr\u00e9vias das passagens.\n\u2022 Descubra estrelas, constela\u00e7\u00f5es, a Lua, os planetas e suas principais luas.\n\u2022 Mova o telefone para acompanhar o c\u00e9u ou arraste e amplie para explorar.\n\u2022 Aprecie superf\u00edcies planet\u00e1rias detalhadas, a Via L\u00e1ctea e um tranquilo horizonte noturno."
+      },
+      "relationships": {
+        "build": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/5922d452-b397-426d-8df6-55c9ed537036/relationships/build",
+            "related": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/5922d452-b397-426d-8df6-55c9ed537036/build"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/5922d452-b397-426d-8df6-55c9ed537036"
+      }
+    },
+    "links": {
+      "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/5922d452-b397-426d-8df6-55c9ed537036"
+    }
+  },
+  "ru": {
+    "data": {
+      "type": "betaBuildLocalizations",
+      "id": "c5f92acc-becc-4026-8bd1-cc0f286c7aa9",
+      "attributes": {
+        "locale": "ru",
+        "whatsNew": "\u0418\u0441\u0441\u043b\u0435\u0434\u0443\u0439\u0442\u0435 \u043d\u0435\u0431\u043e \u0432 \u043d\u043e\u0432\u043e\u043c \u043e\u0431\u044a\u0451\u043c\u043d\u043e\u043c 3D-\u043f\u043b\u0430\u043d\u0435\u0442\u0430\u0440\u0438\u0438.\n\u2022 \u0421\u043b\u0435\u0434\u0438\u0442\u0435 \u0437\u0430 \u041c\u041a\u0421 \u0438 \u00ab\u0422\u044f\u043d\u044c\u0433\u0443\u043d\u00bb \u0441 \u0430\u043d\u0438\u043c\u0438\u0440\u043e\u0432\u0430\u043d\u043d\u044b\u043c\u0438 \u0442\u0440\u0430\u0435\u043a\u0442\u043e\u0440\u0438\u044f\u043c\u0438 \u0438 \u043f\u0440\u0435\u0434\u043f\u0440\u043e\u0441\u043c\u043e\u0442\u0440\u043e\u043c \u043f\u0440\u043e\u043b\u0451\u0442\u043e\u0432.\n\u2022 \u041e\u0442\u043a\u0440\u043e\u0439\u0442\u0435 \u0434\u043b\u044f \u0441\u0435\u0431\u044f \u0437\u0432\u0451\u0437\u0434\u044b, \u0441\u043e\u0437\u0432\u0435\u0437\u0434\u0438\u044f, \u041b\u0443\u043d\u0443, \u043f\u043b\u0430\u043d\u0435\u0442\u044b \u0438 \u0438\u0445 \u043e\u0441\u043d\u043e\u0432\u043d\u044b\u0435 \u0441\u043f\u0443\u0442\u043d\u0438\u043a\u0438.\n\u2022 \u041f\u043e\u0432\u043e\u0440\u0430\u0447\u0438\u0432\u0430\u0439\u0442\u0435 \u0442\u0435\u043b\u0435\u0444\u043e\u043d \u0432\u0441\u043b\u0435\u0434 \u0437\u0430 \u043d\u0435\u0431\u043e\u043c \u0438\u043b\u0438 \u0438\u0441\u0441\u043b\u0435\u0434\u0443\u0439\u0442\u0435 \u0435\u0433\u043e \u0436\u0435\u0441\u0442\u0430\u043c\u0438 \u0438 \u043c\u0430\u0441\u0448\u0442\u0430\u0431\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u0435\u043c.\n\u2022 \u041b\u044e\u0431\u0443\u0439\u0442\u0435\u0441\u044c \u0434\u0435\u0442\u0430\u043b\u044c\u043d\u044b\u043c\u0438 \u043f\u043e\u0432\u0435\u0440\u0445\u043d\u043e\u0441\u0442\u044f\u043c\u0438 \u043f\u043b\u0430\u043d\u0435\u0442, \u041c\u043b\u0435\u0447\u043d\u044b\u043c \u041f\u0443\u0442\u0451\u043c \u0438 \u0441\u043f\u043e\u043a\u043e\u0439\u043d\u044b\u043c \u043d\u043e\u0447\u043d\u044b\u043c \u0433\u043e\u0440\u0438\u0437\u043e\u043d\u0442\u043e\u043c."
+      },
+      "relationships": {
+        "build": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/c5f92acc-becc-4026-8bd1-cc0f286c7aa9/relationships/build",
+            "related": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/c5f92acc-becc-4026-8bd1-cc0f286c7aa9/build"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/c5f92acc-becc-4026-8bd1-cc0f286c7aa9"
+      }
+    },
+    "links": {
+      "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/c5f92acc-becc-4026-8bd1-cc0f286c7aa9"
+    }
+  },
+  "ja": {
+    "data": {
+      "type": "betaBuildLocalizations",
+      "id": "570a2d81-266c-406b-b441-4e677978ae5a",
+      "attributes": {
+        "locale": "ja",
+        "whatsNew": "\u65b0\u3057\u3044\u81e8\u5834\u611f\u3042\u3075\u308c\u308b3D\u30d7\u30e9\u30cd\u30bf\u30ea\u30a6\u30e0\u3067\u591c\u7a7a\u3092\u63a2\u7d22\u3002\n\u2022 \u30a2\u30cb\u30e1\u30fc\u30b7\u30e7\u30f3\u4ed8\u304d\u306e\u8ecc\u8de1\u3068\u901a\u904e\u30d7\u30ec\u30d3\u30e5\u30fc\u3067\u3001ISS\u3068\u5929\u5bae\u3092\u8ffd\u8de1\u3067\u304d\u307e\u3059\u3002\n\u2022 \u6052\u661f\u3001\u661f\u5ea7\u3001\u6708\u3001\u60d1\u661f\u3001\u305d\u3057\u3066\u4e3b\u306a\u885b\u661f\u3092\u89b3\u5bdf\u3067\u304d\u307e\u3059\u3002\n\u2022 \u30b9\u30de\u30fc\u30c8\u30d5\u30a9\u30f3\u3092\u52d5\u304b\u3057\u3066\u7a7a\u3092\u898b\u6e21\u3057\u305f\u308a\u3001\u30c9\u30e9\u30c3\u30b0\u3084\u30ba\u30fc\u30e0\u3067\u81ea\u7531\u306b\u63a2\u7d22\u3067\u304d\u307e\u3059\u3002\n\u2022 \u8a73\u7d30\u306a\u60d1\u661f\u306e\u8868\u9762\u3001\u5929\u306e\u5ddd\u3001\u9759\u304b\u306a\u591c\u306e\u5730\u5e73\u7dda\u3092\u304a\u697d\u3057\u307f\u304f\u3060\u3055\u3044\u3002"
+      },
+      "relationships": {
+        "build": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/570a2d81-266c-406b-b441-4e677978ae5a/relationships/build",
+            "related": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/570a2d81-266c-406b-b441-4e677978ae5a/build"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/570a2d81-266c-406b-b441-4e677978ae5a"
+      }
+    },
+    "links": {
+      "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/570a2d81-266c-406b-b441-4e677978ae5a"
+    }
+  },
+  "ko": {
+    "data": {
+      "type": "betaBuildLocalizations",
+      "id": "09dad5e2-bd8e-4422-bc57-4167d5692087",
+      "attributes": {
+        "locale": "ko",
+        "whatsNew": "\uc0c8\ub85c\uc6b4 \ubab0\uc785\ud615 3D \ucc9c\uccb4\uad00\uc5d0\uc11c \ubc24\ud558\ub298\uc744 \ud0d0\ud5d8\ud558\uc138\uc694.\n\u2022 \uc6c0\uc9c1\uc774\ub294 \uada4\uc801\uacfc \ud1b5\uacfc \ubbf8\ub9ac\ubcf4\uae30\ub85c ISS\uc640 \ud188\uad81\uc744 \ucd94\uc801\ud558\uc138\uc694.\n\u2022 \ubcc4, \ubcc4\uc790\ub9ac, \ub2ec, \ud589\uc131\uacfc \uc8fc\uc694 \uc704\uc131\uc744 \ub9cc\ub098\ubcf4\uc138\uc694.\n\u2022 \ud734\ub300\uc804\ud654\ub97c \uc6c0\uc9c1\uc5ec \ud558\ub298\uc744 \ub530\ub77c\uac00\uac70\ub098 \ub4dc\ub798\uadf8\uc640 \ud655\ub300\u00b7\ucd95\uc18c\ub85c \ud0d0\ud5d8\ud558\uc138\uc694.\n\u2022 \uc138\ubc00\ud55c \ud589\uc131 \ud45c\uba74, \uc740\ud558\uc218\uc640 \uace0\uc694\ud55c \ubc24\uc758 \uc9c0\ud3c9\uc120\uc744 \uac10\uc0c1\ud558\uc138\uc694."
+      },
+      "relationships": {
+        "build": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/09dad5e2-bd8e-4422-bc57-4167d5692087/relationships/build",
+            "related": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/09dad5e2-bd8e-4422-bc57-4167d5692087/build"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/09dad5e2-bd8e-4422-bc57-4167d5692087"
+      }
+    },
+    "links": {
+      "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/09dad5e2-bd8e-4422-bc57-4167d5692087"
+    }
+  },
+  "zh-Hans": {
+    "data": {
+      "type": "betaBuildLocalizations",
+      "id": "0becc6d3-8bb7-47de-8d95-a4a1c0898879",
+      "attributes": {
+        "locale": "zh-Hans",
+        "whatsNew": "\u5168\u65b0\u6c89\u6d78\u5f0f 3D \u5929\u8c61\u9986\uff0c\u5e26\u4f60\u63a2\u7d22\u661f\u7a7a\u3002\n\u2022 \u52a8\u6001\u8f68\u8ff9\u4e0e\u8fc7\u5883\u9884\u89c8\uff0c\u8f7b\u677e\u8ffd\u8e2a\u5929\u5bab\u548c\u56fd\u9645\u7a7a\u95f4\u7ad9\u3002\n\u2022 \u63a2\u7d22\u6052\u661f\u3001\u661f\u5ea7\u3001\u6708\u7403\u3001\u884c\u661f\u53ca\u5176\u4e3b\u8981\u536b\u661f\u3002\n\u2022 \u8f6c\u52a8\u624b\u673a\u8ddf\u968f\u5929\u7a7a\uff0c\u6216\u62d6\u52a8\u3001\u7f29\u653e\u81ea\u7531\u63a2\u7d22\u3002\n\u2022 \u6b23\u8d4f\u7ec6\u817b\u7684\u884c\u661f\u8868\u9762\u3001\u7480\u74a8\u94f6\u6cb3\u4e0e\u5b81\u9759\u7684\u591c\u8272\u5730\u5e73\u7ebf\u3002"
+      },
+      "relationships": {
+        "build": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/0becc6d3-8bb7-47de-8d95-a4a1c0898879/relationships/build",
+            "related": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/0becc6d3-8bb7-47de-8d95-a4a1c0898879/build"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/0becc6d3-8bb7-47de-8d95-a4a1c0898879"
+      }
+    },
+    "links": {
+      "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/0becc6d3-8bb7-47de-8d95-a4a1c0898879"
+    }
+  }
+}

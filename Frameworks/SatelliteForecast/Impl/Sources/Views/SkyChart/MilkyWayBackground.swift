@@ -66,6 +66,34 @@ enum MilkyWayBackground {
             pixels = bytes
         }
 
+        // Separable spherical blur: wrap longitude and clamp latitude. Filtering
+        // before reprojection prevents faint source stars from aliasing into grain.
+        func smoothed(radius: Int) -> Texture {
+            var input = pixels
+            for horizontal in [true, false] {
+                var output = input
+                for y in 0..<height {
+                    for x in 0..<width {
+                        for channel in 0..<3 {
+                            var sum = 0
+                            for offset in -radius...radius {
+                                let xx = horizontal ? (x + offset + width) % width : x
+                                let yy = horizontal ? y : max(0, min(height - 1, y + offset))
+                                sum += Int(input[(yy * width + xx) * 4 + channel])
+                            }
+                            output[(y * width + x) * 4 + channel] = UInt8(sum / (radius * 2 + 1))
+                        }
+                    }
+                }
+                input = output
+            }
+            return Texture(width: width, height: height, pixels: input)
+        }
+
+        private init(width: Int, height: Int, pixels: [UInt8]) {
+            self.width = width; self.height = height; self.pixels = pixels
+        }
+
         func sample(_ uv: SIMD2<Double>) -> SIMD3<Double> {
             let x = (uv.x - floor(uv.x)) * Double(width) - 0.5
             let y = max(0, min(Double(height - 1), uv.y * Double(height) - 0.5))
@@ -86,8 +114,11 @@ enum MilkyWayBackground {
     static let texture: Texture? = {
         guard let url = Bundle.module.url(forResource: "milkyway-galactic", withExtension: "jpg"),
               let source = CGImageSourceCreateWithURL(url as CFURL, nil),
-              let image = CGImageSourceCreateImageAtIndex(source, 0, nil) else { return nil }
-        return Texture(image: image)
+              let image = CGImageSourceCreateThumbnailAtIndex(source, 0, [
+                kCGImageSourceCreateThumbnailFromImageAlways: true,
+                kCGImageSourceThumbnailMaxPixelSize: 1024
+              ] as CFDictionary) else { return nil }
+        return Texture(image: image)?.smoothed(radius: 2)
     }()
 
     /// Bounded low-frequency raster. Rotation/zoom reuse the enclosing sky image;

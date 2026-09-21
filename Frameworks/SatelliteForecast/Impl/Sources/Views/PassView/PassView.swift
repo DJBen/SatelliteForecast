@@ -74,66 +74,12 @@ public struct PassView: View {
         self.detailedPassViewFactory = detailedPassViewFactory
     }
     
-    private var compassButton: some View {
-        Button {
-            isCompassEnabled.toggle()
-        } label: {
-            HStack(spacing: 8) {
-                Image(systemName: isCompassEnabled ? "safari.fill" : "safari")
-                    .font(.body)
-                Text("Compass", bundle: .module)
-                    .font(.subheadline.weight(.medium))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.75)
-                if isCompassEnabled {
-                    Image(systemName: "checkmark")
-                        .font(.caption.weight(.bold))
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 4)
-            .foregroundStyle(isCompassEnabled
-                ? (colorScheme == .dark ? AppTheme.background : Color.white)
-                : AppTheme.accent)
-        }
-        .accessibilityValue(isCompassEnabled ? "On" : "Off")
-        .accessibilityAddTraits(isCompassEnabled ? .isSelected : [])
-    }
-
     private var chartControls: some View {
-        GlassEffectContainer(spacing: 16) {
-            HStack(spacing: 10) {
-                if isCompassEnabled {
-                    compassButton.buttonStyle(.glassProminent)
-                } else {
-                    compassButton.buttonStyle(.glass)
-                }
-
-                Button {
-                    viewModel.send(.showDetailPassView(true))
-                } label: {
-                    HStack(spacing: 8) {
-                        Image(systemName: "arrow.up.left.and.arrow.down.right")
-                            .font(.body)
-                        Text("Full screen", bundle: .module)
-                            .font(.subheadline.weight(.medium))
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 4)
-                }
-                Button {
-                    showsPlanetarium = true
-                } label: {
-                    Label("3D", systemImage: "cube.transparent")
-                        .font(.subheadline.weight(.semibold))
-                        .padding(.vertical, 4)
-                }
-                .accessibilityLabel(AppLocalization.text("Open 3D planetarium"))
-                .accessibilityIdentifier("pass.planetarium")
-            }
-            .buttonStyle(.glass)
-            .buttonBorderShape(.roundedRectangle(radius: 16))
-        }
+        PassChartControls(
+            isCompassEnabled: Binding(get: { isCompassEnabled }, set: { isCompassEnabled = $0 }),
+            openChart: { viewModel.send(.showDetailPassView(true)) },
+            openPlanetarium: { showsPlanetarium = true }
+        )
     }
 
     private func skyChart(in rect: CGRect) -> some View {

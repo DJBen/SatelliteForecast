@@ -70,7 +70,7 @@ for locale, entry in manifest['locales'].items():
     else:
         raise RuntimeError(f'{locale}: remote screenshots changed since inventory; re-inspect before replacing')
     plans.append((locale, entry, folder, checksums, mode))
-    print(f'{locale}: {"resume" if mode == "--skip-existing" else "replace"} 4 {manifest["displayType"]} images', flush=True)
+    print(f'{locale}: {"resume" if mode == "--skip-existing" else "replace"} {len(checksums)} {manifest["displayType"]} images', flush=True)
 
 if not args.apply:
     print('Validation complete. No App Store assets changed. Pass --apply after visual review.')
@@ -87,11 +87,11 @@ for locale, entry, folder, checksums, mode in plans:
         current = screenshots(entry)
         states = [s['attributes'].get('assetDeliveryState', {}).get('state') for s in current]
         actual = [s['attributes'].get('sourceFileChecksum') for s in current]
-        if len(current) == 4 and states == ['COMPLETE'] * 4 and actual == checksums:
+        if len(current) == len(checksums) and states == ['COMPLETE'] * len(checksums) and actual == checksums:
             break
         if any(state == 'FAILED' for state in states):
             raise RuntimeError(f'{locale}: Apple rejected an image: {states}')
         time.sleep(2)
     else:
         raise RuntimeError(f'{locale}: image processing or checksum verification incomplete')
-    print(f'{locale}: verified all 4 uploads, order, and checksums', flush=True)
+    print(f'{locale}: verified all {len(checksums)} uploads, order, and checksums', flush=True)

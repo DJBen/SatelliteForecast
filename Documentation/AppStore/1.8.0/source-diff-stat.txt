@@ -1,0 +1,26 @@
+ Documentation/Analytics.md                         |  16 +
+ Documentation/AppStore/PublishingGuide.md          |   7 +
+ Documentation/AppStore/ScreenshotMoments.md        |   6 +
+ .../Daytime/daytime-overlays-hidden-dark-ui.png    | Bin 34087 -> 34394 bytes
+ Documentation/Planetarium.md                       | 305 +++++++++++++
+ .../Impl/Sources/Resources/PlanetariumCredits.txt  |  12 +
+ .../Sources/Resources/PlanetariumShaders.metal     | 110 ++++-
+ .../Sources/Resources/en.lproj/Localizable.strings |  16 +
+ .../Sources/Resources/es.lproj/Localizable.strings |  16 +
+ .../Sources/Resources/fr.lproj/Localizable.strings |  16 +
+ .../Sources/Resources/ja.lproj/Localizable.strings |  16 +
+ .../Sources/Resources/ko.lproj/Localizable.strings |  16 +
+ .../Resources/pt-BR.lproj/Localizable.strings      |  16 +
+ .../Sources/Resources/ru.lproj/Localizable.strings |  16 +
+ .../Resources/zh-Hans.lproj/Localizable.strings    |  16 +
+ .../Views/BackgroundSkyView/MoonAppearance.swift   |  20 +-
+ .../Views/Planetarium/PlanetariumController.swift  | 508 ++++++++++++++++++---
+ .../Views/Planetarium/PlanetariumGlobe.swift       |  16 +
+ .../Planetarium/PlanetariumMetalRenderer.swift     |  63 ++-
+ .../Views/Planetarium/PlanetariumView.swift        | 243 ++++++----
+ SatelliteForecast.xcodeproj/project.pbxproj        |   8 +-
+ SatelliteForecast.xctestplan                       |  16 +-
+ SatelliteForecastTests/PlanetariumTests.swift      | 405 +++++++++++++++-
+ SatelliteForecastTests/ScreenSnapshotTests.swift   |  16 +-
+ scripts/capture-store-screenshots.py               |   5 +-
+ 25 files changed, 1694 insertions(+), 190 deletions(-)

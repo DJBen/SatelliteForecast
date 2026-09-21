@@ -1,0 +1,10 @@
+{
+  "version": "1.8.0",
+  "build": "8",
+  "bundleId": "io.djben.SatelliteForecast",
+  "sourceHEAD": "ec055865a8354df6be1ff97e34d84b8e878f4322",
+  "includesUncommittedChanges": true,
+  "archive": "/tmp/SatelliteForecast-1.8.0-8.xcarchive",
+  "ipa": "/tmp/SatelliteForecast-1.8.0-8.ipa",
+  "ipaSHA256": "c84a5fcb115ff2b5f6b3baee3d068903ad7a692119b462dbdb6da9ca51bdbe63"
+}

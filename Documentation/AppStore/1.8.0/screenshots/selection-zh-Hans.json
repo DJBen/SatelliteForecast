@@ -1,0 +1,13 @@
+{
+  "country" : "CN",
+  "elevation" : 57.40698516382993,
+  "featuredNORAD" : 48274,
+  "featuredPassUTC" : "2026-09-13T10:48:51Z",
+  "geography" : "中华人民共和国·安徽省上空",
+  "homeDateUTC" : "2026-09-12T11:52:30Z",
+  "locale" : "zh-Hans",
+  "observerLatitude" : 31.230399999999999,
+  "observerLongitude" : 121.47369999999999,
+  "passForecastDateUTC" : "2026-09-13T09:48:51Z",
+  "timeZone" : "Asia\/Shanghai"
+}

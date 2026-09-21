@@ -65,3 +65,20 @@ https://nssdc.gsfc.nasa.gov/planetary/factsheet/
 Earth's thumbnail uses the requested exact 24-hour / 10-second normalization.
 Venus displays opaque sulfuric-acid clouds; its illustrative cloud texture
 rotates with the body, not a separate atmospheric superrotation simulation.
+
+Detailed Moon map: NASA Scientific Visualization Studio, CGI Moon Kit (2025 map),
+LROC WAC mosaic, NASA/GSFC/Arizona State University; visualization Ernie Wright.
+https://svs.gsfc.nasa.gov/4720/
+https://svs.gsfc.nasa.gov/vis/a000000/a004700/a004720/lroc_color_16bit_srgb_4k.tif
+Converted to 4096x2048 JPEG at quality 95 for the planetarium, without upscaling.
+
+Major planetary moons: positions from NASA/JPL Horizons (ICRF, geocentric,
+light-time corrected vectors); radii and sampling periods from JPL SSD satellite
+physical parameters/mean elements. https://ssd-api.jpl.nasa.gov/doc/horizons.html
+https://ssd.jpl.nasa.gov/sats/phys_par/  https://ssd.jpl.nasa.gov/sats/elem/
+128px moon materials are original procedural illustrations, not NASA surface maps.
+
+Saturn globe/ring dimensions: NASA NSSDCA Saturn and Saturnian Rings Fact Sheets
+https://nssdc.gsfc.nasa.gov/planetary/factsheet/saturnfact.html
+https://nssdc.gsfc.nasa.gov/planetary/factsheet/satringfact.html
+Planet phase validation: NASA/JPL Horizons observer ephemerides.

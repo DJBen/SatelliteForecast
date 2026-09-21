@@ -1,0 +1,13 @@
+✅ App installed successfully on device C3458ABB-8C5F-50FC-AC3F-C9C3815810C7
+
+22:50:23  Acquired tunnel connection to device.
+22:50:23  Enabling developer disk image services.
+22:50:23  Acquired usage assertion.
+App installed:
+• bundleID: io.djben.SatelliteForecast
+• installationURL: file:///private/var/containers/Bundle/Application/65146485-BB19-4515-A8CD-6C651C1ABBAF/SatelliteForecastApp.app/
+• launchServicesIdentifier: unknown
+• databaseUUID: 9F60CB9F-8151-4155-B5E2-6367D61B2300
+• databaseSequenceNumber: 3268
+• options: 
+

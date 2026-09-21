@@ -28,6 +28,8 @@ Parameters contain fixed labels and numeric counts/timings only. Do not add coor
 | `alarm_setup` | Individual alarm configuration sheet |
 | `ephemerides` | Orbital-data management |
 
+The pass controls are labeled “Chart” and “Planetarium”; the adaptive compact/accessibility layout does not change destination screen names or event semantics.
+
 The modifier sits on destination content, not the surrounding navigation stack. It records when that content appears while active and when it returns from background, deduplicating repeated appearance callbacks until disappearance. Visits are not unique users. Sheet presentations can leave their underlying screen mounted: a sheet dismissal does not necessarily emit another underlying `screen_view`. Custom events always carry an explicit `screen`, so asynchronous work does not inherit whichever screen Firebase last saw. Do not use these visits to calculate exact dwell time. Debug menus and embedded previews are not separate product screens.
 
 ## Events
@@ -125,3 +127,37 @@ older payloads open `passes`. Do not require a `passes` screen event when measur
 notification-to-detail conversion. URL links use the same destination screens but
 do not emit `notification_opened`. Link parsing and pass matching add no telemetry
 parameters; coordinates, times, URLs, and identifiers remain excluded.
+
+Planetarium moon ephemerides load on demand below the close-zoom threshold and
+cache valid windows locally. This adds no analytics operation/event or screen;
+network timing is not counted as forecast or sky-catalog loading. Horizons
+requests contain body IDs and time ranges, never the observer's coordinates.
+
+The planetarium Follow Device toolbar control and automatic motion disengagement
+on drag add no screen or analytics event. Motion samples and gestures are not
+logged; existing measurement boundaries remain unchanged.
+
+The profile-guided planetarium refactor isolates time controls, selection, and
+navigation updates in child views. It does not add screens/events or change
+analytics measurement boundaries. Release phone performance checks use the
+existing Release telemetry rules; frame rates and motion samples are not logged.
+
+The 1.8.0 localized time-selector width adjustment changes no events, screen names, or measurement boundaries.
+
+Sky-label typography and cached bright-star names introduce no analytics events or screen changes. Name metadata is loaded through the existing star catalog, including asynchronous viewport-label lookups when zoomed; viewport positions and label choices are not logged.
+
+Preview selection tracking and render-clock playback introduce no analytics events. Frame updates, tracking anchors, selected coordinates, and cached ephemeris interpolation are not logged; screen and conversion semantics remain unchanged.
+
+Continuous planetarium live-time sampling, observed planetary inclinations, and
+Sky Chart background filtering add no analytics events or screens. The clock
+label's 1 Hz refresh and orbital sampling's 30 Hz refresh are rendering details;
+existing operation and conversion measurement boundaries remain unchanged.
+
+Sun-label spacing/color, physical planetary illumination, and Saturn ring
+geometry change no screens, events, or measurement boundaries. The geometry
+uses bundled ephemerides locally; reference Horizons queries are offline test
+fixtures and add no production network or telemetry flow.
+
+Century-range planetarium validation and IAU precession introduce no screen or
+analytics events. Reference ephemerides are offline test data; application
+calculations remain local and preserve all existing measurement boundaries.

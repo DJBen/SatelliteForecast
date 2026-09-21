@@ -22,7 +22,7 @@ struct SelectedStarLabel: View {
                 Text(
                     primaryStarDescription ?? ""
                 )
-                .font(.title2)
+                .font(.system(.title2, design: .serif))
                 .foregroundColor(Color(UIColor.label))
 
                 if let secondaryStarDescription = secondaryStarDescription {
@@ -38,7 +38,7 @@ struct SelectedStarLabel: View {
                 Text(
                     starInfo?.constellation?.localizedName ?? ""
                 )
-                .font(.headline)
+                .font(.system(.headline, design: .serif))
                 .foregroundColor(AppTheme.muted)
             }
 

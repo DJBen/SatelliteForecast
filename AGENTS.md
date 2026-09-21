@@ -1,5 +1,6 @@
 # Screenshot and visual review
 
+- Default to the iPhone 17 Pro Max simulator unless the user specifies a different simulator.
 - Always capture and review app screenshots in dark mode.
 - Do not spend time capturing, reviewing, or fixing light-mode appearance unless the user explicitly requests it.
 - Set the simulator to dark mode before visual inspection.

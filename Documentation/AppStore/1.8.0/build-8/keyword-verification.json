@@ -1,0 +1,50 @@
+{
+  "ko": {
+    "keywords": "iss,tiangong,위성,추적,천문학,별자리,별지도,궤도,알림,관측,하늘",
+    "containsISS": true,
+    "containsTiangong": true,
+    "changed": false
+  },
+  "pt-BR": {
+    "keywords": "iss,tiangong,satélite,rastreamento,astronomia,estrelas,céu,mapa,órbita,alerta,lembrete,observação",
+    "containsISS": true,
+    "containsTiangong": true,
+    "changed": false
+  },
+  "es-ES": {
+    "keywords": "iss,tiangong,satélite,seguimiento,astronomía,estrellas,cielo,mapa,alerta,recordatorio,observación",
+    "containsISS": true,
+    "containsTiangong": true,
+    "changed": false
+  },
+  "ja": {
+    "keywords": "iss,tiangong,衛星,追跡,星空,星図,観測,軌道,通知,リマインダー,天体観測",
+    "containsISS": true,
+    "containsTiangong": true,
+    "changed": false
+  },
+  "ru": {
+    "keywords": "iss,tiangong,спутник,трекер,астрономия,орбита,небо,уведомления",
+    "containsISS": true,
+    "containsTiangong": true,
+    "changed": false
+  },
+  "fr-FR": {
+    "keywords": "iss,tiangong,satellite,suivi,astronomie,étoiles,ciel,carte,orbite,alerte,rappel,observation",
+    "containsISS": true,
+    "containsTiangong": true,
+    "changed": false
+  },
+  "zh-Hans": {
+    "keywords": "天宫,iss,tiangong,国际空间站,卫星,追踪,星图,观星,天文,轨道,提醒,观测,星空,月相",
+    "containsISS": true,
+    "containsTiangong": true,
+    "changed": false
+  },
+  "en-US": {
+    "keywords": "iss,tiangong,satellite,tracker,astronomy,stargazing,sky,chart,orbit,alert,reminder,overhead,spotting",
+    "containsISS": true,
+    "containsTiangong": true,
+    "changed": false
+  }
+}

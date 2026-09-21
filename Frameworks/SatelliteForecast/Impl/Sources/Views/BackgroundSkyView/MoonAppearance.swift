@@ -85,8 +85,16 @@ enum MoonAppearance {
         return MilkyWayBackground.Texture(image: image)
     }()
 
-    static func image(geometry: Geometry, dimension: Int = 96, emissionOnly: Bool = false) -> UIImage? {
-        let dimension = min(128, max(16, dimension))
+    private static let detailedTexture: MilkyWayBackground.Texture? = {
+        guard let url = Bundle.module.url(forResource: "planetarium-lunar-albedo-4k", withExtension: "jpg"),
+              let source = CGImageSourceCreateWithURL(url as CFURL, nil),
+              let image = CGImageSourceCreateImageAtIndex(source, 0, nil) else { return nil }
+        return MilkyWayBackground.Texture(image: image)
+    }()
+
+    static func image(geometry: Geometry, dimension: Int = 96, emissionOnly: Bool = false, exposure: Double = 1, detailed: Bool = false) -> UIImage? {
+        let dimension = min(1024, max(16, dimension))
+        let surfaceTexture = detailed ? detailedTexture : texture
         let daylight = SkyChartAtmosphere.transition(-6, 2, geometry.sunElevation)
         // Earth is nearly full as seen from a crescent Moon. Deliberately lifted
         // for legibility at 24 pt; this is not a calibrated radiance prediction.
@@ -104,7 +112,11 @@ enum MoonAppearance {
                 let local = geometry.body.transpose * surface
                 let uv = SIMD2(0.5 + atan2(local.y, local.x) / (2 * .pi),
                                0.5 - asin(max(-1, min(1, local.z))) / .pi)
-                let albedo = texture?.sample(uv) ?? SIMD3(repeating: 0.65)
+                var albedo = surfaceTexture?.sample(uv) ?? SIMD3(repeating: 0.65)
+                if detailed {
+                    // Monotonic contrast curve preserves bright terrain without clipping.
+                    albedo = SIMD3(pow(albedo.x, 1.35), pow(albedo.y, 1.35), pow(albedo.z, 1.35))
+                }
                 let incidence = simd_dot(normal, geometry.light)
                 let lit = SkyChartAtmosphere.transition(-0.015, 0.015, incidence)
                 // Gentle lunar limb shading retains maria at full phase.
@@ -116,7 +128,7 @@ enum MoonAppearance {
                     ? coverage * sunlight * (1 - daylight * 0.85)
                     : coverage * (1 - daylight * (1 - lit))
                 let rgb = emissionOnly ? SIMD3(0.94, 0.97, 1.0)
-                    : simd_clamp(albedo * brightness * 1.2, SIMD3(repeating: 0), SIMD3(repeating: 1))
+                    : simd_clamp(albedo * brightness * (1.2 * exposure), SIMD3(repeating: 0), SIMD3(repeating: 1))
                 let index = (y * dimension + x) * 4
                 pixels[index] = UInt8(rgb.x * alpha * 255)
                 pixels[index + 1] = UInt8(rgb.y * alpha * 255)

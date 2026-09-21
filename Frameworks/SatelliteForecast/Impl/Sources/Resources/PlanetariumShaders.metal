@@ -13,7 +13,7 @@ struct Uniforms {
 struct StarInstance { float4 positionMagnitude; float4 colorWavelength; };
 struct LineVertex { float4 position; float4 color; float4 profile; };
 struct Sprite { float4 positionSize; float4 tint; float4 uvRect; float4 options; };
-struct Raster { float4 position [[position]]; float2 uv; float4 color; float4 optics; };
+struct Raster { float4 position [[position]]; float2 uv; float4 color; float4 optics; float4 flow; };
 
 // Periodic angular profile, matched by PlanetariumGeometry for hit testing.
 float mountainHeight(float a) {
@@ -39,17 +39,9 @@ float4 project(float3 p, constant Uniforms &u) {
 vertex Raster background_vertex(uint id [[vertex_id]]) {
     Raster o; o.position=float4(billboardQuad[id],0.999,1); o.uv=billboardQuad[id]; return o;
 }
-float3 galacticLight(float3 d, constant Uniforms &u,
-                     texture2d<float> milkyLeft, texture2d<float> milkyRight) {
-    float3 eq=d.x*u.east.xyz+d.y*u.zenith.xyz-d.z*u.north.xyz;
-    float3 gal=float3(dot(eq,float3(-0.05487556,-0.87343709,-0.48383502)),dot(eq,float3(0.49410943,-0.44482963,0.74698224)),dot(eq,float3(-0.86766615,-0.19807637,0.45598378)));
-    float2 uv=float2(0.5-atan2(gal.y,gal.x)/(2*M_PI_F),0.5-asin(clamp(gal.z,-1.0,1.0))/M_PI_F);
+// A continuous lookup across the two 8K tiles, including longitude wrap.
+float3 galaxySample(float2 uv, float lod, texture2d<float> milkyLeft, texture2d<float> milkyRight) {
     constexpr sampler skySampler(address::clamp_to_edge, filter::linear, mip_filter::linear);
-    // Explicit LOD avoids derivative discontinuities at longitude and tile seams.
-    float2 dx=dfdx(uv), dy=dfdy(uv);
-    dx.x-=round(dx.x); dy.x-=round(dy.x);
-    float2 dimensions=float2(16384,8192);
-    float lod=clamp(log2(max(length(dx*dimensions),length(dy*dimensions)))-0.35,0.0,13.0);
     float x=fract(uv.x)*2;
     float3 galaxy=x<1 ? milkyLeft.sample(skySampler,float2(x,uv.y),level(lod)).rgb
                         : milkyRight.sample(skySampler,float2(x-1,uv.y),level(lod)).rgb;
@@ -66,6 +58,38 @@ float3 galacticLight(float3 d, constant Uniforms &u,
                    smoothstep(-edge,edge,wrapped));
     }
     return galaxy;
+}
+float3 galacticLight(float3 d, constant Uniforms &u,
+                     texture2d<float> milkyLeft, texture2d<float> milkyRight) {
+    float3 eq=d.x*u.east.xyz+d.y*u.zenith.xyz-d.z*u.north.xyz;
+    float3 gal=float3(dot(eq,float3(-0.05487556,-0.87343709,-0.48383502)),dot(eq,float3(0.49410943,-0.44482963,0.74698224)),dot(eq,float3(-0.86766615,-0.19807637,0.45598378)));
+    float2 uv=float2(0.5-atan2(gal.y,gal.x)/(2*M_PI_F),0.5-asin(clamp(gal.z,-1.0,1.0))/M_PI_F);
+    float2 dx=dfdx(uv), dy=dfdy(uv);
+    dx.x-=round(dx.x); dy.x-=round(dy.x);
+    float2 tx=dx*float2(16384,8192), ty=dy*float2(16384,8192);
+    // Largest singular value of the pixel footprint. Unlike max(|dx|,|dy|),
+    // this does not sharpen/soften the mip choice just because the phone rolls.
+    float a=dot(tx,tx), b=dot(tx,ty), c=dot(ty,ty);
+    float footprint=sqrt(max(0.0,0.5*(a+c+sqrt((a-c)*(a-c)+4*b*b))));
+    // Match the mip to the actual pixel footprint; the former negative LOD
+    // bias brought unresolved high-frequency grain back into the image.
+    float lod=clamp(log2(max(footprint,1.0)),0.0,13.0);
+    float3 original=galaxySample(uv,lod,milkyLeft,milkyRight);
+    float closeView=1-smoothstep(10.0,32.0,u.viewport.w);
+    if(closeView<=0) return original;
+    // Separate diffuse galactic structure from the baked-in tiny star speckles.
+    // At telescope zoom those speckles otherwise grow into grainy blobs. Work
+    // in linear light and retain strong medium-scale dust-lane contrast, while
+    // shrinking low-amplitude high-frequency variation toward the diffuse base.
+    float3 base=galaxySample(uv,max(lod,5.0),milkyLeft,milkyRight);
+    float3 structure=galaxySample(uv,max(lod,3.0),milkyLeft,milkyRight);
+    float3 detail=structure-base;
+    float signal=max(dot(base,float3(0.2126,0.7152,0.0722)),0.003);
+    float keepStructure=smoothstep(0.12,0.40,length(detail)/signal);
+    float3 diffuse=max(float3(0),base+detail*keepStructure);
+    // This affects only the photographic background. Catalog stars and their
+    // optics are rendered separately and remain sharp at every magnification.
+    return mix(original,diffuse,closeView);
 }
 
 float3 atmosphere(float3 d, constant Uniforms &u) {
@@ -190,11 +214,12 @@ vertex Raster star_vertex(uint id [[vertex_id]], uint instance [[instance_id]],
     float fNumber=mix(2.8,3.5,clamp((105-fov)/100,0.0,1.0));
     float exposure=2.8*pow(max(1.0,105.0/max(fov,1e-4)),1.75);
     float omega=0.9*star.colorWavelength.w*fNumber;
-    float phase=fract(sin(float(instance)*12.9898+78.233)*43758.5453)*6.2831853;
-    // The same flux/Gaussian optics, with subdued altitude-dependent scintillation.
-    float flicker=1.0-(0.04+0.12*exp(-max(d.y,0.0)*5.0))*(0.5+0.5*sin(u.effects.z*6+phase));
-    float extinction=exp(-0.16/max(0.08,d.y));
+    // A star keeps its phase when culling or tier changes reorder the buffer.
+    float phase=fract(sin(dot(star.positionMagnitude.xyz,float3(12.9898,78.233,37.719)))*43758.5453)*6.2831853;
     float importance=1-smoothstep(-0.5,3.5,star.positionMagnitude.w);
+    // The same flux/Gaussian optics, with subdued altitude-dependent scintillation.
+    float flicker=1.0-importance*(0.025+0.075*exp(-max(d.y,0.0)*5.0))*(0.5+0.5*sin(u.effects.z*4+phase));
+    float extinction=exp(-0.16/max(0.08,d.y));
     float multiplier=flux*exposure*flicker*extinction*(1-u.effects.x)*(1.15+importance*2.8);
     float size=omega*sqrt(max(0.01,-0.5*log(1.0/255.0/max(multiplier,0.004))));
     o.position=project(d,u);
@@ -236,14 +261,15 @@ vertex Raster line_vertex(uint id [[vertex_id]], uint instance [[instance_id]],
     float3 db=b.position.w>0.5 ? local(b.position.xyz,u) : b.position.xyz;
     float4 ca=project(da,u), cb=project(db,u);
     float ta=a.profile.x, tb=b.profile.x;
+    float sa=a.profile.z, sb=b.profile.z;
     const float near=0.005;
     if(ca.w<near && cb.w<near) {
-        o.position=float4(2,2,2,1); o.uv=0; o.color=0; o.optics=0; return o;
+        o.position=float4(2,2,2,1); o.uv=0; o.color=0; o.optics=0; o.flow=0; return o;
     }
     if(ca.w<near) {
-        float t=(near-ca.w)/(cb.w-ca.w); da=mix(da,db,t); ta=mix(ta,tb,t); ca=project(da,u);
+        float t=(near-ca.w)/(cb.w-ca.w); da=mix(da,db,t); ta=mix(ta,tb,t); sa=mix(sa,sb,t); ca=project(da,u);
     } else if(cb.w<near) {
-        float t=(near-cb.w)/(ca.w-cb.w); db=mix(db,da,t); tb=mix(tb,ta,t); cb=project(db,u);
+        float t=(near-cb.w)/(ca.w-cb.w); db=mix(db,da,t); tb=mix(tb,ta,t); sb=mix(sb,sa,t); cb=project(db,u);
     }
     float2 delta=(cb.xy/cb.w-ca.xy/ca.w)*u.viewport.xy*0.5;
     float2 perpendicular=float2(-delta.y,delta.x)/max(length(delta),0.001);
@@ -255,10 +281,14 @@ vertex Raster line_vertex(uint id [[vertex_id]], uint instance [[instance_id]],
     o.position.xy+=perpendicular*(side*halfWidth)*2/u.viewport.xy*o.position.w;
     o.uv=float2(side*halfWidth,coreHalf);
     o.color=mix(a.color,b.color,along);
-    o.optics=float4(mix(da,db,along),a.position.w>0.5 ? mix(ta,tb,along) : -1);
+    if(a.profile.y>1.5) o.color.a*=1-smoothstep(-6.0,0.0,u.sun.w);
+    o.optics=float4(mix(da,db,along),a.position.w>0.5 && a.profile.y<0.5 ? mix(ta,tb,along) : -1);
+    // A uniform angular scale keeps dots and pulses coherent across segments.
+    o.flow=float4(mix(ta,tb,along),a.profile.y,mix(sa,sb,along),
+                  max(2*atan(u.viewport.z)*u.effects.w/u.viewport.y,1e-9));
     return o;
 }
-fragment float4 line_fragment(Raster in [[stage_in]]) {
+fragment float4 line_fragment(Raster in [[stage_in]], constant float2 &flowTime [[buffer(1)]]) {
     // Convert the full-edge parameter gradient to a five-point star clearance.
     // Screen-space derivatives keep the gap stable while zooming. Short edges
     // retain their middle section, including during the contraction animation.
@@ -273,8 +303,26 @@ fragment float4 line_fragment(Raster in [[stage_in]]) {
     float taper=edgeParameter>=0 ? pow(max(0.0,sin(M_PI_F*saturate(edgeParameter))),0.65) : 1;
     float halfWidth=in.uv.y*(0.12+0.88*taper);
     float coverage=1-smoothstep(halfWidth,halfWidth+0.75,abs(in.uv.x));
+    if(in.flow.y>0.5 && in.flow.z>flowTime.y) {
+        // Future path: round dots anchored to the orbit, never marching backward
+        // when the preview time changes. The separate highlight still flows forward.
+        float radiansPerPixel=max(length(float2(dfdx(in.flow.x),dfdy(in.flow.x))),0.000001);
+        float spacing=in.flow.y>1.5 ? in.flow.w*10.0 : 0.008;
+        float along=(fract(in.flow.x/spacing)-0.5)*spacing/radiansPerPixel;
+        coverage=1-smoothstep(halfWidth,halfWidth+0.75,length(float2(along,in.uv.x)));
+    }
     float alpha=in.color.a*coverage*taper;
-    return float4(in.color.rgb*alpha,alpha);
+    float3 color=in.color.rgb;
+    if(in.flow.y>0.5 && flowTime.x>=0) {
+        // A continuous angular coordinate keeps pulses joined across segments.
+        // Increasing phase travels from rise toward set, even when preview is paused.
+        float period=in.flow.y>1.5 ? in.flow.w*160.0 : 0.35;
+        float phase=fract(in.flow.x/period-flowTime.x*0.45);
+        float pulse=smoothstep(0.35,0.8,phase)*(1-smoothstep(0.8,0.94,phase));
+        alpha*=0.65+0.35*pulse;
+        color=mix(color,float3(0.82,1.0,0.97),0.7*pulse);
+    }
+    return float4(color*alpha,alpha);
 }
 vertex Raster sprite_vertex(uint id [[vertex_id]], constant Sprite &sprite [[buffer(0)]], constant Uniforms &u [[buffer(1)]]) {
     Raster o; float3 d=sprite.options.x>0.5 ? local(sprite.positionSize.xyz,u) : sprite.positionSize.xyz;
@@ -284,55 +332,78 @@ vertex Raster sprite_vertex(uint id [[vertex_id]], constant Sprite &sprite [[buf
     q=float2(q.x*cos(a)-q.y*sin(a),q.x*sin(a)+q.y*cos(a));
     float2 pixels=float2(sprite.positionSize.w,sprite.positionSize.w*sprite.options.y);
     o.position.xy+=q*pixels/u.viewport.xy*o.position.w;
-    if(d.y<0 || (sprite.options.w<0.5 && behindGround(d))) o.position=float4(2,2,2,1);
+    if(d.y<0 || ((sprite.options.w<0.5 || sprite.options.w>1.5) && behindGround(d))) o.position=float4(2,2,2,1);
     o.uv=sprite.uvRect.xy+(billboardQuad[id]*float2(0.5,-0.5)+0.5)*sprite.uvRect.zw;
-    o.color=sprite.tint; return o;
+    o.color=sprite.tint;
+    // Atmospheric scattering is in front of a planet, including its night side.
+    // Keep the opaque disk (so background stars remain occulted) and add the same
+    // local daylight atmosphere used by the sky instead of a black daytime disk.
+    o.optics=float4(atmosphere(d,u)*u.effects.x,sprite.options.w>1.5 && sprite.options.w<2.5 ? 1.0 : 0.0);
+    if(sprite.options.w>2.5) {
+        // One color for the whole label, chosen from its local sky plus the same
+        // broad solar glare used by background_fragment. No stroke or shadow.
+        float3 background=atmosphere(d,u);
+        float facing=dot(u.sun.xyz,u.forward.xyz);
+        if(u.sun.w>0 && facing>0) {
+            float4 solar=project(u.sun.xyz,u), label=project(d,u);
+            float2 delta=(label.xy/label.w-solar.xy/solar.w)*float2(u.viewport.x/u.viewport.y,1);
+            float r2=dot(delta,delta);
+            background+=float3(1,0.75,0.42)*exp(-r2*40)*0.5;
+            background+=float3(1,0.90,0.7)*exp(-r2*700)*1.5;
+        }
+        float luminance=dot(background,float3(0.2126,0.7152,0.0722));
+        o.color.rgb*=luminance>0.20 ? float3(0.005,0.01,0.02) : float3(1,0.92,0.75);
+    }
+    return o;
 }
 fragment float4 sprite_fragment(Raster in [[stage_in]], texture2d<float> tex [[texture(0)]]) {
     constexpr sampler s(address::clamp_to_edge,filter::linear);
-    float4 c=tex.sample(s,in.uv); return c*in.color;
+    float4 c=tex.sample(s,in.uv);
+    c.rgb+=in.optics.xyz*c.a*in.optics.w;
+    return c*in.color;
 }
 
-// Orthographic ray/sphere intersection for the selection-card miniature.
-// Texture coordinates rotate on the 3D surface; lighting remains in view space.
+// Optical structure of the main C/B/A rings, radii in Saturn equatorial radii.
+// NASA NSSDCA: 74658, 91975, 117507, 122340, 136780 km / 60268 km.
+float saturnRingOpacity(float radius, float aa) {
+    float c = smoothstep(74658.0/60268.0-aa,74658.0/60268.0+aa,radius);
+    float b = smoothstep(91975.0/60268.0-aa,91975.0/60268.0+aa,radius);
+    float gap = smoothstep(117507.0/60268.0-aa,117507.0/60268.0+aa,radius);
+    float a = smoothstep(122340.0/60268.0-aa,122340.0/60268.0+aa,radius);
+    float end = smoothstep(136780.0/60268.0-aa,136780.0/60268.0+aa,radius);
+    return max(0.0,0.23*c + 0.72*b - 0.92*gap + 0.73*a - 0.76*end);
+}
+
+// Orthographic ray/oblate-spheroid intersection. Geometry and sunlight use a
+// pole-up disk frame for both the resolved sky disk and the selected miniature.
 fragment float4 planet_icon_fragment(Raster in [[stage_in]], constant float4 &p [[buffer(0)]],
+                                     constant float4 &sun [[buffer(1)]], constant float4 &shape [[buffer(2)]],
                                      texture2d<float> surface [[texture(0)]],
                                      texture2d<float> clouds [[texture(1)]]) {
     int kind=int(p.x);
-    float radius=kind==5 ? 0.48 : 0.76;
-    float2 screen=in.uv;
     float c=cos(p.z), s=sin(p.z);
-    float2 q=float2(c*screen.x+s*screen.y,-s*screen.x+c*screen.y)/radius;
-    float r=length(q), aa=max(fwidth(r),0.001);
-    float4 result=0;
-    // Saturn's inclined rings: render the far half behind the globe, then
-    // the near half in front. The gap between ring bands stays transparent.
-    float ringRadius=length(float2(q.x,q.y/0.36));
-    float ringAA=max(fwidth(ringRadius),0.008);
-    float ringCoverage=smoothstep(1.18-ringAA,1.18+ringAA,ringRadius)
-        *(1-smoothstep(1.91-ringAA,1.91+ringAA,ringRadius));
-    ringCoverage*=1-0.8*exp(-pow((ringRadius-1.64)/0.035,2));
-    float bands=0.65+0.12*sin(ringRadius*72)+0.10*sin(ringRadius*131);
-    float4 ring=float4(float3(0.62,0.51,0.34)*bands*ringCoverage,ringCoverage*0.85);
-    if(kind==5 && q.y>0) result=ring;
-    bool atmospheric=kind!=0;
-    float3 haze=kind==1 ? float3(0.9,0.65,0.28) : kind==3 ? float3(0.7,0.25,0.10) : float3(0.15,0.45,0.9);
-    if(kind==4 || kind==5) haze=float3(0.65,0.49,0.30);
-    if(kind==6) haze=float3(0.25,0.65,0.75);
-    float strength=kind==1 ? 0.35 : kind==3 ? 0.07 : 0.18;
-    if(atmospheric) {
-        float halo=exp(-max(r-1,0.0)*35)*strength*smoothstep(0.9,1.0,r)*(1-smoothstep(1.07,1.16,r));
-        result=float4(haze*halo,halo)+result*(1-halo);
-    }
-    if(r<1+aa) {
-        float3 n=float3(q,sqrt(max(0.0,1-dot(q,q))));
-        n=normalize(n);
-        // Inverse body rotation maps the view-space hit into material space.
-        float3 rotated=float3(cos(p.y)*n.x-sin(p.y)*n.z,n.y,sin(p.y)*n.x+cos(p.y)*n.z);
+    float2 q=float2(c*in.uv.x+s*in.uv.y,-s*in.uv.x+c*in.uv.y)/shape.y;
+    float3 light=normalize(sun.xyz);
+    float opening=sin(p.w), poleHeight=cos(p.w);
+    float3 pole=float3(0,poleHeight,opening);
+    float flattening=1/(shape.x*shape.x)-1;
+    float projectedPolar=sqrt(opening*opening+shape.x*shape.x*poleHeight*poleHeight);
+    float silhouette=length(float2(q.x,q.y/projectedPolar));
+    float aa=max(fwidth(silhouette),0.001);
+    float a=1+flattening*pole.z*pole.z;
+    float b=flattening*q.y*pole.y*pole.z;
+    float cc=dot(q,q)+flattening*q.y*q.y*pole.y*pole.y-1;
+    float discriminant=b*b-a*cc;
+    float z=(-b+sqrt(max(0.0,discriminant)))/a;
+    float3 hit=float3(q,z);
+    float3 normal=normalize(hit+flattening*dot(hit,pole)*pole);
+    float4 globe=0, ring=0;
+
+    if(silhouette<1+aa) {
+        float3 material=normalize(float3(hit.x,poleHeight*hit.y+opening*hit.z,-opening*hit.y+poleHeight*hit.z));
+        float3 rotated=float3(cos(p.y)*material.x-sin(p.y)*material.z,material.y,sin(p.y)*material.x+cos(p.y)*material.z);
         float2 uv=float2(0.5+atan2(rotated.x,rotated.z)/(2*M_PI_F),0.5-asin(clamp(rotated.y,-1.0,1.0))/M_PI_F);
         constexpr sampler mapSampler(s_address::repeat,t_address::clamp_to_edge,filter::linear,mip_filter::linear);
-        // Wrap longitude derivatives as well as coordinates, avoiding a blurry
-        // mip stripe when the map seam rotates across the visible hemisphere.
         float2 dx=dfdx(uv), dy=dfdy(uv);
         dx.x-=round(dx.x); dy.x-=round(dy.x);
         float3 albedo=surface.sample(mapSampler,uv,gradient2d(dx,dy)).rgb;
@@ -340,14 +411,63 @@ fragment float4 planet_icon_fragment(Raster in [[stage_in]], constant float4 &p 
             float cloud=clouds.sample(mapSampler,uv,gradient2d(dx,dy)).r;
             albedo=mix(albedo,float3(0.92),smoothstep(0.1,0.85,cloud)*0.85);
         }
-        // Venus's map is its opaque cloud deck, never the radar surface map.
-        float3 viewNormal=float3(c*n.x-s*n.y,s*n.x+c*n.y,n.z);
-        float light=max(dot(viewNormal,normalize(float3(-0.45,0.55,1))),0.0);
-        float3 color=albedo*(0.12+0.88*light);
-        if(atmospheric) color+=haze*pow(1-n.z,3.0)*strength*(0.25+0.75*light);
-        float coverage=1-smoothstep(1-aa,1+aa,r);
-        result=float4(color*coverage,coverage)+result*(1-coverage);
+        // No fixed ambient fill: the night side must remain dark at crescent phase.
+        float illumination=pow(max(dot(normal,light),0.0),0.65);
+        if(kind==5 && abs(dot(light,pole))>0.0001) {
+            float t=-dot(hit,pole)/dot(light,pole);
+            if(t>0) illumination*=1-saturnRingOpacity(length(hit+t*light),0.006)*0.90;
+        }
+        float3 color=albedo*illumination;
+        if(kind!=0) {
+            float3 haze=kind==1 ? float3(0.9,0.65,0.28) : kind==3 ? float3(0.7,0.25,0.10) : float3(0.15,0.45,0.9);
+            if(kind==4 || kind==5) haze=float3(0.65,0.49,0.30);
+            if(kind==6) haze=float3(0.25,0.65,0.75);
+            color+=haze*pow(1-max(normal.z,0.0),3.0)*0.12*illumination;
+        }
+        float coverage=1-smoothstep(1-aa,1+aa,silhouette);
+        globe=float4(color*coverage,coverage);
     }
-    if(kind==5 && q.y<=0) result=ring+result*(1-ring.a);
-    return result;
+
+    float ringZ=0;
+    if(kind==5 && abs(opening)>0.00001) {
+        ringZ=-q.y*poleHeight/opening;
+        float3 ringHit=float3(q,ringZ);
+        float ringRadius=length(ringHit);
+        float ringAA=min(0.03,max(fwidth(ringRadius),0.001));
+        float opacity=saturnRingOpacity(ringRadius,ringAA);
+        // Physical rings approach zero projected area when viewed edge-on.
+        opacity*=min(1.0,abs(opening)/max(fwidth(q.y),0.0001));
+        float bands=0.94+0.035*sin(ringRadius*80)+0.025*sin(ringRadius*173);
+        float brightness=0.35+0.65*sqrt(abs(dot(pole,light)));
+        // Trace toward the Sun to cast the oblate globe's shadow on the rings.
+        float qa=1+flattening*pow(dot(light,pole),2.0);
+        float qb=dot(ringHit,light)+flattening*dot(ringHit,pole)*dot(light,pole);
+        float qc=dot(ringHit,ringHit)+flattening*pow(dot(ringHit,pole),2.0)-1;
+        float shadowDisc=qb*qb-qa*qc;
+        if(qb<0 && shadowDisc>0) brightness*=0.03;
+        ring=float4(float3(0.69,0.60,0.44)*bands*brightness*opacity,opacity);
+    }
+    return ringZ>z ? ring+globe*(1-ring.a) : globe+ring*(1-globe.a);
+}
+
+// One instanced dot per ephemeris sample: daily planets, 12-hour Moon.
+vertex Raster motion_trail_vertex(uint id [[vertex_id]], uint instance [[instance_id]],
+    const device LineVertex *points [[buffer(0)]], constant Uniforms &u [[buffer(1)]]) {
+    Raster o;
+    LineVertex point=points[instance];
+    float3 direction=local(point.position.xyz,u);
+    o.position=project(direction,u);
+    float radius=(point.profile.x>0 ? point.profile.x : 1.35)*u.effects.w;
+    float2 pixel=billboardQuad[id]*(radius+0.75);
+    o.position.xy+=pixel*2/u.viewport.xy*o.position.w;
+    if(o.position.w<=0.005 || behindGround(direction)) o.position=float4(2,2,2,1);
+    o.uv=pixel; o.optics=float4(radius,0,0,0); o.flow=0;
+    o.color=point.color;
+    // These are sky annotations, not self-luminous objects in the daytime sky.
+    o.color.a*=1-smoothstep(-6.0,0.0,u.sun.w);
+    return o;
+}
+fragment float4 motion_trail_fragment(Raster in [[stage_in]]) {
+    float alpha=in.color.a*(1-smoothstep(in.optics.x,in.optics.x+0.75,length(in.uv)));
+    return float4(in.color.rgb*alpha,alpha);
 }

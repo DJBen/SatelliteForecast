@@ -218,6 +218,51 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
         }
     }
 
+    /// A restrained set of names in the all-sky chart; the 3D chart reveals more on zoom.
+    @ViewBuilder private func brightStarNames(julianDate: Double) -> some View {
+        Canvas { canvas, size in
+            let sun = SkyChartAtmosphere.sun(observer: context.observer, julianDate: julianDate)
+            guard sun.elev < 0, min(size.width, size.height) >= 250 else { return }
+            let rect = CGRect(origin: .zero, size: size)
+            let convert = getStarCoordinateConverter(julianDate: julianDate, rect: rect)
+            var occupied: [CGRect] = []
+            if context.configs.showConstellationLines && ObjectIdentifier(ConstellationLabel.self) != ObjectIdentifier(EmptyView.self) {
+                for constellation in viewModel.state.resources.allConstellations {
+                    let center = convert(RADec(constellation.center))
+                    let width = (constellation.localizedName.uppercased(with: .current) as NSString).size(withAttributes: [
+                        .font: UIFont.systemFont(ofSize: 12)]).width
+                    occupied.append(CGRect(x: center.x - width / 2 - 5, y: center.y - 10, width: width + 10, height: 20))
+                }
+            }
+            for body in context.configs.visibleBodies {
+                let center = convert(RADec(body.eci(julianDay: julianDate)))
+                occupied.append(CGRect(x: center.x - 45, y: center.y - 22, width: 90, height: 44))
+            }
+            let budget = min(size.width, size.height) >= 450 ? 6 : 3
+            var count = 0
+            for star in context.starManager.namedBrightStars {
+                guard count < budget, let name = star.info?.displayName else { continue }
+                let point = convert(RADec(star.coordinate))
+                let text = canvas.resolve(Text(verbatim: name).font(.system(size: 11, design: .serif))
+                    .foregroundStyle(Color.secondary))
+                let textSize = text.measure(in: CGSize(width: 140, height: 24))
+                let center = CGPoint(x: point.x, y: point.y + 12)
+                let box = CGRect(x: center.x - textSize.width / 2, y: center.y - textSize.height / 2,
+                    width: textSize.width, height: textSize.height).insetBy(dx: -5, dy: -4)
+                // Keep the entire label inside the horizon and away from other annotations.
+                let radius = min(size.width, size.height) / 2 - 8
+                let corners = [CGPoint(x: box.minX, y: box.minY), CGPoint(x: box.maxX, y: box.minY),
+                    CGPoint(x: box.minX, y: box.maxY), CGPoint(x: box.maxX, y: box.maxY)]
+                guard corners.allSatisfy({ hypot($0.x - rect.midX, $0.y - rect.midY) < radius }),
+                      !occupied.contains(where: { $0.intersects(box) }) else { continue }
+                occupied.append(box)
+                canvas.draw(text, at: center)
+                count += 1
+            }
+        }
+        .allowsHitTesting(false)
+    }
+
     @ViewBuilder func constellationLabelView(julianDate: Double) -> some View {
         GeometryReader { geometry in
             let rect = geometry.frame(in: .local)
@@ -232,7 +277,7 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
                     )
 
                     context.constellationLabel(
-                        constellation.localizedName
+                        constellation.localizedName.uppercased(with: .current)
                     )
                     .position(
                         SkyChartUtils.point(
@@ -275,6 +320,7 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
                             constellationLabelView(julianDate: backgroundSkyJulianDate)
                         }
                     }
+                    .overlay { brightStarNames(julianDate: backgroundSkyJulianDate) }
                     .clipShape(Circle())
                 )
             } else {

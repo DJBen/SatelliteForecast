@@ -1,0 +1,13 @@
+{
+  "country" : "US",
+  "elevation" : 55.608258809071941,
+  "featuredNORAD" : 25544,
+  "featuredPassUTC" : "2026-09-10T03:34:57Z",
+  "geography" : "Over California, US",
+  "homeDateUTC" : "2026-09-10T10:11:15Z",
+  "locale" : "en-US",
+  "observerLatitude" : 37.486742999999997,
+  "observerLongitude" : -122.22656000000001,
+  "passForecastDateUTC" : "2026-09-10T02:34:57Z",
+  "timeZone" : "America\/Los_Angeles"
+}

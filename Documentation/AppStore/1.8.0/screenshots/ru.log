@@ -1,0 +1,17 @@
+✅ Test Run test succeeded for scheme SatelliteForecastApp.
+
+Test Results Summary:
+Test Summary: Test - SatelliteForecastApp
+Overall Result: Passed
+
+Test Counts:
+  Total: 1
+  Passed: 1
+  Failed: 0
+  Skipped: 0
+  Expected Failures: 0
+
+Environment: SatelliteForecast · Built with macOS 26.6.2
+
+Device: iPhone 17 Pro Max (iOS Simulator 26.5)
+

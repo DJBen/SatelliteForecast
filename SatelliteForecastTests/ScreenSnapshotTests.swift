@@ -488,6 +488,59 @@ final class ScreenSnapshotTests: XCTestCase {
         }
     }
 
+    /// Review the actual adaptive controls in every supported locale at narrow widths.
+    func testLocalizedChartControls() async throws {
+        let folder = root.appendingPathComponent("Documentation/DesignReview/ChartControls")
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        let locales = ["en", "fr", "es", "pt-BR", "ru", "zh-Hans", "ja", "ko"]
+        for (width, typeSize, rowHeight, name) in [
+            (320.0, DynamicTypeSize.large, 150.0, "320-default"),
+            (375.0, DynamicTypeSize.large, 150.0, "375-default"),
+            (320.0, DynamicTypeSize.xxxLarge, 200.0, "320-largest-standard"),
+            (320.0, DynamicTypeSize.accessibility5, 620.0, "320-accessibility")
+        ] {
+            var captures: [UIImage] = []
+            for locale in locales {
+                let view = VStack(alignment: .leading, spacing: 12) {
+                    Text(locale).font(.caption).foregroundStyle(.secondary)
+                    PassChartControls(isCompassEnabled: .constant(true), openChart: {}, openPlanetarium: {})
+                    Spacer(minLength: 0)
+                }
+                .padding(20)
+                .frame(width: width, height: rowHeight)
+                .background(Color.black)
+                .environment(\.locale, Locale(identifier: locale))
+                .environment(\.dynamicTypeSize, typeSize)
+                .environment(\.colorScheme, .dark)
+                let host = UIHostingController(rootView: view)
+                let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.first as? UIWindowScene)
+                let window = UIWindow(windowScene: scene)
+                window.frame = CGRect(x: 0, y: 0, width: width, height: rowHeight)
+                window.overrideUserInterfaceStyle = .dark
+                window.rootViewController = host
+                window.makeKeyAndVisible()
+                host.view.frame = window.bounds
+                try await Task.sleep(for: .milliseconds(100))
+                host.view.layoutIfNeeded()
+                let format = UIGraphicsImageRendererFormat()
+                format.scale = 1
+                captures.append(UIGraphicsImageRenderer(size: window.bounds.size, format: format).image { _ in
+                    host.view.drawHierarchy(in: host.view.bounds, afterScreenUpdates: true)
+                })
+                window.isHidden = true
+                window.rootViewController = nil
+            }
+            let format = UIGraphicsImageRendererFormat()
+            format.scale = 1
+            let sheet = UIGraphicsImageRenderer(size: CGSize(width: width * 2, height: rowHeight * 4), format: format).image { _ in
+                for (index, image) in captures.enumerated() {
+                    image.draw(at: CGPoint(x: Double(index % 2) * width, y: Double(index / 2) * rowHeight))
+                }
+            }
+            try XCTUnwrap(sheet.pngData()).write(to: folder.appendingPathComponent("\(name)-dark.png"))
+        }
+    }
+
     /// Locale-driven Text lookup, at a narrow phone width, including the optional dismissal action.
     func testLocalizedOrientationGuidance() async throws {
         let defaults = UserDefaults.standard
@@ -745,7 +798,21 @@ extension Fixture {
                 satelliteCategoryViewFactory: { SatelliteCategoryViewImpl(viewModel: .init(state: .init(observer: observer)), context: $0, listViewFactory: ViewFactory { factory.list($0) }) },
                 settingsOverviewFactory: { NativeSettingsView(session: session) }))
         }
-        return [("01-forecast", root(overview)), ("02-pass-chart", root(detail)), ("03-pass-list", root(passList)), ("04-satellites", root(overview, tab: .satellites))]
+        let planetariumController = PlanetariumController()
+        let planetariumContext = PassViewContext(passIndex: 0, satelliteInfo: info,
+            satelliteCommonName: info.noradIndex == 25544 ? "ISS (ZARYA)" : "CSS (TIANHE)", category: category,
+            julianDateRange: passRange, observer: passObserver, passSnapshots: pass,
+            starManager: catalog, julianDateProvider: passDate)
+        let planetarium = AnyView(PlanetariumView(context: planetariumContext, controller: planetariumController)
+            .task {
+                try? await Task.sleep(for: .milliseconds(750))
+                planetariumController.setMotionEnabled(false)
+                planetariumController.setOverlays(labels: true, lines: true)
+                planetariumController.zoom(by: 100 / planetariumController.fieldOfView)
+                planetariumController.pointCamera(azimuth: pass.pass.culmination.azim,
+                    elevation: max(25, pass.pass.culmination.elev - 30))
+            })
+        return [("01-forecast", root(overview)), ("02-pass-chart", root(detail)), ("03-pass-list", root(passList)), ("04-satellites", root(overview, tab: .satellites)), ("05-planetarium", planetarium)]
     }
 }
 

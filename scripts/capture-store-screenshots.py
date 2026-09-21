@@ -11,10 +11,11 @@ ROOT = Path(__file__).resolve().parents[1]
 LOCALES = {'en-US': ('en', 'US'), 'fr-FR': ('fr', 'FR'), 'es-ES': ('es', 'ES'),
            'pt-BR': ('pt-BR', 'BR'), 'ru': ('ru', 'RU'), 'ja': ('ja', 'JP'),
            'ko': ('ko', 'KR'), 'zh-Hans': ('zh-Hans', 'CN')}
-SCREENS = ['01-forecast', '02-pass-chart', '03-pass-list', '04-satellites']
+SCREENS = ['01-forecast', '02-pass-chart', '03-pass-list', '04-satellites', '05-planetarium']
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--locales', nargs='+', choices=LOCALES, default=list(LOCALES))
 parser.add_argument('--screens', nargs='+', choices=SCREENS, default=SCREENS)
+parser.add_argument('--derived-data', default='/tmp/SatelliteForecast-build')
 parser.add_argument('--simulator', default='5D6FFD0C-6B24-4F95-8E94-B7F3EBD22FDB')
 parser.add_argument('--output', type=Path, default=ROOT / 'Documentation/AppStore/1.7.0/screenshots')
 args = parser.parse_args()
@@ -49,7 +50,7 @@ try:
         with log_path.open('w') as log:
             process = subprocess.Popen(['xcodebuildmcp', 'simulator', 'test', '--project-path', str(ROOT / 'SatelliteForecast.xcodeproj'),
                                      '--scheme', 'SatelliteForecastApp', '--simulator-id', args.simulator,
-                                     '--derived-data-path', '/tmp/SatelliteForecast-build', '--json', json.dumps({'extraArgs': extra})],
+                                     '--derived-data-path', args.derived_data, '--json', json.dumps({'extraArgs': extra})],
                                     cwd=ROOT, stdout=log, stderr=subprocess.STDOUT)
             try:
                 while process.poll() is None:

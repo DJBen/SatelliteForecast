@@ -266,10 +266,29 @@ final class MilkyWayProjectionTests: XCTestCase {
         XCTAssertEqual(uv(SIMD3(0, 0, 1)).y, 0)
         XCTAssertEqual(uv(SIMD3(0, 0, -1)).y, 1)
         let texture = try XCTUnwrap(MilkyWayBackground.texture)
-        XCTAssertEqual(texture.width, 2048)
-        XCTAssertEqual(texture.height, 1024)
+        XCTAssertEqual(texture.width, 1024)
+        XCTAssertEqual(texture.height, 512)
         XCTAssertLessThan(simd_length(texture.sample(SIMD2(1 - 1e-10, 0.5)) - texture.sample(SIMD2(1e-10, 0.5))), 1e-6)
         XCTAssertGreaterThan(simd_length(texture.sample(SIMD2(0.5, 0.45))), simd_length(texture.sample(SIMD2(0.5, 0))))
+    }
+
+    func testSmoothingSuppressesFineGrainAndPreservesMean() throws {
+        var bytes = [UInt8]()
+        for y in 0..<16 {
+            for x in 0..<16 {
+                let value: UInt8 = (x+y).isMultiple(of: 2) ? 80 : 160
+                bytes += [value, value, value, 255]
+            }
+        }
+        let provider = try XCTUnwrap(CGDataProvider(data: Data(bytes) as CFData))
+        let image = try XCTUnwrap(CGImage(width: 16, height: 16, bitsPerComponent: 8, bitsPerPixel: 32, bytesPerRow: 64,
+            space: CGColorSpace(name: CGColorSpace.sRGB)!, bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue),
+            provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent))
+        let texture = try XCTUnwrap(MilkyWayBackground.Texture(image: image)).smoothed(radius: 2)
+        let values = stride(from: 0, to: texture.pixels.count, by: 4).map { Double(texture.pixels[$0]) }
+        XCTAssertLessThan(values.max()! - values.min()!, 20)
+        XCTAssertEqual(values.reduce(0,+) / Double(values.count), 120, accuracy: 1)
+        XCTAssertLessThan(simd_distance(texture.sample(SIMD2(0.00000001,0.5)), texture.sample(SIMD2(0.99999999,0.5))), 0.00001)
     }
 
     func testTextureDecodePreservesNorthAndSouthAndWrapsLongitude() throws {

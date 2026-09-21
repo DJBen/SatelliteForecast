@@ -1,0 +1,10 @@
+{
+  "en-US": "Test stable star labels during panning, smaller star-name text, uppercase constellation names, and smoother Follow Device movement. Dragging should still disengage Follow Device and level the view.",
+  "fr-FR": "Testez la stabilité des noms d’étoiles pendant les déplacements, leur taille réduite, les noms des constellations en majuscules et le suivi plus fluide de l’appareil. Faire glisser la vue doit désactiver le suivi et redresser l’horizon.",
+  "es-ES": "Prueba la estabilidad de las etiquetas al desplazar la vista, los nombres de estrellas más pequeños, las constelaciones en mayúsculas y el seguimiento más suave del dispositivo. Arrastrar debe desactivar el seguimiento y nivelar la vista.",
+  "pt-BR": "Teste a estabilidade dos nomes ao mover a vista, o texto menor das estrelas, as constelações em maiúsculas e o acompanhamento mais suave do dispositivo. Arrastar deve desativar o acompanhamento e nivelar a vista.",
+  "ru": "Проверьте стабильность подписей при панорамировании, уменьшенный шрифт названий звёзд, названия созвездий прописными буквами и плавное отслеживание устройства. Перетаскивание должно отключать отслеживание и выравнивать вид.",
+  "ja": "パン中の恒星名の安定性、小さくした恒星名、星座名の大文字表示、デバイス追従の滑らかさをご確認ください。ドラッグすると追従が解除され、傾きが水平に戻ります。",
+  "ko": "이동 중 별 이름의 안정성, 작아진 별 이름, 별자리 이름의 대문자 표시, 부드러운 기기 따라가기를 확인해 주세요. 드래그하면 따라가기가 꺼지고 기울기가 수평으로 돌아와야 합니다.",
+  "zh-Hans": "请测试拖动时恒星名称的稳定性、更小的星名字体、星座名称大写，以及更平稳的跟随设备效果。拖动仍应关闭跟随设备并恢复水平视角。"
+}

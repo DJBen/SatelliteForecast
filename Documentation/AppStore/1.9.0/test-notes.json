@@ -1,0 +1,3 @@
+{
+  "en-US": "Please test the updated 3D sky view and Sky Chart:\n- Smooth satellite and space station motion, preview playback, tracking, and device-follow controls.\n- Planet phases as seen from Earth, Saturn ring proportions and orientation, and selected planet models.\n- Planet orientations when changing dates across 1926\u20132126.\n- Cleaner Milky Way backgrounds, stable star labels, detailed Moon rendering, and motion trails.\n- The Sun label adapts to the sky brightness without a shadow or outline.\n"
+}

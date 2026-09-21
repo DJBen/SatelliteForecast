@@ -1,0 +1,1 @@
+{"data":{"type":"reviewSubmissions","id":"1fe9d4bc-674d-4bd3-a56a-5ff51c41d604","attributes":{"platform":"IOS","state":"WAITING_FOR_REVIEW","submittedDate":"2026-09-20T21:02:06.537Z"},"relationships":{"items":{"data":null}}},"links":{"self":"https://api.appstoreconnect.apple.com/v1/reviewSubmissions/1fe9d4bc-674d-4bd3-a56a-5ff51c41d604"}}

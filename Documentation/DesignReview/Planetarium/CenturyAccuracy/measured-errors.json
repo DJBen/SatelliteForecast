@@ -1,0 +1,72 @@
+{
+  "jupiter" : {
+    "openingDegrees" : 0.0020004572896286099,
+    "openingDegreesJD" : 2470587.5,
+    "phasePercentagePoints" : 0.00048078720092803451,
+    "phasePercentagePointsJD" : 2485683.5,
+    "poleAngleDegrees" : 0.0062717361469140087,
+    "poleAngleDegreesJD" : 2471986.5,
+    "positionDegrees" : 0.00047091527532279779,
+    "positionDegreesJD" : 2469826.5
+  },
+  "mars" : {
+    "openingDegrees" : 0.001169746399503957,
+    "openingDegreesJD" : 2452080.5,
+    "phasePercentagePoints" : 0.0033860977172821549,
+    "phasePercentagePointsJD" : 2469339.5,
+    "poleAngleDegrees" : 0.0061794622234287999,
+    "poleAngleDegreesJD" : 2441183.5,
+    "positionDegrees" : 0.0017283642604249863,
+    "positionDegreesJD" : 2435705.5
+  },
+  "mercury" : {
+    "openingDegrees" : 0.0006320706105911178,
+    "openingDegreesJD" : 2494601.5,
+    "phasePercentagePoints" : 0.0089356467437724518,
+    "phasePercentagePointsJD" : 2433209.5,
+    "poleAngleDegrees" : 0.0053998439332758608,
+    "poleAngleDegreesJD" : 2471652.5,
+    "positionDegrees" : 0.0021685666899156721,
+    "positionDegreesJD" : 2461180.5
+  },
+  "neptune" : {
+    "openingDegrees" : 0.00029677991357601741,
+    "openingDegreesJD" : 2496944.5,
+    "phasePercentagePoints" : 4.016586304089742e-05,
+    "phasePercentagePointsJD" : 2469308.5,
+    "poleAngleDegrees" : 0.007259630657983962,
+    "poleAngleDegreesJD" : 2451563.5,
+    "positionDegrees" : 0.00072937401293989338,
+    "positionDegreesJD" : 2480783.5
+  },
+  "saturn" : {
+    "openingDegrees" : 0.00012191991798626844,
+    "openingDegreesJD" : 2460542.5,
+    "phasePercentagePoints" : 0.00019632850647610667,
+    "phasePercentagePointsJD" : 2430987.5,
+    "poleAngleDegrees" : 0.0032313485857002888,
+    "poleAngleDegreesJD" : 2440149.5,
+    "positionDegrees" : 0.00028284477599276628,
+    "positionDegreesJD" : 2470007.5
+  },
+  "uranus" : {
+    "openingDegrees" : 0.00042474403002046301,
+    "openingDegreesJD" : 2464925.5,
+    "phasePercentagePoints" : 7.4963836667052419e-05,
+    "phasePercentagePointsJD" : 2471073.5,
+    "poleAngleDegrees" : 0.0466715571280929,
+    "poleAngleDegreesJD" : 2462460.5,
+    "positionDegrees" : 0.00044752272426198031,
+    "positionDegreesJD" : 2464528.5
+  },
+  "venus" : {
+    "openingDegrees" : 0.0010077265867085572,
+    "openingDegreesJD" : 2489973.5,
+    "phasePercentagePoints" : 0.0062919033813457759,
+    "phasePercentagePointsJD" : 2428126.5,
+    "poleAngleDegrees" : 0.004814641527900676,
+    "poleAngleDegreesJD" : 2485866.5,
+    "positionDegrees" : 0.0018498440966523825,
+    "positionDegreesJD" : 2487631.5
+  }
+}

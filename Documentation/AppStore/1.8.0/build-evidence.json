@@ -1,0 +1,11 @@
+{
+  "archive": "/tmp/SatelliteForecast-1.8.0-7.xcarchive",
+  "version": "1.8.0",
+  "build": "7",
+  "signingIdentity": "Apple Development: Sihao Lu (PT96WG5CAD)",
+  "bundleID": "io.djben.SatelliteForecast",
+  "ipa": "/tmp/SatelliteForecast-1.8.0-7.ipa",
+  "ipaSHA256": "1115e50363191d5aeb8b893e3a372efb6a7e4a2d900cc06208d15729bceb30fa",
+  "sourceHEAD": "ec055865a8354df6be1ff97e34d84b8e878f4322",
+  "sourceHasUncommittedChanges": true
+}

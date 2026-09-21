@@ -310,3 +310,23 @@
 "Compass.northAbbreviation" = "N";
 "Station.iss.short" = "ISS";
 "Station.tiangong.short" = "Tiangong";
+
+"Now" = "Now";
+
+"Preview" = "Preview";
+
+"Time mode" = "Time mode";
+
+"Moon of %@ · %.0f km radius" = "Moon of %@ · %.0f km radius";
+
+"Follow Device" = "Follow Device";
+
+"On" = "On";
+
+"Off" = "Off";
+
+"Move your device to explore the sky. Drag to turn off." = "Move your device to explore the sky. Drag to turn off.";
+
+/* Pass chart destinations */
+"Chart" = "Chart";
+"Planetarium" = "Planetarium";

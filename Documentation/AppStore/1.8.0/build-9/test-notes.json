@@ -1,0 +1,10 @@
+{
+  "en-US": "Star names now remain stable as you pan the planetarium. Please test slow panning, Follow Device, zooming, and crowded star fields: labels should stay readable without overlapping or rapidly flashing.",
+  "fr-FR": "Les noms des étoiles restent désormais stables lorsque vous déplacez la vue du planétarium. Testez les mouvements lents, le suivi de l’appareil, le zoom et les champs denses : les noms doivent rester lisibles, sans chevauchement ni clignotement rapide.",
+  "es-ES": "Los nombres de las estrellas ahora permanecen estables al mover el planetario. Prueba desplazamientos lentos, seguimiento del dispositivo, zoom y campos densos: las etiquetas deben ser legibles, sin superponerse ni parpadear rápidamente.",
+  "pt-BR": "Os nomes das estrelas agora permanecem estáveis ao mover o planetário. Teste movimentos lentos, acompanhamento do dispositivo, zoom e campos densos: os nomes devem permanecer legíveis, sem sobreposição ou piscadas rápidas.",
+  "ru": "Названия звёзд теперь остаются стабильными при перемещении вида планетария. Проверьте медленное панорамирование, отслеживание устройства, масштабирование и плотные звёздные поля: подписи должны оставаться читаемыми, без наложений и частого мигания.",
+  "ja": "プラネタリウムを動かしたときの恒星名のちらつきを改善しました。ゆっくりしたパン、デバイス追従、ズーム、星の多い領域で、ラベルが重なったり頻繁に点滅したりせず読みやすいことをご確認ください。",
+  "ko": "천체관을 움직일 때 별 이름이 안정적으로 표시되도록 개선했습니다. 느린 이동, 기기 따라가기, 확대·축소, 별이 밀집한 영역에서 이름이 겹치거나 빠르게 깜빡이지 않는지 확인해 주세요.",
+  "zh-Hans": "改进天象馆中恒星名称的稳定性。请测试缓慢拖动、跟随设备、缩放和密集星区：名称应保持清晰，不重叠，也不会频繁闪烁。"
+}

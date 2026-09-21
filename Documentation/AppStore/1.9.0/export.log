@@ -1,0 +1,6 @@
+2026-09-20 17:42:34.650 xcodebuild[5337:1308941] [MT] IDEDistribution: -[IDEDistributionLogging _createLoggingBundleAtPath:]: Created bundle at path "/var/folders/k5/3_hnbssd6pggrm3j4vhmvz_40000gn/T/SatelliteForecastApp_2026-09-20_17-42-34.649.xcdistributionlogs".
+2026-09-20 17:42:34.826 xcodebuild[5337:1308976]  DVTDeveloperAccountManager: Failed to load credentials for 20126DA3-E377-4B46-9534-43AA7CF221BF: Error Domain=DVTDeveloperAccountCredentialsError Code=0 "Invalid credentials in keychain for 20126DA3-E377-4B46-9534-43AA7CF221BF, missing Xcode-Username" UserInfo={NSLocalizedDescription=Invalid credentials in keychain for 20126DA3-E377-4B46-9534-43AA7CF221BF, missing Xcode-Username}
+Exported SatelliteForecastApp to: /tmp/.asc-xcode-export-1295489514
+** EXPORT SUCCEEDED **
+
+{"archive_path":"/tmp/SatelliteForecast-1.9.0-11.xcarchive","ipa_path":"/tmp/SatelliteForecast-1.9.0-11.ipa","bundle_id":"io.djben.SatelliteForecast","version":"1.9.0","build_number":"11"}

@@ -71,3 +71,13 @@ CSS (TIANHE)
 ## Earlier useful scene
 
 Release 1.7.0 used the San Francisco Bay observer `(37.486743, -122.226560)` and the same TLEs, with a reference time of `2026-09-10T01:00:00Z`. The ISS scene rose around September 9 at 20:34 America/Los_Angeles, reaching 56°. Tiangong’s September 10 scene around 20:27 reached 87°. See the [1.7.0 release notes](1.7.0/README.md) and its reviewed captures before reusing; those rounded times are a selection hint, not exact rise timestamps.
+
+## 1.8.0 fifth slot: planetarium
+
+`05-planetarium` uses the same locale observer, time zone, pinned station TLE, and reviewed featured pass as the pass-chart slot. It opens the actual Metal planetarium in Preview at the pass midpoint, with constellation labels/lines enabled and Follow Device off (deterministic simulator). The camera uses 100° field of view, culmination azimuth, and elevation `max(25°, culmination elevation − 30°)` to include more of the sky and horizon while retaining the station. No synthetic sky or composited UI is used.
+
+Capture to `Documentation/AppStore/1.8.0/screenshots`, inspect each full-size dark-mode image, and append it to the inherited four images. The saved `selection-<locale>.json` records reproduce the existing reviewed pass inputs.
+
+### Build 8 refresh
+
+The pass-chart and planetarium captures were regenerated in all eight locales into `1.8.0/build-8/screenshots/`. Each new selection JSON exactly matches the previous reviewed locale fixture: observer, time zone, featured pass, and pinned TLE inputs are unchanged. Dark native iPhone 17 Pro Max captures show the adaptive Chart/Planetarium buttons, New York celestial labels, bright-star names, and fading peripheral constellation labels. The other three screenshot slots remain unchanged. Review contact sheets are aids only; upload the native 1320 × 2868 PNGs.

@@ -48,8 +48,11 @@ struct PlanetariumSprite {
 /// Buckets use conservative spherical caps, including at the poles / RA seam.
 struct PlanetariumStarTiers {
     struct Cell {
+        let id: Int
         let center: SIMD3<Float>
         var stars: [Star]
+        let tiers: [Double: [Star]]
+        func stars(at limit: Double) -> [Star] { tiers[limit] ?? [] }
     }
     let bright: [Star]
     let cells: [Cell]
@@ -70,19 +73,23 @@ struct PlanetariumStarTiers {
         cells = groups.sorted { $0.key < $1.key }.map { key, value in
             let longitude = (Double(key % 24) + 0.5) * .pi / 12
             let latitude = (Double(key / 24) + 0.5) * .pi / 12 - .pi / 2
-            return Cell(center: SIMD3(Float(cos(latitude) * cos(longitude)), Float(cos(latitude) * sin(longitude)), Float(sin(latitude))), stars: value)
+            return Cell(id: key, center: SIMD3(Float(cos(latitude) * cos(longitude)), Float(cos(latitude) * sin(longitude)), Float(sin(latitude))), stars: value, tiers: Dictionary(uniqueKeysWithValues: [6.5, 7.5, 9.0].map { limit in
+                (limit, value.filter { $0.magnitude <= limit })
+            }))
         }
     }
     static func magnitudeLimit(fieldOfView: Double) -> Double {
         fieldOfView < 25 ? 9 : (fieldOfView < 45 ? 7.5 : 6.5)
     }
-    func visibleFaintStars(forward: SIMD3<Float>, diagonalHalfAngle: Float, fieldOfView: Double) -> [Star] {
-        // 11° encloses each 15°×15° cell; 4° is camera update overscan.
+    func visibleCells(forward: SIMD3<Float>, diagonalHalfAngle: Float) -> [Cell] {
         let threshold = cos(min(.pi, diagonalHalfAngle + 15 * .pi / 180))
-        let limit = Self.magnitudeLimit(fieldOfView: fieldOfView)
         return cells.filter { simd_dot($0.center, forward) >= threshold }
-            .flatMap { $0.stars.filter { $0.magnitude <= limit } }
     }
+    func visibleFaintStars(forward: SIMD3<Float>, diagonalHalfAngle: Float, fieldOfView: Double) -> [Star] {
+        visibleCells(forward: forward, diagonalHalfAngle: diagonalHalfAngle)
+            .flatMap { $0.stars(at: Self.magnitudeLimit(fieldOfView: fieldOfView)) }
+    }
+
 }
 
 @MainActor final class PlanetariumMetalRenderer: NSObject, MTKViewDelegate {
@@ -90,6 +97,9 @@ struct PlanetariumStarTiers {
     let queue: MTLCommandQueue
     private let backgroundPipeline: MTLRenderPipelineState
     private let starPipeline: MTLRenderPipelineState
+    private let motionTrailPipeline: MTLRenderPipelineState
+    private var motionTrailBuffer: MTLBuffer?
+    private var moonOrbitBuffer: MTLBuffer?
     private let linePipeline: MTLRenderPipelineState
     private let spritePipeline: MTLRenderPipelineState
     let milkyWay: [MTLTexture]
@@ -100,6 +110,7 @@ struct PlanetariumStarTiers {
     private var passBuffer: MTLBuffer?
     var sprites: [(PlanetariumSprite, MTLTexture)] = []
     var showLines = true
+    var passElapsedSeconds: Float = 0
     var beforeDraw: (() -> Void)?
     private let startTime = CACurrentMediaTime()
     private let inFlight = DispatchSemaphore(value: 3)
@@ -111,7 +122,7 @@ struct PlanetariumStarTiers {
         self.device = device; self.queue = queue
         view.device = device
         view.colorPixelFormat = .bgra8Unorm_srgb
-        view.preferredFramesPerSecond = 30
+        view.preferredFramesPerSecond = 60
         view.clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 1)
         let library = try device.makeDefaultLibrary(bundle: .module)
         func pipeline(_ vertex: String, _ fragment: String, blend: Bool) throws -> MTLRenderPipelineState {
@@ -129,6 +140,7 @@ struct PlanetariumStarTiers {
         }
         backgroundPipeline = try pipeline("background_vertex", "background_fragment", blend: false)
         starPipeline = try pipeline("star_vertex", "star_fragment", blend: true)
+        motionTrailPipeline = try pipeline("motion_trail_vertex", "motion_trail_fragment", blend: true)
         linePipeline = try pipeline("line_vertex", "line_fragment", blend: true)
         spritePipeline = try pipeline("sprite_vertex", "sprite_fragment", blend: true)
         let loader = MTKTextureLoader(device: device)
@@ -162,9 +174,34 @@ struct PlanetariumStarTiers {
             return device.makeBuffer(bytes: base, length: bytes.count, options: .storageModeShared)
         }
     }
+    private var faintCellBuffers: [String: MTLBuffer] = [:]
+    private var activeFaintCellBuffers: [MTLBuffer] = []
+    private(set) var starCellUploadCount = 0
+
+    func resetStarCellCache() {
+        // Buffers are immutable; submitted Metal command buffers retain old
+        // resources until completion, so catalog replacement cannot overwrite them.
+        faintCellBuffers.removeAll()
+        activeFaintCellBuffers.removeAll()
+        starCellUploadCount = 0
+    }
+    func setFaintStarCells(_ cells: [PlanetariumStarTiers.Cell], limit: Double) {
+        faintBuffer = nil
+        activeFaintCellBuffers = cells.compactMap { cell in
+            let key = "\(cell.id):\(limit)"
+            if let cached = faintCellBuffers[key] { return cached }
+            guard let cached = buffer(cell.stars(at: limit).map(PlanetariumStarInstance.init)) else { return nil }
+            faintCellBuffers[key] = cached
+            starCellUploadCount += 1
+            return cached
+        }
+    }
     func setBrightStars(_ stars: [Star]) { brightBuffer = buffer(stars.map(PlanetariumStarInstance.init)) }
-    func setFaintStars(_ stars: [Star]) { faintBuffer = buffer(stars.map(PlanetariumStarInstance.init)) }
+    func setFaintStars(_ stars: [Star]) { activeFaintCellBuffers = []; faintBuffer = buffer(stars.map(PlanetariumStarInstance.init)) }
     func setConstellations(_ vertices: [PlanetariumLineVertex]) { constellationBuffer = buffer(vertices) }
+    var motionTrailPointCount: Int { (motionTrailBuffer?.length ?? 0) / MemoryLayout<PlanetariumLineVertex>.stride }
+    func setMotionTrails(_ vertices: [PlanetariumLineVertex]) { motionTrailBuffer = buffer(vertices) }
+    func setMoonOrbits(_ vertices: [PlanetariumLineVertex]) { moonOrbitBuffer = buffer(vertices) }
     func setPass(_ vertices: [PlanetariumLineVertex]) { passBuffer = buffer(vertices) }
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {}
 
@@ -200,13 +237,23 @@ struct PlanetariumStarTiers {
         encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 6)
         encoder.setVertexBytes(&u, length: MemoryLayout<PlanetariumUniforms>.stride, index: 1)
         encoder.setRenderPipelineState(starPipeline)
-        for buffer in [brightBuffer, faintBuffer].compactMap({ $0 }) {
+        for buffer in [brightBuffer, faintBuffer].compactMap({ $0 }) + activeFaintCellBuffers {
             encoder.setVertexBuffer(buffer, offset: 0, index: 0)
             encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 6,
                 instanceCount: buffer.length / MemoryLayout<PlanetariumStarInstance>.stride)
         }
         encoder.setRenderPipelineState(linePipeline)
+        var flowTime = SIMD2<Float>(UIAccessibility.isReduceMotionEnabled ? -1 : time, passElapsedSeconds)
+        encoder.setFragmentBytes(&flowTime, length: MemoryLayout<SIMD2<Float>>.stride, index: 1)
         for buffer in [showLines ? constellationBuffer : nil, passBuffer].compactMap({ $0 }) {
+            encoder.setVertexBuffer(buffer, offset: 0, index: 0)
+            encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 6,
+                instanceCount: buffer.length / (2 * MemoryLayout<PlanetariumLineVertex>.stride))
+        }
+        var bodyFlowTime = SIMD2<Float>(flowTime.x, 0)
+        encoder.setFragmentBytes(&bodyFlowTime, length: MemoryLayout<SIMD2<Float>>.stride, index: 1)
+        for buffer in [motionTrailBuffer, moonOrbitBuffer].compactMap({ $0 }) {
+            encoder.setRenderPipelineState(linePipeline)
             encoder.setVertexBuffer(buffer, offset: 0, index: 0)
             encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 6,
                 instanceCount: buffer.length / (2 * MemoryLayout<PlanetariumLineVertex>.stride))

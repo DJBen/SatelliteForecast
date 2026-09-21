@@ -1,0 +1,314 @@
+{
+  "ko": {
+    "versionLocalizationId": "5e25898e-c210-40ae-8013-638a4f91541b",
+    "setId": "d9b3cba0-bfe0-4428-a872-58827f35eb86",
+    "displayType": "APP_IPHONE_67",
+    "total": 5,
+    "uploaded": 5,
+    "results": [
+      {
+        "fileName": "01-forecast.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/ko/01-forecast.png",
+        "assetId": "b36c9417-8e22-4849-b86c-dde08053e467",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "02-pass-chart.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/ko/02-pass-chart.png",
+        "assetId": "e268aeb4-b82a-492e-942a-05244e0f0b27",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "03-pass-list.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/ko/03-pass-list.png",
+        "assetId": "8d65b543-ad19-461a-8dea-a041821d8494",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "04-satellites.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/ko/04-satellites.png",
+        "assetId": "0adceff9-881e-4add-bab3-3c4883bd4035",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "05-planetarium.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/ko/05-planetarium.png",
+        "assetId": "df57c6c2-a202-40f1-98cd-836f0dee5b50",
+        "state": "COMPLETE"
+      }
+    ]
+  },
+  "pt-BR": {
+    "versionLocalizationId": "5ae13b33-a798-4049-9e14-f0e082a25dbb",
+    "setId": "6ef3a216-bd4c-4067-b520-e7fe73647e48",
+    "displayType": "APP_IPHONE_67",
+    "total": 5,
+    "uploaded": 5,
+    "results": [
+      {
+        "fileName": "01-forecast.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/pt-BR/01-forecast.png",
+        "assetId": "52963cd9-3c94-4316-92ef-5dcb38a30e54",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "02-pass-chart.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/pt-BR/02-pass-chart.png",
+        "assetId": "3919e8f7-0249-45e3-a919-8964923616fe",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "03-pass-list.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/pt-BR/03-pass-list.png",
+        "assetId": "b22a50dc-b8d4-47e3-8f6b-29ee692ea39a",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "04-satellites.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/pt-BR/04-satellites.png",
+        "assetId": "3ca68031-41cc-42e8-bb38-d8ec08d5d043",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "05-planetarium.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/pt-BR/05-planetarium.png",
+        "assetId": "9b4855e8-4eff-4f45-aad4-af3abcc908c6",
+        "state": "COMPLETE"
+      }
+    ]
+  },
+  "es-ES": {
+    "versionLocalizationId": "41ecdde3-016c-4a15-aa13-635566ea3299",
+    "setId": "009f1b1d-e2d7-42c1-8104-515d11b66828",
+    "displayType": "APP_IPHONE_67",
+    "total": 5,
+    "uploaded": 5,
+    "results": [
+      {
+        "fileName": "01-forecast.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/es-ES/01-forecast.png",
+        "assetId": "93a15df8-c397-4b5d-b8dc-7f22de86b457",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "02-pass-chart.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/es-ES/02-pass-chart.png",
+        "assetId": "edd65432-80e6-4e71-a46b-274b693b3d7f",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "03-pass-list.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/es-ES/03-pass-list.png",
+        "assetId": "54e7d5dd-75bd-45ec-9649-0cdbf60be172",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "04-satellites.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/es-ES/04-satellites.png",
+        "assetId": "03a3283b-f807-4544-a471-f3ba36bb6adb",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "05-planetarium.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/es-ES/05-planetarium.png",
+        "assetId": "df58b536-9077-4a12-bec2-dd28586662cd",
+        "state": "COMPLETE"
+      }
+    ]
+  },
+  "ja": {
+    "versionLocalizationId": "474600db-92d0-4564-8f30-c8a580ed8885",
+    "setId": "b4e64d20-791b-4284-8c00-04d3d697cb97",
+    "displayType": "APP_IPHONE_67",
+    "total": 5,
+    "uploaded": 5,
+    "results": [
+      {
+        "fileName": "01-forecast.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/ja/01-forecast.png",
+        "assetId": "89835268-b3c2-495c-893d-474f75ef147a",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "02-pass-chart.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/ja/02-pass-chart.png",
+        "assetId": "967ac1f6-7af8-47c7-a9fc-64f1c5df9abf",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "03-pass-list.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/ja/03-pass-list.png",
+        "assetId": "9d4c2058-a424-4e31-9bf4-874ac62e96bf",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "04-satellites.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/ja/04-satellites.png",
+        "assetId": "d72f2bf1-2ff1-43bd-9ba0-c86e96fd6dae",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "05-planetarium.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/ja/05-planetarium.png",
+        "assetId": "190e0fdb-09b5-449c-9ada-2d03c9170dec",
+        "state": "COMPLETE"
+      }
+    ]
+  },
+  "ru": {
+    "versionLocalizationId": "4af279e6-1434-4601-99d6-316c0a606e79",
+    "setId": "974d0c17-7331-4991-b9f0-55d360a66509",
+    "displayType": "APP_IPHONE_67",
+    "total": 5,
+    "uploaded": 5,
+    "results": [
+      {
+        "fileName": "01-forecast.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/ru/01-forecast.png",
+        "assetId": "cd785417-5971-4810-9240-784240152b7f",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "02-pass-chart.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/ru/02-pass-chart.png",
+        "assetId": "2c926ad4-3ddb-43bd-a742-1d981a9282c4",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "03-pass-list.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/ru/03-pass-list.png",
+        "assetId": "cf93785c-1e78-4fb2-a803-fe1286a79278",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "04-satellites.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/ru/04-satellites.png",
+        "assetId": "d9fbfadf-2e85-44e9-ab07-af79f9b1d744",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "05-planetarium.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/ru/05-planetarium.png",
+        "assetId": "8933d27d-3e2e-4a60-9370-b578c7ac9508",
+        "state": "COMPLETE"
+      }
+    ]
+  },
+  "fr-FR": {
+    "versionLocalizationId": "b01222f8-63a9-4805-8c62-9395df2e9947",
+    "setId": "64fcc214-e5ca-42a1-83ed-ee36258bbedb",
+    "displayType": "APP_IPHONE_67",
+    "total": 5,
+    "uploaded": 5,
+    "results": [
+      {
+        "fileName": "01-forecast.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/fr-FR/01-forecast.png",
+        "assetId": "72ee9a34-0239-4121-b6d5-f320c74c2ff1",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "02-pass-chart.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/fr-FR/02-pass-chart.png",
+        "assetId": "0ba7a3c2-fe96-480c-8e57-df3a29a33311",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "03-pass-list.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/fr-FR/03-pass-list.png",
+        "assetId": "17a407c2-4a8d-4199-aa0b-958da2b9a208",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "04-satellites.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/fr-FR/04-satellites.png",
+        "assetId": "d9fc5e9e-b188-4197-84c3-a71483b6afc8",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "05-planetarium.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/fr-FR/05-planetarium.png",
+        "assetId": "fcda9987-5429-406c-bcd3-846d8bfbfccb",
+        "state": "COMPLETE"
+      }
+    ]
+  },
+  "zh-Hans": {
+    "versionLocalizationId": "60e512b8-cf50-4cb1-9230-c35e4d053d77",
+    "setId": "4a5e9711-e4f7-41fe-9ec7-e68091490245",
+    "displayType": "APP_IPHONE_67",
+    "total": 5,
+    "uploaded": 5,
+    "results": [
+      {
+        "fileName": "01-forecast.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/zh-Hans/01-forecast.png",
+        "assetId": "d4605eb2-f0bf-4a36-b92b-fd36eb68f683",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "02-pass-chart.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/zh-Hans/02-pass-chart.png",
+        "assetId": "3881c913-8897-4612-b11b-ea0405dfd46a",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "03-pass-list.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/zh-Hans/03-pass-list.png",
+        "assetId": "da6fc511-fb27-41b9-a400-173da048bd05",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "04-satellites.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/zh-Hans/04-satellites.png",
+        "assetId": "b54569da-5ea4-4e6e-b20c-688265dfee03",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "05-planetarium.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/zh-Hans/05-planetarium.png",
+        "assetId": "57d7eeeb-53dd-4623-9b1f-595f7fffe29c",
+        "state": "COMPLETE"
+      }
+    ]
+  },
+  "en-US": {
+    "versionLocalizationId": "3c2a087d-c00d-40cf-8452-355858221ac4",
+    "setId": "e5c65ce7-9c8f-45dd-b08e-b5deed4fdd4a",
+    "displayType": "APP_IPHONE_67",
+    "total": 5,
+    "uploaded": 5,
+    "results": [
+      {
+        "fileName": "01-forecast.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/en-US/01-forecast.png",
+        "assetId": "82d417a9-0d6b-4edd-9f99-605557c44def",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "02-pass-chart.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/en-US/02-pass-chart.png",
+        "assetId": "e0242061-3485-4c2e-9f5a-110c26e6b053",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "03-pass-list.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/en-US/03-pass-list.png",
+        "assetId": "a6a88d2c-e3f4-4c16-8aa7-594798a13fe7",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "04-satellites.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/en-US/04-satellites.png",
+        "assetId": "067275ae-1eb4-4e11-956f-a8d5bbe522f9",
+        "state": "COMPLETE"
+      },
+      {
+        "fileName": "05-planetarium.png",
+        "filePath": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/1.8.0/build-8/screenshots/en-US/05-planetarium.png",
+        "assetId": "3c450e05-c10d-45ee-b69b-9d55336869f7",
+        "state": "COMPLETE"
+      }
+    ]
+  }
+}

@@ -14,7 +14,7 @@ public struct ConstellationLabel: View {
         Text(
             text
         )
-        .font(.caption)
+        .font(.system(.caption, design: .serif))
         .foregroundColor(.secondary)
     }
 }

@@ -1,0 +1,9 @@
+{
+  "version": "1.8.0",
+  "build": "10",
+  "ipaSHA256": "35a40ee18c9be6561252458036ad5864981dc699b3fe1f65d8ba4cc942c816ab",
+  "archive": "/tmp/SatelliteForecast-1.8.0-10.xcarchive",
+  "ipa": "/tmp/SatelliteForecast-1.8.0-10.ipa",
+  "sourceHEAD": "ec055865a8354df6be1ff97e34d84b8e878f4322",
+  "includesUncommittedChanges": true
+}
