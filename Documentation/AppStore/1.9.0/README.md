@@ -15,5 +15,7 @@ visual evidence is in Documentation/DesignReview/Planetarium, including
 AdaptiveSunLabel and CenturyAccuracy. The test plan was restored.
 
 Build identity and IPA SHA-256 are recorded in build-identity.json. Archives and
-IPAs remain outside Git. TestFlight processing/distribution evidence will be
-recorded after upload. This release does not request App Store review or release.
+IPAs remain outside Git. Build `85cec208-6fca-4385-b20e-479980328510` finished processing as VALID
+and is IN_BETA_TESTING for internal First Light, with automatic notification
+enabled. External state is READY_FOR_BETA_SUBMISSION; no external submission
+was requested. Source commit: `943ae72`. Final remote responses are retained. This release does not request App Store review or release.
