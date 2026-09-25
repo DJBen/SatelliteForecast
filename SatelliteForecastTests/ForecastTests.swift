@@ -4,12 +4,135 @@ import SwiftUI
 import BTree
 import SatelliteForecast
 import SatelliteKit
+import SatelliteWidgetSupport
 @testable import SatelliteForecastImpl
 
 @MainActor
 final class ForecastTests: XCTestCase {
     private let date = Date(timeIntervalSince1970: 1_622_592_000)
     private let observer = LatLonAlt(37, -122, 0)
+
+    func testWidgetPassTransitionsAndExpiry() {
+        let first = WidgetPass(station: 25544, rise: date.addingTimeInterval(60),
+            peak: date.addingTimeInterval(120), set: date.addingTimeInterval(180),
+            elevation: 60, startDirection: "W", endDirection: "E")
+        let second = WidgetPass(station: 25544, rise: date.addingTimeInterval(300),
+            peak: date.addingTimeInterval(360), set: date.addingTimeInterval(420),
+            elevation: 40, startDirection: "NW", endDirection: "SE")
+        let expiry = date.addingTimeInterval(600)
+        let forecast = WidgetForecast(generated: date, expires: expiry, passes: [second, first])
+        XCTAssertEqual(forecast.next(station: 25544, at: date), first)
+        XCTAssertEqual(forecast.next(station: 25544, at: first.rise), first)
+        XCTAssertEqual(forecast.next(station: 25544, at: first.set), second)
+        XCTAssertNil(forecast.next(station: 48274, at: date))
+        XCTAssertNil(forecast.next(station: 25544, at: date.addingTimeInterval(-1)))
+        XCTAssertNil(forecast.next(station: 25544, at: expiry))
+        XCTAssertEqual(forecast.entryDates(after: date), [date, first.rise, first.set, second.rise, second.set, expiry])
+        XCTAssertEqual(forecast.entryDates(after: expiry), [expiry])
+    }
+
+    func testWidgetForecastRoundTrip() throws {
+        let forecast = WidgetForecast.preview(at: date)
+        let decoded = try JSONDecoder().decode(WidgetForecast.self, from: JSONEncoder().encode(forecast))
+        XCTAssertEqual(decoded.passes, forecast.passes)
+        XCTAssertEqual(decoded.expires, forecast.expires)
+    }
+
+    func testWidgetSkyProjectionMatchesApp() {
+        for azimuth in stride(from: 0.0, through: 360.0, by: 15) {
+            for elevation in [0.0, 30, 60, 90] {
+                let unit = WidgetSkyPoint(azimuth: azimuth, elevation: elevation).unitPoint
+                let app = SkyChartUtils.point(at: .init(azimuth, elevation), rect: .init(x: 0, y: 0, width: 200, height: 200))
+                XCTAssertEqual(100 + unit.x * 100, app.x, accuracy: 0.00001)
+                XCTAssertEqual(100 + unit.y * 100, app.y, accuracy: 0.00001)
+                XCTAssertLessThanOrEqual(hypot(unit.x, unit.y), 1.00001)
+            }
+        }
+    }
+
+    func testLargeWidgetSelectsEarliestStationAndReadsLegacyCache() throws {
+        let original = WidgetForecast.preview(at: date)
+        XCTAssertEqual(original.next(at: date)?.station, 25544)
+        XCTAssertEqual(original.next(at: original.passes[0].set)?.station, 48274)
+        XCTAssertNil(original.next(at: original.expires))
+        var json = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(original)) as? [String: Any])
+        var passes = try XCTUnwrap(json["passes"] as? [[String: Any]])
+        for index in passes.indices { passes[index].removeValue(forKey: "skyTrack") }
+        json["passes"] = passes
+        let legacy = try JSONDecoder().decode(WidgetForecast.self, from: JSONSerialization.data(withJSONObject: json))
+        XCTAssertNil(legacy.next(at: date)?.skyTrack)
+        XCTAssertEqual(legacy.next(at: date)?.station, 25544)
+    }
+
+    func testWidgetTracksUsePropagatedPositions() async throws {
+        let folder = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let service = ForecastService(cacheDirectory: folder, fetch: { _ in tle })
+        let request = ForecastRequest(observer: observer, dateRange: date.julianDate...(date.julianDate + 2))
+        let found = try await service.passes(for: .iss, request: request)
+        let pass = try XCTUnwrap(found.first)
+        let tracks = try await service.widgetTracks(for: .iss, request: request, passes: [pass])
+        let points = try XCTUnwrap(tracks[pass.rise.julianDate])
+        XCTAssertGreaterThan(points.count, 2)
+        XCTAssertLessThanOrEqual(points.count, 121)
+        XCTAssertEqual(points.first!.azimuth, pass.rise.azim, accuracy: 0.2)
+        XCTAssertEqual(points.last!.azimuth, pass.set.azim, accuracy: 0.2)
+        let info = try await service.satelliteInfo(for: .iss)
+        for index in points.indices {
+            let jd = pass.rise.julianDate + (pass.set.julianDate - pass.rise.julianDate) * Double(index) / Double(points.count - 1)
+            let expected = try SatelliteSnapshot(satelliteInfo: info, julianDate: jd, observer: observer)
+            XCTAssertEqual(points[index].elevation, expected.position.elev, accuracy: 0.00001)
+            XCTAssertEqual(points[index].illuminated, pass.isIlluminated(at: jd))
+        }
+    }
+
+    func testWidgetSkyUsesOnlyBrightAboveHorizonCatalogStars() async throws {
+        let catalog = try await AppStarCatalog.load()
+        let service = ForecastService(brightStars: catalog.stars(maximumMagnitude: 6.5))
+        let pass = pass(at: date)
+        let request = ForecastRequest(observer: observer, dateRange: date.julianDate...(date.julianDate + 1))
+        let skies = try await service.widgetSkies(request: request, passes: [pass])
+        let sky = try XCTUnwrap(skies[pass.rise.julianDate])
+        let image = try XCTUnwrap(sky.imagePNG.flatMap { UIImage(data: $0) })
+        XCTAssertEqual(image.size.width * image.scale, 560)
+        XCTAssertEqual(image.size.height * image.scale, 560)
+        XCTAssertFalse(sky.stars.isEmpty)
+        XCTAssertLessThanOrEqual(sky.stars.count, 80)
+        XCTAssertTrue(sky.stars.allSatisfy { $0.magnitude <= 3 && $0.position.elevation > 0 })
+        let expected = catalog.stars(maximumMagnitude: 3).sorted { $0.magnitude < $1.magnitude }.compactMap { star -> WidgetStar? in
+            let point = azel(time: Date(julianDate: pass.culmination.julianDate), site: LatLon(observer), cele: RADec(star.coordinate))
+            guard point.elev > 0 else { return nil }
+            return WidgetStar(position: .init(azimuth: point.azim, elevation: point.elev), magnitude: star.magnitude, spectralClass: star.spectralClass)
+        }
+        XCTAssertEqual(sky.stars, Array(expected.prefix(80)))
+        let decoded = try JSONDecoder().decode(WidgetSkyBackground.self, from: JSONEncoder().encode(sky))
+        XCTAssertEqual(decoded, sky)
+    }
+
+    func testWidgetPlanetsRespectHorizonAndTwilight() {
+        var visibleCount = 0
+        var daylightCount = 0
+        for hour in 0..<24 {
+            let jd = date.julianDate + Double(hour) / 24
+            let sun = SkyChartAtmosphere.sun(observer: observer, julianDate: jd)
+            let planets = SkyChartUtils.widgetPlanets(observer: observer, julianDate: jd)
+            if sun.elev >= -6 {
+                daylightCount += 1
+                XCTAssertTrue(planets.isEmpty)
+            }
+            for planet in planets {
+                visibleCount += 1
+                XCTAssertGreaterThanOrEqual(planet.coordinate.elev, 0)
+                XCTAssertTrue(planet.magnitude.isFinite)
+                XCTAssertLessThan(sun.elev, planet.body == .venus ? -6 : -12)
+                let projected = SkyChartUtils.point(at: planet.coordinate,
+                    rect: CGRect(x: 0, y: 0, width: 280, height: 280))
+                XCTAssertLessThanOrEqual(hypot(projected.x - 140, projected.y - 140), 140.001)
+            }
+        }
+        XCTAssertGreaterThan(visibleCount, 0)
+        XCTAssertGreaterThan(daylightCount, 0)
+    }
 
     private func pass(at date: Date, id: UInt = 25544) -> Pass {
         let jd = date.julianDate

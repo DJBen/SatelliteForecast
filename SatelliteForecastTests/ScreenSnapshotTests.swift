@@ -8,6 +8,8 @@ import SatelliteForecast
 @testable import SatelliteForecastImpl
 import SatelliteKit
 import SolarSystem
+import SatelliteWidgetSupport
+import WidgetKit
 
 /// Native view snapshots at a fixed phone size, locale, timezone and orbital epoch.
 /// No live store middleware, location permissions, notifications or network loaders.
@@ -16,6 +18,260 @@ final class ScreenSnapshotTests: XCTestCase {
     private let isSEReview = ProcessInfo.processInfo.environment["SNAPSHOT_DEVICE"] == "se3"
     private var size: CGSize { isSEReview ? CGSize(width: 375, height: 667) : CGSize(width: 402, height: 874) }
     private let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
+
+    /// Renders the actual shared widget view at Home Screen sizes, in dark mode only.
+    func testWidgetPreviews() async throws {
+        guard let output = ProcessInfo.processInfo.environment["WIDGET_SCREENSHOT_OUTPUT"] else {
+            throw XCTSkip("Set WIDGET_SCREENSHOT_OUTPUT to a new evidence directory")
+        }
+        let directory = URL(fileURLWithPath: output, isDirectory: true)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let catalog = try await AppStarCatalog.load()
+        let fixture = try Fixture(catalog: catalog)
+        let pass = try XCTUnwrap(fixture.passes.map(\.pass).first {
+            $0.sunElevationAtTransit < -6 && ($0.highestIlluminated?.elev ?? 0) > 20 && $0.culmination.elev < 60
+        })
+        let now = Date(julianDate: pass.rise.julianDate).addingTimeInterval(-1800)
+        let skyService = ForecastService(brightStars: catalog.stars(maximumMagnitude: 3))
+        let request = ForecastRequest(observer: fixture.observer, dateRange: fixture.range)
+        let skies = try await skyService.widgetSkies(request: request, passes: [pass])
+        let track: [WidgetSkyPoint] = try (0...80).map { index in
+            let jd = pass.rise.julianDate + (pass.set.julianDate - pass.rise.julianDate) * Double(index) / 80
+            let sample = try SatelliteSnapshot(satelliteInfo: fixture.info, julianDate: jd, observer: fixture.observer)
+            return WidgetSkyPoint(azimuth: sample.position.azim, elevation: sample.position.elev,
+                                  illuminated: pass.isIlluminated(at: jd))
+        }
+        try JSONEncoder().encode(track).write(to: directory.appendingPathComponent("preview-track.json"))
+        let forecast = WidgetForecast(generated: now, expires: now.addingTimeInterval(86400), passes: [
+            WidgetPass(station: 25544, rise: Date(julianDate: pass.rise.julianDate),
+                peak: Date(julianDate: pass.culmination.julianDate), set: Date(julianDate: pass.set.julianDate),
+                elevation: pass.culmination.elev, startDirection: "SW", endDirection: "NE", skyTrack: track,
+                skyBackground: skies[pass.rise.julianDate]),
+            WidgetForecast.preview(at: now).passes[1]
+        ])
+        let cases: [(String, WidgetFamily, CGSize, Bool, Int, WidgetForecast?)] = [
+            ("small-stations", .systemSmall, .init(width: 170, height: 170), false, 25544, forecast),
+            ("small-chart-iss", .systemSmall, .init(width: 170, height: 170), true, 25544, forecast),
+            ("small-chart-tiangong", .systemSmall, .init(width: 170, height: 170), true, 48274, forecast),
+            ("medium-stations", .systemMedium, .init(width: 364, height: 170), false, 25544, forecast),
+            ("large-sky-chart", .systemLarge, .init(width: 364, height: 382), false, 25544, forecast),
+            ("large-empty", .systemLarge, .init(width: 364, height: 382), false, 25544,
+                .init(generated: now, expires: now.addingTimeInterval(3600), passes: [])),
+            ("small-setup", .systemSmall, .init(width: 170, height: 170), false, 25544, nil),
+            ("small-expired", .systemSmall, .init(width: 170, height: 170), false, 25544,
+                .init(generated: now.addingTimeInterval(-7200), expires: now.addingTimeInterval(-3600), passes: [])),
+            ("small-empty", .systemSmall, .init(width: 170, height: 170), false, 25544,
+                .init(generated: now, expires: now.addingTimeInterval(3600), passes: []))
+        ]
+        for (name, family, size, chart, station, data) in cases {
+            let content = StationWidgetView(forecast: data, date: now, family: family, chart: chart, station: station)
+                .padding(16)
+                .frame(width: size.width, height: size.height)
+                .background(StationWidgetView.background)
+                .clipShape(RoundedRectangle(cornerRadius: 24))
+                .environment(\.colorScheme, .dark)
+                .environment(\.locale, Locale(identifier: "en_US"))
+            let renderer = ImageRenderer(content: content)
+            renderer.scale = 3
+            let image = try XCTUnwrap(renderer.uiImage)
+            try XCTUnwrap(image.pngData()).write(to: directory.appendingPathComponent(name + ".png"))
+        }
+        func preview(_ family: WidgetFamily, chart: Bool, size: CGSize) -> some View {
+            StationWidgetView(forecast: forecast, date: now, family: family, chart: chart)
+                .padding(16).frame(width: size.width, height: size.height)
+                .background(StationWidgetView.background)
+                .clipShape(RoundedRectangle(cornerRadius: 24))
+        }
+        let gallery = VStack(alignment: .leading, spacing: 16) {
+            Text("Small widgets").font(.system(.headline, design: .rounded))
+            HStack(spacing: 24) {
+                preview(.systemSmall, chart: false, size: .init(width: 170, height: 170))
+                preview(.systemSmall, chart: true, size: .init(width: 170, height: 170))
+            }
+            Text("Two-station layout").font(.system(.headline, design: .rounded))
+            preview(.systemMedium, chart: false, size: .init(width: 364, height: 170))
+        }
+        .padding(20).foregroundStyle(.white)
+        .background(Color(red: 20/255, green: 34/255, blue: 51/255))
+        .environment(\.colorScheme, .dark)
+        .environment(\.locale, Locale(identifier: "en_US"))
+        let renderer = ImageRenderer(content: gallery)
+        renderer.scale = 3
+        try XCTUnwrap(renderer.uiImage?.pngData()).write(to: directory.appendingPathComponent("overview.png"))
+    }
+
+    /// Narrow widget frames expose overflow; the red outline marks the content boundary.
+    func testWidgetDateLayout() throws {
+        guard let output = ProcessInfo.processInfo.environment["WIDGET_SCREENSHOT_OUTPUT"] else {
+            throw XCTSkip("Set WIDGET_SCREENSHOT_OUTPUT for date-layout review")
+        }
+        let directory = URL(fileURLWithPath: output, isDirectory: true)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let zone = TimeZone(secondsFromGMT: 0)!
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = zone
+        let now = calendar.date(from: DateComponents(year: 2026, month: 9, day: 27, hour: 12))!
+        let rise = calendar.date(from: DateComponents(year: 2026, month: 9, day: 30, hour: 23, minute: 58))!
+        let forecast = WidgetForecast(generated: now, expires: now.addingTimeInterval(86400), passes: [25544, 48274].map {
+            WidgetPass(station: $0, rise: rise, peak: rise.addingTimeInterval(180),
+                set: rise.addingTimeInterval(360), elevation: 68, startDirection: "NW", endDirection: "SE", skyTrack: WidgetSkyPoint.previewTrack)
+        })
+        let cases: [(String, WidgetFamily, CGSize, Bool)] = [
+            ("small-rows", .systemSmall, .init(width: 158, height: 158), false),
+            ("small-chart", .systemSmall, .init(width: 158, height: 158), true),
+            ("medium", .systemMedium, .init(width: 338, height: 158), false),
+            ("large", .systemLarge, .init(width: 338, height: 354), false)
+        ]
+        for locale in ["en_US", "fr_FR", "de_DE", "zh_Hans"] {
+            for (typeName, typeSize) in [("normal", DynamicTypeSize.large), ("large-text", .xxxLarge)] {
+                let cards = cases.map { name, family, size, chart in
+                    AnyView(VStack(alignment: .leading, spacing: 4) {
+                        Text("\(name) · \(locale) · \(typeName)").font(.system(size: 11)).foregroundStyle(.white)
+                        StationWidgetView(forecast: forecast, date: now, family: family, chart: chart, station: 48274)
+                            .padding(16).frame(width: size.width, height: size.height)
+                            .background(StationWidgetView.background)
+                            .border(.red.opacity(0.6), width: 0.5)
+                            .environment(\.dynamicTypeSize, typeSize)
+                            .environment(\.locale, Locale(identifier: locale))
+                            .environment(\.timeZone, zone)
+                            .environment(\.calendar, calendar)
+                    }.padding(10))
+                }
+                let gallery = VStack(alignment: .leading, spacing: 8) {
+                    ForEach(cards.indices, id: \.self) { cards[$0] }
+                }.padding(10).background(Color(white: 0.15)).environment(\.colorScheme, .dark)
+                let renderer = ImageRenderer(content: gallery)
+                renderer.scale = 3
+                let image = try XCTUnwrap(renderer.uiImage)
+                try XCTUnwrap(image.pngData()).write(to: directory.appendingPathComponent("date-\(locale)-\(typeName).png"))
+            }
+        }
+    }
+
+    /// Render every supported language and layout in bounded phone-size viewports.
+    func testWidgetLocaleMatrix() throws {
+        guard let output = ProcessInfo.processInfo.environment["WIDGET_SCREENSHOT_OUTPUT"] else {
+            throw XCTSkip("Set WIDGET_SCREENSHOT_OUTPUT for locale review")
+        }
+        let folder = URL(fileURLWithPath: output).appendingPathComponent("locale-matrix")
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        let zone = TimeZone(secondsFromGMT: 0)!
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = zone
+        let now = calendar.date(from: .init(year: 2026, month: 9, day: 27, hour: 12))!
+        let rise = calendar.date(from: .init(year: 2026, month: 9, day: 30, hour: 23, minute: 58))!
+        let locales = ["en_US", "es_ES", "fr_FR", "pt_BR", "ru_RU", "zh_Hans", "ja_JP", "ko_KR"]
+        let profiles: [(String, CGFloat, CGFloat, CGFloat)] = [
+            ("compact", 146, 292, 311), ("narrow", 158, 338, 354),
+            ("regular", 170, 364, 382), ("wide", 180, 382, 402)
+        ]
+        var report = "locale,profile,text,state,layout,width,height,outside_pixels\n"
+        var overflow = [String]()
+        var count = 0
+        func forecast(_ state: String, station: Int) -> WidgetForecast? {
+            if state == "setup" { return nil }
+            let start = state == "ongoing" ? now.addingTimeInterval(-30) : rise
+            return WidgetForecast(generated: now.addingTimeInterval(-7200),
+                expires: state == "expired" ? now.addingTimeInterval(-60) : rise.addingTimeInterval(3600),
+                passes: state == "empty" ? [] : [station, station == 25544 ? 48274 : 25544].enumerated().map { index, id in
+                    WidgetPass(station: id, rise: start.addingTimeInterval(Double(index) * 10),
+                        peak: start.addingTimeInterval(180), set: start.addingTimeInterval(360), elevation: 32,
+                        startDirection: "SW", endDirection: "NE",
+                        skyTrack: state == "legacy" ? nil : WidgetSkyPoint.previewTrack)
+                })
+        }
+        func card(locale: String, profile: String, typeName: String, typeSize: DynamicTypeSize,
+                  state: String, name: String, family: WidgetFamily, size: CGSize, chart: Bool, station: Int) throws -> AnyView {
+            let margin: CGFloat = 24
+            let view = StationWidgetView(forecast: forecast(state, station: station), date: now,
+                family: family, chart: chart, station: station)
+                .padding(16).frame(width: size.width, height: size.height)
+                .background(StationWidgetView.background).border(.red.opacity(0.65), width: 0.5)
+                .padding(margin)
+                .environment(\.locale, Locale(identifier: locale)).environment(\.calendar, calendar)
+                .environment(\.timeZone, zone).environment(\.colorScheme, .dark)
+                .environment(\.dynamicTypeSize, typeSize)
+            let renderer = ImageRenderer(content: view)
+            renderer.scale = 1
+            let image = try XCTUnwrap(renderer.uiImage)
+            let cgImage = try XCTUnwrap(image.cgImage)
+            let width = cgImage.width, height = cgImage.height
+            var bytes = [UInt8](repeating: 0, count: width * height * 4)
+            bytes.withUnsafeMutableBytes { buffer in
+                let context = CGContext(data: buffer.baseAddress, width: width, height: height, bitsPerComponent: 8,
+                    bytesPerRow: width * 4, space: CGColorSpaceCreateDeviceRGB(),
+                    bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
+                context.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
+            }
+            var outside = 0
+            for y in 0..<height {
+                for x in 0..<width where x < 23 || x >= width - 23 || y < 23 || y >= height - 23 {
+                    if bytes[(y * width + x) * 4 + 3] > 20 { outside += 1 }
+                }
+            }
+            count += 1
+            report += "\(locale),\(profile),\(typeName),\(state),\(name),\(size.width),\(size.height),\(outside)\n"
+            if outside > 0 { overflow.append("\(locale)/\(profile)/\(typeName)/\(state)/\(name): \(outside)") }
+            return AnyView(VStack(spacing: 0) {
+                Text("\(name) · \(Int(size.width))×\(Int(size.height)) · \(state)")
+                    .font(.system(size: 10)).foregroundStyle(.white)
+                Image(uiImage: image)
+            })
+        }
+        func save(_ rows: [[AnyView]], name: String) throws {
+            let sheet = VStack(alignment: .leading, spacing: 8) {
+                Text(name).font(.system(size: 15, weight: .semibold)).foregroundStyle(.white)
+                ForEach(rows.indices, id: \.self) { row in
+                    HStack(alignment: .top, spacing: 0) {
+                        ForEach(rows[row].indices, id: \.self) { col in rows[row][col] }
+                    }
+                }
+            }.padding(12).background(Color(white: 0.15))
+            let renderer = ImageRenderer(content: sheet)
+            renderer.scale = 1.5
+            try XCTUnwrap(renderer.uiImage?.pngData()).write(to: folder.appendingPathComponent(name + ".png"))
+        }
+        for locale in locales {
+            for (typeName, typeSize) in [("normal", DynamicTypeSize.large), ("XXXL", .xxxLarge), ("AX5", .accessibility5)] {
+                for (profile, small, wide, tall) in profiles {
+                    // The largest accessibility setting is additionally stressed on the smallest profile.
+                    if typeName == "AX5" && profile != "compact" { continue }
+                    var rows = [[AnyView](), [AnyView]()]
+                    for (name, family, size, chart, station) in [
+                        ("small-rows", WidgetFamily.systemSmall, CGSize(width: small, height: small), false, 25544),
+                        ("small-ISS", .systemSmall, CGSize(width: small, height: small), true, 25544),
+                        ("small-Tiangong", .systemSmall, CGSize(width: small, height: small), true, 48274),
+                        ("medium", .systemMedium, CGSize(width: wide, height: small), false, 25544),
+                        ("large-ISS", .systemLarge, CGSize(width: wide, height: tall), false, 25544),
+                        ("large-Tiangong", .systemLarge, CGSize(width: wide, height: tall), false, 48274)
+                    ] {
+                        rows[family == .systemSmall ? 0 : 1].append(try card(locale: locale, profile: profile,
+                            typeName: typeName, typeSize: typeSize, state: "future", name: name, family: family,
+                            size: size, chart: chart, station: station))
+                    }
+                    try save(rows, name: "\(locale)-\(profile)-\(typeName)")
+                }
+            }
+            for state in ["ongoing", "empty", "setup", "expired", "legacy"] {
+                var rows = [[AnyView](), [AnyView]()]
+                for (typeName, typeSize) in [("normal", DynamicTypeSize.large), ("XXXL", .xxxLarge), ("AX5", .accessibility5)] {
+                    let cards = try [("rows", WidgetFamily.systemSmall, CGSize(width: 146, height: 146), false),
+                                     ("chart", .systemSmall, CGSize(width: 146, height: 146), true),
+                                     ("medium", .systemMedium, CGSize(width: 292, height: 146), false),
+                                     ("large", .systemLarge, CGSize(width: 292, height: 311), false)].map { name, family, size, chart in
+                        try card(locale: locale, profile: "compact", typeName: typeName, typeSize: typeSize,
+                            state: state, name: name + "-" + typeName, family: family, size: size, chart: chart, station: 48274)
+                    }
+                    rows.append(cards)
+                }
+                try save(rows.filter { !$0.isEmpty }, name: "\(locale)-states-\(state)")
+            }
+        }
+        try report.write(to: folder.appendingPathComponent("bounds.csv"), atomically: true, encoding: .utf8)
+        try ("Rendered \(count) cases.\n" + overflow.joined(separator: "\n")).write(
+            to: folder.appendingPathComponent("bounds-summary.txt"), atomically: true, encoding: .utf8)
+        XCTAssertTrue(overflow.isEmpty, "Rendered content crossed widget bounds: \(overflow.prefix(12))")
+    }
 
     /// Opt-in interactive fixture for native navigation gestures (driven by the simulator CLI).
     /// Create /tmp/satellite-pass-navigation-review before running this test; remove it to finish.

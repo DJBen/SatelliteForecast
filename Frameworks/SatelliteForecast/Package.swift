@@ -8,6 +8,7 @@ let package = Package(
         .iOS("26.0")
     ],
     products: [
+        .library(name: "SatelliteWidgetSupport", targets: ["SatelliteWidgetSupport"]),
         .library(
             name: "SatelliteForecast",
             targets: ["SatelliteForecast"]),
@@ -37,6 +38,7 @@ let package = Package(
         .package(path: "../SatellitePasses"),
     ],
     targets: [
+        .target(name: "SatelliteWidgetSupport", path: "WidgetSupport", resources: [.process("Resources")]),
         .target(
             name: "SatelliteForecast",
             dependencies: [
@@ -55,6 +57,7 @@ let package = Package(
         .target(
             name: "SatelliteForecastImpl",
             dependencies: [
+                "SatelliteWidgetSupport",
                 "SatelliteForecast",
                 "ActivityView",
                 "SwiftUIVisualEffects",

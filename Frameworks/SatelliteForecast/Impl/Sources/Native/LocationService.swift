@@ -3,6 +3,7 @@ import MapKit
 import Observation
 import SatelliteForecast
 import SatelliteKit
+import SatelliteWidgetSupport
 
 @MainActor @Observable
 public final class LocationService: NSObject, CLLocationManagerDelegate {
@@ -45,6 +46,11 @@ public final class LocationService: NSObject, CLLocationManagerDelegate {
     if let location = resources.location,
       let data = try? JSONEncoder().encode(LatLonAlt(location: location))
     {
+      let previous = UserDefaults.standard.data(forKey: "lastUsedLocation")
+        .flatMap { try? JSONDecoder().decode(LatLonAlt.self, from: $0) }
+      if previous != LatLonAlt(location: location) {
+        WidgetForecastStore.clear()
+      }
       UserDefaults.standard.set(data, forKey: "lastUsedLocation")
     }
   }

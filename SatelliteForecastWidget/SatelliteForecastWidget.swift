@@ -1,71 +1,85 @@
-//
-//  SatelliteForecastWidget.swift
-//  SatelliteForecastWidget
-//
-//  Created by Sihao Lu on 7/26/25.
-//
-
-import WidgetKit
+import AppIntents
 import SwiftUI
+import WidgetKit
+import SatelliteWidgetSupport
 
-struct Provider: TimelineProvider {
-    func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), emoji: "😀")
-    }
-
-    func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-        let entry = SimpleEntry(date: Date(), emoji: "😀")
-        completion(entry)
-    }
-
-    func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-        var entries: [SimpleEntry] = []
-
-        // Generate a timeline consisting of five entries an hour apart, starting from the current date.
-        let currentDate = Date()
-        for hourOffset in 0 ..< 5 {
-            let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-            let entry = SimpleEntry(date: entryDate, emoji: "😀")
-            entries.append(entry)
-        }
-
-        let timeline = Timeline(entries: entries, policy: .atEnd)
-        completion(timeline)
-    }
-
-//    func relevances() async -> WidgetRelevances<Void> {
-//        // Generate a list containing the contexts this widget is relevant in.
-//    }
+enum SmallWidgetLayout: String, AppEnum {
+    case stations, chart
+    static let typeDisplayRepresentation: TypeDisplayRepresentation = "Small widget style"
+    static let caseDisplayRepresentations: [Self: DisplayRepresentation] = [
+        .stations: "Both stations", .chart: "Pass chart"
+    ]
 }
 
-struct SimpleEntry: TimelineEntry {
+enum WidgetStation: String, AppEnum {
+    case iss, tiangong
+    static let typeDisplayRepresentation: TypeDisplayRepresentation = "Station"
+    static let caseDisplayRepresentations: [Self: DisplayRepresentation] = [.iss: "ISS", .tiangong: "Tiangong"]
+    var norad: Int { self == .iss ? 25544 : 48274 }
+}
+
+struct StationWidgetConfiguration: WidgetConfigurationIntent {
+    static let title: LocalizedStringResource = "Next passes"
+    static let description = IntentDescription("Choose a small-widget style and its chart station. Medium shows both stations. Large shows the next visible pass across both stations.")
+    @Parameter(title: "Small widget style", default: .stations) var layout: SmallWidgetLayout
+    @Parameter(title: "Small chart station", default: .iss) var station: WidgetStation
+}
+
+struct StationEntry: TimelineEntry {
     let date: Date
-    let emoji: String
+    let forecast: WidgetForecast?
+    let configuration: StationWidgetConfiguration
 }
 
-struct SatelliteForecastWidgetEntryView : View {
-    var entry: Provider.Entry
-
-    var body: some View {
-        VStack {
-            Text("Time:")
-            Text(entry.date, style: .time)
-
-            Text("Emoji:")
-            Text(entry.emoji)
+struct StationProvider: AppIntentTimelineProvider {
+    func placeholder(in context: Context) -> StationEntry {
+        let now = Date()
+        return .init(date: now, forecast: .preview(at: now), configuration: .init())
+    }
+    func snapshot(for configuration: StationWidgetConfiguration, in context: Context) async -> StationEntry {
+        let now = Date()
+        return .init(date: now, forecast: context.isPreview ? .preview(at: now) : WidgetForecastStore.read(), configuration: configuration)
+    }
+    func timeline(for configuration: StationWidgetConfiguration, in context: Context) async -> Timeline<StationEntry> {
+        let now = Date()
+        let forecast = WidgetForecastStore.read()
+        let dates = forecast?.entryDates(after: now) ?? [now]
+        // Keep each serialized entry small: only the next pass for each station is displayed.
+        let entries = dates.map { date in
+            let compact = forecast.map { saved in
+                WidgetForecast(generated: saved.generated, expires: saved.expires,
+                    passes: [saved.next(station: 25544, at: date), saved.next(station: 48274, at: date)].compactMap { $0 })
+            }
+            return StationEntry(date: date, forecast: compact, configuration: configuration)
         }
+        return Timeline(entries: entries, policy: .after(now.addingTimeInterval(3600)))
+    }
+}
+
+struct StationWidgetEntryView: View {
+    @Environment(\.widgetFamily) private var family
+    let entry: StationEntry
+    var body: some View {
+        StationWidgetView(forecast: entry.forecast, date: entry.date, family: family,
+                          chart: entry.configuration.layout == .chart, station: entry.configuration.station.norad)
+            .containerBackground(StationWidgetView.background, for: .widget)
     }
 }
 
 struct SatelliteForecastWidget: Widget {
-    let kind: String = "SatelliteForecastWidget"
-
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: Provider()) { entry in
-            SatelliteForecastWidgetEntryView(entry: entry)
-                .containerBackground(.fill.tertiary, for: .widget)
+        AppIntentConfiguration(kind: WidgetForecastStore.kind, intent: StationWidgetConfiguration.self, provider: StationProvider()) {
+            StationWidgetEntryView(entry: $0)
         }
-        .configurationDisplayName("My Widget")
-        .description("This is an example widget.")
+        .configurationDisplayName("Space Station Passes")
+        .description("The next visible ISS and Tiangong passes for your app location. Choose two station rows or a simple chart in the small size.")
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
     }
+}
+
+#Preview("Both stations", as: .systemSmall) {
+    SatelliteForecastWidget()
+} timeline: {
+    let now = Date()
+    StationEntry(date: now, forecast: .preview(at: now), configuration: .init())
 }

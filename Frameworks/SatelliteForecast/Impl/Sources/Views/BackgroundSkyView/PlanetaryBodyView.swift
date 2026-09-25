@@ -122,7 +122,7 @@ extension SolarSystemBody {
 
     }
 
-    fileprivate func visible(sunElevation: Double) -> Bool {
+    func visible(sunElevation: Double) -> Bool {
         switch self {
         case .sun, .moon:
             return true

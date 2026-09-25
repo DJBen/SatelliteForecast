@@ -165,3 +165,23 @@ calculations remain local and preserve all existing measurement boundaries.
 The optional planetarium FPS readout uses local Metal presentation timestamps. It sends no telemetry and changes no screen names, events, or measurement boundaries.
 
 Planetarium deep-star loading queries local indexed H3 cells on a dedicated actor. Region keys, camera directions, star IDs, cache statistics, and FPS remain local rendering state; no new analytics operations or per-region events are emitted. The existing `load_sky_catalog` operation still measures satellite catalog loading, not these star queries.
+
+
+## Home Screen widgets
+
+Widget timelines and configuration introduce no analytics events or new screen
+names. Successful real-time station forecasts publish visible-pass summaries to
+an App Group container; this storage is local and is not telemetry. Debug time
+travel, tests, and previews do not publish forecasts. Widget opening enters the
+existing app flow without emitting `notification_opened`. Location changes clear
+the shared cache; existing forecast operation boundaries remain unchanged.
+
+Large-widget sky-track sampling runs locally after the existing station forecast
+results are accepted. It adds no screen, event, or telemetry parameter and is
+excluded from the existing forecast operation timers. Azimuth/elevation samples
+and illumination states stay in the local App Group cache.
+
+Widget bright-star and solar-background preparation uses the existing local
+catalog and pass observer/time. It adds no analytics events or parameters and
+remains outside forecast operation timers. Star positions and spectral metadata
+are cached locally only.

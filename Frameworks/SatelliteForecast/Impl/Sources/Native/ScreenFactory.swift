@@ -66,7 +66,7 @@ public struct NativeForecastView: SatelliteOverviewView {
   public init(session: AppSession, context: SatelliteOverviewViewContext) {
     self.session = session
     self.context = context
-    _model = State(initialValue: ForecastModel(client: .live(service: ForecastService())))
+    _model = State(initialValue: ForecastModel(client: .live(service: ForecastService(brightStars: session.catalog.stars(maximumMagnitude: 3)))))
   }
   public var body: some View {
     @Bindable var navigation = session.navigation

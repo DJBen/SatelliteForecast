@@ -7,6 +7,7 @@
 
 import BTree
 import UIKit
+import SatelliteWidgetSupport
 import SatelliteForecast
 @preconcurrency import SatelliteKit
 import StarryNight
@@ -86,46 +87,11 @@ public enum SkyChartUtils {
         to ctx: UIGraphicsImageRendererContext,
         params: SatellitePassPathRenderParams
     ) {
-        let snapshotsByIllumination = params.snapshotsDuringPass.split(inclusivity: .includesSecondElementsInPreviousGroup) { (e1, e2) -> Bool in
-            return e1.isIlluminated != e2.isIlluminated
-        }
-        ctx.cgContext.saveGState()
-        for index in snapshotsByIllumination.indices {
-            let isIlluminated = snapshotsByIllumination[index].first!.isIlluminated
-            let color = isIlluminated ? params.illuminatedColor : params.unlitColor
-            let snapshotsGroup = snapshotsByIllumination[index]
-
-            ctx.cgContext.setStrokeColor(color.cgColor)
-            ctx.cgContext.setLineWidth(params.lineWidth)
-            for i in snapshotsGroup.indices where i < snapshotsGroup.index(before: snapshotsGroup.endIndex) {
-                if i == snapshotsGroup.startIndex {
-                    let point = point(at: AziEle(snapshotsGroup[i].position), rect: params.rect)
-                    ctx.cgContext.move(to: point)
-                }
-                let nextPoint = point(at: AziEle(snapshotsGroup[snapshotsGroup.index(after: i)].position), rect: params.rect)
-                ctx.cgContext.addLine(to: nextPoint)
-            }
-            ctx.cgContext.drawPath(using: .stroke)
-            
-            if snapshotsGroup.count > 3 {
-                ctx.cgContext.saveGState()
-
-                let e1 = snapshotsGroup[snapshotsGroup.count / 2 - 1].position
-                let e2 = snapshotsGroup[snapshotsGroup.count / 2].position
-                let p1 = point(at: AziEle(e1), rect: params.rect)
-                let p2 = point(at: AziEle(e2), rect: params.rect)
-                let rot = atan2pi(Double(p2.y - p1.y), Double(p2.x - p1.x))
-                ctx.cgContext.translateBy(x: p1.x, y: p1.y)
-                ctx.cgContext.rotate(by: CGFloat(rot))
-                ctx.cgContext.setFillColor(color.cgColor)
-                let image = UIImage(systemName: "arrowtriangle.right.fill")!
-                let imageRect = CGRect(origin: CGPoint(x: -params.arrowSize / 2, y: -params.arrowSize / 2), size: CGSize(width: params.arrowSize, height: params.arrowSize))
-                ctx.cgContext.clip(to: imageRect, mask: image.cgImage!)
-                ctx.cgContext.fill(imageRect)
-                ctx.cgContext.restoreGState()
-            }
-        }
-        ctx.cgContext.restoreGState()
+        SkyPassPathRenderer.draw(in: ctx.cgContext, rect: params.rect,
+            track: params.snapshotsDuringPass.map {
+                WidgetSkyPoint(azimuth: $0.position.azim, elevation: $0.position.elev, illuminated: $0.isIlluminated)
+            }, lineWidth: params.lineWidth, illuminatedColor: params.illuminatedColor,
+            unlitColor: params.unlitColor, arrowSize: params.arrowSize)
     }
 
     public static func rasterizedSatellitePassPath(
@@ -141,7 +107,7 @@ public enum SkyChartUtils {
     public static func addRasterizedBackgroundSkyPath(
         to ctx: UIGraphicsImageRendererContext,
         params: BackgroundSkyRenderParams,
-        starManager: AppStarCatalog
+        starManager: AppStarCatalog?
     ) {
         if let border = params.border {
             ctx.cgContext.saveGState()
@@ -184,9 +150,9 @@ public enum SkyChartUtils {
             if alt < 0 {
                 continue
             }
-            for line in starManager.constellationLines(for: constellation) {
-                guard let star1 = starManager.star(withId: line.star1Id),
-                      let star2 = starManager.star(withId: line.star2Id) else { continue }
+            for line in (starManager?.constellationLines(for: constellation) ?? []) {
+                guard let star1 = starManager?.star(withId: line.star1Id),
+                      let star2 = starManager?.star(withId: line.star2Id) else { continue }
                 let aziElev1 = azel(time: Date(julianDate: params.julianDate), site: LatLon(params.observer), cele: RADec(star1.coordinate))
                 let aziElev2 = azel(time: Date(julianDate: params.julianDate), site: LatLon(params.observer), cele: RADec(star2.coordinate))
                 if aziElev1.elev < 0 || aziElev2.elev < 0 {
@@ -269,9 +235,42 @@ public enum SkyChartUtils {
         ctx.cgContext.restoreGState()
     }
         
+    /// Compact charts use the same naked-eye planets, twilight rules and photometry
+    /// as PlanetaryBodyView, without text or astronomical-symbol labels.
+    static func widgetPlanets(observer: LatLonAlt, julianDate: Double) -> [(body: SolarSystemBody, coordinate: AziEle, magnitude: Double)] {
+        let sunElevation = SkyChartAtmosphere.sun(observer: observer, julianDate: julianDate).elev
+        return [SolarSystemBody.mercury, .venus, .mars, .jupiter, .saturn].compactMap { body in
+            let coordinate = azel(time: Date(julianDate: julianDate), site: LatLon(observer),
+                cele: RADec(body.eci(julianDay: julianDate)))
+            guard coordinate.elev >= 0, body.visible(sunElevation: sunElevation),
+                  let magnitude = body.apparentMagnitude(julianDay: julianDate), magnitude.isFinite else { return nil }
+            return (body, coordinate, magnitude)
+        }
+    }
+
+    static func addUnlabeledPlanetsAndMoon(to context: UIGraphicsImageRendererContext,
+                                         rect: CGRect, observer: LatLonAlt, julianDate: Double) {
+        let cg = context.cgContext
+        cg.saveGState()
+        defer { cg.restoreGState() }
+        cg.addEllipse(in: rect)
+        cg.clip()
+        for planet in widgetPlanets(observer: observer, julianDate: julianDate) {
+            SkyChartTheme.drawPointSource(in: cg, at: point(at: planet.coordinate, rect: rect),
+                radius: max(1, min(3.5, 1.65 - 0.3 * planet.magnitude)),
+                color: SkyChartTheme.starColor(traitCollection: UITraitCollection.current), magnitude: planet.magnitude)
+        }
+        let moon = MoonAppearance.Geometry(julianDate: julianDate, observer: observer)
+        if moon.coordinate.elev >= 0 {
+            let center = point(at: moon.coordinate, rect: rect)
+            MoonAppearance.photograph(geometry: moon, dimension: 48)?.draw(in:
+                CGRect(x: center.x - 12, y: center.y - 12, width: 24, height: 24))
+        }
+    }
+
     public static func rasterizedBackgroundSkyPath(
         params: BackgroundSkyRenderParams,
-        starManager: AppStarCatalog
+        starManager: AppStarCatalog?
     ) -> UIImage {
         let renderer = UIGraphicsImageRenderer(size: params.rect.size)
 

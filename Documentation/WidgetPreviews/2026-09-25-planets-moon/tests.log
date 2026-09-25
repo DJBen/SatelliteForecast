@@ -1,0 +1,25 @@
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/SatelliteForecastTests/NativeArchitectureTests.swift:192:25: warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning:     |                         `- warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/SatelliteForecastTests/NativeArchitectureTests.swift:211:13: warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning:     |             `- warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/SatelliteForecastTests/NativeArchitectureTests.swift:207:13: warning: initialization of immutable value 'navigation' was never used; consider replacing with assignment to '_' or removing it [#NoUsage]
+⚠️ Warning:     |             `- warning: initialization of immutable value 'navigation' was never used; consider replacing with assignment to '_' or removing it [#NoUsage]
+✅ Test Run test succeeded for scheme SatelliteForecastApp.
+
+Test Results Summary:
+Test Summary: Test - SatelliteForecastApp
+Overall Result: Passed
+
+Test Counts:
+  Total: 41
+  Passed: 41
+  Failed: 0
+  Skipped: 0
+  Expected Failures: 0
+
+Environment: SatelliteForecast · Built with macOS 27.0
+
+Device: iPhone 17 Pro Max (iOS Simulator 27.0)
+
+Insights:
+  1. [68% of duration] 1 longest test run with outlier durations exceeding 5.57s (three standard deviations)
