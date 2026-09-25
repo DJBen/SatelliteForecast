@@ -154,12 +154,50 @@ final class ForecastTests: XCTestCase {
             let start = projection.point(azimuth: rise, elevation: 0)
             let end = projection.point(azimuth: set, elevation: 0)
             let top = projection.point(azimuth: peak, elevation: 60)
-            XCTAssertEqual(start.x, 15, accuracy: 0.001)
-            XCTAssertEqual(end.x, 345, accuracy: 0.001)
+            XCTAssertLessThan(start.x, 180)
+            XCTAssertGreaterThan(end.x, 180)
+            XCTAssertGreaterThanOrEqual(start.x, 14.999)
+            XCTAssertLessThanOrEqual(end.x, 345.001)
             XCTAssertEqual(start.y, end.y, accuracy: 0.001)
             XCTAssertLessThan(top.y, start.y)
             XCTAssertTrue(top.x.isFinite && top.y.isFinite)
         }
+    }
+
+    func testHomeChoosesMinorArcRegardlessOfCulmination() {
+        XCTAssertEqual(ObservationSkyProjection.minorArc(from: 350, to: 10), 20)
+        XCTAssertEqual(ObservationSkyProjection.minorArc(from: 10, to: 350), -20)
+        XCTAssertEqual(ObservationSkyProjection.minorArc(from: 310, to: 145), -165)
+        XCTAssertEqual(ObservationSkyProjection.minorArc(from: 145, to: 310), 165)
+        XCTAssertEqual(ObservationSkyProjection.minorArc(from: 0, to: 180), 180)
+        let original = pass(at: date)
+        let contraryPeak = Pass(noradIndex: original.noradIndex,
+            rise: .init(julianDate: original.rise.julianDate, azim: 350, elev: 0),
+            set: .init(julianDate: original.set.julianDate, azim: 10, elev: 0),
+            culmination: .init(julianDate: original.culmination.julianDate, azim: 180, elev: 80),
+            illumination: original.illumination, sunElevationAtTransit: -20)
+        let projection = ObservationSkyProjection(pass: contraryPeak, samples: [], size: CGSize(width: 360, height: 258))
+        XCTAssertEqual(projection.arc, 20)
+        XCTAssertEqual(projection.front.x, 0, accuracy: 1e-10)
+        XCTAssertEqual(projection.front.y, 1, accuracy: 1e-10)
+    }
+
+    func testDirectSkyRaysAlignWithCatalogAndPreserveLocalShape() {
+        let projection = ObservationSkyProjection(pass: pass(at: date), samples: [], size: CGSize(width: 360, height: 258))
+        for (azimuth, elevation) in [(30.0, 0.0), (90, 30), (160, 75)] {
+            let point = projection.point(azimuth: azimuth, elevation: elevation)
+            let ray = projection.direction(at: point)
+            XCTAssertEqual(atan2(ray.x, ray.y) * 180 / .pi, azimuth, accuracy: 1e-8)
+            XCTAssertEqual(asin(ray.z) * 180 / .pi, elevation, accuracy: 1e-8)
+        }
+        // Equal tiny angular distances in perpendicular directions must have
+        // equal pixel lengths. Independent horizontal/vertical stretching fails.
+        let center = projection.point(azimuth: 90, elevation: 30)
+        let across = projection.point(azimuth: 90 + 0.01 / cos(.pi / 6), elevation: 30)
+        let above = projection.point(azimuth: 90, elevation: 30.01)
+        let a = hypot(across.x - center.x, across.y - center.y)
+        let b = hypot(above.x - center.x, above.y - center.y)
+        XCTAssertEqual(a / b, 1, accuracy: 0.001)
     }
 
     func testHomeDomeHidesBodiesBehindTheProjectedSky() {

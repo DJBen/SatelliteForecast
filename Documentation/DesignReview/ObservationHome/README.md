@@ -21,21 +21,25 @@ checkout were not copied or modified.
 
 ## Sky illustration
 
-Uses the **app** `BackgroundSkyView`, `SkyChartAtmosphere`, Milky Way,
-`SkyChartTheme` spectral point sources, observer-aware Moon, and planetary body
-renderer. The home illustration now views the sky dome from 12° above the horizon,
-with rise at the left and set at the right. Its vertical extent fits the pass;
-this preview is an overview, not an angular scale. The full all-sky chart remains
-available on tap. A dotted, curved horizon replaces the circular chart border.
+The rise-to-set bearing uses the signed **minor arc** (at most 180°), including
+wraparound at north. Culmination no longer chooses the hemisphere. Exactly opposite
+directions are an unavoidable 180° tie and consistently use the positive arc.
 
-A Metal layer effect reprojects the existing diffuse sky texture using the inverse
-of the track projection. Stars, Moon and planet disks use the same projected
-positions but preserve their original point-source glow and round artwork. The preview disables the chart's UIKit star-tap
-overlay so it can be composited correctly. Star names, constellation lines, planet
-names and planet symbols are hidden in this preview only. Stars are limited to
-magnitude 2.5 or brighter (previously 4.5); full chart defaults are unchanged.
+The sky is rendered directly into the final view. `ChartRenderer` samples the
+app's original spherical NASA galaxy texture for each output pixel's sky ray and
+evaluates the in-app planetarium's night/twilight palette in that direction. There
+is no intermediate circular sky image or distortion shader. A stereographic camera
+uses one uniform scale for both axes, preserving local shapes rather than fitting
+the background into a vertically stretched dome. The curved dotted horizon remains.
 
-The background is prepared at culmination on the existing renderer actor. A
+Stars are drawn from the catalog with `SkyChartTheme`'s point-source glow and
+spectral color at magnitude 2.5 or brighter. Moon and planet disks reuse the app's
+existing artwork and observer-aware positions. All celestial objects use the same
+camera, remain unlabeled and retain their round shapes. The full sky chart remains
+available on tap, with its defaults unchanged.
+
+The background is prepared at culmination on the existing renderer actor at up
+to two pixels per point. Rendering cancels when the pass, observer or size changes. A
 small Canvas interpolates precomputed orbital samples at 30 fps over a 12-second
 preview plus a three-second end hold. Solid versus dotted indicates elapsed
 versus remaining **preview** time. Teal versus slate indicates illumination,
@@ -49,10 +53,10 @@ No additional network asset source or widget renderer is used.
 ## Verification
 
 - Build/run and dark-mode visual review: iPhone 17 Pro Max, iOS 27 simulator.
-- 45 selected regression and snapshot tests passed (0 failures). Coverage: dome
-  orientation across north, body visibility, forecast ordering, duplicates, visibility,
+- 47 selected regression and snapshot tests passed (0 failures). Coverage: minor-arc
+  selection, north wraparound, direct ray/catalog alignment, uniform local scale,
+  body visibility, forecast ordering, duplicates, visibility,
   shadow-window reminder time, expiry, stale results, location search and analytics.
-  The final point-source rendering refinement also passed the native screenshot run.
 - Native dark captures cover home, missing location, empty forecast, large text,
   and playback at 20% and 82% (under `../after/observation-*.png`).
 - Interactive runtime: choosing simulated San Francisco location, permission

@@ -208,5 +208,7 @@ not live tracking. Local preview preparation follows the existing forecast
 operation, is excluded from forecast timings, and sends no additional telemetry.
 No frame, orbital position, observer, place name or notification ID is logged.
 
-The tilted home sky dome changes only local presentation. Its projection, bright-star
-cutoff, horizon and animation retain the same event and measurement boundaries.
+The home sky uses a minor-arc camera and directly renders its spherical galaxy
+source, atmosphere and celestial objects. These local rendering changes, the
+bright-star cutoff, horizon and animation retain the same event and measurement
+boundaries. No per-pixel or per-frame operations are logged.

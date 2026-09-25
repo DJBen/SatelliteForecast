@@ -27,27 +27,8 @@ struct ObservationSkyPreview: View {
             let projection = ObservationSkyProjection(pass: pass, samples: samples, size: geometry.size)
             let points = samples.map { projection.point(azimuth: $0.position.azim, elevation: $0.position.elev) }
             ZStack(alignment: .topLeading) {
-                ScreenFactory(session: session).background(.init(observer: observer,
-                    basicChartConfigs: .init(showAzimuthTexts: false, azimuthMarkInterval: 90,
-                        azimuthMarkLength: 0, showDirections: false, showsAttitude: false),
-                    configs: .init(stars: .none, showConstellationLines: false,
-                        showStarNames: false, visibleBodies: [], bodySymbol: .none), quality: .full,
-                    allowsStarInteraction: false,
-                    starManager: session.catalog, constellationLabel: { _ in EmptyView() },
-                    annotationView: { _ in EmptyView() }, starTapped: { _ in }))
-                    .environment(\.backgroundSkyJulianDateKey, pass.culmination.julianDate.roundJulianDate(.toMins(1)))
-                    .frame(width: geometry.size.width, height: geometry.size.width)
-                    .drawingGroup()
-                    .layerEffect(ShaderLibrary.bundle(.module).observationSkyDome(
-                        .float4(Float(geometry.size.width), Float(geometry.size.height),
-                                Float(projection.extent), Float(projection.horizonDepth)),
-                        .float4(Float(projection.right.x), Float(projection.right.y),
-                                Float(projection.front.x), Float(projection.front.y)),
-                        .float4(Float(projection.baseline), Float(projection.verticalScale),
-                                Float(ObservationSkyProjection.tilt), Float(projection.halfWidth))),
-                        maxSampleOffset: CGSize(width: geometry.size.width, height: geometry.size.width))
-                    .frame(height: geometry.size.height, alignment: .top)
-                    .clipped()
+                ObservationSkyBackground(projection: projection, observer: observer,
+                    julianDate: pass.culmination.julianDate, renderer: session.renderer)
                 // Project positions, not point-source artwork: bright stars retain
                 // the chart's compact spectral glow instead of becoming stretched.
                 Canvas { context, _ in
@@ -81,9 +62,8 @@ struct ObservationSkyPreview: View {
                 Canvas { context, _ in
                     var horizon = Path()
                     for step in 0...120 {
-                        let x = -projection.extent + 2 * projection.extent * Double(step) / 120
-                        let depth = sqrt(max(0, 1 - x * x))
-                        let point = projection.point(right: x, front: depth, up: 0)
+                        let azimuth = pass.rise.azim + projection.arc * Double(step) / 120
+                        let point = projection.point(azimuth: azimuth, elevation: 0)
                         if step == 0 { horizon.move(to: point) } else { horizon.addLine(to: point) }
                     }
                     context.stroke(horizon, with: .color(AppTheme.muted.opacity(0.5)),
@@ -173,70 +153,80 @@ struct ObservationSkyPreview: View {
     }
 }
 
-/// Orthographic sky dome viewed from 12° above the horizon. Orient its horizontal
-/// axis from rise to set, then fit the pass vertically. The shader uses its inverse
-/// to sample the existing azimuth/elevation sky texture; celestial positions and
-/// the track therefore retain the same orientation. This is an overview, not an
-/// angular scale (the detailed chart remains available on tap).
-struct ObservationSkyProjection {
-    static let tilt = 12.0 * Double.pi / 180
-    let size: CGSize
+/// A conformal sky view centered on the minor rise-to-set arc. Stereographic
+/// projection uses ONE scale for both axes, preserving local celestial shapes.
+/// The diffuse sky is rendered directly from spherical source data in this view;
+/// no intermediate circular chart, hemisphere folding or vertical stretch is used.
+struct ObservationSkyProjection: Hashable, Sendable {
+    static let pitch = -18.0 * Double.pi / 180
+    let width: Double
+    let height: Double
+    let arc: Double
+    let centerAzimuth: Double
     let right: SIMD2<Double>
     let front: SIMD2<Double>
-    let extent: Double
-    let horizonDepth: Double
-    let verticalScale: Double
-    let baseline: Double
-    var halfWidth: Double { max(1, (size.width - 30) / 2) }
+    let scale: Double
+    let originY: Double
+    var size: CGSize { CGSize(width: width, height: height) }
 
-    init(pass: Pass, samples: [SatelliteSnapshot], size: CGSize) {
-        self.size = size
-        func horizontal(_ azimuth: Double) -> SIMD2<Double> {
-            let a = azimuth * .pi / 180
-            return SIMD2(sin(a), cos(a))
-        }
-        let rise = horizontal(pass.rise.azim), set = horizontal(pass.set.azim)
-        let delta = set - rise
-        let length = hypot(delta.x, delta.y)
-        right = length > 0.0001 ? delta / length : SIMD2(rise.y, -rise.x)
-        var normal = SIMD2(-right.y, right.x)
-        let peak = horizontal(pass.culmination.azim)
-        if normal.x * peak.x + normal.y * peak.y < 0 { normal = -normal }
-        front = normal
-        extent = max(0.1, length / 2)
-        horizonDepth = rise.x * normal.x + rise.y * normal.y
-        let horizon = horizonDepth
-        let highest = samples.map { sample -> Double in
-            let e = max(0, sample.position.elev) * .pi / 180
-            let h = horizontal(sample.position.azim) * cos(e)
-            let depth = h.x * normal.x + h.y * normal.y
-            return cos(Self.tilt) * sin(e) - sin(Self.tilt) * (depth - horizon)
-        }.max() ?? 1
-        let horizonBulge = max(0, sin(Self.tilt) * (1 - horizon))
-        let scale = max(1, size.height - 60) / max(0.15, highest + horizonBulge)
-        verticalScale = scale
-        baseline = size.height - 32 - scale * horizonBulge
+    static func minorArc(from rise: Double, to set: Double) -> Double {
+        let turn = PlanetariumGeometry.shortestTurn(from: rise, to: set)
+        // Exactly opposite directions have two equal semicircles, never a longer
+        // arc. Pick one consistently instead of changing with culmination azimuth.
+        return abs(turn) == 180 ? 180 : turn
     }
 
-    func visiblePoint(azimuth: Double, elevation: Double) -> CGPoint? {
+    init(pass: Pass, samples: [SatelliteSnapshot], size: CGSize) {
+        width = size.width; height = size.height
+        arc = Self.minorArc(from: pass.rise.azim, to: pass.set.azim)
+        centerAzimuth = pass.rise.azim + arc / 2
+        let a = centerAzimuth * .pi / 180
+        let front = SIMD2(sin(a), cos(a))
+        let right = SIMD2(cos(a), -sin(a)) * (arc < 0 ? -1.0 : 1.0)
+        self.front = front; self.right = right
+        let rise = Self.project(azimuth: pass.rise.azim, elevation: 0, front: front, right: right)
+        let set = Self.project(azimuth: pass.set.azim, elevation: 0, front: front, right: right)
+        let peak = Self.project(azimuth: pass.culmination.azim, elevation: pass.culmination.elev, front: front, right: right)
+        let path = samples.map { Self.project(azimuth: $0.position.azim, elevation: max(0, $0.position.elev), front: front, right: right) }
+        let widest = max(0.2, max(abs(rise.x), max(abs(set.x), path.map { abs($0.x) }.max() ?? 0)))
+        let bottom = min(rise.y, set.y)
+        let top = max(peak.y, path.map(\.y).max() ?? peak.y)
+        let scale = min(max(1, size.width - 30) / (2 * widest), max(1, size.height - 66) / max(0.1, top - bottom))
+        self.scale = scale
+        originY = size.height - 36 + bottom * scale
+    }
+
+    private static func project(azimuth: Double, elevation: Double, front: SIMD2<Double>, right: SIMD2<Double>) -> SIMD2<Double> {
         let a = azimuth * .pi / 180, e = elevation * .pi / 180
         let h = SIMD2(sin(a), cos(a)) * cos(e)
-        let depth = h.x * front.x + h.y * front.y
-        // Match the shader's front-facing hemisphere; do not fold a planet from
-        // the back of the dome over unrelated foreground stars.
-        guard elevation >= 0, depth * cos(Self.tilt) + sin(e) * sin(Self.tilt) >= 0 else { return nil }
-        return point(azimuth: azimuth, elevation: elevation)
+        let depth = h.x * front.x + h.y * front.y, z = sin(e)
+        let denominator = max(0.0001, 1 + depth * cos(pitch) + z * sin(pitch))
+        return SIMD2((h.x * right.x + h.y * right.y) / denominator,
+                     (z * cos(pitch) - depth * sin(pitch)) / denominator)
     }
 
     func point(azimuth: Double, elevation: Double) -> CGPoint {
-        let a = azimuth * .pi / 180, e = max(0, elevation) * .pi / 180
-        let h = SIMD2(sin(a), cos(a)) * cos(e)
-        return point(right: h.x * right.x + h.y * right.y,
-                     front: h.x * front.x + h.y * front.y, up: sin(e))
+        let p = Self.project(azimuth: azimuth, elevation: elevation, front: front, right: right)
+        return CGPoint(x: width / 2 + p.x * scale, y: originY - p.y * scale)
     }
 
-    func point(right x: Double, front depth: Double, up z: Double) -> CGPoint {
-        CGPoint(x: size.width / 2 + x / extent * halfWidth,
-                y: baseline + verticalScale * (sin(Self.tilt) * (depth - horizonDepth) - cos(Self.tilt) * z))
+    func visiblePoint(azimuth: Double, elevation: Double) -> CGPoint? {
+        guard elevation >= 0,
+              abs(PlanetariumGeometry.shortestTurn(from: centerAzimuth, to: azimuth)) <= 90.0001 else { return nil }
+        let p = point(azimuth: azimuth, elevation: elevation)
+        guard p.x >= 0, p.x <= width, p.y >= 0, p.y <= height else { return nil }
+        return p
+    }
+
+    /// Screen pixel → unit local direction (east, north, zenith), for direct
+    /// spherical-texture sampling. This also supplies the atmospheric ray.
+    func direction(at point: CGPoint) -> SIMD3<Double> {
+        let x = (point.x - width / 2) / scale, y = (originY - point.y) / scale
+        let denominator = 1 + x * x + y * y
+        let r = 2 * x / denominator, u = 2 * y / denominator
+        let f = (1 - x * x - y * y) / denominator
+        let depth = f * cos(Self.pitch) - u * sin(Self.pitch)
+        let horizontal = right * r + front * depth
+        return SIMD3(horizontal.x, horizontal.y, f * sin(Self.pitch) + u * cos(Self.pitch))
     }
 }
