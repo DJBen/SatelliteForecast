@@ -1,9 +1,10 @@
 import SwiftUI
 import SatelliteForecast
 import SatelliteKit
+import SolarSystem
 
-/// The app's all-sky projection, atmosphere, Milky Way and point-source renderer.
-/// The sky is prepared once at culmination; only the small path overlay animates.
+/// A side-on view of the app's sky dome, with a shared projection for the
+/// existing sky renderer and the pass. Only the precomputed track animates.
 struct ObservationSkyPreview: View {
     let preview: ObservationPreview
     let observer: LatLonAlt
@@ -22,31 +23,82 @@ struct ObservationSkyPreview: View {
 
     var body: some View {
         GeometryReader { geometry in
-            let side = min(geometry.size.width - 42, geometry.size.height - 20)
-            let rect = CGRect(x: 0, y: 0, width: side, height: side)
             let samples = samples
-            let points = samples.map { SkyChartUtils.point(at: AziEle($0.position.azim, max(0, $0.position.elev)), rect: rect) }
-            ZStack {
+            let projection = ObservationSkyProjection(pass: pass, samples: samples, size: geometry.size)
+            let points = samples.map { projection.point(azimuth: $0.position.azim, elevation: $0.position.elev) }
+            ZStack(alignment: .topLeading) {
                 ScreenFactory(session: session).background(.init(observer: observer,
                     basicChartConfigs: .init(showAzimuthTexts: false, azimuthMarkInterval: 90,
                         azimuthMarkLength: 0, showDirections: false, showsAttitude: false),
-                    configs: .init(stars: .limitedMagnitude(4.5), showConstellationLines: false,
-                        showStarNames: false, bodySymbol: .none), quality: .full,
+                    configs: .init(stars: .none, showConstellationLines: false,
+                        showStarNames: false, visibleBodies: [], bodySymbol: .none), quality: .full,
+                    allowsStarInteraction: false,
                     starManager: session.catalog, constellationLabel: { _ in EmptyView() },
                     annotationView: { _ in EmptyView() }, starTapped: { _ in }))
                     .environment(\.backgroundSkyJulianDateKey, pass.culmination.julianDate.roundJulianDate(.toMins(1)))
+                    .frame(width: geometry.size.width, height: geometry.size.width)
+                    .drawingGroup()
+                    .layerEffect(ShaderLibrary.bundle(.module).observationSkyDome(
+                        .float4(Float(geometry.size.width), Float(geometry.size.height),
+                                Float(projection.extent), Float(projection.horizonDepth)),
+                        .float4(Float(projection.right.x), Float(projection.right.y),
+                                Float(projection.front.x), Float(projection.front.y)),
+                        .float4(Float(projection.baseline), Float(projection.verticalScale),
+                                Float(ObservationSkyProjection.tilt), Float(projection.halfWidth))),
+                        maxSampleOffset: CGSize(width: geometry.size.width, height: geometry.size.width))
+                    .frame(height: geometry.size.height, alignment: .top)
+                    .clipped()
+                // Project positions, not point-source artwork: bright stars retain
+                // the chart's compact spectral glow instead of becoming stretched.
+                Canvas { context, _ in
+                    guard pass.sunElevationAtTransit < -6 else { return }
+                    let traits = UITraitCollection(userInterfaceStyle: .dark)
+                    context.withCGContext { cg in
+                        for star in session.catalog.stars(maximumMagnitude: 2.5) {
+                            let coordinate = azel(time: Date(julianDate: pass.culmination.julianDate),
+                                site: LatLon(observer), cele: RADec(star.coordinate))
+                            guard let point = projection.visiblePoint(azimuth: coordinate.azim, elevation: coordinate.elev) else { continue }
+                            SkyChartTheme.drawPointSource(in: cg, at: point,
+                                radius: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction.default.apply(star.magnitude),
+                                color: SkyChartTheme.starColor(spectralClass: star.spectralClass, traitCollection: traits),
+                                magnitude: star.magnitude)
+                        }
+                    }
+                }
+                .clipped()
+                // Keep resolved Moon/planet disks round rather than warping their
+                // artwork with the diffuse sky texture. They share the same projection.
+                ForEach(BackgroundSkyConfigs().visibleBodies, id: \.self) { body in
+                    PlanetaryBodyView(planetaryBody: body, label: .none, magFunction: .default,
+                        referenceDate: pass.culmination.julianDate, observer: observer,
+                        sunElevation: pass.sunElevationAtTransit,
+                        projectedPosition: { coordinate, _ in
+                            projection.visiblePoint(azimuth: coordinate.azim, elevation: coordinate.elev)
+                        })
+                }
+                .frame(width: geometry.size.width, height: geometry.size.height)
+                .clipped()
+                Canvas { context, _ in
+                    var horizon = Path()
+                    for step in 0...120 {
+                        let x = -projection.extent + 2 * projection.extent * Double(step) / 120
+                        let depth = sqrt(max(0, 1 - x * x))
+                        let point = projection.point(right: x, front: depth, up: 0)
+                        if step == 0 { horizon.move(to: point) } else { horizon.addLine(to: point) }
+                    }
+                    context.stroke(horizon, with: .color(AppTheme.muted.opacity(0.5)),
+                        style: StrokeStyle(lineWidth: 1, lineCap: .round, dash: [1, 5]))
+                }
                 TimelineView(.animation(minimumInterval: 1.0 / 30, paused: paused)) { timeline in
                     let progress = reviewProgress ?? (paused ? 0.58 : min(1, max(0, timeline.date.timeIntervalSince(started))
                         .truncatingRemainder(dividingBy: 15) / 12))
                     Canvas { context, _ in
                         drawOrbit(context: &context, points: points, samples: samples, progress: progress)
                     }
-                    .clipShape(Circle())
                 }
-                endpoint(pass.rise, rect: rect)
-                endpoint(pass.set, rect: rect)
+                endpoint(pass.rise, projection: projection)
+                endpoint(pass.set, projection: projection)
             }
-            .frame(width: side, height: side)
             .frame(width: geometry.size.width, height: geometry.size.height)
         }
         .environment(\.colorScheme, .dark)
@@ -57,14 +109,12 @@ struct ObservationSkyPreview: View {
         .onChange(of: scenePhase) { _, phase in if phase == .active { started = Date() } }
     }
 
-    private func endpoint(_ position: Pass.DatePosition, rect: CGRect) -> some View {
-        let point = SkyChartUtils.point(at: AziEle(position.azim, 0), rect: rect)
-        let dx = point.x - rect.midX, dy = point.y - rect.midY
-        let length = max(1, hypot(dx, dy))
+    private func endpoint(_ position: Pass.DatePosition, projection: ObservationSkyProjection) -> some View {
+        let point = projection.point(azimuth: position.azim, elevation: 0)
         return Text(ObservationOpportunity.direction(position.azim))
             .font(.caption2.weight(.medium))
             .foregroundStyle(AppTheme.muted)
-            .position(x: point.x + dx / length * 13, y: point.y + dy / length * 13)
+            .position(x: point.x, y: point.y + 19)
     }
 
     private func drawOrbit(context: inout GraphicsContext, points: [CGPoint], samples: [SatelliteSnapshot], progress: Double) {
@@ -120,5 +170,73 @@ struct ObservationSkyPreview: View {
             }
         }
         context.fill(Path(ellipseIn: CGRect(x: cursor.x - 3.5, y: cursor.y - 3.5, width: 7, height: 7)), with: .color(lit ? .white : color(false)))
+    }
+}
+
+/// Orthographic sky dome viewed from 12° above the horizon. Orient its horizontal
+/// axis from rise to set, then fit the pass vertically. The shader uses its inverse
+/// to sample the existing azimuth/elevation sky texture; celestial positions and
+/// the track therefore retain the same orientation. This is an overview, not an
+/// angular scale (the detailed chart remains available on tap).
+struct ObservationSkyProjection {
+    static let tilt = 12.0 * Double.pi / 180
+    let size: CGSize
+    let right: SIMD2<Double>
+    let front: SIMD2<Double>
+    let extent: Double
+    let horizonDepth: Double
+    let verticalScale: Double
+    let baseline: Double
+    var halfWidth: Double { max(1, (size.width - 30) / 2) }
+
+    init(pass: Pass, samples: [SatelliteSnapshot], size: CGSize) {
+        self.size = size
+        func horizontal(_ azimuth: Double) -> SIMD2<Double> {
+            let a = azimuth * .pi / 180
+            return SIMD2(sin(a), cos(a))
+        }
+        let rise = horizontal(pass.rise.azim), set = horizontal(pass.set.azim)
+        let delta = set - rise
+        let length = hypot(delta.x, delta.y)
+        right = length > 0.0001 ? delta / length : SIMD2(rise.y, -rise.x)
+        var normal = SIMD2(-right.y, right.x)
+        let peak = horizontal(pass.culmination.azim)
+        if normal.x * peak.x + normal.y * peak.y < 0 { normal = -normal }
+        front = normal
+        extent = max(0.1, length / 2)
+        horizonDepth = rise.x * normal.x + rise.y * normal.y
+        let horizon = horizonDepth
+        let highest = samples.map { sample -> Double in
+            let e = max(0, sample.position.elev) * .pi / 180
+            let h = horizontal(sample.position.azim) * cos(e)
+            let depth = h.x * normal.x + h.y * normal.y
+            return cos(Self.tilt) * sin(e) - sin(Self.tilt) * (depth - horizon)
+        }.max() ?? 1
+        let horizonBulge = max(0, sin(Self.tilt) * (1 - horizon))
+        let scale = max(1, size.height - 60) / max(0.15, highest + horizonBulge)
+        verticalScale = scale
+        baseline = size.height - 32 - scale * horizonBulge
+    }
+
+    func visiblePoint(azimuth: Double, elevation: Double) -> CGPoint? {
+        let a = azimuth * .pi / 180, e = elevation * .pi / 180
+        let h = SIMD2(sin(a), cos(a)) * cos(e)
+        let depth = h.x * front.x + h.y * front.y
+        // Match the shader's front-facing hemisphere; do not fold a planet from
+        // the back of the dome over unrelated foreground stars.
+        guard elevation >= 0, depth * cos(Self.tilt) + sin(e) * sin(Self.tilt) >= 0 else { return nil }
+        return point(azimuth: azimuth, elevation: elevation)
+    }
+
+    func point(azimuth: Double, elevation: Double) -> CGPoint {
+        let a = azimuth * .pi / 180, e = max(0, elevation) * .pi / 180
+        let h = SIMD2(sin(a), cos(a)) * cos(e)
+        return point(right: h.x * right.x + h.y * right.y,
+                     front: h.x * front.x + h.y * front.y, up: sin(e))
+    }
+
+    func point(right x: Double, front depth: Double, up z: Double) -> CGPoint {
+        CGPoint(x: size.width / 2 + x / extent * halfWidth,
+                y: baseline + verticalScale * (sin(Self.tilt) * (depth - horizonDepth) - cos(Self.tilt) * z))
     }
 }

@@ -207,3 +207,6 @@ planetary rendering without labels. Foreground playback is an accelerated previe
 not live tracking. Local preview preparation follows the existing forecast
 operation, is excluded from forecast timings, and sends no additional telemetry.
 No frame, orbital position, observer, place name or notification ID is logged.
+
+The tilted home sky dome changes only local presentation. Its projection, bright-star
+cutoff, horizon and animation retain the same event and measurement boundaries.

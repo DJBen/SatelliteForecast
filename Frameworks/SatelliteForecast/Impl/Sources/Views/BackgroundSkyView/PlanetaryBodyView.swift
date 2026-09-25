@@ -18,6 +18,12 @@ struct PlanetaryBodyView: View {
     let referenceDate: Double
     let observer: LatLonAlt
     let sunElevation: Double
+    var projectedPosition: ((AziEle, CGRect) -> CGPoint?)? = nil
+
+    private func position(for coordinate: AziEle, in rect: CGRect) -> CGPoint? {
+        if let projectedPosition { return projectedPosition(coordinate, rect) }
+        return SkyChartUtils.point(at: coordinate, rect: rect)
+    }
 
     var displayRadius: CGFloat {
         // Sun and Moon are resolved disks, independent of point-source photometry.
@@ -57,22 +63,24 @@ struct PlanetaryBodyView: View {
                 planetView(
                     solarSystemBody: planetaryBody
                 ) { solarSystemBody, coordinate in
-                    let labelOnLeft = SkyChartUtils.point(at: coordinate, rect: rect).x > rect.midX
-                    if planetaryBody == .moon {
-                        MoonDiskView(julianDate: referenceDate, observer: observer, radius: displayRadius, chartRect: rect)
-                            .overlay(alignment: labelOnLeft ? .trailing : .leading) {
-                                if label == .text {
-                                    Text("Moon", bundle: .module)
-                                        .font(.system(.caption2, design: .serif))
-                                        .foregroundColor(.secondary)
-                                        .fixedSize()
-                                        .offset(x: (labelOnLeft ? -1 : 1) * (displayRadius * 2 + 3))
+                    if let position = position(for: coordinate, in: rect) {
+                        let labelOnLeft = position.x > rect.midX
+                        if planetaryBody == .moon {
+                            MoonDiskView(julianDate: referenceDate, observer: observer, radius: displayRadius, chartRect: rect)
+                                .overlay(alignment: labelOnLeft ? .trailing : .leading) {
+                                    if label == .text {
+                                        Text("Moon", bundle: .module)
+                                            .font(.system(.caption2, design: .serif))
+                                            .foregroundColor(.secondary)
+                                            .fixedSize()
+                                            .offset(x: (labelOnLeft ? -1 : 1) * (displayRadius * 2 + 3))
+                                    }
                                 }
-                            }
-                            .position(SkyChartUtils.point(at: coordinate, rect: rect))
-                    } else {
-                        planetaryBody.view(label: label, rect: rect, radius: displayRadius, labelOnLeft: labelOnLeft, magnitude: planetaryBody.apparentMagnitude(julianDay: referenceDate) ?? 0)
-                            .position(SkyChartUtils.point(at: coordinate, rect: rect))
+                                .position(position)
+                        } else {
+                            planetaryBody.view(label: label, rect: rect, radius: displayRadius, labelOnLeft: labelOnLeft, magnitude: planetaryBody.apparentMagnitude(julianDay: referenceDate) ?? 0)
+                                .position(position)
+                        }
                     }
                 }
             }

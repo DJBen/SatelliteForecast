@@ -142,6 +142,33 @@ final class ForecastTests: XCTestCase {
             illumination: .init(initiallyIlluminated: true, changes: []), sunElevationAtTransit: -20)
     }
 
+    func testHomeDomeAlwaysPlacesRiseLeftAndSetRightAcrossNorth() {
+        let original = pass(at: date)
+        for (rise, set, peak) in [(310.0, 145.0, 220.0), (350, 45, 15), (45, 350, 15), (0, 180, 90)] {
+            let pass = Pass(noradIndex: original.noradIndex,
+                rise: .init(julianDate: original.rise.julianDate, azim: rise, elev: 0),
+                set: .init(julianDate: original.set.julianDate, azim: set, elev: 0),
+                culmination: .init(julianDate: original.culmination.julianDate, azim: peak, elev: 60),
+                illumination: original.illumination, sunElevationAtTransit: -20)
+            let projection = ObservationSkyProjection(pass: pass, samples: [], size: CGSize(width: 360, height: 258))
+            let start = projection.point(azimuth: rise, elevation: 0)
+            let end = projection.point(azimuth: set, elevation: 0)
+            let top = projection.point(azimuth: peak, elevation: 60)
+            XCTAssertEqual(start.x, 15, accuracy: 0.001)
+            XCTAssertEqual(end.x, 345, accuracy: 0.001)
+            XCTAssertEqual(start.y, end.y, accuracy: 0.001)
+            XCTAssertLessThan(top.y, start.y)
+            XCTAssertTrue(top.x.isFinite && top.y.isFinite)
+        }
+    }
+
+    func testHomeDomeHidesBodiesBehindTheProjectedSky() {
+        let projection = ObservationSkyProjection(pass: pass(at: date), samples: [], size: CGSize(width: 360, height: 258))
+        XCTAssertNotNil(projection.visiblePoint(azimuth: 90, elevation: 30))
+        XCTAssertNil(projection.visiblePoint(azimuth: 270, elevation: 10))
+        XCTAssertNil(projection.visiblePoint(azimuth: 90, elevation: -5))
+    }
+
     func testHomeOrdersAcrossStationsAndDeduplicates() {
         let laterISS = pass(at: date.addingTimeInterval(1200))
         let earlierTiangong = pass(at: date.addingTimeInterval(600), id: 48274)

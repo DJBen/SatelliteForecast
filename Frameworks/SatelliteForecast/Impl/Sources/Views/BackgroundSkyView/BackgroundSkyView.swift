@@ -26,6 +26,7 @@ public struct BackgroundSkyViewContext<ConstellationLabel: View, AnnotationView:
     public let basicChartConfigs: BasicChartConfigs
     public let configs: BackgroundSkyConfigs
     public let quality: ChartQuality
+    public let allowsStarInteraction: Bool
     public let starManager: AppStarCatalog
     public let constellationLabel: (String) -> ConstellationLabel
     public let annotationView: (@escaping (RADec) -> CGPoint) -> AnnotationView
@@ -36,6 +37,7 @@ public struct BackgroundSkyViewContext<ConstellationLabel: View, AnnotationView:
         basicChartConfigs: BasicChartConfigs,
         configs: BackgroundSkyConfigs,
         quality: ChartQuality,
+        allowsStarInteraction: Bool = true,
         starManager: AppStarCatalog,
         @ViewBuilder constellationLabel: @escaping (String) -> ConstellationLabel,
         @ViewBuilder annotationView: @escaping (@escaping (RADec) -> CGPoint) -> AnnotationView,
@@ -45,6 +47,7 @@ public struct BackgroundSkyViewContext<ConstellationLabel: View, AnnotationView:
         self.basicChartConfigs = basicChartConfigs
         self.configs = configs
         self.quality = quality
+        self.allowsStarInteraction = allowsStarInteraction
         self.starManager = starManager
         self.constellationLabel = constellationLabel
         self.annotationView = annotationView
@@ -170,7 +173,7 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
             }
             .modifier(
                 TapGestureDetectionModifier(
-                    isEnabled: true
+                    isEnabled: context.allowsStarInteraction
                 ) { (point, rect) in
                     switch context.configs.stars {
                     case .none:
