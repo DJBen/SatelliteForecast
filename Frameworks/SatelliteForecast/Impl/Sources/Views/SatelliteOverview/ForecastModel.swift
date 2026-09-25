@@ -55,6 +55,7 @@ public final class ForecastModel {
     public private(set) var currentDate: Date
     public private(set) var issNextPass: Loadable<NextPass, Error>
     public private(set) var tianheNextPass: Loadable<NextPass, Error>
+    public private(set) var upcomingPasses: [Pass] = []
     @ObservationIgnored private let client: ForecastClient
     @ObservationIgnored private var generation = 0
     @ObservationIgnored private var passes: [SpecialSatellite: [Pass]] = [:]
@@ -101,6 +102,7 @@ public final class ForecastModel {
             WidgetForecastStore.clear()
             lastWidgetObserver = input.observer
         }
+        upcomingPasses = []
         issNextPass = .loading
         tianheNextPass = .loading
         guard let observer = input.observer else {
@@ -169,6 +171,7 @@ public final class ForecastModel {
 
     private func updateNextPasses(offset: Double) {
         let now = currentDate.julianDate + offset
+        upcomingPasses = ObservationOpportunity.upcoming(passes.values.flatMap { $0 }, now: now)
         for (satellite, found) in passes {
             let next = NextPass(
                 nextVisiblePass: found.first { $0.set.julianDate >= now && ($0.highestIlluminated?.elev ?? 0) > 10 && $0.sunElevationAtTransit < -6 },

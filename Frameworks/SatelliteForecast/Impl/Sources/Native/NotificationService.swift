@@ -58,9 +58,9 @@ public final class NotificationService {
   }
   public func schedule(
     _ notification: PassNotification, snapshots: PassSnapshots, catalog: AppStarCatalog,
-    offset: Double = 0, rapid: Bool = false, fromAlarmSetup: Bool = false
+    offset: Double = 0, rapid: Bool = false, fromAlarmSetup: Bool = false, fromForecast: Bool = false
   ) async {
-    let source: AppAnalytics.Screen = fromAlarmSetup ? .alarmSetup : .passes
+    let source: AppAnalytics.Screen = fromForecast ? .forecast : (fromAlarmSetup ? .alarmSetup : .passes)
     let metric = AppAnalytics.Operation("schedule_alarm", screen: source)
     defer { metric.finish("cancelled") }
     do {

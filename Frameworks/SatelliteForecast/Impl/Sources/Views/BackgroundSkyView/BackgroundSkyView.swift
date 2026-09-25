@@ -320,7 +320,7 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
                             constellationLabelView(julianDate: backgroundSkyJulianDate)
                         }
                     }
-                    .overlay { brightStarNames(julianDate: backgroundSkyJulianDate) }
+                    .overlay { if context.configs.showStarNames { brightStarNames(julianDate: backgroundSkyJulianDate) } }
                     .clipShape(Circle())
                 )
             } else {

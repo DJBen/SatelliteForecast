@@ -109,6 +109,7 @@ extension SolarSystemBody {
 
         path.overlay(alignment: labelOnLeft ? .trailing : .leading) {
             switch label {
+            case .none: EmptyView()
             case .text:
                 textLabel().fixedSize().offset(x: (labelOnLeft ? -1 : 1) * (radius * 3 + 3))
             case .symbol:

@@ -692,3 +692,36 @@ The localized string for the status of a spare satellite */
 
 /* Planetarium frame rate overlay */
 "Show FPS" = "显示 FPS";
+
+/* Observation home */
+"Next observation" = "下一次观测";
+"Choose a location" = "选择观测地点";
+"Change" = "更改";
+"Finding your next observation…" = "正在寻找下一次观测机会…";
+"Opens the sky chart for this pass" = "打开此次过境的天空图";
+"Retry preview" = "重试预览";
+"Setting reminder…" = "正在设置提醒…";
+"Reminder set" = "已设置提醒";
+"Start observing" = "开始观测";
+"Remind me 5 min before" = "提前 5 分钟提醒我";
+"Tap to cancel this reminder" = "轻点取消此次提醒";
+"Coming up" = "接下来的机会";
+"All passes" = "全部过境";
+"No more visible station passes in this forecast." = "本次预报范围内没有更多可见的空间站过境。";
+"Explore space stations" = "探索空间站";
+"See a space station with your own eyes." = "亲眼看见空间站。";
+"Choose where you’ll be watching. We’ll find the next visible pass and show you where to look." = "选择观测地点，我们会寻找下一次可见过境，并告诉你朝哪里看。";
+"Use my location" = "使用当前位置";
+"Choose a city" = "选择城市";
+"No visible station passes in the next 7 days" = "未来 7 天没有可见的空间站过境";
+"Check your connection and try again." = "请检查网络连接后重试。";
+"Try another observing location or explore other satellites." = "试试其他观测地点，或探索其他卫星。";
+"Change location" = "更改观测地点";
+"Explore satellites" = "探索卫星";
+"Some station passes could not be loaded." = "部分空间站过境未能加载。";
+"Tonight" = "今晚";
+"Today" = "今天";
+"Tomorrow" = "明天";
+"%@ · %d° at highest" = "%@ · 最高 %d°";
+"Unable to find your location. Try again or choose a city." = "无法获取你的位置。请重试或选择城市。";
+"Pass animation preview. Solid trail: traveled in the preview. Dotted trail: still ahead. Gray: in Earth’s shadow." = "过境动画预览。实线表示预览中已经经过的轨迹，虚线表示尚未经过的轨迹，灰色表示地球阴影中的部分。";

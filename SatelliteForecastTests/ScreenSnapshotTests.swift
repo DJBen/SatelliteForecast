@@ -314,6 +314,44 @@ final class ScreenSnapshotTests: XCTestCase {
         XCTFail("Interactive review timed out")
     }
 
+    func testObservationHomeDarkReview() async throws {
+        let catalog = try await AppStarCatalog.load()
+        let fixture = try Fixture(catalog: catalog, now: Date(timeIntervalSince1970: 1789002000), tle: [
+            "ISS (ZARYA)",
+            "1 25544U 98067A   26256.62713074  .00005522  00000+0  10793-3 0  9997",
+            "2 25544  51.6309 222.3825 0004920 137.6518 222.4851 15.49103177585466"
+        ])
+        let featured = try XCTUnwrap(fixture.passes.first {
+            $0.pass.visibility == .visible && ($0.pass.highestIlluminated?.elev ?? 0) > 45
+                && $0.pass.sunElevationAtTransit < -10
+        })
+        let now = Date(julianDate: ObservationOpportunity.start(featured.pass) - 1.0 / 24)
+        let model = ForecastModel(client: .init(load: { station, _ in
+            station == .iss ? fixture.passes.map(\.pass) : []
+        }, now: { now }))
+        await model.refresh(.init(observer: fixture.observer))
+        XCTAssertEqual(model.upcomingPasses.first, featured.pass)
+        let context = SatelliteOverviewViewContext(starManager: catalog, julianDateProvider: { now.julianDate })
+        let preview = ObservationPreview(info: fixture.info, snapshots: featured)
+        let home = ObservationHomeView(session: fixture.session, model: model, context: context, initialPreview: preview)
+        try await assertSnapshot(AnyView(home), name: "observation-home-dark", style: .dark, record: true)
+        try await assertSnapshot(AnyView(home.environment(\.dynamicTypeSize, .accessibility2)),
+            name: "observation-home-large-text-dark", style: .dark, record: true)
+        for progress in [0.2, 0.82] {
+            let sky = ObservationSkyPreview(preview: preview, observer: fixture.observer, session: fixture.session,
+                reviewProgress: progress)
+                .frame(height: 320).padding(24).background(AppTheme.background)
+            try await assertSnapshot(AnyView(sky), name: "observation-path-\(Int(progress * 100))-dark", style: .dark, record: true)
+        }
+        let noLocation = AppSession(catalog: catalog, location: LocationService())
+        try await assertSnapshot(AnyView(ObservationHomeView(session: noLocation, model: model, context: context)),
+            name: "observation-location-dark", style: .dark, record: true)
+        let empty = ForecastModel(client: .init(load: { _, _ in [] }, now: { now }))
+        await empty.refresh(.init(observer: fixture.observer))
+        try await assertSnapshot(AnyView(ObservationHomeView(session: fixture.session, model: empty, context: context)),
+            name: "observation-empty-dark", style: .dark, record: true)
+    }
+
     func testPlanetariumEntranceDark() async throws {
         let savedCompass = UserDefaults.standard.object(forKey: "passCompassEnabled")
         UserDefaults.standard.set(true, forKey: "passCompassEnabled")
@@ -857,7 +895,8 @@ final class ScreenSnapshotTests: XCTestCase {
         host.view.setNeedsLayout()
         host.view.layoutIfNeeded()
         // Allow SwiftUI layout, async star labels and UIKit navigation to settle.
-        try await Task.sleep(for: .milliseconds((name.hasPrefix("02-predictions-intro") || name.hasPrefix("tutorial-")) ? 2500 : 800))
+        try await Task.sleep(for: .milliseconds(name.hasPrefix("observation-") ? 6000 :
+            ((name.hasPrefix("02-predictions-intro") || name.hasPrefix("tutorial-")) ? 2500 : 800)))
         host.view.layoutIfNeeded()
         if let scrollDistance {
             func scrollViews(in view: UIView) -> [UIScrollView] {

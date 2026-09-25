@@ -15,7 +15,7 @@ Parameters contain fixed labels and numeric counts/timings only. Do not add coor
 | `screen` | Destination |
 | --- | --- |
 | `onboarding` | Welcome and prediction introduction |
-| `forecast` | Main station forecast cards |
+| `forecast` | Next observation home and combined upcoming station passes |
 | `categories` | Satellite categories |
 | `satellites` | Searchable satellite list |
 | `passes` | Calculated passes for one satellite |
@@ -47,7 +47,7 @@ Every event includes `screen`.
 | `retry_tapped` | — | User retries loading the satellite catalog |
 | `operation_started` | `operation` | A measured unit of work starts |
 | `operation_finished` | `operation`, `outcome`, `duration_ms`; optional `result_count`, `reason` | One terminal outcome per started operation during normal task completion/cancellation |
-| `alarm_scheduled` | — | OS notification center accepts an alarm and local state is persisted; screen is `passes` for a quick alarm or `alarm_setup` for the configuration sheet |
+| `alarm_scheduled` | — | OS notification center accepts an alarm and local state is persisted; screen is `forecast` for a home reminder, `passes` for a list quick alarm, or `alarm_setup` for the configuration sheet |
 | `alarm_cancelled` | — | Explicit cancellation removes an existing scheduled alarm; `screen=alarms` denotes the alarm-management domain, not necessarily the visible screen |
 | `notification_opened` | — | AppSession accepts a notification deep link; this does not guarantee the destination loaded. External URL opens are excluded |
 
@@ -64,7 +64,7 @@ Onboarding replay counts and rescheduling the same alarm count as actions, not n
 | `load_sky_catalog` | `sky_now` | Active satellite request to accepted result | Satellites before LEO filtering |
 | `location_search` | `location` | Suggestions request after debounce to accepted results | Suggestions |
 | `location_resolve` | `location` | Selected suggestion resolution to pending location | — |
-| `schedule_alarm` | `passes` or `alarm_setup` | Authorization request, preview generation, and OS scheduling | — |
+| `schedule_alarm` | `forecast`, `passes` or `alarm_setup` | Authorization request, preview generation, and OS scheduling | — |
 
 Terminal `outcome` values:
 
@@ -185,3 +185,25 @@ Widget bright-star and solar-background preparation uses the existing local
 catalog and pass observer/time. It adds no analytics events or parameters and
 remains outside forecast operation timers. Star positions and spectral metadata
 are cached locally only.
+
+## Observation home (2026-09-25)
+
+Home merges visible ISS and Tiangong opportunities by the start of their sunlit
+intervals, with one card per pass. A home card opens the existing `pass_detail`
+screen directly; do not require `passes` in the home conversion funnel. The
+combined upcoming list remains in the `forecast` domain. Home reminders emit
+`schedule_alarm` and `alarm_scheduled` with `screen=forecast`, only after the
+notification center accepts the request. Taps, pending work, and denied access
+are not conversions. The five-minute lead is relative to the first sunlit
+interval, which can begin after geometric rise.
+
+Location authorization is requested on an explicit location action. A requested
+device selection emits `location_selected(method=device)` only when a usable fix
+is accepted; launching the app or asking permission does not emit a conversion.
+City selection uses the existing resolution and selection boundaries.
+
+The home sky illustration uses the app chart's catalog, atmospheric, lunar and
+planetary rendering without labels. Foreground playback is an accelerated preview,
+not live tracking. Local preview preparation follows the existing forecast
+operation, is excluded from forecast timings, and sends no additional telemetry.
+No frame, orbital position, observer, place name or notification ID is logged.

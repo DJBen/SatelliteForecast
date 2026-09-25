@@ -333,3 +333,36 @@
 
 /* Planetarium frame rate overlay */
 "Show FPS" = "Show FPS";
+
+/* Observation home */
+"Next observation" = "Next observation";
+"Choose a location" = "Choose a location";
+"Change" = "Change";
+"Finding your next observation…" = "Finding your next observation…";
+"Opens the sky chart for this pass" = "Opens the sky chart for this pass";
+"Retry preview" = "Retry preview";
+"Setting reminder…" = "Setting reminder…";
+"Reminder set" = "Reminder set";
+"Start observing" = "Start observing";
+"Remind me 5 min before" = "Remind me 5 min before";
+"Tap to cancel this reminder" = "Tap to cancel this reminder";
+"Coming up" = "Coming up";
+"All passes" = "All passes";
+"No more visible station passes in this forecast." = "No more visible station passes in this forecast.";
+"Explore space stations" = "Explore space stations";
+"See a space station with your own eyes." = "See a space station with your own eyes.";
+"Choose where you’ll be watching. We’ll find the next visible pass and show you where to look." = "Choose where you’ll be watching. We’ll find the next visible pass and show you where to look.";
+"Use my location" = "Use my location";
+"Choose a city" = "Choose a city";
+"No visible station passes in the next 7 days" = "No visible station passes in the next 7 days";
+"Check your connection and try again." = "Check your connection and try again.";
+"Try another observing location or explore other satellites." = "Try another observing location or explore other satellites.";
+"Change location" = "Change location";
+"Explore satellites" = "Explore satellites";
+"Some station passes could not be loaded." = "Some station passes could not be loaded.";
+"Tonight" = "Tonight";
+"Today" = "Today";
+"Tomorrow" = "Tomorrow";
+"%@ · %d° at highest" = "%@ · %d° at highest";
+"Unable to find your location. Try again or choose a city." = "Unable to find your location. Try again or choose a city.";
+"Pass animation preview. Solid trail: traveled in the preview. Dotted trail: still ahead. Gray: in Earth’s shadow." = "Pass animation preview. Solid trail: traveled in the preview. Dotted trail: still ahead. Gray: in Earth’s shadow.";

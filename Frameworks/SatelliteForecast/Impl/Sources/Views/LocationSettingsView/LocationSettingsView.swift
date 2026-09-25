@@ -31,13 +31,16 @@ public struct LocationSettingsView: View {
     @Environment(\.dismiss) private var dismiss
     let state: LocationSettingsViewState
     let selectLocation: (LocationResources.Selection) -> Void
+    let requestCurrentLocation: (() -> Void)?
 
     public init(
         state: LocationSettingsViewState,
-        selectLocation: @escaping (LocationResources.Selection) -> Void
+        selectLocation: @escaping (LocationResources.Selection) -> Void,
+        requestCurrentLocation: (() -> Void)? = nil
     ) {
         self.state = state
         self.selectLocation = selectLocation
+        self.requestCurrentLocation = requestCurrentLocation
     }
 
     @State private var search = LocationSearchModel()
@@ -68,17 +71,23 @@ public struct LocationSettingsView: View {
         List {
             Section(content: {
                 Button(action: {
-                    if state.currentLocation == nil {
+                    if let requestCurrentLocation {
+                        requestCurrentLocation()
+                    } else if state.currentLocation == nil {
                         UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
                     } else if state.locationSelection != .currentLocation {
                         search.useCurrentLocation()
                     }
                 }) {
-                    LocationSettingsCurrentLocationCell(
-                        currentLocation: state.currentLocation,
-                        currentLocationPlacemark: state.currentLocationPlacemark,
-                        isSelected: state.locationSelection == .currentLocation
-                    )
+                    if requestCurrentLocation != nil && state.currentLocation == nil {
+                        Label(AppLocalization.text("Use my location"), systemImage: "location")
+                    } else {
+                        LocationSettingsCurrentLocationCell(
+                            currentLocation: state.currentLocation,
+                            currentLocationPlacemark: state.currentLocationPlacemark,
+                            isSelected: state.locationSelection == .currentLocation
+                        )
+                    }
                 }
             }, header: {
                 Text("Current location", bundle: .module)

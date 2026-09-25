@@ -69,16 +69,7 @@ public struct NativeForecastView: SatelliteOverviewView {
     _model = State(initialValue: ForecastModel(client: .live(service: ForecastService(brightStars: session.catalog.stars(maximumMagnitude: 3)))))
   }
   public var body: some View {
-    @Bindable var navigation = session.navigation
-    return SatelliteOverviewViewImpl(
-      model: model,
-      input: .init(
-        observer: session.location.resources.location.map(LatLonAlt.init),
-        julianDateOffset: session.debug.config.effectiveOffset,
-        authorizationStatus: session.location.resources.authorizationStatus),
-      navigationPath: $navigation.forecastPath,
-      context: context,
-      singleSatelliteWrappingViewFactory: { ScreenFactory(session: session).detail($0) })
+    ObservationHomeView(session: session, model: model, context: context)
   }
 }
 
@@ -96,7 +87,8 @@ public struct NativeSettingsView: SettingsOverviewView {
             locationSelection: session.location.resources.selection,
             currentLocation: session.location.resources.currentLocation,
             currentLocationPlacemark: session.location.resources.currentLocationPlacemark),
-          selectLocation: { session.location.select($0) })
+          selectLocation: { session.location.select($0) },
+          requestCurrentLocation: { session.location.useCurrentLocation() })
       },
       alarmSettingsCellFactory: {
         AlarmSettingsCell(numberOfAlerts: session.notifications.scheduled.count)

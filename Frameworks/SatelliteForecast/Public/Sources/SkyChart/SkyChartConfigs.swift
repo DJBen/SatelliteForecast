@@ -60,6 +60,7 @@ public struct BackgroundSkyConfigs: Equatable, Hashable, Sendable {
     public var starMagToDisplayRadiusMappingFunction: StarMagToDisplayRadiusMappingFunction
     public var hidesStarsDuringDay: Bool = true
     public var showConstellationLines: Bool = true
+    public var showStarNames: Bool = true
 
     public var visibleBodies: [SolarSystemBody] = [
         .sun,
@@ -75,6 +76,7 @@ public struct BackgroundSkyConfigs: Equatable, Hashable, Sendable {
     public enum PlantaryBodyLabel: Equatable, Hashable, Sendable {
         case text
         case symbol
+        case none
     }
 
     public var bodySymbol: PlantaryBodyLabel = .text
@@ -88,6 +90,7 @@ public struct BackgroundSkyConfigs: Equatable, Hashable, Sendable {
         starMagToDisplayRadiusMappingFunction: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction = .default,
         hidesStarsDuringDay: Bool = true,
         showConstellationLines: Bool = true,
+        showStarNames: Bool = true,
         visibleBodies: [SolarSystemBody] = [
             .sun,
             .moon,
@@ -104,6 +107,7 @@ public struct BackgroundSkyConfigs: Equatable, Hashable, Sendable {
         self.starMagToDisplayRadiusMappingFunction = starMagToDisplayRadiusMappingFunction
         self.hidesStarsDuringDay = hidesStarsDuringDay
         self.showConstellationLines = showConstellationLines
+        self.showStarNames = showStarNames
         self.visibleBodies = visibleBodies
         self.bodySymbol = bodySymbol
     }

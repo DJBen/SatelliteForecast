@@ -142,6 +142,38 @@ final class ForecastTests: XCTestCase {
             illumination: .init(initiallyIlluminated: true, changes: []), sunElevationAtTransit: -20)
     }
 
+    func testHomeOrdersAcrossStationsAndDeduplicates() {
+        let laterISS = pass(at: date.addingTimeInterval(1200))
+        let earlierTiangong = pass(at: date.addingTimeInterval(600), id: 48274)
+        let expired = pass(at: date.addingTimeInterval(-1800))
+        let result = ObservationOpportunity.upcoming([laterISS, earlierTiangong, expired, earlierTiangong], now: date.julianDate)
+        XCTAssertEqual(result.map(\.noradIndex), [48274, 25544])
+    }
+
+    func testHomeUsesIlluminatedWindowForReminderAndExpiry() {
+        let original = pass(at: date)
+        let appears = Pass.DatePosition(julianDate: original.rise.julianDate + 0.002, azim: 45, elev: 40)
+        let disappears = Pass.DatePosition(julianDate: original.rise.julianDate + 0.007, azim: 135, elev: 30)
+        let partial = Pass(noradIndex: original.noradIndex, rise: original.rise, set: original.set,
+            culmination: original.culmination,
+            illumination: .init(initiallyIlluminated: false, changes: [.exitsShadow(appears), .entersShadow(disappears)]),
+            sunElevationAtTransit: -15)
+        XCTAssertEqual(ObservationOpportunity.start(partial), appears.julianDate)
+        let reminder = ObservationOpportunity.reminder(partial, observer: observer)
+        XCTAssertEqual(reminder.alertJulianDate, appears.julianDate - 300.0 / 86400, accuracy: 1e-8)
+        XCTAssertTrue(ObservationOpportunity.upcoming([partial], now: disappears.julianDate + 0.0001).isEmpty,
+            "Home must not recommend a pass that has already faded but is still above the horizon")
+    }
+
+    func testHomeRejectsDaylightAndUnlitPasses() {
+        let original = pass(at: date)
+        let daylight = Pass(noradIndex: original.noradIndex, rise: original.rise, set: original.set,
+            culmination: original.culmination, illumination: original.illumination, sunElevationAtTransit: 5)
+        let shadow = Pass(noradIndex: original.noradIndex, rise: original.rise, set: original.set,
+            culmination: original.culmination, illumination: .init(initiallyIlluminated: false, changes: []), sunElevationAtTransit: -20)
+        XCTAssertTrue(ObservationOpportunity.upcoming([daylight, shadow], now: date.julianDate).isEmpty)
+    }
+
     func testPassPreviewSummarizesVisibleSegmentsAndBestTime() {
         let original = pass(at: date)
         let shadow = Pass.DatePosition(julianDate: original.rise.julianDate + 0.002, azim: 45, elev: 40)
@@ -215,6 +247,7 @@ final class ForecastTests: XCTestCase {
         pending?.resume(returning: [oldPass])
         await old.value
         XCTAssertEqual(model.issNextPass.content?.nextVisiblePass, newPass)
+        XCTAssertEqual(model.upcomingPasses, [newPass])
     }
 
     func testOneSatelliteFailureDoesNotHideTheOtherAndRetryRecovers() async {
@@ -280,6 +313,7 @@ final class ForecastTests: XCTestCase {
         XCTAssertEqual(requests, 2)
         XCTAssertNotNil(model.issNextPass.content)
         XCTAssertNil(model.issNextPass.content?.nextVisiblePass)
+        XCTAssertTrue(model.upcomingPasses.isEmpty)
     }
 
     func testHourlyRefreshAdvancesPredictionWindow() async {

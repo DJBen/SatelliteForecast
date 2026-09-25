@@ -83,6 +83,7 @@ struct DeepLinkView: View {
           ProgressView()
         }
       }
+      .toolbar(.visible, for: .navigationBar)
       .toolbar { ToolbarItem(placement: .cancellationAction) { Button(AppLocalization.text("Done")) { dismiss() } } }
     }
     .task(id: attempt) {
