@@ -15,14 +15,23 @@ hand. Check both before archiving.
 - Observation home, pass list, navigation and atmosphere review evidence lives
   under `Documentation/DesignReview/ObservationHome/`.
 
-## Archive status
+## Archive, export and upload (September 25, 2026, main at 289491c)
 
-Archiving failed twice on signing. The widgets introduced the
-`group.io.djben.SatelliteForecast` App Group entitlement on the app and the
-widget extension, and the cached automatic profiles do not include it.
-Xcode has no signed-in account (`No Accounts`), so `-allowProvisioningUpdates`
-cannot regenerate them, and `io.djben.SatelliteForecast.Widget` is not yet a
-registered bundle ID in App Store Connect. Resolution options are recorded in
-the publishing guide. No IPA was produced and nothing was uploaded.
-
-Test notes for the upload: [test-notes-en-US.txt](test-notes-en-US.txt).
+- Two archive attempts failed with `No Accounts` plus App Group profile errors
+  (see the previous section of this file's history). A third attempt with
+  `-allowProvisioningUpdates` succeeded once Xcode had account access: it
+  registered `io.djben.SatelliteForecast.Widget`, enabled the
+  `group.io.djben.SatelliteForecast` App Group, and generated development and
+  store profiles for both targets. The export also needed
+  `--xcodebuild-flag=-allowProvisioningUpdates` to create the store profiles.
+- Archive: `/tmp/SatelliteForecast-2.0.0-12.xcarchive`; IPA:
+  `/tmp/SatelliteForecast-2.0.0-12.ipa` (134,536,721 bytes). Not stored in Git.
+- Upload: `asc publish testflight` with [test-notes-en-US.txt](test-notes-en-US.txt),
+  log in [publish-log.txt](publish-log.txt). Build ID
+  `cca96cc4-d976-48ca-933e-acb43c33d880`, `processingState: VALID`.
+- Distribution: First Light receives all builds automatically (the "skipped"
+  message). `asc testflight distribution view` reported
+  `internalBuildState: IN_BETA_TESTING`, `externalBuildState:
+  READY_FOR_BETA_SUBMISSION`, `autoNotifyEnabled: true`.
+- No App Store version was created for 2.0.0 and nothing was submitted for
+  review or external testing. Internal TestFlight availability only.
