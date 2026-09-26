@@ -1,0 +1,6 @@
+2.0.0 (13) — home and widget refinements
+
+• Home: the Remind me row has a close button; the bell moves to the card corner and, if notifications are denied, opens Settings. The sky preview is shorter, dissolves at its edges, and the Moon's glow no longer shows a box.
+• No location yet? The prompt now plays a recorded ISS pass through the real preview.
+• Widgets: the large chart labels rise, peak (with degrees), set and shadow crossings and uses the full station name. Small and medium widgets show the home-style dome arc with sunlit and shadowed portions.
+• Please check that widgets refresh after opening the app once.
