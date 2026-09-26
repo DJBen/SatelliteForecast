@@ -4,6 +4,7 @@ import SatelliteKit
 
 /// A recorded orbit, propagated locally: onboarding never depends on location or network access.
 struct OnboardingPassExample: Sendable {
+    let info: SatelliteInfo
     let pass: PassSnapshots
     let samples: [SatelliteSnapshot]
     static let observer = LatLonAlt(37.486743, -122.226560, 0)
@@ -22,7 +23,7 @@ struct OnboardingPassExample: Sendable {
         }) else { throw ExampleError.noVisiblePass }
         let samples = try info.generateSnapshots(observer: observer,
             julianDateRange: pass.pass.rise.julianDate...pass.pass.set.julianDate, interval: 1)
-        return Self(pass: pass, samples: samples)
+        return Self(info: info, pass: pass, samples: samples)
     }
     enum ExampleError: Error { case noVisiblePass }
 }
@@ -141,3 +142,38 @@ struct OnboardingPassAnimation: View {
         .clipShape(Circle())
     }
 }
+
+/// The recorded pass rendered through the real home sky preview, used where no observer
+/// location is available yet. Propagation runs off the main thread once per appearance.
+struct ObservationExamplePreview: View {
+    let session: AppSession
+    var isActive = true
+    @State private var example: OnboardingPassExample?
+    @State private var failed = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Group {
+                if let example {
+                    ObservationSkyPreview(
+                        preview: .init(info: example.info, snapshots: .init(pass: example.pass.pass,
+                            snapshots: example.samples, notableSnapshots: example.pass.notableSnapshots)),
+                        observer: OnboardingPassExample.observer, session: session, isActive: isActive)
+                } else if failed {
+                    Color.clear
+                } else {
+                    ProgressView().frame(maxWidth: .infinity)
+                }
+            }
+            .frame(height: 210)
+            Text("Example: a recorded ISS pass over San Francisco Bay", bundle: .module)
+                .font(.caption).foregroundStyle(AppTheme.muted)
+        }
+        .task {
+            guard example == nil else { return }
+            let loaded = await Task.detached(priority: .userInitiated) { try? OnboardingPassExample.load() }.value
+            if let loaded { example = loaded } else { failed = true }
+        }
+    }
+}
+

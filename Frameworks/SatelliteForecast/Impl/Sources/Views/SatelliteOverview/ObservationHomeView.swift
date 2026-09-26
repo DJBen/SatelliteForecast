@@ -350,7 +350,7 @@ struct ObservationHomeView: View {
 
     private var locationPrompt: some View {
         VStack(alignment: .leading, spacing: 18) {
-            Image(systemName: "sparkles").font(.largeTitle).foregroundStyle(AppTheme.accent)
+            ObservationExamplePreview(session: session, isActive: isVisible && !showsLocation)
             Text("See a space station with your own eyes.", bundle: .module).font(.title2.bold())
             Text("Choose where you’ll be watching. We’ll find the next visible pass and show you where to look.", bundle: .module)
                 .foregroundStyle(AppTheme.muted)

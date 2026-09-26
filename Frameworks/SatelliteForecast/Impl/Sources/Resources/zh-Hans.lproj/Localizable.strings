@@ -731,3 +731,4 @@ The localized string for the status of a spare satellite */
 "%d min" = "%d 分钟";
 "Hide reminder button" = "隐藏提醒按钮";
 "Open notification settings" = "打开通知设置";
+"Example: a recorded ISS pass over San Francisco Bay" = "示例：旧金山湾上空的一次国际空间站过境记录";
