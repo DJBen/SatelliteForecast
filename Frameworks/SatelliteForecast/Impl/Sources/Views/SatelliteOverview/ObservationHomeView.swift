@@ -163,14 +163,14 @@ struct ObservationHomeView: View {
                     if let preview = currentPreview, let observer = input.observer {
                         ObservationSkyPreview(preview: preview, observer: observer, session: session,
                             isActive: isVisible && skyIsVisible && !showsLocation && session.navigation.forecastPath.isEmpty && session.navigation.deepLink == nil)
-                            .frame(height: dynamicType.isAccessibilitySize ? 240 : 258)
+                            .frame(height: dynamicType.isAccessibilitySize ? 180 : 194)
                             .onScrollVisibilityChange(threshold: 0.1) { skyIsVisible = $0 }
                     } else if previewFailed {
                         Label(AppLocalization.text("Pass preview unavailable"), systemImage: "cloud")
                             .font(.subheadline).foregroundStyle(AppTheme.muted)
                             .frame(maxWidth: .infinity, minHeight: 190)
                     } else {
-                        ProgressView().frame(maxWidth: .infinity, minHeight: 258)
+                        ProgressView().frame(maxWidth: .infinity, minHeight: 194)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
