@@ -173,6 +173,18 @@ enum MoonAppearance {
                     parameters: [kCIInputBackgroundImageKey: composite])
             }
         }
+        // The widest wing still carries energy at the square extent's edges. Fade the
+        // halo to nothing inside the inscribed circle so it never shows a tile boundary.
+        let falloff = CIFilter(name: "CIRadialGradient", parameters: [
+            "inputCenter": CIVector(x: extent.midX, y: extent.midY),
+            "inputRadius0": Double(dimension) * 0.75,
+            "inputRadius1": Double(dimension) * 1.45,
+            "inputColor0": CIColor(red: 1, green: 1, blue: 1, alpha: 1),
+            "inputColor1": CIColor(red: 1, green: 1, blue: 1, alpha: 0)
+        ])?.outputImage?.cropped(to: extent)
+        if let falloff {
+            composite = composite.applyingFilter("CISourceInCompositing", parameters: [kCIInputBackgroundImageKey: falloff])
+        }
         guard let cg = bloomContext.createCGImage(composite, from: extent) else { return base }
         let halo = UIImage(cgImage: cg)
         let near = input.applyingFilter("CIGaussianBlur", parameters: [kCIInputRadiusKey: Double(dimension) * 0.045])

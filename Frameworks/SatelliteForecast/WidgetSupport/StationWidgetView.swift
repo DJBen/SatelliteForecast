@@ -81,9 +81,15 @@ public struct StationWidgetView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             if !small, !spaciousText, let pass {
-                PassArc(pass: pass, accent: accent, muted: muted)
-                    .frame(width: 84, height: 48)
-                    .accessibilityLabel("\(Int(pass.elevation.rounded())) degrees maximum, \(text(pass.startDirection)) to \(text(pass.endDirection))")
+                Group {
+                    if let dome = pass.dome {
+                        DomeChart(pass: pass, dome: dome, accent: accent, muted: muted, showsBackground: false)
+                    } else {
+                        PassArc(pass: pass, accent: accent, muted: muted)
+                    }
+                }
+                .frame(width: 96, height: 52)
+                .accessibilityLabel("\(Int(pass.elevation.rounded())) degrees maximum, \(text(pass.startDirection)) to \(text(pass.endDirection))")
             }
         }
         .frame(maxHeight: .infinity, alignment: .center)
@@ -99,7 +105,7 @@ public struct StationWidgetView: View {
         }
         if let pass {
             if let dome = pass.dome {
-                DomeChart(pass: pass, dome: dome, accent: accent, muted: muted)
+                DomeChart(pass: pass, dome: dome, accent: accent, muted: muted, labelSize: 10)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding(.horizontal, -6)
                     .accessibilityLabel("Sky preview, maximum \(Int(pass.elevation.rounded())) degrees, \(text(pass.startDirection)) to \(text(pass.endDirection))")
@@ -237,31 +243,43 @@ private struct PassArc: View {
 
 
 /// The home screen's rise-to-set dome: the app-rendered sky with the projected track,
-/// dotted horizon, peak elevation and compass labels, scaled to the widget.
+/// dotted horizon, peak elevation and compass labels, scaled to the widget. The dome is
+/// fitted so the horizon sits just above the compass labels and the arc fills the width.
 private struct DomeChart: View {
     @Environment(\.locale) private var locale
     let pass: WidgetPass
     let dome: WidgetDome
     let accent: Color
     let muted: Color
+    var showsBackground = true
+    var labelSize: CGFloat = 9
 
     var body: some View {
         GeometryReader { proxy in
-            let labelHeight: CGFloat = 12
-            let available = CGSize(width: proxy.size.width, height: max(1, proxy.size.height - labelHeight))
-            let scale = min(available.width / dome.width, available.height / dome.height)
-            let rect = CGRect(x: (available.width - dome.width * scale) / 2, y: (available.height - dome.height * scale) / 2,
+            let labelHeight = labelSize + 4
+            let track = dome.track
+            let peakY = track.map(\.y).min() ?? 0.2
+            let horizonY = max(track.first?.y ?? 0.8, track.last?.y ?? 0.8)
+            let peakLabelRoom: CGFloat = 16
+            let usableHeight = max(1, proxy.size.height - labelHeight - peakLabelRoom - 2)
+            let span = max(0.05, horizonY - peakY) * dome.height
+            let scale = min(proxy.size.width / dome.width, usableHeight / span)
+            // Centre the used band (peak label, arc, compass labels) vertically.
+            let used = peakLabelRoom + span * scale + labelHeight + 2
+            let top = max(0, (proxy.size.height - used) / 2)
+            let rect = CGRect(x: (proxy.size.width - dome.width * scale) / 2,
+                              y: top + peakLabelRoom - peakY * dome.height * scale,
                               width: dome.width * scale, height: dome.height * scale)
             let point: (WidgetDomePoint) -> CGPoint = { p in CGPoint(x: rect.minX + p.x * rect.width, y: rect.minY + p.y * rect.height) }
+            let horizonLine = rect.minY + horizonY * rect.height
             ZStack(alignment: .topLeading) {
-                if let data = dome.imagePNG, let image = UIImage(data: data) {
+                if showsBackground, let data = dome.imagePNG, let image = UIImage(data: data) {
                     Image(uiImage: image).resizable().frame(width: rect.width, height: rect.height).offset(x: rect.minX, y: rect.minY)
                 }
                 Canvas { context, _ in
                     var horizon = Path()
                     for (i, p) in dome.horizon.enumerated() { i == 0 ? horizon.move(to: point(p)) : horizon.addLine(to: point(p)) }
                     context.stroke(horizon, with: .color(muted.opacity(0.6)), style: StrokeStyle(lineWidth: 1, lineCap: .round, dash: [1, 4]))
-                    let track = dome.track
                     for lit in [false, true] {
                         var path = Path()
                         var connected = false
@@ -272,30 +290,35 @@ private struct DomeChart: View {
                             connected = true
                         }
                         let style = StrokeStyle(lineWidth: lit ? 2.4 : 2, lineCap: .round, lineJoin: .round, dash: lit ? [] : [2, 4])
-                        context.stroke(path, with: .color(.black.opacity(0.5)), style: StrokeStyle(lineWidth: style.lineWidth + 2, lineCap: .round, lineJoin: .round, dash: style.dash))
+                        if showsBackground {
+                            context.stroke(path, with: .color(.black.opacity(0.5)), style: StrokeStyle(lineWidth: style.lineWidth + 2, lineCap: .round, lineJoin: .round, dash: style.dash))
+                        }
                         context.stroke(path, with: .color(lit ? accent : muted.opacity(0.85)), style: style)
                     }
                     if let peak = track.min(by: { $0.y < $1.y }) {
                         let p = point(peak)
                         context.fill(Path(ellipseIn: CGRect(x: p.x - 2.5, y: p.y - 2.5, width: 5, height: 5)), with: .color(peak.illuminated ? accent : muted))
                         let label = context.resolve(Text("\(Int(pass.elevation.rounded()))°")
-                            .font(.system(size: 10, weight: .semibold, design: .rounded)).foregroundStyle(accent))
+                            .font(.system(size: labelSize + 1, weight: .semibold, design: .rounded)).foregroundStyle(accent))
                         let size = label.measure(in: CGSize(width: 60, height: 20))
-                        let anchor = CGPoint(x: min(rect.maxX - size.width / 2, max(rect.minX + size.width / 2, p.x)), y: max(rect.minY + size.height / 2, p.y - 10))
-                        context.fill(Path(roundedRect: CGRect(x: anchor.x - size.width / 2 - 3, y: anchor.y - size.height / 2 - 1, width: size.width + 6, height: size.height + 2), cornerRadius: 4),
-                                     with: .color(.black.opacity(0.45)))
+                        let anchor = CGPoint(x: min(proxy.size.width - size.width / 2, max(size.width / 2, p.x)), y: max(size.height / 2, p.y - 9))
+                        if showsBackground {
+                            context.fill(Path(roundedRect: CGRect(x: anchor.x - size.width / 2 - 3, y: anchor.y - size.height / 2 - 1, width: size.width + 6, height: size.height + 2), cornerRadius: 4),
+                                         with: .color(.black.opacity(0.45)))
+                        }
                         context.draw(label, at: anchor)
                     }
-                    let labelY = rect.maxY + labelHeight / 2
+                    let labelY = min(proxy.size.height - labelHeight / 2, horizonLine + labelHeight / 2 + 2)
                     if let first = track.first, let last = track.last {
-                        let font = Font.system(size: 9, weight: .medium, design: .rounded)
+                        let font = Font.system(size: labelSize, weight: .medium, design: .rounded)
                         context.draw(Text(WidgetStrings.text(pass.startDirection, locale: locale)).font(font).foregroundStyle(muted),
-                                     at: CGPoint(x: min(rect.maxX - 8, max(rect.minX + 8, point(first).x)), y: labelY))
+                                     at: CGPoint(x: min(proxy.size.width - 8, max(8, point(first).x)), y: labelY))
                         context.draw(Text(WidgetStrings.text(pass.endDirection, locale: locale)).font(font).foregroundStyle(muted),
-                                     at: CGPoint(x: min(rect.maxX - 8, max(rect.minX + 8, point(last).x)), y: labelY))
+                                     at: CGPoint(x: min(proxy.size.width - 8, max(8, point(last).x)), y: labelY))
                     }
                 }
             }
+            .clipped()
         }
     }
 }

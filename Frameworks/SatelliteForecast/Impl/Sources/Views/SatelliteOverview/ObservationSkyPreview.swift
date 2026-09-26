@@ -39,9 +39,13 @@ struct ObservationSkyPreview: View {
                             let coordinate = azel(time: Date(julianDate: pass.culmination.julianDate),
                                 site: LatLon(observer), cele: RADec(star.coordinate))
                             guard let point = projection.visiblePoint(azimuth: coordinate.azim, elevation: coordinate.elev) else { continue }
+                            // Stars dissolve at the frame edges together with the sky behind them.
+                            let fade = projection.edgeFade(at: point)
+                            guard fade > 0.02 else { continue }
                             SkyChartTheme.drawPointSource(in: cg, at: point,
                                 radius: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction.default.apply(star.magnitude),
-                                color: SkyChartTheme.starColor(spectralClass: star.spectralClass, traitCollection: traits),
+                                color: SkyChartTheme.starColor(spectralClass: star.spectralClass, traitCollection: traits)
+                                    .withAlphaComponent(fade),
                                 magnitude: star.magnitude)
                         }
                     }
@@ -204,6 +208,16 @@ struct ObservationSkyProjection: Hashable, Sendable {
         let denominator = max(0.0001, 1 + depth * cos(pitch) + z * sin(pitch))
         return SIMD2((h.x * right.x + h.y * right.y) / denominator,
                      (z * cos(pitch) - depth * sin(pitch)) / denominator)
+    }
+
+    /// The same dissolve the background raster uses at the frame edges (see
+    /// `ChartRenderer.observationSky`), so foreground points fade in step with the sky.
+    func edgeFade(at point: CGPoint) -> Double {
+        func smooth(_ low: Double, _ high: Double, _ value: Double) -> Double {
+            let t = min(1, max(0, (value - low) / (high - low)))
+            return t * t * (3 - 2 * t)
+        }
+        return smooth(0, 64, min(point.x, width - point.x)) * smooth(0, 84, point.y) * smooth(0, 22, height - point.y)
     }
 
     func point(azimuth: Double, elevation: Double) -> CGPoint {
