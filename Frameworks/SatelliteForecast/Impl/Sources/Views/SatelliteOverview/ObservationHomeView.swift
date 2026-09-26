@@ -19,6 +19,9 @@ struct ObservationHomeView: View {
     @State private var isVisible = false
     @State private var skyIsVisible = true
     @State private var reminderTask: Task<Void, Never>?
+    /// Set when the user closes the Remind me row; the bell shortcut then lives on the card corner.
+    @AppStorage("homeReminderDismissed") private var reminderDismissed = false
+    @Namespace private var reminderNamespace
 
     init(session: AppSession, model: ForecastModel, context: SatelliteOverviewViewContext,
          initialPreview: ObservationPreview? = nil) {
@@ -187,37 +190,95 @@ struct ObservationHomeView: View {
             RoundedRectangle(cornerRadius: 28, style: .continuous)
                 .fill(LinearGradient(colors: [AppTheme.surface, AppTheme.background], startPoint: .topLeading, endPoint: .bottomTrailing))
         }
+        .overlay(alignment: .topTrailing) {
+            if showsBellShortcut(pass) { bellShortcut.padding(14) }
+        }
+    }
+
+    /// Reminder presentation depends on the OS permission state:
+    /// authorized → nothing; denied → bell that opens Settings; never asked → the Remind me row,
+    /// or the bell once the row was closed.
+    private func showsReminderRow(_ pass: Pass) -> Bool {
+        !session.notifications.isAuthorized && !session.notifications.isDenied && !reminderDismissed
+    }
+    private func showsBellShortcut(_ pass: Pass) -> Bool {
+        guard !session.notifications.isAuthorized else { return false }
+        return session.notifications.isDenied || reminderDismissed
+    }
+
+    private var bellShortcut: some View {
+        Button {
+            if session.notifications.isDenied { openNotificationSettings() } else { enableReminders() }
+        } label: {
+            Image(systemName: "bell")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(AppTheme.accent)
+                .frame(width: 36, height: 36)
+                .background(AppTheme.accent.opacity(0.14), in: Circle())
+                .matchedGeometryEffect(id: "reminderBell", in: reminderNamespace)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text(session.notifications.isDenied ? "Open notification settings" : "Remind me", bundle: .module))
+    }
+
+    private func openNotificationSettings() {
+        guard let url = URL(string: UIApplication.openNotificationSettingsURLString) else { return }
+        UIApplication.shared.open(url)
     }
 
     /// Enables ISS and Tiangong push reminders through the notification permission prompt.
     /// No local notification is scheduled; the backend delivers reminders to authorized devices.
-    /// Once notifications are allowed the button disappears unless the pass is about to start.
+    /// The row is hidden once permission is granted or denied, and can be closed with the
+    /// secondary button, which moves the bell to the card corner.
     @ViewBuilder
     private func reminderButton(_ pass: Pass) -> some View {
-        let enabled = session.notifications.isAuthorized
         let requesting = session.notifications.isRequestingAuthorization
         let tooLate = ObservationOpportunity.start(pass) - 300.0 / 86400 <= now
-        if tooLate || !enabled {
-            Button {
-                if tooLate { open(pass) } else { enableReminders() }
-            } label: {
-                HStack(spacing: 10) {
-                    if requesting { ProgressView().tint(Color(uiColor: .systemBackground)) }
-                    else { Image(systemName: tooLate ? "location.north.line" : "bell") }
-                    Text(AppLocalization.text(requesting ? "Turning on reminders…" : tooLate ? "Start observing" : "Remind me"))
-                        .fixedSize(horizontal: false, vertical: true)
+        if tooLate {
+            primaryButton(title: "Start observing", icon: "location.north.line", requesting: false) { open(pass) }
+        } else if showsReminderRow(pass) {
+            HStack(spacing: 10) {
+                Button {
+                    withAnimation(.spring(duration: 0.45, bounce: 0.2)) { reminderDismissed = true }
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.headline.weight(.semibold))
+                        .foregroundStyle(AppTheme.muted)
+                        .frame(width: 52)
+                        .frame(maxHeight: .infinity)
                 }
-                .font(.title3.weight(.semibold))
-                .frame(maxWidth: .infinity, minHeight: 32)
-                .padding(.vertical, 12)
+                .buttonStyle(.bordered)
+                .tint(AppTheme.muted)
+                .buttonBorderShape(.roundedRectangle(radius: 16))
+                .accessibilityLabel(Text("Hide reminder button", bundle: .module))
+                primaryButton(title: requesting ? "Turning on reminders…" : "Remind me", icon: "bell", requesting: requesting,
+                    matched: true) { enableReminders() }
+                    .disabled(requesting)
+                    .accessibilityHint(Text("Allows notifications for ISS and Tiangong passes", bundle: .module))
             }
-            .buttonStyle(.borderedProminent)
-            .tint(AppTheme.accent)
-            .foregroundStyle(Color(uiColor: .systemBackground))
-            .buttonBorderShape(.roundedRectangle(radius: 16))
-            .disabled(requesting)
-            .accessibilityHint(Text(tooLate ? "" : "Allows notifications for ISS and Tiangong passes", bundle: .module))
+            .fixedSize(horizontal: false, vertical: true)
+            .transition(.opacity.combined(with: .scale(scale: 0.96)))
         }
+    }
+
+    private func primaryButton(title: String, icon: String, requesting: Bool, matched: Bool = false,
+                               action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 10) {
+                if requesting { ProgressView().tint(Color(uiColor: .systemBackground)) }
+                else if matched {
+                    Image(systemName: icon).matchedGeometryEffect(id: "reminderBell", in: reminderNamespace)
+                } else { Image(systemName: icon) }
+                Text(AppLocalization.text(title)).fixedSize(horizontal: false, vertical: true)
+            }
+            .font(.title3.weight(.semibold))
+            .frame(maxWidth: .infinity, minHeight: 32)
+            .padding(.vertical, 10)
+        }
+        .buttonStyle(.borderedProminent)
+        .tint(AppTheme.accent)
+        .foregroundStyle(Color(uiColor: .systemBackground))
+        .buttonBorderShape(.roundedRectangle(radius: 16))
     }
 
     private var upcoming: some View {

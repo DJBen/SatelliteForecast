@@ -80,8 +80,10 @@ extension ChartRenderer {
                     + twilight * horizon * wideGlow * SIMD3(0.55, 0.26, 0.12)
                     + glow * twilight * SIMD3(0.85, 0.34, 0.10)
                 let color = simd_min(SIMD3(repeating: 1), sky + galaxy * (0.65 * (1 - daylight)))
-                let edge = smooth(0, 18, min(point.x, projection.width - point.x))
-                    * smooth(0, 22, min(point.y, projection.height - point.y))
+                // Long dissolves at the top and sides so the dome never shows a hard frame edge;
+                // the bottom keeps a short fade so the horizon line stays crisp.
+                let edge = smooth(0, 64, min(point.x, projection.width - point.x))
+                    * smooth(0, 84, point.y) * smooth(0, 22, projection.height - point.y)
                 let alpha = edge * smooth(0, 0.02, ray.z) * smooth(0, 0.05, facing)
                 let index = (y * width + x) * 4
                 pixels[index] = UInt8(color.x * alpha * 255)

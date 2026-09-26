@@ -729,3 +729,5 @@ The localized string for the status of a spare satellite */
 "ISS" = "国际空间站";
 "Tiangong" = "天宫";
 "%d min" = "%d 分钟";
+"Hide reminder button" = "隐藏提醒按钮";
+"Open notification settings" = "打开通知设置";

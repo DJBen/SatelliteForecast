@@ -14,6 +14,9 @@ public final class NotificationService {
   /// True when the OS currently allows this app to present notifications. Station push
   /// reminders are delivered only to authorized devices; see `enableStationReminders()`.
   public var isAuthorized = false
+  /// Raw OS state, so views can tell "never asked" from "explicitly denied".
+  public var authorizationStatus: UNAuthorizationStatus = .notDetermined
+  public var isDenied: Bool { authorizationStatus == .denied }
   public var isRequestingAuthorization = false
   private var revision = 0
   @ObservationIgnored private let center: UNUserNotificationCenter
@@ -51,6 +54,7 @@ public final class NotificationService {
   /// Reads the live OS authorization state without prompting.
   public func checkAuthorization() async -> Bool {
     let status = await center.notificationSettings().authorizationStatus
+    authorizationStatus = status
     return [.authorized, .provisional, .ephemeral].contains(status)
   }
   /// Requests notification permission for ISS and Tiangong push reminders. The prompt appears
@@ -63,6 +67,7 @@ public final class NotificationService {
     do {
       let granted = try await center.requestAuthorization(options: [.alert, .sound, .badge])
       isAuthorized = granted
+      authorizationStatus = await center.notificationSettings().authorizationStatus
       guard granted else {
         metric.finish("blocked", reason: "notification_permission_denied")
         errorMessage = AppLocalization.text("Notifications are disabled. Enable them in Settings to get station reminders.")
