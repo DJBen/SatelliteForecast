@@ -74,20 +74,16 @@ public struct StationWidgetView: View {
                     if family != .systemMedium {
                         time(pass).font(.system(small ? .caption : .title3, design: .rounded, weight: .medium))
                     }
-                    if !small {
-                        Text("\(Int(pass.elevation.rounded()))° \(text("max")) · \(text(pass.startDirection)) → \(text(pass.endDirection))")
-                            .font(.caption).foregroundStyle(muted).lineLimit(1).minimumScaleFactor(0.7)
-                    }
                 } else {
                     Text(text(small ? "empty.short" : "empty")).font(.caption).foregroundStyle(muted)
                         .lineLimit(1).minimumScaleFactor(0.7)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            if !small, !spaciousText, let pass, pass.rise > date, calendar.isDate(pass.rise, inSameDayAs: date) {
+            if !small, !spaciousText, let pass {
                 PassArc(pass: pass, accent: accent, muted: muted)
-                    .frame(width: family == .systemLarge ? 116 : 72, height: family == .systemLarge ? 88 : 42)
-                    .accessibilityHidden(true)
+                    .frame(width: 84, height: 48)
+                    .accessibilityLabel("\(Int(pass.elevation.rounded())) degrees maximum, \(text(pass.startDirection)) to \(text(pass.endDirection))")
             }
         }
         .frame(maxHeight: .infinity, alignment: .center)
@@ -115,14 +111,16 @@ public struct StationWidgetView: View {
     @ViewBuilder private var skyChartContent: some View {
         if let pass = forecast?.next(at: date) {
             HStack(alignment: .firstTextBaseline) {
-                Text(stationName(pass.station)).accessibilityLabel(text(pass.station == 25544 ? "iss" : "tiangong")).font(.system(.title2, design: .rounded, weight: .semibold))
-                    .lineLimit(1).minimumScaleFactor(0.75)
+                Text(text(pass.station == 25544 ? "iss.full" : "tiangong.full"))
+                    .font(.system(.title2, design: .rounded, weight: .semibold))
+                    .lineLimit(1).minimumScaleFactor(0.6)
                 Spacer(minLength: 8)
                 time(pass).font(.system(.subheadline, design: .rounded, weight: .medium))
                     .foregroundStyle(accent)
             }
             if let track = pass.skyTrack, track.count >= 2 {
-                WidgetSkyChart(track: track, background: pass.skyBackground, accent: accent, muted: muted)
+                WidgetSkyChart(track: track, background: pass.skyBackground, events: pass.events ?? [],
+                               peakElevation: pass.elevation, accent: accent, muted: muted)
                     .padding(.horizontal, -8)
                     .padding(.bottom, -8)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -165,30 +163,62 @@ public struct StationWidgetView: View {
 
 }
 
+/// Elevation over time for one pass. Sunlit portions are teal and shadowed portions grey,
+/// taken from the sky track; the peak carries its elevation in degrees.
 private struct PassArc: View {
     @Environment(\.locale) private var locale
     let pass: WidgetPass
     let accent: Color
     let muted: Color
+
+    /// (fraction of pass, elevation 0–90, illuminated) samples; a symmetric arc when no track exists.
+    private var samples: [(x: Double, elevation: Double, lit: Bool)] {
+        if let track = pass.skyTrack, track.count >= 2 {
+            return track.enumerated().map { (Double($0.offset) / Double(track.count - 1), $0.element.elevation, $0.element.illuminated) }
+        }
+        let peak = min(0.9, max(0.1, pass.peak.timeIntervalSince(pass.rise) / max(1, pass.set.timeIntervalSince(pass.rise))))
+        return (0...40).map { i in
+            let x = Double(i) / 40
+            let t = x < peak ? x / peak : (1 - x) / (1 - peak)
+            return (x, pass.elevation * sin(t * .pi / 2), true)
+        }
+    }
+
     var body: some View {
-        VStack(spacing: 3) {
-            GeometryReader { proxy in
-                let w = proxy.size.width
-                let h = proxy.size.height
-                let peak = min(0.9, max(0.1, pass.peak.timeIntervalSince(pass.rise) / pass.set.timeIntervalSince(pass.rise)))
-                let y = h * (1 - min(90, max(0, pass.elevation)) / 90) * 0.8 + 2
-                Path { p in
-                    p.move(to: CGPoint(x: 0, y: h))
-                    p.addLine(to: CGPoint(x: w, y: h))
-                    p.move(to: CGPoint(x: 0, y: h * 0.5))
-                    p.addLine(to: CGPoint(x: w, y: h * 0.5))
-                }.stroke(muted.opacity(0.22), style: StrokeStyle(lineWidth: 1, dash: [3, 3]))
-                Path { p in
-                    p.move(to: CGPoint(x: 2, y: h))
-                    p.addQuadCurve(to: CGPoint(x: w * peak, y: y), control: CGPoint(x: w * peak * 0.45, y: y))
-                    p.addQuadCurve(to: CGPoint(x: w - 2, y: h), control: CGPoint(x: w * (peak + (1 - peak) * 0.55), y: y))
-                }.stroke(accent, style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
-                Circle().fill(accent).frame(width: 5, height: 5).position(x: w * peak, y: y)
+        VStack(spacing: 2) {
+            Canvas { context, size in
+                let w = size.width, h = size.height
+                let top: CGFloat = 12   // room for the peak label
+                func point(_ s: (x: Double, elevation: Double, lit: Bool)) -> CGPoint {
+                    CGPoint(x: 2 + (w - 4) * s.x, y: h - (h - top) * min(90, max(0, s.elevation)) / 90)
+                }
+                var horizon = Path()
+                horizon.move(to: CGPoint(x: 0, y: h)); horizon.addLine(to: CGPoint(x: w, y: h))
+                context.stroke(horizon, with: .color(muted.opacity(0.35)), style: StrokeStyle(lineWidth: 1, dash: [3, 3]))
+                let samples = samples
+                // Contiguous runs share illumination; grey runs sit underneath teal ones.
+                for lit in [false, true] {
+                    var path = Path()
+                    var connected = false
+                    for i in 0..<(samples.count - 1) {
+                        guard samples[i].lit == lit else { connected = false; continue }
+                        if !connected { path.move(to: point(samples[i])) }
+                        path.addLine(to: point(samples[i + 1]))
+                        connected = true
+                    }
+                    context.stroke(path, with: .color(lit ? accent : muted.opacity(0.7)),
+                                   style: StrokeStyle(lineWidth: 2.5, lineCap: .round, lineJoin: .round,
+                                                      dash: lit ? [] : [2, 4]))
+                }
+                if let peak = samples.max(by: { $0.elevation < $1.elevation }) {
+                    let p = point(peak)
+                    context.fill(Path(ellipseIn: CGRect(x: p.x - 2.5, y: p.y - 2.5, width: 5, height: 5)),
+                                 with: .color(peak.lit ? accent : muted))
+                    let label = Text("\(Int(pass.elevation.rounded()))°")
+                        .font(.system(size: 10, weight: .semibold, design: .rounded)).foregroundStyle(accent)
+                    let anchor = CGPoint(x: min(w - 12, max(12, p.x)), y: max(6, p.y - 9))
+                    context.draw(label, at: anchor)
+                }
             }
             HStack {
                 Text(WidgetStrings.text(pass.startDirection, locale: locale))
@@ -203,8 +233,11 @@ private struct PassArc: View {
 /// A compact horizon-to-zenith chart using the same projection as SkyChartUtils.
 private struct WidgetSkyChart: View {
     @Environment(\.locale) private var locale
+    @Environment(\.timeZone) private var timeZone
     let track: [WidgetSkyPoint]
     let background: WidgetSkyBackground?
+    let events: [WidgetSkyEvent]
+    let peakElevation: Double
     let accent: Color
     let muted: Color
 
@@ -269,6 +302,50 @@ private struct WidgetSkyChart: View {
                     unlitColor: UIColor(muted).withAlphaComponent(0.6))
             }
             sky.draw(Image(uiImage: pathImage), in: disk)
+            drawEvents(in: &context, center: center, radius: radius)
+        }
+    }
+
+    /// Timestamps at rise, culmination, set and shadow crossings. The peak also carries its
+    /// elevation. Labels sit on the side of the marker that faces away from the chart centre,
+    /// which keeps them off the track and inside the disk for most passes.
+    private func drawEvents(in context: inout GraphicsContext, center: CGPoint, radius: CGFloat) {
+        let style = Date.FormatStyle(date: .omitted, time: .shortened, locale: locale, timeZone: timeZone)
+        struct Placed { let event: WidgetSkyEvent; let point: CGPoint; var rect: CGRect; let text: GraphicsContext.ResolvedText }
+        var placed: [Placed] = []
+        for event in events {
+            let unit = event.position.unitPoint
+            let point = CGPoint(x: center.x + unit.x * radius, y: center.y + unit.y * radius)
+            var label = event.date.formatted(style)
+            if event.kind == .peak { label += " · \(Int(peakElevation.rounded()))°" }
+            let resolved = context.resolve(Text(label).font(.system(size: 10, weight: .semibold, design: .rounded)).foregroundStyle(.white))
+            let size = resolved.measure(in: CGSize(width: 120, height: 20))
+            // Horizon events and anything near the rim go inward so the text stays on the disk;
+            // the peak sits above its marker; the rest go outward, away from the track.
+            let distance = hypot(unit.x, unit.y)
+            let direction = distance > 0.001 ? CGPoint(x: unit.x / distance, y: unit.y / distance) : CGPoint(x: 0, y: -1)
+            let inward = event.kind == .rise || event.kind == .set || distance > 0.8
+            var anchor = CGPoint(x: point.x + direction.x * (inward ? -16 : 14), y: point.y + direction.y * (inward ? -16 : 14))
+            if event.kind == .peak { anchor = CGPoint(x: point.x, y: point.y - 13) }
+            let rect = CGRect(x: anchor.x - size.width / 2 - 4, y: anchor.y - size.height / 2 - 2, width: size.width + 8, height: size.height + 4)
+            placed.append(.init(event: event, point: point, rect: rect, text: resolved))
+        }
+        // Resolve overlaps in time order by sliding later labels away from earlier ones.
+        for i in placed.indices {
+            for j in 0..<i where placed[i].rect.intersects(placed[j].rect) {
+                let up = placed[i].rect.midY < placed[j].rect.midY
+                let shift = up ? -(placed[i].rect.maxY - placed[j].rect.minY + 3) : (placed[j].rect.maxY - placed[i].rect.minY + 3)
+                placed[i].rect = placed[i].rect.offsetBy(dx: 0, dy: shift)
+            }
+        }
+        for item in placed {
+            let shadow = item.event.kind == .entersShadow || item.event.kind == .exitsShadow
+            let color = shadow ? muted : accent
+            let marker = Path(ellipseIn: CGRect(x: item.point.x - 3, y: item.point.y - 3, width: 6, height: 6))
+            context.fill(marker, with: .color(item.event.kind == .entersShadow ? muted.opacity(0.9) : Color.black.opacity(0.6)))
+            context.stroke(marker, with: .color(color), lineWidth: 1.4)
+            context.fill(Path(roundedRect: item.rect, cornerRadius: 5), with: .color(Color.black.opacity(0.55)))
+            context.draw(item.text, at: CGPoint(x: item.rect.midX, y: item.rect.midY))
         }
     }
 }

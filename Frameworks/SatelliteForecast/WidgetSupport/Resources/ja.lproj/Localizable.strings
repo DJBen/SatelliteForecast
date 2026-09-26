@@ -20,3 +20,5 @@
 "empty.short" = "通過なし";
 "iss.compact" = "ISS";
 "now.short" = "通過中";
+"iss.full" = "国際宇宙ステーション";
+"tiangong.full" = "天宮宇宙ステーション";

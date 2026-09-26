@@ -87,6 +87,19 @@ public struct WidgetSkyBackground: Codable, Equatable, Sendable {
     }
 }
 
+/// A labelled moment on the large widget's sky chart.
+public struct WidgetSkyEvent: Codable, Equatable, Sendable {
+    public enum Kind: String, Codable, Sendable { case rise, peak, set, entersShadow, exitsShadow }
+    public let kind: Kind
+    public let date: Date
+    public let position: WidgetSkyPoint
+    public init(kind: Kind, date: Date, position: WidgetSkyPoint) {
+        self.kind = kind
+        self.date = date
+        self.position = position
+    }
+}
+
 public struct WidgetPass: Codable, Equatable, Sendable {
     public let station: Int
     public let rise: Date
@@ -97,9 +110,13 @@ public struct WidgetPass: Codable, Equatable, Sendable {
     public let endDirection: String
     public let skyTrack: [WidgetSkyPoint]?
     public let skyBackground: WidgetSkyBackground?
+    /// Rise, culmination, set and shadow crossings with their sky positions. Optional so
+    /// forecasts written by earlier app versions still decode.
+    public let events: [WidgetSkyEvent]?
 
     public init(station: Int, rise: Date, peak: Date, set: Date, elevation: Double,
-                startDirection: String, endDirection: String, skyTrack: [WidgetSkyPoint]? = nil, skyBackground: WidgetSkyBackground? = nil) {
+                startDirection: String, endDirection: String, skyTrack: [WidgetSkyPoint]? = nil,
+                skyBackground: WidgetSkyBackground? = nil, events: [WidgetSkyEvent]? = nil) {
         self.station = station
         self.rise = rise
         self.peak = peak
@@ -109,6 +126,7 @@ public struct WidgetPass: Codable, Equatable, Sendable {
         self.endDirection = endDirection
         self.skyTrack = skyTrack
         self.skyBackground = skyBackground
+        self.events = events
     }
     public var name: String { station == 25544 ? "ISS" : "Tiangong" }
 }

@@ -20,3 +20,5 @@
 "empty.short" = "暂无过境";
 "iss.compact" = "国际空间站";
 "now.short" = "过境中";
+"iss.full" = "国际空间站";
+"tiangong.full" = "天宫空间站";

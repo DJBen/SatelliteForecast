@@ -46,7 +46,7 @@ final class ScreenSnapshotTests: XCTestCase {
             WidgetPass(station: 25544, rise: Date(julianDate: pass.rise.julianDate),
                 peak: Date(julianDate: pass.culmination.julianDate), set: Date(julianDate: pass.set.julianDate),
                 elevation: pass.culmination.elev, startDirection: "SW", endDirection: "NE", skyTrack: track,
-                skyBackground: skies[pass.rise.julianDate]),
+                skyBackground: skies[pass.rise.julianDate], events: ForecastModel.widgetEvents(pass)),
             WidgetForecast.preview(at: now).passes[1]
         ])
         let cases: [(String, WidgetFamily, CGSize, Bool, Int, WidgetForecast?)] = [

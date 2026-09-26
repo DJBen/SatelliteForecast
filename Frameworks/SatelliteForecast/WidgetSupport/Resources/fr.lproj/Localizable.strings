@@ -20,3 +20,5 @@
 "empty.short" = "Aucun passage";
 "iss.compact" = "ISS";
 "now.short" = "En cours";
+"iss.full" = "Station spatiale internationale";
+"tiangong.full" = "Station spatiale Tiangong";

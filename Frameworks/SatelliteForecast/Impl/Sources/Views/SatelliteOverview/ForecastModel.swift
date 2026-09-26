@@ -132,7 +132,8 @@ public final class ForecastModel {
                     peak: Date(julianDate: pass.culmination.julianDate),
                     set: Date(julianDate: pass.set.julianDate), elevation: pass.culmination.elev,
                     startDirection: Self.direction(pass.rise.azim), endDirection: Self.direction(pass.set.azim),
-                    skyTrack: tracks[pass.rise.julianDate], skyBackground: skies[pass.rise.julianDate])
+                    skyTrack: tracks[pass.rise.julianDate], skyBackground: skies[pass.rise.julianDate],
+                    events: Self.widgetEvents(pass))
                 summaries.append(summary)
             }
         }
@@ -146,6 +147,22 @@ public final class ForecastModel {
         ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil ||
         ProcessInfo.processInfo.environment["SATELLITE_SNAPSHOT_TESTS"] == "1" ||
         ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
+    }
+
+    /// Rise, culmination, set and each shadow crossing, in time order.
+    static func widgetEvents(_ pass: Pass) -> [WidgetSkyEvent] {
+        func event(_ kind: WidgetSkyEvent.Kind, _ position: Pass.DatePosition) -> WidgetSkyEvent {
+            .init(kind: kind, date: Date(julianDate: position.julianDate),
+                  position: .init(azimuth: position.azim, elevation: max(0, position.elev)))
+        }
+        var events = [event(.rise, pass.rise), event(.peak, pass.culmination), event(.set, pass.set)]
+        for change in pass.illumination.changes {
+            switch change {
+            case .entersShadow(let position): events.append(event(.entersShadow, position))
+            case .exitsShadow(let position): events.append(event(.exitsShadow, position))
+            }
+        }
+        return events.sorted { $0.date < $1.date }
     }
 
     private static func direction(_ azimuth: Double) -> String {

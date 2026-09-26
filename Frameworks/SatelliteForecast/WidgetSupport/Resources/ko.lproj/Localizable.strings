@@ -20,3 +20,5 @@
 "empty.short" = "통과 없음";
 "iss.compact" = "ISS";
 "now.short" = "통과 중";
+"iss.full" = "국제우주정거장";
+"tiangong.full" = "톈궁 우주정거장";
