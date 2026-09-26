@@ -35,6 +35,10 @@ enum ObservationOpportunity {
     static func name(_ pass: Pass) -> String {
         SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedTitle(category(pass))
     }
+    /// Compact station name for list rows where the full title would wrap.
+    static func shortName(_ pass: Pass) -> String {
+        AppLocalization.text(category(pass) == .iss ? "ISS" : "Tiangong")
+    }
     static func direction(_ azimuth: Double) -> String {
         let angle = (azimuth.truncatingRemainder(dividingBy: 360) + 360).truncatingRemainder(dividingBy: 360)
         return AppLocalization.text(["N", "NE", "E", "SE", "S", "SW", "W", "NW"][Int((angle / 45).rounded()) % 8])

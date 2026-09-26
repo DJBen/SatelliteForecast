@@ -4,7 +4,11 @@ import SwiftUI
 
 public struct NativeRootView: View {
   let session: AppSession
-  public init(session: AppSession) { self.session = session }
+  @State private var forecast: ForecastModel
+  public init(session: AppSession) {
+    self.session = session
+    _forecast = State(initialValue: ForecastModel(client: .live(service: ForecastService(brightStars: session.catalog.stars(maximumMagnitude: 3)))))
+  }
   public var body: some View {
     let factory = ScreenFactory(session: session)
     RootView(
@@ -17,11 +21,13 @@ public struct NativeRootView: View {
           viewModel: RealtimeSkyModel(session: session, service: session.orbits), context: $0,
           backgroundSkyViewFactory: ViewFactory { factory.background($0) })
       },
-      satelliteOverviewViewFactory: { NativeForecastView(session: session, context: $0) },
-      satelliteCategoryViewFactory: {
-        SatelliteCategoryViewImpl(
-          viewModel: SatelliteCategoryModel(session: session), context: $0,
-          listViewFactory: ViewFactory { factory.list($0) })
+      satelliteOverviewViewFactory: { NativeForecastView(session: session, context: $0, model: forecast) },
+      satelliteCategoryViewFactory: { context in
+        let cards = NativeStationCards(session: session, model: forecast, context: context)
+        return SatelliteCategoryViewImpl(
+          viewModel: SatelliteCategoryModel(session: session), context: context,
+          listViewFactory: ViewFactory { factory.list($0) },
+          header: AnyView(cards), stationDestination: { AnyView(cards.destination($0)) })
       },
       settingsOverviewFactory: { NativeSettingsView(session: session) }
     )
@@ -43,7 +49,37 @@ public struct NativeRootView: View {
   }
 }
 
+/// Notification and URL entry: the pass content inside its own stack with a Done button.
 struct DeepLinkView: View {
+  let session: AppSession
+  let link: SatelliteDeepLink
+  @Environment(\.dismiss) private var dismiss
+  var body: some View {
+    NavigationStack {
+      DeepLinkContent(session: session, link: link)
+        .toolbar { ToolbarItem(placement: .cancellationAction) { Button(AppLocalization.text("Done")) { dismiss() } } }
+    }
+  }
+}
+
+/// Pushed forecast destinations. Everything home opens lives in `forecastPath`, so a single
+/// pop always returns exactly one screen and no destination is presented twice.
+enum ForecastRoute: Hashable {
+  case allPasses
+  case pass(PassRoute)
+}
+
+struct PassRoute: Hashable {
+  let category: SatelliteCategory
+  let noradIndex: UInt
+  let observer: LatLonAlt
+  let passTime: Date
+  var link: SatelliteDeepLink { .init(category: category, noradIndex: noradIndex, observer: observer, passTime: passTime) }
+}
+
+/// Resolves a deep link to the timed pass screen, or the station's pass list when no time is
+/// given. Used both pushed from home and inside the notification sheet.
+struct DeepLinkContent: View {
   let session: AppSession
   let link: SatelliteDeepLink
   @State private var info: SatelliteInfo?
@@ -51,41 +87,37 @@ struct DeepLinkView: View {
   @State private var showAllPasses = false
   @State private var error: String?
   @State private var attempt = 0
-  @Environment(\.dismiss) private var dismiss
   var body: some View {
-    NavigationStack {
-      Group {
-        if let info, let selectedPass, !showAllPasses {
-          ScreenFactory(session: session).pass(.init(
-            passIndex: 0, satelliteInfo: info,
-            satelliteCommonName: info.elements.commonName, category: link.category,
-            julianDateRange: selectedPass.pass.rise.julianDate...selectedPass.pass.set.julianDate,
-            observer: link.observer, passSnapshots: selectedPass,
-            starManager: session.catalog, julianDateProvider: { Date().julianDate }))
-        } else if let info, link.passTime == nil || showAllPasses {
-          ScreenFactory(session: session).passes(
-            .init(
-              satelliteInfo: info,
-              julianDateRange: JulianDateUtil.createJulianDateRange(
-                now: Date().julianDate + session.debug.config.effectiveOffset),
-              observer: link.observer, starManager: session.catalog,
-              julianDateProvider: { Date().julianDate }), category: link.category)
-        } else if let error {
-          ContentUnavailableView {
-            Label(AppLocalization.text("Unable to open pass"), systemImage: "exclamationmark.triangle")
-          } description: {
-            Text(error)
-          } actions: {
-            Button(AppLocalization.text("Retry")) { attempt += 1 }
-            if info != nil { Button(AppLocalization.text("View all passes")) { showAllPasses = true } }
-          }
-        } else {
-          ProgressView()
+    Group {
+      if let info, let selectedPass, !showAllPasses {
+        ScreenFactory(session: session).pass(.init(
+          passIndex: 0, satelliteInfo: info,
+          satelliteCommonName: info.elements.commonName, category: link.category,
+          julianDateRange: selectedPass.pass.rise.julianDate...selectedPass.pass.set.julianDate,
+          observer: link.observer, passSnapshots: selectedPass,
+          starManager: session.catalog, julianDateProvider: { Date().julianDate }))
+      } else if let info, link.passTime == nil || showAllPasses {
+        ScreenFactory(session: session).passes(
+          .init(
+            satelliteInfo: info,
+            julianDateRange: JulianDateUtil.createJulianDateRange(
+              now: Date().julianDate + session.debug.config.effectiveOffset),
+            observer: link.observer, starManager: session.catalog,
+            julianDateProvider: { Date().julianDate }), category: link.category)
+      } else if let error {
+        ContentUnavailableView {
+          Label(AppLocalization.text("Unable to open pass"), systemImage: "exclamationmark.triangle")
+        } description: {
+          Text(error)
+        } actions: {
+          Button(AppLocalization.text("Retry")) { attempt += 1 }
+          if info != nil { Button(AppLocalization.text("View all passes")) { showAllPasses = true } }
         }
+      } else {
+        ProgressView().modifier(AppSurface())
       }
-      .toolbar(.visible, for: .navigationBar)
-      .toolbar { ToolbarItem(placement: .cancellationAction) { Button(AppLocalization.text("Done")) { dismiss() } } }
     }
+    .toolbar(.visible, for: .navigationBar)
     .task(id: attempt) {
       error = nil
       do {

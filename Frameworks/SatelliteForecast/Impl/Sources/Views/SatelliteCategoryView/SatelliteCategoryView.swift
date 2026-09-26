@@ -39,15 +39,24 @@ public struct SatelliteCategoryViewImpl: SatelliteCategoryView {
     @State var viewModel: SatelliteCategoryModel
     let context: SatelliteCategoryViewContext
     let listViewFactory: ViewFactory<SatelliteListViewContext, SatelliteListView>
+    /// Optional content shown above the categories, such as the station cards.
+    let header: AnyView?
+    /// Destination for `SpecialSatellite` links in the header. Registered on the stack root,
+    /// because a destination declared inside the lazy content is not reliably found.
+    let stationDestination: ((SpecialSatellite) -> AnyView)?
 
     public init(
         viewModel: SatelliteCategoryModel,
         context: SatelliteCategoryViewContext,
         listViewFactory: ViewFactory<SatelliteListViewContext, SatelliteListView>,
+        header: AnyView? = nil,
+        stationDestination: ((SpecialSatellite) -> AnyView)? = nil
     ) {
         self.viewModel = viewModel
         self.context = context
         self.listViewFactory = listViewFactory
+        self.header = header
+        self.stationDestination = stationDestination
     }
 
     public var body: some View {
@@ -71,6 +80,7 @@ public struct SatelliteCategoryViewImpl: SatelliteCategoryView {
                             .font(.largeTitle.bold())
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.top, 8)
+                        if let header { header.padding(.bottom, 10) }
                         Section {
                             LazyVStack(
                                 alignment: .leading,
@@ -106,6 +116,9 @@ public struct SatelliteCategoryViewImpl: SatelliteCategoryView {
                 )
                 .navigationBarHidden(true)
         .analyticsScreen(.categories)
+                .navigationDestination(for: SpecialSatellite.self) { station in
+                    if let stationDestination { stationDestination(station) }
+                }
                 .navigationDestination(for: SatelliteCategory.self) { category in
                     LazyView {
                         listViewFactory.view(

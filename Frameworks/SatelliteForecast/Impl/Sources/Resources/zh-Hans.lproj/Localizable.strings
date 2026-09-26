@@ -700,11 +700,11 @@ The localized string for the status of a spare satellite */
 "Finding your next observation…" = "正在寻找下一次观测机会…";
 "Opens the sky chart for this pass" = "打开此次过境的天空图";
 "Retry preview" = "重试预览";
-"Setting reminder…" = "正在设置提醒…";
-"Reminder set" = "已设置提醒";
 "Start observing" = "开始观测";
-"Remind me 5 min before" = "提前 5 分钟提醒我";
-"Tap to cancel this reminder" = "轻点取消此次提醒";
+"Remind me" = "提醒我";
+"Turning on reminders…" = "正在开启提醒…";
+"Notifications are disabled. Enable them in Settings to get station reminders." = "通知已关闭。请在“设置”中开启通知以接收空间站提醒。";
+"Allows notifications for ISS and Tiangong passes" = "允许接收国际空间站和天宫过境通知";
 "Coming up" = "接下来的机会";
 "All passes" = "全部过境";
 "No more visible station passes in this forecast." = "本次预报范围内没有更多可见的空间站过境。";
@@ -725,3 +725,7 @@ The localized string for the status of a spare satellite */
 "%@ · %d° at highest" = "%@ · 最高 %d°";
 "Unable to find your location. Try again or choose a city." = "无法获取你的位置。请重试或选择城市。";
 "Pass animation preview. Solid trail: traveled in the preview. Dotted trail: still ahead. Gray: in Earth’s shadow." = "过境动画预览。实线表示预览中已经经过的轨迹，虚线表示尚未经过的轨迹，灰色表示地球阴影中的部分。";
+"%d° at highest" = "最高 %d°";
+"ISS" = "国际空间站";
+"Tiangong" = "天宫";
+"%d min" = "%d 分钟";

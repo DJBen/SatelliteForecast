@@ -343,6 +343,17 @@ final class ScreenSnapshotTests: XCTestCase {
                 .frame(height: 320).padding(24).background(AppTheme.background)
             try await assertSnapshot(AnyView(sky), name: "observation-path-\(Int(progress * 100))-dark", style: .dark, record: true)
         }
+        // Atmosphere review: a pass during evening or morning twilight shows the violet rim and solar glow.
+        if let twilight = fixture.passes.first(where: {
+            $0.pass.visibility == .visible && $0.pass.sunElevationAtTransit > -15 && $0.pass.sunElevationAtTransit < -6
+        }) {
+            let sky = ObservationSkyPreview(preview: .init(info: fixture.info, snapshots: twilight), observer: fixture.observer,
+                session: fixture.session, reviewProgress: 0.5)
+                .frame(height: 320).padding(24).background(AppTheme.background)
+            try await assertSnapshot(AnyView(sky), name: "observation-sky-twilight-dark", style: .dark, record: true)
+        } else {
+            XCTFail("Fixture has no twilight pass for the atmosphere review")
+        }
         let noLocation = AppSession(catalog: catalog, location: LocationService())
         try await assertSnapshot(AnyView(ObservationHomeView(session: noLocation, model: model, context: context)),
             name: "observation-location-dark", style: .dark, record: true)

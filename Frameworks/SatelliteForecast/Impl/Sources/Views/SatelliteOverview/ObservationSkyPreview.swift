@@ -107,15 +107,16 @@ struct ObservationSkyPreview: View {
         let traits = UITraitCollection(userInterfaceStyle: .dark)
         func color(_ lit: Bool) -> Color { Color(uiColor: SkyChartTheme.satellitePathColor(illuminated: lit, traitCollection: traits)) }
         // Group by illumination and preview time. Dashes never encode illumination.
-        for lit in [false, true] {
-            for ahead in [false, true] {
+        // The dotted track always covers the whole pass from fixed sample points so the dash
+        // phase stays put while the solid elapsed portion is painted over it up to the cursor.
+        for ahead in [true, false] {
+            for lit in [false, true] {
                 var path = Path()
                 var connected = false
                 for i in 0..<(points.count - 1) {
-                    guard samples[i].isIlluminated == lit, (ahead ? i >= index : i <= index) else { connected = false; continue }
-                    let from = ahead && i == index ? cursor : points[i]
+                    guard samples[i].isIlluminated == lit, ahead || i <= index else { connected = false; continue }
                     let to = !ahead && i == index ? cursor : points[i + 1]
-                    if !connected { path.move(to: from) }
+                    if !connected { path.move(to: points[i]) }
                     path.addLine(to: to)
                     connected = true
                 }

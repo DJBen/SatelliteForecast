@@ -12,14 +12,12 @@ struct ObservationHomeView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.dynamicTypeSize) private var dynamicType
     @State private var showsLocation = false
-    @State private var showsAll = false
     @State private var preview: ObservationPreview?
     @State private var previewKey: PreviewKey?
     @State private var previewFailed = false
     @State private var previewAttempt = 0
     @State private var isVisible = false
     @State private var skyIsVisible = true
-    @State private var isScheduling = false
     @State private var reminderTask: Task<Void, Never>?
 
     init(session: AppSession, model: ForecastModel, context: SatelliteOverviewViewContext,
@@ -94,11 +92,11 @@ struct ObservationHomeView: View {
                 await model.refresh(input)
             }
             .analyticsScreen(.forecast)
-            .navigationDestination(isPresented: $showsAll) { allPasses }
-            .navigationDestination(for: SpecialSatellite.self) { station in
-                ScreenFactory(session: session).detail(.init(selectedNoradIndex: station.rawValue,
-                    julianDateRange: JulianDateUtil.createJulianDateRange(now: now), observer: input.observer,
-                    starManager: session.catalog, julianDateProvider: context.julianDateProvider))
+            .navigationDestination(for: ForecastRoute.self) { route in
+                switch route {
+                case .allPasses: allPasses
+                case .pass(let pass): DeepLinkContent(session: session, link: pass.link)
+                }
             }
             .sheet(isPresented: $showsLocation) {
                 NavigationStack {
@@ -161,7 +159,7 @@ struct ObservationHomeView: View {
                         .fixedSize(horizontal: false, vertical: true)
                     if let preview = currentPreview, let observer = input.observer {
                         ObservationSkyPreview(preview: preview, observer: observer, session: session,
-                            isActive: isVisible && skyIsVisible && !showsLocation && !showsAll && session.navigation.deepLink == nil)
+                            isActive: isVisible && skyIsVisible && !showsLocation && session.navigation.forecastPath.isEmpty && session.navigation.deepLink == nil)
                             .frame(height: dynamicType.isAccessibilitySize ? 240 : 258)
                             .onScrollVisibilityChange(threshold: 0.1) { skyIsVisible = $0 }
                     } else if previewFailed {
@@ -191,86 +189,102 @@ struct ObservationHomeView: View {
         }
     }
 
+    /// Enables ISS and Tiangong push reminders through the notification permission prompt.
+    /// No local notification is scheduled; the backend delivers reminders to authorized devices.
+    /// Once notifications are allowed the button disappears unless the pass is about to start.
+    @ViewBuilder
     private func reminderButton(_ pass: Pass) -> some View {
-        let scheduled = session.notifications.scheduled.contains { $0.id == pass.notificationIdentifier }
+        let enabled = session.notifications.isAuthorized
+        let requesting = session.notifications.isRequestingAuthorization
         let tooLate = ObservationOpportunity.start(pass) - 300.0 / 86400 <= now
-        return Button {
-            if scheduled { session.notifications.cancel([pass.notificationIdentifier]) }
-            else if tooLate { open(pass) }
-            else { schedule(pass) }
-        } label: {
-            HStack(spacing: 8) {
-                if isScheduling { ProgressView().tint(.black) }
-                else { Image(systemName: scheduled ? "bell.badge.fill" : tooLate ? "location.north.line" : "bell") }
-                Text(AppLocalization.text(isScheduling ? "Setting reminder…" : scheduled ? "Reminder set" : tooLate ? "Start observing" : "Remind me 5 min before"))
-                    .fixedSize(horizontal: false, vertical: true)
+        if tooLate || !enabled {
+            Button {
+                if tooLate { open(pass) } else { enableReminders() }
+            } label: {
+                HStack(spacing: 10) {
+                    if requesting { ProgressView().tint(Color(uiColor: .systemBackground)) }
+                    else { Image(systemName: tooLate ? "location.north.line" : "bell") }
+                    Text(AppLocalization.text(requesting ? "Turning on reminders…" : tooLate ? "Start observing" : "Remind me"))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .font(.title3.weight(.semibold))
+                .frame(maxWidth: .infinity, minHeight: 32)
+                .padding(.vertical, 12)
             }
-            .font(.headline)
-            .frame(maxWidth: .infinity, minHeight: 28)
-            .padding(.vertical, 12)
+            .buttonStyle(.borderedProminent)
+            .tint(AppTheme.accent)
+            .foregroundStyle(Color(uiColor: .systemBackground))
+            .buttonBorderShape(.roundedRectangle(radius: 16))
+            .disabled(requesting)
+            .accessibilityHint(Text(tooLate ? "" : "Allows notifications for ISS and Tiangong passes", bundle: .module))
         }
-        .buttonStyle(.borderedProminent)
-        .tint(AppTheme.accent)
-        .foregroundStyle(Color(uiColor: .systemBackground))
-        .buttonBorderShape(.roundedRectangle(radius: 16))
-        .disabled(isScheduling || (!tooLate && !scheduled && currentPreview == nil))
-        .accessibilityHint(Text(scheduled ? "Tap to cancel this reminder" : "", bundle: .module))
     }
 
     private var upcoming: some View {
-        VStack(spacing: 2) {
+        VStack(spacing: 10) {
             HStack {
                 Text("Coming up", bundle: .module).font(.title3.weight(.semibold))
                 Spacer()
-                Button { showsAll = true } label: {
+                Button { session.navigation.forecastPath.append(ForecastRoute.allPasses) } label: {
                     HStack(spacing: 4) {
                         Text("All passes", bundle: .module)
                         Image(systemName: "chevron.right").font(.caption.weight(.semibold))
                     }.font(.subheadline).foregroundStyle(AppTheme.accent)
                 }.frame(minHeight: 44)
             }
-            ForEach(Array(passes.dropFirst().prefix(3)), id: \.notificationIdentifier) { pass in row(pass) }
-            if passes.count == 1 {
+            .padding(.horizontal, 4)
+            let next = Array(passes.dropFirst().prefix(3))
+            if next.isEmpty {
                 Text("No more visible station passes in this forecast.", bundle: .module)
                     .font(.subheadline).foregroundStyle(AppTheme.muted)
-                    .frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 12)
+                    .frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 4).padding(.vertical, 8)
+            } else {
+                VStack(spacing: 0) {
+                    ForEach(Array(next.enumerated()), id: \.element.notificationIdentifier) { offset, pass in
+                        if offset > 0 { ObservationRowDivider() }
+                        ObservationPassRow(pass: pass, now: now) { open(pass) }
+                    }
+                }
+                .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppTheme.cardRadius, style: .continuous))
             }
         }
     }
 
-    private func row(_ pass: Pass) -> some View {
-        Button { open(pass) } label: {
-            HStack(alignment: .top, spacing: 12) {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(ObservationOpportunity.name(pass)).font(.headline).foregroundStyle(.primary)
-                    Text(summary(pass)).font(.caption).foregroundStyle(AppTheme.muted)
-                }
-                Spacer(minLength: 0)
-                VStack(alignment: .trailing, spacing: 6) {
-                    Text(date(pass), format: .dateTime.hour().minute()).font(.headline).foregroundStyle(.primary)
-                    Text(dayLabel(pass)).font(.caption).foregroundStyle(AppTheme.muted)
-                }
-            }
-            .fixedSize(horizontal: false, vertical: true)
-            .padding(.vertical, 16)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .overlay(alignment: .bottom) { Rectangle().fill(AppTheme.border.opacity(0.6)).frame(height: 0.5) }
-    }
-
+    /// Every visible pass in the forecast, grouped by day.
     private var allPasses: some View {
-        List {
-            Section { ForEach(passes, id: \.notificationIdentifier) { row($0) } }
-            Section {
-                NavigationLink(value: SpecialSatellite.iss) { Text(SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedTitle(.iss)) }
-                NavigationLink(value: SpecialSatellite.tianhe) { Text(SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedTitle(.tianhe)) }
-            } header: { Text("Explore space stations", bundle: .module) }
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                ForEach(passGroups, id: \.title) { group in
+                    ObservationPassGroup(title: group.title) {
+                        ForEach(Array(group.passes.enumerated()), id: \.element.notificationIdentifier) { offset, pass in
+                            if offset > 0 { ObservationRowDivider() }
+                            ObservationPassRow(pass: pass, now: now, showsDay: false) { open(pass) }
+                        }
+                    }
+                }
+                if passes.isEmpty {
+                    Text("No visible station passes in the next 7 days", bundle: .module)
+                        .font(.subheadline).foregroundStyle(AppTheme.muted).padding(.horizontal, 4)
+                }
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 8)
+            .padding(.bottom, 24)
         }
         .modifier(AppSurface())
         .navigationTitle(Text("All passes", bundle: .module))
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar(.visible, for: .navigationBar)
+    }
+
+    private var passGroups: [(title: String, passes: [Pass])] {
+        var groups: [(title: String, passes: [Pass])] = []
+        for pass in passes {
+            let title = ObservationPassRow.dayLabel(date(pass), now: now, locale: locale, timeZone: timeZone)
+            if let index = groups.firstIndex(where: { $0.title == title }) { groups[index].passes.append(pass) }
+            else { groups.append((title, [pass])) }
+        }
+        return groups
     }
 
     private var locationPrompt: some View {
@@ -322,24 +336,17 @@ struct ObservationHomeView: View {
     }
     private func date(_ pass: Pass) -> Date { Date(julianDate: ObservationOpportunity.start(pass)) }
     private func dayLabel(_ pass: Pass) -> String {
-        var calendar = Calendar(identifier: .gregorian); calendar.timeZone = timeZone
-        let current = Date(julianDate: now), target = date(pass)
-        if calendar.isDate(target, inSameDayAs: current) {
-            return AppLocalization.text(calendar.component(.hour, from: target) >= 18 ? "Tonight" : "Today")
-        }
-        if let tomorrow = calendar.date(byAdding: .day, value: 1, to: current), calendar.isDate(target, inSameDayAs: tomorrow) {
-            return AppLocalization.text("Tomorrow")
-        }
-        return target.formatted(Date.FormatStyle(date: .abbreviated, time: .omitted, locale: locale, timeZone: timeZone))
+        ObservationPassRow.dayLabel(date(pass), now: now, locale: locale, timeZone: timeZone)
     }
     private func summary(_ pass: Pass) -> String {
         AppLocalization.format("%@ · %d° at highest", PassPreviewCell.visibleDurationText(for: pass, locale: locale),
             Int((pass.highestIlluminated?.elev ?? pass.culmination.elev).rounded()))
     }
+    /// Pushes the timed pass screen onto the forecast stack; notifications keep the sheet route.
     private func open(_ pass: Pass) {
         guard let observer = input.observer else { showsLocation = true; return }
-        session.open(ObservationOpportunity.category(pass), id: pass.noradIndex, observer: observer,
-            passTime: Date(julianDate: pass.culmination.julianDate), fromNotification: false)
+        session.navigation.forecastPath.append(ForecastRoute.pass(.init(category: ObservationOpportunity.category(pass),
+            noradIndex: pass.noradIndex, observer: observer, passTime: Date(julianDate: pass.culmination.julianDate))))
     }
     private func loadPreview(_ key: PreviewKey) async {
         guard !SnapshotEnvironment.isEnabled, previewKey != key else { return }
@@ -360,14 +367,8 @@ struct ObservationHomeView: View {
         } catch is CancellationError { if previewKey == key { previewKey = nil } }
         catch { if !Task.isCancelled && previewKey == key { previewFailed = true } }
     }
-    private func schedule(_ pass: Pass) {
-        guard !isScheduling, let preview = currentPreview, let observer = input.observer else { return }
-        isScheduling = true
-        reminderTask = Task { @MainActor in
-            defer { isScheduling = false }
-            await session.notifications.schedule(ObservationOpportunity.reminder(pass, observer: observer),
-                snapshots: preview.snapshots, catalog: session.catalog, offset: input.julianDateOffset,
-                rapid: session.debug.config.rapidNotificationDelivery, fromForecast: true)
-        }
+    private func enableReminders() {
+        reminderTask?.cancel()
+        reminderTask = Task { @MainActor in _ = await session.enableStationReminders() }
     }
 }

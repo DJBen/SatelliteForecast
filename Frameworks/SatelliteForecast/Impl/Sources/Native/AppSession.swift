@@ -56,6 +56,13 @@ public final class AppSession {
       alarmTasks[id] = nil
     }
   }
+  /// Asks for notification permission and, once granted, registers this device for ISS and
+  /// Tiangong push reminders. The backend delivers reminders to every registered device.
+  public func enableStationReminders() async -> Bool {
+    let granted = await notifications.enableStationReminders()
+    if granted, let token = debug.fcmToken { updateRegistration(token) }
+    return granted
+  }
   public func handle(_ event: AppDelegateAction) {
     switch event {
     case .didFinishLaunchingWithOptions:
@@ -83,7 +90,15 @@ public final class AppSession {
     navigation.tab = category == .iss || category == .tianhe ? .forecast : .satellites
     navigation.deepLink = SatelliteDeepLink(category: category, noradIndex: id, observer: observer, passTime: passTime)
   }
+  /// Writes the push registration only after the user has allowed notifications, so a device
+  /// is never subscribed to station reminders it cannot receive.
   private func updateRegistration(_ token: String) {
+    Task { [weak self] in
+      guard let self, await notifications.checkAuthorization() else { return }
+      writeRegistration(token)
+    }
+  }
+  private func writeRegistration(_ token: String) {
     #if targetEnvironment(simulator)
       return
     #else

@@ -51,6 +51,8 @@ extension ChartRenderer {
         }
         let daylight = smooth(-8, 12, sun.elev)
         let twilight = smooth(-18, -5, sun.elev) * (1 - smooth(0, 14, sun.elev))
+        // Residual scattering while the Sun is within 18° of the horizon, as in SkyChartAtmosphere.
+        let presence = smooth(-18, -2, sun.elev) * (1 - daylight)
         let pixelsPerPoint = min(2, 1024 / max(projection.width, projection.height))
         let width = max(1, Int(projection.width * pixelsPerPoint))
         let height = max(1, Int(projection.height * pixelsPerPoint))
@@ -64,14 +66,19 @@ extension ChartRenderer {
                 guard ray.z > 0, facing >= 0 else { continue }
                 let equatorial = frame.east * ray.x + frame.north * ray.y + frame.zenith * ray.z
                 let galaxy = texture?.sample(MilkyWayBackground.textureCoordinates(MilkyWayBackground.galactic(equatorial))) ?? .zero
-                // Same directional night/twilight palette as the in-app planetarium.
-                let horizon = exp(-ray.z * 5)
+                // The planetarium's directional palette, with the night sky lifted to the sky
+                // chart's illustration levels: a deep blue zenith, a hazier blue horizon band
+                // from airglow and scattered light, a violet twilight rim and a warm solar aureole.
+                let horizon = exp(-ray.z * 4.5)
                 let glow = pow(max(0, simd_dot(ray, sunRay)), 12)
-                let night = SIMD3(0.0015, 0.003, 0.012) * (1 - horizon) + SIMD3(0.018, 0.030, 0.053) * horizon
+                let wideGlow = pow(max(0, simd_dot(ray, sunRay)), 3)
+                let night = SIMD3(0.010, 0.020, 0.062) * (1 - horizon) + SIMD3(0.052, 0.112, 0.240) * horizon
                 let day = SIMD3(0.025, 0.16, 0.42) * (1 - horizon) + SIMD3(0.37, 0.60, 0.82) * horizon
                 let sky = night * (1 - daylight) + day * daylight
-                    + twilight * horizon * SIMD3(0.18, 0.06, 0.12)
-                    + glow * twilight * SIMD3(0.65, 0.22, 0.06)
+                    + presence * (0.35 + 0.65 * horizon) * SIMD3(0.02, 0.09, 0.24)
+                    + twilight * horizon * SIMD3(0.32, 0.15, 0.36)
+                    + twilight * horizon * wideGlow * SIMD3(0.55, 0.26, 0.12)
+                    + glow * twilight * SIMD3(0.85, 0.34, 0.10)
                 let color = simd_min(SIMD3(repeating: 1), sky + galaxy * (0.65 * (1 - daylight)))
                 let edge = smooth(0, 18, min(point.x, projection.width - point.x))
                     * smooth(0, 22, min(point.y, projection.height - point.y))

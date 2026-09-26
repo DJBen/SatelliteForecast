@@ -19,6 +19,14 @@ public final class DebugModel {
       config = state.config
       fcmToken = state.fcmToken
     }
+    #if DEBUG
+      // Launch argument for simulator reviews: `-debugMockedOffsetDays 1.5` shifts the mocked date.
+      let days = UserDefaults.standard.double(forKey: "debugMockedOffsetDays")
+      if days != 0 {
+        config.mockedOffsetOn = true
+        config.mockedOffset = days
+      }
+    #endif
   }
   public func send(_ action: DebugMenuAction) {
     let now = Date().julianDate

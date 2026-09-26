@@ -92,6 +92,7 @@ public struct LocationSettingsView: View {
             }, header: {
                 Text("Current location", bundle: .module)
             })
+            .listRowBackground(AppTheme.surface)
 
             switch state.locationSelection {
             case .currentLocation:
@@ -111,10 +112,12 @@ public struct LocationSettingsView: View {
                 }, header: {
                     Text("Custom location", bundle: .module)
                 })
+                .listRowBackground(AppTheme.surface)
             }
 
             if let message = search.errorMessage {
                 Section { Text(message).foregroundStyle(.secondary) }
+                    .listRowBackground(AppTheme.surface)
             }
             Section {
                 ForEach(search.results, id: \.self) { locationAutoCompletion in
@@ -125,6 +128,7 @@ public struct LocationSettingsView: View {
                     }
                 }
             }
+            .listRowBackground(AppTheme.surface)
         }
         .searchable(
             text: $search.query,
@@ -133,6 +137,7 @@ public struct LocationSettingsView: View {
         )
         .modifier(AppSurface())
         .navigationTitle(Text("Select Location", bundle: .module))
+        .navigationBarTitleDisplayMode(.inline)
         .analyticsScreen(.location)
         .task(id: search.query) { await search.search() }
         .onDisappear { search.cancel() }

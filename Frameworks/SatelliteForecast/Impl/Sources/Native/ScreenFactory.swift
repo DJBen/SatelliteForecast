@@ -63,10 +63,10 @@ public struct NativeForecastView: SatelliteOverviewView {
   let session: AppSession
   let context: SatelliteOverviewViewContext
   @State private var model: ForecastModel
-  public init(session: AppSession, context: SatelliteOverviewViewContext) {
+  public init(session: AppSession, context: SatelliteOverviewViewContext, model: ForecastModel? = nil) {
     self.session = session
     self.context = context
-    _model = State(initialValue: ForecastModel(client: .live(service: ForecastService(brightStars: session.catalog.stars(maximumMagnitude: 3)))))
+    _model = State(initialValue: model ?? ForecastModel(client: .live(service: ForecastService(brightStars: session.catalog.stars(maximumMagnitude: 3)))))
   }
   public var body: some View {
     ObservationHomeView(session: session, model: model, context: context)

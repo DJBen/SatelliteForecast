@@ -341,11 +341,11 @@
 "Finding your next observation…" = "Finding your next observation…";
 "Opens the sky chart for this pass" = "Opens the sky chart for this pass";
 "Retry preview" = "Retry preview";
-"Setting reminder…" = "Setting reminder…";
-"Reminder set" = "Reminder set";
 "Start observing" = "Start observing";
-"Remind me 5 min before" = "Remind me 5 min before";
-"Tap to cancel this reminder" = "Tap to cancel this reminder";
+"Remind me" = "Remind me";
+"Turning on reminders…" = "Turning on reminders…";
+"Notifications are disabled. Enable them in Settings to get station reminders." = "Notifications are disabled. Enable them in Settings to get station reminders.";
+"Allows notifications for ISS and Tiangong passes" = "Allows notifications for ISS and Tiangong passes";
 "Coming up" = "Coming up";
 "All passes" = "All passes";
 "No more visible station passes in this forecast." = "No more visible station passes in this forecast.";
@@ -366,3 +366,7 @@
 "%@ · %d° at highest" = "%@ · %d° at highest";
 "Unable to find your location. Try again or choose a city." = "Unable to find your location. Try again or choose a city.";
 "Pass animation preview. Solid trail: traveled in the preview. Dotted trail: still ahead. Gray: in Earth’s shadow." = "Pass animation preview. Solid trail: traveled in the preview. Dotted trail: still ahead. Gray: in Earth’s shadow.";
+"%d° at highest" = "%d° at highest";
+"ISS" = "ISS";
+"Tiangong" = "Tiangong";
+"%d min" = "%d min";

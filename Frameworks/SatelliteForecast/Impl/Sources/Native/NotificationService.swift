@@ -11,6 +11,10 @@ public final class NotificationService {
   public var pending: [UNNotificationRequest] = []
   public var delivered: [UNNotification] = []
   public var errorMessage: String?
+  /// True when the OS currently allows this app to present notifications. Station push
+  /// reminders are delivered only to authorized devices; see `enableStationReminders()`.
+  public var isAuthorized = false
+  public var isRequestingAuthorization = false
   private var revision = 0
   @ObservationIgnored private let center: UNUserNotificationCenter
   @ObservationIgnored private let defaults: UserDefaults
@@ -30,6 +34,7 @@ public final class NotificationService {
   }
   public func refresh() async {
     let expectedRevision = revision
+    isAuthorized = await checkAuthorization()
     let requests = await center.pendingNotificationRequests()
     pending = requests
     delivered = await center.deliveredNotifications()
@@ -41,6 +46,35 @@ public final class NotificationService {
   public func persist() {
     if let data = try? JSONEncoder().encode(Array(scheduled)) {
       defaults.set(data, forKey: "scheduledLocalNotifications")
+    }
+  }
+  /// Reads the live OS authorization state without prompting.
+  public func checkAuthorization() async -> Bool {
+    let status = await center.notificationSettings().authorizationStatus
+    return [.authorized, .provisional, .ephemeral].contains(status)
+  }
+  /// Requests notification permission for ISS and Tiangong push reminders. The prompt appears
+  /// only from an explicit user action; nothing is scheduled locally. Returns the OS decision.
+  public func enableStationReminders() async -> Bool {
+    guard !isRequestingAuthorization else { return isAuthorized }
+    isRequestingAuthorization = true
+    defer { isRequestingAuthorization = false }
+    let metric = AppAnalytics.Operation("enable_station_reminders", screen: .forecast)
+    do {
+      let granted = try await center.requestAuthorization(options: [.alert, .sound, .badge])
+      isAuthorized = granted
+      guard granted else {
+        metric.finish("blocked", reason: "notification_permission_denied")
+        errorMessage = AppLocalization.text("Notifications are disabled. Enable them in Settings to get station reminders.")
+        return false
+      }
+      metric.finish("success")
+      AppAnalytics.event("station_reminders_enabled", screen: .forecast)
+      return true
+    } catch {
+      metric.finish("failure", reason: "authorization_failed")
+      errorMessage = error.localizedDescription
+      return false
     }
   }
   public func cancel(_ ids: [String]) {

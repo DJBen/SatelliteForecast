@@ -60,6 +60,8 @@ public final class ForecastModel {
     @ObservationIgnored private var generation = 0
     @ObservationIgnored private var passes: [SpecialSatellite: [Pass]] = [:]
     @ObservationIgnored private var lastRefresh: Date?
+    /// True once any refresh has started, so a second screen can avoid restarting the forecast.
+    public var hasRefreshed: Bool { lastRefresh != nil }
     @ObservationIgnored private var lastWidgetObserver: LatLonAlt?
 
     public init(client: ForecastClient,
