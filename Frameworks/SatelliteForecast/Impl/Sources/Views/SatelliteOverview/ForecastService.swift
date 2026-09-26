@@ -75,6 +75,48 @@ public actor ForecastService {
         return result
     }
 
+    /// The home dome for each pass, rendered with the app's own sky renderer at a fixed size.
+    public func widgetDomes(for satellite: SpecialSatellite, request: ForecastRequest,
+                            passes: [Pass]) async throws -> [Double: WidgetDome] {
+        guard !passes.isEmpty else { return [:] }
+        let info = try await satelliteInfo(for: satellite)
+        var result: [Double: WidgetDome] = [:]
+        for pass in passes {
+            try Task.checkCancellation()
+            result[pass.rise.julianDate] = try await widgetDome(pass: pass, info: info, observer: request.observer)
+        }
+        return result
+    }
+
+    public static let widgetDomeSize = CGSize(width: 150, height: 100)
+
+    public func widgetDome(pass: Pass, info: SatelliteInfo, observer: LatLonAlt) async throws -> WidgetDome {
+        let duration = (pass.set.julianDate - pass.rise.julianDate) * 86400
+        let count = max(2, min(160, Int(ceil(duration / 5))))
+        var samples: [SatelliteSnapshot] = []
+        for index in 0...count {
+            let jd = pass.rise.julianDate + (pass.set.julianDate - pass.rise.julianDate) * Double(index) / Double(count)
+            samples.append(try SatelliteSnapshot(satelliteInfo: info, julianDate: jd, observer: observer))
+        }
+        let size = Self.widgetDomeSize
+        let projection = ObservationSkyProjection(pass: pass, samples: samples, size: size)
+        let image = await domeRenderer.observationSky(projection: projection, observer: observer, julianDate: pass.culmination.julianDate)
+        func normalised(_ point: CGPoint, lit: Bool = true) -> WidgetDomePoint {
+            .init(x: point.x / size.width, y: point.y / size.height, illuminated: lit)
+        }
+        let track = samples.map { sample in
+            normalised(projection.point(azimuth: sample.position.azim, elevation: max(0, sample.position.elev)),
+                       lit: pass.isIlluminated(at: sample.julianDate))
+        }
+        let horizon = (0...40).map { i -> WidgetDomePoint in
+            let t = Double(i) / 40
+            let azimuth = pass.rise.azim + projection.arc * (t * 1.3 - 0.15)
+            return normalised(projection.point(azimuth: azimuth, elevation: 0))
+        }
+        return WidgetDome(imagePNG: image?.pngData(), width: size.width, height: size.height, track: track, horizon: horizon)
+    }
+    private let domeRenderer = ChartRenderer()
+
     /// Use the same catalog and equatorial-to-horizontal conversion as the in-app chart.
     public func widgetSkies(request: ForecastRequest, passes: [Pass]) throws -> [Double: WidgetSkyBackground] {
         var result: [Double: WidgetSkyBackground] = [:]

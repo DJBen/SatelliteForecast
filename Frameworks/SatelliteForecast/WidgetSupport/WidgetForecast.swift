@@ -100,6 +100,35 @@ public struct WidgetSkyEvent: Codable, Equatable, Sendable {
     }
 }
 
+/// A point in the side-on dome image, normalised to 0…1 of its width and height.
+public struct WidgetDomePoint: Codable, Equatable, Sendable {
+    public let x: Double
+    public let y: Double
+    public let illuminated: Bool
+    public init(x: Double, y: Double, illuminated: Bool = true) {
+        self.x = x
+        self.y = y
+        self.illuminated = illuminated
+    }
+}
+
+/// The home screen's rise-to-set dome, pre-rendered by the app for the small chart widget:
+/// the photographic sky as PNG plus the projected track and horizon in image coordinates.
+public struct WidgetDome: Codable, Equatable, Sendable {
+    public let imagePNG: Data?
+    public let width: Double
+    public let height: Double
+    public let track: [WidgetDomePoint]
+    public let horizon: [WidgetDomePoint]
+    public init(imagePNG: Data?, width: Double, height: Double, track: [WidgetDomePoint], horizon: [WidgetDomePoint]) {
+        self.imagePNG = imagePNG
+        self.width = width
+        self.height = height
+        self.track = track
+        self.horizon = horizon
+    }
+}
+
 public struct WidgetPass: Codable, Equatable, Sendable {
     public let station: Int
     public let rise: Date
@@ -113,10 +142,11 @@ public struct WidgetPass: Codable, Equatable, Sendable {
     /// Rise, culmination, set and shadow crossings with their sky positions. Optional so
     /// forecasts written by earlier app versions still decode.
     public let events: [WidgetSkyEvent]?
+    public let dome: WidgetDome?
 
     public init(station: Int, rise: Date, peak: Date, set: Date, elevation: Double,
                 startDirection: String, endDirection: String, skyTrack: [WidgetSkyPoint]? = nil,
-                skyBackground: WidgetSkyBackground? = nil, events: [WidgetSkyEvent]? = nil) {
+                skyBackground: WidgetSkyBackground? = nil, events: [WidgetSkyEvent]? = nil, dome: WidgetDome? = nil) {
         self.station = station
         self.rise = rise
         self.peak = peak
@@ -127,6 +157,7 @@ public struct WidgetPass: Codable, Equatable, Sendable {
         self.skyTrack = skyTrack
         self.skyBackground = skyBackground
         self.events = events
+        self.dome = dome
     }
     public var name: String { station == 25544 ? "ISS" : "Tiangong" }
 }

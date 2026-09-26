@@ -95,12 +95,18 @@ public struct StationWidgetView: View {
             Text(stationName(station)).accessibilityLabel(text(station == 25544 ? "iss" : "tiangong")).font(.system(.headline, design: .rounded))
                 .lineLimit(1).minimumScaleFactor(0.5)
             Spacer(minLength: 6)
-            if let pass { Text("\(Int(pass.elevation.rounded()))°").font(.caption.weight(.semibold)).foregroundStyle(accent).fixedSize() }
+            if let pass { time(pass).font(.system(.caption, design: .rounded, weight: .medium)).foregroundStyle(accent) }
         }
         if let pass {
-            PassArc(pass: pass, accent: accent, muted: muted).frame(maxHeight: .infinity)
-                .accessibilityLabel("Simplified elevation chart, maximum \(Int(pass.elevation.rounded())) degrees")
-            time(pass).font(.system(.caption, design: .rounded, weight: .medium))
+            if let dome = pass.dome {
+                DomeChart(pass: pass, dome: dome, accent: accent, muted: muted)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding(.horizontal, -6)
+                    .accessibilityLabel("Sky preview, maximum \(Int(pass.elevation.rounded())) degrees, \(text(pass.startDirection)) to \(text(pass.endDirection))")
+            } else {
+                PassArc(pass: pass, accent: accent, muted: muted).frame(maxHeight: .infinity)
+                    .accessibilityLabel("Simplified elevation chart, maximum \(Int(pass.elevation.rounded())) degrees")
+            }
         } else {
             Spacer(minLength: 0)
             Text(text("empty.short")).font(.subheadline).foregroundStyle(muted).lineLimit(3).minimumScaleFactor(0.75)
@@ -229,6 +235,70 @@ private struct PassArc: View {
     }
 }
 
+
+/// The home screen's rise-to-set dome: the app-rendered sky with the projected track,
+/// dotted horizon, peak elevation and compass labels, scaled to the widget.
+private struct DomeChart: View {
+    @Environment(\.locale) private var locale
+    let pass: WidgetPass
+    let dome: WidgetDome
+    let accent: Color
+    let muted: Color
+
+    var body: some View {
+        GeometryReader { proxy in
+            let labelHeight: CGFloat = 12
+            let available = CGSize(width: proxy.size.width, height: max(1, proxy.size.height - labelHeight))
+            let scale = min(available.width / dome.width, available.height / dome.height)
+            let rect = CGRect(x: (available.width - dome.width * scale) / 2, y: (available.height - dome.height * scale) / 2,
+                              width: dome.width * scale, height: dome.height * scale)
+            let point: (WidgetDomePoint) -> CGPoint = { p in CGPoint(x: rect.minX + p.x * rect.width, y: rect.minY + p.y * rect.height) }
+            ZStack(alignment: .topLeading) {
+                if let data = dome.imagePNG, let image = UIImage(data: data) {
+                    Image(uiImage: image).resizable().frame(width: rect.width, height: rect.height).offset(x: rect.minX, y: rect.minY)
+                }
+                Canvas { context, _ in
+                    var horizon = Path()
+                    for (i, p) in dome.horizon.enumerated() { i == 0 ? horizon.move(to: point(p)) : horizon.addLine(to: point(p)) }
+                    context.stroke(horizon, with: .color(muted.opacity(0.6)), style: StrokeStyle(lineWidth: 1, lineCap: .round, dash: [1, 4]))
+                    let track = dome.track
+                    for lit in [false, true] {
+                        var path = Path()
+                        var connected = false
+                        for i in 0..<max(0, track.count - 1) {
+                            guard track[i].illuminated == lit else { connected = false; continue }
+                            if !connected { path.move(to: point(track[i])) }
+                            path.addLine(to: point(track[i + 1]))
+                            connected = true
+                        }
+                        let style = StrokeStyle(lineWidth: lit ? 2.4 : 2, lineCap: .round, lineJoin: .round, dash: lit ? [] : [2, 4])
+                        context.stroke(path, with: .color(.black.opacity(0.5)), style: StrokeStyle(lineWidth: style.lineWidth + 2, lineCap: .round, lineJoin: .round, dash: style.dash))
+                        context.stroke(path, with: .color(lit ? accent : muted.opacity(0.85)), style: style)
+                    }
+                    if let peak = track.min(by: { $0.y < $1.y }) {
+                        let p = point(peak)
+                        context.fill(Path(ellipseIn: CGRect(x: p.x - 2.5, y: p.y - 2.5, width: 5, height: 5)), with: .color(peak.illuminated ? accent : muted))
+                        let label = context.resolve(Text("\(Int(pass.elevation.rounded()))°")
+                            .font(.system(size: 10, weight: .semibold, design: .rounded)).foregroundStyle(accent))
+                        let size = label.measure(in: CGSize(width: 60, height: 20))
+                        let anchor = CGPoint(x: min(rect.maxX - size.width / 2, max(rect.minX + size.width / 2, p.x)), y: max(rect.minY + size.height / 2, p.y - 10))
+                        context.fill(Path(roundedRect: CGRect(x: anchor.x - size.width / 2 - 3, y: anchor.y - size.height / 2 - 1, width: size.width + 6, height: size.height + 2), cornerRadius: 4),
+                                     with: .color(.black.opacity(0.45)))
+                        context.draw(label, at: anchor)
+                    }
+                    let labelY = rect.maxY + labelHeight / 2
+                    if let first = track.first, let last = track.last {
+                        let font = Font.system(size: 9, weight: .medium, design: .rounded)
+                        context.draw(Text(WidgetStrings.text(pass.startDirection, locale: locale)).font(font).foregroundStyle(muted),
+                                     at: CGPoint(x: min(rect.maxX - 8, max(rect.minX + 8, point(first).x)), y: labelY))
+                        context.draw(Text(WidgetStrings.text(pass.endDirection, locale: locale)).font(font).foregroundStyle(muted),
+                                     at: CGPoint(x: min(rect.maxX - 8, max(rect.minX + 8, point(last).x)), y: labelY))
+                    }
+                }
+            }
+        }
+    }
+}
 
 /// A compact horizon-to-zenith chart using the same projection as SkyChartUtils.
 private struct WidgetSkyChart: View {

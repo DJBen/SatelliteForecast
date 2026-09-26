@@ -26,12 +26,14 @@ public struct ForecastClient {
     public var satelliteInfo: @MainActor (SpecialSatellite) async throws -> SatelliteInfo?
     public var widgetTracks: @MainActor (SpecialSatellite, ForecastRequest, [Pass]) async throws -> [Double: [WidgetSkyPoint]]
     public var widgetSkies: @MainActor (ForecastRequest, [Pass]) async throws -> [Double: WidgetSkyBackground]
+    public var widgetDomes: @MainActor (SpecialSatellite, ForecastRequest, [Pass]) async throws -> [Double: WidgetDome]
     public var now: @MainActor () -> Date
     public var sleep: @MainActor (Duration) async throws -> Void
     public init(load: @escaping @MainActor (SpecialSatellite, ForecastRequest) async throws -> [Pass],
                 satelliteInfo: @escaping @MainActor (SpecialSatellite) async throws -> SatelliteInfo? = { _ in nil },
                 widgetTracks: @escaping @MainActor (SpecialSatellite, ForecastRequest, [Pass]) async throws -> [Double: [WidgetSkyPoint]] = { _, _, _ in [:] },
                 widgetSkies: @escaping @MainActor (ForecastRequest, [Pass]) async throws -> [Double: WidgetSkyBackground] = { _, _ in [:] },
+                widgetDomes: @escaping @MainActor (SpecialSatellite, ForecastRequest, [Pass]) async throws -> [Double: WidgetDome] = { _, _, _ in [:] },
                 now: @escaping @MainActor () -> Date = { Date() },
                 sleep: @escaping @MainActor (Duration) async throws -> Void = { try await Task.sleep(for: $0) }) {
         self.load = load
@@ -39,13 +41,15 @@ public struct ForecastClient {
         self.now = now
         self.widgetTracks = widgetTracks
         self.widgetSkies = widgetSkies
+        self.widgetDomes = widgetDomes
         self.sleep = sleep
     }
     public static func live(service: ForecastService) -> Self {
         Self(load: { try await service.passes(for: $0, request: $1) },
              satelliteInfo: { try await service.satelliteInfo(for: $0) },
              widgetTracks: { try await service.widgetTracks(for: $0, request: $1, passes: $2) },
-             widgetSkies: { try await service.widgetSkies(request: $0, passes: $1) })
+             widgetSkies: { try await service.widgetSkies(request: $0, passes: $1) },
+             widgetDomes: { try await service.widgetDomes(for: $0, request: $1, passes: $2) })
     }
 }
 
@@ -126,6 +130,8 @@ public final class ForecastModel {
             guard requestGeneration == generation, !Task.isCancelled else { return }
             let skies = (try? await client.widgetSkies(request, visible)) ?? [:]
             guard requestGeneration == generation, !Task.isCancelled else { return }
+            let domes = (try? await client.widgetDomes(satellite, request, visible)) ?? [:]
+            guard requestGeneration == generation, !Task.isCancelled else { return }
             for pass in visible {
                 let summary = WidgetPass(station: Int(pass.noradIndex),
                     rise: Date(julianDate: pass.rise.julianDate),
@@ -133,7 +139,7 @@ public final class ForecastModel {
                     set: Date(julianDate: pass.set.julianDate), elevation: pass.culmination.elev,
                     startDirection: Self.direction(pass.rise.azim), endDirection: Self.direction(pass.set.azim),
                     skyTrack: tracks[pass.rise.julianDate], skyBackground: skies[pass.rise.julianDate],
-                    events: Self.widgetEvents(pass))
+                    events: Self.widgetEvents(pass), dome: domes[pass.rise.julianDate])
                 summaries.append(summary)
             }
         }

@@ -35,6 +35,7 @@ final class ScreenSnapshotTests: XCTestCase {
         let skyService = ForecastService(brightStars: catalog.stars(maximumMagnitude: 3))
         let request = ForecastRequest(observer: fixture.observer, dateRange: fixture.range)
         let skies = try await skyService.widgetSkies(request: request, passes: [pass])
+        let dome = try await skyService.widgetDome(pass: pass, info: fixture.info, observer: fixture.observer)
         let track: [WidgetSkyPoint] = try (0...80).map { index in
             let jd = pass.rise.julianDate + (pass.set.julianDate - pass.rise.julianDate) * Double(index) / 80
             let sample = try SatelliteSnapshot(satelliteInfo: fixture.info, julianDate: jd, observer: fixture.observer)
@@ -46,7 +47,7 @@ final class ScreenSnapshotTests: XCTestCase {
             WidgetPass(station: 25544, rise: Date(julianDate: pass.rise.julianDate),
                 peak: Date(julianDate: pass.culmination.julianDate), set: Date(julianDate: pass.set.julianDate),
                 elevation: pass.culmination.elev, startDirection: "SW", endDirection: "NE", skyTrack: track,
-                skyBackground: skies[pass.rise.julianDate], events: ForecastModel.widgetEvents(pass)),
+                skyBackground: skies[pass.rise.julianDate], events: ForecastModel.widgetEvents(pass), dome: dome),
             WidgetForecast.preview(at: now).passes[1]
         ])
         let cases: [(String, WidgetFamily, CGSize, Bool, Int, WidgetForecast?)] = [
