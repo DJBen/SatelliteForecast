@@ -1,0 +1,7 @@
+2.0.0 (12) — new observation home
+
+• Passes tab: a single "Next observation" card with an animated rise-to-set sky preview, atmosphere and the Moon and planets. Check the sky reads well for low and high passes.
+• Remind me: tapping it asks for notification permission once and turns on ISS and Tiangong push reminders. No local alarm is scheduled from home. Please report whether the reminder arrives before your next visible pass.
+• All passes: day-grouped list with station icons and peak elevation. Tapping a pass or a station pushes a screen; going back should never show a screen twice.
+• Satellites tab: the ISS and Tiangong video cards now sit above the categories.
+• Location picker from the home "Change" button has an inline title and matching row colours.
