@@ -15,6 +15,12 @@ public struct StationWidgetView: View {
     private let accent = Color(red: 112/255, green: 218/255, blue: 210/255)
     private let muted = Color(red: 167/255, green: 184/255, blue: 203/255)
     public static let background = Color(red: 10/255, green: 19/255, blue: 33/255)
+    /// Margins applied by the host in place of the system's 16 pt content inset. The
+    /// medium rows use 10 pt top and bottom so the two rows fill the widget height.
+    public static func contentPadding(for family: WidgetFamily) -> EdgeInsets {
+        family == .systemMedium ? EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16)
+            : EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16)
+    }
 
     public init(forecast: WidgetForecast?, date: Date, family: WidgetFamily, chart: Bool = false, station: Int = 25544) {
         self.forecast = forecast

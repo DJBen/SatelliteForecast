@@ -62,6 +62,7 @@ struct StationWidgetEntryView: View {
     var body: some View {
         StationWidgetView(forecast: entry.forecast, date: entry.date, family: family,
                           chart: entry.configuration.layout == .chart, station: entry.configuration.station.norad)
+            .padding(StationWidgetView.contentPadding(for: family))
             .containerBackground(StationWidgetView.background, for: .widget)
     }
 }
@@ -74,6 +75,8 @@ struct SatelliteForecastWidget: Widget {
         .configurationDisplayName("Space Station Passes")
         .description("The next visible ISS and Tiangong passes for your app location. Choose two station rows or a simple chart in the small size.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+        // The 16 pt system inset leaves the medium rows floating; use our own tighter margins.
+        .contentMarginsDisabled()
     }
 }
 

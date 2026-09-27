@@ -71,7 +71,7 @@ final class ScreenSnapshotTests: XCTestCase {
         ]
         for (name, family, size, chart, station, data) in cases {
             let content = StationWidgetView(forecast: data, date: now, family: family, chart: chart, station: station)
-                .padding(16)
+                .padding(StationWidgetView.contentPadding(for: family))
                 .frame(width: size.width, height: size.height)
                 .background(StationWidgetView.background)
                 .clipShape(RoundedRectangle(cornerRadius: 24))
@@ -84,7 +84,7 @@ final class ScreenSnapshotTests: XCTestCase {
         }
         func preview(_ family: WidgetFamily, chart: Bool, size: CGSize) -> some View {
             StationWidgetView(forecast: forecast, date: now, family: family, chart: chart)
-                .padding(16).frame(width: size.width, height: size.height)
+                .padding(StationWidgetView.contentPadding(for: family)).frame(width: size.width, height: size.height)
                 .background(StationWidgetView.background)
                 .clipShape(RoundedRectangle(cornerRadius: 24))
         }
@@ -134,7 +134,7 @@ final class ScreenSnapshotTests: XCTestCase {
                     AnyView(VStack(alignment: .leading, spacing: 4) {
                         Text("\(name) · \(locale) · \(typeName)").font(.system(size: 11)).foregroundStyle(.white)
                         StationWidgetView(forecast: forecast, date: now, family: family, chart: chart, station: 48274)
-                            .padding(16).frame(width: size.width, height: size.height)
+                            .padding(StationWidgetView.contentPadding(for: family)).frame(width: size.width, height: size.height)
                             .background(StationWidgetView.background)
                             .border(.red.opacity(0.6), width: 0.5)
                             .environment(\.dynamicTypeSize, typeSize)
@@ -191,7 +191,7 @@ final class ScreenSnapshotTests: XCTestCase {
             let margin: CGFloat = 24
             let view = StationWidgetView(forecast: forecast(state, station: station), date: now,
                 family: family, chart: chart, station: station)
-                .padding(16).frame(width: size.width, height: size.height)
+                .padding(StationWidgetView.contentPadding(for: family)).frame(width: size.width, height: size.height)
                 .background(StationWidgetView.background).border(.red.opacity(0.65), width: 0.5)
                 .padding(margin)
                 .environment(\.locale, Locale(identifier: locale)).environment(\.calendar, calendar)
