@@ -6,4 +6,3 @@ fr-FR: already matches
 ja: already matches
 ru: already matches
 en-US: already matches
-Validation complete. No App Store assets changed. Pass --apply after visual review.

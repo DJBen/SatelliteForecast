@@ -1,0 +1,6 @@
+2.0.0 (14) — redesigned small and medium widgets
+
+• Small widget: the sooner pass leads with a large time, elevation and a "when · where · how long" line; the other station sits in the footer.
+• Medium widget: one row per station with the route, a right-aligned time and day, and the peak elevation on the arc.
+• Widgets are now fully localized in all eight languages.
+• Please check the widgets after opening the app once, and report any clipped text in your language.

@@ -76,7 +76,7 @@ public struct StationWidgetView: View {
                 let compact = proxy.size.width < 300
                 VStack(spacing: 0) {
                     mediumRow(station: 25544, pass: iss, compact: compact)
-                    Rectangle().fill(muted.opacity(0.18)).frame(height: 1).padding(.leading, 46)
+                    Rectangle().fill(muted.opacity(0.18)).frame(height: 1).padding(.leading, 52)
                     mediumRow(station: 48274, pass: tiangong, compact: compact)
                 }
             }
@@ -132,9 +132,9 @@ public struct StationWidgetView: View {
             HStack(spacing: 6) {
                 icon(station, size: 22)
                 Text(stationName(station)).accessibilityLabel(text(station == 25544 ? "iss" : "tiangong"))
-                    .font(.system(.subheadline, design: .rounded, weight: .bold)).lineLimit(1).minimumScaleFactor(0.7)
+                    .font(.system(.subheadline, design: .rounded, weight: .bold)).lineLimit(1).minimumScaleFactor(0.6)
                 Spacer(minLength: 4)
-                if let pass { elevationChip(pass) }
+                if let pass { elevationChip(pass).fixedSize().layoutPriority(1) }
             }
             if let pass {
                 if pass.rise <= date {
@@ -144,30 +144,51 @@ public struct StationWidgetView: View {
                     clock(pass).font(.system(size: 26, weight: .bold, design: .rounded)).monospacedDigit()
                         .lineLimit(1).minimumScaleFactor(0.6)
                 }
-                Text([dayLabel(pass), route(pass)].compactMap { $0 }.joined(separator: " · ")).font(.system(size: 11)).foregroundStyle(muted)
-                    .lineLimit(2).minimumScaleFactor(0.8).fixedSize(horizontal: false, vertical: true)
+                // Small has no room for the compass route; day and duration only.
+                Text([dayLabel(pass), minutes(pass)].compactMap { $0 }.joined(separator: " · ")).font(.system(size: 11)).foregroundStyle(muted)
+                    .lineLimit(1).minimumScaleFactor(0.8)
             } else {
                 Text(text("empty.short")).font(.subheadline).foregroundStyle(muted).lineLimit(2).minimumScaleFactor(0.75)
             }
         }
     }
 
+    private func footerTime(_ pass: WidgetPass, showsDay: Bool) -> some View {
+        VStack(alignment: .trailing, spacing: 0) {
+            if pass.rise <= date {
+                Text(text("now.short")).foregroundStyle(accent).font(.system(size: 12.5, weight: .semibold, design: .rounded))
+            } else {
+                clock(pass).font(.system(size: 12.5, weight: .semibold, design: .rounded)).monospacedDigit()
+                if showsDay, let day = dayLabel(pass) { Text(day).font(.system(size: 10)).foregroundStyle(muted) }
+            }
+        }
+        .lineLimit(1).fixedSize(horizontal: showsDay, vertical: true)
+    }
+
     private func footer(station: Int, pass: WidgetPass?) -> some View {
         HStack(spacing: 6) {
             icon(station, size: 18)
-            Text(stationName(station)).accessibilityLabel(text(station == 25544 ? "iss" : "tiangong"))
-                .font(.system(size: 12.5, weight: .semibold, design: .rounded)).lineLimit(1).minimumScaleFactor(0.7)
-            Spacer(minLength: 4)
+            if pass == nil {
+                Text(stationName(station)).accessibilityLabel(text(station == 25544 ? "iss" : "tiangong"))
+                    .font(.system(size: 12.5, weight: .semibold, design: .rounded)).lineLimit(1).minimumScaleFactor(0.6)
+                Spacer(minLength: 4)
+            }
             if let pass {
-                VStack(alignment: .trailing, spacing: 0) {
-                    if pass.rise <= date {
-                        Text(text("now.short")).foregroundStyle(accent).font(.system(size: 12.5, weight: .semibold, design: .rounded))
-                    } else {
-                        clock(pass).font(.system(size: 12.5, weight: .semibold, design: .rounded)).monospacedDigit()
-                        if let day = dayLabel(pass) { Text(day).font(.system(size: 10)).foregroundStyle(muted) }
+                // Stacked time and day when the name leaves room; time alone when it does not.
+                ViewThatFits(in: .horizontal) {
+                    HStack(spacing: 4) {
+                        Text(stationName(station)).font(.system(size: 12.5, weight: .semibold, design: .rounded)).lineLimit(1).fixedSize()
+                        Spacer(minLength: 6)
+                        footerTime(pass, showsDay: true)
+                    }
+                    // Tight rows keep the whole name and let the clock shrink instead.
+                    HStack(spacing: 4) {
+                        Text(stationName(station)).font(.system(size: 12.5, weight: .semibold, design: .rounded)).lineLimit(1).fixedSize()
+                        Spacer(minLength: 4)
+                        footerTime(pass, showsDay: false).minimumScaleFactor(0.55)
                     }
                 }
-                .lineLimit(1).minimumScaleFactor(0.7)
+                .accessibilityLabel(text(station == 25544 ? "iss" : "tiangong"))
             } else {
                 Text(text("empty.short")).font(.system(size: 11)).foregroundStyle(muted).lineLimit(1).minimumScaleFactor(0.7)
             }
@@ -176,25 +197,25 @@ public struct StationWidgetView: View {
 
     private func mediumRow(station: Int, pass: WidgetPass?, compact: Bool) -> some View {
         HStack(spacing: 10) {
-            icon(station, size: 36)
-            VStack(alignment: .leading, spacing: 3) {
+            icon(station, size: 42)
+            VStack(alignment: .leading, spacing: 4) {
                 Text(stationName(station)).accessibilityLabel(text(station == 25544 ? "iss" : "tiangong"))
-                    .font(.system(.subheadline, design: .rounded, weight: .bold)).lineLimit(1).minimumScaleFactor(0.7)
+                    .font(.system(size: 17, weight: .bold, design: .rounded)).lineLimit(1).minimumScaleFactor(0.7)
                 if let pass {
-                    Text(route(pass)).font(.system(size: 11.5)).foregroundStyle(muted).lineLimit(1).minimumScaleFactor(0.75)
+                    Text(route(pass)).font(.system(size: 12.5)).foregroundStyle(muted).lineLimit(1).minimumScaleFactor(0.75)
                 } else {
-                    Text(text("empty")).font(.system(size: 11.5)).foregroundStyle(muted).lineLimit(1).minimumScaleFactor(0.75)
+                    Text(text("empty")).font(.system(size: 12.5)).foregroundStyle(muted).lineLimit(1).minimumScaleFactor(0.75)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             if let pass {
-                VStack(alignment: .trailing, spacing: 3) {
+                VStack(alignment: .trailing, spacing: 4) {
                     if pass.rise <= date {
-                        Text(text("now.short")).font(.system(.headline, design: .rounded, weight: .bold)).foregroundStyle(accent)
+                        Text(text("now.short")).font(.system(size: 20, weight: .bold, design: .rounded)).foregroundStyle(accent)
                     } else {
-                        clock(pass).font(.system(size: 18, weight: .bold, design: .rounded)).monospacedDigit()
+                        clock(pass).font(.system(size: 21, weight: .bold, design: .rounded)).monospacedDigit()
                     }
-                    if let day = dayLabel(pass) { Text(day).font(.system(size: 11)).foregroundStyle(muted) }
+                    if let day = dayLabel(pass) { Text(day).font(.system(size: 12)).foregroundStyle(muted) }
                 }
                 .lineLimit(1).minimumScaleFactor(0.6).layoutPriority(1)
                 if !spaciousText && !compact {
@@ -205,7 +226,7 @@ public struct StationWidgetView: View {
                             PassArc(pass: pass, accent: accent, muted: muted, showsLabels: false)
                         }
                     }
-                    .frame(width: 80, height: 46)
+                    .frame(width: 92, height: 56)
                     .accessibilityLabel("\(Int(pass.elevation.rounded())) degrees maximum, \(text(pass.startDirection)) to \(text(pass.endDirection))")
                 }
             }
@@ -220,7 +241,13 @@ public struct StationWidgetView: View {
             Text(stationName(station)).accessibilityLabel(text(station == 25544 ? "iss" : "tiangong")).font(.system(.headline, design: .rounded))
                 .lineLimit(1).minimumScaleFactor(0.5)
             Spacer(minLength: 6)
-            if let pass { time(pass).font(.system(.caption, design: .rounded, weight: .medium)).foregroundStyle(accent) }
+            if let pass {
+                ViewThatFits(in: .horizontal) {
+                    time(pass).fixedSize()
+                    clock(pass).lineLimit(1).fixedSize()
+                }
+                .font(.system(.caption, design: .rounded, weight: .medium)).foregroundStyle(accent)
+            }
         }
         if let pass {
             if let dome = pass.dome {
