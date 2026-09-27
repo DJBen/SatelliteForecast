@@ -104,3 +104,4 @@ iOSInjectionProject/
 # Local tooling caches and reports
 __pycache__/
 /.asc/
+/.playwright-cli/

@@ -29,5 +29,3 @@ __pycache__/
 **/.DS_Store
 
 firestore-debug.log
-# Playwright CLI page snapshots
-.playwright-cli/
