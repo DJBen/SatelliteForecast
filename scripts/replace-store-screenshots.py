@@ -43,7 +43,10 @@ for locale, entry in manifest['locales'].items():
         continue
     folder = root / 'screenshots' / locale
     files = sorted(folder.glob('*.png'))
-    if [p.stem for p in files] != [s['slot'] for s in entry['screenshots']]:
+    # Inventoried slots must lead the local set in order; extra trailing local slots are new
+    # screenshots appended by this release (for example 06-widgets in 2.0.0).
+    slots = [s['slot'] for s in entry['screenshots']]
+    if [p.stem for p in files][:len(slots)] != slots or len(files) < len(slots):
         raise RuntimeError(f'{locale}: screenshot count/order mismatch')
     for p in files:
         png = p.read_bytes()

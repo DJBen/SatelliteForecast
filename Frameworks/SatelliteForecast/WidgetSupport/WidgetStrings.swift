@@ -6,7 +6,10 @@ public enum WidgetStrings {
         Bundle.module.path(forResource: language, ofType: "lproj").flatMap(Bundle.init(path:)).map { (language, $0) }
     })
     public static func text(_ key: String, locale: Locale) -> String {
-        let language = Bundle.preferredLocalizations(from: languages, forPreferences: [locale.identifier]).first ?? "en"
+        // WidgetKit hands the environment locale as "fr_FR"; preferredLocalizations only matches
+        // BCP 47 tags, so offer the hyphenated form as well or every locale silently falls back to English.
+        let preferences = [locale.identifier, locale.identifier.replacingOccurrences(of: "_", with: "-")]
+        let language = Bundle.preferredLocalizations(from: languages, forPreferences: preferences).first ?? "en"
         return (bundles[language] ?? Bundle.module).localizedString(forKey: key, value: nil, table: nil)
     }
 }

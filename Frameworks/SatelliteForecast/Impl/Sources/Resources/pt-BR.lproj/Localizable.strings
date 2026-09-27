@@ -691,3 +691,43 @@ The localized string for the status of a spare satellite */
 
 /* Planetarium frame rate overlay */
 "Show FPS" = "Mostrar FPS";
+
+/* Observation home (2.0.0) */
+"Next observation" = "Próxima observação";
+"Choose a location" = "Escolha um local";
+"Change" = "Alterar";
+"Finding your next observation…" = "Procurando sua próxima observação…";
+"Opens the sky chart for this pass" = "Abre a carta do céu desta passagem";
+"Retry preview" = "Tentar a prévia novamente";
+"Start observing" = "Começar a observar";
+"Remind me" = "Lembrar-me";
+"Turning on reminders…" = "Ativando lembretes…";
+"Notifications are disabled. Enable them in Settings to get station reminders." = "As notificações estão desativadas. Ative-as nos Ajustes para receber lembretes de passagens.";
+"Allows notifications for ISS and Tiangong passes" = "Permite notificações das passagens da ISS e da Tiangong";
+"Coming up" = "Em breve";
+"All passes" = "Todas as passagens";
+"No more visible station passes in this forecast." = "Não há mais passagens visíveis nesta previsão.";
+"Explore space stations" = "Explorar estações espaciais";
+"See a space station with your own eyes." = "Veja uma estação espacial com seus próprios olhos.";
+"Choose where you’ll be watching. We’ll find the next visible pass and show you where to look." = "Escolha de onde você vai observar. Encontraremos a próxima passagem visível e mostraremos para onde olhar.";
+"Use my location" = "Usar minha localização";
+"Choose a city" = "Escolher uma cidade";
+"No visible station passes in the next 7 days" = "Nenhuma passagem visível nos próximos 7 dias";
+"Check your connection and try again." = "Verifique sua conexão e tente novamente.";
+"Try another observing location or explore other satellites." = "Tente outro local de observação ou explore outros satélites.";
+"Change location" = "Alterar local";
+"Explore satellites" = "Explorar satélites";
+"Some station passes could not be loaded." = "Algumas passagens não puderam ser carregadas.";
+"Tonight" = "Hoje à noite";
+"Today" = "Hoje";
+"Tomorrow" = "Amanhã";
+"%@ · %d° at highest" = "%@ · %d° no máximo";
+"Unable to find your location. Try again or choose a city." = "Não foi possível encontrar sua localização. Tente novamente ou escolha uma cidade.";
+"Pass animation preview. Solid trail: traveled in the preview. Dotted trail: still ahead. Gray: in Earth’s shadow." = "Prévia animada da passagem. Linha contínua: já percorrida na prévia. Pontilhada: ainda por vir. Cinza: na sombra da Terra.";
+"%d° at highest" = "%d° no máximo";
+"ISS" = "ISS";
+"Tiangong" = "Tiangong";
+"%d min" = "%d min";
+"Hide reminder button" = "Ocultar botão de lembrete";
+"Open notification settings" = "Abrir ajustes de notificações";
+"Example: a recorded ISS pass over San Francisco Bay" = "Exemplo: uma passagem gravada da ISS sobre a baía de São Francisco";

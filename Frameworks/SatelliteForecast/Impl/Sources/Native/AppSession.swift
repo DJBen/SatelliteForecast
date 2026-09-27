@@ -99,6 +99,13 @@ public final class AppSession {
     }
   }
   private func writeRegistration(_ token: String) {
+    // Real Debug devices receive reminders; automated tests and previews never register.
+    let environment = ProcessInfo.processInfo.environment
+    guard environment["SATELLITE_SNAPSHOT_TESTS"] != "1",
+          environment["XCTestConfigurationFilePath"] == nil,
+          environment["XCTestBundlePath"] == nil,
+          environment["XCODE_RUNNING_FOR_PREVIEWS"] != "1",
+          NSClassFromString("XCTestCase") == nil else { return }
     #if targetEnvironment(simulator)
       return
     #else

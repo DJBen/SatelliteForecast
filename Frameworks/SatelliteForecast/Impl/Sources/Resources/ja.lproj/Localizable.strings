@@ -692,3 +692,43 @@ The localized string for the status of a spare satellite */
 
 /* Planetarium frame rate overlay */
 "Show FPS" = "FPS を表示";
+
+/* Observation home (2.0.0) */
+"Next observation" = "次の観測";
+"Choose a location" = "場所を選択";
+"Change" = "変更";
+"Finding your next observation…" = "次の観測を検索中…";
+"Opens the sky chart for this pass" = "この通過の星図を開きます";
+"Retry preview" = "プレビューを再試行";
+"Start observing" = "観測を始める";
+"Remind me" = "リマインド";
+"Turning on reminders…" = "リマインダーをオンにしています…";
+"Notifications are disabled. Enable them in Settings to get station reminders." = "通知がオフになっています。通過リマインダーを受け取るには「設定」で通知をオンにしてください。";
+"Allows notifications for ISS and Tiangong passes" = "ISSと天宮の通過通知を許可します";
+"Coming up" = "この先の通過";
+"All passes" = "すべての通過";
+"No more visible station passes in this forecast." = "この予報には、これ以上の可視通過はありません。";
+"Explore space stations" = "宇宙ステーションを見る";
+"See a space station with your own eyes." = "宇宙ステーションを自分の目で見よう。";
+"Choose where you’ll be watching. We’ll find the next visible pass and show you where to look." = "観測する場所を選んでください。次の可視通過を見つけて、どこを見ればよいかお知らせします。";
+"Use my location" = "現在地を使用";
+"Choose a city" = "都市を選択";
+"No visible station passes in the next 7 days" = "今後7日間に可視通過はありません";
+"Check your connection and try again." = "接続を確認して、もう一度お試しください。";
+"Try another observing location or explore other satellites." = "別の観測地を試すか、ほかの衛星を探してみてください。";
+"Change location" = "場所を変更";
+"Explore satellites" = "衛星を探す";
+"Some station passes could not be loaded." = "一部の通過を読み込めませんでした。";
+"Tonight" = "今夜";
+"Today" = "今日";
+"Tomorrow" = "明日";
+"%@ · %d° at highest" = "%@ · 最高%d°";
+"Unable to find your location. Try again or choose a city." = "現在地を取得できません。もう一度お試しいただくか、都市を選択してください。";
+"Pass animation preview. Solid trail: traveled in the preview. Dotted trail: still ahead. Gray: in Earth’s shadow." = "通過のアニメーションプレビュー。実線：プレビューで通過済み。点線：これから。グレー：地球の影の中。";
+"%d° at highest" = "最高%d°";
+"ISS" = "ISS";
+"Tiangong" = "天宮";
+"%d min" = "%d分";
+"Hide reminder button" = "リマインドボタンを隠す";
+"Open notification settings" = "通知設定を開く";
+"Example: a recorded ISS pass over San Francisco Bay" = "例：サンフランシスコ湾上空のISS通過の記録";

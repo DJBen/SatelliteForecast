@@ -692,3 +692,43 @@ The localized string for the status of a spare satellite */
 
 /* Planetarium frame rate overlay */
 "Show FPS" = "Показывать FPS";
+
+/* Observation home (2.0.0) */
+"Next observation" = "Следующее наблюдение";
+"Choose a location" = "Выберите место";
+"Change" = "Изменить";
+"Finding your next observation…" = "Ищем ваше следующее наблюдение…";
+"Opens the sky chart for this pass" = "Открывает карту неба для этого пролёта";
+"Retry preview" = "Повторить превью";
+"Start observing" = "Начать наблюдение";
+"Remind me" = "Напомнить";
+"Turning on reminders…" = "Включаем напоминания…";
+"Notifications are disabled. Enable them in Settings to get station reminders." = "Уведомления отключены. Включите их в Настройках, чтобы получать напоминания о пролётах.";
+"Allows notifications for ISS and Tiangong passes" = "Разрешает уведомления о пролётах МКС и «Тяньгун»";
+"Coming up" = "Скоро";
+"All passes" = "Все пролёты";
+"No more visible station passes in this forecast." = "Других видимых пролётов в этом прогнозе нет.";
+"Explore space stations" = "Космические станции";
+"See a space station with your own eyes." = "Увидьте космическую станцию своими глазами.";
+"Choose where you’ll be watching. We’ll find the next visible pass and show you where to look." = "Укажите, откуда вы будете наблюдать. Мы найдём ближайший видимый пролёт и покажем, куда смотреть.";
+"Use my location" = "Моё местоположение";
+"Choose a city" = "Выбрать город";
+"No visible station passes in the next 7 days" = "В ближайшие 7 дней видимых пролётов нет";
+"Check your connection and try again." = "Проверьте подключение и повторите попытку.";
+"Try another observing location or explore other satellites." = "Попробуйте другое место наблюдения или изучите другие спутники.";
+"Change location" = "Изменить место";
+"Explore satellites" = "Спутники";
+"Some station passes could not be loaded." = "Не удалось загрузить часть пролётов.";
+"Tonight" = "Сегодня вечером";
+"Today" = "Сегодня";
+"Tomorrow" = "Завтра";
+"%@ · %d° at highest" = "%@ · до %d°";
+"Unable to find your location. Try again or choose a city." = "Не удалось определить местоположение. Повторите попытку или выберите город.";
+"Pass animation preview. Solid trail: traveled in the preview. Dotted trail: still ahead. Gray: in Earth’s shadow." = "Анимированное превью пролёта. Сплошная линия: пройдено в превью. Пунктир: впереди. Серый: в тени Земли.";
+"%d° at highest" = "до %d°";
+"ISS" = "МКС";
+"Tiangong" = "Тяньгун";
+"%d min" = "%d мин";
+"Hide reminder button" = "Скрыть кнопку напоминания";
+"Open notification settings" = "Открыть настройки уведомлений";
+"Example: a recorded ISS pass over San Francisco Bay" = "Пример: записанный пролёт МКС над заливом Сан-Франциско";

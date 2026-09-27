@@ -624,7 +624,7 @@ final class ScreenSnapshotTests: XCTestCase {
     func testFloatingTabScreens() async throws {
         let catalog = try await AppStarCatalog.load()
         let fixture = try Fixture(catalog: catalog)
-        for (name, view) in fixture.storeScreens(tianhePasses: fixture.passes, featured: fixture)
+        for (name, view) in await fixture.storeScreens(tianhePasses: fixture.passes, featured: fixture)
             where ["01-forecast", "03-pass-list", "04-satellites"].contains(name) {
             try await assertSnapshot(view, name: "tabs-\(name)-scrolled", style: .dark, scrollDistance: 180)
         }
@@ -757,7 +757,7 @@ final class ScreenSnapshotTests: XCTestCase {
             "elevation": best.pass.highestIlluminated?.elev ?? 0]
         try JSONSerialization.data(withJSONObject: report, options: [.prettyPrinted, .sortedKeys])
             .write(to: URL(fileURLWithPath: destination).appendingPathComponent("selection-\(locale).json"))
-        let screens = fixture.storeScreens(tianhePasses: tiangong.passes, tianheInfo: tiangong.info, featured: featured)
+        let screens = await fixture.storeScreens(tianhePasses: tiangong.passes, tianheInfo: tiangong.info, featured: featured)
         let selectedScreens = env["STORE_SCREENSHOT_SCREENS"]?.split(separator: ",").map(String.init)
         let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.first as? UIWindowScene)
         let folder = URL(fileURLWithPath: destination).appendingPathComponent(locale)
@@ -1064,7 +1064,7 @@ struct Fixture {
 private struct StoreOverview: SatelliteOverviewView { let content: AnyView; var body: some View { content } }
 
 extension Fixture {
-    func storeScreens(tianhePasses: [PassSnapshots], tianheInfo: SatelliteInfo? = nil, featured: Fixture) -> [(String, AnyView)] {
+    func storeScreens(tianhePasses: [PassSnapshots], tianheInfo: SatelliteInfo? = nil, featured: Fixture) async -> [(String, AnyView)] {
         func next(_ passes: [PassSnapshots]) -> NextPass {
             let visible = passes.first { $0.pass.visibility == .visible }
             let prominent = passes.first { $0.pass.visibility == .visible && ($0.pass.highestIlluminated?.elev ?? 0) > 45 }
@@ -1101,13 +1101,45 @@ extension Fixture {
                 passView
             }
         })
+        // 2.0.0 home: the observation card for the reviewed featured pass, with the other station's
+        // later passes in "Coming up". The forecast clock is one hour before the featured rise.
+        let featuredCategory: SpecialSatellite = info.noradIndex == 25544 ? .iss : .tianhe
+        let otherPasses = (featuredCategory == .iss ? tianhePasses : self.passes)
+            .filter { $0.pass.rise.julianDate > pass.pass.rise.julianDate }.map(\.pass)
+        let homeNow = featured.now
+        let homeModel = ForecastModel(client: .init(
+            load: { station, _ in station == featuredCategory ? passes.map(\.pass) : otherPasses },
+            satelliteInfo: { station in
+                if station == featuredCategory { return info }
+                return station == .iss ? self.info : tianheInfo
+            }, now: { homeNow }))
+        await homeModel.refresh(.init(observer: passObserver))
+        // The Satellites tab cards show each station's own next visible pass from the full
+        // window, unfiltered, so neither card reads "no visible pass" because of the hero rule.
+        let cardsModel = ForecastModel(client: .init(
+            load: { station, _ in (station == .iss ? (featuredCategory == .iss ? passes : self.passes) : (featuredCategory == .tianhe ? passes : tianhePasses)).map(\.pass) },
+            satelliteInfo: { station in
+                if station == featuredCategory { return info }
+                return station == .iss ? self.info : tianheInfo
+            }, now: { homeNow }))
+        await cardsModel.refresh(.init(observer: passObserver))
+        let homeContext = SatelliteOverviewViewContext(starManager: catalog, julianDateProvider: passDate)
+        let home = AnyView(ObservationHomeView(session: session, model: homeModel, context: homeContext,
+            initialPreview: ObservationPreview(info: info, snapshots: pass)))
         func root(_ content: AnyView, tab: SatelliteForecast.Tab = .forecast) -> AnyView {
             session.settings.showExperimentalSkyNow = false
+            // The Satellites tab keeps the reviewed home instant so the station cards report the
+            // catalogued geography (for example "Over California, US").
             return AnyView(RootView(selectedTab: .constant(tab), settings: session.settings,
                 context: .init(starManager: catalog, julianDateProvider: date),
                 realtimeSkyViewFactory: { RealtimeSkyViewImpl(viewModel: .init(state: .init(observer: observer)), context: $0, backgroundSkyViewFactory: ViewFactory { factory.background($0) }) },
                 satelliteOverviewViewFactory: { _ in StoreOverview(content: content) },
-                satelliteCategoryViewFactory: { SatelliteCategoryViewImpl(viewModel: .init(state: .init(observer: observer)), context: $0, listViewFactory: ViewFactory { factory.list($0) }) },
+                satelliteCategoryViewFactory: { context in
+                    let cards = NativeStationCards(session: session, model: cardsModel, context: context)
+                    return SatelliteCategoryViewImpl(viewModel: .init(state: .init(observer: observer)), context: context,
+                        listViewFactory: ViewFactory { factory.list($0) },
+                        header: AnyView(cards), stationDestination: { AnyView(cards.destination($0)) })
+                },
                 settingsOverviewFactory: { NativeSettingsView(session: session) }))
         }
         let planetariumController = PlanetariumController()
@@ -1124,7 +1156,8 @@ extension Fixture {
                 planetariumController.pointCamera(azimuth: pass.pass.culmination.azim,
                     elevation: max(25, pass.pass.culmination.elev - 30))
             })
-        return [("01-forecast", root(overview)), ("02-pass-chart", root(detail)), ("03-pass-list", root(passList)), ("04-satellites", root(overview, tab: .satellites)), ("05-planetarium", planetarium)]
+        _ = overview
+        return [("01-forecast", root(home)), ("02-pass-chart", root(detail)), ("03-pass-list", root(passList)), ("04-satellites", root(home, tab: .satellites)), ("05-planetarium", planetarium)]
     }
 }
 

@@ -81,3 +81,26 @@ Capture to `Documentation/AppStore/1.8.0/screenshots`, inspect each full-size da
 ### Build 8 refresh
 
 The pass-chart and planetarium captures were regenerated in all eight locales into `1.8.0/build-8/screenshots/`. Each new selection JSON exactly matches the previous reviewed locale fixture: observer, time zone, featured pass, and pinned TLE inputs are unchanged. Dark native iPhone 17 Pro Max captures show the adaptive Chart/Planetarium buttons, New York celestial labels, bright-star names, and fading peripheral constellation labels. The other three screenshot slots remain unchanged. Review contact sheets are aids only; upload the native 1320 × 2868 PNGs.
+
+## 2.0.0 slots
+
+- `01-forecast` now shows the observation home: the reviewed featured pass from the
+  pass-screen table is the hero card, with the forecast clock one hour before its
+  rise (`passForecastDateUTC`). The other station contributes only passes that rise
+  after the featured one, so the hero is always the catalogued pass. The sky
+  preview is frozen at 58% by the snapshot environment.
+- `04-satellites` shows the Satellites tab with the station video cards on top.
+  Their "Over …" label uses the home instant from the table above, so the
+  geography matches the earlier overview captures.
+- `06-widgets` is a Home Screen capture of the medium and large widgets. It is
+  produced by `scripts/capture-widget-home-screenshots.py`, which switches the
+  simulator's system language, region, time zone (via `SIMCTL_CHILD_TZ` on boot)
+  and simulated location to the locale's observer, lets the app write the widget
+  forecast, reboots so SpringBoard opens on the widgets page, and captures at 9:41.
+  The widget data is the **live** forecast for that observer at capture time, not
+  the historical moment, so times and elevations differ between captures. The
+  simulator's first Home Screen page must already hold the two widgets. Two fixes
+  were needed for localized widgets: `WidgetStrings` must match `fr_FR`-style
+  identifiers, and the widget extension's Info.plist must declare
+  `CFBundleLocalizations`, or SpringBoard treats the extension as English-only and
+  the app name under the widget stays untranslated.
