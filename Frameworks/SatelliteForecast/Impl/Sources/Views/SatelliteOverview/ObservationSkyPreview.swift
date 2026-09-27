@@ -172,6 +172,8 @@ struct ObservationSkyProjection: Hashable, Sendable {
     let front: SIMD2<Double>
     let scale: Double
     let originY: Double
+    /// Upper envelope of the projected pass, sampled once per horizontal point.
+    private let skyBoundary: [Double]
     var size: CGSize { CGSize(width: width, height: height) }
 
     static func minorArc(from rise: Double, to set: Double) -> Double {
@@ -198,7 +200,18 @@ struct ObservationSkyProjection: Hashable, Sendable {
         let top = max(peak.y, path.map(\.y).max() ?? peak.y)
         let scale = min(max(1, size.width - 30) / (2 * widest), max(1, size.height - 66) / max(0.1, top - bottom))
         self.scale = scale
-        originY = size.height - 36 + bottom * scale
+        let originY = size.height - 36 + bottom * scale
+        self.originY = originY
+        let projected = path.map { SIMD2(size.width / 2 + $0.x * scale, originY - $0.y * scale) }
+        skyBoundary = (0...Int(ceil(size.width))).map { x in
+            var upper = size.height
+            for (a, b) in zip(projected, projected.dropFirst()) {
+                guard Double(x) >= min(a.x, b.x), Double(x) <= max(a.x, b.x) else { continue }
+                let t = abs(b.x - a.x) < 0.001 ? 0 : (Double(x) - a.x) / (b.x - a.x)
+                upper = min(upper, a.y + (b.y - a.y) * t)
+            }
+            return upper
+        }
     }
 
     private static func project(azimuth: Double, elevation: Double, front: SIMD2<Double>, right: SIMD2<Double>) -> SIMD2<Double> {
@@ -210,14 +223,19 @@ struct ObservationSkyProjection: Hashable, Sendable {
                      (z * cos(pitch) - depth * sin(pitch)) / denominator)
     }
 
-    /// The same dissolve the background raster uses at the frame edges (see
-    /// `ChartRenderer.observationSky`), so foreground points fade in step with the sky.
+    /// Keep the photographic sky close to the pass, with a narrow feather across
+    /// the arc. The shared raster gives home and widgets the same limited bleed;
+    /// foreground stars use the same fade, without recoloring the atmosphere.
     func edgeFade(at point: CGPoint) -> Double {
         func smooth(_ low: Double, _ high: Double, _ value: Double) -> Double {
             let t = min(1, max(0, (value - low) / (high - low)))
             return t * t * (3 - 2 * t)
         }
-        return smooth(0, 64, min(point.x, width - point.x)) * smooth(0, 84, point.y) * smooth(0, 22, height - point.y)
+        let x = min(skyBoundary.count - 1, max(0, Int(point.x)))
+        let bleed = max(4, width * 0.04)
+        return smooth(-bleed, bleed, point.y - skyBoundary[x])
+            * smooth(0, width * 0.08, min(point.x, width - point.x))
+            * smooth(0, height * 0.08, height - point.y)
     }
 
     func point(azimuth: Double, elevation: Double) -> CGPoint {
