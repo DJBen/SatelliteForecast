@@ -71,8 +71,7 @@ struct PassChartControls: View {
             }
         }
         .frame(minWidth: iconOnly ? 24 : nil, maxWidth: iconOnly ? nil : .infinity)
-        .padding(.vertical, 2)
-        .frame(minHeight: 32)
+        .frame(minHeight: 28)
         .contentShape(Rectangle())
     }
 }
