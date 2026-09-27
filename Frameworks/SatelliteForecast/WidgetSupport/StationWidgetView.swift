@@ -43,9 +43,7 @@ public struct StationWidgetView: View {
             } else if family == .systemSmall && chart {
                 chartContent
             } else {
-                row(station: 25544)
-                Rectangle().fill(muted.opacity(0.18)).frame(height: 1)
-                row(station: 48274)
+                stationRows
             }
         }
         // Widget viewports are fixed; retain readable scaling through XXXL while
@@ -55,45 +53,166 @@ public struct StationWidgetView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 
-    @ViewBuilder private func row(station: Int) -> some View {
-        let pass = forecast?.next(station: station, at: date)
-        let small = family == .systemSmall
-        HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: small || spaciousText ? 3 : 6) {
-                HStack(spacing: 5) {
-                    Circle().fill(accent).frame(width: 5, height: 5)
-                    Text(stationName(station)).accessibilityLabel(text(station == 25544 ? "iss" : "tiangong"))
-                        .font(.system(small ? .subheadline : .headline, design: .rounded, weight: .semibold))
-                        .lineLimit(1).minimumScaleFactor(0.75)
-                    if family == .systemMedium, let pass {
-                        Spacer(minLength: 3)
-                        time(pass).font(.system(.subheadline, design: .rounded, weight: .medium))
+    // MARK: Two-row layouts
+
+    /// Small: the sooner pass leads with a large time and a "when · where · how long" line;
+    /// the other station sits in a compact footer. Medium: one list row per station, the
+    /// elevation on the arc rather than beside the name.
+    @ViewBuilder private var stationRows: some View {
+        let iss = forecast?.next(station: 25544, at: date)
+        let tiangong = forecast?.next(station: 48274, at: date)
+        if family == .systemSmall {
+            let ordered: [(Int, WidgetPass?)] = (iss?.rise ?? .distantFuture) <= (tiangong?.rise ?? .distantFuture)
+                ? [(25544, iss), (48274, tiangong)] : [(48274, tiangong), (25544, iss)]
+            VStack(alignment: .leading, spacing: 0) {
+                featured(station: ordered[0].0, pass: ordered[0].1)
+                Spacer(minLength: 6)
+                Rectangle().fill(muted.opacity(0.18)).frame(height: 1)
+                footer(station: ordered[1].0, pass: ordered[1].1).padding(.top, 8)
+            }
+        } else {
+            GeometryReader { proxy in
+                // The arc needs the regular medium width; 292 pt widgets give the space to text.
+                let compact = proxy.size.width < 300
+                VStack(spacing: 0) {
+                    mediumRow(station: 25544, pass: iss, compact: compact)
+                    Rectangle().fill(muted.opacity(0.18)).frame(height: 1).padding(.leading, 46)
+                    mediumRow(station: 48274, pass: tiangong, compact: compact)
+                }
+            }
+        }
+    }
+
+    private func icon(_ station: Int, size: CGFloat) -> some View {
+        Image(station == 25544 ? "station_iss" : "station_tiangong", bundle: .module)
+            .resizable().aspectRatio(contentMode: .fit).frame(width: size, height: size)
+            .accessibilityHidden(true)
+    }
+
+    /// Filled at 40° and above, outlined below, matching the app's pass list.
+    private func elevationChip(_ pass: WidgetPass, compact: Bool = false) -> some View {
+        let degrees = Int(pass.elevation.rounded())
+        let strong = degrees >= 40
+        return Text(verbatim: "\(degrees)°")
+            .font(.system(size: compact ? 10 : 11, weight: .bold, design: .rounded)).monospacedDigit()
+            .foregroundStyle(strong ? Self.background : accent)
+            .padding(.horizontal, 6).padding(.vertical, 2)
+            .background(strong ? accent : accent.opacity(0.16), in: Capsule())
+            .accessibilityLabel("\(degrees) degrees maximum")
+    }
+
+    /// nil while the pass is in progress: the time slot already says so.
+    private func dayLabel(_ pass: WidgetPass) -> String? {
+        if pass.rise <= date { return nil }
+        if calendar.isDate(pass.rise, inSameDayAs: date) {
+            return text(calendar.component(.hour, from: pass.rise) >= 18 ? "tonight" : "today")
+        }
+        if let tomorrow = calendar.date(byAdding: .day, value: 1, to: date), calendar.isDate(pass.rise, inSameDayAs: tomorrow) {
+            return text("tomorrow")
+        }
+        var format = Date.FormatStyle().month(.abbreviated).day()
+        format.locale = locale; format.calendar = calendar; format.timeZone = timeZone
+        return pass.rise.formatted(format)
+    }
+    private func clock(_ pass: WidgetPass) -> Text {
+        var format = Date.FormatStyle().hour().minute()
+        format.locale = locale; format.calendar = calendar; format.timeZone = timeZone
+        return Text(pass.rise.formatted(format))
+    }
+    private func minutes(_ pass: WidgetPass) -> String {
+        String(format: text("minutes"), locale: locale, max(1, Int((pass.set.timeIntervalSince(pass.rise) / 60).rounded())))
+    }
+    /// "NW → SE · 7 min" with the localized compass points.
+    private func route(_ pass: WidgetPass) -> String {
+        "\(text(pass.startDirection)) → \(text(pass.endDirection)) · \(minutes(pass))"
+    }
+
+    private func featured(station: Int, pass: WidgetPass?) -> some View {
+        VStack(alignment: .leading, spacing: 3) {
+            HStack(spacing: 6) {
+                icon(station, size: 22)
+                Text(stationName(station)).accessibilityLabel(text(station == 25544 ? "iss" : "tiangong"))
+                    .font(.system(.subheadline, design: .rounded, weight: .bold)).lineLimit(1).minimumScaleFactor(0.7)
+                Spacer(minLength: 4)
+                if let pass { elevationChip(pass) }
+            }
+            if let pass {
+                if pass.rise <= date {
+                    Text(text("now.short")).font(.system(.title3, design: .rounded, weight: .bold)).foregroundStyle(accent)
+                        .lineLimit(1).minimumScaleFactor(0.6)
+                } else {
+                    clock(pass).font(.system(size: 26, weight: .bold, design: .rounded)).monospacedDigit()
+                        .lineLimit(1).minimumScaleFactor(0.6)
+                }
+                Text([dayLabel(pass), route(pass)].compactMap { $0 }.joined(separator: " · ")).font(.system(size: 11)).foregroundStyle(muted)
+                    .lineLimit(2).minimumScaleFactor(0.8).fixedSize(horizontal: false, vertical: true)
+            } else {
+                Text(text("empty.short")).font(.subheadline).foregroundStyle(muted).lineLimit(2).minimumScaleFactor(0.75)
+            }
+        }
+    }
+
+    private func footer(station: Int, pass: WidgetPass?) -> some View {
+        HStack(spacing: 6) {
+            icon(station, size: 18)
+            Text(stationName(station)).accessibilityLabel(text(station == 25544 ? "iss" : "tiangong"))
+                .font(.system(size: 12.5, weight: .semibold, design: .rounded)).lineLimit(1).minimumScaleFactor(0.7)
+            Spacer(minLength: 4)
+            if let pass {
+                VStack(alignment: .trailing, spacing: 0) {
+                    if pass.rise <= date {
+                        Text(text("now.short")).foregroundStyle(accent).font(.system(size: 12.5, weight: .semibold, design: .rounded))
+                    } else {
+                        clock(pass).font(.system(size: 12.5, weight: .semibold, design: .rounded)).monospacedDigit()
+                        if let day = dayLabel(pass) { Text(day).font(.system(size: 10)).foregroundStyle(muted) }
                     }
                 }
+                .lineLimit(1).minimumScaleFactor(0.7)
+            } else {
+                Text(text("empty.short")).font(.system(size: 11)).foregroundStyle(muted).lineLimit(1).minimumScaleFactor(0.7)
+            }
+        }
+    }
+
+    private func mediumRow(station: Int, pass: WidgetPass?, compact: Bool) -> some View {
+        HStack(spacing: 10) {
+            icon(station, size: 36)
+            VStack(alignment: .leading, spacing: 3) {
+                Text(stationName(station)).accessibilityLabel(text(station == 25544 ? "iss" : "tiangong"))
+                    .font(.system(.subheadline, design: .rounded, weight: .bold)).lineLimit(1).minimumScaleFactor(0.7)
                 if let pass {
-                    if family != .systemMedium {
-                        time(pass).font(.system(small ? .caption : .title3, design: .rounded, weight: .medium))
-                    }
+                    Text(route(pass)).font(.system(size: 11.5)).foregroundStyle(muted).lineLimit(1).minimumScaleFactor(0.75)
                 } else {
-                    Text(text(small ? "empty.short" : "empty")).font(.caption).foregroundStyle(muted)
-                        .lineLimit(1).minimumScaleFactor(0.7)
+                    Text(text("empty")).font(.system(size: 11.5)).foregroundStyle(muted).lineLimit(1).minimumScaleFactor(0.75)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            if !small, !spaciousText, let pass {
-                Group {
-                    if let dome = pass.dome {
-                        DomeChart(pass: pass, dome: dome, accent: accent, muted: muted, showsBackground: false)
+            if let pass {
+                VStack(alignment: .trailing, spacing: 3) {
+                    if pass.rise <= date {
+                        Text(text("now.short")).font(.system(.headline, design: .rounded, weight: .bold)).foregroundStyle(accent)
                     } else {
-                        PassArc(pass: pass, accent: accent, muted: muted)
+                        clock(pass).font(.system(size: 18, weight: .bold, design: .rounded)).monospacedDigit()
                     }
+                    if let day = dayLabel(pass) { Text(day).font(.system(size: 11)).foregroundStyle(muted) }
                 }
-                .frame(width: 96, height: 52)
-                .accessibilityLabel("\(Int(pass.elevation.rounded())) degrees maximum, \(text(pass.startDirection)) to \(text(pass.endDirection))")
+                .lineLimit(1).minimumScaleFactor(0.6).layoutPriority(1)
+                if !spaciousText && !compact {
+                    Group {
+                        if let dome = pass.dome {
+                            DomeChart(pass: pass, dome: dome, accent: accent, muted: muted, showsBackground: false, labelSize: 0)
+                        } else {
+                            PassArc(pass: pass, accent: accent, muted: muted, showsLabels: false)
+                        }
+                    }
+                    .frame(width: 80, height: 46)
+                    .accessibilityLabel("\(Int(pass.elevation.rounded())) degrees maximum, \(text(pass.startDirection)) to \(text(pass.endDirection))")
+                }
             }
         }
-        .frame(maxHeight: .infinity, alignment: .center)
+        .frame(maxHeight: .infinity)
     }
+
 
     @ViewBuilder private var chartContent: some View {
         let pass = forecast?.next(station: station, at: date)
@@ -182,6 +301,7 @@ private struct PassArc: View {
     let pass: WidgetPass
     let accent: Color
     let muted: Color
+    var showsLabels = true
 
     /// (fraction of pass, elevation 0–90, illuminated) samples; a symmetric arc when no track exists.
     private var samples: [(x: Double, elevation: Double, lit: Bool)] {
@@ -232,11 +352,13 @@ private struct PassArc: View {
                     context.draw(label, at: anchor)
                 }
             }
-            HStack {
-                Text(WidgetStrings.text(pass.startDirection, locale: locale))
-                Spacer()
-                Text(WidgetStrings.text(pass.endDirection, locale: locale))
-            }.font(.system(size: 9, weight: .medium)).foregroundStyle(muted)
+            if showsLabels {
+                HStack {
+                    Text(WidgetStrings.text(pass.startDirection, locale: locale))
+                    Spacer()
+                    Text(WidgetStrings.text(pass.endDirection, locale: locale))
+                }.font(.system(size: 9, weight: .medium)).foregroundStyle(muted)
+            }
         }
     }
 }
@@ -256,7 +378,8 @@ private struct DomeChart: View {
 
     var body: some View {
         GeometryReader { proxy in
-            let labelHeight = labelSize + 4
+            // labelSize 0 hides the compass labels; the peak degrees stay on the arc.
+            let labelHeight: CGFloat = labelSize > 0 ? labelSize + 4 : 0
             let track = dome.track
             let peakY = track.map(\.y).min() ?? 0.2
             let horizonY = max(track.first?.y ?? 0.8, track.last?.y ?? 0.8)
@@ -299,7 +422,7 @@ private struct DomeChart: View {
                         let p = point(peak)
                         context.fill(Path(ellipseIn: CGRect(x: p.x - 2.5, y: p.y - 2.5, width: 5, height: 5)), with: .color(peak.illuminated ? accent : muted))
                         let label = context.resolve(Text("\(Int(pass.elevation.rounded()))°")
-                            .font(.system(size: labelSize + 1, weight: .semibold, design: .rounded)).foregroundStyle(accent))
+                            .font(.system(size: max(10, labelSize + 1), weight: .semibold, design: .rounded)).foregroundStyle(accent))
                         let size = label.measure(in: CGSize(width: 60, height: 20))
                         let anchor = CGPoint(x: min(proxy.size.width - size.width / 2, max(size.width / 2, p.x)), y: max(size.height / 2, p.y - 9))
                         if showsBackground {
@@ -309,7 +432,7 @@ private struct DomeChart: View {
                         context.draw(label, at: anchor)
                     }
                     let labelY = min(proxy.size.height - labelHeight / 2, horizonLine + labelHeight / 2 + 2)
-                    if let first = track.first, let last = track.last {
+                    if labelSize > 0, let first = track.first, let last = track.last {
                         let font = Font.system(size: labelSize, weight: .medium, design: .rounded)
                         context.draw(Text(WidgetStrings.text(pass.startDirection, locale: locale)).font(font).foregroundStyle(muted),
                                      at: CGPoint(x: min(proxy.size.width - 8, max(8, point(first).x)), y: labelY))
@@ -442,3 +565,4 @@ private struct WidgetSkyChart: View {
         }
     }
 }
+

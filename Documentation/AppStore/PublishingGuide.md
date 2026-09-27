@@ -157,6 +157,10 @@ python3 scripts/capture-widget-home-screenshots.py --output Documentation/AppSto
 - The widget content is the live forecast for that observer at capture time, not the
   historical moment; times and elevations differ between captures. Review each image for
   the station names, localized dates and the 24-hour clock in European locales.
+- Two-row widgets (small "featured plus footer", medium list rows with the elevation on
+  the arc) are documented with mockups in
+  `Documentation/DesignReview/WidgetTwoRow-2026-09-27-mockups.html`; the locale matrix
+  under `Documentation/WidgetPreviews/2026-09-27-two-row/` is the fit evidence.
 - `WidgetStrings.text` must be offered both `fr_FR` and `fr-FR`; the underscore form alone
   makes every widget fall back to English. The widget extension's Info.plist also needs
   `CFBundleLocalizations` for the eight languages, or the widget name under each widget

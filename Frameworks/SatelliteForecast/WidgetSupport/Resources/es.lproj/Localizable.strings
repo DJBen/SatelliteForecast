@@ -22,3 +22,7 @@
 "now.short" = "En curso";
 "iss.full" = "Estación Espacial Internacional";
 "tiangong.full" = "Estación espacial Tiangong";
+"today" = "Hoy";
+"tonight" = "Esta noche";
+"tomorrow" = "Mañana";
+"minutes" = "%d min";

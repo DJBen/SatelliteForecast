@@ -22,3 +22,7 @@
 "now.short" = "通過中";
 "iss.full" = "国際宇宙ステーション";
 "tiangong.full" = "天宮宇宙ステーション";
+"today" = "今日";
+"tonight" = "今夜";
+"tomorrow" = "明日";
+"minutes" = "%d分";

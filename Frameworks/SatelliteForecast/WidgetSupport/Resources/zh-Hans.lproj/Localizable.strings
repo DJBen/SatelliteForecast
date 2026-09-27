@@ -22,3 +22,7 @@
 "now.short" = "过境中";
 "iss.full" = "国际空间站";
 "tiangong.full" = "天宫空间站";
+"today" = "今天";
+"tonight" = "今晚";
+"tomorrow" = "明天";
+"minutes" = "%d 分钟";
