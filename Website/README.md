@@ -35,8 +35,8 @@ for a day.
   passes that are above 10°, sunlit, and seen against a sky with the Sun below −6°.
   The observer is a city from the built-in list (defaulting to the visitor's time
   zone) or the browser geolocation after a tap; nothing is sent to the server.
-- **Screenshots.** `img/` holds the en-US 2.0.0 store screenshots resized to 720 px
-  wide. Refresh them from `Documentation/AppStore/<version>/screenshots/en-US` when
+- **Screenshots.** `img/` holds the en-US 2.0.0 store screenshots at full resolution as WebP
+  (`cwebp -q 90 -m 6`). Refresh them from `Documentation/AppStore/<version>/screenshots/en-US` when
   the app's look changes.
 
 ## Contact address
