@@ -39,3 +39,13 @@ Changes made for these captures:
 Review: contact sheets in [visual-review](visual-review/) (aids only; the native PNGs
 under `screenshots/` are what was uploaded). Upload results and post-upload verification
 are in `upload-results.json` and `screenshots-verified.txt`.
+
+## Slot order
+
+The store order is not the capture order. en-US was rearranged by hand in App Store
+Connect and the other locales were re-uploaded to match; the order is recorded in
+[slot-order.json](slot-order.json): widgets, home, planetarium, pass chart, pass list,
+Satellites. `replace-store-screenshots.py` uploads in filename order, so after a
+reorder it reports a checksum mismatch rather than "already matches"; use the
+per-locale checksum comparison in `reorder-results.json`'s workflow instead.
+

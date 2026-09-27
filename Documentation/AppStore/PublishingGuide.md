@@ -89,6 +89,9 @@ targets. The guide is a procedure, not standing authorization to publish.
    files in order; extra trailing slots are appended. The script only touches
    `PREPARE_FOR_SUBMISSION` drafts, waits for `COMPLETE`, and verifies ordered MD5 checksums.
    Rerun without `--apply` afterwards; every locale should print `already matches`.
+   If the store order differs from the filename order (2.0.0 leads with the widget
+   slot), record it in `slot-order.json` and upload copies renamed with a position
+   prefix; the replace script's "already matches" check then no longer applies.
 9. **Attach and validate** when requested: `asc versions attach-build --version-id
    <VERSION_ID> --build <BUILD_ID>`, then `asc validate --app 1578649430 --version <V>`.
    The manual-release and App Privacy notices are informational.
