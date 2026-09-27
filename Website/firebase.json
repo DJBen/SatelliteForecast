@@ -1,0 +1,18 @@
+{
+  "hosting": {
+    "site": "space-station-passes",
+    "public": "public",
+    "cleanUrls": true,
+    "trailingSlash": false,
+    "ignore": ["**/.*"],
+    "rewrites": [
+      { "source": "/api/orbital", "function": { "functionId": "orbital_data", "region": "us-central1" } }
+    ],
+    "headers": [
+      { "source": "/api/orbital", "headers": [{ "key": "Access-Control-Allow-Origin", "value": "*" }] },
+      { "source": "**/*.html", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
+      { "source": "**", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
+      { "source": "**/*.png", "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400" }] }
+    ]
+  }
+}

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Privacy Policy · Space Station Passes</title>
+  <meta name="description" content="What Space Station Passes collects, why, and how to delete it. Location computes passes; there is no account, no ads and no sale of data.">
+  <meta name="apple-itunes-app" content="app-id=1578649430, app-argument=satelliteforecast://satellite">
+  <meta name="theme-color" content="#0a1120">
+  <link rel="icon" href="/img/icon.png">
+  <link rel="apple-touch-icon" href="/img/icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="/assets/site.css?v=4">
+</head>
+<body>
+<canvas id="stars" aria-hidden="true"></canvas>
+<div class="page">
+
+  <div class="store" id="store" hidden>
+    <div class="wrap">
+      <img src="/img/icon.png" alt="">
+      <div class="t"><b>Space Station Passes</b><span>Free on the App Store · iPhone and iPad</span></div>
+      <a class="cta" href="https://apps.apple.com/app/id1578649430">View</a>
+      <button class="x" type="button" id="store-x" aria-label="Dismiss">×</button>
+    </div>
+  </div>
+
+  <nav class="top">
+    <div class="wrap">
+      <a class="brand" href="/"><img src="/img/icon.png" alt=""><span>Space Station Passes</span></a>
+      <div class="tabs">
+        <a href="/">Overview</a>
+        <a href="/privacy" class="on" aria-current="page">Privacy</a>
+        <a href="/support">Support</a>
+      </div>
+      <a class="cta" href="https://apps.apple.com/app/id1578649430">Get the app</a>
+    </div>
+  </nav>
+
+  <main class="wrap article">
+    <aside class="toc">
+      <span class="eyebrow">Privacy Policy</span>
+      <a href="#summary">Summary</a>
+      <a href="#collect">What we collect</a>
+      <a href="#location">Location</a>
+      <a href="#notifications">Reminders and push</a>
+      <a href="#analytics">Analytics</a>
+      <a href="#website">This website</a>
+      <a href="#third">Third parties</a>
+      <a href="#retention">Retention and deletion</a>
+      <a href="#children">Children</a>
+      <a href="#changes">Changes</a>
+      <a href="#contact">Contact</a>
+    </aside>
+    <article class="prose">
+      <h1>Privacy Policy</h1>
+      <p class="meta">Space Station Passes for iOS and iPadOS · Effective 27 September 2026</p>
+
+      <h2 id="summary">Summary</h2>
+      <p>Space Station Passes predicts when the International Space Station, Tiangong and other satellites will be visible from where you are. To do that it needs a location. Nothing else about you is required. There is no account, no advertising and no sale of data.</p>
+      <div class="callout"><b>Two modes.</b> If you never turn on pass reminders, your location stays on your device and is used only to compute passes locally. If you turn on reminders, your location and a push token are stored on our server so it can predict passes and send them to you.</div>
+
+      <h2 id="collect">What we collect</h2>
+      <p><strong>Location.</strong> The coordinates you choose in the app, either your device's current location or a place you search for. See the Location section.</p>
+      <p><strong>Push notification token.</strong> An identifier Apple assigns to your device so we can send reminders. It is created only after you allow notifications.</p>
+      <p><strong>Device settings.</strong> Time zone offset, language and region, app version and whether the build is a release or debug build. These make reminders arrive at the right local time in the right language.</p>
+      <p><strong>Usage analytics.</strong> Which screens are opened, how long forecasts take to load, and whether reminders were enabled. See the Analytics section.</p>
+      <p><strong>What we do not collect.</strong> Your name, email address, contacts, photos, search text, the exact satellites you browse, or any advertising identifier.</p>
+
+      <h2 id="location">Location</h2>
+      <p>Pass predictions are computed on your device from your chosen location and public orbital data. That location is stored locally and is not sent anywhere in this mode.</p>
+      <p>When you tap Remind me and allow notifications, the app registers your device with our server so it can predict passes ahead of time and send push reminders. That registration includes your latitude, longitude and altitude, plus a five-character geohash (an area of roughly 5 km by 5 km) used to group nearby devices. Each time you open the app or change location, the registration is updated.</p>
+      <p>You can stop sharing location at any time by revoking the app's location permission or disabling notifications in iOS Settings. Registrations that have not been active for 30 days no longer receive automatic reminders.</p>
+
+      <h2 id="notifications">Reminders and push notifications</h2>
+      <p>Reminders come in two forms. <strong>Local alarms</strong> for a specific pass are scheduled by iOS on your device and involve no server. <strong>Station reminders</strong> for the ISS and Tiangong are sent by our server about five minutes before a visible pass. They contain the local start time, the direction and the peak elevation, and nothing else. We never send advertising or promotions.</p>
+
+      <h2 id="analytics">Analytics</h2>
+      <p>We use Firebase Analytics to understand which parts of the app are used and how quickly they load. Events carry fixed labels, counts and timings only. They never include coordinates, place names, search text, satellite names, notification identifiers or error text. Firebase attaches its standard device and session metadata, such as device model, OS version and country derived from IP address.</p>
+      <p>Analytics are sent from release builds only. Tests, previews and simulators are excluded.</p>
+
+      <h2 id="website">This website</h2>
+      <p>The next-pass preview on the home page runs entirely in your browser. If you tap Use my location, the browser asks for permission and the coordinates stay on your device; they are used only to compute the preview and are remembered in your browser's local storage until you pick a city instead. The site fetches public orbital data from our server; that request carries no location. The site sets no analytics or advertising cookies. Firebase Hosting, which serves the site, keeps standard server logs including IP addresses for a limited period.</p>
+
+      <h2 id="third">Third parties</h2>
+      <p><strong>Google Firebase</strong> (Cloud Firestore, Cloud Functions, Cloud Messaging, Hosting and Analytics) stores registrations, runs pass predictions, serves this site and delivers reminders. Google processes this data under its <a href="https://firebase.google.com/support/privacy">Firebase privacy terms</a>.</p>
+      <p><strong>Apple Push Notification service</strong> delivers reminders to your device.</p>
+      <p><strong>Orbital data</strong> is public and comes from CelesTrak. Requests for it carry no personal data.</p>
+      <p>We do not share your data with advertisers, data brokers or anyone else, and we do not sell it.</p>
+
+      <h2 id="retention">Retention and deletion</h2>
+      <p>A reminder registration is kept while your device stays active and is eligible for automatic reminders for 30 days after the last app launch. To delete it, disable notifications for the app in iOS Settings or delete the app, then email us with the approximate date you did so and we will remove the record. Analytics data is retained by Firebase for its default period of 14 months.</p>
+
+      <h2 id="children">Children</h2>
+      <p>The app is not directed at children under 13 and does not knowingly collect personal data from them.</p>
+
+      <h2 id="changes">Changes to this policy</h2>
+      <p>Changes are posted on this page with a new effective date. Material changes will also be noted in the App Store release notes.</p>
+
+      <h2 id="contact">Contact</h2>
+      <p>Questions about privacy or a deletion request: <span class="mono" id="mail">lsh32768@gmail.com</span></p>
+    </article>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>© 2026 Space Station Passes. Orbital data from CelesTrak.</span>
+      <span><a href="/privacy">Privacy</a> · <a href="/support">Support</a> · <a href="https://apps.apple.com/app/id1578649430">App Store</a></span>
+    </div>
+  </footer>
+</div>
+<script src="/assets/site.js?v=4"></script>
+</body>
+</html>

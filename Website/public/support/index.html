@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Support · Space Station Passes</title>
+  <meta name="description" content="Answers to common questions about pass forecasts and reminders in Space Station Passes, and how to contact us.">
+  <meta name="apple-itunes-app" content="app-id=1578649430, app-argument=satelliteforecast://satellite">
+  <meta name="theme-color" content="#0a1120">
+  <link rel="icon" href="/img/icon.png">
+  <link rel="apple-touch-icon" href="/img/icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="/assets/site.css?v=4">
+</head>
+<body>
+<canvas id="stars" aria-hidden="true"></canvas>
+<div class="page">
+
+  <div class="store" id="store" hidden>
+    <div class="wrap">
+      <img src="/img/icon.png" alt="">
+      <div class="t"><b>Space Station Passes</b><span>Free on the App Store · iPhone and iPad</span></div>
+      <a class="cta" href="https://apps.apple.com/app/id1578649430">View</a>
+      <button class="x" type="button" id="store-x" aria-label="Dismiss">×</button>
+    </div>
+  </div>
+
+  <nav class="top">
+    <div class="wrap">
+      <a class="brand" href="/"><img src="/img/icon.png" alt=""><span>Space Station Passes</span></a>
+      <div class="tabs">
+        <a href="/">Overview</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/support" class="on" aria-current="page">Support</a>
+      </div>
+      <a class="cta" href="https://apps.apple.com/app/id1578649430">Get the app</a>
+    </div>
+  </nav>
+
+  <main class="wrap article">
+    <aside class="toc">
+      <span class="eyebrow">Support</span>
+      <a href="#faq">Common questions</a>
+      <a href="#contact">Contact</a>
+      <a href="#details">App details</a>
+    </aside>
+    <article class="prose">
+      <h1>Support</h1>
+      <p>Most questions are about why a pass did or did not show up. Start with the answers below. If yours is not here, write to us.</p>
+
+      <h2 id="faq">Common questions</h2>
+      <div class="faq">
+        <details open><summary>Why does the app show no passes for the next few days?</summary><p>Visible passes need the station to be sunlit while your sky is dark. That combination comes in cycles: a week or two of evening passes, then a gap, then morning passes. The app only lists passes you can actually see, so an empty week is normal.</p></details>
+        <details><summary>The ISS passed but I got no reminder.</summary><p>Station reminders need three things: notifications allowed for the app, a location set, and the app opened at least once in the last 30 days. Also check Focus modes and Notification Summary, which can hold the alert until later.</p></details>
+        <details><summary>How accurate are the times?</summary><p>Orbital data is refreshed several times a day. Predictions are usually within a few seconds for the next several days. Stations occasionally boost their orbit, which can shift times by a minute or more until the next data refresh.</p></details>
+        <details><summary>Can I set a location other than where I am?</summary><p>Yes. Tap Change next to the location on the home screen and search for a city. Reminders follow whichever location is set.</p></details>
+        <details><summary>Does the app work without an internet connection?</summary><p>Passes are computed on the device from the last downloaded orbital data, so a forecast made recently keeps working offline. Refreshing data and receiving push reminders need a connection.</p></details>
+        <details><summary>How do I delete my data?</summary><p>Disable notifications for the app or delete the app, then email us with the approximate date. See the <a href="/privacy">privacy policy</a> for what is stored.</p></details>
+      </div>
+
+      <h2 id="contact">Contact</h2>
+      <div class="contact">
+        <div><div class="k">Email</div><div class="v mono" id="mail">lsh32768@gmail.com</div><div class="s">Replies usually within a few days.</div><button class="copy" id="copy-mail" type="button">Copy address</button></div>
+        <div><div class="k">Include</div><div class="v">App version, iOS version, city</div><div class="s">For a wrong pass, add the date and time the app showed and the station name.</div></div>
+      </div>
+
+      <h2 id="details">App details</h2>
+      <div class="tbl">
+        <table>
+          <tbody>
+            <tr><td>Current version</td><td class="mono">2.0.0</td></tr>
+            <tr><td>Requires</td><td>iOS 17 or later · iPhone and iPad</td></tr>
+            <tr><td>Languages</td><td>English, Chinese (Simplified), French, Japanese, Korean, Portuguese (Brazil), Russian, Spanish</td></tr>
+            <tr><td>App Store</td><td><a href="https://apps.apple.com/app/id1578649430">apps.apple.com/app/id1578649430</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>© 2026 Space Station Passes. Orbital data from CelesTrak.</span>
+      <span><a href="/privacy">Privacy</a> · <a href="/support">Support</a> · <a href="https://apps.apple.com/app/id1578649430">App Store</a></span>
+    </div>
+  </footer>
+</div>
+<script src="/assets/site.js?v=4"></script>
+</body>
+</html>

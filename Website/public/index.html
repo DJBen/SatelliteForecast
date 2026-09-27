@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Space Station Passes</title>
+  <meta name="description" content="Know when the International Space Station and Tiangong will cross your sky, where to look, and get a reminder before each visible pass. For iPhone and iPad.">
+  <meta name="apple-itunes-app" content="app-id=1578649430, app-argument=satelliteforecast://satellite">
+  <meta property="og:title" content="Space Station Passes">
+  <meta property="og:description" content="Know when to look up, and where to look. ISS and Tiangong pass forecasts, sky charts and reminders for iPhone.">
+  <meta property="og:image" content="https://space-station-passes.web.app/img/icon.png">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#0a1120">
+  <link rel="icon" href="/img/icon.png">
+  <link rel="apple-touch-icon" href="/img/icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="/assets/site.css?v=4">
+</head>
+<body>
+<canvas id="stars" aria-hidden="true"></canvas>
+<div class="page">
+
+  <div class="store" id="store" hidden>
+    <div class="wrap">
+      <img src="/img/icon.png" alt="">
+      <div class="t"><b>Space Station Passes</b><span>Free on the App Store · iPhone and iPad</span></div>
+      <a class="cta" href="https://apps.apple.com/app/id1578649430">View</a>
+      <button class="x" type="button" id="store-x" aria-label="Dismiss">×</button>
+    </div>
+  </div>
+
+  <nav class="top">
+    <div class="wrap">
+      <a class="brand" href="/"><img src="/img/icon.png" alt=""><span>Space Station Passes</span></a>
+      <div class="tabs">
+        <a href="/" class="on" aria-current="page">Overview</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/support">Support</a>
+      </div>
+      <a class="cta" href="https://apps.apple.com/app/id1578649430">Get the app</a>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <div>
+          <h1>Know when to <em>look up</em>, and where to look.</h1>
+          <p class="lede measure">The ISS and Tiangong cross your sky for a few minutes at a time. Get the moment, the direction and a reminder.</p>
+          <div class="actions">
+            <a class="cta" href="https://apps.apple.com/app/id1578649430">Download on the App Store</a>
+            <a class="cta ghost" href="/privacy">Read the privacy policy</a>
+          </div>
+
+          <div class="peek" id="peek">
+            <div class="peek-head">
+              <div class="where">
+                <span>Next pass over</span>
+                <label class="sr" for="peek-city">City</label>
+                <select id="peek-city"></select>
+                <span class="muted">·</span>
+                <button class="link" type="button" id="peek-locate">Use my location</button>
+              </div>
+              <span class="live" id="peek-live"><i></i>Live</span>
+            </div>
+            <div class="when" id="peek-when">Finding the next pass…</div>
+            <div class="sat" id="peek-sat">&nbsp;</div>
+            <div class="sub" id="peek-sub">&nbsp;</div>
+            <svg class="arc" id="arc" viewBox="0 0 520 190" role="img" aria-label="Path of the pass over the horizon"></svg>
+            <div class="row" id="peek-row"></div>
+            <p class="status" id="peek-status" hidden></p>
+            <div class="foot">
+              <div class="up" id="peek-up"></div>
+              <span id="peek-tz">Computed in your browser</span>
+            </div>
+          </div>
+        </div>
+        <div class="phone"><img src="/img/01-forecast.png" alt="Home screen showing the next observation card with an animated sky arc and a list of upcoming ISS and Tiangong passes"></div>
+      </div>
+    </section>
+
+    <section id="features" class="showcase">
+      <div class="wrap">
+        <div class="show-head">
+          <span class="eyebrow">In the app</span>
+          <h2>Four screens, one evening.</h2>
+        </div>
+        <div class="show">
+          <div class="show-phone">
+            <div class="phone frames" id="frames">
+              <img src="/img/01-forecast.png" class="on" alt="Home screen with the next observation card and upcoming passes" data-i="0">
+              <img src="/img/02-pass-chart.png" alt="Sky chart of one pass across constellations and the Milky Way" data-i="1">
+              <img src="/img/05-planetarium.png" alt="Planetarium view of the pass" data-i="2">
+              <img src="/img/06-widgets.png" alt="Home Screen widgets in three sizes" data-i="3">
+            </div>
+            <div class="dots" id="dots" role="tablist" aria-label="Screens">
+              <button type="button" class="on" role="tab" aria-selected="true" aria-label="Forecast" data-i="0"></button>
+              <button type="button" role="tab" aria-selected="false" aria-label="Sky chart" data-i="1"></button>
+              <button type="button" role="tab" aria-selected="false" aria-label="Planetarium" data-i="2"></button>
+              <button type="button" role="tab" aria-selected="false" aria-label="Widgets" data-i="3"></button>
+            </div>
+          </div>
+          <div class="steps" id="steps">
+            <div class="step on" data-i="0">
+              <span class="k">01 · Forecast</span>
+              <h3>Your next observation, already waiting.</h3>
+              <p>Open the app and the next visible pass is on screen: time, duration, peak height and a preview of where it rises and sets. The rest of the week sits below, grouped by day.</p>
+            </div>
+            <div class="step" data-i="1">
+              <span class="k">02 · Sky chart</span>
+              <h3>Follow the path across the stars.</h3>
+              <p>Stars, constellations, the Milky Way and the planets, with the station's track drawn through them. Compass mode points the phone at it.</p>
+              <div class="moments">
+                <div><div class="k">Rises</div><div class="v">8:34:57 PM</div><div class="d">239° · 0°</div></div>
+                <div><div class="k">Culminates</div><div class="v">8:40:32 PM</div><div class="d">322° · 56°</div></div>
+                <div><div class="k">Disappears</div><div class="v">8:43:38 PM</div><div class="d">41° · 13°</div></div>
+              </div>
+            </div>
+            <div class="step" data-i="2">
+              <span class="k">03 · Planetarium</span>
+              <h3>Stand under it before you go outside.</h3>
+              <p>A 3D sky you can turn with a finger, showing where the station will be against the horizon you actually have.</p>
+            </div>
+            <div class="step" data-i="3">
+              <span class="k">04 · Widgets</span>
+              <h3>Tonight's answer on the Home Screen.</h3>
+              <p>Small, medium and large widgets show the next pass with its arc and times. No need to open the app to know whether to step outside.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>© 2026 Space Station Passes. Orbital data from CelesTrak.</span>
+      <span><a href="/privacy">Privacy</a> · <a href="/support">Support</a> · <a href="https://apps.apple.com/app/id1578649430">App Store</a></span>
+    </div>
+  </footer>
+</div>
+<script src="/assets/satellite.min.js?v=4"></script>
+<script src="/assets/site.js?v=4"></script>
+<script src="/assets/peek.js?v=4"></script>
+</body>
+</html>
