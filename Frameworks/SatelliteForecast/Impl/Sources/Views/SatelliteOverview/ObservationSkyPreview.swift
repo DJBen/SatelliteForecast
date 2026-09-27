@@ -9,6 +9,8 @@ struct ObservationSkyPreview: View {
     let preview: ObservationPreview
     let observer: LatLonAlt
     let session: AppSession
+    /// Home keeps the sky above the pass, dissolving toward the top edge.
+    var extendsSkyUpward = false
     var isActive = true
     var reviewProgress: Double? = nil
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -24,7 +26,8 @@ struct ObservationSkyPreview: View {
     var body: some View {
         GeometryReader { geometry in
             let samples = samples
-            let projection = ObservationSkyProjection(pass: pass, samples: samples, size: geometry.size)
+            let projection = ObservationSkyProjection(pass: pass, samples: samples, size: geometry.size,
+                extendsUpward: extendsSkyUpward)
             let points = samples.map { projection.point(azimuth: $0.position.azim, elevation: $0.position.elev) }
             ZStack(alignment: .topLeading) {
                 ObservationSkyBackground(projection: projection, observer: observer,
@@ -58,7 +61,10 @@ struct ObservationSkyPreview: View {
                         referenceDate: pass.culmination.julianDate, observer: observer,
                         sunElevation: pass.sunElevationAtTransit,
                         projectedPosition: { coordinate, _ in
-                            projection.visiblePoint(azimuth: coordinate.azim, elevation: coordinate.elev)
+                            // A disk centered on the horizon reads as risen even while
+                            // the body is still below it; require it to clear the horizon.
+                            guard coordinate.elev >= Self.minimumBodyElevation else { return nil }
+                            return projection.visiblePoint(azimuth: coordinate.azim, elevation: coordinate.elev)
                         })
                 }
                 .frame(width: geometry.size.width, height: geometry.size.height)
@@ -92,6 +98,8 @@ struct ObservationSkyPreview: View {
         .onChange(of: isActive) { _, active in if active { started = Date() } }
         .onChange(of: scenePhase) { _, phase in if phase == .active { started = Date() } }
     }
+
+    private static let minimumBodyElevation = 2.0
 
     private func endpoint(_ position: Pass.DatePosition, projection: ObservationSkyProjection) -> some View {
         let point = projection.point(azimuth: position.azim, elevation: 0)
@@ -174,6 +182,8 @@ struct ObservationSkyProjection: Hashable, Sendable {
     let originY: Double
     /// Upper envelope of the projected pass, sampled once per horizontal point.
     private let skyBoundary: [Double]
+    /// Fill the sky above the pass too, fading out toward the top edge.
+    let extendsUpward: Bool
     var size: CGSize { CGSize(width: width, height: height) }
 
     static func minorArc(from rise: Double, to set: Double) -> Double {
@@ -183,8 +193,9 @@ struct ObservationSkyProjection: Hashable, Sendable {
         return abs(turn) == 180 ? 180 : turn
     }
 
-    init(pass: Pass, samples: [SatelliteSnapshot], size: CGSize) {
+    init(pass: Pass, samples: [SatelliteSnapshot], size: CGSize, extendsUpward: Bool = false) {
         width = size.width; height = size.height
+        self.extendsUpward = extendsUpward
         arc = Self.minorArc(from: pass.rise.azim, to: pass.set.azim)
         centerAzimuth = pass.rise.azim + arc / 2
         let a = centerAzimuth * .pi / 180
@@ -233,7 +244,13 @@ struct ObservationSkyProjection: Hashable, Sendable {
         }
         let x = min(skyBoundary.count - 1, max(0, Int(point.x)))
         let bleed = max(4, width * 0.04)
-        return smooth(-bleed, bleed, point.y - skyBoundary[x])
+        var vertical = smooth(-bleed, bleed, point.y - skyBoundary[x])
+        if extendsUpward {
+            // Straight sides up from the horizon; the top dissolves by the pass's peak.
+            let peak = max(bleed, skyBoundary.min() ?? height)
+            vertical = max(vertical, smooth(0, peak, point.y))
+        }
+        return vertical
             * smooth(0, width * 0.08, min(point.x, width - point.x))
             * smooth(0, height * 0.08, height - point.y)
     }

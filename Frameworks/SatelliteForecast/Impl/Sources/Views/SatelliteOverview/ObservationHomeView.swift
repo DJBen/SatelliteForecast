@@ -162,6 +162,7 @@ struct ObservationHomeView: View {
                         .fixedSize(horizontal: false, vertical: true)
                     if let preview = currentPreview, let observer = input.observer {
                         ObservationSkyPreview(preview: preview, observer: observer, session: session,
+                            extendsSkyUpward: true,
                             isActive: isVisible && skyIsVisible && !showsLocation && session.navigation.forecastPath.isEmpty && session.navigation.deepLink == nil)
                             .frame(height: dynamicType.isAccessibilitySize ? 180 : 194)
                             .onScrollVisibilityChange(threshold: 0.1) { skyIsVisible = $0 }

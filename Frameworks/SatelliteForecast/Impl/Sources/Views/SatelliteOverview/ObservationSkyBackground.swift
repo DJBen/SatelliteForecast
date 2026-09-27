@@ -36,23 +36,22 @@ struct ObservationSkyBackground: View {
 
 extension ChartRenderer {
     /// Draw from the original spherical NASA map, never from a flat sky chart.
-    /// Reuses the app's catalog frame, diffuse galaxy source and planetarium
-    /// atmosphere palette, evaluated along each final output pixel's sky ray.
+    /// Reuses the app's catalog frame and diffuse galaxy source. The atmosphere is
+    /// the round sky chart's (`SkyChartAtmosphere`), evaluated along each output
+    /// pixel's sky ray at that ray's position in the chart, so both views agree.
     func observationSky(projection: ObservationSkyProjection, observer: LatLonAlt, julianDate: Double) -> UIImage? {
         guard projection.width > 0, projection.height > 0 else { return nil }
         let texture = MilkyWayBackground.texture
         let frame = MilkyWayBackground.Projection(observer: observer, julianDate: julianDate)
         let sun = SkyChartAtmosphere.sun(observer: observer, julianDate: julianDate)
-        let a = sun.azim * .pi / 180, e = sun.elev * .pi / 180
-        let sunRay = SIMD3(sin(a) * cos(e), cos(a) * cos(e), sin(e))
         func smooth(_ low: Double, _ high: Double, _ value: Double) -> Double {
             let t = min(1, max(0, (value - low) / (high - low)))
             return t * t * (3 - 2 * t)
         }
         let daylight = smooth(-8, 12, sun.elev)
         let twilight = smooth(-18, -5, sun.elev) * (1 - smooth(0, 14, sun.elev))
-        // Residual scattering while the Sun is within 18° of the horizon, as in SkyChartAtmosphere.
-        let presence = smooth(-18, -2, sun.elev) * (1 - daylight)
+        let presence = smooth(-18, -2, sun.elev)
+        let atmosphere = ChartAtmosphere(sun: sun, daylight: daylight, twilight: twilight, presence: presence)
         let pixelsPerPoint = min(2, 1024 / max(projection.width, projection.height))
         let width = max(1, Int(projection.width * pixelsPerPoint))
         let height = max(1, Int(projection.height * pixelsPerPoint))
@@ -66,20 +65,7 @@ extension ChartRenderer {
                 guard ray.z > 0, facing >= 0 else { continue }
                 let equatorial = frame.east * ray.x + frame.north * ray.y + frame.zenith * ray.z
                 let galaxy = texture?.sample(MilkyWayBackground.textureCoordinates(MilkyWayBackground.galactic(equatorial))) ?? .zero
-                // The planetarium's directional palette, with the night sky lifted to the sky
-                // chart's illustration levels: a deep blue zenith, a hazier blue horizon band
-                // from airglow and scattered light, a violet twilight rim and a warm solar aureole.
-                let horizon = exp(-ray.z * 4.5)
-                let glow = pow(max(0, simd_dot(ray, sunRay)), 12)
-                let wideGlow = pow(max(0, simd_dot(ray, sunRay)), 3)
-                let night = SIMD3(0.010, 0.020, 0.062) * (1 - horizon) + SIMD3(0.052, 0.112, 0.240) * horizon
-                let day = SIMD3(0.025, 0.16, 0.42) * (1 - horizon) + SIMD3(0.37, 0.60, 0.82) * horizon
-                let sky = night * (1 - daylight) + day * daylight
-                    + presence * (0.35 + 0.65 * horizon) * SIMD3(0.02, 0.09, 0.24)
-                    + twilight * horizon * SIMD3(0.32, 0.15, 0.36)
-                    + twilight * horizon * wideGlow * SIMD3(0.55, 0.26, 0.12)
-                    + glow * twilight * SIMD3(0.85, 0.34, 0.10)
-                let color = simd_min(SIMD3(repeating: 1), sky + galaxy * (0.65 * (1 - daylight)))
+                let color = simd_min(SIMD3(repeating: 1), atmosphere.color(along: ray) + galaxy * (0.65 * (1 - daylight)))
                 // Feather only a narrow band around the pass; share that boundary
                 // with foreground stars and the widget's cached dome raster.
                 let edge = projection.edgeFade(at: point)
@@ -97,5 +83,68 @@ extension ChartRenderer {
                   bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue),
                   provider: provider, decode: nil, shouldInterpolate: true, intent: .defaultIntent) else { return nil }
         return UIImage(cgImage: cgImage, scale: pixelsPerPoint, orientation: .up)
+    }
+}
+
+/// `SkyChartAtmosphere`'s layers as a function of sky direction. Each ray is placed
+/// where the round chart would draw it (azimuthal equidistant, horizon at radius 1)
+/// and the same gradient stops are composited source-over in premultiplied color.
+private struct ChartAtmosphere {
+    typealias Stop = (location: Double, color: SIMD3<Double>, alpha: Double)
+    let sunPoint: SIMD2<Double>
+    let zenith: [Stop]
+    let violet: [Stop]
+    let aureoles: [(radius: Double, color: SIMD3<Double>, strength: Double)]
+    let presence: Double
+
+    init(sun: AziEle, daylight: Double, twilight: Double, presence: Double) {
+        self.presence = presence
+        sunPoint = Self.chartPoint(azimuth: sun.azim * .pi / 180, elevation: sun.elev)
+        zenith = [(0, SIMD3(0.025, 0.12, 0.34), presence * 0.9),
+                  (0.65, SIMD3(0.055, 0.30, 0.68), daylight * 0.96),
+                  (1, SIMD3(0.27, 0.59, 0.88), daylight)]
+        violet = [(0.48, .zero, 0),
+                  (0.76, SIMD3(0.27, 0.16, 0.65), twilight * 0.35),
+                  (0.94, SIMD3(0.65, 0.27, 0.78), twilight * 0.8),
+                  (1, SIMD3(0.82, 0.40, 0.74), twilight * 0.85)]
+        aureoles = [(1.1, SIMD3(1, 0.38, 0.20), twilight * 0.88),
+                    (0.6, SIMD3(1, 0.72, 0.40), twilight * 0.65)]
+    }
+
+    static func chartPoint(azimuth: Double, elevation: Double) -> SIMD2<Double> {
+        SIMD2(sin(azimuth), cos(azimuth)) * ((90 - elevation) / 90)
+    }
+
+    /// Premultiplied gradient sample; SwiftUI interpolates stops the same way.
+    private static func sample(_ stops: [Stop], at location: Double) -> SIMD4<Double> {
+        func premultiplied(_ stop: Stop) -> SIMD4<Double> { SIMD4(stop.color * stop.alpha, stop.alpha) }
+        guard let first = stops.first, location > first.location else { return premultiplied(stops[0]) }
+        for (a, b) in zip(stops, stops.dropFirst()) where location <= b.location {
+            let t = (location - a.location) / (b.location - a.location)
+            return premultiplied(a) * (1 - t) + premultiplied(b) * t
+        }
+        return premultiplied(stops[stops.count - 1])
+    }
+
+    /// Opaque color for a ray above the horizon. The chart has no fill in deep
+    /// night, so the arc keeps a dark blue base beneath its layers instead.
+    func color(along ray: SIMD3<Double>) -> SIMD3<Double> {
+        let elevation = asin(max(-1, min(1, ray.z))) * 180 / .pi
+        let point = Self.chartPoint(azimuth: atan2(ray.x, ray.y), elevation: elevation)
+        var color = SIMD3(0.010, 0.020, 0.062)
+        func over(_ layer: SIMD4<Double>) {
+            color = SIMD3(layer.x, layer.y, layer.z) + color * (1 - layer.w)
+        }
+        over(SIMD4(SIMD3(0.015, 0.025, 0.075) * presence, presence))
+        let radius = simd_length(point)
+        over(Self.sample(zenith, at: radius))
+        over(Self.sample(violet, at: radius))
+        let distance = simd_distance(point, sunPoint)
+        for aureole in aureoles where aureole.strength > 0 {
+            over(Self.sample([(0, aureole.color, aureole.strength), (0.24, aureole.color, aureole.strength * 0.48),
+                              (0.6, aureole.color, aureole.strength * 0.12), (1, aureole.color, 0)],
+                             at: distance / aureole.radius))
+        }
+        return color
     }
 }
