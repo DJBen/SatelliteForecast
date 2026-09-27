@@ -92,7 +92,7 @@ struct FlippingCityText: View {
                         Text(localizedText.prefix)
                             .font(.largeTitle)
                             .fontWeight(.bold)
-                            .foregroundColor(.white)
+                            .foregroundColor(AppTheme.text)
                             .multilineTextAlignment(.center)
                     }
                     FlippingTextView(items: cities)
@@ -101,7 +101,7 @@ struct FlippingCityText: View {
                     Text(localizedText.suffix)
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .foregroundColor(AppTheme.text)
                         .multilineTextAlignment(.center)
                 }
             case .vertical:
@@ -109,7 +109,7 @@ struct FlippingCityText: View {
                     Text(localizedText.prefix)
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .foregroundColor(AppTheme.text)
                         .multilineTextAlignment(.center)
                 }
                 FlippingTextView(items: cities)
@@ -117,7 +117,7 @@ struct FlippingCityText: View {
                     Text(localizedText.suffix)
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .foregroundColor(AppTheme.text)
                         .multilineTextAlignment(.center)
                 }
             }

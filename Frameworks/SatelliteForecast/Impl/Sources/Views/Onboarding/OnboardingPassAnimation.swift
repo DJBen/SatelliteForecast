@@ -55,7 +55,7 @@ struct OnboardingPassAnimation: View {
                             Text("ISS · San Francisco Bay", bundle: .module)
                                 .font(.headline)
                             Text(reduceMotion ? "Recorded pass" : "Recorded pass · 40× replay", bundle: .module)
-                                .font(.caption).foregroundStyle(.secondary)
+                                .font(.caption).foregroundStyle(AppTheme.muted)
                         }
                         GeometryReader { geometry in
                             // Direction labels extend beyond the circular chart bounds.
@@ -83,7 +83,7 @@ struct OnboardingPassAnimation: View {
                             Text("\(Int(sample.position.elev.rounded()))°")
                         }
                         .font(.caption.monospacedDigit())
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(AppTheme.muted)
                     }
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel(Text("Recorded ISS pass over San Francisco Bay", bundle: .module))

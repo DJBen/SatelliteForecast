@@ -1,4 +1,5 @@
 import UIKit
+import SatelliteWidgetSupport
 import MetalKit
 import CoreMotion
 import Combine
@@ -60,7 +61,7 @@ struct PlanetariumSatelliteTrack {
         guard let first = samples.first else { return [] }
         for (a, b) in zip(samples, samples.dropFirst()) {
             let length = atan2(simd_length(simd_cross(a.direction, b.direction)), simd_dot(a.direction, b.direction))
-            let color = a.illuminated ? SIMD4<Float>(0.37, 0.96, 0.82, 0.9) : SIMD4<Float>(0.5, 0.6, 0.68, 0.4)
+            let color = a.illuminated ? MoonstonePalette.vector(MoonstonePalette.accentHex, alpha: 0.9) : MoonstonePalette.vector(MoonstonePalette.mutedHex, alpha: 0.4)
             result.append(.init(position: SIMD4(a.direction, 0), color: color,
                                 profile: SIMD4(distance, 1, Float((a.date-first.date)*86400), 0)))
             distance += length
@@ -228,9 +229,9 @@ struct PlanetariumSatelliteTrack {
         renderer.setBrightStars(tiers.bright)
         markerTexture = renderer.texture(Self.markerImage())
         glowTexture = renderer.texture(Self.glowImage())
-        satelliteLabel = renderer.texture(Self.labelImage(context.satelliteCommonName, color: .cyan))
+        satelliteLabel = renderer.texture(Self.labelImage(context.satelliteCommonName, color: MoonstonePalette.uiColor(MoonstonePalette.accentHex)))
         for constellation in context.starManager.allConstellations() {
-            let image = Self.labelImage(constellation.localizedName.uppercased(with: .current), color: UIColor(red: 0.64, green: 0.76, blue: 0.91, alpha: 0.72))
+            let image = Self.labelImage(constellation.localizedName.uppercased(with: .current), color: MoonstonePalette.uiColor(MoonstonePalette.mutedHex).withAlphaComponent(0.72))
             if let texture = renderer.texture(image) {
                 constellationLabels.append((SIMD3<Float>(constellation.center), texture, image.size.width))
             }
@@ -705,7 +706,7 @@ struct PlanetariumSatelliteTrack {
             }
         }
         if satelliteVisible {
-            let color = satelliteIlluminated ? SIMD4<Float>(0.35, 1, 0.85, 1) : SIMD4<Float>(0.5, 0.65, 0.75, 0.6)
+            let color = satelliteIlluminated ? MoonstonePalette.vector(MoonstonePalette.accentHex, alpha: 1) : MoonstonePalette.vector(MoonstonePalette.mutedHex, alpha: 0.6)
             append(satelliteDirection, glowTexture, width: 32, tint: color, overlay: true)
             append(satelliteDirection, markerTexture, width: 28, tint: color, overlay: true)
             appendBodyLabel(simd_normalize(satelliteDirection + up * Float(0.045 * fieldOfView / 65)), satelliteLabel,
@@ -748,7 +749,7 @@ struct PlanetariumSatelliteTrack {
         }
 
         if let selectionDirection, selection?.moonID == nil || naturalMoons.contains(where: { $0.moon.id == selection?.moonID && naturalMoonVisible($0) }) {
-            append(selectionDirection, markerTexture, width: 38, tint: SIMD4(0.7, 0.9, 1, 1))
+            append(selectionDirection, markerTexture, width: 38, tint: MoonstonePalette.vector(MoonstonePalette.accentHex, alpha: 1))
         }
         renderer.sprites = sprites
     }

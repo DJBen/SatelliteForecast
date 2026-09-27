@@ -134,7 +134,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
                             Self.satelliteLabelInGraph(result.satelliteInfo)
                         )
                         .font(.system(size: 8, weight: .regular, design: .default))
-                        .foregroundColor(.gray)
+                        .foregroundColor(AppTheme.muted)
                         .offset(y: 8)
                         .frame(alignment: .leading)
                         .position(
@@ -153,7 +153,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
                             Self.satelliteLabelInGraph(result.satelliteInfo)
                         )
                         .font(.system(size: 9, weight: .regular, design: .default))
-                        .foregroundColor(.orange)
+                        .foregroundColor(AppTheme.accent)
                         .offset(y: 12)
                         .frame(alignment: .leading)
                         .position(
@@ -199,7 +199,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
                     from: viewModel.state.resources.displayResults,
                     rect: rect
                 )
-                .fill(.blue)
+                .fill(AppTheme.accent)
 
                 satellitePaths(
                     from: visiblePropagationResults,
@@ -284,7 +284,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
                 Text(
                     Self.SatelliteList.loadingText
                 )
-                .foregroundColor(.secondary)
+                .foregroundColor(AppTheme.muted)
             }
         }
     }
@@ -308,14 +308,14 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
                     }
                 )
                 .font(Font.headline)
-                .foregroundColor(Color(UIColor.systemBlue))
+                .foregroundColor(AppTheme.accent)
             }
         case .loaded(_):
             if visiblePropagationResults.isEmpty {
                 Text(
                     Self.SatelliteList.emptyText
                 )
-                .foregroundColor(.secondary)
+                .foregroundColor(AppTheme.muted)
             } else {
                 List {
                     ForEach(visiblePropagationResults, id: \.self) { result in
@@ -327,6 +327,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
                     }
                 }
                 .listStyle(.inset)
+                .scrollContentBackground(.hidden)
             }
         }
     }
@@ -352,6 +353,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
             } noLocationContentBuilder: {
                 Text("Location not available", bundle: .module)
             }
+            .modifier(AppSurface())
             .navigationTitle(Self.Navigation.title)
         .analyticsScreen(.skyNow)
             .navigationBarTitleDisplayMode(.inline)

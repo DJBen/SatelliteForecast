@@ -19,6 +19,13 @@ final class ScreenSnapshotTests: XCTestCase {
     private var size: CGSize { isSEReview ? CGSize(width: 375, height: 667) : CGSize(width: 402, height: 874) }
     private let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
 
+    override func setUp() {
+        super.setUp()
+        // DateFormatter-based labels must match the SwiftUI snapshot timezone,
+        // including when a secondary fixture is run without the main screen suite.
+        NSTimeZone.default = TimeZone(secondsFromGMT: 0)!
+    }
+
     /// Renders the actual shared widget view at Home Screen sizes, in dark mode only.
     func testWidgetPreviews() async throws {
         guard let output = ProcessInfo.processInfo.environment["WIDGET_SCREENSHOT_OUTPUT"] else {
@@ -98,7 +105,7 @@ final class ScreenSnapshotTests: XCTestCase {
             preview(.systemMedium, chart: false, size: .init(width: 364, height: 170))
         }
         .padding(20).foregroundStyle(.white)
-        .background(Color(red: 20/255, green: 34/255, blue: 51/255))
+        .background(MoonstonePalette.surface)
         .environment(\.colorScheme, .dark)
         .environment(\.locale, Locale(identifier: "en_US"))
         let renderer = ImageRenderer(content: gallery)
@@ -895,6 +902,9 @@ final class ScreenSnapshotTests: XCTestCase {
     }
 
     private func assertSnapshot(_ view: AnyView, name: String, style: UIUserInterfaceStyle, scrollDistance: CGFloat? = nil, checkFullHeight: Bool = true, expectedModal: Bool? = nil, record: Bool = false) async throws {
+        // A palette review can exercise the full fixture catalog without recording
+        // or comparing light appearance, while ordinary runs retain both modes.
+        if ProcessInfo.processInfo.environment["SNAPSHOT_DARK_ONLY"] == "1", style != .dark { return }
         let host = UIHostingController(rootView: view
             .environment(\.motionManagerKey, CMMotionManager())
             .environment(\.locale, Locale(identifier: "en_US"))
@@ -913,7 +923,7 @@ final class ScreenSnapshotTests: XCTestCase {
         host.view.layoutIfNeeded()
         // Allow SwiftUI layout, async star labels and UIKit navigation to settle.
         try await Task.sleep(for: .milliseconds(name.hasPrefix("observation-") ? 6000 :
-            ((name.hasPrefix("02-predictions-intro") || name.hasPrefix("tutorial-")) ? 2500 : 800)))
+            ((name.hasPrefix("02-predictions-intro") || name.hasPrefix("19-planetarium") || name.hasPrefix("tutorial-")) ? 2500 : 800)))
         host.view.layoutIfNeeded()
         if let scrollDistance {
             func scrollViews(in view: UIView) -> [UIScrollView] {
@@ -951,7 +961,8 @@ final class ScreenSnapshotTests: XCTestCase {
         attachment.lifetime = .keepAlways
         add(attachment)
         let mode = ProcessInfo.processInfo.environment["SNAPSHOT_RECORD"] ?? ""
-        let baseFolder = root.appendingPathComponent(name.hasPrefix("point-source-") ? "Documentation/DesignReview/PointSources" : "Documentation/DesignReview/\(mode == "before" ? "before" : "after")")
+        let defaultFolder = root.appendingPathComponent(name.hasPrefix("point-source-") ? "Documentation/DesignReview/PointSources" : "Documentation/DesignReview/\(mode == "before" ? "before" : "after")")
+        let baseFolder = ProcessInfo.processInfo.environment["SNAPSHOT_OUTPUT"].map { URL(fileURLWithPath: $0, isDirectory: true) } ?? defaultFolder
         let folder = isSEReview ? baseFolder.appendingPathComponent("se3") : baseFolder
         let url = folder.appendingPathComponent(name + ".png")
         let data = try XCTUnwrap(image.pngData())
@@ -1055,9 +1066,10 @@ struct Fixture {
             ("15-star-detail", AnyView(NavigationStack { SelectedStarLabel(starManager: catalog, star: catalog.brightestStars()[0]).padding().navigationTitle("Star details") })),
             ("17-mission-control", AnyView(MissionControlView(satelliteInfo: info, julianDateProvider: date, julianDateOffset: 0, userLocation: CLLocation(latitude: observer.lat, longitude: observer.lon)))),
             ("18-ephemeris-text", AnyView(NavigationStack { EphemerideTextBrowserView(resource: textResource) })),
+            ("19-planetarium", AnyView(PlanetariumView(context: .init(passIndex: 0, satelliteInfo: info, satelliteCommonName: "ISS (ZARYA)", category: .iss, julianDateRange: range, observer: observer, passSnapshots: pass, starManager: catalog, julianDateProvider: date)))),
             ("20-debug", AnyView(DebugMenu(viewModel: .init(state: DebugMenuState(trueJulianDate: now.julianDate, config: .init(), pendingNotifications: [], deliveredNotifications: [], fcmToken: nil))))),
             ("16-night-mode", AnyView(NativeSettingsView(session: session).overlay(Color.red.blendMode(.plusDarker).allowsHitTesting(false)))),
-        ]
+        ].filter { $0.0 != "19-planetarium" || ProcessInfo.processInfo.environment["SNAPSHOT_PLANETARIUM"] == "1" }
     }
 }
 

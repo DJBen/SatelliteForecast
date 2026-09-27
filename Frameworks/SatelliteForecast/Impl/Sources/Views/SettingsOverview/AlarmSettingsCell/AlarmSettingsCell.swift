@@ -26,11 +26,11 @@ public struct AlarmSettingsCell: View {
             HStack {
                 Image(systemName: numberOfAlerts == 0 ? "bell" : "bell.fill")
                     .font(.headline)
-                    .foregroundColor(Color(UIColor.label))
+                    .foregroundColor(AppTheme.text)
                 
                 Text(AlarmSettingsCell.title)
                     .font(.headline)
-                    .foregroundColor(Color(UIColor.label))
+                    .foregroundColor(AppTheme.text)
 
                 Spacer()
             }

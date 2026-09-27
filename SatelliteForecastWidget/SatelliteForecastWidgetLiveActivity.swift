@@ -8,6 +8,7 @@
 import ActivityKit
 import WidgetKit
 import SwiftUI
+import SatelliteWidgetSupport
 
 struct SatelliteForecastWidgetAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
@@ -26,8 +27,9 @@ struct SatelliteForecastWidgetLiveActivity: Widget {
             VStack {
                 Text("Hello \(context.state.emoji)")
             }
-            .activityBackgroundTint(Color.cyan)
-            .activitySystemActionForegroundColor(Color.black)
+            .foregroundStyle(MoonstonePalette.text)
+            .activityBackgroundTint(MoonstonePalette.background)
+            .activitySystemActionForegroundColor(MoonstonePalette.accent)
 
         } dynamicIsland: { context in
             DynamicIsland {
@@ -51,7 +53,7 @@ struct SatelliteForecastWidgetLiveActivity: Widget {
                 Text(context.state.emoji)
             }
             .widgetURL(URL(string: "http://www.apple.com"))
-            .keylineTint(Color.red)
+            .keylineTint(MoonstonePalette.accent)
         }
     }
 }

@@ -130,7 +130,7 @@ struct ObservationHomeView: View {
             Button { showsLocation = true } label: {
                 HStack(spacing: 7) {
                     Image(systemName: "mappin.and.ellipse").foregroundStyle(AppTheme.muted)
-                    Text(locationName).foregroundStyle(.primary).lineLimit(2)
+                    Text(locationName).foregroundStyle(AppTheme.text).lineLimit(2)
                     Text("Change", bundle: .module).foregroundStyle(AppTheme.accent).font(.subheadline)
                 }
                 .font(.subheadline)
@@ -155,9 +155,9 @@ struct ObservationHomeView: View {
                         }
                     }
                     .font(.system(.title, design: .rounded, weight: .bold))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(AppTheme.text)
                     .fixedSize(horizontal: false, vertical: true)
-                    Text(ObservationOpportunity.name(pass)).font(.headline).foregroundStyle(.primary)
+                    Text(ObservationOpportunity.name(pass)).font(.headline).foregroundStyle(AppTheme.text)
                     Text(summary(pass)).font(.subheadline).foregroundStyle(AppTheme.muted)
                         .fixedSize(horizontal: false, vertical: true)
                     if let preview = currentPreview, let observer = input.observer {
@@ -187,8 +187,8 @@ struct ObservationHomeView: View {
         }
         .padding(20)
         .background {
-            RoundedRectangle(cornerRadius: 28, style: .continuous)
-                .fill(LinearGradient(colors: [AppTheme.surface, AppTheme.background], startPoint: .topLeading, endPoint: .bottomTrailing))
+            AppTheme.featuredBackground
+                .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
         }
         .overlay(alignment: .topTrailing) {
             if showsBellShortcut(pass) { bellShortcut.padding(14) }

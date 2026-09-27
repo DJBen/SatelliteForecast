@@ -63,7 +63,7 @@ struct StationWidgetEntryView: View {
         StationWidgetView(forecast: entry.forecast, date: entry.date, family: family,
                           chart: entry.configuration.layout == .chart, station: entry.configuration.station.norad)
             .padding(StationWidgetView.contentPadding(for: family))
-            .containerBackground(StationWidgetView.background, for: .widget)
+            .containerBackground(for: .widget) { StationWidgetView.background }
     }
 }
 

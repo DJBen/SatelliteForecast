@@ -92,7 +92,7 @@ public struct DetailedPassView: View {
                     .padding(.horizontal, 16)
                 }
             }
-            .background(Color.black)
+            .modifier(AppSurface())
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(

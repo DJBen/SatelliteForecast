@@ -322,7 +322,7 @@ fragment float4 line_fragment(Raster in [[stage_in]], constant float2 &flowTime 
         float phase=fract(in.flow.x/period-flowTime.x*0.45);
         float pulse=smoothstep(0.35,0.8,phase)*(1-smoothstep(0.8,0.94,phase));
         alpha*=0.65+0.35*pulse;
-        color=mix(color,float3(0.82,1.0,0.97),0.7*pulse);
+        color=mix(color,float3(0.925,0.933,0.949),0.7*pulse);
     }
     return float4(color*alpha,alpha);
 }

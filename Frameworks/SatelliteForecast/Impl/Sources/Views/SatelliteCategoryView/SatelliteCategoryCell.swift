@@ -35,7 +35,7 @@ struct SatelliteCategoryCell: View {
                 Text(SatelliteCategoryCell.categoryLocalizedString(category))
                     .font(.title3)
                     .fontWeight(.semibold)
-                    .foregroundColor(.primary)
+                    .foregroundColor(AppTheme.text)
                     .multilineTextAlignment(.leading)
                     .minimumScaleFactor(0.8)
                     .lineLimit(1)
@@ -43,7 +43,7 @@ struct SatelliteCategoryCell: View {
                 Image(systemName: "chevron.right")
                     .font(.title3)
                     .fontWeight(.semibold)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(AppTheme.muted)
             }
             .padding(16)
             .background(AppTheme.surface)

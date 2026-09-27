@@ -229,3 +229,7 @@ The home sky uses a minor-arc camera and directly renders its spherical galaxy
 source, atmosphere and celestial objects. These local rendering changes, the
 bright-star cutoff, horizon and animation retain the same event and measurement
 boundaries. No per-pixel or per-frame operations are logged.
+
+The Moonstone palette and static background texture change no screen names,
+events, conversion definitions or measurement boundaries. App and widget visual
+review runs retain the existing Debug/XCTest telemetry exclusions.

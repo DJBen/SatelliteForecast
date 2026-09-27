@@ -88,3 +88,12 @@ swift scripts/review-widget-text.swift /absolute/path/to/new-evidence/locale-mat
 ```
 
 The capture script sets dark appearance and restores the test plan afterward.
+
+
+## Moonstone palette — September 27, 2026
+
+Widgets share neutral
+charcoal, soft white and desaturated silver-blue interface colors with the app.
+Their background uses an 8% accent tint; the circular chart retains its natural
+blue/violet/pink atmosphere and the small chart retains the committed arc trim.
+See [the Moonstone review](DesignReview/Moonstone.md) for native dark captures.

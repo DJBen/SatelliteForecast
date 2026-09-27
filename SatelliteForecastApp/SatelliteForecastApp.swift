@@ -38,6 +38,10 @@ struct SatelliteForecastApp: App {
                     ProgressView(AppLocalization.text("Loading the sky…"))
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .foregroundStyle(AppTheme.text)
+            .tint(AppTheme.accent)
+            .background(AppTheme.pageBackground.ignoresSafeArea())
             .onOpenURL { appDelegate.open($0) }
             .task(id: loadAttempt) {
                 guard catalog == nil, ProcessInfo.processInfo.environment["SATELLITE_SNAPSHOT_TESTS"] != "1" else { return }

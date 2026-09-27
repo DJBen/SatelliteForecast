@@ -171,7 +171,7 @@ public struct SatelliteListView: View {
                 }
             )
             .font(Font.headline)
-            .foregroundColor(Color(UIColor.systemBlue))
+            .foregroundColor(AppTheme.accent)
         }
     }
 

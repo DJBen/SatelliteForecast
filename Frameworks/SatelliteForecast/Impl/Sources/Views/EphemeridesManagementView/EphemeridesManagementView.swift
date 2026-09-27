@@ -23,7 +23,7 @@ struct EphemeridesManagementView: View {
                         resource.fileName
                     )
                     .font(.headline)
-                    .foregroundColor(Color(UIColor.label))
+                    .foregroundColor(AppTheme.text)
 
                     Spacer()
 
@@ -85,6 +85,7 @@ struct EphemeridesManagementView: View {
                         cell(
                             resource: resource
                         )
+                        .listRowBackground(AppTheme.surface)
                     }
                     .onDelete { indexSet in
                         let resourcesToDelete = Array(indexSet).map { resources[$0] }

@@ -1,8 +1,9 @@
 import SwiftUI
 import WidgetKit
 
-/// Shares the main app's navy surfaces, teal accent, muted labels and rounded typography.
+/// Shares the app's Moonstone palette, matte backdrop and rounded typography.
 public struct StationWidgetView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.calendar) private var calendar
     @Environment(\.locale) private var locale
@@ -12,9 +13,9 @@ public struct StationWidgetView: View {
     public let family: WidgetFamily
     public let chart: Bool
     public let station: Int
-    private let accent = Color(red: 112/255, green: 218/255, blue: 210/255)
-    private let muted = Color(red: 167/255, green: 184/255, blue: 203/255)
-    public static let background = Color(red: 10/255, green: 19/255, blue: 33/255)
+    private let accent = MoonstonePalette.accent
+    private let muted = MoonstonePalette.muted
+    public static var background: some View { MoonstoneBackground(glowOpacity: 0.08) }
     /// Margins applied by the host in place of the system's 16 pt content inset. The
     /// medium rows use 10 pt top and bottom so the two rows fill the widget height.
     public static func contentPadding(for family: WidgetFamily) -> EdgeInsets {
@@ -55,7 +56,7 @@ public struct StationWidgetView: View {
         // Widget viewports are fixed; retain readable scaling through XXXL while
         // keeping complete text available to VoiceOver at accessibility settings.
         .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
-        .foregroundStyle(.white)
+        .foregroundStyle(MoonstonePalette.text)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 
@@ -92,6 +93,8 @@ public struct StationWidgetView: View {
     private func icon(_ station: Int, size: CGFloat) -> some View {
         Image(station == 25544 ? "station_iss" : "station_tiangong", bundle: .module)
             .resizable().aspectRatio(contentMode: .fit).frame(width: size, height: size)
+            .saturation(colorScheme == .dark ? 0.08 : 1)
+            .colorMultiply(colorScheme == .dark ? MoonstonePalette.text : .white)
             .accessibilityHidden(true)
     }
 
@@ -101,7 +104,7 @@ public struct StationWidgetView: View {
         let strong = degrees >= 40
         return Text(verbatim: "\(degrees)°")
             .font(.system(size: compact ? 10 : 11, weight: .bold, design: .rounded)).monospacedDigit()
-            .foregroundStyle(strong ? Self.background : accent)
+            .foregroundStyle(strong ? MoonstonePalette.background : accent)
             .padding(.horizontal, 6).padding(.vertical, 2)
             .background(strong ? accent : accent.opacity(0.16), in: Capsule())
             .accessibilityLabel("\(degrees) degrees maximum")
@@ -349,7 +352,7 @@ public struct StationWidgetView: View {
 
 }
 
-/// Elevation over time for one pass. Sunlit portions are teal and shadowed portions grey,
+/// Elevation over time for one pass. Sunlit portions are silver-blue and shadowed portions grey,
 /// taken from the sky track; the peak carries its elevation in degrees.
 private struct PassArc: View {
     @Environment(\.locale) private var locale
@@ -523,7 +526,7 @@ private struct WidgetSkyChart: View {
         Canvas { context, size in
             let center = CGPoint(x: size.width / 2, y: size.height / 2)
             let radius = max(1, min(size.width, size.height) / 2 - 17)
-            func label(_ text: String, at position: CGPoint, color: Color = .white, size: CGFloat = 11) {
+            func label(_ text: String, at position: CGPoint, color: Color = MoonstonePalette.text, size: CGFloat = 11) {
                 context.draw(Text(text).font(.system(size: size, weight: .medium, design: .rounded))
                     .foregroundStyle(color), at: position)
             }
@@ -596,7 +599,7 @@ private struct WidgetSkyChart: View {
             let point = CGPoint(x: center.x + unit.x * radius, y: center.y + unit.y * radius)
             var label = event.date.formatted(style)
             if event.kind == .peak { label += " · \(Int(peakElevation.rounded()))°" }
-            let resolved = context.resolve(Text(label).font(.system(size: 10, weight: .semibold, design: .rounded)).foregroundStyle(.white))
+            let resolved = context.resolve(Text(label).font(.system(size: 10, weight: .semibold, design: .rounded)).foregroundStyle(MoonstonePalette.text))
             let size = resolved.measure(in: CGSize(width: 120, height: 20))
             // Horizon events and anything near the rim go inward so the text stays on the disk;
             // the peak sits above its marker; the rest go outward, away from the track.

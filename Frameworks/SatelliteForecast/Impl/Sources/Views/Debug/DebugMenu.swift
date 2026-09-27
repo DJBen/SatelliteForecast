@@ -98,31 +98,31 @@ public struct DebugMenu: View {
             HStack {
                 Text(verbatim: request.content.title)
                     .font(.headline)
-                    .foregroundColor(Color(UIColor.label))
+                    .foregroundColor(AppTheme.text)
                 Spacer()
             }
             
             Text(verbatim: request.content.body)
                 .font(.caption)
-                .foregroundColor(Color(UIColor.label))
+                .foregroundColor(AppTheme.text)
             
             if let deliveredDate = deliveredDate {
                 Text(verbatim: "Delivered at \(deliveredDate.formatted())")
                     .font(.caption)
                     .multilineTextAlignment(.leading)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(AppTheme.muted)
             }
             
             if let calendarTrigger = request.trigger as? UNCalendarNotificationTrigger {
                 Text(verbatim: calendarTrigger.dateComponents.description)
                     .font(.caption)
                     .multilineTextAlignment(.leading)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(AppTheme.muted)
             } else if let timeIntervalTrigger = request.trigger as? UNTimeIntervalNotificationTrigger {
                 Text(verbatim: "Time interval \(timeIntervalTrigger.timeInterval.formatted())")
                     .font(.caption)
                     .multilineTextAlignment(.leading)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(AppTheme.muted)
             }
         }
     }
@@ -151,6 +151,7 @@ public struct DebugMenu: View {
         unwrapState { state in
             NavigationStack {
                 Form {
+                    Group {
                     Section {
                         VStack(alignment: .leading, spacing: 4) {
                             HStack {
@@ -160,12 +161,12 @@ public struct DebugMenu: View {
                                     if let fcmToken = state.fcmToken {
                                         Text(verbatim: fcmToken)
                                             .font(.caption)
-                                            .foregroundColor(.secondary)
+                                            .foregroundColor(AppTheme.muted)
                                             .lineLimit(nil)
                                     } else {
                                         Text(verbatim: "No FCM token")
                                             .font(.caption)
-                                            .foregroundColor(.secondary)
+                                            .foregroundColor(AppTheme.muted)
                                     }
                                 }
                                 Spacer()
@@ -285,6 +286,8 @@ public struct DebugMenu: View {
                     } header: {
                         Text(verbatim: "Delivered notifications")
                     }
+                    }
+                    .listRowBackground(AppTheme.surface)
                 }
                 .modifier(AppSurface())
         .navigationTitle(Text(verbatim: "Debug Menu"))

@@ -68,7 +68,7 @@ struct PassPreviewCell: View {
                 }
                 .frame(maxHeight: .infinity)
             }
-            .foregroundStyle(.primary)
+            .foregroundStyle(AppTheme.text)
             .accessibilityElement(children: .combine)
         } else {
             VStack(spacing: 8) {
@@ -90,7 +90,7 @@ struct PassPreviewCell: View {
                 RoundedRectangle(cornerRadius: AppTheme.cardRadius)
                     .strokeBorder(AppTheme.border, lineWidth: 0.5)
             }
-            .foregroundStyle(.primary)
+            .foregroundStyle(AppTheme.text)
             .accessibilityElement(children: .combine)
         }
     }

@@ -67,7 +67,7 @@ struct RealtimeSkySatelliteCell: View {
                         magnitudeText
                     )
                     .font(.body)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(AppTheme.muted)
                 }
 
                 HStack {
@@ -75,7 +75,7 @@ struct RealtimeSkySatelliteCell: View {
                         distanceText(snapshot.distance)
                     )
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(AppTheme.muted)
                 }
             }
         }

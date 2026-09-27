@@ -23,7 +23,7 @@ struct SelectedStarLabel: View {
                     primaryStarDescription ?? ""
                 )
                 .font(.system(.title2, design: .serif))
-                .foregroundColor(Color(UIColor.label))
+                .foregroundColor(AppTheme.text)
 
                 if let secondaryStarDescription = secondaryStarDescription {
                     Text(

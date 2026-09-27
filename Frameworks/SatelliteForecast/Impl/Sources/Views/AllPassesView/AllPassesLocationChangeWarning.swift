@@ -30,7 +30,9 @@ struct AllPassesLocationChangeWarning: View {
                 .font(.footnote.bold())
         }
         .padding(16)
-        .background(colorScheme == .light ? .yellow : Color(UIColor.systemYellow.darken(by: 0.3)))
+        .foregroundStyle(AppTheme.text)
+        .tint(AppTheme.warning)
+        .background(colorScheme == .light ? .yellow : AppTheme.warning.opacity(0.14))
         .frame(maxWidth: .infinity)
     }
     

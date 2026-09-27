@@ -564,7 +564,7 @@ extension MissionControlViewController: MKMapViewDelegate {
                 in: .module,
                 compatibleWith: nil
             )
-            annotationView?.markerTintColor = .systemOrange
+            annotationView?.markerTintColor = AppTheme.accentColor
             annotationView?.glyphTintColor = .white
             annotationView?.displayPriority = .required
             return annotationView
@@ -580,7 +580,7 @@ extension MissionControlViewController: MKMapViewDelegate {
                     comment: "Map annotation indicating the radius that space stations are visible for the user"
                 )
                 label.font = UIFont.boldSystemFont(ofSize: 14)
-                label.textColor = .systemYellow
+                label.textColor = AppTheme.accentColor
                 label.backgroundColor = UIColor(white: 0, alpha: 0.5)
                 label.layer.cornerRadius = 6
                 label.layer.masksToBounds = true
@@ -627,23 +627,23 @@ extension MissionControlViewController: MKMapViewDelegate {
         if let polyline = overlay as? MKGeodesicPolyline {
             let colorsAndStops: [GradientPathRenderer.ColorAndStop] = [
                 GradientPathRenderer.ColorAndStop(
-                    color: UIColor.systemBlue.cgColor,
+                    color: AppTheme.mutedColor.cgColor,
                     stop: 0
                 ),
                 GradientPathRenderer.ColorAndStop(
-                    color: UIColor.systemGreen.cgColor,
+                    color: AppTheme.textColor.cgColor,
                     stop: 0.25
                 ),
                 GradientPathRenderer.ColorAndStop(
-                    color: UIColor.systemYellow.cgColor,
+                    color: AppTheme.accentColor.cgColor,
                     stop: 0.5
                 ),
                 GradientPathRenderer.ColorAndStop(
-                    color: UIColor.systemOrange.cgColor,
+                    color: AppTheme.accentColor.cgColor,
                     stop: 0.75
                 ),
                 GradientPathRenderer.ColorAndStop(
-                    color: UIColor.systemRed.cgColor,
+                    color: AppTheme.warningColor.cgColor,
                     stop: 1
                 )
             ]
@@ -658,8 +658,8 @@ extension MissionControlViewController: MKMapViewDelegate {
         // Add circle overlay rendering for user visibility
         if let circle = overlay as? MKCircle {
             let renderer = MKCircleRenderer(circle: circle)
-            renderer.fillColor = UIColor.systemYellow.withAlphaComponent(0.15)
-            renderer.strokeColor = UIColor.systemYellow.withAlphaComponent(0.5)
+            renderer.fillColor = AppTheme.accentColor.withAlphaComponent(0.15)
+            renderer.strokeColor = AppTheme.accentColor.withAlphaComponent(0.5)
             renderer.lineWidth = 2
             return renderer
         }

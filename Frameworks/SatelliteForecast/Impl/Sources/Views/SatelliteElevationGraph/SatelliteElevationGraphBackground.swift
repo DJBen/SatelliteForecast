@@ -46,7 +46,7 @@ struct SatelliteElevationGraphBackground: View, @preconcurrency Equatable {
                     path.addLine(to: CGPoint(x: x, y: rect.maxY))
                 }
             }
-            .stroke(Color.blue.opacity(0.3), lineWidth: 1)
+            .stroke(AppTheme.border.opacity(0.7), lineWidth: 1)
         }
     }
 

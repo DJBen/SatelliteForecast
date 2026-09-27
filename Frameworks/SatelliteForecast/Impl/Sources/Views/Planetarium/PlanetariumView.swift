@@ -42,7 +42,7 @@ struct PlanetariumView: View {
                             controller.setMotionEnabled(!controller.motionEnabled)
                         } label: {
                             Image(systemName: controller.motionEnabled ? "location.north.line.fill" : "location.north.line")
-                                .foregroundStyle(controller.motionEnabled ? Color.cyan : Color.primary)
+                                .foregroundStyle(controller.motionEnabled ? AppTheme.accent : AppTheme.text)
                                 .frame(width: 44, height: 44)
                                 .contentShape(Rectangle())
                         }
@@ -96,7 +96,7 @@ struct PlanetariumView: View {
                 PlanetariumFPSReadout(monitor: monitor)
             }
         }
-        .foregroundStyle(.white).tint(.cyan).preferredColorScheme(.dark)
+        .foregroundStyle(AppTheme.text).tint(AppTheme.accent).preferredColorScheme(.dark)
         .onAppear {
             controller.configure(context: context, julianDate: (context.passSnapshots.pass.rise.julianDate + context.passSnapshots.pass.set.julianDate) / 2)
             controller.setOverlays(labels: labels, lines: lines)
@@ -129,7 +129,7 @@ private struct PlanetariumFPSReadout: View {
     var body: some View {
         HStack(spacing: 6) {
             Text("FPS")
-                .foregroundStyle(.secondary)
+                .foregroundStyle(AppTheme.muted)
             Text(monitor.framesPerSecond.map { String(format: "%.0f", $0) } ?? "—")
                 .monospacedDigit()
         }
@@ -220,7 +220,7 @@ private struct PlanetariumTimeControls: View {
                         VStack(alignment: .leading, spacing: 1) {
                             Text(Date(julianDate: julianDate), format: .dateTime.year(.twoDigits).month(.twoDigits).day(.twoDigits))
                                 .font(.system(size: 15, weight: .medium, design: .rounded))
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(AppTheme.muted)
                             Text(Date(julianDate: julianDate), format: .dateTime.hour().minute().second())
                                 .font(.system(size: 22, weight: .medium, design: .rounded))
                         }
@@ -306,13 +306,13 @@ private struct PlanetariumSelectionCard: View {
                                 .frame(width: 48, height: 48)
                                 .accessibilityHidden(true)
                         } else {
-                            Image(systemName: "sparkle").font(.title2).foregroundStyle(.cyan)
+                            Image(systemName: "sparkle").font(.title2).foregroundStyle(AppTheme.accent)
                                 .frame(width: 48, height: 48)
                         }
                         VStack(alignment: .leading, spacing: 4) {
                             Text(selection.name).font(.system(.headline, design: .serif))
-                            Text(selection.detail).font(.caption).foregroundStyle(.secondary)
-                            Text(selection.coordinates).font(.caption2.monospacedDigit()).foregroundStyle(.secondary)
+                            Text(selection.detail).font(.caption).foregroundStyle(AppTheme.muted)
+                            Text(selection.coordinates).font(.caption2.monospacedDigit()).foregroundStyle(AppTheme.muted)
                         }
                         Spacer(minLength: 0)
                         Button(AppLocalization.text("Dismiss selection"), systemImage: "xmark") { controller.clearSelection() }

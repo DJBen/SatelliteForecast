@@ -36,7 +36,7 @@ struct SkyChartPassLabel<BackgroundModifier: ViewModifier, Content: View>: View 
                 path.move(to: CGPoint(x: rect.midX, y: rect.midY))
                 path.addLine(to: CGPoint(x: rect.midX + 20, y: rect.midY))
             }
-            .stroke(Color.gray)
+            .stroke(AppTheme.muted)
             .frame(alignment: .leading)
 
             content(
@@ -100,10 +100,10 @@ struct HighlightedPassLabelModifier: ViewModifier {
     }
 
     func body(content: Content) -> some View {
-        let gradient = shouldHighlight ? Gradient(colors: [Color(UIColor.systemPink), Color(UIColor.systemOrange)]) : Gradient(colors: [Color(UIColor.systemGray), Color(UIColor.systemGray2)])
+        let gradient = shouldHighlight ? Gradient(colors: [AppTheme.accent, AppTheme.accent]) : Gradient(colors: [AppTheme.surface, AppTheme.surface])
         content.fixedSize()
             .padding(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
-            .foregroundColor(Color("passInfoLabel_foreground", bundle: .module))
+            .foregroundColor(shouldHighlight ? AppTheme.background : AppTheme.text)
             .font(.caption.weight(.semibold).monospaced())
             .background(LinearGradient(gradient: gradient, startPoint: .leading, endPoint: .trailing).rotationEffect(rotationAngle))
             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))

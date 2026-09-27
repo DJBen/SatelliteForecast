@@ -85,8 +85,8 @@ public struct OnboardingView: View {
             AppAnalytics.event("onboarding_step", screen: .onboarding, parameters: ["step": page + 1])
         }
         .modifier(CompactHeightLayout())
-        .background(Color.black)
-        .foregroundColor(.white)
+        .background(AppTheme.pageBackground)
+        .foregroundColor(AppTheme.text)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .ignoresSafeArea(.all)
     }
@@ -136,7 +136,7 @@ private struct OnboardingPageView: View {
                     LinearGradient(
                         gradient: Gradient(colors: [
                             Color.black,
-                            Color.blue.opacity(0.3),
+                            AppTheme.accent.opacity(0.10),
                             Color.black
                         ]),
                         startPoint: .top,
@@ -184,7 +184,7 @@ private struct OnboardingPageView: View {
                         Text(page.description)
                             .font(.headline)
                             .fontWeight(.medium)
-                            .foregroundStyle(.white.opacity(0.85))
+                            .foregroundStyle(AppTheme.text.opacity(0.85))
                             .multilineTextAlignment(.leading)
                             .lineLimit(nil)
                             .fixedSize(horizontal: false, vertical: true)
@@ -205,7 +205,7 @@ private struct OnboardingPageView: View {
                     .buttonStyle(.glass)
                     .buttonBorderShape(.capsule)
                     .controlSize(.large)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(AppTheme.text)
                     .environment(\.colorScheme, .dark)
                     .padding(.horizontal, 32)
                 }

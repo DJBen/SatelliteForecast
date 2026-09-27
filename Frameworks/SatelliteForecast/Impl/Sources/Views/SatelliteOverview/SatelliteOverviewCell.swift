@@ -35,7 +35,7 @@ struct SatelliteOverviewCell: View {
                     Text(SatelliteOverviewCell.satelliteOfSpecialInterestLocalizedTitle(satellite))
                         .font(.title3)
                         .fontWeight(.semibold)
-                        .foregroundColor(.primary)
+                        .foregroundColor(AppTheme.text)
                         .multilineTextAlignment(.leading)
                     locationLabel
                 }

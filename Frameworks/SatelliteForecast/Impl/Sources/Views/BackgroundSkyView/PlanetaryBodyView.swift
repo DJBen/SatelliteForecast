@@ -71,7 +71,7 @@ struct PlanetaryBodyView: View {
                                     if label == .text {
                                         Text("Moon", bundle: .module)
                                             .font(.system(.caption2, design: .serif))
-                                            .foregroundColor(.secondary)
+                                            .foregroundColor(AppTheme.muted)
                                             .fixedSize()
                                             .offset(x: (labelOnLeft ? -1 : 1) * (displayRadius * 2 + 3))
                                     }

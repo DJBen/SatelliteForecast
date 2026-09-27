@@ -30,7 +30,7 @@ public struct AlarmSettingsView: View {
             HStack(alignment: .firstTextBaseline) {
                 Text(item.notification.satelliteName)
                     .font(.headline)
-                    .foregroundColor(Color(UIColor.label))
+                    .foregroundColor(AppTheme.text)
                 
                 Spacer()
                 
@@ -56,12 +56,12 @@ public struct AlarmSettingsView: View {
                 Text(AlarmSettingsView.passDescription(pass: item.notification.pass))
                     .font(.caption)
                     .multilineTextAlignment(.leading)
-                    .foregroundColor(.primary)
+                    .foregroundColor(AppTheme.text)
                 
                 Text(AlarmSettingsView.passVisibilityDescription(pass: item.notification.pass))
                     .font(.caption)
                     .multilineTextAlignment(.leading)
-                    .foregroundColor(.primary)
+                    .foregroundColor(AppTheme.text)
             }
         }
         .padding([.top, .bottom], 4)
@@ -83,6 +83,7 @@ public struct AlarmSettingsView: View {
                     .foregroundColor(AppTheme.muted)
                     .multilineTextAlignment(.center)
                 }
+                .listRowBackground(AppTheme.surface)
                 .padding(
                     EdgeInsets(
                         top: 16,
@@ -93,7 +94,7 @@ public struct AlarmSettingsView: View {
                 )
             } else {
                 ForEach(notifications) { item in
-                    itemView(item)
+                    itemView(item).listRowBackground(AppTheme.surface)
                 }
                 .onDelete(perform: deleteAlarms)
             }

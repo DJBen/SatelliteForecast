@@ -106,7 +106,7 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
             HStack {
                 Image(systemName: settings.showExperimentalSkyNow ? "star.fill" : "star")
                     .font(.headline)
-                    .foregroundColor(Color(UIColor.label))
+                    .foregroundColor(AppTheme.text)
 
                 let text: String = {
                     if settings.showExperimentalSkyNow {
@@ -132,7 +132,7 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                     text
                 )
                 .font(.headline)
-                .foregroundColor(Color(UIColor.label))
+                .foregroundColor(AppTheme.text)
                 .multilineTextAlignment(.leading)
 
                 Spacer()
@@ -202,7 +202,7 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                                 Spacer()
                             }
                             .font(.headline)
-                            .foregroundStyle(.primary)
+                            .foregroundStyle(AppTheme.text)
                             .padding()
                             .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppTheme.cardRadius))
                         }

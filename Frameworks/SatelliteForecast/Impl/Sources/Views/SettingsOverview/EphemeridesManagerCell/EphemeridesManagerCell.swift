@@ -39,11 +39,11 @@ public struct EphemeridesManagerCell: View {
             HStack {
                 Image(systemName: "archivebox")
                     .font(.headline)
-                    .foregroundColor(Color(UIColor.label))
+                    .foregroundColor(AppTheme.text)
 
                 Text(EphemeridesManagerCell.title(fileCount: resources.count))
                     .font(.headline)
-                    .foregroundColor(Color(UIColor.label))
+                    .foregroundColor(AppTheme.text)
 
                 Spacer()
             }

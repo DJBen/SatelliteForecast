@@ -119,7 +119,7 @@ public struct PassAlarmSettingsModalView: View {
                     description(for: timing)
                 )
                 .if(isNotificationScheduled) { text in
-                    text.foregroundColor(.secondary)
+                    text.foregroundColor(AppTheme.muted)
                 }
 
                 Spacer()
@@ -127,18 +127,18 @@ public struct PassAlarmSettingsModalView: View {
                 Text(
                     TimingCell.formattedDatePosition(datePosition(for: timing)!)
                 )
-                .foregroundColor(.secondary)
+                .foregroundColor(AppTheme.muted)
 
                 if selectedTiming == timing {
                     Image(
                         systemName: "circle.inset.filled"
                     )
-                    .foregroundColor(.secondary)
+                    .foregroundColor(AppTheme.muted)
                 } else {
                     Image(
                         systemName: "circle"
                     )
-                    .foregroundColor(.secondary)
+                    .foregroundColor(AppTheme.muted)
                 }
             }
             .padding(.horizontal, 16)
@@ -170,7 +170,7 @@ public struct PassAlarmSettingsModalView: View {
                         }
                     }
                 }
-                .background(Color(UIColor.secondarySystemGroupedBackground))
+                .background(AppTheme.surface)
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 .padding(.horizontal, 16)
 
@@ -179,7 +179,7 @@ public struct PassAlarmSettingsModalView: View {
                         Self.leadTimeLabel
                     )
                     .font(.headline.lowercaseSmallCaps().weight(.regular))
-                    .foregroundColor(Color(UIColor.label))
+                    .foregroundColor(AppTheme.text)
 
                     Spacer()
                 }
@@ -284,9 +284,9 @@ public struct PassAlarmSettingsModalView: View {
 struct AlarmTimingButtonStyle: ButtonStyle {
     func makeBody(configuration: Self.Configuration) -> some View {
         if configuration.isPressed {
-            return configuration.label.background(Color(UIColor.tertiarySystemGroupedBackground))
+            return configuration.label.background(AppTheme.border)
         } else {
-            return configuration.label.background(Color(UIColor.secondarySystemGroupedBackground))
+            return configuration.label.background(AppTheme.surface)
         }
     }
 }

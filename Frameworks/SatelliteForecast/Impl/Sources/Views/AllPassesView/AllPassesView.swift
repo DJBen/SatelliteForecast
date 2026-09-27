@@ -331,7 +331,7 @@ public struct AllPassesView: View {
             HStack {
                 Text(AllPassesView.Section.VisiblePasses.header)
                     .font(.headline.lowercaseSmallCaps())
-                    .foregroundColor(Color(UIColor.label))
+                    .foregroundColor(AppTheme.text)
 
                 Spacer()
                 
@@ -355,7 +355,7 @@ public struct AllPassesView: View {
         VStack(alignment: .leading, spacing: 4) {
             Text(AllPassesView.Section.InvisiblePasses.header)
                 .font(.headline.lowercaseSmallCaps())
-                .foregroundColor(Color(UIColor.label))
+                .foregroundColor(AppTheme.text)
             Text(AllPassesView.Section.InvisiblePasses.headerCaption)
                 .font(.caption)
                 .foregroundColor(AppTheme.muted)
@@ -408,7 +408,7 @@ public struct AllPassesView: View {
                     VStack(spacing: 16) {
                         Image(systemName: "location.slash")
                             .symbolRenderingMode(.palette)
-                            .foregroundStyle(.red, Color(uiColor: .label))
+                            .foregroundStyle(.red, AppTheme.text)
                             .font(.title)
                         
                         Text(
@@ -416,7 +416,7 @@ public struct AllPassesView: View {
                         Need a location to find satellite passes.
                         """
                         )
-                        .foregroundColor(Color(UIColor.label))
+                        .foregroundColor(AppTheme.text)
                         .multilineTextAlignment(.leading)
                         .padding(EdgeInsets(top: 0, leading: 32, bottom: 0, trailing: 32))
                         

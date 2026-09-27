@@ -32,3 +32,16 @@ All 40 comparisons passed in a comparison-only run on the reference runtime.
 MapKit regions are not masked; external tile updates can require a reviewed
 baseline refresh. Scene-owned sensor dependencies are supplied, but simulator
 snapshots do not validate physical compass accuracy.
+
+## Moonstone dark baselines
+
+The September 27, 2026 dark baselines were reviewed on iPhone 17 Pro Max / iOS 27.
+Light baselines retain their earlier reference runtime. For a palette review,
+use `scripts/capture-moonstone-review.py --output /absolute/new/evidence` and
+repeat with `--extended` for secondary fixtures. These commands record isolated
+evidence; they do not automatically accept baselines. `SNAPSHOT_DARK_ONLY=1`
+skips light captures, `SNAPSHOT_OUTPUT` redirects output, and
+`SNAPSHOT_PLANETARIUM=1` opts into the live Metal fixture. See
+[Moonstone verification](../Documentation/DesignReview/Moonstone.md) for
+coverage and known limitations. The latest runs were recording runs; no new
+comparison-only pass is claimed.

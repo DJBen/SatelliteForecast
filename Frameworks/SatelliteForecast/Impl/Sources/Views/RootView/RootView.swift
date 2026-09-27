@@ -79,6 +79,8 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
         let navBarAppearance = UINavigationBarAppearance()
         navBarAppearance.configureWithOpaqueBackground()
         navBarAppearance.backgroundColor = AppTheme.backgroundColor
+        navBarAppearance.titleTextAttributes = [.foregroundColor: AppTheme.textColor]
+        navBarAppearance.largeTitleTextAttributes = [.foregroundColor: AppTheme.textColor]
         navBarAppearance.shadowImage = UIImage()
         navBarAppearance.shadowColor = .clear
         UINavigationBar.appearance().standardAppearance = navBarAppearance
@@ -187,6 +189,7 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
             }
         }
         .tint(AppTheme.accent)
-        .background(AppTheme.background.ignoresSafeArea())
+        .foregroundStyle(AppTheme.text)
+        .background(AppTheme.pageBackground.ignoresSafeArea())
     }
 }

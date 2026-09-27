@@ -77,7 +77,7 @@ extension SatelliteElevationGraph {
                 ctx.cgContext.drawLinearGradient(
                     CGGradient(
                         colorsSpace: CGColorSpace(name: CGColorSpace.sRGB),
-                        colors: [UIColor.systemRed.cgColor, UIColor.systemBlue.cgColor] as CFArray,
+                        colors: [UIColor.systemRed.cgColor, AppTheme.accentColor.cgColor] as CFArray,
                         locations: [0.0, 1.0]
                     )!,
                     start: CGPoint(x: rect.midX, y: rect.minY),

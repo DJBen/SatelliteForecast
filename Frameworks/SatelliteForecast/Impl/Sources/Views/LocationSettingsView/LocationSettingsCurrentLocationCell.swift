@@ -37,7 +37,7 @@ public struct LocationSettingsCurrentLocationCell: View {
             } else {
                 Image(systemName: "location.slash")
                     .symbolRenderingMode(.palette)
-                    .foregroundStyle(.red, Color(uiColor: .label))
+                    .foregroundStyle(.red, AppTheme.text)
             }
 
             VStack(alignment: .leading, spacing: 2) {

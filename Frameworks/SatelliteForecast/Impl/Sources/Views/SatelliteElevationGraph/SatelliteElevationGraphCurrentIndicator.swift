@@ -31,7 +31,7 @@ struct SatelliteElevationGraphCurrentIndicator: View {
                         path.addLine(to: CGPoint(x: rect.maxX * percentageCoordinate.x, y: rect.maxY))
                     }
                     .stroke(style: StrokeStyle(lineWidth: 1, dash: [2]))
-                    .foregroundColor(.blue)
+                    .foregroundColor(AppTheme.accent)
                     .frame(width: 20)
 
                     Text(Date(julianDate: currentJulianDate).formatted(date: .omitted, time: .shortened))
@@ -45,12 +45,12 @@ struct SatelliteElevationGraphCurrentIndicator: View {
                     Circle(
                     )
                     .frame(width: 14, height: 14)
-                    .foregroundColor(.blue)
+                    .foregroundColor(AppTheme.accent)
 
                     Circle(
                     )
                     .frame(width: 14, height: 14)
-                    .foregroundColor(.blue)
+                    .foregroundColor(AppTheme.accent)
                     .scaleEffect(scale)
                     .opacity(opacity)
                     .onAppear {

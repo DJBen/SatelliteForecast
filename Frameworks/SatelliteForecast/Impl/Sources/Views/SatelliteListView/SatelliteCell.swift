@@ -140,7 +140,7 @@ struct UCSSatCell: View {
                         Text(unofficialName)
                             .font(.subheadline)
                             .lineLimit(nil)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(AppTheme.muted)
                     }
                 }
 

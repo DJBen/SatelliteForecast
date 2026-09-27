@@ -116,7 +116,7 @@ public struct LocationSettingsView: View {
             }
 
             if let message = search.errorMessage {
-                Section { Text(message).foregroundStyle(.secondary) }
+                Section { Text(message).foregroundStyle(AppTheme.muted) }
                     .listRowBackground(AppTheme.surface)
             }
             Section {

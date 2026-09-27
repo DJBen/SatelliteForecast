@@ -137,7 +137,7 @@ public struct PassView: View {
                     VStack(alignment: .leading, spacing: 3) {
                         Text(LocalizedStringKey(event.title), bundle: .module).font(.subheadline.weight(.medium))
                         Text("\(Int(event.position.azim.rounded()) % 360)° azimuth · \(Int(event.position.elev.rounded()))° elevation", bundle: .module)
-                            .font(.caption).foregroundStyle(.secondary)
+                            .font(.caption).foregroundStyle(AppTheme.muted)
                     }
                     Spacer(minLength: 8)
                     Text(Date(julianDate: event.position.julianDate), format: .dateTime.hour().minute().second())

@@ -183,11 +183,11 @@ public struct ObserverCell: View {
                     HStack {
                         Text(titleText)
                             .font(.headline)
-                            .foregroundColor(Color(UIColor.label))
+                            .foregroundColor(AppTheme.text)
                         Spacer()
                         Image(systemName: "chevron.forward")
                             .font(.headline)
-                            .foregroundColor(Color(UIColor.label))
+                            .foregroundColor(AppTheme.text)
                     }
 
                     if let secondaryLabelText = secondaryLabelText {

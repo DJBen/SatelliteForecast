@@ -75,7 +75,7 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                     ) {
                         Text(NSLocalizedString("tabs.forecast.text", bundle: .module, value: "Passes", comment: "Forecast screen title"))
                             .font(.largeTitle.bold())
-                            .foregroundStyle(.primary)
+                            .foregroundStyle(AppTheme.text)
                             .padding(.top, 8)
                         Section {
                             ForEach(
@@ -141,7 +141,7 @@ public struct SatelliteOverviewViewImpl: SatelliteOverviewView {
                         HStack {
                             Image(systemName: "location.slash")
                                 .symbolRenderingMode(.palette)
-                                .foregroundStyle(.red, Color(uiColor: .label))
+                                .foregroundStyle(.red, AppTheme.text)
                                 .font(.headline)
                             Text("Location needed to calculate satellite passes. Your experience may be degraded.", bundle: .module)
                         }

@@ -171,7 +171,7 @@ struct TutorialVideoView: View {
                 Button(action: onDismiss) {
                     Image(systemName: "xmark")
                         .font(.body.weight(.medium))
-                        .foregroundColor(.primary)
+                        .foregroundColor(AppTheme.text)
                 }
             }
         }

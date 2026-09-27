@@ -55,7 +55,7 @@ struct DeviceOrientationGuidanceView: View {
                                     .fixedSize(horizontal: false, vertical: true)
                                 Text("Camera up. Screen down.", bundle: .module)
                                     .font(.subheadline)
-                                    .foregroundStyle(.secondary)
+                                    .foregroundStyle(AppTheme.muted)
                                     .fixedSize(horizontal: false, vertical: true)
                             }
                             .padding(.trailing, 8)
@@ -83,7 +83,7 @@ struct DeviceOrientationGuidanceView: View {
                         } label: {
                             Image(systemName: "xmark")
                                 .font(.caption.weight(.semibold))
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(AppTheme.muted)
                                 .frame(width: 44, height: 44)
                                 .contentShape(Rectangle())
                         }

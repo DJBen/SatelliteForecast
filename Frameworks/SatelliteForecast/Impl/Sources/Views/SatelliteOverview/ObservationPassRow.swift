@@ -25,7 +25,7 @@ struct ObservationPassRow: View {
                     .frame(width: dynamicType.isAccessibilitySize ? 40 : 52, height: dynamicType.isAccessibilitySize ? 40 : 52)
                 VStack(alignment: .leading, spacing: 5) {
                     HStack(spacing: 8) {
-                        Text(ObservationOpportunity.shortName(pass)).font(.headline).foregroundStyle(.primary)
+                        Text(ObservationOpportunity.shortName(pass)).font(.headline).foregroundStyle(AppTheme.text)
                         ObservationElevationBadge(degrees: elevation)
                     }
                     HStack(spacing: 5) {
@@ -40,7 +40,7 @@ struct ObservationPassRow: View {
                 Spacer(minLength: 8)
                 VStack(alignment: .trailing, spacing: 5) {
                     Text(start, format: .dateTime.hour().minute())
-                        .font(.system(.headline, design: .rounded, weight: .semibold)).foregroundStyle(.primary)
+                        .font(.system(.headline, design: .rounded, weight: .semibold)).foregroundStyle(AppTheme.text)
                     if showsDay {
                         Text(ObservationPassRow.dayLabel(start, now: now, locale: locale, timeZone: timeZone, short: true))
                             .font(.caption).foregroundStyle(AppTheme.muted)
@@ -91,12 +91,15 @@ struct ObservationElevationBadge: View {
 
 /// Low-poly glass renders of each station (see Documentation/DesignReview/ObservationHome/stations.py).
 struct ObservationStationIcon: View {
+    @Environment(\.colorScheme) private var colorScheme
     let pass: Pass
     var body: some View {
         Image(ObservationOpportunity.category(pass) == .iss ? "station_iss" : "station_tiangong", bundle: .module)
             .resizable()
             .aspectRatio(contentMode: .fit)
-            .shadow(color: (ObservationOpportunity.category(pass) == .iss ? AppTheme.accent : Color(red: 1, green: 0.72, blue: 0.56)).opacity(0.45), radius: 8)
+            .saturation(colorScheme == .dark ? 0.08 : 1)
+            .colorMultiply(colorScheme == .dark ? AppTheme.text : .white)
+            .shadow(color: AppTheme.accent.opacity(0.45), radius: 8)
             .accessibilityHidden(true)
     }
 }
