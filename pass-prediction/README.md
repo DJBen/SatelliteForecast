@@ -45,7 +45,9 @@ the pinned NumPy version; newer NumPy releases removed APIs it imports.
 Prediction work now runs in bounded regional Cloud Tasks. Changed orbital data,
 aging calculations, or expiring coverage trigger a fresh seven-day scan from
 the current time. See [the architecture and operations guide](ARCHITECTURE.md)
-for the queue, atomic cache, delivery receipts, and 15-minute reconciliation flow.
+for the queue, atomic cache, delivery receipts, and six-hour prediction sweeps and hourly notification reconciliation. Automatic
+server alerts are limited to registrations active in the last 30 days; app
+launch/location changes get immediate best-effort reconciliation.
 
 After deploying refresh changes, run the orbital refresh first and verify new
 object update times in `gs://pass-prediction_tle`, then run the global transit

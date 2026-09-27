@@ -59,10 +59,12 @@ class SchedulerTimestampTests(unittest.TestCase):
 class LocationEnqueueTests(unittest.TestCase):
     def test_location_write_queues_work_without_calculating(self):
         snapshot = MagicMock(exists=True)
-        snapshot.to_dict.return_value = {'lat': 0, 'lon': 0, 'alt': 0}
+        snapshot.to_dict.return_value = {'lat': 0, 'lon': 0, 'alt': 0,
+                                         'lastAppLaunch': datetime.datetime.now(datetime.timezone.utc)}
         event = SimpleNamespace(params={'push_token': 'test-device'},
-                                data=SimpleNamespace(before=snapshot, after=snapshot))
-        with patch.object(main, 'enqueue_region') as enqueue, patch.object(main, 'find_visible_satellite_transits') as predict:
+                                data=SimpleNamespace(before=None, after=snapshot))
+        with patch.object(main, 'enqueue_region') as enqueue, patch.object(main, 'find_visible_satellite_transits') as predict, \
+             patch.object(main, 'orbital_sources'), patch.object(main, 'stale_regions', return_value={'7zzzz'}):
             main.on_user_location_change.__wrapped__(event)
         enqueue.assert_called_once()
         snapshot.reference.update.assert_called_once_with({'geoHash5': '7zzzz'})
@@ -72,7 +74,7 @@ class LocationEnqueueTests(unittest.TestCase):
         for data in ({'lat': float('nan'), 'lon': 0}, {'lat': 0, 'lon': 0, 'notifications_disabled': True}):
             snapshot = MagicMock(exists=True)
             snapshot.to_dict.return_value = data
-            event = SimpleNamespace(data=SimpleNamespace(after=snapshot))
+            event = SimpleNamespace(data=SimpleNamespace(before=None, after=snapshot))
             with patch.object(main, 'enqueue_region') as enqueue:
                 main.on_user_location_change.__wrapped__(event)
             enqueue.assert_not_called()
@@ -90,7 +92,7 @@ class DeliveryEndpointTests(unittest.TestCase):
         app = Flask(__name__)
         database = MagicMock()
         user_ref = MagicMock()
-        user_ref.get.return_value.to_dict.return_value = {'lat': 0, 'lon': 0, 'alt': 0, 'tzOffset': 0}
+        user_ref.get.return_value.to_dict.return_value = {'lat': 0, 'lon': 0, 'alt': 0, 'tzOffset': 0, 'lastAppLaunch': now}
         receipt = MagicMock(path='receipt/test')
         def collection(name):
             result = MagicMock()

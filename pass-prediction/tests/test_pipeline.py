@@ -12,9 +12,7 @@ sys.path.insert(0, str(ROOT / 'functions'))
 from common import prediction_pipeline as pipeline
 from common.delivery import claim_delivery, finish_delivery
 
-spec = importlib.util.spec_from_file_location('notification_scheduler', ROOT / 'jobs/schedule_notifications/main.py')
-scheduler = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(scheduler)
+from common import notification_scheduler as scheduler
 NOW = dt.datetime(2026, 9, 21, 12, tzinfo=dt.timezone.utc)
 
 
@@ -119,11 +117,11 @@ class NotificationPlanTests(unittest.TestCase):
         passes = {'25544': [('pass-one', transit(), 2)]}
         client.queue_path.return_value = 'queue'
         with patch.object(scheduler, 'plan', return_value=True):
-            scheduler.schedule_user(db, client, 'test', 'device', {'tzOffset': 0}, 's0000', passes, NOW)
+            scheduler.schedule_user(db, client, 'test', 'device', {'tzOffset': 0, 'lastAppLaunch': NOW}, 's0000', passes, NOW)
             first = [c.kwargs['task']['name'] for c in client.create_task.call_args_list]
             client.reset_mock()
             client.create_task.side_effect = AlreadyExists('exists')
-            scheduler.schedule_user(db, client, 'test', 'device', {'tzOffset': 0}, 's0000', passes, NOW)
+            scheduler.schedule_user(db, client, 'test', 'device', {'tzOffset': 0, 'lastAppLaunch': NOW}, 's0000', passes, NOW)
         self.assertEqual(first, [c.kwargs['task']['name'] for c in client.create_task.call_args_list])
 
     def test_outbox_survives_task_creation_failure(self):
@@ -131,14 +129,14 @@ class NotificationPlanTests(unittest.TestCase):
         client.create_task.side_effect = ServiceUnavailable('offline')
         with patch.object(scheduler, 'plan', return_value=True) as plan:
             with self.assertRaises(ServiceUnavailable):
-                scheduler.schedule_user(db, client, 'test', 'device', {'tzOffset': 0}, 's0000', {'25544': [('pass', transit(), 2)]}, NOW)
+                scheduler.schedule_user(db, client, 'test', 'device', {'tzOffset': 0, 'lastAppLaunch': NOW}, 's0000', {'25544': [('pass', transit(), 2)]}, NOW)
         self.assertEqual(plan.call_args.args[-1]['status'], 'planned')
         db.collection.return_value.document.return_value.collection.return_value.document.return_value.delete.assert_not_called()
 
     def test_past_notification_is_not_replayed(self):
         db, client = MagicMock(), MagicMock()
         passes = {'25544': [('pass', transit(NOW + dt.timedelta(minutes=2)), 2)]}
-        self.assertEqual(scheduler.schedule_user(db, client, 'test', 'device', {'tzOffset': 0}, 's0000', passes, NOW), 0)
+        self.assertEqual(scheduler.schedule_user(db, client, 'test', 'device', {'tzOffset': 0, 'lastAppLaunch': NOW}, 's0000', passes, NOW), 0)
         client.create_task.assert_not_called()
 
 

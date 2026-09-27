@@ -71,15 +71,11 @@ def deploy_schedule_notifications_job(c):
     if not GOOGLE_CLOUD_PROJECT:
         raise ValueError("GOOGLE_CLOUD_PROJECT environment variable is not set")
     
-    command = f"""
-        gcloud run jobs deploy schedule-notifications \
-        --source schedule_notifications \
-        --tasks 1 \
-        --max-retries 0 \
-        --region {REGION} \
-        --project {GOOGLE_CLOUD_PROJECT}
-    """
-    c.run(command)
+    if GOOGLE_CLOUD_PROJECT != 'pass-prediction':
+        raise ValueError('The shared scheduler deployment targets pass-prediction')
+    script = os.path.join(os.path.dirname(__file__), '..', 'scripts', 'deploy_notification_job.sh')
+    subprocess.run(['bash', script], check=True)
+
 
 @task()
 def execute_schedule_notifications_job(c):

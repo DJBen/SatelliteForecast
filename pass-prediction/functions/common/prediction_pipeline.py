@@ -3,6 +3,8 @@ import hashlib
 import json
 import math
 import uuid
+import threading
+import time
 from datetime import datetime, timedelta, timezone
 
 import pygeohash
@@ -14,6 +16,10 @@ from firebase_functions import logger
 REGION = 'us-central1'
 QUEUE = 'pass-predictions'
 SERVICE_ACCOUNT = '388502820521-compute@developer.gserviceaccount.com'
+SATELLITES = ('25544', '48274')
+_ORBITAL_CACHE = {}
+_ORBITAL_LOCK = threading.Lock()
+
 WORKER_URL = 'https://us-central1-pass-prediction.cloudfunctions.net/process_prediction_region'
 
 
@@ -53,9 +59,55 @@ def enqueue_region(client, project, region, now=None):
 
 
 def coverage_is_fresh(data, source_hash, now):
-    return (data.get('schema_version') == 2 and data.get('source_hash') == source_hash
-            and utc(data['scan_end_time']) >= now + timedelta(days=2)
-            and utc(data['generated_at']) >= now - timedelta(hours=12))
+    try:
+        return (data.get('schema_version') == 2 and data.get('source_hash') == source_hash
+                and utc(data['scan_end_time']) >= now + timedelta(days=2)
+                and utc(data['generated_at']) >= now - timedelta(hours=12))
+    except (KeyError, TypeError, ValueError, AttributeError):
+        return False
+
+
+def orbital_sources(storage_client=None):
+    # Reuse immutable downloads for five minutes, including across warm invocations.
+    # Explicit clients bypass the process cache (tests and diagnostics).
+    if storage_client is not None:
+        return _load_sources(storage_client)
+    with _ORBITAL_LOCK:
+        if _ORBITAL_CACHE.get('until', 0) > time.monotonic():
+            return _ORBITAL_CACHE['sources']
+        sources = _load_sources(storage.Client())
+        _ORBITAL_CACHE.update(sources=sources, until=time.monotonic() + 300)
+        return sources
+
+
+def _load_sources(client):
+    sources = {}
+    now = datetime.now(timezone.utc)
+    bucket = client.bucket('pass-prediction_tle')
+    for sat_id in SATELLITES:
+        blob = bucket.get_blob(f'tle_{sat_id}.txt')
+        if blob is None or now - blob.updated > timedelta(days=7):
+            raise RuntimeError('orbital_cache_unavailable')
+        raw = blob.download_as_text(if_generation_match=blob.generation)
+        sources[sat_id] = {'raw': raw, 'hash': hashlib.sha256(raw.encode()).hexdigest(),
+                           'updated': blob.updated}
+    return sources
+
+
+def stale_regions(db, regions, sources, now):
+    """Batch coverage reads before dispatch, instead of starting a worker per cache hit."""
+    regions = sorted(regions)
+    stale = set()
+    for offset in range(0, len(regions), 100):
+        chunk = regions[offset:offset + 100]
+        refs = [db.collection('prediction_cache').document(f'{sat}_{region}')
+                for region in chunk for sat in SATELLITES]
+        snapshots = {doc.id: doc.to_dict() or {} for doc in db.get_all(refs)}
+        for region in chunk:
+            if any(not coverage_is_fresh(snapshots.get(f'{sat}_{region}', {}),
+                                         sources[sat]['hash'], now) for sat in SATELLITES):
+                stale.add(region)
+    return stale
 
 
 @firestore.transactional
@@ -93,16 +145,13 @@ def match_pass_ids(transits, old_records, sat_id):
 
 
 def refresh_region(db, region, predict, storage_client=None):
-    storage_client = storage_client or storage.Client()
+    sources = orbital_sources(storage_client)
     lat, lon = pygeohash.decode(region)
     updated = 0
-    for sat_id in ('25544', '48274'):
+    for sat_id in SATELLITES:
         now = datetime.now(timezone.utc)
-        blob = storage_client.bucket('pass-prediction_tle').get_blob(f'tle_{sat_id}.txt')
-        if blob is None or now - blob.updated > timedelta(days=7):
-            raise RuntimeError('orbital_cache_unavailable')
-        raw = blob.download_as_text(if_generation_match=blob.generation)
-        source_hash = hashlib.sha256(raw.encode()).hexdigest()
+        source = sources[sat_id]
+        raw, source_hash = source['raw'], source['hash']
         ref = db.collection('prediction_cache').document(f'{sat_id}_{region}')
         owner = uuid.uuid4().hex
         decision = acquire(db.transaction(), ref, source_hash, now, owner)
@@ -141,7 +190,7 @@ def refresh_region(db, region, predict, storage_client=None):
                 'created_at': firestore.SERVER_TIMESTAMP, 'expires_at': peak + timedelta(days=2)})
         # Preconditions protect against a worker whose lease expired while it was calculating.
         batch.update(ref, {'schema_version': 2, 'source_hash': source_hash,
-                          'source_updated_at': blob.updated, 'scan_end_time': end,
+                          'source_updated_at': source['updated'], 'scan_end_time': end,
                           'generated_at': now, 'lease_owner': None, 'lease_until': None},
                      option=db.write_option(last_update_time=snapshot.update_time))
         batch.commit()

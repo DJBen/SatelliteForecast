@@ -18,7 +18,9 @@ from common.satellite import find_visible_satellite_transits
 from common.description import describe_transit, describe_prominent_transit, get_localized_satellite_title
 from common.deep_link import pass_time_data
 from common.delivery import claim_delivery, finish_delivery
-from common.prediction_pipeline import utc
+from common.prediction_pipeline import utc, orbital_sources, stale_regions
+from common.activity import eligible_user, USER_FIELDS
+from common.notification_scheduler import reconcile_user, reconcile_region, eligible_region_users
 
 app = initialize_app()
 
@@ -94,18 +96,29 @@ def _send_fcm_notification(push_token, title, body, sat_id=None, observer_data=N
         logger.error("fcm_send_failed", error_type=type(e).__name__)
         return False, (jsonify({"error": "FCM send failed"}), 500)
 
-@on_document_written(document="users/{push_token}", timeout_sec=60)
+@on_document_written(document="users/{push_token}", timeout_sec=120)
 def on_user_location_change(event: Event[Change]) -> None:
     """Keep app writes fast; queue deduplicated regional work instead of computing inline."""
     if event.data is None or event.data.after is None or not event.data.after.exists:
         return
     data = event.data.after.to_dict() or {}
+    now = datetime.datetime.now(datetime.timezone.utc)
     region = region_for_user(data)
-    if not region or data.get('notifications_disabled'):
+    if not region or not eligible_user(data, now):
+        return
+    before = event.data.before
+    previous = (before.to_dict() or {}) if before is not None and before.exists else {}
+    # Ignore our geohash backfill and receipt-related writes; retries remain safe.
+    inputs = ('lat', 'lon', 'lastAppLaunch', 'tzOffset', 'locale',
+              'notifications_disabled', 'appVariant')
+    if all(previous.get(key) == data.get(key) for key in inputs):
         return
     if data.get('geoHash5') != region:
         event.data.after.reference.update({'geoHash5': region})
-    enqueue_region(cloud_task_client, PROJECT_ID, region)
+    if stale_regions(db, [region], orbital_sources(), now):
+        enqueue_region(cloud_task_client, PROJECT_ID, region)
+    else:
+        reconcile_user(db, cloud_task_client, PROJECT_ID, event.params['push_token'], data, region, now)
 
 
 @https_fn.on_request(invoker='private', timeout_sec=540, memory=options.MemoryOption.GB_1,
@@ -118,8 +131,15 @@ def process_prediction_region(request):
     if not isinstance(region, str) or len(region) != 5 or any(c not in '0123456789bcdefghjkmnpqrstuvwxyz' for c in region):
         return ('Invalid region', 400)
     try:
+        now = datetime.datetime.now(datetime.timezone.utc)
+        users = eligible_region_users(db, region, now)
+        if not users:
+            logger.info('prediction_region_inactive')
+            return ('OK', 200)
         updated = refresh_region(db, region, find_visible_satellite_transits)
-        logger.info('prediction_region_completed', updated_satellites=updated)
+        reconciled = reconcile_region(db, cloud_task_client, PROJECT_ID, region,
+                                      datetime.datetime.now(datetime.timezone.utc), users=users)
+        logger.info('prediction_region_completed', updated_satellites=updated, tasks_reconciled=reconciled)
         return ('OK', 200)
     except Exception as error:
         logger.error('prediction_region_failed', error_type=type(error).__name__)
@@ -161,7 +181,7 @@ def _deliver_notification(request, prominent=False):
         user = user_ref.get().to_dict() or {}
         region = region_for_user(user)
         reason = None
-        if not region or user.get('notifications_disabled'):
+        if not region or not eligible_user(user, now):
             reason = 'device_unavailable'
         elif data.get('geo_hash_5') and region != data['geo_hash_5']:
             reason = 'location_changed'
@@ -218,17 +238,19 @@ def notify_prominent(request):
     return _deliver_notification(request, prominent=True)
 
 
-@scheduler_fn.on_schedule(schedule="*/15 * * * *", timeout_sec=540,
+@scheduler_fn.on_schedule(schedule="30 */6 * * *", timeout_sec=540,
                           memory=options.MemoryOption.MB_512, max_instances=1,
                           retry_count=2, min_backoff_seconds=60)
 def refresh_all_user_transits(event) -> None:
     """Only enumerate and enqueue; independent region failures cannot block other users."""
+    now = datetime.datetime.now(datetime.timezone.utc)
     regions = set()
     users = 0
+    eligible = 0
     queued = 0
     cursor = None
     while True:
-        query = db.collection('users').select(['lat', 'lon', 'geoHash5', 'notifications_disabled']).order_by('__name__').limit(250)
+        query = db.collection('users').select(USER_FIELDS).order_by('__name__').limit(250)
         if cursor:
             query = query.start_after(cursor)
         docs = list(query.stream())
@@ -238,15 +260,18 @@ def refresh_all_user_transits(event) -> None:
             users += 1
             data = doc.to_dict()
             region = region_for_user(data)
-            if not region or data.get('notifications_disabled'):
+            if not region or not eligible_user(data, now):
                 continue
+            eligible += 1
             if data.get('geoHash5') != region:
                 doc.reference.update({'geoHash5': region})
-            if region not in regions:
-                queued += int(enqueue_region(cloud_task_client, PROJECT_ID, region))
-                regions.add(region)
+            regions.add(region)
         cursor = docs[-1]
+    stale = stale_regions(db, regions, orbital_sources(), now) if regions else set()
+    for region in sorted(stale):
+        queued += int(enqueue_region(cloud_task_client, PROJECT_ID, region, now))
     db.collection('backend_health').document('prediction_dispatch').set({
         'completed_at': firestore.SERVER_TIMESTAMP, 'users': users,
-        'regions': len(regions), 'queued': queued})
-    logger.info('prediction_dispatch_completed', users=users, regions=len(regions), queued=queued)
+        'regions': len(regions), 'queued': queued, 'eligible_users': eligible, 'stale_regions': len(stale)})
+    logger.info('prediction_dispatch_completed', users=users, eligible_users=eligible,
+                regions=len(regions), stale_regions=len(stale), queued=queued)

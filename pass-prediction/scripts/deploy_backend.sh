@@ -21,10 +21,9 @@ orbital_functions/venv/bin/python -m unittest discover -s orbital_functions -p '
 PATH="$PWD/functions/venv/bin:$PATH" firebase deploy --only functions --project "$project" --non-interactive
 gcloud run services add-iam-policy-binding process-prediction-region --project="$project" --region="$region" \
     --member="serviceAccount:$runtime_account" --role=roles/run.invoker --quiet
-gcloud run jobs deploy schedule-notifications --source=jobs/schedule_notifications \
-    --project="$project" --region="$region" --tasks=1 --max-retries=1 --task-timeout=900s --quiet
+scripts/deploy_notification_job.sh
 gcloud scheduler jobs update http schedule-notifications-scheduler-trigger \
-    --project="$project" --location="$region" --schedule='*/15 * * * *' --time-zone=UTC
+    --project="$project" --location="$region" --schedule='0 * * * *' --time-zone=UTC
 gcloud firestore fields ttls update expires_at --collection-group=tasks --enable-ttl --project="$project" --async --quiet
 gcloud firestore fields ttls update expires_at --collection-group=records --enable-ttl --project="$project" --async --quiet
 gcloud tasks queues resume pass-predictions --project="$project" --location="$region"

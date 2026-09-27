@@ -6,7 +6,7 @@ The app uses the existing Firebase Analytics installation. `Native/AppAnalytics.
 
 Release builds send events after Firebase has been configured. Debug builds send these custom events only when launched with `-FIRDebugEnabled`; snapshot tests, XCTest hosts, and previews never send them. This guard applies to our instrumentation, not Firebase's own automatic lifecycle events. No separate Firebase project, dashboard, or custom definition is provisioned by the code.
 
-Parameters contain fixed labels and numeric counts/timings only. Do not add coordinates, place names, queries, satellite names, notification identifiers, tokens, raw errors, or user IDs. Firebase still supplies its standard app/device/session metadata. Existing Firestore registration is separate from this analytics instrumentation.
+Parameters contain fixed labels and numeric counts/timings only. Do not add coordinates, place names, queries, satellite names, notification identifiers, tokens, raw errors, or user IDs. Firebase still supplies its standard app/device/session metadata. Existing Firestore registration is separate from this analytics instrumentation. Real-device Debug builds remain eligible for automatic push reminders. XCTest hosts, snapshot tests, previews, and simulators do not write push registrations; this does not change analytics collection guards.
 
 ## Screens
 
@@ -167,6 +167,16 @@ calculations remain local and preserve all existing measurement boundaries.
 The optional planetarium FPS readout uses local Metal presentation timestamps. It sends no telemetry and changes no screen names, events, or measurement boundaries.
 
 Planetarium deep-star loading queries local indexed H3 cells on a dedicated actor. Region keys, camera directions, star IDs, cache statistics, and FPS remain local rendering state; no new analytics operations or per-region events are emitted. The existing `load_sky_catalog` operation still measures satellite catalog loading, not these star queries.
+
+
+The 2026-09-24 backend cost policy limits automatic server pass alerts to
+registrations active within 30 days, excludes Debug/disabled registrations, and
+uses six-hour prediction sweeps plus hourly alert reconciliation. Manual local
+alarms and their `alarm_scheduled` conversion are unchanged. `lastAppLaunch` is
+existing operational registration data, not a new Analytics event or active-user
+metric. Reduced server-alert exposure changes the population eligible for
+`notification_opened`; account for this policy when comparing reminder-return
+funnels across rollout. No new events, identifiers, or coordinates are logged.
 
 
 ## Home Screen widgets
