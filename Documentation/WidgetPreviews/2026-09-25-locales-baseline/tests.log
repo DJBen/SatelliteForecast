@@ -1,0 +1,30 @@
+❌ Error: /Users/sihaolu/Developments/SatelliteForecast/SatelliteForecastTests/ScreenSnapshotTests.swift:273: error: -[SatelliteForecastTests.ScreenSnapshotTests testWidgetLocaleMatrix] : XCTAssertTrue failed - Rendered content crossed widget bounds: ["en_US/compact/AX5/future/small-rows: 803", "en_US/compact/AX5/future/medium: 2199", "en_US/compact/AX5/ongoing/rows-AX5: 1083", "en_US/compact/AX5/ongoing/medium-AX5: 2149", "en_US/compact/AX5/empty/rows-AX5: 920", "en_US/compact/AX5/empty/medium-AX5: 1572", "en_US/compact/AX5/setup/rows-AX5: 524", "en_US/compact/AX5/setup/chart-AX5: 524", "en_US/compact/AX5/setup/medium-AX5: 782", "en_US/compact/AX5/expired/rows-AX5: 454", "en_US/compact/AX5/expired/chart-AX5: 454", "en_US/compact/AX5/expired/medium-AX5: 782"]
+❌ [stderr] 2026-09-25 12:00:47.423 xcodebuild[42420:1700421] [MT] IDETestOperationsObserverDebug: 167.149 elapsed -- Testing started completed.
+❌ [stderr] 2026-09-25 12:00:47.423 xcodebuild[42420:1700421] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+❌ [stderr] 2026-09-25 12:00:47.423 xcodebuild[42420:1700421] [MT] IDETestOperationsObserverDebug: 167.149 sec, +167.149 sec -- end
+❌ [stderr] Failing tests:
+❌ [stderr] 	ScreenSnapshotTests.testWidgetLocaleMatrix()
+❌ [stderr] ** TEST FAILED **
+❌ Test Run test failed for scheme SatelliteForecastApp.
+
+Test Results Summary:
+Test Summary: Test - SatelliteForecastApp
+Overall Result: Failed
+
+Test Counts:
+  Total: 40
+  Passed: 39
+  Failed: 1
+  Skipped: 0
+  Expected Failures: 0
+
+Environment: SatelliteForecast · Built with macOS 27.0
+
+Device: iPhone 17 Pro Max (iOS Simulator 27.0)
+
+Test Failures:
+  1. testWidgetLocaleMatrix() (SatelliteForecastTests)
+     XCTAssertTrue failed - Rendered content crossed widget bounds: ["en_US/compact/AX5/future/small-rows: 803", "en_US/compact/AX5/future/medium: 2199", "en_US/compact/AX5/ongoing/rows-AX5: 1083", "en_US/compact/AX5/ongoing/medium-AX5: 2149", "en_US/compact/AX5/empty/rows-AX5: 920", "en_US/compact/AX5/empty/medium-AX5: 1572", "en_US/compact/AX5/setup/rows-AX5: 524", "en_US/compact/AX5/setup/chart-AX5: 524", "en_US/compact/AX5/setup/medium-AX5: 782", "en_US/compact/AX5/expired/rows-AX5: 454", "en_US/compact/AX5/expired/chart-AX5: 454", "en_US/compact/AX5/expired/medium-AX5: 782"]
+
+Insights:
+  1. [76% of duration] 1 longest test run with outlier durations exceeding 6.51s (three standard deviations)
