@@ -1,0 +1,7 @@
+2.0.0 (16) — widget refinements
+
+• Medium widget: tighter margins so the two station rows fill the widget.
+• Small chart widget: the large time and day lead, with the elevation in a chip and the arc anchored at the bottom.
+• Large widget: station icon, compact name and day line in the header; overlapping time labels on the sky chart are pushed apart.
+• Russian "tonight" shortened so it never clips the route.
+• Please report any clipped text in your language after opening the app once.
