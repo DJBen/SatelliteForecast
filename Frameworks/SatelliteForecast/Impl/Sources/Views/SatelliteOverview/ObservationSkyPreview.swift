@@ -31,7 +31,7 @@ struct ObservationSkyPreview: View {
             let points = samples.map { projection.point(azimuth: $0.position.azim, elevation: $0.position.elev) }
             ZStack(alignment: .topLeading) {
                 ObservationSkyBackground(projection: projection, observer: observer,
-                    julianDate: pass.culmination.julianDate, renderer: session.renderer)
+                    julianDate: pass.culmination.julianDate)
                 // Project positions, not point-source artwork: bright stars retain
                 // the chart's compact spectral glow instead of becoming stretched.
                 Canvas { context, _ in
@@ -181,7 +181,7 @@ struct ObservationSkyProjection: Hashable, Sendable {
     let scale: Double
     let originY: Double
     /// Upper envelope of the projected pass, sampled once per horizontal point.
-    private let skyBoundary: [Double]
+    let skyBoundary: [Double]
     /// Fill the sky above the pass too, fading out toward the top edge.
     let extendsUpward: Bool
     var size: CGSize { CGSize(width: width, height: height) }
@@ -243,17 +243,20 @@ struct ObservationSkyProjection: Hashable, Sendable {
             return t * t * (3 - 2 * t)
         }
         let x = min(skyBoundary.count - 1, max(0, Int(point.x)))
-        let bleed = max(4, width * 0.04)
         var vertical = smooth(-bleed, bleed, point.y - skyBoundary[x])
         if extendsUpward {
             // Straight sides up from the horizon; the top dissolves by the pass's peak.
-            let peak = max(bleed, skyBoundary.min() ?? height)
             vertical = max(vertical, smooth(0, peak, point.y))
         }
         return vertical
             * smooth(0, width * 0.08, min(point.x, width - point.x))
             * smooth(0, height * 0.08, height - point.y)
     }
+
+    /// Half-width of the feather across the pass boundary.
+    var bleed: Double { max(4, width * 0.04) }
+    /// Where the upward extension reaches full strength: the top of the pass.
+    var peak: Double { max(bleed, skyBoundary.min() ?? height) }
 
     func point(azimuth: Double, elevation: Double) -> CGPoint {
         let p = Self.project(azimuth: azimuth, elevation: elevation, front: front, right: right)

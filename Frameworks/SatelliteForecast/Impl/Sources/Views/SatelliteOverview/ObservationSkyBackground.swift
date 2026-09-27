@@ -1,36 +1,51 @@
 import SwiftUI
 import SatelliteKit
+import ImageIO
 import simd
 
-/// A native raster in the final camera, generated once per size/pass/observer.
-/// Animation only redraws the satellite overlay, never this photographic sky.
+/// The app's arc sky, drawn every frame on the GPU by `observationSky` in
+/// ObservationSkyShader.metal. The widget's dome keeps the CPU raster below
+/// (`ChartRenderer.observationSky`), which evaluates the same model.
 struct ObservationSkyBackground: View {
     let projection: ObservationSkyProjection
     let observer: LatLonAlt
     let julianDate: Double
-    let renderer: ChartRenderer
-    @State private var image: UIImage?
 
-    private struct Key: Hashable {
-        let projection: ObservationSkyProjection
-        let latitude: Double
-        let longitude: Double
-        let julianDate: Double
-    }
+    /// Loaded once; the shader samples it with the CPU path's 5-texel box blur.
+    private static let galaxy: Image? = {
+        guard let url = Bundle.module.url(forResource: "milkyway-galactic", withExtension: "jpg"),
+              let source = CGImageSourceCreateWithURL(url as CFURL, nil),
+              let image = CGImageSourceCreateThumbnailAtIndex(source, 0, [
+                kCGImageSourceCreateThumbnailFromImageAlways: true,
+                kCGImageSourceThumbnailMaxPixelSize: 1024
+              ] as CFDictionary) else { return nil }
+        return Image(decorative: image, scale: 1)
+    }()
 
     var body: some View {
-        Group {
-            if let image { Image(uiImage: image).resizable() }
-            else { Color.clear }
+        if let galaxy = Self.galaxy {
+            Rectangle()
+                .colorEffect(ShaderLibrary.bundle(.module).observationSky(
+                    .floatArray(parameters), .floatArray(projection.skyBoundary.map { Float($0) }), .image(galaxy)))
+                .frame(width: projection.width, height: projection.height)
+        } else {
+            Color.clear.frame(width: projection.width, height: projection.height)
         }
-        .frame(width: projection.width, height: projection.height)
-        .task(id: Key(projection: projection, latitude: observer.lat,
-                      longitude: observer.lon, julianDate: julianDate)) {
-            image = nil
-            let rendered = await renderer.observationSky(projection: projection, observer: observer, julianDate: julianDate)
-            guard !Task.isCancelled else { return }
-            image = rendered
-        }
+    }
+
+    /// Order matches `enum Parameter` in ObservationSkyShader.metal.
+    private var parameters: [Float] {
+        let frame = MilkyWayBackground.Projection(observer: observer, julianDate: julianDate)
+        let atmosphere = ChartAtmosphere(sun: SkyChartAtmosphere.sun(observer: observer, julianDate: julianDate))
+        let values: [Double] = [
+            projection.width, projection.height, projection.scale, projection.originY, ObservationSkyProjection.pitch,
+            projection.right.x, projection.right.y, projection.front.x, projection.front.y,
+            frame.east.x, frame.east.y, frame.east.z, frame.north.x, frame.north.y, frame.north.z,
+            frame.zenith.x, frame.zenith.y, frame.zenith.z,
+            atmosphere.sunPoint.x, atmosphere.sunPoint.y, atmosphere.daylight, atmosphere.twilight, atmosphere.presence,
+            projection.bleed, projection.extendsUpward ? 1 : 0, projection.peak
+        ]
+        return values.map { Float($0) }
     }
 }
 
@@ -48,10 +63,8 @@ extension ChartRenderer {
             let t = min(1, max(0, (value - low) / (high - low)))
             return t * t * (3 - 2 * t)
         }
-        let daylight = smooth(-8, 12, sun.elev)
-        let twilight = smooth(-18, -5, sun.elev) * (1 - smooth(0, 14, sun.elev))
-        let presence = smooth(-18, -2, sun.elev)
-        let atmosphere = ChartAtmosphere(sun: sun, daylight: daylight, twilight: twilight, presence: presence)
+        let atmosphere = ChartAtmosphere(sun: sun)
+        let daylight = atmosphere.daylight
         let pixelsPerPoint = min(2, 1024 / max(projection.width, projection.height))
         let width = max(1, Int(projection.width * pixelsPerPoint))
         let height = max(1, Int(projection.height * pixelsPerPoint))
@@ -89,16 +102,21 @@ extension ChartRenderer {
 /// `SkyChartAtmosphere`'s layers as a function of sky direction. Each ray is placed
 /// where the round chart would draw it (azimuthal equidistant, horizon at radius 1)
 /// and the same gradient stops are composited source-over in premultiplied color.
-private struct ChartAtmosphere {
+/// ObservationSkyShader.metal repeats these stops for the app's GPU arc.
+struct ChartAtmosphere {
     typealias Stop = (location: Double, color: SIMD3<Double>, alpha: Double)
-    let sunPoint: SIMD2<Double>
-    let zenith: [Stop]
-    let violet: [Stop]
-    let aureoles: [(radius: Double, color: SIMD3<Double>, strength: Double)]
+    let daylight: Double
+    let twilight: Double
     let presence: Double
+    let sunPoint: SIMD2<Double>
+    private let zenith: [Stop]
+    private let violet: [Stop]
+    private let aureoles: [(radius: Double, stops: [Stop])]
 
-    init(sun: AziEle, daylight: Double, twilight: Double, presence: Double) {
-        self.presence = presence
+    init(sun: AziEle) {
+        daylight = SkyChartAtmosphere.transition(-8, 12, sun.elev)
+        twilight = SkyChartAtmosphere.transition(-18, -5, sun.elev) * (1 - SkyChartAtmosphere.transition(0, 14, sun.elev))
+        presence = SkyChartAtmosphere.transition(-18, -2, sun.elev)
         sunPoint = Self.chartPoint(azimuth: sun.azim * .pi / 180, elevation: sun.elev)
         zenith = [(0, SIMD3(0.025, 0.12, 0.34), presence * 0.9),
                   (0.65, SIMD3(0.055, 0.30, 0.68), daylight * 0.96),
@@ -107,8 +125,12 @@ private struct ChartAtmosphere {
                   (0.76, SIMD3(0.27, 0.16, 0.65), twilight * 0.35),
                   (0.94, SIMD3(0.65, 0.27, 0.78), twilight * 0.8),
                   (1, SIMD3(0.82, 0.40, 0.74), twilight * 0.85)]
-        aureoles = [(1.1, SIMD3(1, 0.38, 0.20), twilight * 0.88),
-                    (0.6, SIMD3(1, 0.72, 0.40), twilight * 0.65)]
+        let twilight = twilight
+        aureoles = [(1.1, SIMD3(1, 0.38, 0.20), twilight * 0.88), (0.6, SIMD3(1, 0.72, 0.40), twilight * 0.65)]
+            .filter { $0.2 > 0 }
+            .map { radius, color, strength in
+                (radius, [(0, color, strength), (0.24, color, strength * 0.48), (0.6, color, strength * 0.12), (1, color, 0)])
+            }
     }
 
     static func chartPoint(azimuth: Double, elevation: Double) -> SIMD2<Double> {
@@ -118,8 +140,9 @@ private struct ChartAtmosphere {
     /// Premultiplied gradient sample; SwiftUI interpolates stops the same way.
     private static func sample(_ stops: [Stop], at location: Double) -> SIMD4<Double> {
         func premultiplied(_ stop: Stop) -> SIMD4<Double> { SIMD4(stop.color * stop.alpha, stop.alpha) }
-        guard let first = stops.first, location > first.location else { return premultiplied(stops[0]) }
-        for (a, b) in zip(stops, stops.dropFirst()) where location <= b.location {
+        guard location > stops[0].location else { return premultiplied(stops[0]) }
+        for index in 1..<stops.count where location <= stops[index].location {
+            let a = stops[index - 1], b = stops[index]
             let t = (location - a.location) / (b.location - a.location)
             return premultiplied(a) * (1 - t) + premultiplied(b) * t
         }
@@ -140,10 +163,8 @@ private struct ChartAtmosphere {
         over(Self.sample(zenith, at: radius))
         over(Self.sample(violet, at: radius))
         let distance = simd_distance(point, sunPoint)
-        for aureole in aureoles where aureole.strength > 0 {
-            over(Self.sample([(0, aureole.color, aureole.strength), (0.24, aureole.color, aureole.strength * 0.48),
-                              (0.6, aureole.color, aureole.strength * 0.12), (1, aureole.color, 0)],
-                             at: distance / aureole.radius))
+        for aureole in aureoles {
+            over(Self.sample(aureole.stops, at: distance / aureole.radius))
         }
         return color
     }
