@@ -83,6 +83,12 @@ private struct LoadedSatelliteForecastView: View {
             }
             session.location.start()
         }
+        .task(id: scenePhase) {
+            if scenePhase == .active { await session.liveActivity.runWhileActive() }
+        }
+        .onChange(of: session.location.resources.selection) { _, _ in
+            Task { await session.liveActivity.stop() }
+        }
         .onChange(of: scenePhase) { old, new in session.handle(.scenePhaseDidChange(old, new)) }
         .onReceive(NotificationCenter.default.publisher(for: .deviceDidShakeNotification)) { _ in
             #if DEBUG

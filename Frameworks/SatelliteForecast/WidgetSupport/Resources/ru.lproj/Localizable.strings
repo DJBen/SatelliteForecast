@@ -26,3 +26,27 @@
 "tonight" = "Вечером";
 "tomorrow" = "Завтра";
 "minutes" = "%d мин";
+
+/* Station pass Live Activity */
+"live.untilVisible" = "до видимости";
+"live.untilShadow" = "до тени";
+"live.untilSet" = "до захода";
+"live.set" = "Заход";
+"live.complete" = "завершено";
+"live.inShadow" = "В тени Земли";
+"live.finished" = "Пролёт завершён";
+"live.openUpdate" = "Откройте приложение";
+"live.peak" = "Макс. %d°";
+"live.arcAccessibility" = "От %@ до %@, максимальная высота %d°";
+"live.sunlit" = "Освещён";
+"live.shadow" = "Тень";
+"live.follow" = "Следить за пролётом";
+"live.stop" = "Остановить Live Activity";
+"live.disabled" = "Включите Live Activities в настройках, чтобы следить за пролётом.";
+"live.expired" = "Время наблюдения этого пролёта закончилось.";
+"live.tooEarly" = "Выберите пролёт в ближайшие 24 часа.";
+"live.alreadyFollowing" = "Остановите другую Live Activity, прежде чем следить за этим пролётом.";
+"live.failed" = "Не удалось запустить Live Activity. Повторите попытку.";
+"live.startAlert" = "Скоро начнётся пролёт космической станции.";
+"live.followHelp" = "Появится за две минуты до наблюдения. Один пролёт за раз.";
+"live.followingHelp" = "Запланировано или активно. Откройте приложение для обновления фаз.";

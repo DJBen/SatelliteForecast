@@ -10,6 +10,7 @@ import SatelliteKit
 import SolarSystem
 import SatelliteWidgetSupport
 import WidgetKit
+import ActivityKit
 
 /// Native view snapshots at a fixed phone size, locale, timezone and orbital epoch.
 /// No live store middleware, location permissions, notifications or network loaders.
@@ -24,6 +25,105 @@ final class ScreenSnapshotTests: XCTestCase {
         // DateFormatter-based labels must match the SwiftUI snapshot timezone,
         // including when a secondary fixture is run without the main screen suite.
         NSTimeZone.default = TimeZone(secondsFromGMT: 0)!
+    }
+
+    func testLiveActivitySystemLifecycle() async throws {
+        XCTAssertTrue(ActivityAuthorizationInfo().areActivitiesEnabled)
+        let pass = StationPassActivity.example()
+        let activity = try Activity<StationPassActivity>.request(attributes: pass,
+            content: .init(state: pass.state(at: Date()), staleDate: pass.set), pushType: nil)
+        XCTAssertEqual(activity.attributes.station, 25544)
+        let service = StationLiveActivityService()
+        XCTAssertEqual(service.followedID, pass.passID)
+        await service.stop()
+        XCTAssertNil(service.followedID)
+        for _ in 0..<30 where activity.activityState != .dismissed { try await Task.sleep(for: .milliseconds(100)) }
+        XCTAssertEqual(activity.activityState, .dismissed)
+        let future = StationPassActivity.example(rise: Date().addingTimeInterval(124))
+        let scheduled = try Activity<StationPassActivity>.request(attributes: future,
+            content: .init(state: future.state(at: Date()), staleDate: future.rise),
+            style: .standard, alertConfiguration: .init(title: "ISS", body: "Test", sound: .default),
+            start: future.rise.addingTimeInterval(-120))
+        XCTAssertEqual(scheduled.activityState, .pending)
+        for _ in 0..<100 where scheduled.activityState == .pending { try await Task.sleep(for: .milliseconds(100)) }
+        XCTAssertEqual(scheduled.activityState, .active)
+        await scheduled.end(nil, dismissalPolicy: .immediate)
+    }
+
+    func testLiveActivityStatesAndLocales() throws {
+        let rise = Date(timeIntervalSince1970: 1_800_000_000)
+        for station in [25544, 48274] {
+            for scenario in 0...2 {
+                let pass = StationPassActivity.example(station: station, scenario: scenario, rise: rise)
+                XCTAssertLessThan(try JSONEncoder().encode(pass).count, 3500)
+                let before = pass.state(at: rise.addingTimeInterval(-60))
+                XCTAssertEqual(before.phase, .upcoming)
+                XCTAssertEqual(pass.state(at: pass.set).phase, .ended)
+                if scenario == 1 {
+                    XCTAssertEqual(pass.state(at: rise).phase, .shadow)
+                    XCTAssertEqual(pass.state(at: rise.addingTimeInterval(150)).phase, .visible)
+                    XCTAssertEqual(before.target, rise.addingTimeInterval(150))
+                } else if scenario == 2 {
+                    XCTAssertTrue(pass.state(at: rise).targetsShadow)
+                    XCTAssertEqual(pass.state(at: rise.addingTimeInterval(360)).phase, .shadow)
+                } else {
+                    XCTAssertFalse(pass.hasShadow)
+                    XCTAssertEqual(pass.state(at: rise).target, pass.set)
+                }
+            }
+        }
+        var multiple = StationPassActivity.example(rise: rise)
+        multiple.illuminated = [.init(start: rise, end: rise.addingTimeInterval(60)),
+            .init(start: rise.addingTimeInterval(180), end: rise.addingTimeInterval(240))]
+        XCTAssertEqual(multiple.state(at: rise.addingTimeInterval(60)).phase, .shadow)
+        XCTAssertEqual(multiple.state(at: rise.addingTimeInterval(60)).target, rise.addingTimeInterval(180))
+        XCTAssertEqual(multiple.state(at: rise.addingTimeInterval(180)).phase, .visible)
+        XCTAssertEqual(multiple.state(at: rise.addingTimeInterval(240)).target, multiple.set)
+        let keys = ["untilVisible", "untilShadow", "untilSet", "set", "complete", "inShadow", "finished", "openUpdate", "peak", "arcAccessibility", "sunlit", "shadow", "follow", "stop", "disabled", "expired", "tooEarly", "alreadyFollowing", "failed", "startAlert", "followHelp", "followingHelp"]
+        for language in WidgetStrings.languages {
+            let locale = Locale(identifier: language)
+            for key in keys { XCTAssertNotEqual(WidgetStrings.text("live." + key, locale: locale), "live." + key) }
+            let peak = String(format: WidgetStrings.text("live.peak", locale: locale), locale: locale, 64)
+            XCTAssertTrue(peak.contains("64"))
+        }
+    }
+
+    func testLiveActivityLocaleMatrix() throws {
+        guard let output = ProcessInfo.processInfo.environment["LIVE_ACTIVITY_OUTPUT"] else {
+            throw XCTSkip("Set LIVE_ACTIVITY_OUTPUT for the localized Live Activity review")
+        }
+        let folder = URL(fileURLWithPath: output)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        let rise = Date(timeIntervalSince1970: 1_800_000_000)
+        let cases: [(String, TimeInterval, Bool)] = [("before", -60, false), ("rising", 60, false), ("visible", 180, false), ("late", 400, false), ("ended", 480, false), ("stale", 180, true)]
+        var count = 0
+        for language in WidgetStrings.languages {
+            for station in [25544, 48274] {
+                for scenario in 0...2 {
+                    let pass = StationPassActivity.example(station: station, scenario: scenario, rise: rise)
+                    for (name, offset, stale) in cases {
+                        let date = rise.addingTimeInterval(offset)
+                        for (sizeName, width, typeSize) in [("lock", CGFloat(370), DynamicTypeSize.large), ("island", CGFloat(320), .large), ("largeText", CGFloat(320), .xxxLarge)] {
+                            let content = StationPassActivityView(pass: pass, state: pass.state(at: date), stale: stale, previewDate: date)
+                                .frame(width: width)
+                                .background(sizeName == "island" ? Color.black : MoonstonePalette.surface)
+                                .environment(\.colorScheme, .dark)
+                                .environment(\.locale, Locale(identifier: language))
+                                .environment(\.timeZone, TimeZone(secondsFromGMT: 0)!)
+                                .environment(\.dynamicTypeSize, typeSize)
+                            let renderer = ImageRenderer(content: content)
+                            renderer.scale = 2
+                            let image = try XCTUnwrap(renderer.uiImage)
+                            XCTAssertLessThanOrEqual(image.size.height, 160, "\(language)/\(station)/\(scenario)/\(name)/\(sizeName) exceeds 160pt")
+                            try XCTUnwrap(image.pngData()).write(to: folder.appendingPathComponent("\(language)-\(station)-\(scenario)-\(name)-\(sizeName).png"))
+                            count += 1
+                        }
+                    }
+                }
+            }
+        }
+        XCTAssertEqual(count, 864)
+        try "Rendered \(count) native dark Live Activity cases across 8 locales.\n".write(to: folder.appendingPathComponent("summary.txt"), atomically: true, encoding: .utf8)
     }
 
     /// Renders the actual shared widget view at Home Screen sizes, in dark mode only.

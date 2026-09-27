@@ -20,6 +20,7 @@ public final class AppNavigation {
 public final class AppSession {
   public let location: LocationService
   public let notifications: NotificationService
+  public let liveActivity = StationLiveActivityService()
   public let navigation = AppNavigation()
   public let settings = AppSettings()
   public let debug = DebugModel()
@@ -37,8 +38,9 @@ public final class AppSession {
     self.notifications = notifications ?? NotificationService()
     debug.session = self
     self.location.onLocationChanged = { [weak self] _ in
-      guard let self, let token = debug.fcmToken else { return }
-      updateRegistration(token)
+      guard let self else { return }
+      Task { await self.liveActivity.invalidateIfMoved(to: self.location.resources.location) }
+      if let token = debug.fcmToken { updateRegistration(token) }
     }
   }
   public func completeOnboarding() {

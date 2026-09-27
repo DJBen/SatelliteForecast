@@ -233,3 +233,13 @@ boundaries. No per-pixel or per-frame operations are logged.
 The Moonstone palette and static background texture change no screen names,
 events, conversion definitions or measurement boundaries. App and widget visual
 review runs retain the existing Debug/XCTest telemetry exclusions.
+
+## Station pass Live Activities
+
+Following or stopping a pass on `pass_detail` introduces no new analytics event or
+screen. ActivityKit attributes contain the selected pass geometry, dates, and a
+local deep link to its observer; they remain on-device and are never logged or
+sent to the reminder backend. Scheduled Live Activity presentation is not an
+`alarm_scheduled` conversion. Opening the activity uses the existing URL flow
+and does not emit `notification_opened`. Tests and snapshot captures remain out
+of production custom telemetry.

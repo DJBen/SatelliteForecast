@@ -26,3 +26,27 @@
 "tonight" = "Tonight";
 "tomorrow" = "Tomorrow";
 "minutes" = "%d min";
+
+/* Station pass Live Activity */
+"live.untilVisible" = "until visible";
+"live.untilShadow" = "until shadow";
+"live.untilSet" = "until set";
+"live.set" = "Sets";
+"live.complete" = "complete";
+"live.inShadow" = "In Earth’s shadow";
+"live.finished" = "Pass finished";
+"live.openUpdate" = "Open app to update";
+"live.peak" = "Peak %d°";
+"live.arcAccessibility" = "From %@ to %@, maximum elevation %d°";
+"live.sunlit" = "Sunlit";
+"live.shadow" = "Shadow";
+"live.follow" = "Follow pass live";
+"live.stop" = "Stop Live Activity";
+"live.disabled" = "Enable Live Activities in Settings to follow a pass.";
+"live.expired" = "This viewing opportunity has ended.";
+"live.tooEarly" = "Choose a pass within the next 24 hours.";
+"live.alreadyFollowing" = "Stop the other Live Activity before following this pass.";
+"live.failed" = "Could not start the Live Activity. Please try again.";
+"live.startAlert" = "A space station pass is starting soon.";
+"live.followHelp" = "Appears two minutes before viewing. One pass at a time.";
+"live.followingHelp" = "Scheduled or active. Open the app to refresh phase changes.";

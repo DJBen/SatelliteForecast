@@ -26,3 +26,27 @@
 "tonight" = "今晚";
 "tomorrow" = "明天";
 "minutes" = "%d 分钟";
+
+/* Station pass Live Activity */
+"live.untilVisible" = "距可见";
+"live.untilShadow" = "距入影";
+"live.untilSet" = "距落下";
+"live.set" = "落下时间";
+"live.complete" = "已结束";
+"live.inShadow" = "位于地影中";
+"live.finished" = "过境已结束";
+"live.openUpdate" = "打开 App 更新";
+"live.peak" = "最高 %d°";
+"live.arcAccessibility" = "从%@到%@，最大仰角 %d 度";
+"live.sunlit" = "受光";
+"live.shadow" = "地影";
+"live.follow" = "实时关注过境";
+"live.stop" = "停止实时活动";
+"live.disabled" = "请在设置中启用实时活动以关注过境。";
+"live.expired" = "此次观测时段已结束。";
+"live.tooEarly" = "请选择未来 24 小时内的过境。";
+"live.alreadyFollowing" = "请先停止另一个实时活动，再关注此次过境。";
+"live.failed" = "无法启动实时活动，请重试。";
+"live.startAlert" = "空间站即将过境。";
+"live.followHelp" = "观测前两分钟显示。每次关注一次过境。";
+"live.followingHelp" = "已安排或正在进行。打开 App 更新阶段。";

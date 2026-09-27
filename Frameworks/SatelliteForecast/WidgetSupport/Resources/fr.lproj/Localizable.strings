@@ -26,3 +26,27 @@
 "tonight" = "Ce soir";
 "tomorrow" = "Demain";
 "minutes" = "%d min";
+
+/* Station pass Live Activity */
+"live.untilVisible" = "avant visibilité";
+"live.untilShadow" = "avant l’ombre";
+"live.untilSet" = "avant le coucher";
+"live.set" = "Coucher";
+"live.complete" = "terminé";
+"live.inShadow" = "Dans l’ombre terrestre";
+"live.finished" = "Passage terminé";
+"live.openUpdate" = "Ouvrez l’app pour actualiser";
+"live.peak" = "Max. %d°";
+"live.arcAccessibility" = "De %@ à %@, élévation maximale de %d°";
+"live.sunlit" = "Éclairé";
+"live.shadow" = "Ombre";
+"live.follow" = "Suivre le passage en direct";
+"live.stop" = "Arrêter l’activité en direct";
+"live.disabled" = "Activez les activités en direct dans Réglages pour suivre un passage.";
+"live.expired" = "Cette occasion d’observation est terminée.";
+"live.tooEarly" = "Choisissez un passage dans les 24 prochaines heures.";
+"live.alreadyFollowing" = "Arrêtez l’autre activité en direct avant de suivre ce passage.";
+"live.failed" = "Impossible de démarrer l’activité en direct. Réessayez.";
+"live.startAlert" = "Le passage d’une station spatiale va bientôt commencer.";
+"live.followHelp" = "Apparaît deux minutes avant l’observation. Un passage à la fois.";
+"live.followingHelp" = "Programmée ou active. Ouvrez l’app pour actualiser les phases.";

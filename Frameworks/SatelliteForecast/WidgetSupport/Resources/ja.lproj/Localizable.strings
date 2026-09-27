@@ -26,3 +26,27 @@
 "tonight" = "今夜";
 "tomorrow" = "明日";
 "minutes" = "%d分";
+
+/* Station pass Live Activity */
+"live.untilVisible" = "見え始めるまで";
+"live.untilShadow" = "地球の影まで";
+"live.untilSet" = "沈むまで";
+"live.set" = "沈む時刻";
+"live.complete" = "終了";
+"live.inShadow" = "地球の影の中";
+"live.finished" = "通過終了";
+"live.openUpdate" = "アプリを開いて更新";
+"live.peak" = "最高 %d°";
+"live.arcAccessibility" = "%@から%@へ、最大仰角%d度";
+"live.sunlit" = "日照";
+"live.shadow" = "地球の影";
+"live.follow" = "通過をライブで追跡";
+"live.stop" = "ライブアクティビティを停止";
+"live.disabled" = "設定でライブアクティビティを有効にして通過を追跡してください。";
+"live.expired" = "この観測機会は終了しました。";
+"live.tooEarly" = "今後24時間以内の通過を選択してください。";
+"live.alreadyFollowing" = "この通過を追跡する前に、別のライブアクティビティを停止してください。";
+"live.failed" = "ライブアクティビティを開始できませんでした。もう一度お試しください。";
+"live.startAlert" = "まもなく宇宙ステーションが通過します。";
+"live.followHelp" = "観測の2分前に表示されます。一度に1つの通過を追跡できます。";
+"live.followingHelp" = "予約済み、または実行中です。アプリを開いて段階を更新してください。";

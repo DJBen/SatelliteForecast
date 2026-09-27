@@ -5,5 +5,6 @@ import SwiftUI
 struct SatelliteForecastWidgetBundle: WidgetBundle {
     var body: some Widget {
         SatelliteForecastWidget()
+        SatelliteForecastWidgetLiveActivity()
     }
 }

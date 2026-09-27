@@ -1,59 +1,40 @@
-//
-//  SatelliteForecastWidgetLiveActivity.swift
-//  SatelliteForecastWidget
-//
-//  Created by Sihao Lu on 7/26/25.
-//
-
 import ActivityKit
 import WidgetKit
 import SwiftUI
 import SatelliteWidgetSupport
 
-struct SatelliteForecastWidgetAttributes: ActivityAttributes {
-    public struct ContentState: Codable, Hashable {
-        // Dynamic stateful properties about your activity go here!
-        var emoji: String
-    }
-
-    // Fixed non-changing properties about your activity go here!
-    var name: String
-}
-
 struct SatelliteForecastWidgetLiveActivity: Widget {
     var body: some WidgetConfiguration {
-        ActivityConfiguration(for: SatelliteForecastWidgetAttributes.self) { context in
-            // Lock screen/banner UI goes here
-            VStack {
-                Text("Hello \(context.state.emoji)")
-            }
-            .foregroundStyle(MoonstonePalette.text)
-            .activityBackgroundTint(MoonstonePalette.background)
-            .activitySystemActionForegroundColor(MoonstonePalette.accent)
-
+        ActivityConfiguration(for: StationPassActivity.self) { context in
+            StationPassActivityView(pass: context.attributes, state: context.state, stale: context.isStale)
+                .activityBackgroundTint(MoonstonePalette.surface)
+                .activitySystemActionForegroundColor(MoonstonePalette.accent)
+                .widgetURL(context.attributes.url)
         } dynamicIsland: { context in
             DynamicIsland {
-                // Expanded UI goes here.  Compose the expanded UI through
-                // various regions, like leading/trailing/center/bottom
-                DynamicIslandExpandedRegion(.leading) {
-                    Text("Leading")
-                }
-                DynamicIslandExpandedRegion(.trailing) {
-                    Text("Trailing")
-                }
                 DynamicIslandExpandedRegion(.bottom) {
-                    Text("Bottom \(context.state.emoji)")
-                    // more content
+                    StationPassActivityView(pass: context.attributes, state: context.state, stale: context.isStale)
                 }
             } compactLeading: {
-                Text("L")
+                ActivityStationIcon(station: context.attributes.station).frame(width: 26, height: 24)
             } compactTrailing: {
-                Text("T \(context.state.emoji)")
+                if context.isStale { Image(systemName: "clock").foregroundStyle(MoonstonePalette.accent) }
+                else { StationPassCountdown(pass: context.attributes, state: context.state).font(.caption.monospacedDigit()).frame(width: 46) }
             } minimal: {
-                Text(context.state.emoji)
+                ActivityStationIcon(station: context.attributes.station).frame(width: 24, height: 24)
             }
-            .widgetURL(URL(string: "http://www.apple.com"))
+            .widgetURL(context.attributes.url)
             .keylineTint(MoonstonePalette.accent)
         }
+    }
+}
+
+private struct ActivityStationIcon: View {
+    @Environment(\.locale) private var locale
+    let station: Int
+    var body: some View {
+        StationPassIcon(station: station)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(WidgetStrings.text(station == 25544 ? "iss.full" : "tiangong.full", locale: locale))
     }
 }

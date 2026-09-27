@@ -11,6 +11,7 @@ import SatelliteForecast
 import SwiftUI
 import StarryNight
 import CoreMotion
+import SatelliteWidgetSupport
 
 public struct PassViewState {
     public var scheduledPassNotifications: Set<ScheduledPassNotification>
@@ -112,9 +113,39 @@ public struct PassView: View {
 
                 VStack(spacing: 20) {
                     chartControls
+                    liveActivityControl
                     eventTable
                 }
                 .padding(.horizontal, 20)
+            }
+        }
+    }
+
+    @ViewBuilder private var liveActivityControl: some View {
+        if let session = viewModel.session,
+           [25544, 48274].contains(context.passSnapshots.pass.noradIndex),
+           context.passSnapshots.pass.visibility == .visible,
+           session.debug.config.effectiveOffset == 0 {
+            let service = session.liveActivity
+            let followed = service.followedID == context.passSnapshots.pass.notificationIdentifier
+            VStack(spacing: 6) {
+                Button {
+                    Task { if followed { await service.stop() } else { await service.follow(context) } }
+                } label: {
+                    Label(WidgetStrings.text(followed ? "live.stop" : "live.follow", locale: locale), systemImage: followed ? "stop.circle" : "waveform.path")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered).disabled(service.busy)
+                if service.followedID != nil && !followed {
+                    Button(WidgetStrings.text("live.stop", locale: locale)) { Task { await service.stop() } }
+                        .font(.caption)
+                }
+                if let key = service.errorKey {
+                    Text(WidgetStrings.text(key, locale: locale)).font(.caption).foregroundStyle(AppTheme.muted)
+                } else {
+                    Text(WidgetStrings.text(followed ? "live.followingHelp" : "live.followHelp", locale: locale))
+                        .font(.caption).foregroundStyle(AppTheme.muted)
+                }
             }
         }
     }

@@ -5,17 +5,19 @@
 	};
 	objectVersion = 60;
 	objects = {
+        AACC00000000000000000001 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteForecastWidgetLiveActivity.swift; sourceTree = "<group>"; };
+        AACC00000000000000000002 = { isa = PBXBuildFile; fileRef = AACC00000000000000000001; };
 		AABBCCDD0000000000000001 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteForecastWidget.swift; sourceTree = "<group>"; };
 		AABBCCDD0000000000000002 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SatelliteForecastWidgetBundle.swift; sourceTree = "<group>"; };
 		AABBCCDD0000000000000003 = { isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AABBCCDD0000000000000004 = { isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SatelliteForecastWidget.entitlements; sourceTree = "<group>"; };
 		AABBCCDD0000000000000005 = { isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; path = SatelliteForecastWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		AABBCCDD0000000000000006 = { isa = PBXGroup; children = (AABBCCDD0000000000000001, AABBCCDD0000000000000002, AABBCCDD0000000000000003, AABBCCDD0000000000000004,); path = SatelliteForecastWidget; sourceTree = "<group>"; };
+		AABBCCDD0000000000000006 = { isa = PBXGroup; children = (AACC00000000000000000001, AABBCCDD0000000000000001, AABBCCDD0000000000000002, AABBCCDD0000000000000003, AABBCCDD0000000000000004,); path = SatelliteForecastWidget; sourceTree = "<group>"; };
 		AABBCCDD0000000000000007 = { isa = PBXBuildFile; fileRef = AABBCCDD0000000000000001; };
 		AABBCCDD0000000000000008 = { isa = PBXBuildFile; fileRef = AABBCCDD0000000000000002; };
 		AABBCCDD0000000000000009 = { isa = XCSwiftPackageProductDependency; productName = SatelliteWidgetSupport; };
 		AABBCCDD000000000000000A = { isa = PBXBuildFile; productRef = AABBCCDD0000000000000009; };
-		AABBCCDD000000000000000B = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (AABBCCDD0000000000000007, AABBCCDD0000000000000008,); runOnlyForDeploymentPostprocessing = 0; };
+		AABBCCDD000000000000000B = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (AACC00000000000000000002, AABBCCDD0000000000000007, AABBCCDD0000000000000008,); runOnlyForDeploymentPostprocessing = 0; };
 		AABBCCDD000000000000000C = { isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (AABBCCDD000000000000000A,); runOnlyForDeploymentPostprocessing = 0; };
 		AABBCCDD000000000000000D = { isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 		AABBCCDD000000000000000E = { isa = XCBuildConfiguration; buildSettings = { APPLICATION_EXTENSION_API_ONLY = YES; CODE_SIGN_ENTITLEMENTS = SatelliteForecastWidget/SatelliteForecastWidget.entitlements; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 16; DEVELOPMENT_TEAM = 52RD2GH5DP; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_FILE = SatelliteForecastWidget/Info.plist; INFOPLIST_KEY_CFBundleDisplayName = "Space Station Passes"; IPHONEOS_DEPLOYMENT_TARGET = 26.0; LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks", "@executable_path/../../Frameworks",); MARKETING_VERSION = 2.0.0; PRODUCT_BUNDLE_IDENTIFIER = io.djben.SatelliteForecast.Widget; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SKIP_INSTALL = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Debug; };
