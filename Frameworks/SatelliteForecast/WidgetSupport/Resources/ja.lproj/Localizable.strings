@@ -40,7 +40,7 @@
 "live.arcAccessibility" = "%@から%@へ、最大仰角%d度";
 "live.sunlit" = "日照";
 "live.shadow" = "地球の影";
-"live.follow" = "通過をライブで追跡";
+"live.follow" = "ライブで追跡";
 "live.stop" = "ライブアクティビティを停止";
 "live.disabled" = "設定でライブアクティビティを有効にして通過を追跡してください。";
 "live.expired" = "この観測機会は終了しました。";

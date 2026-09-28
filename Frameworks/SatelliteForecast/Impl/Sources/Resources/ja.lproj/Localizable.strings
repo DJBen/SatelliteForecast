@@ -732,3 +732,10 @@ The localized string for the status of a spare satellite */
 "Hide reminder button" = "リマインドボタンを隠す";
 "Open notification settings" = "通知設定を開く";
 "Example: a recorded ISS pass over San Francisco Bay" = "例：サンフランシスコ湾上空のISS通過の記録";
+
+/* Real-time position on the home observation arc. */
+"Live position" = "現在の位置";
+"Elevation %d°" = "仰角 %d°";
+"Live satellite position. Solid trail: traveled. Dotted trail: still ahead. Gray: in Earth’s shadow." = "衛星の現在位置。実線：通過済み。点線：これから通過。灰色：地球の影の中。";
+
+"%@ passing now" = "%@が通過中";

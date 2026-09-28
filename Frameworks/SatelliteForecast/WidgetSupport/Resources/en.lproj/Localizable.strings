@@ -40,7 +40,7 @@
 "live.arcAccessibility" = "From %@ to %@, maximum elevation %d°";
 "live.sunlit" = "Sunlit";
 "live.shadow" = "Shadow";
-"live.follow" = "Follow pass live";
+"live.follow" = "Follow live";
 "live.stop" = "Stop Live Activity";
 "live.disabled" = "Enable Live Activities in Settings to follow a pass.";
 "live.expired" = "This viewing opportunity has ended.";

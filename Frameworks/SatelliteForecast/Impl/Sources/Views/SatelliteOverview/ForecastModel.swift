@@ -7,12 +7,14 @@ import SatelliteWidgetSupport
 
 public struct ForecastInput: Equatable {
     public var observer: LatLonAlt?
+    public var frozenJulianDate: Double?
     public var julianDateOffset: Double
     public var authorizationStatus: CLAuthorizationStatus
-    public init(observer: LatLonAlt? = nil, julianDateOffset: Double = 0,
+    public init(observer: LatLonAlt? = nil, julianDateOffset: Double = 0, frozenJulianDate: Double? = nil,
                 authorizationStatus: CLAuthorizationStatus = .notDetermined) {
         self.observer = observer
         self.julianDateOffset = julianDateOffset
+        self.frozenJulianDate = frozenJulianDate
         self.authorizationStatus = authorizationStatus
     }
     public var isMissingLocation: Bool {
@@ -86,13 +88,13 @@ public final class ForecastModel {
     public func run(_ input: ForecastInput) async {
         await refresh(input)
         while !Task.isCancelled {
-            do { try await client.sleep(.seconds(10)); try Task.checkCancellation() }
+            do { try await client.sleep(.seconds(1)); try Task.checkCancellation() }
             catch { return }
             currentDate = client.now()
             if let lastRefresh, currentDate.timeIntervalSince(lastRefresh) >= 3600 {
                 await refresh(input)
             } else {
-                updateNextPasses(offset: input.julianDateOffset)
+                updateNextPasses(input: input)
             }
         }
     }
@@ -104,7 +106,7 @@ public final class ForecastModel {
         currentDate = client.now()
         lastRefresh = currentDate
         passes = [:]
-        if input.julianDateOffset == 0 && (input.observer == nil || lastWidgetObserver != input.observer) && !isWidgetTest {
+        if input.julianDateOffset == 0 && input.frozenJulianDate == nil && (input.observer == nil || lastWidgetObserver != input.observer) && !isWidgetTest {
             WidgetForecastStore.clear()
             lastWidgetObserver = input.observer
         }
@@ -116,11 +118,11 @@ public final class ForecastModel {
             return
         }
         let request = ForecastRequest(observer: observer,
-            dateRange: JulianDateUtil.createJulianDateRange(now: currentDate.julianDate + input.julianDateOffset))
-        async let iss: Void = load(.iss, request: request, generation: requestGeneration, offset: input.julianDateOffset)
-        async let tianhe: Void = load(.tianhe, request: request, generation: requestGeneration, offset: input.julianDateOffset)
+            dateRange: JulianDateUtil.createJulianDateRange(now: input.frozenJulianDate ?? (currentDate.julianDate + input.julianDateOffset)))
+        async let iss: Void = load(.iss, request: request, generation: requestGeneration, input: input)
+        async let tianhe: Void = load(.tianhe, request: request, generation: requestGeneration, input: input)
         _ = await (iss, tianhe)
-        guard requestGeneration == generation, !Task.isCancelled, input.julianDateOffset == 0,
+        guard requestGeneration == generation, !Task.isCancelled, input.julianDateOffset == 0 && input.frozenJulianDate == nil,
               !isWidgetTest, passes[.iss] != nil, passes[.tianhe] != nil else { return }
         var summaries: [WidgetPass] = []
         let loadedPasses = passes
@@ -176,7 +178,7 @@ public final class ForecastModel {
         return ["N", "NE", "E", "SE", "S", "SW", "W", "NW"][Int((normalized / 45).rounded()) % 8]
     }
 
-    private func load(_ satellite: SpecialSatellite, request: ForecastRequest, generation expected: Int, offset: Double) async {
+    private func load(_ satellite: SpecialSatellite, request: ForecastRequest, generation expected: Int, input: ForecastInput) async {
         let metric = AppAnalytics.Operation(satellite == .iss ? "forecast_iss" : "forecast_tiangong", screen: .forecast)
         defer { metric.finish("cancelled") }
         do {
@@ -185,7 +187,7 @@ public final class ForecastModel {
             guard expected == generation else { return }
             metric.finish(found.isEmpty ? "empty" : "success", count: found.count)
             passes[satellite] = found
-            updateNextPasses(offset: offset)
+            updateNextPasses(input: input)
         } catch {
             guard expected == generation, !Task.isCancelled, !(error is CancellationError) else { return }
             metric.finish("failure", reason: "load_failed")
@@ -194,8 +196,8 @@ public final class ForecastModel {
         }
     }
 
-    private func updateNextPasses(offset: Double) {
-        let now = currentDate.julianDate + offset
+    private func updateNextPasses(input: ForecastInput) {
+        let now = input.frozenJulianDate ?? (currentDate.julianDate + input.julianDateOffset)
         upcomingPasses = ObservationOpportunity.upcoming(passes.values.flatMap { $0 }, now: now)
         for (satellite, found) in passes {
             let next = NextPass(

@@ -732,3 +732,10 @@ The localized string for the status of a spare satellite */
 "Hide reminder button" = "Masquer le bouton de rappel";
 "Open notification settings" = "Ouvrir les réglages de notification";
 "Example: a recorded ISS pass over San Francisco Bay" = "Exemple : un passage enregistré de l’ISS au-dessus de la baie de San Francisco";
+
+/* Real-time position on the home observation arc. */
+"Live position" = "Position en direct";
+"Elevation %d°" = "Élévation %d°";
+"Live satellite position. Solid trail: traveled. Dotted trail: still ahead. Gray: in Earth’s shadow." = "Position du satellite en direct. Trait plein : trajet parcouru. Pointillés : trajet à venir. Gris : dans l’ombre de la Terre.";
+
+"%@ passing now" = "%@ passe en ce moment";

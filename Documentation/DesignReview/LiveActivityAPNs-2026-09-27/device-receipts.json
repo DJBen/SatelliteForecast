@@ -1,0 +1,26 @@
+[
+  {
+    "phase": "upcoming",
+    "receivedAt": "2026-09-28T00:11:26Z"
+  },
+  {
+    "receivedAt": "2026-09-28T00:11:30Z",
+    "phase": "upcoming"
+  },
+  {
+    "receivedAt": "2026-09-28T00:13:18Z",
+    "phase": "shadow"
+  },
+  {
+    "phase": "visible",
+    "receivedAt": "2026-09-28T00:13:18Z"
+  },
+  {
+    "phase": "shadow",
+    "receivedAt": "2026-09-28T00:14:23Z"
+  },
+  {
+    "receivedAt": "2026-09-28T00:14:23Z",
+    "phase": "ended"
+  }
+]

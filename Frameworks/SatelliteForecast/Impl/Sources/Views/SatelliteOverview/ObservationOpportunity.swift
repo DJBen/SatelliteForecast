@@ -21,6 +21,10 @@ enum ObservationOpportunity {
 
     static func start(_ pass: Pass) -> Double { visibleIntervals(pass).first?.lowerBound ?? pass.rise.julianDate }
     static func end(_ pass: Pass) -> Double { visibleIntervals(pass).last?.upperBound ?? pass.set.julianDate }
+    static func isOccurring(_ pass: Pass, now: Double) -> Bool {
+        now >= start(pass) && now < end(pass)
+    }
+
     static func upcoming(_ passes: [Pass], now: Double) -> [Pass] {
         var ids = Set<String>()
         return passes.filter {

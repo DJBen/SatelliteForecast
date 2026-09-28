@@ -37,6 +37,7 @@ public struct PassView: View {
     @AppStorage("passCompassEnabled") private var savedCompassEnabled = true
     @State private var compassOverride: Bool?
     @State private var showsPlanetarium = false
+    @State private var liveActivityError: String?
 
     private var isCompassEnabled: Bool {
         get { compassOverride ?? savedCompassEnabled }
@@ -113,7 +114,6 @@ public struct PassView: View {
 
                 VStack(spacing: 20) {
                     chartControls
-                    liveActivityControl
                     eventTable
                 }
                 .padding(.horizontal, 20)
@@ -128,24 +128,29 @@ public struct PassView: View {
            session.debug.config.effectiveOffset == 0 {
             let service = session.liveActivity
             let followed = service.followedID == context.passSnapshots.pass.notificationIdentifier
-            VStack(spacing: 6) {
-                Button {
-                    Task { if followed { await service.stop() } else { await service.follow(context) } }
-                } label: {
-                    Label(WidgetStrings.text(followed ? "live.stop" : "live.follow", locale: locale), systemImage: followed ? "stop.circle" : "waveform.path")
-                        .frame(maxWidth: .infinity)
+            Button {
+                Task {
+                    if followed { await service.stop() } else { await service.follow(context) }
+                    liveActivityError = service.errorKey
                 }
-                .buttonStyle(.bordered).disabled(service.busy)
-                if service.followedID != nil && !followed {
-                    Button(WidgetStrings.text("live.stop", locale: locale)) { Task { await service.stop() } }
-                        .font(.caption)
+            } label: {
+                Image(systemName: followed ? "eye.fill" : "eye")
+            }
+            .disabled(service.busy)
+            .accessibilityLabel(WidgetStrings.text(followed ? "live.stop" : "live.follow", locale: locale))
+            .accessibilityAddTraits(followed ? [.isSelected] : [])
+            .accessibilityIdentifier("pass.followLive")
+            .alert(WidgetStrings.text("live.follow", locale: locale), isPresented: Binding(
+                get: { liveActivityError != nil }, set: { if !$0 { liveActivityError = nil } }
+            )) {
+                if liveActivityError == "live.alreadyFollowing" {
+                    Button(WidgetStrings.text("live.stop", locale: locale), role: .destructive) {
+                        Task { await service.stop() }
+                    }
                 }
-                if let key = service.errorKey {
-                    Text(WidgetStrings.text(key, locale: locale)).font(.caption).foregroundStyle(AppTheme.muted)
-                } else {
-                    Text(WidgetStrings.text(followed ? "live.followingHelp" : "live.followHelp", locale: locale))
-                        .font(.caption).foregroundStyle(AppTheme.muted)
-                }
+                Button(AppLocalization.text("OK"), role: .cancel) { liveActivityError = nil }
+            } message: {
+                Text(WidgetStrings.text(liveActivityError ?? "live.failed", locale: locale))
             }
         }
     }
@@ -218,24 +223,12 @@ public struct PassView: View {
                 ToolbarItem(
                     placement: .primaryAction
                 ) {
-                    Button {
-                        if viewModel.state.scheduledPassNotifications.contains(where: { $0.id == context.passSnapshots.pass.notificationIdentifier }) {
-                            viewModel.send(.unscheduleAlarm(context.passSnapshots.pass))
-                        } else {
-                            viewModel.send(.showAlarmConfiguration(true))
-                        }
-                    } label: {
-                        if viewModel.state.scheduledPassNotifications.contains(where: { $0.id == context.passSnapshots.pass.notificationIdentifier }) {
-                            Image(systemName: "bell.fill")
-                        } else {
-                            Image(systemName: "bell")
-                        }
-                    }
+                    liveActivityControl
                 }
             }
         }
         .fullScreenCover(isPresented: $showsPlanetarium) {
-            PlanetariumView(context: context)
+            PlanetariumView(context: context, debug: viewModel.session?.debug)
         }
         .fullScreenCover(
             isPresented: $viewModel.state.showAlarmConfigurationModal,

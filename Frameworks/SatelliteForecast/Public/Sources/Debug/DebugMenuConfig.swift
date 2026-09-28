@@ -20,5 +20,10 @@ public struct DebugMenuConfig: Equatable {
         mockedOffsetOn ? mockedOffset : 0
     }
 
+    /// The same simulated clock is used by live sky views and the observation card.
+    public func julianDate(at realJulianDate: Double) -> Double {
+        frozenAt ?? (realJulianDate + effectiveOffset)
+    }
+
     public init() {}
 }

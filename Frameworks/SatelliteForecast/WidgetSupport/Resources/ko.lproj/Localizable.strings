@@ -40,7 +40,7 @@
 "live.arcAccessibility" = "%@에서 %@까지, 최대 고도 %d도";
 "live.sunlit" = "햇빛";
 "live.shadow" = "그림자";
-"live.follow" = "통과 실시간 추적";
+"live.follow" = "실시간 추적";
 "live.stop" = "실시간 현황 중지";
 "live.disabled" = "설정에서 실시간 현황을 켜서 통과를 추적하세요.";
 "live.expired" = "이번 관측 기회가 종료되었습니다.";

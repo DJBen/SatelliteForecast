@@ -220,8 +220,8 @@ is accepted; launching the app or asking permission does not emit a conversion.
 City selection uses the existing resolution and selection boundaries.
 
 The home sky illustration uses the app chart's catalog, atmospheric, lunar and
-planetary rendering without labels. Foreground playback is an accelerated preview,
-not live tracking. Local preview preparation follows the existing forecast
+planetary rendering without labels. Upcoming passes use an accelerated preview; during the observable pass window,
+the arc tracks the current time and shows the interpolated elevation once per second. Local preview preparation follows the existing forecast
 operation, is excluded from forecast timings, and sends no additional telemetry.
 No frame, orbital position, observer, place name or notification ID is logged.
 
@@ -238,8 +238,19 @@ review runs retain the existing Debug/XCTest telemetry exclusions.
 
 Following or stopping a pass on `pass_detail` introduces no new analytics event or
 screen. ActivityKit attributes contain the selected pass geometry, dates, and a
-local deep link to its observer; they remain on-device and are never logged or
-sent to the reminder backend. Scheduled Live Activity presentation is not an
+local deep link to its observer; the geometry and observer remain on-device.
+Following a pass registers its illumination times and FCM/ActivityKit tokens with
+the Live Activity backend using App Check. Coordinates, geometry and the deep
+link are not uploaded. Tokens and schedules are operational delivery data, never
+analytics parameters or logs. Cancellation removes tokens and leaves a short-lived
+tombstone; ended/invalid activities retire tokens and TTL removes expired records. Scheduled Live Activity presentation is not an
 `alarm_scheduled` conversion. Opening the activity uses the existing URL flow
 and does not emit `notification_opened`. Tests and snapshot captures remain out
 of production custom telemetry.
+
+The pass-detail toolbar eye follows/stops a Live Activity and replaces the manual
+alarm shortcut. Its filled eye appears only after ActivityKit accepts the request.
+This control does not emit `alarm_scheduled`; manual alarms in the pass list
+retain their existing conversion semantics. No new events are added.
+
+Planetarium Now mode and the observation card resolve the debug clock (mock offset or frozen date). An active pass opens the planetarium in Now mode; its direction arrow announces the station passing now. These presentation updates introduce no events and preserve Debug telemetry suppression.

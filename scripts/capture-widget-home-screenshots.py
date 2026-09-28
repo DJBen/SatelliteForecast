@@ -10,6 +10,7 @@ capture time, not the reviewed historical pass moments used by the in-app slots.
 """
 import argparse
 import os
+import json
 import struct
 import subprocess
 import time
@@ -66,14 +67,35 @@ try:
         reboot(tz)
         simctl('ui', args.simulator, 'appearance', 'dark')
         simctl('location', args.simulator, 'set', f'{lat},{lon}')
+        refresh_started = time.time()
         simctl('launch', args.simulator, BUNDLE)
         time.sleep(args.settle)
+        # The first forecast can take longer while all sky charts are generated.
+        # Never publish a setup placeholder just because a fixed delay elapsed.
+        groups = simctl('get_app_container', args.simulator, BUNDLE, 'groups', capture=True).stdout
+        group_path = next(line.split('\t', 1)[1] for line in groups.splitlines()
+                          if line.startswith('group.io.djben.SatelliteForecast\t'))
+        forecast_file = Path(group_path) / 'widget-forecast-v1.json'
+        deadline = time.time() + 180
+        while True:
+            try:
+                forecast = json.loads(forecast_file.read_text())
+                ready = forecast_file.stat().st_mtime >= refresh_started and bool(forecast.get('passes'))
+            except (OSError, ValueError):
+                ready = False
+            if ready:
+                break
+            if time.time() >= deadline:
+                raise RuntimeError(f'{locale}: widget forecast was not ready; no screenshot captured')
+            time.sleep(3)
+        # Let WidgetKit finish archiving the refreshed timeline before restarting its host.
+        time.sleep(30)
         # Terminating the app would land SpringBoard on the page holding its icon, and restarting
         # SpringBoard alone leaves the status bar blank for a while. A clean reboot shows the first
         # page, where the widgets live, with the widget forecast already written.
         reboot(tz)
         simctl('ui', args.simulator, 'appearance', 'dark')
-        time.sleep(4)
+        time.sleep(45)
         simctl('status_bar', args.simulator, 'override', '--time', '9:41', '--dataNetwork', 'wifi', '--wifiMode', 'active',
                '--wifiBars', '3', '--cellularMode', 'active', '--cellularBars', '4', '--batteryState', 'discharging', '--batteryLevel', '100')
         time.sleep(6)

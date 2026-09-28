@@ -32,6 +32,7 @@ let package = Package(
                 .product(name: "SatelliteForecast", package: "SatelliteForecast"),
                 .product(name: "SatelliteForecastImpl", package: "SatelliteForecast"),
                 .product(name: "FirebaseCore", package: "firebase-ios-sdk"),
+                .product(name: "FirebaseAppCheck", package: "firebase-ios-sdk"),
                 .product(name: "FirebaseMessaging", package: "firebase-ios-sdk"),
                 .product(name: "FirebaseFirestore", package: "firebase-ios-sdk"),
             ],

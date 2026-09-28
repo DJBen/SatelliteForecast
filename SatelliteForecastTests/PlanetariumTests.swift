@@ -669,7 +669,7 @@ extension PlanetariumTests {
         let pass = try XCTUnwrap(fixture.passes.first { $0.pass.visibility == .visible })
         let context = PassViewContext(passIndex: 0, satelliteInfo: fixture.info, satelliteCommonName: "ISS",
             category: .iss, julianDateRange: fixture.range, observer: fixture.observer, passSnapshots: pass,
-            starManager: fixture.catalog, julianDateProvider: { pass.pass.culmination.julianDate })
+            starManager: fixture.catalog, julianDateProvider: { pass.pass.rise.julianDate - 1 / 86400 })
         let controller = PlanetariumController()
         let host = UIHostingController(rootView: PlanetariumView(context: context, controller: controller)
             .environment(\.colorScheme, .dark))

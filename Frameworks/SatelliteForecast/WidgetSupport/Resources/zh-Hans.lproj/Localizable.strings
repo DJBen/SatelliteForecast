@@ -40,7 +40,7 @@
 "live.arcAccessibility" = "从%@到%@，最大仰角 %d 度";
 "live.sunlit" = "受光";
 "live.shadow" = "地影";
-"live.follow" = "实时关注过境";
+"live.follow" = "实时关注";
 "live.stop" = "停止实时活动";
 "live.disabled" = "请在设置中启用实时活动以关注过境。";
 "live.expired" = "此次观测时段已结束。";

@@ -40,7 +40,7 @@
 "live.arcAccessibility" = "De %@ a %@, elevação máxima de %d°";
 "live.sunlit" = "Iluminado";
 "live.shadow" = "Sombra";
-"live.follow" = "Acompanhar passagem ao vivo";
+"live.follow" = "Acompanhar ao vivo";
 "live.stop" = "Parar Atividade ao Vivo";
 "live.disabled" = "Ative as Atividades ao Vivo nos Ajustes para acompanhar uma passagem.";
 "live.expired" = "Esta oportunidade de observação terminou.";

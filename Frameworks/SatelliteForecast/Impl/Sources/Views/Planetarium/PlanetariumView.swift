@@ -6,6 +6,9 @@ import SatelliteKit
 /// The selected pass and observer are deliberately shared with the 2D chart.
 struct PlanetariumView: View {
     let context: PassViewContext
+    let debug: DebugModel?
+    @State private var live: Bool
+    @State private var now: Date
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
     @StateObject private var controller = PlanetariumController()
@@ -13,9 +16,22 @@ struct PlanetariumView: View {
     @AppStorage("planetariumLines") private var lines = true
     @AppStorage("planetariumFPS") private var showFPS = false
 
-    init(context: PassViewContext, controller: PlanetariumController? = nil) {
+    init(context: PassViewContext, controller: PlanetariumController? = nil, debug: DebugModel? = nil) {
         self.context = context
+        self.debug = debug
+        let date = debug?.config.julianDate(at: context.julianDateProvider()) ?? context.julianDateProvider()
+        self._live = State(initialValue: Self.isPassing(context: context, at: date))
+        self._now = State(initialValue: Date(julianDate: date))
         self._controller = StateObject(wrappedValue: controller ?? PlanetariumController())
+    }
+
+    static func isPassing(context: PassViewContext, at date: Double) -> Bool {
+        let pass = context.passSnapshots.pass
+        return date >= pass.rise.julianDate && date < pass.set.julianDate
+    }
+
+    private var effectiveJulianDate: Double {
+        debug?.config.julianDate(at: context.julianDateProvider()) ?? context.julianDateProvider()
     }
 
     private var stationName: String {
@@ -82,9 +98,9 @@ struct PlanetariumView: View {
                     Text("Motion unavailable · Drag to explore the sky", bundle: .module)
                         .font(.caption).padding(10).background(.ultraThinMaterial, in: Capsule())
                 }
-                PlanetariumStationIndicator(controller: controller, navigation: controller.navigation, stationName: stationName)
+                PlanetariumStationIndicator(controller: controller, navigation: controller.navigation, stationName: stationName, passingNow: live && Self.isPassing(context: context, at: now.julianDate))
                 PlanetariumSelectionCard(controller: controller, state: controller.selectionState)
-                PlanetariumTimeControls(context: context, controller: controller)
+                PlanetariumTimeControls(context: context, controller: controller, live: $live, now: $now, julianDateProvider: { effectiveJulianDate })
             }
             .padding(20)
             if let error = controller.errorMessage {
@@ -98,7 +114,7 @@ struct PlanetariumView: View {
         }
         .foregroundStyle(AppTheme.text).tint(AppTheme.accent).preferredColorScheme(.dark)
         .onAppear {
-            controller.configure(context: context, julianDate: (context.passSnapshots.pass.rise.julianDate + context.passSnapshots.pass.set.julianDate) / 2)
+            controller.configure(context: context, julianDate: live ? effectiveJulianDate : (context.passSnapshots.pass.rise.julianDate + context.passSnapshots.pass.set.julianDate) / 2)
             controller.setOverlays(labels: labels, lines: lines)
             controller.setActive(true)
             controller.setMotionEnabled(true)
@@ -167,18 +183,20 @@ private struct PlanetariumStationIndicator: View {
     let controller: PlanetariumController
     @ObservedObject var navigation: PlanetariumNavigationState
     let stationName: String
+    let passingNow: Bool
     var body: some View {
                 Color.clear
                     .overlay {
                         GeometryReader { geometry in
                             if let bearing = navigation.bearing {
                                 let dx = sin(bearing), dy = -cos(bearing)
-                                let halfWidth = max(0, geometry.size.width / 2 - 24)
-                                let halfHeight = max(0, geometry.size.height / 2 - 24)
+                                let halfWidth = max(0, geometry.size.width / 2 - (passingNow ? 90 : 24))
+                                let halfHeight = max(0, geometry.size.height / 2 - (passingNow ? 48 : 24))
                                 let distance = min(halfWidth / max(0.0001, abs(dx)), halfHeight / max(0.0001, abs(dy)))
                                 Button {
                                     controller.animateToSatellite()
                                 } label: {
+                                    VStack(spacing: 4) {
                                     StationDirectionArrow()
                                         .fill(.white.opacity(0.62))
                                         .frame(width: 26, height: 32)
@@ -186,10 +204,15 @@ private struct PlanetariumStationIndicator: View {
                                         .shadow(color: .black.opacity(0.35), radius: 4, y: 2)
                                         .frame(width: 48, height: 48)
                                         .contentShape(Rectangle())
+                                    if passingNow {
+                                        PlanetariumPassingNowBadge(stationName: stationName)
+                                    }
+                                    }
+                                    .frame(width: passingNow ? 180 : 48)
                                 }
                                 .buttonStyle(.plain)
                                 .accessibilityLabel(AppLocalization.text("Find satellite"))
-                                .accessibilityValue(stationName)
+                                .accessibilityValue(passingNow ? String(format: AppLocalization.text("%@ passing now"), stationName) : stationName)
                                 .accessibilityIdentifier("planetarium.offscreenStation")
                                 .position(x: geometry.size.width / 2 + dx * distance,
                                           y: geometry.size.height / 2 + dy * distance)
@@ -199,14 +222,36 @@ private struct PlanetariumStationIndicator: View {
     }
 }
 
+/// A small sweep of light draws attention without flashing or invalidating the sky renderer.
+private struct PlanetariumPassingNowBadge: View {
+    let stationName: String
+    private let coral = PassingNowShimmer.coral
+
+    private var label: some View {
+        Text(String(format: AppLocalization.text("%@ passing now"), stationName))
+            .font(.caption.weight(.semibold))
+            .multilineTextAlignment(.center)
+            .padding(.horizontal, 10).padding(.vertical, 5)
+    }
+
+    var body: some View {
+        label
+            .modifier(PassingNowShimmer())
+            .background(coral.opacity(0.15), in: Capsule())
+            .background(.ultraThinMaterial, in: Capsule())
+            .overlay { Capsule().strokeBorder(coral.opacity(0.55), lineWidth: 1) }
+    }
+}
+
 private struct PlanetariumTimeControls: View {
     let context: PassViewContext
     let controller: PlanetariumController
     @Environment(\.scenePhase) private var scenePhase
     @State private var progress = 0.5
     @State private var playing = false
-    @State private var live = false
-    @State private var now = Date()
+    @Binding var live: Bool
+    @Binding var now: Date
+    let julianDateProvider: () -> Double
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     private let timer = Timer.publish(every: 1 / 30, on: .main, in: .common).autoconnect()
     private var julianDate: Double {
@@ -260,7 +305,7 @@ private struct PlanetariumTimeControls: View {
                 .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
         .onChange(of: live) { _, value in
             playing = false
-            if value { now = Date(julianDate: context.julianDateProvider()) }
+            if value { now = Date(julianDate: julianDateProvider()) }
             controller.setPreviewPlayback(playing: false, date: julianDate, end: context.passSnapshots.pass.set.julianDate, trackingSelection: !value)
         }
         .onChange(of: playing) { _, value in
@@ -275,7 +320,7 @@ private struct PlanetariumTimeControls: View {
         .onReceive(timer) { _ in
             guard scenePhase == .active else { return }
             if live {
-                let next = Date(julianDate: context.julianDateProvider())
+                let next = Date(julianDate: julianDateProvider())
                 if floor(next.timeIntervalSince1970) != floor(now.timeIntervalSince1970) { now = next }
                 // Keep the label at 1 Hz, but interpolate the orbit at every tick.
                 controller.updateTime(next.julianDate)

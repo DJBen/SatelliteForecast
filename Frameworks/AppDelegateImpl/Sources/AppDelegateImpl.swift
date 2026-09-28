@@ -14,6 +14,7 @@ import SatelliteForecast
 import SatelliteForecastImpl
 import SatelliteKit
 import FirebaseCore
+import FirebaseAppCheck
 import FirebaseMessaging
 import FirebaseFirestore
 
@@ -42,6 +43,9 @@ public class AppDelegateImpl: NSObject, AppDelegateProtocol, MessagingHandlerPro
         UNUserNotificationCenter.current().delegate = self
         
         // Initialize Firebase
+        #if !targetEnvironment(simulator)
+        AppCheck.setAppCheckProviderFactory(StationAppCheckProviderFactory())
+        #endif
         FirebaseApp.configure()
         Messaging.messaging().delegate = self
         
@@ -139,5 +143,11 @@ extension AppDelegateImpl: UNUserNotificationCenterDelegate {
     
     public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         didReceive(response: response, withCompletionHandler: completionHandler)
+    }
+}
+
+private final class StationAppCheckProviderFactory: NSObject, AppCheckProviderFactory {
+    func createProvider(with app: FirebaseApp) -> AppCheckProvider? {
+        AppAttestProvider(app: app)
     }
 }

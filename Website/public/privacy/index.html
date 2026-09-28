@@ -64,7 +64,7 @@
 
       <h2 id="collect">What we collect</h2>
       <p><strong>Location.</strong> The coordinates you choose in the app, either your device's current location or a place you search for. See the Location section.</p>
-      <p><strong>Push notification token.</strong> An identifier Apple assigns to your device so we can send reminders. It is created only after you allow notifications.</p>
+      <p><strong>Push notification token.</strong> Delivery identifiers used by Apple and Firebase to send the reminders or Live Activity updates you request.</p>
       <p><strong>Device settings.</strong> Time zone offset, language and region, app version and whether the build is a release or debug build. These make reminders arrive at the right local time in the right language.</p>
       <p><strong>Usage analytics.</strong> Which screens are opened, how long forecasts take to load, and whether reminders were enabled. See the Analytics section.</p>
       <p><strong>What we do not collect.</strong> Your name, email address, contacts, photos, search text, the exact satellites you browse, or any advertising identifier.</p>
@@ -76,6 +76,8 @@
 
       <h2 id="notifications">Reminders and push notifications</h2>
       <p>Reminders come in two forms. <strong>Local alarms</strong> for a specific pass are scheduled by iOS on your device and involve no server. <strong>Station reminders</strong> for the ISS and Tiangong are sent by our server about five minutes before a visible pass. They contain the local start time, the direction and the peak elevation, and nothing else. We never send advertising or promotions.</p>
+
+      <p><strong>Live Activities.</strong> When you follow a pass with the eye button, the app sends a per-activity delivery token, a Firebase delivery token, the pass schedule and its sunlight/shadow intervals to our server. This lets the Live Activity update while the app is in the background. This registration contains no coordinates or satellite name. Firebase App Check verifies that registration requests come from the app. Delivery tokens are removed when the activity ends or its cancellation reaches the server; expiring records are also automatically cleaned up. A cancellation receipt may remain for up to two days, plus the database cleanup delay.</p>
 
       <h2 id="analytics">Analytics</h2>
       <p>We use Firebase Analytics to understand which parts of the app are used and how quickly they load. Events carry fixed labels, counts and timings only. They never include coordinates, place names, search text, satellite names, notification identifiers or error text. Firebase attaches its standard device and session metadata, such as device model, OS version and country derived from IP address.</p>

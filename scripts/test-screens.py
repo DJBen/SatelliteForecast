@@ -24,7 +24,7 @@ try:
         'xcodebuildmcp', 'simulator', 'test', '--project-path', str(root / 'SatelliteForecast.xcodeproj'),
         '--scheme', 'SatelliteForecastApp', '--simulator-id', args.simulator,
         '--derived-data-path', args.derived_data,
-        '--json', json.dumps({'extraArgs': ['-disableAutomaticPackageResolution', '-onlyUsePackageVersionsFromResolvedFile', '-skipPackageUpdates'] + (['-skip-testing:SatelliteForecastTests/ScreenSnapshotTests'] if args.behavior_only else [])}),
+        '--json', json.dumps({'extraArgs': ['-disableAutomaticPackageResolution', '-onlyUsePackageVersionsFromResolvedFile', '-skipPackageUpdates', '-parallel-testing-enabled', 'NO', '-collect-test-diagnostics', 'never'] + (['-skip-testing:SatelliteForecastTests/ScreenSnapshotTests'] if args.behavior_only else [])}),
     ], cwd=root, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     print(result.stdout)
     # The MCP CLI may exit zero even when the underlying test operation fails.

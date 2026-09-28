@@ -427,6 +427,100 @@ final class ScreenSnapshotTests: XCTestCase {
         XCTFail("Interactive review timed out")
     }
 
+    func testPlanetariumDebugClockAndLiveEntry() async throws {
+        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let pass = try XCTUnwrap(fixture.passes.first { $0.pass.visibility == .visible })
+        let rise = pass.pass.rise.julianDate, set = pass.pass.set.julianDate
+        let target = pass.pass.culmination.julianDate
+        let real = target - 2
+        let debug = DebugModel()
+        debug.config.mockedOffsetOn = true
+        debug.config.mockedOffset = 2
+        XCTAssertEqual(debug.config.julianDate(at: real), target)
+        XCTAssertEqual(debug.config.julianDate(at: real + 1), target + 1)
+        debug.config.frozenAt = target
+        XCTAssertEqual(debug.config.julianDate(at: real + 1), target)
+        let context = PassViewContext(passIndex: 0, satelliteInfo: fixture.info, satelliteCommonName: "ISS",
+            category: .iss, julianDateRange: fixture.range, observer: fixture.observer, passSnapshots: pass,
+            starManager: fixture.catalog, julianDateProvider: { real })
+        XCTAssertFalse(PlanetariumView.isPassing(context: context, at: rise - 1 / 86400))
+        XCTAssertTrue(PlanetariumView.isPassing(context: context, at: rise))
+        XCTAssertTrue(PlanetariumView.isPassing(context: context, at: debug.config.julianDate(at: real)))
+        XCTAssertFalse(PlanetariumView.isPassing(context: context, at: set))
+        var forecastClock = Date(julianDate: real)
+        let model = ForecastModel(client: .init(load: { station, _ in station == .iss ? [pass.pass] : [] }, now: { forecastClock }))
+        let input = ForecastInput(observer: fixture.observer, frozenJulianDate: target)
+        await model.refresh(input)
+        XCTAssertEqual(model.upcomingPasses.first, pass.pass)
+        forecastClock = Date(julianDate: set + 10)
+        await model.refresh(input)
+        XCTAssertEqual(model.upcomingPasses.first, pass.pass, "A frozen pass must not expire with real time")
+        let controller = PlanetariumController()
+        let view = PlanetariumView(context: context, controller: controller, debug: debug)
+            .task {
+                try? await Task.sleep(for: .milliseconds(500))
+                controller.setMotionEnabled(false)
+                controller.pointCamera(azimuth: pass.pass.culmination.azim + 110, elevation: 30)
+            }
+        try await assertSnapshot(AnyView(view), name: "19-planetarium-frozen-now-dark", style: .dark, record: true)
+        XCTAssertEqual(debug.config.julianDate(at: real + 10), target)
+        debug.send(.setMockedDateOffset(3))
+        XCTAssertEqual(try XCTUnwrap(debug.config.frozenAt), Date().julianDate + 3, accuracy: 1 / 86400)
+        debug.send(.toggleFreezeTime(false))
+        XCTAssertEqual(debug.config.julianDate(at: real), real + 3)
+        debug.send(.toggleMockedOffset(false))
+        XCTAssertEqual(debug.config.julianDate(at: real), real)
+    }
+
+    func testObservationHomeLivePosition() async throws {
+        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let featured = try XCTUnwrap(fixture.passes.first {
+            $0.pass.visibility == .visible && ($0.pass.highestIlluminated?.elev ?? 0) > 30
+                && $0.pass.sunElevationAtTransit < -10
+        })
+        let pass = featured.pass
+        let start = ObservationOpportunity.start(pass), end = ObservationOpportunity.end(pass)
+        XCTAssertFalse(ObservationOpportunity.isOccurring(pass, now: start - 1 / 86400))
+        XCTAssertTrue(ObservationOpportunity.isOccurring(pass, now: start))
+        XCTAssertFalse(ObservationOpportunity.isOccurring(pass, now: end))
+        let samples = featured.snapshots.filter { $0.julianDate >= pass.rise.julianDate && $0.julianDate <= pass.set.julianDate }
+        let i = samples.count / 3
+        let midpoint = (samples[i].julianDate + samples[i + 1].julianDate) / 2
+        let position = try XCTUnwrap(ObservationTrackPosition(samples: samples, date: midpoint))
+        XCTAssertEqual(position.index, i)
+        XCTAssertEqual(position.fraction, 0.5, accuracy: 0.0001)
+        XCTAssertEqual(position.elevation, (samples[i].position.elev + samples[i + 1].position.elev) / 2, accuracy: 0.001)
+        XCTAssertNil(ObservationTrackPosition(samples: [], date: midpoint))
+        XCTAssertNil(ObservationTrackPosition(samples: samples, date: .nan))
+        var clock = Date(julianDate: start - 60 / 86400)
+        let model = ForecastModel(client: .init(load: { station, _ in station == .iss ? [pass] : [] }, now: { clock }))
+        let context = SatelliteOverviewViewContext(starManager: fixture.catalog, julianDateProvider: { clock.julianDate })
+        var elevations: [String: Double] = [:]
+        for (name, time) in [("upcoming", start - 60 / 86400), ("rising", start + (end - start) * 0.2),
+                             ("setting", start + (end - start) * 0.8)] {
+            clock = Date(julianDate: time)
+            await model.refresh(.init(observer: fixture.observer))
+            XCTAssertEqual(model.upcomingPasses.first, pass)
+            let home = ObservationHomeView(session: fixture.session, model: model, context: context,
+                initialPreview: .init(info: fixture.info, snapshots: featured))
+            try await assertSnapshot(AnyView(home), name: "observation-live-\(name)-dark", style: .dark, record: true)
+            XCTAssertEqual(model.currentDate.julianDate, time, accuracy: 1e-8)
+            let expectedPosition = try XCTUnwrap(ObservationTrackPosition(samples: samples, date: time))
+            elevations[name] = expectedPosition.elevation
+            XCTAssertEqual(fixture.session.debug.config.effectiveOffset, 0)
+            if name == "setting" {
+                try await assertSnapshot(AnyView(home.environment(\.dynamicTypeSize, .accessibility2)),
+                    name: "observation-live-large-text-dark", style: .dark, record: true)
+            }
+        }
+        if let folder = ProcessInfo.processInfo.environment["SNAPSHOT_OUTPUT"] {
+            try JSONEncoder().encode(elevations).write(to: URL(fileURLWithPath: folder).appendingPathComponent("live-elevations.json"))
+        }
+        clock = Date(julianDate: end + 1 / 86400)
+        await model.refresh(.init(observer: fixture.observer))
+        XCTAssertTrue(model.upcomingPasses.isEmpty, "An ended observation must leave the live card")
+    }
+
     func testObservationHomeDarkReview() async throws {
         let catalog = try await AppStarCatalog.load()
         let fixture = try Fixture(catalog: catalog, now: Date(timeIntervalSince1970: 1789002000), tle: [

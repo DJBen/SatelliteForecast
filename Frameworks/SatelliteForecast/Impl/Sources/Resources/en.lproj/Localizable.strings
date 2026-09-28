@@ -373,3 +373,10 @@
 "Hide reminder button" = "Hide reminder button";
 "Open notification settings" = "Open notification settings";
 "Example: a recorded ISS pass over San Francisco Bay" = "Example: a recorded ISS pass over San Francisco Bay";
+
+/* Real-time position on the home observation arc. */
+"Live position" = "Live position";
+"Elevation %d°" = "Elevation %d°";
+"Live satellite position. Solid trail: traveled. Dotted trail: still ahead. Gray: in Earth’s shadow." = "Live satellite position. Solid trail: traveled. Dotted trail: still ahead. Gray: in Earth’s shadow.";
+
+"%@ passing now" = "%@ passing now";

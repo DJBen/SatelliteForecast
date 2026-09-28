@@ -11,13 +11,14 @@ struct ObservationSkyPreview: View {
     let session: AppSession
     /// Home keeps the sky above the pass, dissolving toward the top edge.
     var extendsSkyUpward = false
+    var liveJulianDate: Double? = nil
     var isActive = true
     var reviewProgress: Double? = nil
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.scenePhase) private var scenePhase
     @State private var started = Date()
 
-    private var paused: Bool { reduceMotion || SnapshotEnvironment.isEnabled || !isActive || scenePhase != .active }
+    private var paused: Bool { liveJulianDate != nil || reduceMotion || SnapshotEnvironment.isEnabled || !isActive || scenePhase != .active }
     private var pass: Pass { preview.snapshots.pass }
     private var samples: [SatelliteSnapshot] {
         preview.snapshots.snapshots.filter { $0.julianDate >= pass.rise.julianDate && $0.julianDate <= pass.set.julianDate }
@@ -79,11 +80,17 @@ struct ObservationSkyPreview: View {
                     context.stroke(horizon, with: .color(AppTheme.muted.opacity(0.5)),
                         style: StrokeStyle(lineWidth: 1, lineCap: .round, dash: [1, 5]))
                 }
-                TimelineView(.animation(minimumInterval: 1.0 / 30, paused: paused)) { timeline in
-                    let progress = reviewProgress ?? (paused ? 0.58 : min(1, max(0, timeline.date.timeIntervalSince(started))
-                        .truncatingRemainder(dividingBy: 15) / 12))
+                if liveJulianDate != nil {
                     Canvas { context, _ in
-                        drawOrbit(context: &context, points: points, samples: samples, progress: progress)
+                        drawOrbit(context: &context, points: points, samples: samples, progress: 0, size: geometry.size)
+                    }
+                } else {
+                    TimelineView(.animation(minimumInterval: 1.0 / 30, paused: paused)) { timeline in
+                        let progress = reviewProgress ?? (paused ? 0.58 : min(1, max(0, timeline.date.timeIntervalSince(started))
+                            .truncatingRemainder(dividingBy: 15) / 12))
+                        Canvas { context, _ in
+                            drawOrbit(context: &context, points: points, samples: samples, progress: progress, size: geometry.size)
+                        }
                     }
                 }
                 endpoint(pass.rise, projection: projection)
@@ -94,9 +101,17 @@ struct ObservationSkyPreview: View {
         .environment(\.colorScheme, .dark)
         .allowsHitTesting(false)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text("Pass animation preview. Solid trail: traveled in the preview. Dotted trail: still ahead. Gray: in Earth’s shadow.", bundle: .module))
+        .accessibilityLabel(Text(liveJulianDate == nil
+            ? "Pass animation preview. Solid trail: traveled in the preview. Dotted trail: still ahead. Gray: in Earth’s shadow."
+            : "Live satellite position. Solid trail: traveled. Dotted trail: still ahead. Gray: in Earth’s shadow.", bundle: .module))
+        .accessibilityValue(liveElevationLabel)
         .onChange(of: isActive) { _, active in if active { started = Date() } }
         .onChange(of: scenePhase) { _, phase in if phase == .active { started = Date() } }
+    }
+
+    private var liveElevationLabel: String {
+        guard let date = liveJulianDate, let position = ObservationTrackPosition(samples: samples, date: date) else { return "" }
+        return AppLocalization.format("Elevation %d°", Int(position.elevation.rounded()))
     }
 
     private static let minimumBodyElevation = 2.0
@@ -109,11 +124,11 @@ struct ObservationSkyPreview: View {
             .position(x: point.x, y: point.y + 19)
     }
 
-    private func drawOrbit(context: inout GraphicsContext, points: [CGPoint], samples: [SatelliteSnapshot], progress: Double) {
+    private func drawOrbit(context: inout GraphicsContext, points: [CGPoint], samples: [SatelliteSnapshot], progress: Double, size: CGSize) {
         guard points.count > 1, let first = samples.first, let last = samples.last else { return }
-        let time = first.julianDate + progress * (last.julianDate - first.julianDate)
-        let index = min(samples.firstIndex(where: { $0.julianDate >= time }).map { max(0, $0 - 1) } ?? (samples.count - 2), samples.count - 2)
-        let fraction = min(1, max(0, (time - samples[index].julianDate) / max(1e-9, samples[index + 1].julianDate - samples[index].julianDate)))
+        let time = liveJulianDate ?? (first.julianDate + progress * (last.julianDate - first.julianDate))
+        guard let position = ObservationTrackPosition(samples: samples, date: time) else { return }
+        let index = position.index, fraction = position.fraction
         let cursor = CGPoint(x: points[index].x + (points[index + 1].x - points[index].x) * fraction,
                              y: points[index].y + (points[index + 1].y - points[index].y) * fraction)
         let traits = UITraitCollection(userInterfaceStyle: .dark)
@@ -163,6 +178,18 @@ struct ObservationSkyPreview: View {
             }
         }
         context.fill(Path(ellipseIn: CGRect(x: cursor.x - 3.5, y: cursor.y - 3.5, width: 7, height: 7)), with: .color(lit ? .white : color(false)))
+        if liveJulianDate != nil {
+            let label = Text(AppLocalization.format("Elevation %d°", Int(position.elevation.rounded())))
+                .font(.caption2.weight(.semibold)).monospacedDigit().foregroundStyle(.white)
+            let resolved = context.resolve(label)
+            let labelSize = resolved.measure(in: size)
+            let x = min(size.width - labelSize.width / 2 - 5, max(labelSize.width / 2 + 5, cursor.x))
+            let y = max(labelSize.height / 2 + 5, cursor.y - 20)
+            let box = CGRect(x: x - labelSize.width / 2 - 5, y: y - labelSize.height / 2 - 3,
+                             width: labelSize.width + 10, height: labelSize.height + 6)
+            context.fill(Path(roundedRect: box, cornerRadius: 5), with: .color(AppTheme.background.opacity(0.85)))
+            context.draw(resolved, at: CGPoint(x: x, y: y))
+        }
     }
 }
 
@@ -281,5 +308,21 @@ struct ObservationSkyProjection: Hashable, Sendable {
         let depth = f * cos(Self.pitch) - u * sin(Self.pitch)
         let horizontal = right * r + front * depth
         return SIMD3(horizontal.x, horizontal.y, f * sin(Self.pitch) + u * cos(Self.pitch))
+    }
+}
+
+/// Interpolate the cached orbital track by timestamp, never by animation phase.
+struct ObservationTrackPosition {
+    let index: Int
+    let fraction: Double
+    let elevation: Double
+
+    init?(samples: [SatelliteSnapshot], date: Double) {
+        guard samples.count >= 2, date.isFinite else { return nil }
+        index = min(samples.firstIndex(where: { $0.julianDate >= date }).map { max(0, $0 - 1) }
+                    ?? (samples.count - 2), samples.count - 2)
+        let a = samples[index], b = samples[index + 1]
+        fraction = min(1, max(0, (date - a.julianDate) / max(1e-9, b.julianDate - a.julianDate)))
+        elevation = a.position.elev + (b.position.elev - a.position.elev) * fraction
     }
 }

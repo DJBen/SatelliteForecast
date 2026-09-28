@@ -5,7 +5,7 @@ The replace script uploads in filename order. When the store order differs (2.0.
 with the widget slot), use this script instead: it copies the slot PNGs into a temporary
 directory named by position, replaces the locale's APP_IPHONE_67 set, and verifies that
 the remote checksums come back in the requested order and COMPLETE. Locales whose remote
-set already matches are skipped. Only PREPARE_FOR_SUBMISSION drafts are touched.
+set already matches are skipped. Only PREPARE_FOR_SUBMISSION and DEVELOPER_REJECTED drafts are touched.
 """
 import argparse
 import hashlib
@@ -46,8 +46,8 @@ def remote(loc):
 version = asc('versions', 'view', '--version-id', inv['versionId'])
 data = version.get('data', version)
 state = data.get('state', data.get('attributes', {}).get('appStoreState'))
-if state != 'PREPARE_FOR_SUBMISSION':
-    raise RuntimeError(f'Version is {state}, not a prepare-for-submission draft')
+if state not in {'PREPARE_FOR_SUBMISSION', 'DEVELOPER_REJECTED'}:
+    raise RuntimeError(f'Version is {state}, not an editable draft')
 
 results = {}
 for loc in inv['locales']:
@@ -77,4 +77,7 @@ for loc in inv['locales']:
         raise RuntimeError(f'{loc}: order or processing not verified')
     print(f'{loc}: verified {len(order)} images, order and checksums', flush=True)
 if results:
-    (root / 'reorder-results.json').write_text(json.dumps(results, indent=1) + '\n')
+    results_path = root / 'reorder-results.json'
+    previous = json.loads(results_path.read_text()) if results_path.exists() else {}
+    previous.update(results)
+    results_path.write_text(json.dumps(previous, indent=1) + '\n')

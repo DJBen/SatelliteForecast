@@ -732,3 +732,10 @@ The localized string for the status of a spare satellite */
 "Hide reminder button" = "隐藏提醒按钮";
 "Open notification settings" = "打开通知设置";
 "Example: a recorded ISS pass over San Francisco Bay" = "示例：旧金山湾上空的一次国际空间站过境记录";
+
+/* Real-time position on the home observation arc. */
+"Live position" = "实时位置";
+"Elevation %d°" = "仰角 %d°";
+"Live satellite position. Solid trail: traveled. Dotted trail: still ahead. Gray: in Earth’s shadow." = "卫星实时位置。实线：已通过的轨迹。虚线：尚未通过的轨迹。灰色：位于地球阴影中。";
+
+"%@ passing now" = "%@ 正在过境";

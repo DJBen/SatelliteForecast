@@ -732,3 +732,10 @@ The localized string for the status of a spare satellite */
 "Hide reminder button" = "Скрыть кнопку напоминания";
 "Open notification settings" = "Открыть настройки уведомлений";
 "Example: a recorded ISS pass over San Francisco Bay" = "Пример: записанный пролёт МКС над заливом Сан-Франциско";
+
+/* Real-time position on the home observation arc. */
+"Live position" = "Положение сейчас";
+"Elevation %d°" = "Высота %d°";
+"Live satellite position. Solid trail: traveled. Dotted trail: still ahead. Gray: in Earth’s shadow." = "Текущее положение спутника. Сплошная линия: пройденный путь. Пунктир: предстоящий путь. Серый: в тени Земли.";
+
+"%@ passing now" = "%@ пролетает сейчас";

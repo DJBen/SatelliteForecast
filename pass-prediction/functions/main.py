@@ -275,3 +275,15 @@ def refresh_all_user_transits(event) -> None:
         'regions': len(regions), 'queued': queued, 'eligible_users': eligible, 'stale_regions': len(stale)})
     logger.info('prediction_dispatch_completed', users=users, eligible_users=eligible,
                 regions=len(regions), stale_regions=len(stale), queued=queued)
+
+
+@https_fn.on_request(max_instances=5, timeout_sec=60)
+def register_live_activity(request: https_fn.Request):
+    from common.live_activity_backend import handle_registration
+    return handle_registration(request, db, cloud_task_client, PROJECT_ID)
+
+
+@https_fn.on_request(invoker='private', max_instances=5, timeout_sec=30)
+def deliver_live_activity(request: https_fn.Request):
+    from common.live_activity_backend import handle_delivery
+    return handle_delivery(request, db)

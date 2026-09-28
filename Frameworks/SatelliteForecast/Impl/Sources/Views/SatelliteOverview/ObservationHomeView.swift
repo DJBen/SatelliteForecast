@@ -42,9 +42,10 @@ struct ObservationHomeView: View {
     private var input: ForecastInput {
         .init(observer: session.location.resources.location.map(LatLonAlt.init),
             julianDateOffset: session.debug.config.effectiveOffset,
+            frozenJulianDate: session.debug.config.frozenAt,
             authorizationStatus: session.location.resources.authorizationStatus)
     }
-    private var now: Double { model.currentDate.julianDate + input.julianDateOffset }
+    private var now: Double { session.debug.config.julianDate(at: model.currentDate.julianDate) }
     private var passes: [Pass] { model.upcomingPasses }
     private var request: PreviewKey { .init(pass: passes.first, observer: input.observer, attempt: previewAttempt) }
     private var currentPreview: ObservationPreview? { previewKey == request ? preview : nil }
@@ -141,28 +142,36 @@ struct ObservationHomeView: View {
     }
 
     private func hero(_ pass: Pass) -> some View {
-        VStack(spacing: 0) {
+        let live = ObservationOpportunity.isOccurring(pass, now: now)
+        return VStack(spacing: 0) {
             Button { open(pass) } label: {
                 VStack(alignment: .leading, spacing: 9) {
-                    ViewThatFits(in: .horizontal) {
-                        HStack(alignment: .firstTextBaseline, spacing: 9) {
-                            Text(dayLabel(pass))
-                            Text(date(pass), format: .dateTime.hour().minute())
+                    if live {
+                        Text(AppLocalization.text("PassPreviewCell.relativeDate.passing"))
+                            .font(.system(.title, design: .rounded, weight: .bold))
+                            .modifier(PassingNowShimmer())
+                            .accessibilityIdentifier("observation.passingNow")
+                    } else {
+                        ViewThatFits(in: .horizontal) {
+                            HStack(alignment: .firstTextBaseline, spacing: 9) {
+                                Text(dayLabel(pass))
+                                Text(date(pass), format: .dateTime.hour().minute())
+                            }
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(dayLabel(pass))
+                                Text(date(pass), format: .dateTime.hour().minute())
+                            }
                         }
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(dayLabel(pass))
-                            Text(date(pass), format: .dateTime.hour().minute())
-                        }
+                        .font(.system(.title, design: .rounded, weight: .bold))
+                        .foregroundStyle(AppTheme.text)
+                        .fixedSize(horizontal: false, vertical: true)
                     }
-                    .font(.system(.title, design: .rounded, weight: .bold))
-                    .foregroundStyle(AppTheme.text)
-                    .fixedSize(horizontal: false, vertical: true)
                     Text(ObservationOpportunity.name(pass)).font(.headline).foregroundStyle(AppTheme.text)
                     Text(summary(pass)).font(.subheadline).foregroundStyle(AppTheme.muted)
                         .fixedSize(horizontal: false, vertical: true)
                     if let preview = currentPreview, let observer = input.observer {
                         ObservationSkyPreview(preview: preview, observer: observer, session: session,
-                            extendsSkyUpward: true,
+                            extendsSkyUpward: true, liveJulianDate: live ? now : nil,
                             isActive: isVisible && skyIsVisible && !showsLocation && session.navigation.forecastPath.isEmpty && session.navigation.deepLink == nil)
                             .frame(height: dynamicType.isAccessibilitySize ? 180 : 194)
                             .onScrollVisibilityChange(threshold: 0.1) { skyIsVisible = $0 }
@@ -183,8 +192,18 @@ struct ObservationHomeView: View {
                 Button(AppLocalization.text("Retry preview")) { previewAttempt += 1 }
                     .padding(.bottom, 10)
             }
-            reminderButton(pass)
+            if live {
+                HStack(spacing: 6) {
+                    Circle().fill(AppTheme.accent).frame(width: 6, height: 6)
+                    Text("Live position", bundle: .module).font(.caption.weight(.medium))
+                    Spacer()
+                }
+                .foregroundStyle(AppTheme.accent)
                 .padding(.top, 4)
+            } else {
+                reminderButton(pass)
+                    .padding(.top, 4)
+            }
         }
         .padding(20)
         .background {

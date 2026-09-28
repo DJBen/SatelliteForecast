@@ -33,8 +33,12 @@ public final class DebugModel {
     switch action {
     case .toggleDebugMenu(let value): config.isDebugMenuVisible = value
     case .toggleFreezeTime(let value): config.frozenAt = value ? now + config.effectiveOffset : nil
-    case .toggleMockedOffset(let value): config.mockedOffsetOn = value
-    case .setMockedDateOffset(let value): config.mockedOffset = value
+    case .toggleMockedOffset(let value):
+      config.mockedOffsetOn = value
+      if config.frozenAt != nil { config.frozenAt = now + config.effectiveOffset }
+    case .setMockedDateOffset(let value):
+      config.mockedOffset = value
+      if config.frozenAt != nil { config.frozenAt = now + config.effectiveOffset }
     case .toggleRapidNotificationDelivery(let value): config.rapidNotificationDelivery = value
     case .fetchNotifications: Task { await session?.notifications.refresh() }
     case .triggerPassDeepLink(let category, let id):

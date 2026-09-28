@@ -40,7 +40,7 @@
 "live.arcAccessibility" = "От %@ до %@, максимальная высота %d°";
 "live.sunlit" = "Освещён";
 "live.shadow" = "Тень";
-"live.follow" = "Следить за пролётом";
+"live.follow" = "Следить в реальном времени";
 "live.stop" = "Остановить Live Activity";
 "live.disabled" = "Включите Live Activities в настройках, чтобы следить за пролётом.";
 "live.expired" = "Время наблюдения этого пролёта закончилось.";

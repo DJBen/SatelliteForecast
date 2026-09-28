@@ -37,7 +37,7 @@ try:
         subprocess.run(['xcrun', 'simctl', 'status_bar', args.simulator, 'override', '--time', '9:41',
                         '--dataNetwork', 'wifi', '--wifiMode', 'active', '--wifiBars', '3',
                         '--batteryState', 'discharging', '--batteryLevel', '100'], check=True)
-        extra = ['-disableAutomaticPackageResolution', '-onlyUsePackageVersionsFromResolvedFile', '-skipPackageUpdates',
+        extra = ['-disableAutomaticPackageResolution', '-onlyUsePackageVersionsFromResolvedFile', '-skipPackageUpdates', '-parallel-testing-enabled', 'NO', '-collect-test-diagnostics', 'never',
                  '-only-testing:SatelliteForecastTests/ScreenSnapshotTests/testAppStoreScreenshots']
         folder = args.output / locale
         folder.mkdir(exist_ok=True)

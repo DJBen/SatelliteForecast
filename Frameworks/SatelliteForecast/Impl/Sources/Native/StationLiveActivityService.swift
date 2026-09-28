@@ -11,6 +11,14 @@ public final class StationLiveActivityService {
     public private(set) var followedID: String?
     public private(set) var busy = false
     public var errorKey: String?
+    private let push = StationLiveActivityPush()
+    private var tokenObservers: [String: Task<Void, Never>] = [:]
+    #if DEBUG
+    private var reviewStarted = false
+    private var reviewObserver: Task<Void, Never>?
+    private var isPushReview: Bool { ProcessInfo.processInfo.arguments.contains("-liveActivityPushReview") }
+    #endif
+    private var stateObservers: [String: Task<Void, Never>] = [:]
     public init() { followedID = activities.first?.attributes.passID }
     private var activities: [Activity<StationPassActivity>] {
         Activity.activities.filter { $0.activityState != .ended && $0.activityState != .dismissed }
@@ -38,21 +46,26 @@ public final class StationLiveActivityService {
             if start > now {
                 let name = WidgetStrings.text(pass.station == 25544 ? "iss.compact" : "tiangong", locale: .current)
                 let body = WidgetStrings.text("live.startAlert", locale: .current)
-                _ = try Activity.request(attributes: pass, content: content, style: .standard,
+                _ = try Activity.request(attributes: pass, content: content, pushType: .token, style: .standard,
                     alertConfiguration: .init(title: LocalizedStringResource(stringLiteral: name),
                         body: LocalizedStringResource(stringLiteral: body), sound: .default), start: start)
             } else {
-                _ = try Activity.request(attributes: pass, content: content, pushType: nil)
+                _ = try Activity.request(attributes: pass, content: content, pushType: .token)
             }
             followedID = pass.passID
+            await synchronizePush()
         } catch { errorKey = "live.failed" }
     }
     public func stop() async {
         errorKey = nil
         for activity in activities { await activity.end(nil, dismissalPolicy: .immediate) }
         followedID = nil
+        await push.synchronize([])
     }
     public func invalidateIfMoved(to location: CLLocation?) async {
+        #if DEBUG
+        if isPushReview { return }
+        #endif
         guard let location else { return }
         for activity in activities {
             let items = URLComponents(url: activity.attributes.url, resolvingAgainstBaseURL: false)?.queryItems ?? []
@@ -63,8 +76,12 @@ public final class StationLiveActivityService {
             }
         }
         followedID = activities.first?.attributes.passID
+        await synchronizePush()
     }
     public func refresh() async {
+        #if DEBUG
+        if isPushReview { await synchronizePush(); return }
+        #endif
         let now = Date()
         for activity in activities where activity.activityState != .pending {
             let state = activity.attributes.state(at: now)
@@ -75,13 +92,72 @@ public final class StationLiveActivityService {
             }
         }
         followedID = activities.first(where: { $0.activityState != .ended && $0.activityState != .dismissed })?.attributes.passID
+        await synchronizePush()
+    }
+    private func synchronizePush() async {
+        let current = activities
+        let ids = Set(current.map(\.id))
+        for id in Array(tokenObservers.keys) where !ids.contains(id) {
+            tokenObservers.removeValue(forKey: id)?.cancel()
+            stateObservers.removeValue(forKey: id)?.cancel()
+        }
+        for activity in current where tokenObservers[activity.id] == nil {
+            tokenObservers[activity.id] = Task { [weak self] in
+                for await _ in activity.pushTokenUpdates {
+                    guard !Task.isCancelled else { return }
+                    await self?.synchronizePush()
+                }
+            }
+            stateObservers[activity.id] = Task { [weak self] in
+                for await _ in activity.activityStateUpdates {
+                    guard !Task.isCancelled else { return }
+                    await self?.refresh()
+                }
+            }
+        }
+        await push.synchronize(current)
     }
     public func runWhileActive() async {
+        #if DEBUG
+        if isPushReview, !reviewStarted { await startPushReview() }
+        #endif
         while !Task.isCancelled {
             await refresh()
             do { try await Task.sleep(for: .seconds(2)) } catch { return }
         }
     }
+    #if DEBUG
+    /// Opt-in physical-device smoke test. No local phase updates; all changes must arrive by APNs.
+    private func startPushReview() async {
+        reviewStarted = true
+        guard activities.isEmpty else { return }
+        let rise = Date().addingTimeInterval(45)
+        var pass = StationPassActivity.example(rise: rise)
+        pass.passID = "push-review-" + UUID().uuidString
+        pass.set = rise.addingTimeInterval(120)
+        pass.points = pass.points.map { .init(seconds: $0.seconds / 4, elevation: $0.elevation) }
+        pass.illuminated = [.init(start: rise.addingTimeInterval(30), end: rise.addingTimeInterval(90))]
+        do {
+            let activity = try Activity.request(attributes: pass,
+                content: .init(state: pass.state(at: Date()), staleDate: rise), pushType: .token)
+            followedID = pass.passID
+            let file = URL.documentsDirectory.appendingPathComponent("live-activity-push-review.json")
+            try Data("[]".utf8).write(to: file, options: .atomic)
+            reviewObserver = Task {
+                var receipts: [[String: String]] = []
+                for await content in activity.contentUpdates {
+                    receipts.append(["phase": content.state.phase.rawValue,
+                                     "receivedAt": Date().ISO8601Format()])
+                    if let data = try? JSONSerialization.data(withJSONObject: receipts, options: .prettyPrinted) {
+                        try? data.write(to: file, options: .atomic)
+                    }
+                }
+            }
+            await synchronizePush()
+        } catch { errorKey = "live.failed" }
+    }
+    #endif
+
     static func attributes(_ context: PassViewContext) throws -> StationPassActivity {
         let pass = context.passSnapshots.pass
         let intervals = ObservationOpportunity.visibleIntervals(pass)

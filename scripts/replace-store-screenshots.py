@@ -32,7 +32,7 @@ def screenshots(entry):
 version = asc('versions', 'view', '--version-id', manifest['versionId'])
 # Replacements must never target an already released version.
 version_data = version.get('data', version)
-if version_data.get('state', version_data.get('attributes', {}).get('appStoreState')) != 'PREPARE_FOR_SUBMISSION':
+if version_data.get('state', version_data.get('attributes', {}).get('appStoreState')) not in {'PREPARE_FOR_SUBMISSION', 'DEVELOPER_REJECTED'}:
     raise RuntimeError('Version is no longer a prepare-for-submission draft')
 
 plans = []

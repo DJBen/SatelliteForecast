@@ -105,3 +105,6 @@ iOSInjectionProject/
 __pycache__/
 /.asc/
 /.playwright-cli/
+
+# Local capture scratch space; reviewed release assets live under Documentation/AppStore.
+/output/
