@@ -1,0 +1,7 @@
+Sky Now is now a permanent second tab with a live 3D planetarium showing satellites currently above your horizon. Pan, zoom, follow your device, and select a passing satellite. Sky Now always follows the current time.
+
+For this build, Sky Now loads at most 100 bright low-Earth-orbit satellites. Switching tabs reuses the loaded catalog, and returning to Passes reuses fresh forecasts instead of recalculating them. Leaving a tab cancels unfinished work.
+
+Catalog metadata now uses an isolated SQLite actor and an in-memory cache. Orbital timestamp parsing is faster, and satellite inclination metadata has been corrected.
+
+Please test first load, switching tabs while loading, returning to Sky Now and Passes, location changes, background/foreground transitions, and offline use after a successful load.

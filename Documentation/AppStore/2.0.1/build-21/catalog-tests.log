@@ -1,0 +1,40 @@
+✅ Swift package tests completed.
+💡 Next: Execute your app with swift_package_run if tests passed
+Test Suite 'All tests' started at 2026-09-28 12:32:25.045.
+Test Suite 'SatelliteCatalogImpl_SQLiteTests.xctest' started at 2026-09-28 12:32:25.047.
+Test Suite 'SatCatTests' started at 2026-09-28 12:32:25.047.
+Test Case '-[SatelliteCatalogImpl_SQLiteTests.SatCatTests testReadingSatCat]' started.
+Test Case '-[SatelliteCatalogImpl_SQLiteTests.SatCatTests testReadingSatCat]' passed (3.683 seconds).
+Test Suite 'SatCatTests' passed at 2026-09-28 12:32:28.729.
+	 Executed 1 test, with 0 failures (0 unexpected) in 3.683 (3.683) seconds
+Test Suite 'UCSSatTests' started at 2026-09-28 12:32:28.729.
+Test Case '-[SatelliteCatalogImpl_SQLiteTests.UCSSatTests testDateConversation]' started.
+Test Case '-[SatelliteCatalogImpl_SQLiteTests.UCSSatTests testDateConversation]' passed (0.002 seconds).
+Test Case '-[SatelliteCatalogImpl_SQLiteTests.UCSSatTests testReadingUSCSat]' started.
+Test Case '-[SatelliteCatalogImpl_SQLiteTests.UCSSatTests testReadingUSCSat]' passed (0.304 seconds).
+Test Suite 'UCSSatTests' passed at 2026-09-28 12:32:29.036.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.306 (0.307) seconds
+Test Suite 'SatelliteCatalogImpl_SQLiteTests.xctest' passed at 2026-09-28 12:32:29.036.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 3.989 (3.989) seconds
+Test Suite 'All tests' passed at 2026-09-28 12:32:29.036.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 3.989 (3.991) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 2084
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite SatelliteMetadataStoreTests started.
+􀟈  Test inclinationAndUTCLaunchDatesMatchBundledData() started.
+􀟈  Test bundledLookupsUseIndexes() started.
+􀟈  Test cacheEvictionIsBoundedAndReloadsCorrectly() started.
+􀟈  Test warmCatalogAvoidsDatabaseAndDecoding() started.
+􀟈  Test concurrentReadersShareDecodedRecordsAndMissingResults() started.
+􀟈  Test cancelledLookupDoesNotPopulateCache() started.
+􁁛  Test bundledLookupsUseIndexes() passed after 0.003 seconds.
+􁁛  Test cancelledLookupDoesNotPopulateCache() passed after 0.005 seconds.
+􁁛  Test inclinationAndUTCLaunchDatesMatchBundledData() passed after 0.006 seconds.
+􁁛  Test concurrentReadersShareDecodedRecordsAndMissingResults() passed after 0.006 seconds.
+􁁛  Test cacheEvictionIsBoundedAndReloadsCorrectly() passed after 0.006 seconds.
+Metadata benchmark, 100 records: cold 0.025298833 seconds, warm 4.9625e-05 seconds
+􁁛  Test warmCatalogAvoidsDatabaseAndDecoding() passed after 0.028 seconds.
+􁁛  Suite SatelliteMetadataStoreTests passed after 0.029 seconds.
+􁁛  Test run with 6 tests in 1 suite passed after 0.029 seconds.
+

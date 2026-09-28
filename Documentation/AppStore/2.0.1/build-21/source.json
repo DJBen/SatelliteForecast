@@ -1,0 +1,19 @@
+{
+  "version": "2.0.1",
+  "build": "21",
+  "sourceCommit": "8b749fd48426ce537f27dbcfff200b73a5a215a6",
+  "appID": "1578649430",
+  "bundleID": "io.djben.SatelliteForecast",
+  "internalGroupID": "3b41d8f3-2916-4274-9506-6bcc7cd7ec20",
+  "behaviorTests": {
+    "passed": 143,
+    "failed": 0,
+    "skipped": 3
+  },
+  "catalogTests": {
+    "passed": 9,
+    "failed": 0
+  },
+  "mergeCommit": "3a7bb6e5afbb15a83efedb1dc3ae7175d57d1f7b",
+  "pullRequest": "https://github.com/DJBen/SatelliteForecast/pull/86"
+}

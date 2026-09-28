@@ -1,0 +1,74 @@
+[
+  {
+    "id": "ca72ee89-33f3-43fa-b017-b2c9e1f00204",
+    "version": "20",
+    "uploadedDate": "2026-09-27T19:51:48-07:00",
+    "expirationDate": "2026-12-26T18:51:48-08:00",
+    "processingState": "VALID",
+    "minOsVersion": "26.0",
+    "usesNonExemptEncryption": false
+  },
+  {
+    "id": "bb6d0360-d418-4ffe-b48d-e3aba86b290f",
+    "version": "19",
+    "uploadedDate": "2026-09-27T19:26:21-07:00",
+    "expirationDate": "2026-12-26T18:26:21-08:00",
+    "processingState": "VALID",
+    "minOsVersion": "26.0",
+    "usesNonExemptEncryption": false
+  },
+  {
+    "id": "bf8639cb-481c-4e5e-8179-93b7c1bcb1b3",
+    "version": "18",
+    "uploadedDate": "2026-09-27T18:47:01-07:00",
+    "expirationDate": "2026-12-26T17:47:01-08:00",
+    "processingState": "VALID",
+    "minOsVersion": "26.0",
+    "usesNonExemptEncryption": false
+  },
+  {
+    "id": "2e67e10e-59a5-42b5-8793-769c0b4103fc",
+    "version": "17",
+    "uploadedDate": "2026-09-27T18:41:34-07:00",
+    "expirationDate": "2026-12-26T17:41:34-08:00",
+    "processingState": "VALID",
+    "minOsVersion": "26.0",
+    "usesNonExemptEncryption": false
+  },
+  {
+    "id": "adb91e16-4aec-41c8-a41f-c7dc06880d6d",
+    "version": "16",
+    "uploadedDate": "2026-09-27T08:06:28-07:00",
+    "expirationDate": "2026-12-26T07:06:28-08:00",
+    "processingState": "VALID",
+    "minOsVersion": "26.0",
+    "usesNonExemptEncryption": false
+  },
+  {
+    "id": "a0ca6293-aed6-462a-9d9c-8d16cf49f3f5",
+    "version": "15",
+    "uploadedDate": "2026-09-27T00:55:07-07:00",
+    "expirationDate": "2026-12-25T23:55:07-08:00",
+    "processingState": "VALID",
+    "minOsVersion": "26.0",
+    "usesNonExemptEncryption": false
+  },
+  {
+    "id": "e96b804b-5b1a-4728-a894-e0a0e102c283",
+    "version": "14",
+    "uploadedDate": "2026-09-27T00:43:54-07:00",
+    "expirationDate": "2026-12-25T23:43:54-08:00",
+    "processingState": "VALID",
+    "minOsVersion": "26.0",
+    "usesNonExemptEncryption": false
+  },
+  {
+    "id": "55cdcf90-ced8-4f92-a687-e66f179c1a26",
+    "version": "13",
+    "uploadedDate": "2026-09-26T01:34:14-07:00",
+    "expirationDate": "2026-12-25T00:34:14-08:00",
+    "processingState": "VALID",
+    "minOsVersion": "26.0",
+    "usesNonExemptEncryption": false
+  }
+]

@@ -197,6 +197,9 @@ python3 scripts/capture-widget-home-screenshots.py --output Documentation/AppSto
 
 ## Evidence index
 
+- [2.0.1](2.0.1/README.md): live Sky Now, catalog/forecast reuse, and isolated SQLite
+  metadata loading; release validation and TestFlight tracking for build 21.
+
 - [2.0.0](2.0.0/README.md): observation home, push reminders, widgets; draft with six
   screenshot slots. Builds 12 and 13 on internal TestFlight.
 - [1.9.0](1.9.0/README.md): TestFlight-only version bump (build 11).
@@ -241,3 +244,15 @@ and deploy to https://space-station-passes.web.app with `firebase deploy --only 
   coordinates as well as modification time and nonempty passes.
 - Use separate simulator clones when other tasks build or run concurrently. A shared
   simulator can interrupt snapshot tests or restore the app over a Home Screen capture.
+
+## 2.0.1 TestFlight processing checks
+
+- After an upload is committed, the build can be absent from `builds info` while
+  Apple's upload record is already `PROCESSING`. Inspect it with `asc builds
+  uploads list --app 1578649430 --cf-bundle-short-version <V> --cf-bundle-version <N>`
+  before considering another upload. The actual uploaded record has `uploadedDate`;
+  archive/export validation may leave a separate `AWAITING_UPLOAD` placeholder.
+  Do not mistake that placeholder for a failed committed upload.
+- Keep TestFlight-only releases separate from App Store submissions. Preflight on
+  September 28, 2026 confirmed 2.0.0 as `READY_FOR_SALE` / `READY_FOR_DISTRIBUTION`;
+  2.0.1 preparation did not change that public version or its screenshots.

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "3b41d8f3-2916-4274-9506-6bcc7cd7ec20",
+    "name": "First Light",
+    "createdDate": "2026-09-16T16:46:13.715Z",
+    "isInternalGroup": true,
+    "hasAccessToAllBuilds": true,
+    "feedbackEnabled": true
+  },
+  {
+    "id": "fe2fe77e-ebee-4d88-84c4-8225a55fe746",
+    "name": "First External Light",
+    "createdDate": "2021-08-09T07:04:20.088Z",
+    "publicLinkEnabled": true,
+    "publicLinkLimitEnabled": true,
+    "publicLinkLimit": 1000,
+    "publicLink": "https://testflight.apple.com/join/ZJvjqV5N",
+    "feedbackEnabled": true
+  }
+]

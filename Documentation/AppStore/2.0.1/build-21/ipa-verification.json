@@ -1,0 +1,24 @@
+{
+  "ipaSHA256": "678a72c722e1925e6c6245c57d4e3cdcdcefa678497fe576029593689994dda9",
+  "ipaBytes": 135465674,
+  "bundles": [
+    {
+      "CFBundleIdentifier": "io.djben.SatelliteForecast.Widget",
+      "CFBundleShortVersionString": "2.0.1",
+      "CFBundleVersion": "21",
+      "MinimumOSVersion": "26.0"
+    },
+    {
+      "CFBundleIdentifier": "io.djben.SatelliteForecast",
+      "CFBundleShortVersionString": "2.0.1",
+      "CFBundleVersion": "21",
+      "MinimumOSVersion": "26.0"
+    }
+  ],
+  "apsEnvironment": "production",
+  "appAttestEnvironment": "production",
+  "appGroups": [
+    "group.io.djben.SatelliteForecast"
+  ],
+  "signatureVerified": true
+}
