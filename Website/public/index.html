@@ -10,13 +10,13 @@
   <meta property="og:description" content="Know when to look up, and where to look. ISS and Tiangong pass forecasts, sky charts and reminders for iPhone.">
   <meta property="og:image" content="https://space-station-passes.web.app/img/icon.png">
   <meta property="og:type" content="website">
-  <meta name="theme-color" content="#0a1120">
+  <meta name="theme-color" content="#111214">
   <link rel="icon" href="/img/icon.png">
   <link rel="apple-touch-icon" href="/img/icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
-  <link rel="stylesheet" href="/assets/site.css?v=4">
+  <link rel="stylesheet" href="/assets/site.css?v=5">
 </head>
 <body>
 <canvas id="stars" aria-hidden="true"></canvas>
@@ -53,8 +53,8 @@
             <a class="cta" href="https://apps.apple.com/app/id1578649430">Download on the App Store</a>
             <a class="cta ghost" href="/privacy">Read the privacy policy</a>
           </div>
-
-          <div class="peek" id="peek">
+        </div>
+        <div class="peek" id="peek">
             <div class="peek-head">
               <div class="where">
                 <span>Next pass over</span>
@@ -75,9 +75,7 @@
               <div class="up" id="peek-up"></div>
               <span id="peek-tz">Computed in your browser</span>
             </div>
-          </div>
         </div>
-        <div class="phone"><img src="/img/01-forecast.webp" alt="Home screen showing the next observation card with an animated sky arc and a list of upcoming ISS and Tiangong passes"></div>
       </div>
     </section>
 
@@ -95,12 +93,12 @@
               <img src="/img/05-planetarium.webp" alt="Planetarium view of the pass" data-i="2">
               <img src="/img/06-widgets.webp" alt="Home Screen widgets in three sizes" data-i="3">
             </div>
-            <div class="dots" id="dots" role="tablist" aria-label="Screens">
-              <button type="button" class="on" role="tab" aria-selected="true" aria-label="Forecast" data-i="0"></button>
-              <button type="button" role="tab" aria-selected="false" aria-label="Sky chart" data-i="1"></button>
-              <button type="button" role="tab" aria-selected="false" aria-label="Planetarium" data-i="2"></button>
-              <button type="button" role="tab" aria-selected="false" aria-label="Widgets" data-i="3"></button>
-            </div>
+            <div class="chips" id="chips" role="tablist" aria-label="Choose a screen">
+            <button type="button" class="on" role="tab" aria-selected="true" data-i="0">Forecast</button>
+            <button type="button" role="tab" aria-selected="false" data-i="1">Sky chart</button>
+            <button type="button" role="tab" aria-selected="false" data-i="2">Planetarium</button>
+            <button type="button" role="tab" aria-selected="false" data-i="3">Widgets</button>
+          </div>
           </div>
           <div class="steps" id="steps">
             <div class="step on" data-i="0">
@@ -142,8 +140,8 @@
     </div>
   </footer>
 </div>
-<script src="/assets/satellite.min.js?v=4"></script>
-<script src="/assets/site.js?v=4"></script>
-<script src="/assets/peek.js?v=4"></script>
+<script src="/assets/satellite.min.js?v=5"></script>
+<script src="/assets/site.js?v=5"></script>
+<script src="/assets/peek.js?v=5"></script>
 </body>
 </html>

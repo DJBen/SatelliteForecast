@@ -28,7 +28,7 @@
       for (var i = 0; i < n; i++) {
         var r = Math.random() * 1.1 + 0.2, a = Math.random() * 0.5 + 0.15, warm = Math.random() < 0.08;
         ctx.beginPath(); ctx.arc(Math.random() * innerWidth, Math.random() * innerHeight, r, 0, Math.PI * 2);
-        ctx.fillStyle = warm ? 'rgba(240,178,106,' + a + ')' : 'rgba(234,240,248,' + a + ')';
+        ctx.fillStyle = warm ? 'rgba(240,161,132,' + a + ')' : 'rgba(236,238,242,' + a + ')';
         ctx.fill();
       }
     };
@@ -36,7 +36,7 @@
   }
 
   // ---- Showcase: the step nearest the viewport middle drives the pinned phone ----
-  var frames = document.querySelectorAll('#frames img'), dots = document.querySelectorAll('#dots button'), steps = document.querySelectorAll('#steps .step');
+  var frames = document.querySelectorAll('#frames img'), dots = document.querySelectorAll('#chips button'), steps = document.querySelectorAll('#steps .step');
   if (steps.length) {
     var current = 0, lock = 0, ticking = false;
     var narrow = function () { return innerWidth <= 860; };
@@ -50,8 +50,9 @@
       if (lock > Date.now()) return;
       var best = 0, bestD = Infinity;
       steps.forEach(function (st, i) {
-        var r = st.getBoundingClientRect();
-        var d = narrow() ? Math.abs((r.left + r.right) / 2 - innerWidth / 2) : Math.abs((r.top + r.bottom) / 2 - innerHeight / 2);
+        // On narrow screens the phone pins to the top, so judge steps against the lower part of the viewport.
+        var r = st.getBoundingClientRect(), ref = narrow() ? innerHeight * 0.72 : innerHeight / 2;
+        var d = Math.abs((r.top + r.bottom) / 2 - ref);
         if (d < bestD) { bestD = d; best = i; }
       });
       setFrame(best);
@@ -63,11 +64,11 @@
     var goTo = function (i) {
       setFrame(i); lock = Date.now() + 700;
       var st = steps[i];
-      if (narrow()) st.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-      else st.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      var top = st.getBoundingClientRect().top + scrollY - (narrow() ? innerHeight * 0.5 : (innerHeight - st.offsetHeight) / 2);
+      window.scrollTo({ top: top, behavior: 'smooth' });
     };
     dots.forEach(function (d) { d.addEventListener('click', function () { goTo(+d.dataset.i); }); });
-    steps.forEach(function (st) { st.addEventListener('click', function () { if (!narrow()) goTo(+st.dataset.i); }); });
+    steps.forEach(function (st) { st.addEventListener('click', function () { goTo(+st.dataset.i); }); });
     nearest();
   }
 

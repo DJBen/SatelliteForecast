@@ -194,18 +194,18 @@
     var after = s.filter(function (p) { return p.t >= ps.visEnd.t; }).map(pt).join(' ');
     var peak = ps.visPeak;
     el.arc.innerHTML =
-      '<defs><linearGradient id="g" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#3b2f63" stop-opacity=".55"/><stop offset="1" stop-color="#0a1120" stop-opacity="0"/></linearGradient></defs>' +
+      '<defs><linearGradient id="g" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#a9b9ce" stop-opacity=".18"/><stop offset="1" stop-color="#111214" stop-opacity="0"/></linearGradient></defs>' +
       '<path d="M0 ' + hy + ' Q ' + (W / 2) + ' ' + (hy - 26) + ' ' + W + ' ' + hy + ' L ' + W + ' ' + H + ' L 0 ' + H + ' Z" fill="url(#g)"/>' +
-      '<path d="M0 ' + hy + ' Q ' + (W / 2) + ' ' + (hy - 26) + ' ' + W + ' ' + hy + '" fill="none" stroke="#5d6d88" stroke-width="1" stroke-dasharray="2 4"/>' +
-      [10, 30, 60].map(function (e) { return '<line x1="40" x2="' + (W - 40) + '" y1="' + y(e) + '" y2="' + y(e) + '" stroke="#23324c" stroke-width="1"/><text x="' + (W - 36) + '" y="' + (y(e) + 4) + '" fill="#5d6d88" font-size="10" font-family="IBM Plex Mono, monospace">' + e + '°</text>'; }).join('') +
-      '<polyline points="' + before + '" fill="none" stroke="#6fe3d2" stroke-width="2" stroke-dasharray="3 6" stroke-linecap="round" opacity=".6"/>' +
-      '<polyline points="' + during + '" fill="none" stroke="#6fe3d2" stroke-width="2.5" stroke-linecap="round"/>' +
-      '<polyline points="' + after + '" fill="none" stroke="#6fe3d2" stroke-width="2" stroke-dasharray="3 6" stroke-linecap="round" opacity=".6"/>' +
-      '<circle cx="' + x(ps.visEnd.t) + '" cy="' + y(ps.visEnd.el) + '" r="5" fill="#eaf0f8"/>' +
-      '<circle cx="' + x(peak.t) + '" cy="' + y(peak.el) + '" r="3" fill="#6fe3d2"/>' +
-      '<text x="' + x(peak.t) + '" y="' + (y(peak.el) - 10) + '" fill="#6fe3d2" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace">' + Math.round(peak.el) + '° highest</text>' +
-      '<text x="40" y="' + (hy + 18) + '" fill="#8fa0b8" font-size="11" font-family="IBM Plex Mono, monospace">' + compass(ps.rise.az) + '</text>' +
-      '<text x="' + (W - 40) + '" y="' + (hy + 18) + '" fill="#8fa0b8" text-anchor="end" font-size="11" font-family="IBM Plex Mono, monospace">' + compass(ps.set.az) + '</text>';
+      '<path d="M0 ' + hy + ' Q ' + (W / 2) + ' ' + (hy - 26) + ' ' + W + ' ' + hy + '" fill="none" stroke="#6b7280" stroke-width="1" stroke-dasharray="2 4"/>' +
+      [10, 30, 60].map(function (e) { return '<line x1="40" x2="' + (W - 40) + '" y1="' + y(e) + '" y2="' + y(e) + '" stroke="#33363d" stroke-width="1"/><text x="' + (W - 36) + '" y="' + (y(e) + 4) + '" fill="#6b7280" font-size="10" font-family="IBM Plex Mono, monospace">' + e + '°</text>'; }).join('') +
+      '<polyline points="' + before + '" fill="none" stroke="#a9b9ce" stroke-width="2" stroke-dasharray="3 6" stroke-linecap="round" opacity=".6"/>' +
+      '<polyline points="' + during + '" fill="none" stroke="#a9b9ce" stroke-width="2.5" stroke-linecap="round"/>' +
+      '<polyline points="' + after + '" fill="none" stroke="#a9b9ce" stroke-width="2" stroke-dasharray="3 6" stroke-linecap="round" opacity=".6"/>' +
+      '<circle cx="' + x(ps.visEnd.t) + '" cy="' + y(ps.visEnd.el) + '" r="5" fill="#eceef2"/>' +
+      '<circle cx="' + x(peak.t) + '" cy="' + y(peak.el) + '" r="3" fill="#a9b9ce"/>' +
+      '<text x="' + x(peak.t) + '" y="' + (y(peak.el) - 10) + '" fill="#a9b9ce" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace">' + Math.round(peak.el) + '° highest</text>' +
+      '<text x="40" y="' + (hy + 18) + '" fill="#a3a8b2" font-size="11" font-family="IBM Plex Mono, monospace">' + compass(ps.rise.az) + '</text>' +
+      '<text x="' + (W - 40) + '" y="' + (hy + 18) + '" fill="#a3a8b2" text-anchor="end" font-size="11" font-family="IBM Plex Mono, monospace">' + compass(ps.set.az) + '</text>';
   }
 
   function note(msg) { el.status.textContent = msg; el.status.hidden = !msg; }
