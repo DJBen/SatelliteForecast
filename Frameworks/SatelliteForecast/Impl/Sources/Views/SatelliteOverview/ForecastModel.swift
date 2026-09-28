@@ -68,7 +68,6 @@ public final class ForecastModel {
     @ObservationIgnored private var lastRefresh: Date?
     /// True once any refresh has started, so a second screen can avoid restarting the forecast.
     public var hasRefreshed: Bool { lastRefresh != nil }
-    @ObservationIgnored private var lastWidgetObserver: LatLonAlt?
 
     public init(client: ForecastClient,
                 issNextPass: Loadable<NextPass, Error> = .loading,
@@ -106,10 +105,9 @@ public final class ForecastModel {
         currentDate = client.now()
         lastRefresh = currentDate
         passes = [:]
-        if input.julianDateOffset == 0 && input.frozenJulianDate == nil && (input.observer == nil || lastWidgetObserver != input.observer) && !isWidgetTest {
-            WidgetForecastStore.clear()
-            lastWidgetObserver = input.observer
-        }
+        // The widget keeps the last saved forecast until this refresh replaces it, so launching
+        // and leaving the app before the forecast finishes never blanks it. LocationService
+        // discards the saved forecast when the observer moves far enough to make it wrong.
         upcomingPasses = []
         issNextPass = .loading
         tianheNextPass = .loading
