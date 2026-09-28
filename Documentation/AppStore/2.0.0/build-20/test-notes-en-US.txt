@@ -1,0 +1,1 @@
+Live pass tracking and elevation, coral passing-now shimmer, debug time in the planetarium, improved responsiveness, and remote Live Activity updates. Widgets preserve forecasts across relaunches and GPS jitter, cache four recent places for seven days, and highlight active passes. Chinese app name: 天宫过境.

@@ -1,0 +1,3 @@
+Base main: 26d4767105ec364bda802d6f8c129cd10c97a375
+Release build: 2.0.0 (20)
+Release preparation commit: 18e3286 (version bump and capture script)

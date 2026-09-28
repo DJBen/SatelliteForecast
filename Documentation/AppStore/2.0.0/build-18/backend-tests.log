@@ -1,0 +1,10 @@
+...........................................................
+----------------------------------------------------------------------
+Ran 59 tests in 0.086s
+
+OK
+{"severity": "INFO", "message": "prediction_region_inactive"}
+{"severity": "INFO", "updated_satellites": 0, "tasks_reconciled": 1, "message": "prediction_region_completed"}
+{"severity": "INFO", "reason": "location_changed", "message": "notification_skipped"}
+{"severity": "INFO", "reason": "pass_expired", "message": "notification_skipped"}
+{"severity": "INFO", "users": 0, "eligible_users": 0, "regions": 0, "stale_regions": 0, "queued": 0, "message": "prediction_dispatch_completed"}

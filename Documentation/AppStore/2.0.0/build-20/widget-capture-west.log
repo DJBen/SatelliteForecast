@@ -1,0 +1,221 @@
+An error was encountered processing the command (domain=com.apple.CoreSimulator.SimError, code=405):
+Unable to boot device in current state: Booted
+Monitoring boot status for iPhone 17 Pro Max — Store Widgets 19 (52951D26-A33B-4408-88C1-178D83712E9B).
+[2026-09-28 02:43:55 +0000] Status=2, isTerminal=NO, Elapsed=00:02.
+	Waiting on Data Migration
+		Reason:(null)
+		Migration Elapsed:00:00 seconds
+
+[2026-09-28 02:43:56 +0000] Status=4294967295, isTerminal=YES, Elapsed=00:02.
+	Finished
+
+io.djben.SatelliteForecast: 36114
+Monitoring boot status for iPhone 17 Pro Max — Store Widgets 19 (52951D26-A33B-4408-88C1-178D83712E9B).
+[2026-09-28 02:45:42 +0000] Status=2, isTerminal=NO, Elapsed=00:05.
+	Waiting on Data Migration
+		Reason:(null)
+		Migration Elapsed:00:00 seconds
+
+[2026-09-28 02:45:44 +0000] Status=4, isTerminal=NO, Elapsed=00:06.
+	Waiting on System App
+
+[2026-09-28 02:45:44 +0000] Status=4294967295, isTerminal=YES, Elapsed=00:07.
+	Finished
+
+en-US: captured 06-widgets
+An error was encountered processing the command (domain=com.apple.CoreSimulator.SimError, code=405):
+Unable to boot device in current state: Booted
+Monitoring boot status for iPhone 17 Pro Max — Store Widgets 19 (52951D26-A33B-4408-88C1-178D83712E9B).
+[2026-09-28 02:47:05 +0000] Status=1, isTerminal=NO, Elapsed=00:01.
+	Waiting on BackBoard
+
+[2026-09-28 02:47:06 +0000] Status=4294967295, isTerminal=YES, Elapsed=00:03.
+	Finished
+
+io.djben.SatelliteForecast: 38342
+Monitoring boot status for iPhone 17 Pro Max — Store Widgets 19 (52951D26-A33B-4408-88C1-178D83712E9B).
+[2026-09-28 02:48:59 +0000] Status=4, isTerminal=NO, Elapsed=00:09.
+	Waiting on System App
+
+[2026-09-28 02:49:05 +0000] Status=4, isTerminal=NO, Elapsed=00:15.
+	Waiting on System App
+
+[2026-09-28 02:49:09 +0000] Status=4, isTerminal=NO, Elapsed=00:19.
+	Waiting on System App
+
+[2026-09-28 02:49:12 +0000] Status=4, isTerminal=NO, Elapsed=00:22.
+	Waiting on System App
+
+[2026-09-28 02:49:13 +0000] Status=4, isTerminal=NO, Elapsed=00:23.
+	Waiting on System App
+
+[2026-09-28 02:49:14 +0000] Status=4, isTerminal=NO, Elapsed=00:24.
+	Waiting on System App
+
+[2026-09-28 02:49:15 +0000] Status=4294967295, isTerminal=YES, Elapsed=00:25.
+	Finished
+
+fr-FR: captured 06-widgets
+An error was encountered processing the command (domain=com.apple.CoreSimulator.SimError, code=405):
+Unable to boot device in current state: Booted
+Monitoring boot status for iPhone 17 Pro Max — Store Widgets 19 (52951D26-A33B-4408-88C1-178D83712E9B).
+[2026-09-28 02:50:38 +0000] Status=4, isTerminal=NO, Elapsed=00:10.
+	Waiting on System App
+
+[2026-09-28 02:50:42 +0000] Status=4, isTerminal=NO, Elapsed=00:15.
+	Waiting on System App
+
+[2026-09-28 02:50:44 +0000] Status=4, isTerminal=NO, Elapsed=00:16.
+	Waiting on System App
+
+[2026-09-28 02:50:46 +0000] Status=4, isTerminal=NO, Elapsed=00:18.
+	Waiting on System App
+
+[2026-09-28 02:50:47 +0000] Status=4, isTerminal=NO, Elapsed=00:20.
+	Waiting on System App
+
+[2026-09-28 02:50:48 +0000] Status=4, isTerminal=NO, Elapsed=00:21.
+	Waiting on System App
+
+[2026-09-28 02:50:49 +0000] Status=4, isTerminal=NO, Elapsed=00:22.
+	Waiting on System App
+
+[2026-09-28 02:50:51 +0000] Status=4294967295, isTerminal=YES, Elapsed=00:23.
+	Finished
+
+io.djben.SatelliteForecast: 40096
+Monitoring boot status for iPhone 17 Pro Max — Store Widgets 19 (52951D26-A33B-4408-88C1-178D83712E9B).
+[2026-09-28 02:52:34 +0000] Status=2, isTerminal=NO, Elapsed=00:04.
+	Waiting on Data Migration
+		Reason:(null)
+		Migration Elapsed:00:00 seconds
+
+[2026-09-28 02:52:35 +0000] Status=4, isTerminal=NO, Elapsed=00:04.
+	Waiting on System App
+
+[2026-09-28 02:52:35 +0000] Status=4, isTerminal=NO, Elapsed=00:04.
+	Waiting on System App
+
+[2026-09-28 02:52:36 +0000] Status=4, isTerminal=NO, Elapsed=00:05.
+	Waiting on System App
+
+[2026-09-28 02:52:37 +0000] Status=4, isTerminal=NO, Elapsed=00:06.
+	Waiting on System App
+
+[2026-09-28 02:52:38 +0000] Status=4, isTerminal=NO, Elapsed=00:08.
+	Waiting on System App
+
+[2026-09-28 02:52:41 +0000] Status=4, isTerminal=NO, Elapsed=00:10.
+	Waiting on System App
+
+[2026-09-28 02:52:45 +0000] Status=4, isTerminal=NO, Elapsed=00:14.
+	Waiting on System App
+
+[2026-09-28 02:52:48 +0000] Status=4294967295, isTerminal=YES, Elapsed=00:18.
+	Finished
+
+es-ES: captured 06-widgets
+An error was encountered processing the command (domain=com.apple.CoreSimulator.SimError, code=405):
+Unable to boot device in current state: Booted
+Monitoring boot status for iPhone 17 Pro Max — Store Widgets 19 (52951D26-A33B-4408-88C1-178D83712E9B).
+[2026-09-28 02:54:14 +0000] Status=2, isTerminal=NO, Elapsed=00:03.
+	Waiting on Data Migration
+		Reason:(null)
+		Migration Elapsed:00:00 seconds
+
+[2026-09-28 02:54:15 +0000] Status=4, isTerminal=NO, Elapsed=00:04.
+	Waiting on System App
+
+[2026-09-28 02:54:15 +0000] Status=4, isTerminal=NO, Elapsed=00:04.
+	Waiting on System App
+
+[2026-09-28 02:54:16 +0000] Status=4, isTerminal=NO, Elapsed=00:05.
+	Waiting on System App
+
+[2026-09-28 02:54:17 +0000] Status=4, isTerminal=NO, Elapsed=00:06.
+	Waiting on System App
+
+[2026-09-28 02:54:19 +0000] Status=4, isTerminal=NO, Elapsed=00:08.
+	Waiting on System App
+
+[2026-09-28 02:54:19 +0000] Status=4, isTerminal=NO, Elapsed=00:08.
+	Waiting on System App
+
+[2026-09-28 02:54:22 +0000] Status=4294967295, isTerminal=YES, Elapsed=00:12.
+	Finished
+
+io.djben.SatelliteForecast: 41719
+Monitoring boot status for iPhone 17 Pro Max — Store Widgets 19 (52951D26-A33B-4408-88C1-178D83712E9B).
+[2026-09-28 02:56:07 +0000] Status=1, isTerminal=NO, Elapsed=00:04.
+	Waiting on BackBoard
+
+[2026-09-28 02:56:08 +0000] Status=4, isTerminal=NO, Elapsed=00:05.
+	Waiting on System App
+
+[2026-09-28 02:56:09 +0000] Status=4, isTerminal=NO, Elapsed=00:06.
+	Waiting on System App
+
+[2026-09-28 02:56:09 +0000] Status=4, isTerminal=NO, Elapsed=00:06.
+	Waiting on System App
+
+[2026-09-28 02:56:10 +0000] Status=4, isTerminal=NO, Elapsed=00:07.
+	Waiting on System App
+
+[2026-09-28 02:56:14 +0000] Status=4, isTerminal=NO, Elapsed=00:11.
+	Waiting on System App
+
+[2026-09-28 02:56:18 +0000] Status=4294967295, isTerminal=YES, Elapsed=00:15.
+	Finished
+
+pt-BR: captured 06-widgets
+An error was encountered processing the command (domain=com.apple.CoreSimulator.SimError, code=405):
+Unable to boot device in current state: Booted
+An error was encountered processing the command (domain=com.apple.CoreSimulator.SimError, code=405):
+Unable to lookup in current state: Shutting Down
+An error was encountered processing the command (domain=com.apple.CoreSimulator.LaunchdSimError, code=124):
+Process spawn via launchd failed.
+Underlying error (domain=SimXPCErrorDomain, code=124):
+	Domain is tearing down
+Traceback (most recent call last):
+  File "/Users/sihaolu/Developments/SatelliteForecast/scripts/capture-widget-home-screenshots.py", line 67, in <module>
+    reboot(tz)
+    ~~~~~~^^^^
+  File "/Users/sihaolu/Developments/SatelliteForecast/scripts/capture-widget-home-screenshots.py", line 53, in reboot
+    simctl('shutdown', args.simulator, check=False)
+    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sihaolu/Developments/SatelliteForecast/scripts/capture-widget-home-screenshots.py", line 42, in simctl
+    return subprocess.run(['xcrun', 'simctl', *a], check=check, capture_output=capture, text=True)
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 557, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 1213, in communicate
+    self.wait()
+    ~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 1279, in wait
+    return self._wait(timeout=timeout)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 2084, in _wait
+    (pid, sts) = self._try_wait(0)
+                 ~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 2042, in _try_wait
+    (pid, sts) = os.waitpid(self.pid, wait_flags)
+                 ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sihaolu/Developments/SatelliteForecast/scripts/capture-widget-home-screenshots.py", line 116, in <module>
+    set_language(language, region_locale, tz)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sihaolu/Developments/SatelliteForecast/scripts/capture-widget-home-screenshots.py", line 46, in set_language
+    simctl('spawn', args.simulator, 'defaults', 'write', '.GlobalPreferences', 'AppleLanguages', '-array', language)
+    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sihaolu/Developments/SatelliteForecast/scripts/capture-widget-home-screenshots.py", line 42, in simctl
+    return subprocess.run(['xcrun', 'simctl', *a], check=check, capture_output=capture, text=True)
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['xcrun', 'simctl', 'spawn', '52951D26-A33B-4408-88C1-178D83712E9B', 'defaults', 'write', '.GlobalPreferences', 'AppleLanguages', '-array', 'en-US']' returned non-zero exit status 124.

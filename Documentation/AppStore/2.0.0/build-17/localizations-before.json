@@ -1,0 +1,294 @@
+{
+  "data": [
+    {
+      "type": "appStoreVersionLocalizations",
+      "id": "5d018bd1-2333-4a15-8536-8c3825df3630",
+      "attributes": {
+        "locale": "es-ES",
+        "description": "Descubre cu\u00e1ndo mirar al cielo y hacia d\u00f3nde.\n\nEstaci\u00f3n Espacial te ayuda a localizar la Estaci\u00f3n Espacial Internacional, Tiangong y otros sat\u00e9lites desde el lugar que elijas. Prepara tu pr\u00f3xima observaci\u00f3n con pron\u00f3sticos de pasos, mapas celestes interactivos y recordatorios.\n\n\u2022 Encuentra el pr\u00f3ximo paso visible: consulta los horarios y la altura que alcanzar\u00e1 cada sat\u00e9lite sobre el horizonte.\n\n\u2022 Sigue su trayectoria por el cielo: explora mapas interactivos con estrellas, constelaciones, la V\u00eda L\u00e1ctea y la Luna.\n\n\u2022 Conoce los momentos clave: comprueba cu\u00e1ndo sale un sat\u00e9lite, alcanza su punto visible m\u00e1s alto y desaparece.\n\n\u2022 Configura un recordatorio: programa una alerta para el paso que quieras observar.\n\n\u2022 Explora m\u00e1s all\u00e1 de las estaciones espaciales: descubre miles de sat\u00e9lites, incluidos los m\u00e1s brillantes y los lanzamientos recientes.\n\nPuedes activar una vista experimental del cielo en tiempo real en Ajustes.",
+        "keywords": "iss,tiangong,sat\u00e9lite,seguimiento,astronom\u00eda,estrellas,cielo,mapa,alerta,recordatorio,observaci\u00f3n",
+        "promotionalText": "Localiza la ISS y Tiangong sobre ti. Consulta los pasos visibles, sigue su trayectoria entre las estrellas y configura recordatorios para tu pr\u00f3xima observaci\u00f3n.",
+        "supportUrl": "https://satellite-forecast.square.site",
+        "whatsNew": "Un nuevo inicio para tu pr\u00f3xima observaci\u00f3n.\n\u2022 Consulta de un vistazo el pr\u00f3ximo paso visible de la ISS o de Tiangong, con una vista previa animada del cielo que muestra d\u00f3nde sale, culmina y se pone.\n\u2022 Toca Recordarme para recibir un aviso antes de cada paso visible.\n\u2022 Los widgets de la pantalla de inicio muestran el pr\u00f3ximo paso con una carta del cielo y las horas de salida, culminaci\u00f3n y puesta.\n\u2022 Todos los pasos se agrupan por d\u00eda con el icono de la estaci\u00f3n y la elevaci\u00f3n m\u00e1xima."
+      },
+      "relationships": {
+        "appScreenshotSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/5d018bd1-2333-4a15-8536-8c3825df3630/relationships/appScreenshotSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/5d018bd1-2333-4a15-8536-8c3825df3630/appScreenshotSets"
+          }
+        },
+        "appPreviewSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/5d018bd1-2333-4a15-8536-8c3825df3630/relationships/appPreviewSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/5d018bd1-2333-4a15-8536-8c3825df3630/appPreviewSets"
+          }
+        },
+        "searchKeywords": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/5d018bd1-2333-4a15-8536-8c3825df3630/relationships/searchKeywords",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/5d018bd1-2333-4a15-8536-8c3825df3630/searchKeywords"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/5d018bd1-2333-4a15-8536-8c3825df3630"
+      }
+    },
+    {
+      "type": "appStoreVersionLocalizations",
+      "id": "e893c5ed-994b-447d-9053-cdf2e276d6ab",
+      "attributes": {
+        "locale": "pt-BR",
+        "description": "Saiba quando olhar para o c\u00e9u \u2014 e para onde olhar.\n\nPassagens Esta\u00e7\u00f5es Espaciais ajuda voc\u00ea a avistar a Esta\u00e7\u00e3o Espacial Internacional, Tiangong e outros sat\u00e9lites a partir do local que escolher. Planeje sua pr\u00f3xima observa\u00e7\u00e3o com previs\u00f5es de passagens, mapas celestes interativos e lembretes.\n\n\u2022 Encontre a pr\u00f3xima passagem vis\u00edvel: veja os hor\u00e1rios e a altura que cada sat\u00e9lite alcan\u00e7ar\u00e1 acima do horizonte.\n\n\u2022 Acompanhe a trajet\u00f3ria pelo c\u00e9u: explore mapas interativos com estrelas, constela\u00e7\u00f5es, a Via L\u00e1ctea e a Lua.\n\n\u2022 Conhe\u00e7a os momentos importantes: confira quando o sat\u00e9lite surge no horizonte, atinge seu ponto vis\u00edvel mais alto e desaparece.\n\n\u2022 Defina um lembrete: programe um alerta para a passagem que voc\u00ea quer observar.\n\n\u2022 Explore al\u00e9m das esta\u00e7\u00f5es espaciais: descubra milhares de sat\u00e9lites, incluindo os mais brilhantes e os lan\u00e7amentos recentes.\n\nUma visualiza\u00e7\u00e3o experimental do c\u00e9u em tempo real pode ser ativada nos ajustes.",
+        "keywords": "iss,tiangong,sat\u00e9lite,rastreamento,astronomia,estrelas,c\u00e9u,mapa,\u00f3rbita,alerta,lembrete,observa\u00e7\u00e3o",
+        "promotionalText": "Veja a ISS e Tiangong no c\u00e9u. Encontre passagens vis\u00edveis, acompanhe suas trajet\u00f3rias entre as estrelas e defina lembretes para sua pr\u00f3xima observa\u00e7\u00e3o.",
+        "supportUrl": "https://satellite-forecast.square.site",
+        "whatsNew": "Um novo in\u00edcio para sua pr\u00f3xima observa\u00e7\u00e3o.\n\u2022 Veja de relance a pr\u00f3xima passagem vis\u00edvel da ISS ou da Tiangong, com uma pr\u00e9via animada do c\u00e9u mostrando onde ela nasce, culmina e se p\u00f5e.\n\u2022 Toque em Lembrar-me para receber um aviso antes de cada passagem vis\u00edvel.\n\u2022 Os widgets da Tela de In\u00edcio mostram a pr\u00f3xima passagem com uma carta do c\u00e9u e os hor\u00e1rios de nascer, culmina\u00e7\u00e3o e p\u00f4r.\n\u2022 Todas as passagens s\u00e3o agrupadas por dia com o \u00edcone da esta\u00e7\u00e3o e a eleva\u00e7\u00e3o m\u00e1xima."
+      },
+      "relationships": {
+        "appScreenshotSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/e893c5ed-994b-447d-9053-cdf2e276d6ab/relationships/appScreenshotSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/e893c5ed-994b-447d-9053-cdf2e276d6ab/appScreenshotSets"
+          }
+        },
+        "appPreviewSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/e893c5ed-994b-447d-9053-cdf2e276d6ab/relationships/appPreviewSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/e893c5ed-994b-447d-9053-cdf2e276d6ab/appPreviewSets"
+          }
+        },
+        "searchKeywords": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/e893c5ed-994b-447d-9053-cdf2e276d6ab/relationships/searchKeywords",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/e893c5ed-994b-447d-9053-cdf2e276d6ab/searchKeywords"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/e893c5ed-994b-447d-9053-cdf2e276d6ab"
+      }
+    },
+    {
+      "type": "appStoreVersionLocalizations",
+      "id": "c6adc767-6087-46da-a8b3-e9fe45bdfbfc",
+      "attributes": {
+        "locale": "zh-Hans",
+        "description": "\u77e5\u9053\u4f55\u65f6\u62ac\u5934\uff0c\u4e5f\u77e5\u9053\u671d\u54ea\u91cc\u770b\u3002\n\n\u5929\u5bab\u7a7a\u95f4\u7ad9\u8fc7\u5883\u5e2e\u52a9\u60a8\u5728\u6240\u9009\u5730\u70b9\u5bfb\u627e\u5929\u5bab\u7a7a\u95f4\u7ad9\u3001\u56fd\u9645\u7a7a\u95f4\u7ad9\u53ca\u5176\u4ed6\u536b\u661f\u3002\u901a\u8fc7\u8fc7\u5883\u9884\u6d4b\u3001\u4ea4\u4e92\u5f0f\u661f\u56fe\u548c\u63d0\u9192\uff0c\u63d0\u524d\u89c4\u5212\u4e0b\u4e00\u6b21\u89c2\u6d4b\u3002\n\n\u2022 \u5bfb\u627e\u4e0b\u4e00\u6b21\u53ef\u89c1\u8fc7\u5883\uff1a\u67e5\u770b\u8fc7\u5883\u65f6\u95f4\uff0c\u4e86\u89e3\u536b\u661f\u5c06\u5728\u5730\u5e73\u7ebf\u4e0a\u65b9\u5347\u5230\u591a\u9ad8\u3002\n\n\u2022 \u8ffd\u968f\u5212\u8fc7\u661f\u7a7a\u7684\u8f68\u8ff9\uff1a\u63a2\u7d22\u5305\u542b\u6052\u661f\u3001\u661f\u5ea7\u3001\u94f6\u6cb3\u548c\u6708\u4eae\u7684\u4ea4\u4e92\u5f0f\u661f\u56fe\u3002\n\n\u2022 \u638c\u63e1\u5173\u952e\u65f6\u523b\uff1a\u4e86\u89e3\u536b\u661f\u4f55\u65f6\u5347\u8d77\u3001\u4f55\u65f6\u5230\u8fbe\u53ef\u89c1\u8f68\u8ff9\u7684\u6700\u9ad8\u70b9\uff0c\u4ee5\u53ca\u4f55\u65f6\u6d88\u5931\u5728\u89c6\u91ce\u4e2d\u3002\n\n\u2022 \u8bbe\u7f6e\u89c2\u6d4b\u63d0\u9192\uff1a\u4e3a\u60f3\u770b\u7684\u8fc7\u5883\u5b89\u6392\u63d0\u9192\u3002\n\n\u2022 \u63a2\u7d22\u7a7a\u95f4\u7ad9\u4ee5\u5916\u7684\u536b\u661f\uff1a\u6d4f\u89c8\u6570\u5343\u9897\u536b\u661f\uff0c\u5305\u62ec\u660e\u4eae\u536b\u661f\u548c\u8fd1\u671f\u53d1\u5c04\u7684\u536b\u661f\u3002\n\n\u60a8\u8fd8\u53ef\u4ee5\u5728\u8bbe\u7f6e\u4e2d\u5f00\u542f\u5b9e\u9a8c\u6027\u7684\u5b9e\u65f6\u661f\u7a7a\u89c6\u56fe\u3002",
+        "keywords": "\u5929\u5bab,iss,tiangong,\u56fd\u9645\u7a7a\u95f4\u7ad9,\u536b\u661f,\u8ffd\u8e2a,\u661f\u56fe,\u89c2\u661f,\u5929\u6587,\u8f68\u9053,\u63d0\u9192,\u89c2\u6d4b,\u661f\u7a7a,\u6708\u76f8",
+        "promotionalText": "\u4e0b\u4e00\u6b21\u7a7a\u95f4\u7ad9\u8fc7\u5883\uff0c\u63d0\u524d\u51c6\u5907\u3002\u67e5\u770b\u5929\u5bab\u548c\u56fd\u9645\u7a7a\u95f4\u7ad9\u7684\u53ef\u89c1\u8fc7\u5883\u65f6\u95f4\u4e0e\u661f\u7a7a\u8f68\u8ff9\uff0c\u8bbe\u7f6e\u63d0\u9192\uff0c\u628a\u63e1\u89c2\u6d4b\u65f6\u673a\u3002",
+        "supportUrl": "https://satellite-forecast.square.site",
+        "whatsNew": "\u5168\u65b0\u7684\u201c\u4e0b\u6b21\u89c2\u6d4b\u201d\u4e3b\u9875\u3002\n\u2022 \u4e00\u773c\u770b\u5230\u5929\u5bab\u6216\u56fd\u9645\u7a7a\u95f4\u7ad9\u7684\u4e0b\u4e00\u6b21\u53ef\u89c1\u8fc7\u5883\uff0c\u5e76\u7528\u52a8\u6001\u661f\u7a7a\u9884\u89c8\u5c55\u793a\u5b83\u4ece\u54ea\u91cc\u5347\u8d77\u3001\u8fbe\u5230\u6700\u9ad8\u70b9\u548c\u843d\u4e0b\u3002\n\u2022 \u70b9\u6309\u201c\u63d0\u9192\u6211\u201d\uff0c\u5728\u6bcf\u6b21\u53ef\u89c1\u8fc7\u5883\u524d\u6536\u5230\u63a8\u9001\u63d0\u9192\u3002\n\u2022 \u4e3b\u5c4f\u5e55\u5c0f\u7ec4\u4ef6\u5c55\u793a\u4e0b\u4e00\u6b21\u8fc7\u5883\uff0c\u5305\u542b\u661f\u56fe\u4ee5\u53ca\u5347\u8d77\u3001\u6700\u9ad8\u70b9\u548c\u843d\u4e0b\u65f6\u95f4\u3002\n\u2022 \u5168\u90e8\u8fc7\u5883\u6309\u65e5\u671f\u5206\u7ec4\uff0c\u5e76\u663e\u793a\u7a7a\u95f4\u7ad9\u56fe\u6807\u548c\u6700\u9ad8\u4ef0\u89d2\u3002"
+      },
+      "relationships": {
+        "appScreenshotSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/c6adc767-6087-46da-a8b3-e9fe45bdfbfc/relationships/appScreenshotSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/c6adc767-6087-46da-a8b3-e9fe45bdfbfc/appScreenshotSets"
+          }
+        },
+        "appPreviewSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/c6adc767-6087-46da-a8b3-e9fe45bdfbfc/relationships/appPreviewSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/c6adc767-6087-46da-a8b3-e9fe45bdfbfc/appPreviewSets"
+          }
+        },
+        "searchKeywords": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/c6adc767-6087-46da-a8b3-e9fe45bdfbfc/relationships/searchKeywords",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/c6adc767-6087-46da-a8b3-e9fe45bdfbfc/searchKeywords"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/c6adc767-6087-46da-a8b3-e9fe45bdfbfc"
+      }
+    },
+    {
+      "type": "appStoreVersionLocalizations",
+      "id": "060acddc-4cef-49ad-ae66-bdf21dee2b88",
+      "attributes": {
+        "locale": "ko",
+        "description": "\uc5b8\uc81c \ud558\ub298\uc744 \uc62c\ub824\ub2e4\ubcf4\uace0 \uc5b4\ub290 \ubc29\ud5a5\uc744 \ubd10\uc57c \ud560\uc9c0 \uc54c\uc544\ubcf4\uc138\uc694.\n\n\uc6b0\uc8fc\uc815\uac70\uc7a5 \ud1b5\uacfc\ub294 \uc120\ud0dd\ud55c \uc704\uce58\uc5d0\uc11c \uad6d\uc81c\uc6b0\uc8fc\uc815\uac70\uc7a5, \ud188\uad81 \ubc0f \ub2e4\ub978 \uc704\uc131\uc744 \ucc3e\ub3c4\ub85d \ub3c4\uc640\uc90d\ub2c8\ub2e4. \ud1b5\uacfc \uc608\uce21, \ub300\ud654\ud615 \ubcc4\uc9c0\ub3c4, \uc54c\ub9bc\uc73c\ub85c \ub2e4\uc74c \uad00\uce21\uc744 \uacc4\ud68d\ud558\uc138\uc694.\n\n\u2022 \ub2e4\uc74c \uad00\uce21 \uac00\ub2a5\ud55c \ud1b5\uacfc \ucc3e\uae30: \ud1b5\uacfc \uc2dc\uac01\uacfc \uc704\uc131\uc774 \uc9c0\ud3c9\uc120 \uc704\ub85c \uc5bc\ub9c8\ub098 \ub192\uc774 \uc62c\ub77c\uc624\ub294\uc9c0 \ud655\uc778\ud558\uc138\uc694.\n\n\u2022 \ud558\ub298\uc744 \uac00\ub85c\uc9c0\ub974\ub294 \uacbd\ub85c \ud655\uc778\ud558\uae30: \ubcc4, \ubcc4\uc790\ub9ac, \uc740\ud558\uc218, \ub2ec\uc774 \ud45c\uc2dc\ub418\ub294 \ub300\ud654\ud615 \ubcc4\uc9c0\ub3c4\ub97c \uc0b4\ud3b4\ubcf4\uc138\uc694.\n\n\u2022 \uc8fc\uc694 \uc21c\uac04 \uc54c\uc544\ubcf4\uae30: \uc704\uc131\uc774 \ub5a0\uc624\ub974\uace0, \ubcf4\uc774\ub294 \uad6c\uac04\uc5d0\uc11c \uac00\uc7a5 \ub192\uc740 \uc9c0\uc810\uc5d0 \ub3c4\ub2ec\ud558\uace0, \uc2dc\uc57c\uc5d0\uc11c \uc0ac\ub77c\uc9c0\ub294 \uc2dc\uac01\uc744 \ud655\uc778\ud558\uc138\uc694.\n\n\u2022 \uc54c\ub9bc \uc124\uc815\ud558\uae30: \uad00\uce21\ud558\uace0 \uc2f6\uc740 \ud1b5\uacfc\uc5d0 \ub9de\ucdb0 \uc54c\ub9bc\uc744 \uc608\uc57d\ud558\uc138\uc694.\n\n\u2022 \uc6b0\uc8fc\uc815\uac70\uc7a5 \ub108\uba38\ub85c \ud0d0\uc0c9\ud558\uae30: \ubc1d\uc740 \uc704\uc131\uacfc \ucd5c\uadfc \ubc1c\uc0ac\ub41c \uc704\uc131\uc744 \ud3ec\ud568\ud55c \uc218\ucc9c \uac1c\uc758 \uc704\uc131\uc744 \uc0b4\ud3b4\ubcf4\uc138\uc694.\n\n\uc124\uc815\uc5d0\uc11c \uc2e4\ud5d8\uc801\uc778 \uc2e4\uc2dc\uac04 \ud558\ub298 \ubcf4\uae30\ub97c \ucf24 \uc218 \uc788\uc2b5\ub2c8\ub2e4.",
+        "keywords": "iss,tiangong,\uc704\uc131,\ucd94\uc801,\ucc9c\ubb38\ud559,\ubcc4\uc790\ub9ac,\ubcc4\uc9c0\ub3c4,\uada4\ub3c4,\uc54c\ub9bc,\uad00\uce21,\ud558\ub298",
+        "marketingUrl": "https://satellite-forecast.square.site",
+        "promotionalText": "\uba38\ub9ac \uc704\ub97c \uc9c0\ub098\ub294 ISS\uc640 \ud188\uad81\uc744 \ucc3e\uc544\ubcf4\uc138\uc694. \uad00\uce21 \uac00\ub2a5\ud55c \ud1b5\uacfc\uc640 \ubcc4 \uc0ac\uc774\uc758 \uc774\ub3d9 \uacbd\ub85c\ub97c \ud655\uc778\ud558\uace0 \ub2e4\uc74c \uad00\uce21\uc744 \uc704\ud55c \uc54c\ub9bc\uc744 \uc124\uc815\ud558\uc138\uc694.",
+        "supportUrl": "https://satellite-forecast.square.site",
+        "whatsNew": "\ub2e4\uc74c \uad00\uce21\uc744 \uc704\ud55c \uc0c8\ub85c\uc6b4 \ud648 \ud654\uba74.\n\u2022 ISS \ub610\ub294 \ud188\uad81\uc758 \ub2e4\uc74c \uac00\uc2dc \ud1b5\uacfc\ub97c \ud55c\ub208\uc5d0 \ud655\uc778\ud558\uace0, \uc5b4\ub514\uc5d0\uc11c \ub5a0\uc11c \uc815\uc810\uc5d0 \uc774\ub974\uace0 \uc9c0\ub294\uc9c0 \uc6c0\uc9c1\uc774\ub294 \ud558\ub298 \ubbf8\ub9ac\ubcf4\uae30\ub85c \uc0b4\ud3b4\ubcf4\uc138\uc694.\n\u2022 \u2018\uc54c\ub9bc \ubc1b\uae30\u2019\ub97c \ub204\ub974\uba74 \uac00\uc2dc \ud1b5\uacfc \uc804\uc5d0 \ud478\uc2dc \uc54c\ub9bc\uc744 \ubc1b\uc2b5\ub2c8\ub2e4.\n\u2022 \ud648 \ud654\uba74 \uc704\uc82f\uc5d0\uc11c \uc131\ub3c4\uc640 \ucd9c\ud604\u00b7\uc815\uc810\u00b7\uc18c\uc2e4 \uc2dc\uac01\uacfc \ud568\uaed8 \ub2e4\uc74c \ud1b5\uacfc\ub97c \ubcf4\uc5ec\uc90d\ub2c8\ub2e4.\n\u2022 \ubaa8\ub4e0 \ud1b5\uacfc\ub97c \ub0a0\uc9dc\ubcc4\ub85c \ubb36\uace0 \uc815\uac70\uc7a5 \uc544\uc774\ucf58\uacfc \ucd5c\uace0 \uace0\ub3c4\ub97c \ud45c\uc2dc\ud569\ub2c8\ub2e4."
+      },
+      "relationships": {
+        "appScreenshotSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/060acddc-4cef-49ad-ae66-bdf21dee2b88/relationships/appScreenshotSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/060acddc-4cef-49ad-ae66-bdf21dee2b88/appScreenshotSets"
+          }
+        },
+        "appPreviewSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/060acddc-4cef-49ad-ae66-bdf21dee2b88/relationships/appPreviewSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/060acddc-4cef-49ad-ae66-bdf21dee2b88/appPreviewSets"
+          }
+        },
+        "searchKeywords": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/060acddc-4cef-49ad-ae66-bdf21dee2b88/relationships/searchKeywords",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/060acddc-4cef-49ad-ae66-bdf21dee2b88/searchKeywords"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/060acddc-4cef-49ad-ae66-bdf21dee2b88"
+      }
+    },
+    {
+      "type": "appStoreVersionLocalizations",
+      "id": "3d4ed7ab-b757-4476-96b9-3c4705bfb086",
+      "attributes": {
+        "locale": "fr-FR",
+        "description": "Sachez quand lever les yeux et o\u00f9 regarder.\n\nPassages Station Spatiale vous aide \u00e0 rep\u00e9rer la Station spatiale internationale, Tiangong et d\u2019autres satellites depuis le lieu de votre choix. Pr\u00e9parez votre prochaine observation avec des pr\u00e9visions de passage, des cartes c\u00e9lestes interactives et des rappels.\n\n\u2022 Trouvez le prochain passage visible : consultez les horaires et la hauteur des satellites au-dessus de l\u2019horizon.\n\n\u2022 Suivez leur trajectoire dans le ciel : explorez des cartes interactives avec les \u00e9toiles, les constellations, la Voie lact\u00e9e et la Lune.\n\n\u2022 Identifiez les moments cl\u00e9s : d\u00e9couvrez quand un satellite se l\u00e8ve, atteint son point visible le plus haut et dispara\u00eet.\n\n\u2022 Configurez un rappel : programmez une alerte pour le passage que vous souhaitez observer.\n\n\u2022 Explorez au-del\u00e0 des stations spatiales : parcourez des milliers de satellites, dont les plus brillants et les lancements r\u00e9cents.\n\nUne vue exp\u00e9rimentale du ciel en temps r\u00e9el peut \u00eatre activ\u00e9e dans les r\u00e9glages.",
+        "keywords": "iss,tiangong,satellite,suivi,astronomie,\u00e9toiles,ciel,carte,orbite,alerte,rappel,observation",
+        "promotionalText": "Rep\u00e9rez l\u2019ISS et Tiangong au-dessus de vous. D\u00e9couvrez les passages visibles, suivez leur trajectoire parmi les \u00e9toiles et pr\u00e9parez votre observation avec un rappel.",
+        "supportUrl": "https://satellite-forecast.square.site",
+        "whatsNew": "Un nouvel accueil pour votre prochaine observation.\n\u2022 Voyez d\u2019un coup d\u2019\u0153il le prochain passage visible de l\u2019ISS ou de Tiangong, avec un aper\u00e7u anim\u00e9 du ciel montrant o\u00f9 il se l\u00e8ve, culmine et se couche.\n\u2022 Touchez Me rappeler pour recevoir une notification avant chaque passage visible.\n\u2022 Les widgets de l\u2019\u00e9cran d\u2019accueil affichent le prochain passage avec une carte du ciel et les heures de lever, de culmination et de coucher.\n\u2022 Tous les passages sont regroup\u00e9s par jour avec l\u2019ic\u00f4ne de la station et l\u2019\u00e9l\u00e9vation maximale."
+      },
+      "relationships": {
+        "appScreenshotSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/3d4ed7ab-b757-4476-96b9-3c4705bfb086/relationships/appScreenshotSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/3d4ed7ab-b757-4476-96b9-3c4705bfb086/appScreenshotSets"
+          }
+        },
+        "appPreviewSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/3d4ed7ab-b757-4476-96b9-3c4705bfb086/relationships/appPreviewSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/3d4ed7ab-b757-4476-96b9-3c4705bfb086/appPreviewSets"
+          }
+        },
+        "searchKeywords": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/3d4ed7ab-b757-4476-96b9-3c4705bfb086/relationships/searchKeywords",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/3d4ed7ab-b757-4476-96b9-3c4705bfb086/searchKeywords"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/3d4ed7ab-b757-4476-96b9-3c4705bfb086"
+      }
+    },
+    {
+      "type": "appStoreVersionLocalizations",
+      "id": "9c4cdffc-b779-49d5-b365-060c70bf131b",
+      "attributes": {
+        "locale": "ja",
+        "description": "\u3044\u3064\u3001\u3069\u306e\u65b9\u89d2\u3092\u898b\u4e0a\u3052\u308c\u3070\u3088\u3044\u304b\u304c\u308f\u304b\u308a\u307e\u3059\u3002\n\n\u300c\u5b87\u5b99\u30b9\u30c6\u30fc\u30b7\u30e7\u30f3\u901a\u904e\u300d\u306f\u3001\u9078\u3093\u3060\u5834\u6240\u304b\u3089\u56fd\u969b\u5b87\u5b99\u30b9\u30c6\u30fc\u30b7\u30e7\u30f3\u3001\u5929\u5bae\u3001\u305d\u306e\u4ed6\u306e\u885b\u661f\u3092\u898b\u3064\u3051\u308b\u304a\u624b\u4f1d\u3044\u3092\u3057\u307e\u3059\u3002\u901a\u904e\u4e88\u6e2c\u3001\u30a4\u30f3\u30bf\u30e9\u30af\u30c6\u30a3\u30d6\u306a\u661f\u56f3\u3001\u30ea\u30de\u30a4\u30f3\u30c0\u30fc\u3067\u3001\u6b21\u306e\u89b3\u6e2c\u3092\u8a08\u753b\u3057\u307e\u3057\u3087\u3046\u3002\n\n\u2022 \u6b21\u306e\u89b3\u6e2c\u3067\u304d\u308b\u901a\u904e\u3092\u63a2\u3059\uff1a\u901a\u904e\u6642\u523b\u3068\u3001\u885b\u661f\u304c\u5730\u5e73\u7dda\u304b\u3089\u3069\u308c\u304f\u3089\u3044\u9ad8\u304f\u898b\u3048\u308b\u304b\u3092\u78ba\u8a8d\u3067\u304d\u307e\u3059\u3002\n\n\u2022 \u661f\u7a7a\u3092\u6a2a\u5207\u308b\u8ecc\u8de1\u3092\u305f\u3069\u308b\uff1a\u661f\u3001\u661f\u5ea7\u3001\u5929\u306e\u5ddd\u3001\u6708\u3092\u8868\u793a\u3059\u308b\u30a4\u30f3\u30bf\u30e9\u30af\u30c6\u30a3\u30d6\u306a\u661f\u56f3\u3092\u63a2\u7d22\u3067\u304d\u307e\u3059\u3002\n\n\u2022 \u5927\u5207\u306a\u30bf\u30a4\u30df\u30f3\u30b0\u3092\u77e5\u308b\uff1a\u885b\u661f\u304c\u6607\u308b\u6642\u523b\u3001\u898b\u3048\u3066\u3044\u308b\u9593\u306e\u6700\u9ad8\u70b9\u306b\u9054\u3059\u308b\u6642\u523b\u3001\u898b\u3048\u306a\u304f\u306a\u308b\u6642\u523b\u3092\u78ba\u8a8d\u3067\u304d\u307e\u3059\u3002\n\n\u2022 \u30ea\u30de\u30a4\u30f3\u30c0\u30fc\u3092\u8a2d\u5b9a\u3059\u308b\uff1a\u89b3\u6e2c\u3057\u305f\u3044\u901a\u904e\u306b\u901a\u77e5\u3092\u8a2d\u5b9a\u3067\u304d\u307e\u3059\u3002\n\n\u2022 \u5b87\u5b99\u30b9\u30c6\u30fc\u30b7\u30e7\u30f3\u4ee5\u5916\u3082\u63a2\u3059\uff1a\u660e\u308b\u3044\u885b\u661f\u3084\u6700\u8fd1\u6253\u3061\u4e0a\u3052\u3089\u308c\u305f\u885b\u661f\u306a\u3069\u3001\u6570\u5343\u306e\u885b\u661f\u3092\u8abf\u3079\u3089\u308c\u307e\u3059\u3002\n\n\u8a2d\u5b9a\u3067\u306f\u3001\u5b9f\u9a13\u7684\u306a\u30ea\u30a2\u30eb\u30bf\u30a4\u30e0\u306e\u661f\u7a7a\u8868\u793a\u3092\u6709\u52b9\u306b\u3067\u304d\u307e\u3059\u3002",
+        "keywords": "iss,tiangong,\u885b\u661f,\u8ffd\u8de1,\u661f\u7a7a,\u661f\u56f3,\u89b3\u6e2c,\u8ecc\u9053,\u901a\u77e5,\u30ea\u30de\u30a4\u30f3\u30c0\u30fc,\u5929\u4f53\u89b3\u6e2c",
+        "promotionalText": "\u982d\u4e0a\u3092\u901a\u904e\u3059\u308bISS\u3068\u5929\u5bae\u3092\u898b\u3064\u3051\u307e\u3057\u3087\u3046\u3002\u89b3\u6e2c\u3067\u304d\u308b\u901a\u904e\u3092\u8abf\u3079\u3001\u661f\u7a7a\u3092\u6a2a\u5207\u308b\u8ecc\u8de1\u3092\u78ba\u8a8d\u3057\u3001\u6b21\u306e\u89b3\u6e2c\u306b\u5411\u3051\u3066\u30ea\u30de\u30a4\u30f3\u30c0\u30fc\u3092\u8a2d\u5b9a\u3067\u304d\u307e\u3059\u3002",
+        "supportUrl": "https://satellite-forecast.square.site",
+        "whatsNew": "\u6b21\u306e\u89b3\u6e2c\u306e\u305f\u3081\u306e\u65b0\u3057\u3044\u30db\u30fc\u30e0\u753b\u9762\u3002\n\u2022 ISS\u307e\u305f\u306f\u5929\u5bae\u306e\u6b21\u306e\u53ef\u8996\u901a\u904e\u3092\u4e00\u76ee\u3067\u78ba\u8a8d\u3002\u3069\u3053\u304b\u3089\u6607\u308a\u3001\u6700\u9ad8\u70b9\u306b\u9054\u3057\u3001\u6c88\u3080\u304b\u3092\u30a2\u30cb\u30e1\u30fc\u30b7\u30e7\u30f3\u306e\u7a7a\u3067\u30d7\u30ec\u30d3\u30e5\u30fc\u3067\u304d\u307e\u3059\u3002\n\u2022 \u300c\u30ea\u30de\u30a4\u30f3\u30c9\u300d\u3092\u30bf\u30c3\u30d7\u3059\u308b\u3068\u3001\u53ef\u8996\u901a\u904e\u306e\u524d\u306b\u30d7\u30c3\u30b7\u30e5\u901a\u77e5\u3067\u304a\u77e5\u3089\u305b\u3057\u307e\u3059\u3002\n\u2022 \u30db\u30fc\u30e0\u753b\u9762\u30a6\u30a3\u30b8\u30a7\u30c3\u30c8\u306b\u3001\u661f\u56f3\u3068\u51fa\u73fe\u30fb\u6700\u9ad8\u70b9\u30fb\u6d88\u5931\u306e\u6642\u523b\u3092\u542b\u3080\u6b21\u306e\u901a\u904e\u3092\u8868\u793a\u3057\u307e\u3059\u3002\n\u2022 \u3059\u3079\u3066\u306e\u901a\u904e\u3092\u65e5\u4ed8\u3054\u3068\u306b\u307e\u3068\u3081\u3001\u30b9\u30c6\u30fc\u30b7\u30e7\u30f3\u306e\u30a2\u30a4\u30b3\u30f3\u3068\u6700\u9ad8\u9ad8\u5ea6\u3092\u8868\u793a\u3057\u307e\u3059\u3002"
+      },
+      "relationships": {
+        "appScreenshotSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/9c4cdffc-b779-49d5-b365-060c70bf131b/relationships/appScreenshotSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/9c4cdffc-b779-49d5-b365-060c70bf131b/appScreenshotSets"
+          }
+        },
+        "appPreviewSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/9c4cdffc-b779-49d5-b365-060c70bf131b/relationships/appPreviewSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/9c4cdffc-b779-49d5-b365-060c70bf131b/appPreviewSets"
+          }
+        },
+        "searchKeywords": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/9c4cdffc-b779-49d5-b365-060c70bf131b/relationships/searchKeywords",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/9c4cdffc-b779-49d5-b365-060c70bf131b/searchKeywords"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/9c4cdffc-b779-49d5-b365-060c70bf131b"
+      }
+    },
+    {
+      "type": "appStoreVersionLocalizations",
+      "id": "462e7725-32e2-4a08-b792-3d66efdbfd8f",
+      "attributes": {
+        "locale": "ru",
+        "description": "\u0423\u0437\u043d\u0430\u0439\u0442\u0435, \u043a\u043e\u0433\u0434\u0430 \u043f\u043e\u0434\u043d\u044f\u0442\u044c \u0433\u043b\u0430\u0437\u0430 \u043a \u043d\u0435\u0431\u0443 \u0438 \u043a\u0443\u0434\u0430 \u0441\u043c\u043e\u0442\u0440\u0435\u0442\u044c.\n\n\u00ab\u041a\u043e\u0441\u043c\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u043f\u0440\u043e\u043b\u0451\u0442\u044b\u00bb \u043f\u043e\u043c\u043e\u0433\u0430\u0435\u0442 \u0443\u0432\u0438\u0434\u0435\u0442\u044c \u041c\u0435\u0436\u0434\u0443\u043d\u0430\u0440\u043e\u0434\u043d\u0443\u044e \u043a\u043e\u0441\u043c\u0438\u0447\u0435\u0441\u043a\u0443\u044e \u0441\u0442\u0430\u043d\u0446\u0438\u044e, \u0422\u044f\u043d\u044c\u0433\u0443\u043d \u0438 \u0434\u0440\u0443\u0433\u0438\u0435 \u0441\u043f\u0443\u0442\u043d\u0438\u043a\u0438 \u0438\u0437 \u0432\u044b\u0431\u0440\u0430\u043d\u043d\u043e\u0433\u043e \u0432\u0430\u043c\u0438 \u043c\u0435\u0441\u0442\u0430. \u041f\u043b\u0430\u043d\u0438\u0440\u0443\u0439\u0442\u0435 \u043d\u0430\u0431\u043b\u044e\u0434\u0435\u043d\u0438\u044f \u0441 \u043f\u0440\u043e\u0433\u043d\u043e\u0437\u0430\u043c\u0438 \u043f\u0440\u043e\u043b\u0451\u0442\u043e\u0432, \u0438\u043d\u0442\u0435\u0440\u0430\u043a\u0442\u0438\u0432\u043d\u044b\u043c\u0438 \u043a\u0430\u0440\u0442\u0430\u043c\u0438 \u043d\u0435\u0431\u0430 \u0438 \u043d\u0430\u043f\u043e\u043c\u0438\u043d\u0430\u043d\u0438\u044f\u043c\u0438.\n\n\u2022 \u041d\u0430\u0439\u0434\u0438\u0442\u0435 \u0441\u043b\u0435\u0434\u0443\u044e\u0449\u0438\u0439 \u0432\u0438\u0434\u0438\u043c\u044b\u0439 \u043f\u0440\u043e\u043b\u0451\u0442: \u0443\u0437\u043d\u0430\u0439\u0442\u0435 \u0432\u0440\u0435\u043c\u044f \u043f\u0440\u043e\u043b\u0451\u0442\u0430 \u0438 \u0432\u044b\u0441\u043e\u0442\u0443 \u0441\u043f\u0443\u0442\u043d\u0438\u043a\u0430 \u043d\u0430\u0434 \u0433\u043e\u0440\u0438\u0437\u043e\u043d\u0442\u043e\u043c.\n\n\u2022 \u041f\u0440\u043e\u0441\u043b\u0435\u0434\u0438\u0442\u0435 \u043f\u0443\u0442\u044c \u043f\u043e \u043d\u0435\u0431\u0443: \u0438\u0437\u0443\u0447\u0430\u0439\u0442\u0435 \u0438\u043d\u0442\u0435\u0440\u0430\u043a\u0442\u0438\u0432\u043d\u044b\u0435 \u043a\u0430\u0440\u0442\u044b \u0441\u043e \u0437\u0432\u0451\u0437\u0434\u0430\u043c\u0438, \u0441\u043e\u0437\u0432\u0435\u0437\u0434\u0438\u044f\u043c\u0438, \u041c\u043b\u0435\u0447\u043d\u044b\u043c \u041f\u0443\u0442\u0451\u043c \u0438 \u041b\u0443\u043d\u043e\u0439.\n\n\u2022 \u0423\u0437\u043d\u0430\u0439\u0442\u0435 \u043a\u043b\u044e\u0447\u0435\u0432\u044b\u0435 \u043c\u043e\u043c\u0435\u043d\u0442\u044b: \u043f\u043e\u0441\u043c\u043e\u0442\u0440\u0438\u0442\u0435, \u043a\u043e\u0433\u0434\u0430 \u0441\u043f\u0443\u0442\u043d\u0438\u043a \u0432\u043e\u0441\u0445\u043e\u0434\u0438\u0442, \u0434\u043e\u0441\u0442\u0438\u0433\u0430\u0435\u0442 \u043d\u0430\u0438\u0432\u044b\u0441\u0448\u0435\u0439 \u0432\u0438\u0434\u0438\u043c\u043e\u0439 \u0442\u043e\u0447\u043a\u0438 \u0438 \u0438\u0441\u0447\u0435\u0437\u0430\u0435\u0442 \u0438\u0437 \u0432\u0438\u0434\u0443.\n\n\u2022 \u041d\u0430\u0441\u0442\u0440\u043e\u0439\u0442\u0435 \u043d\u0430\u043f\u043e\u043c\u0438\u043d\u0430\u043d\u0438\u0435: \u0443\u0441\u0442\u0430\u043d\u043e\u0432\u0438\u0442\u0435 \u043e\u043f\u043e\u0432\u0435\u0449\u0435\u043d\u0438\u0435 \u043e \u043f\u0440\u043e\u043b\u0451\u0442\u0435, \u043a\u043e\u0442\u043e\u0440\u044b\u0439 \u0445\u043e\u0442\u0438\u0442\u0435 \u043d\u0430\u0431\u043b\u044e\u0434\u0430\u0442\u044c.\n\n\u2022 \u041e\u0442\u043a\u0440\u043e\u0439\u0442\u0435 \u0434\u043b\u044f \u0441\u0435\u0431\u044f \u0431\u043e\u043b\u044c\u0448\u0435 \u0441\u043f\u0443\u0442\u043d\u0438\u043a\u043e\u0432: \u043f\u0440\u043e\u0441\u043c\u0430\u0442\u0440\u0438\u0432\u0430\u0439\u0442\u0435 \u0442\u044b\u0441\u044f\u0447\u0438 \u043e\u0431\u044a\u0435\u043a\u0442\u043e\u0432, \u0432\u043a\u043b\u044e\u0447\u0430\u044f \u044f\u0440\u043a\u0438\u0435 \u0441\u043f\u0443\u0442\u043d\u0438\u043a\u0438 \u0438 \u043d\u0435\u0434\u0430\u0432\u043d\u0438\u0435 \u0437\u0430\u043f\u0443\u0441\u043a\u0438.\n\n\u0412 \u043d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0430\u0445 \u043c\u043e\u0436\u043d\u043e \u0432\u043a\u043b\u044e\u0447\u0438\u0442\u044c \u044d\u043a\u0441\u043f\u0435\u0440\u0438\u043c\u0435\u043d\u0442\u0430\u043b\u044c\u043d\u044b\u0439 \u0432\u0438\u0434 \u043d\u0435\u0431\u0430 \u0432 \u0440\u0435\u0430\u043b\u044c\u043d\u043e\u043c \u0432\u0440\u0435\u043c\u0435\u043d\u0438.",
+        "keywords": "iss,tiangong,\u0441\u043f\u0443\u0442\u043d\u0438\u043a,\u0442\u0440\u0435\u043a\u0435\u0440,\u0430\u0441\u0442\u0440\u043e\u043d\u043e\u043c\u0438\u044f,\u043e\u0440\u0431\u0438\u0442\u0430,\u043d\u0435\u0431\u043e,\u0443\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u044f",
+        "promotionalText": "\u041d\u0430\u0431\u043b\u044e\u0434\u0430\u0439\u0442\u0435 \u041c\u041a\u0421 \u0438 \u0422\u044f\u043d\u044c\u0433\u0443\u043d \u043d\u0430\u0434 \u0432\u0430\u043c\u0438. \u041d\u0430\u0445\u043e\u0434\u0438\u0442\u0435 \u0432\u0438\u0434\u0438\u043c\u044b\u0435 \u043f\u0440\u043e\u043b\u0451\u0442\u044b, \u0441\u043b\u0435\u0434\u0438\u0442\u0435 \u0437\u0430 \u0442\u0440\u0430\u0435\u043a\u0442\u043e\u0440\u0438\u0435\u0439 \u0441\u0440\u0435\u0434\u0438 \u0437\u0432\u0451\u0437\u0434 \u0438 \u043d\u0430\u0441\u0442\u0440\u0430\u0438\u0432\u0430\u0439\u0442\u0435 \u043d\u0430\u043f\u043e\u043c\u0438\u043d\u0430\u043d\u0438\u044f \u043e \u0441\u043b\u0435\u0434\u0443\u044e\u0449\u0435\u043c \u043d\u0430\u0431\u043b\u044e\u0434\u0435\u043d\u0438\u0438.",
+        "supportUrl": "https://satellite-forecast.square.site",
+        "whatsNew": "\u041d\u043e\u0432\u044b\u0439 \u0433\u043b\u0430\u0432\u043d\u044b\u0439 \u044d\u043a\u0440\u0430\u043d \u0434\u043b\u044f \u0432\u0430\u0448\u0435\u0433\u043e \u0441\u043b\u0435\u0434\u0443\u044e\u0449\u0435\u0433\u043e \u043d\u0430\u0431\u043b\u044e\u0434\u0435\u043d\u0438\u044f.\n\u2022 \u0421\u0440\u0430\u0437\u0443 \u0432\u0438\u0434\u043d\u043e \u0431\u043b\u0438\u0436\u0430\u0439\u0448\u0438\u0439 \u0432\u0438\u0434\u0438\u043c\u044b\u0439 \u043f\u0440\u043e\u043b\u0451\u0442 \u041c\u041a\u0421 \u0438\u043b\u0438 \u00ab\u0422\u044f\u043d\u044c\u0433\u0443\u043d\u00bb \u0441 \u0430\u043d\u0438\u043c\u0438\u0440\u043e\u0432\u0430\u043d\u043d\u044b\u043c \u043f\u0440\u0435\u0432\u044c\u044e \u043d\u0435\u0431\u0430: \u0433\u0434\u0435 \u043e\u043d \u0432\u043e\u0441\u0445\u043e\u0434\u0438\u0442, \u0434\u043e\u0441\u0442\u0438\u0433\u0430\u0435\u0442 \u043c\u0430\u043a\u0441\u0438\u043c\u0443\u043c\u0430 \u0438 \u0437\u0430\u0445\u043e\u0434\u0438\u0442.\n\u2022 \u041d\u0430\u0436\u043c\u0438\u0442\u0435 \u00ab\u041d\u0430\u043f\u043e\u043c\u043d\u0438\u0442\u044c\u00bb, \u0447\u0442\u043e\u0431\u044b \u043f\u043e\u043b\u0443\u0447\u0430\u0442\u044c push-\u043d\u0430\u043f\u043e\u043c\u0438\u043d\u0430\u043d\u0438\u0435 \u043f\u0435\u0440\u0435\u0434 \u043a\u0430\u0436\u0434\u044b\u043c \u0432\u0438\u0434\u0438\u043c\u044b\u043c \u043f\u0440\u043e\u043b\u0451\u0442\u043e\u043c.\n\u2022 \u0412\u0438\u0434\u0436\u0435\u0442\u044b \u043d\u0430 \u044d\u043a\u0440\u0430\u043d\u0435 \u00ab\u0414\u043e\u043c\u043e\u0439\u00bb \u043f\u043e\u043a\u0430\u0437\u044b\u0432\u0430\u044e\u0442 \u0431\u043b\u0438\u0436\u0430\u0439\u0448\u0438\u0439 \u043f\u0440\u043e\u043b\u0451\u0442 \u0441 \u043a\u0430\u0440\u0442\u043e\u0439 \u043d\u0435\u0431\u0430 \u0438 \u0432\u0440\u0435\u043c\u0435\u043d\u0435\u043c \u0432\u043e\u0441\u0445\u043e\u0434\u0430, \u043c\u0430\u043a\u0441\u0438\u043c\u0443\u043c\u0430 \u0438 \u0437\u0430\u0445\u043e\u0434\u0430.\n\u2022 \u0412\u0441\u0435 \u043f\u0440\u043e\u043b\u0451\u0442\u044b \u0441\u0433\u0440\u0443\u043f\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u044b \u043f\u043e \u0434\u043d\u044f\u043c \u0441\u043e \u0437\u043d\u0430\u0447\u043a\u043e\u043c \u0441\u0442\u0430\u043d\u0446\u0438\u0438 \u0438 \u043c\u0430\u043a\u0441\u0438\u043c\u0430\u043b\u044c\u043d\u043e\u0439 \u0432\u044b\u0441\u043e\u0442\u043e\u0439."
+      },
+      "relationships": {
+        "appScreenshotSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/462e7725-32e2-4a08-b792-3d66efdbfd8f/relationships/appScreenshotSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/462e7725-32e2-4a08-b792-3d66efdbfd8f/appScreenshotSets"
+          }
+        },
+        "appPreviewSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/462e7725-32e2-4a08-b792-3d66efdbfd8f/relationships/appPreviewSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/462e7725-32e2-4a08-b792-3d66efdbfd8f/appPreviewSets"
+          }
+        },
+        "searchKeywords": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/462e7725-32e2-4a08-b792-3d66efdbfd8f/relationships/searchKeywords",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/462e7725-32e2-4a08-b792-3d66efdbfd8f/searchKeywords"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/462e7725-32e2-4a08-b792-3d66efdbfd8f"
+      }
+    },
+    {
+      "type": "appStoreVersionLocalizations",
+      "id": "d0a438e3-5645-4463-ba42-882d7bfbcbf1",
+      "attributes": {
+        "locale": "en-US",
+        "description": "Know when to look up\u2014and where to look.\n\nSpace Station Passes helps you spot the International Space Station, Tiangong, and other satellites from your chosen location. Plan your next observation with pass forecasts, interactive sky charts, and reminders.\n\n\u2022 Find your next visible pass: See upcoming passes, their timing, and how high each satellite will appear above the horizon.\n\n\u2022 Follow the path across the sky: Explore interactive charts with stars, constellations, the Milky Way, and the Moon.\n\n\u2022 Know the key moments: Check when a satellite rises, reaches its highest visible point, and disappears from view.\n\n\u2022 Set a reminder: Schedule an alert for the pass you want to watch.\n\n\u2022 Explore beyond the space stations: Browse thousands of satellites, including bright satellites and recent launches.\n\nAn optional experimental realtime sky view is available in Settings.",
+        "keywords": "iss,tiangong,satellite,tracker,astronomy,stargazing,sky,chart,orbit,alert,reminder,overhead,spotting",
+        "promotionalText": "Spot the ISS and Tiangong overhead. Find visible passes, follow their paths across the stars, and set reminders for your next observation.",
+        "supportUrl": "https://satellite-forecast.square.site",
+        "whatsNew": "A new home for your next observation.\n\u2022 See the next visible ISS or Tiangong pass at a glance, with an animated sky preview of where it rises, peaks and sets.\n\u2022 Tap Remind me to get a push reminder before each visible pass.\n\u2022 Home Screen widgets show the upcoming pass with a sky chart and rise, peak and set times.\n\u2022 All passes are grouped by day with station icons and peak elevation."
+      },
+      "relationships": {
+        "appScreenshotSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/d0a438e3-5645-4463-ba42-882d7bfbcbf1/relationships/appScreenshotSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/d0a438e3-5645-4463-ba42-882d7bfbcbf1/appScreenshotSets"
+          }
+        },
+        "appPreviewSets": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/d0a438e3-5645-4463-ba42-882d7bfbcbf1/relationships/appPreviewSets",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/d0a438e3-5645-4463-ba42-882d7bfbcbf1/appPreviewSets"
+          }
+        },
+        "searchKeywords": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/d0a438e3-5645-4463-ba42-882d7bfbcbf1/relationships/searchKeywords",
+            "related": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/d0a438e3-5645-4463-ba42-882d7bfbcbf1/searchKeywords"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersionLocalizations/d0a438e3-5645-4463-ba42-882d7bfbcbf1"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://api.appstoreconnect.apple.com/v1/appStoreVersions/a19adf2d-b230-4638-8989-cfbabb75d7c1/appStoreVersionLocalizations"
+  },
+  "meta": {
+    "paging": {
+      "total": 8,
+      "limit": 50
+    }
+  }
+}

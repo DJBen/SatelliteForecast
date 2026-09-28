@@ -1,0 +1,82 @@
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/AppAnalytics.swift:46:72: warning: converting function value of type '@MainActor (String, AppAnalytics.Screen, [String : Any]) -> ()' to '(String, AppAnalytics.Screen, [String : Any]) -> Void' loses global actor 'MainActor'; this is an error in the Swift 6 language mode
+⚠️ Warning:    |                                                                        `- warning: converting function value of type '@MainActor (String, AppAnalytics.Screen, [String : Any]) -> ()' to '(String, AppAnalytics.Screen, [String : Any]) -> Void' loses global actor 'MainActor'; this is an error in the Swift 6 language mode
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:18:46: warning: 'CLGeocoder' was deprecated in iOS 26.0: Use MapKit [#DeprecatedDeclaration]
+⚠️ Warning:     |                                              `- warning: 'CLGeocoder' was deprecated in iOS 26.0: Use MapKit [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:25:28: warning: call to main actor-isolated instance method 'open(_:options:completionHandler:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+⚠️ Warning:     |                            `- warning: call to main actor-isolated instance method 'open(_:options:completionHandler:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:25:21: warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+⚠️ Warning:     |                     `- warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:25:59: warning: main actor-isolated class property 'unifiedSettingsURLString' can not be referenced from a nonisolated context
+⚠️ Warning:     |                                                           `- warning: main actor-isolated class property 'unifiedSettingsURLString' can not be referenced from a nonisolated context
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:9:47: warning: conformance of 'LocationService' to protocol 'CLLocationManagerDelegate' crosses into main actor-isolated code and can cause data races; this is an error in the Swift 6 language mode [#ConformanceIsolation]
+⚠️ Warning:     |                                               |- warning: conformance of 'LocationService' to protocol 'CLLocationManagerDelegate' crosses into main actor-isolated code and can cause data races; this is an error in the Swift 6 language mode [#ConformanceIsolation]
+❌ Error:  99 |   public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+❌ Error:     |               |- note: main actor-isolated instance method 'locationManager(_:didFailWithError:)' cannot satisfy nonisolated requirement
+❌ Error:     |               `- note: mark instance method 'locationManager(_:didFailWithError:)' 'nonisolated'
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/LocationSettingsView/LocationSearchModel.swift:9:78: warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning:     |                                                                              `- warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/LocationSettingsView/LocationSearchModel.swift:14:81: warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning:     |                                                                                 `- warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/Planetarium/PlanetariumView.swift:256:17: warning: cannot use generic class 'Autoconnect' in a property declaration member of a type not marked '@_implementationOnly'; 'Combine' was not imported by this file
+⚠️ Warning:     |                 `- warning: cannot use generic class 'Autoconnect' in a property declaration member of a type not marked '@_implementationOnly'; 'Combine' was not imported by this file
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/Planetarium/PlanetariumView.swift:256:17: warning: cannot use enum 'Publishers' in a property declaration member of a type not marked '@_implementationOnly'; 'Combine' was not imported by this file
+⚠️ Warning:     |                 `- warning: cannot use enum 'Publishers' in a property declaration member of a type not marked '@_implementationOnly'; 'Combine' was not imported by this file
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/SettingsOverview/ObserverCell/ObserverCell.swift:38:23: warning: 'MapMarker' was deprecated in iOS 17.0: Use Marker along with Map initializers that take a MapContentBuilder instead. [#DeprecatedDeclaration]
+⚠️ Warning:     |                       `- warning: 'MapMarker' was deprecated in iOS 17.0: Use Marker along with Map initializers that take a MapContentBuilder instead. [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/AppAnalytics.swift:46:72: warning: converting function value of type '@MainActor (String, AppAnalytics.Screen, [String : Any]) -> ()' to '(String, AppAnalytics.Screen, [String : Any]) -> Void' loses global actor 'MainActor'; this is an error in the Swift 6 language mode
+⚠️ Warning:    |                                                                        `- warning: converting function value of type '@MainActor (String, AppAnalytics.Screen, [String : Any]) -> ()' to '(String, AppAnalytics.Screen, [String : Any]) -> Void' loses global actor 'MainActor'; this is an error in the Swift 6 language mode
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:18:46: warning: 'CLGeocoder' was deprecated in iOS 26.0: Use MapKit [#DeprecatedDeclaration]
+⚠️ Warning:     |                                              `- warning: 'CLGeocoder' was deprecated in iOS 26.0: Use MapKit [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:25:28: warning: call to main actor-isolated instance method 'open(_:options:completionHandler:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+⚠️ Warning:     |                            `- warning: call to main actor-isolated instance method 'open(_:options:completionHandler:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:25:21: warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+⚠️ Warning:     |                     `- warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:25:59: warning: main actor-isolated class property 'unifiedSettingsURLString' can not be referenced from a nonisolated context
+⚠️ Warning:     |                                                           `- warning: main actor-isolated class property 'unifiedSettingsURLString' can not be referenced from a nonisolated context
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:9:47: warning: conformance of 'LocationService' to protocol 'CLLocationManagerDelegate' crosses into main actor-isolated code and can cause data races; this is an error in the Swift 6 language mode [#ConformanceIsolation]
+⚠️ Warning:     |                                               |- warning: conformance of 'LocationService' to protocol 'CLLocationManagerDelegate' crosses into main actor-isolated code and can cause data races; this is an error in the Swift 6 language mode [#ConformanceIsolation]
+❌ Error:  99 |   public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+❌ Error:     |               |- note: main actor-isolated instance method 'locationManager(_:didFailWithError:)' cannot satisfy nonisolated requirement
+❌ Error:     |               `- note: mark instance method 'locationManager(_:didFailWithError:)' 'nonisolated'
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:114:14: warning: 'cancelGeocode()' was deprecated in iOS 26.0: Use MKGeocodingRequest [#DeprecatedDeclaration]
+⚠️ Warning:     |              `- warning: 'cancelGeocode()' was deprecated in iOS 26.0: Use MKGeocodingRequest [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:118:41: warning: 'reverseGeocodeLocation' was deprecated in iOS 26.0: Use MKReverseGeocodingRequest [#DeprecatedDeclaration]
+⚠️ Warning:     |                                         `- warning: 'reverseGeocodeLocation' was deprecated in iOS 26.0: Use MKReverseGeocodingRequest [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:25:28: warning: call to main actor-isolated instance method 'open(_:options:completionHandler:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+⚠️ Warning:     |                            `- warning: call to main actor-isolated instance method 'open(_:options:completionHandler:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:25:21: warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+⚠️ Warning:     |                     `- warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:25:59: warning: main actor-isolated class property 'unifiedSettingsURLString' can not be referenced from a nonisolated context
+⚠️ Warning:     |                                                           `- warning: main actor-isolated class property 'unifiedSettingsURLString' can not be referenced from a nonisolated context
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:18:46: warning: 'CLGeocoder' was deprecated in iOS 26.0: Use MapKit [#DeprecatedDeclaration]
+⚠️ Warning:     |                                              `- warning: 'CLGeocoder' was deprecated in iOS 26.0: Use MapKit [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/AppAnalytics.swift:46:72: warning: converting function value of type '@MainActor (String, AppAnalytics.Screen, [String : Any]) -> ()' to '(String, AppAnalytics.Screen, [String : Any]) -> Void' loses global actor 'MainActor'; this is an error in the Swift 6 language mode
+⚠️ Warning:    |                                                                        `- warning: converting function value of type '@MainActor (String, AppAnalytics.Screen, [String : Any]) -> ()' to '(String, AppAnalytics.Screen, [String : Any]) -> Void' loses global actor 'MainActor'; this is an error in the Swift 6 language mode
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/AppAnalytics.swift:46:72: warning: converting function value of type '@MainActor (String, AppAnalytics.Screen, [String : Any]) -> ()' to '(String, AppAnalytics.Screen, [String : Any]) -> Void' loses global actor 'MainActor'; this is an error in the Swift 6 language mode
+⚠️ Warning:    |                                                                        `- warning: converting function value of type '@MainActor (String, AppAnalytics.Screen, [String : Any]) -> ()' to '(String, AppAnalytics.Screen, [String : Any]) -> Void' loses global actor 'MainActor'; this is an error in the Swift 6 language mode
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/SatelliteForecastTests/NativeArchitectureTests.swift:192:25: warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning:     |                         `- warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/SatelliteForecastTests/NativeArchitectureTests.swift:211:13: warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning:     |             `- warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/SatelliteForecastTests/NativeArchitectureTests.swift:207:13: warning: initialization of immutable value 'navigation' was never used; consider replacing with assignment to '_' or removing it [#NoUsage]
+⚠️ Warning:     |             `- warning: initialization of immutable value 'navigation' was never used; consider replacing with assignment to '_' or removing it [#NoUsage]
+✅ Test Run test succeeded for scheme SatelliteForecastApp.
+
+Test Results Summary:
+Test Summary: Test - SatelliteForecastApp
+Overall Result: Passed
+
+Test Counts:
+  Total: 134
+  Passed: 132
+  Failed: 0
+  Skipped: 2
+  Expected Failures: 0
+
+Environment: SatelliteForecast · Built with macOS 27.0
+
+Device: iPhone 17 Pro Max (iOS Simulator 27.0)
+
+Insights:
+  1. [20% of duration] 2 longest test runs with outlier durations exceeding 2.57s (three standard deviations)
+

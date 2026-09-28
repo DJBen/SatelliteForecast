@@ -1,10 +1,14 @@
-# 2.0.0 App Store draft (September 26–27, 2026)
+# 2.0.0 App Store release (September 26–27, 2026)
+
+The replacement candidate is [build 20](build-20/README.md), with live-pass indicators,
+planetarium debug time, remote Live Activities, and the Chinese name **天宫过境**.
+Build 16 was withdrawn at the user’s request.
 
 Observation home, push station reminders, Home Screen widgets with sky charts, station
 video cards on the Satellites tab. Builds 12 and 13 are on internal TestFlight
 ([build-12](build-12/README.md), [build-13](build-13/README.md)).
 
-## Draft
+## Original draft
 
 - Created with `asc versions create --copy-metadata-from 1.8.0 --exclude-fields whatsNew
   --release-type MANUAL`: version ID `a19adf2d-b230-4638-8989-cfbabb75d7c1`,
@@ -12,7 +16,8 @@ video cards on the Satellites tab. Builds 12 and 13 are on internal TestFlight
   ([existing-inventory.json](existing-inventory.json)).
 - Release notes for all eight locales are in [release-notes.json](release-notes.json) and
   were applied with `asc localizations update`.
-- No build is attached and nothing was submitted for review or external testing.
+- At draft creation, no build was attached or submitted. See the version-specific build
+  evidence for later submissions.
 
 ## Screenshots (six per locale)
 

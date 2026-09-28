@@ -104,3 +104,11 @@ The pass-chart and planetarium captures were regenerated in all eight locales in
   identifiers, and the widget extension's Info.plist must declare
   `CFBundleLocalizations`, or SpringBoard treats the extension as English-only and
   the app name under the widget stays untranslated.
+
+## 2.0.0 build 20 refresh
+
+All eight pinned selection records were reused unchanged for the replacement submission.
+The new native dark-mode captures live in `2.0.0/build-20/screenshots/`; widget images
+are regenerated using the current forecast. The Chinese installed app and store name
+is now **天宫过境**. Capture runners disable parallel testing and diagnostic collection
+to avoid Xcode 27 hanging after a completed locale.

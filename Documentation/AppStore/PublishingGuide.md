@@ -87,7 +87,7 @@ targets. The guide is a procedure, not standing authorization to publish.
    `python3 scripts/replace-store-screenshots.py --release-dir Documentation/AppStore/<V>`
    without `--apply` to validate, then with `--apply`. Inventoried slots must lead the local
    files in order; extra trailing slots are appended. The script only touches
-   `PREPARE_FOR_SUBMISSION` drafts, waits for `COMPLETE`, and verifies ordered MD5 checksums.
+   `PREPARE_FOR_SUBMISSION` or explicitly withdrawn `DEVELOPER_REJECTED` drafts, waits for `COMPLETE`, and verifies ordered MD5 checksums.
    Rerun without `--apply` afterwards; every locale should print `already matches`.
    If the store order differs from the filename order (2.0.0 leads with the widget
    slot), record it in `slot-order.json` and use
@@ -212,5 +212,32 @@ and deploy to https://space-station-passes.web.app with `firebase deploy --only 
 --project pass-prediction` from that folder. Since 2026-09-27 every locale's app-info
 `privacyPolicyUrl` points to https://space-station-passes.web.app/privacy (pushed with
 `asc metadata push`; the old Square site is retired). Version-level `supportUrl` and
-`marketingUrl` still reference the Square site and should move to `/support` and `/`
-on the next editable version.
+`marketingUrl` moved to `/support` and `/` for build 18 in all eight locales.
+
+## Builds 17–18 replacement notes
+
+- For a version waiting for review, cancel through the modern API with
+  `asc submit cancel --version-id <ID> --app 1578649430 --confirm`; verify
+  `DEVELOPER_REJECTED` before editing. The screenshot upload scripts accept that
+  withdrawn state as well as `PREPARE_FOR_SUBMISSION`, and still reject live or
+  in-review versions.
+- Capture and behavior runners disable parallel testing and test diagnostics collection
+  to avoid Xcode 27 hanging after the tests complete. Check counts and capture sequences.
+- All eight version locales now use the support website's `/support` and `/` URLs.
+  The privacy policy also describes the optional Live Activity registration and retention.
+- Builds 17 and 18 were not submitted. [2.0.0 build 20](2.0.0/build-20/README.md)
+  includes the merged widget persistence fix and replaces the withdrawn build 16 submission.
+
+- Widget capture now waits for a fresh, nonempty shared forecast before rebooting.
+  The first forecast can exceed the fixed 50-second settle delay while sky charts
+  are generated; a setup placeholder is not an acceptable store capture.
+- Allow WidgetKit 30 seconds after the forecast write, then 45 seconds after the
+  Home Screen reboot. Immediate restart can preserve a stale setup timeline even
+  when the shared JSON is ready. Reinstall the normal app after snapshot tests.
+
+- After the per-place cache change, widget readiness must follow `active` in
+  `widget-forecast-places-v1.json` to `widget-forecast-<UUID>.json`; the legacy
+  `widget-forecast-v1.json` is removed after a successful write. Verify observer
+  coordinates as well as modification time and nonempty passes.
+- Use separate simulator clones when other tasks build or run concurrently. A shared
+  simulator can interrupt snapshot tests or restore the app over a Home Screen capture.

@@ -1,0 +1,70 @@
+{
+  "device": "iPhone 17 Pro Max",
+  "appearance": "dark",
+  "reviewed": {
+    "en-US": [
+      "01-forecast",
+      "02-pass-chart",
+      "03-pass-list",
+      "04-satellites",
+      "05-planetarium",
+      "06-widgets"
+    ],
+    "fr-FR": [
+      "01-forecast",
+      "02-pass-chart",
+      "03-pass-list",
+      "04-satellites",
+      "05-planetarium",
+      "06-widgets"
+    ],
+    "es-ES": [
+      "01-forecast",
+      "02-pass-chart",
+      "03-pass-list",
+      "04-satellites",
+      "05-planetarium",
+      "06-widgets"
+    ],
+    "pt-BR": [
+      "01-forecast",
+      "02-pass-chart",
+      "03-pass-list",
+      "04-satellites",
+      "05-planetarium",
+      "06-widgets"
+    ],
+    "ru": [
+      "01-forecast",
+      "02-pass-chart",
+      "03-pass-list",
+      "04-satellites",
+      "05-planetarium",
+      "06-widgets"
+    ],
+    "ja": [
+      "01-forecast",
+      "02-pass-chart",
+      "03-pass-list",
+      "04-satellites",
+      "05-planetarium",
+      "06-widgets"
+    ],
+    "ko": [
+      "01-forecast",
+      "02-pass-chart",
+      "03-pass-list",
+      "04-satellites",
+      "05-planetarium",
+      "06-widgets"
+    ],
+    "zh-Hans": [
+      "01-forecast",
+      "02-pass-chart",
+      "03-pass-list",
+      "04-satellites",
+      "05-planetarium",
+      "06-widgets"
+    ]
+  }
+}

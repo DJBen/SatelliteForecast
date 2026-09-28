@@ -1,0 +1,434 @@
+[
+  {
+    "file": "screenshots/en-US/01-forecast.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "c275cd263570f92df8f3ae1a6c6dd8ec",
+    "sha256": "ec38910992aa531b6d78e83a9ec8b6fc624f446b35b3687f57ccb68d03cfc89b"
+  },
+  {
+    "file": "screenshots/en-US/02-pass-chart.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "d2dbd2601bae2a071b243abf8aa0da92",
+    "sha256": "da0c3760c0430f36fcaf19f7642b6f086a1691031d5c659cce6e57a9f5fa4ae7"
+  },
+  {
+    "file": "screenshots/en-US/03-pass-list.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "f85398130a84437ea50d61c273577ca3",
+    "sha256": "273ef93d25e96058df97282c1ab04596175816bb7656e0baac67876ff4397abc"
+  },
+  {
+    "file": "screenshots/en-US/04-satellites.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "758ca1d2ca3b955e0de10cdddba57c40",
+    "sha256": "923d5a18a99747160a34a41b72b0a03b4d3400328217b7ee6e6cac62f3377792"
+  },
+  {
+    "file": "screenshots/en-US/05-planetarium.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "563600755d9a3b5a13228122d789a316",
+    "sha256": "1435b31ad1fbfca9030ce09020e7d734e9c8b201978a3f711854339e03f6d3d0"
+  },
+  {
+    "file": "screenshots/en-US/06-widgets.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "4049e1c37131089e2cb33dddc38a788b",
+    "sha256": "176c792445db33c823ab5933a8dd0b246b31aac161b2a12a7d5856a733947c65"
+  },
+  {
+    "file": "screenshots/es-ES/01-forecast.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "f8799a8bea83c3ab1205389d88045a4f",
+    "sha256": "d898ace4b953e1e8ede96aa265579cb8763c02531369c92229903f2cb360b709"
+  },
+  {
+    "file": "screenshots/es-ES/02-pass-chart.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "ca89673f8c1ab37e3a0fe45471b43aad",
+    "sha256": "8e7d30b8a4efd9853fd3d099c6f853fbad25d5d7b53e62f560f441353ecd7cf6"
+  },
+  {
+    "file": "screenshots/es-ES/03-pass-list.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "2cdd4c109550c9cbcd0031074800a8b0",
+    "sha256": "e52a1c9ab7492111470b09a6eeb0ff403659841ca7cd6272409506ee369a8f65"
+  },
+  {
+    "file": "screenshots/es-ES/04-satellites.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "f8ad3d413d2e6dc857b1ca54c2658078",
+    "sha256": "d6048baabbf44d88c3475127e649bf366dc79a1c68f91d23e5d0d7a8fbc8f9aa"
+  },
+  {
+    "file": "screenshots/es-ES/05-planetarium.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "e9fbfccae668faee771a2922f8d23386",
+    "sha256": "8f5fb2f07629d5d3b7a7e3015c968bbec5896c279ab02e8b46ee82e5c7e98459"
+  },
+  {
+    "file": "screenshots/es-ES/06-widgets.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "85f478e0dbb4deb82f15e5c992912793",
+    "sha256": "1fd083ed1f27b580d0c9605b3f39c9453edfaaf769ee69eea0d306e9ac8ba057"
+  },
+  {
+    "file": "screenshots/fr-FR/01-forecast.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "68909195ceb3300cd2ec81d6b56b3a8b",
+    "sha256": "27adcdfb9f9af11603e19ac29ea7a6e71fdf7335e0cc872568bd05f0dd8b3004"
+  },
+  {
+    "file": "screenshots/fr-FR/02-pass-chart.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "3bf6f4bfca4c58521755e2e4f4ec0389",
+    "sha256": "547d95e0eadfcfba3fa2b90c07c4f1d3fac9595f3c866c285eea0e2ade1290bb"
+  },
+  {
+    "file": "screenshots/fr-FR/03-pass-list.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "0d3cea8de340b09ede2306c3eb6a022c",
+    "sha256": "3d4ac3a963a1b86e5b1eafb3e5acf93d6375d0289c2da67b086e39806260286b"
+  },
+  {
+    "file": "screenshots/fr-FR/04-satellites.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "f4ae0e1b503345ccef2779842097918b",
+    "sha256": "976b567c82703753e6cbf3d1bdd659217125639ec2faecc4658832b2dce2a8b0"
+  },
+  {
+    "file": "screenshots/fr-FR/05-planetarium.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "2811a5d639c031d248a99772db891360",
+    "sha256": "7c863eb9fa1d3780cc17f6ced5e81c3245d3caa6fe327872f8912d76b85a79fb"
+  },
+  {
+    "file": "screenshots/fr-FR/06-widgets.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "13301be4260fbaf52ebd84720d1625ab",
+    "sha256": "33b1a6d9f92e2500bfa5cc1c54ae66b12909a3d981e4b4035399dab1e14a52db"
+  },
+  {
+    "file": "screenshots/ja/01-forecast.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "b0cea350a34854154a80cc94cde6336d",
+    "sha256": "6f9ece629764cee4b3612ad13cf3c3f9a2cc3814d9186acc1bfe9fc0c9b65bb4"
+  },
+  {
+    "file": "screenshots/ja/02-pass-chart.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "249ada5ec2f3dee42ce9d65fe24d552c",
+    "sha256": "20ff63b5d2e8404a2dbd203631c7e94e6e3625fffe4d50e90dfa54f606403afc"
+  },
+  {
+    "file": "screenshots/ja/03-pass-list.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "62cb268e5919d51d7e183d5825abd816",
+    "sha256": "0f8666e8b72515336d7e36db857cea9f05e82d727725f3730908c46b8bd4dec3"
+  },
+  {
+    "file": "screenshots/ja/04-satellites.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "4ce0ad6fbac882fedc40301b3cd0fb12",
+    "sha256": "64c30fd0f94316665e685afff4b4e104e34098bfc38bcf02b5a296d3ab01a285"
+  },
+  {
+    "file": "screenshots/ja/05-planetarium.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "3256678502349b570135fb5db318c24e",
+    "sha256": "7aa9c96685bd3e10fc22e4bdbe4618e0125bac6546a7580cfef3d74f5ab2e9d1"
+  },
+  {
+    "file": "screenshots/ja/06-widgets.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "496bc790c29ef21ef930ef3725618179",
+    "sha256": "012ffbc7f28df7a11ce1f9eafc575ad4109005d9ed8171649bb4d889731877f0"
+  },
+  {
+    "file": "screenshots/ko/01-forecast.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "1cac9f4ecb442429f171758aaba5c183",
+    "sha256": "0ca5c928f61f6b1fa349a3518eb4e22ab6492a5d2e0c37372ef5f9540b73cc84"
+  },
+  {
+    "file": "screenshots/ko/02-pass-chart.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "4da3cbe3be5ed67c7348dca82b6e1486",
+    "sha256": "38edfb77f64ab7c70f609f1d4df8e4fa820a06e54c74b5e5ad567125e15c1191"
+  },
+  {
+    "file": "screenshots/ko/03-pass-list.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "e17da5f8c965ca04956fe8933134d7ca",
+    "sha256": "f276ef2e3848e5fb6b8bec7c9058f6650e144582f72483da6af005a8168dcdbe"
+  },
+  {
+    "file": "screenshots/ko/04-satellites.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "0e27004804cc1dbd8c342cc9e681ab23",
+    "sha256": "296b3fef81d1d1f80ee0a13fe5187925882de3b08fd782e73dfb1e65dec1788e"
+  },
+  {
+    "file": "screenshots/ko/05-planetarium.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "935eef67c31cb1ee59588d949e2d387c",
+    "sha256": "6bea6ee76fa840771d69c9f43c83a98d7e7ee896deec983d06fda1ab677c21e3"
+  },
+  {
+    "file": "screenshots/ko/06-widgets.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "34f3d97a6ad5f59a898cd61322f3693b",
+    "sha256": "a7c32e1f74b76c89b2c2d1ae52221450887708d616ebafbafeaa9db6d65d9f3e"
+  },
+  {
+    "file": "screenshots/pt-BR/01-forecast.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "68bfeb0ca5f171200fb266a70e5979ec",
+    "sha256": "634f46fb3b391eac90c9eabe668c17ec3bf2d3f490f2d2f21200b02ae2ab388e"
+  },
+  {
+    "file": "screenshots/pt-BR/02-pass-chart.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "f600ceafb2e220c02e33516dcb51b806",
+    "sha256": "a1c5053d702ba78274d52313ff2fd1d4cba569540fe9862838f6731940a6528b"
+  },
+  {
+    "file": "screenshots/pt-BR/03-pass-list.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "f1c6759b3707b846301051ff400c4b3f",
+    "sha256": "7d92c07d679fae212023d3e5132f0688070a0e13f2b8b4f9e46942fe055c0910"
+  },
+  {
+    "file": "screenshots/pt-BR/04-satellites.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "80a61cc099272b24d8fa147114e9ab02",
+    "sha256": "774acf96dbacdcedb0b265c568c10c882542cd94d0e860c2ca1c68e2491b8b45"
+  },
+  {
+    "file": "screenshots/pt-BR/05-planetarium.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "809f9d16e5f2cdbba476a6ce6ff23495",
+    "sha256": "6c0b7892fbe44193fc2b7013cf491af13198da9174367c9d48484d487f9d3929"
+  },
+  {
+    "file": "screenshots/pt-BR/06-widgets.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "7311f1703c4e8f440603cd9051950ee2",
+    "sha256": "7d1beb90ae7d9b20d1ce23b5dea33324a1a40bb07d93a830dacea9fcffec621a"
+  },
+  {
+    "file": "screenshots/ru/01-forecast.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "24b19f8919b5b41d28411521725b7d88",
+    "sha256": "59fc76c8af9e97327473d90112159fea4ae5054ad1b70836ebd6fb72e8b143fb"
+  },
+  {
+    "file": "screenshots/ru/02-pass-chart.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "231f22590441f21593aa1a3ab5b94a6a",
+    "sha256": "43449ae2dacb3c22ec0f76d79c48bcc31dbf568d0746f6b25f4ade1a32f7a0ac"
+  },
+  {
+    "file": "screenshots/ru/03-pass-list.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "b52cfa506d82395df521ccfdd4c4a724",
+    "sha256": "5951496348b9dae239694d9f7a73cf512349e36cc093d329c7ca321fa69dc9e4"
+  },
+  {
+    "file": "screenshots/ru/04-satellites.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "84542f6491b3921ff883c202d81f29fa",
+    "sha256": "3bbd1ade72da4e355c3a4f4b8c31ca7832734411c2ee6d7b049b758ba2dffd0d"
+  },
+  {
+    "file": "screenshots/ru/05-planetarium.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "eee9abf8b46e52bd151d6d79f9cf0cb9",
+    "sha256": "90b1a930ec54116bf2cdd354024a0e8182dffb09d3cc507afa96cc3c47eaaaa8"
+  },
+  {
+    "file": "screenshots/ru/06-widgets.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "6171f73dfa438518b752dd3f3edb7f32",
+    "sha256": "3ce98be898e17863c4fc84938cbc163e00e8d1a7b89ebc0630755209b02eff95"
+  },
+  {
+    "file": "screenshots/zh-Hans/01-forecast.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "262cee44a679c0d11994535e3e43555a",
+    "sha256": "814a221ffad274b4a8a3ccf3012e20e54a03628ef4f8e4cd725eb115c603fcb9"
+  },
+  {
+    "file": "screenshots/zh-Hans/02-pass-chart.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "7b2310486d1dd88d5fed632b67c47fd7",
+    "sha256": "2f53a9b895ef9ad3d55a495649d12c970c2f567343a78405adaff1290dbb5e10"
+  },
+  {
+    "file": "screenshots/zh-Hans/03-pass-list.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "aff83cb0756431dbb2b8f9ac253daa72",
+    "sha256": "4a14b3f65b66e2185fcb613599c0e52b7d16a3e98ce7c009814477c4a407d7d3"
+  },
+  {
+    "file": "screenshots/zh-Hans/04-satellites.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "4d42938365541bacf7f78f7270ef4583",
+    "sha256": "e4b0a98197a2a99cd15c37cf2dcac6c528845b53eb61b36bae7120de69b1d956"
+  },
+  {
+    "file": "screenshots/zh-Hans/05-planetarium.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "60c56aa100765ac138924ba5c711bad1",
+    "sha256": "a7d8448402842554ece8c7a74c4e59220a3ae143f5e651f69759fd564113e72e"
+  },
+  {
+    "file": "screenshots/zh-Hans/06-widgets.png",
+    "dimensions": [
+      1320,
+      2868
+    ],
+    "md5": "5c79dade0ea80128a404526d2f5efbae",
+    "sha256": "e73fac9de0c919753f41eea4570a0f7367acedd1007f6a5e889b09e388645dcf"
+  }
+]

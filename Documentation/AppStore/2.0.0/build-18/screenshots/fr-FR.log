@@ -1,0 +1,18 @@
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/SatelliteForecastTests/ScreenSnapshotTests.swift:984: warning: -[SatelliteForecastTests.ScreenSnapshotTests testAppStoreScreenshots] : [Internal] Thread running at User-interactive quality-of-service class waiting on a thread without a QoS class specified (base priority 31). Investigate ways to avoid priority inversions
+✅ Test Run test succeeded for scheme SatelliteForecastApp.
+
+Test Results Summary:
+Test Summary: Test - SatelliteForecastApp
+Overall Result: Passed
+
+Test Counts:
+  Total: 1
+  Passed: 1
+  Failed: 0
+  Skipped: 0
+  Expected Failures: 0
+
+Environment: SatelliteForecast · Built with macOS 27.0
+
+Device: iPhone 17 Pro Max (iOS Simulator 27.0)
+

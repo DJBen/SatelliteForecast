@@ -1,0 +1,17 @@
+{
+  "version": "2.0.0",
+  "build": "18",
+  "bundleId": "io.djben.SatelliteForecast",
+  "chineseDisplayName": "天宫过境",
+  "entitlements": {
+    "application-identifier": "52RD2GH5DP.io.djben.SatelliteForecast",
+    "aps-environment": "production",
+    "beta-reports-active": true,
+    "com.apple.developer.devicecheck.appattest-environment": "production",
+    "com.apple.developer.team-identifier": "52RD2GH5DP",
+    "com.apple.security.application-groups": [
+      "group.io.djben.SatelliteForecast"
+    ],
+    "get-task-allow": false
+  }
+}

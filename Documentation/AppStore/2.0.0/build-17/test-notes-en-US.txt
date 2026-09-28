@@ -1,0 +1,1 @@
+Test the live pass position and elevation on the home screen, coral passing-now shimmer, filled-eye Live Activity control and remote sunlight/shadow updates. The planetarium opens active passes in Now mode, honors the debug clock, and cancels superseded Moon rendering work.

@@ -1,0 +1,92 @@
+{
+ "en-US": {
+  "versionLocalizationId": "d0a438e3-5645-4463-ba42-882d7bfbcbf1",
+  "setId": "387ca5ad-efd2-4520-9ffd-6fab61d9baa2",
+  "displayType": "APP_IPHONE_67",
+  "total": 6,
+  "uploaded": 6,
+  "results": [
+   {
+    "fileName": "1-06-widgets.png",
+    "filePath": "/var/folders/k5/3_hnbssd6pggrm3j4vhmvz_40000gn/T/tmpogmqclff/1-06-widgets.png",
+    "assetId": "2cf35e5b-5626-4c0f-bc2f-c91378146be3",
+    "state": "COMPLETE"
+   },
+   {
+    "fileName": "2-01-forecast.png",
+    "filePath": "/var/folders/k5/3_hnbssd6pggrm3j4vhmvz_40000gn/T/tmpogmqclff/2-01-forecast.png",
+    "assetId": "533c3b4c-dd9b-4d51-ad1b-2ecfaede22d0",
+    "state": "COMPLETE"
+   },
+   {
+    "fileName": "3-05-planetarium.png",
+    "filePath": "/var/folders/k5/3_hnbssd6pggrm3j4vhmvz_40000gn/T/tmpogmqclff/3-05-planetarium.png",
+    "assetId": "0406eaa7-f733-42ab-af9c-cc2e2a8c017e",
+    "state": "COMPLETE"
+   },
+   {
+    "fileName": "4-02-pass-chart.png",
+    "filePath": "/var/folders/k5/3_hnbssd6pggrm3j4vhmvz_40000gn/T/tmpogmqclff/4-02-pass-chart.png",
+    "assetId": "b697a0c0-9a29-4126-acb9-acde6522ece7",
+    "state": "COMPLETE"
+   },
+   {
+    "fileName": "5-03-pass-list.png",
+    "filePath": "/var/folders/k5/3_hnbssd6pggrm3j4vhmvz_40000gn/T/tmpogmqclff/5-03-pass-list.png",
+    "assetId": "c0836923-f092-4a12-a7cc-9afa7411bd29",
+    "state": "COMPLETE"
+   },
+   {
+    "fileName": "6-04-satellites.png",
+    "filePath": "/var/folders/k5/3_hnbssd6pggrm3j4vhmvz_40000gn/T/tmpogmqclff/6-04-satellites.png",
+    "assetId": "135c6aba-0fa3-4ba9-8415-f067d3382742",
+    "state": "COMPLETE"
+   }
+  ]
+ },
+ "fr-FR": {
+  "versionLocalizationId": "3d4ed7ab-b757-4476-96b9-3c4705bfb086",
+  "setId": "58672d60-58b1-4800-b0d6-8a6fa210794c",
+  "displayType": "APP_IPHONE_67",
+  "total": 6,
+  "uploaded": 6,
+  "results": [
+   {
+    "fileName": "1-06-widgets.png",
+    "filePath": "/var/folders/k5/3_hnbssd6pggrm3j4vhmvz_40000gn/T/tmp4ynf7891/1-06-widgets.png",
+    "assetId": "ca7e3cd1-ffb2-4b3e-9dbf-ddf956d0bf2e",
+    "state": "COMPLETE"
+   },
+   {
+    "fileName": "2-01-forecast.png",
+    "filePath": "/var/folders/k5/3_hnbssd6pggrm3j4vhmvz_40000gn/T/tmp4ynf7891/2-01-forecast.png",
+    "assetId": "5644a4b2-3f99-4651-a943-1219923a0e57",
+    "state": "COMPLETE"
+   },
+   {
+    "fileName": "3-05-planetarium.png",
+    "filePath": "/var/folders/k5/3_hnbssd6pggrm3j4vhmvz_40000gn/T/tmp4ynf7891/3-05-planetarium.png",
+    "assetId": "6f8fc4ce-7bed-41fd-bb40-098363d0d299",
+    "state": "COMPLETE"
+   },
+   {
+    "fileName": "4-02-pass-chart.png",
+    "filePath": "/var/folders/k5/3_hnbssd6pggrm3j4vhmvz_40000gn/T/tmp4ynf7891/4-02-pass-chart.png",
+    "assetId": "9afc240b-008e-4087-9df3-9c0f9416e102",
+    "state": "COMPLETE"
+   },
+   {
+    "fileName": "5-03-pass-list.png",
+    "filePath": "/var/folders/k5/3_hnbssd6pggrm3j4vhmvz_40000gn/T/tmp4ynf7891/5-03-pass-list.png",
+    "assetId": "90bc6057-e8bf-400e-b094-ea06974c2208",
+    "state": "COMPLETE"
+   },
+   {
+    "fileName": "6-04-satellites.png",
+    "filePath": "/var/folders/k5/3_hnbssd6pggrm3j4vhmvz_40000gn/T/tmp4ynf7891/6-04-satellites.png",
+    "assetId": "39f9c8ae-b55d-47ba-8a74-667139184a31",
+    "state": "COMPLETE"
+   }
+  ]
+ }
+}
