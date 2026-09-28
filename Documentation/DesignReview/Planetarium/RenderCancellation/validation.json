@@ -1,0 +1,12 @@
+{
+  "simulator": "iPhone 17 Pro Max / iOS 27.0",
+  "appearance": "dark",
+  "tests": {
+    "passed": 7,
+    "failed": 0
+  },
+  "rapid_time_changes": 30,
+  "maximum_command_response_seconds": 0.22128650000377093,
+  "mean_command_response_seconds": 0.20350545823263624,
+  "note": "Interactive harness polls every 200 ms. These are command handling latencies, not GPU frame times or physical-device performance."
+}

@@ -700,3 +700,27 @@ Monthly regression checks cover seven planets across 1926-09-20–2126-09-20.
 Saturn's sampled opening error is below 0.000122° and pole position-angle error
 below 0.003232° versus JPL. The report documents residual approximations and
 does not promise this measured accuracy outside the tested interval.
+
+### Cancelable detailed Moon rendering (2026-09-27)
+
+A physical iPhone Air trace of Debug build 2.0.0 (16) showed six overlapping
+1024px Moon render jobs consuming roughly five to six CPU cores during rapid
+preview-time updates. Canceling their wrapper tasks did not cancel the detached
+workers. Detailed rendering now runs synchronously on a shared actor: only one
+render executes at a time, canceled queued requests skip rasterization, and a
+cancellation check at each pixel row stops obsolete work. Backgrounding cancels
+the request and resets the refresh date so returning schedules a fresh image.
+The last completed texture remains visible while its replacement renders.
+
+Generated label and Moon RGBA images upload directly into shared RGBA Metal
+textures. This removes the synchronous MTKTextureLoader worker-queue wait from
+the generated-image path, preserving premultiplication, orientation, and color.
+Bundled compressed sky textures keep their existing loading path. No image
+resolution, astronomical model, screen, analytics event, or measurement boundary
+changes. Regression coverage exercises superseded requests, serialization,
+cancellation, and pixel equivalence with the previous generated-image upload.
+
+Seven focused checks passed on the dark-mode iPhone 17 Pro Max simulator.
+Thirty rapid preview-time jumps remained responsive in the interactive harness.
+See [validation and visual evidence](DesignReview/Planetarium/RenderCancellation/README.md);
+post-fix physical-device performance has not yet been measured.

@@ -93,6 +93,7 @@ enum MoonAppearance {
     }()
 
     static func image(geometry: Geometry, dimension: Int = 96, emissionOnly: Bool = false, exposure: Double = 1, detailed: Bool = false) -> UIImage? {
+        guard !Task.isCancelled else { return nil }
         let dimension = min(1024, max(16, dimension))
         let surfaceTexture = detailed ? detailedTexture : texture
         let daylight = SkyChartAtmosphere.transition(-6, 2, geometry.sunElevation)
@@ -101,6 +102,7 @@ enum MoonAppearance {
         let earthshine = 0.13 * pow(1 - geometry.illuminatedFraction, 2) * (1 - daylight)
         var pixels = [UInt8](repeating: 0, count: dimension * dimension * 4)
         for y in 0..<dimension {
+            guard !Task.isCancelled else { return nil }
             for x in 0..<dimension {
                 let px = (Double(x) + 0.5) * 2 / Double(dimension) - 1
                 let py = (Double(y) + 0.5) * 2 / Double(dimension) - 1
@@ -198,6 +200,26 @@ enum MoonAppearance {
         }
     }
 
+}
+
+/// Synchronous actor work serializes detailed renders across planetarium instances.
+/// The caller's task executes the pixel loop, so cancellation reaches running work
+/// and canceled requests queued behind it return without rasterizing.
+actor PlanetariumMoonImageRenderer {
+    static let shared = PlanetariumMoonImageRenderer()
+    private let render: @Sendable (MoonAppearance.Geometry) -> UIImage?
+
+    init(render: @escaping @Sendable (MoonAppearance.Geometry) -> UIImage? = {
+        MoonAppearance.image(geometry: $0, dimension: 1024, exposure: 0.5, detailed: true)
+    }) {
+        self.render = render
+    }
+
+    func image(geometry: MoonAppearance.Geometry) -> UIImage? {
+        guard !Task.isCancelled else { return nil }
+        let image = render(geometry)
+        return Task.isCancelled ? nil : image
+    }
 }
 
 /// A bounded cache keeps scrolling pass lists from repeatedly rasterizing moons.

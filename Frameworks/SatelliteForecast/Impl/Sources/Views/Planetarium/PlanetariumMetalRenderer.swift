@@ -211,10 +211,20 @@ struct PlanetariumStarTiers {
                   bytesPerRow: cg.width * 4, space: CGColorSpace(name: CGColorSpace.sRGB)!,
                   bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { return nil }
         // UIKit may optimize monochrome glyphs to grayscale; normalize to RGBA
-        // so MetalKit can load selection reticles as well as colored labels.
+        // for selection reticles as well as colored labels.
         context.draw(cg, in: CGRect(x: 0, y: 0, width: cg.width, height: cg.height))
-        guard let rgba = context.makeImage() else { return nil }
-        return try? MTKTextureLoader(device: device).newTexture(cgImage: rgba, options: [.SRGB: true])
+        guard let bytes = context.data else { return nil }
+        // Generated labels/disks already have RGBA pixels. Upload them directly:
+        // the synchronous MetalKit loader can wait on its worker queue and stall
+        // the main thread while CPU rendering is busy.
+        let descriptor = MTLTextureDescriptor.texture2DDescriptor(
+            pixelFormat: .rgba8Unorm, width: cg.width, height: cg.height, mipmapped: false)
+        descriptor.storageMode = .shared
+        descriptor.usage = .shaderRead
+        guard let texture = device.makeTexture(descriptor: descriptor) else { return nil }
+        texture.replace(region: MTLRegionMake2D(0, 0, cg.width, cg.height), mipmapLevel: 0,
+                        withBytes: bytes, bytesPerRow: context.bytesPerRow)
+        return texture
     }
     private func buffer<T>(_ values: [T]) -> MTLBuffer? {
         guard !values.isEmpty else { return nil }

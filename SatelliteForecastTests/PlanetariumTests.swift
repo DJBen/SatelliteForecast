@@ -1793,3 +1793,94 @@ extension PlanetariumTests {
         XCTAssertEqual(try pixels(flat), try pixels(afterEviction), "Eviction must never remove an active draw buffer")
     }
 }
+
+private final class MoonRenderProbe: @unchecked Sendable {
+    let started = XCTestExpectation(description: "First Moon render started")
+    let release = DispatchSemaphore(value: 0)
+    private let lock = NSLock()
+    private var count = 0
+    private var active = 0
+    private var peak = 0
+    var measurements: (count: Int, peak: Int) {
+        lock.lock(); defer { lock.unlock() }
+        return (count, peak)
+    }
+    func render(_ geometry: MoonAppearance.Geometry) -> UIImage? {
+        lock.lock()
+        count += 1; active += 1; peak = max(peak, active)
+        let first = count == 1
+        lock.unlock()
+        if first {
+            started.fulfill()
+            _ = release.wait(timeout: .now() + 5)
+        }
+        defer { lock.lock(); active -= 1; lock.unlock() }
+        return MoonAppearance.image(geometry: geometry, dimension: 16)
+    }
+}
+
+extension PlanetariumTests {
+    func testMoonRenderingSerializesAndSkipsSupersededRequests() async throws {
+        let probe = MoonRenderProbe()
+        let renderer = PlanetariumMoonImageRenderer { probe.render($0) }
+        let geometry = MoonAppearance.Geometry(julianDate: 2459373.5, observer: .init(0, 0, 0))
+        let first = Task { await renderer.image(geometry: geometry) }
+        await fulfillment(of: [probe.started], timeout: 5)
+        // Queue obsolete requests while the first renderer is still occupied.
+        let obsolete = (0..<20).map { _ in Task { await renderer.image(geometry: geometry) } }
+        for task in obsolete { task.cancel() }
+        let newest = Task { await renderer.image(geometry: geometry) }
+        first.cancel()
+        probe.release.signal()
+        let firstImage = await first.value
+        XCTAssertNil(firstImage)
+        for task in obsolete {
+            let image = await task.value
+            XCTAssertNil(image)
+        }
+        let newestImage = await newest.value
+        XCTAssertNotNil(newestImage)
+        XCTAssertEqual(probe.measurements.count, 2, "Only the running and newest requests should rasterize")
+        XCTAssertEqual(probe.measurements.peak, 1, "Detailed Moon renders must never overlap")
+    }
+
+    func testDetailedMoonRenderRespondsToCancellation() async throws {
+        let started = expectation(description: "Detailed pixel render started")
+        let geometry = MoonAppearance.Geometry(julianDate: 2459373.5, observer: .init(0, 0, 0))
+        let task = Task.detached {
+            started.fulfill()
+            return MoonAppearance.image(geometry: geometry, dimension: 1024, detailed: true)
+        }
+        await fulfillment(of: [started], timeout: 5)
+        try await Task.sleep(for: .milliseconds(30))
+        task.cancel()
+        let image = await task.value
+        XCTAssertNil(image, "Canceled high-resolution work must not produce an obsolete image")
+    }
+
+    @MainActor
+    func testGeneratedTextureUploadPreservesPixels() throws {
+        let controller = PlanetariumController()
+        defer { controller.stop() }
+        let renderer = try XCTUnwrap(controller.renderer)
+        let format = UIGraphicsImageRendererFormat(); format.scale = 1
+        let image = UIGraphicsImageRenderer(size: CGSize(width: 8, height: 8), format: format).image { c in
+            UIColor.red.setFill(); c.fill(CGRect(x: 0, y: 0, width: 4, height: 4))
+            UIColor.green.withAlphaComponent(0.5).setFill(); c.fill(CGRect(x: 4, y: 4, width: 4, height: 4))
+        }
+        let texture = try XCTUnwrap(renderer.texture(image))
+        let cg = try XCTUnwrap(image.cgImage)
+        let context = try XCTUnwrap(CGContext(data: nil, width: 8, height: 8, bitsPerComponent: 8,
+            bytesPerRow: 32, space: CGColorSpace(name: CGColorSpace.sRGB)!,
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
+        context.draw(cg, in: CGRect(x: 0, y: 0, width: 8, height: 8))
+        let reference = try MTKTextureLoader(device: renderer.device).newTexture(
+            cgImage: XCTUnwrap(context.makeImage()), options: [.SRGB: true])
+        XCTAssertEqual(texture.pixelFormat, reference.pixelFormat)
+        var actual = [UInt8](repeating: 0, count: 256)
+        var expected = actual
+        texture.getBytes(&actual, bytesPerRow: 32, from: MTLRegionMake2D(0, 0, 8, 8), mipmapLevel: 0)
+        reference.getBytes(&expected, bytesPerRow: 32, from: MTLRegionMake2D(0, 0, 8, 8), mipmapLevel: 0)
+        XCTAssertEqual(actual, expected, "Direct upload must preserve orientation, color, transparency, and premultiplication")
+    }
+}

@@ -378,9 +378,7 @@ struct PlanetariumSatelliteTrack {
             lastMoonTextureDate = date
             moonTextureTask?.cancel()
             moonTextureTask = Task { [weak self] in
-                let image = await Task.detached(priority: .userInitiated) {
-                    MoonAppearance.image(geometry: moon, dimension: 1024, exposure: 0.5, detailed: true)
-                }.value
+                let image = await PlanetariumMoonImageRenderer.shared.image(geometry: moon)
                 guard !Task.isCancelled, let self, let image, let texture = self.renderer?.texture(image) else { return }
                 self.detailedMoonTexture = texture
                 if let index = self.planets.firstIndex(where: { $0.moon }) {
@@ -947,6 +945,9 @@ struct PlanetariumSatelliteTrack {
         self.active = active
         if !active {
             stopPanMomentum()
+            moonTextureTask?.cancel(); moonTextureTask = nil
+            lastMoonTextureDate = -Double.infinity
+            lastSkyDate = -Double.infinity
             regionGeneration += 1
             catalogTask?.cancel(); catalogTask = nil
             requestedViewport = nil
