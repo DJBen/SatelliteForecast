@@ -7,7 +7,7 @@ fix caches forecasts for four recent places for seven days and shows live passes
 Chinese installed and App Store names are **天宫过境**.
 
 Build 16 was withdrawn. Builds 17–19 were uploaded but never submitted. Public release
-remains manual. The submission result will be recorded after screenshot verification.
+remains manual. Build 20 is **WAITING_FOR_REVIEW**.
 
 ## Screenshots
 
@@ -43,3 +43,12 @@ All 48 refreshed screenshots were uploaded in eight locales, ordered widgets fir
 then forecast, planetarium, pass chart, pass list, and satellites. Each upload verified
 Apple's COMPLETE state and ordered MD5 checksums. `screenshots-verified.log` records
 the final read-only comparison across every locale.
+
+## Submission
+
+Submitted September 27, 2026 at 8:04 PM PDT (September 28, 03:04 UTC).
+Submission `53dfa07c-0e7a-4e46-a4df-7c185a0fc846` and version 2.0.0 both report
+**WAITING_FOR_REVIEW**. Final validation returned zero errors and zero warnings.
+Build 20 is also available to the internal First Light TestFlight group. External
+TestFlight distribution was not changed; this submission is not a public release.
+The temporary release heartbeat was paused after submission.

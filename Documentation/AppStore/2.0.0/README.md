@@ -1,6 +1,7 @@
 # 2.0.0 App Store release (September 26–27, 2026)
 
-The replacement candidate is [build 20](build-20/README.md), with live-pass indicators,
+[Build 20](build-20/README.md) is **Waiting for Review**, with all 48 refreshed
+screenshots uploaded across eight locales. It includes live-pass indicators,
 planetarium debug time, remote Live Activities, and the Chinese name **天宫过境**.
 Build 16 was withdrawn at the user’s request.
 
