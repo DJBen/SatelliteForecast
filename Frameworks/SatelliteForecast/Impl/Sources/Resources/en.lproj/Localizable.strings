@@ -380,3 +380,12 @@
 "Live satellite position. Solid trail: traveled. Dotted trail: still ahead. Gray: in Earth’s shadow." = "Live satellite position. Solid trail: traveled. Dotted trail: still ahead. Gray: in Earth’s shadow.";
 
 "%@ passing now" = "%@ passing now";
+
+/* Live Sky Now */
+"Choose an observer location to see the sky above you." = "Choose an observer location to see the sky above you.";
+"Passing now" = "Passing now";
+"%lld above the horizon" = "%lld above the horizon";
+"No satellites above the horizon" = "No satellites above the horizon";
+"Unable to load satellites" = "Unable to load satellites";
+"Sunlit" = "Sunlit";
+"In Earth's shadow" = "In Earth's shadow";

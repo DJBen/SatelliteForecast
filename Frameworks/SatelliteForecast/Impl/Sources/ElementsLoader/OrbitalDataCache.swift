@@ -13,6 +13,7 @@ public enum OrbitalDataCache {
 extension OrbitalDataCache {
     /// Accept modern OMM JSON and existing TLE caches during migration.
     static func elements(from data: Data) throws -> [Elements] {
+        try Task.checkCancellation()
         guard let text = String(data: data, encoding: .utf8) else {
             throw ForecastServiceError.invalidResponse
         }
@@ -20,13 +21,13 @@ extension OrbitalDataCache {
         if text.trimmingCharacters(in: .whitespacesAndNewlines).hasPrefix("[") {
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .custom { decoder in
+                try Task.checkCancellation()
                 let value = try decoder.singleValueContainer().decode(String.self)
-                let formatter = ISO8601DateFormatter()
-                formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
                 let utc = value.hasSuffix("Z") ? value : value + "Z"
-                if let date = formatter.date(from: utc) { return date }
-                formatter.formatOptions = [.withInternetDateTime]
-                guard let date = formatter.date(from: utc) else {
+                if let date = try? Date.ISO8601FormatStyle(includingFractionalSeconds: true).parse(utc) {
+                    return date
+                }
+                guard let date = try? Date.ISO8601FormatStyle().parse(utc) else {
                     throw ForecastServiceError.invalidResponse
                 }
                 return date
@@ -39,6 +40,7 @@ extension OrbitalDataCache {
             }
             result = try Elements.load(chunk: text)
         }
+        try Task.checkCancellation()
         guard !result.isEmpty, result.allSatisfy({
             $0.noradIndex > 0 && $0.n₀.isFinite && $0.n₀ > 0 &&
             $0.e₀.isFinite && (0..<1).contains($0.e₀) && $0.t₀.isFinite

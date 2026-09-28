@@ -739,3 +739,12 @@ The localized string for the status of a spare satellite */
 "Live satellite position. Solid trail: traveled. Dotted trail: still ahead. Gray: in Earth’s shadow." = "衛星の現在位置。実線：通過済み。点線：これから通過。灰色：地球の影の中。";
 
 "%@ passing now" = "%@が通過中";
+
+/* Live Sky Now */
+"Choose an observer location to see the sky above you." = "観測地点を選択すると、その場所の空を表示します。";
+"Passing now" = "通過中";
+"%lld above the horizon" = "地平線上に %lld 機";
+"No satellites above the horizon" = "地平線上に衛星はありません";
+"Unable to load satellites" = "衛星を読み込めません";
+"Sunlit" = "日照中";
+"In Earth's shadow" = "地球の影の中";

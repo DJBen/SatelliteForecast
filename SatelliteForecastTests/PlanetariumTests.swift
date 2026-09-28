@@ -337,6 +337,81 @@ final class PlanetariumTests: XCTestCase {
 
 @MainActor
 extension PlanetariumTests {
+    func testLiveSatelliteInterpolationAndExpiry() async throws {
+        let fixture = try await Fixture(catalog: AppStarCatalog())
+        let pass = try XCTUnwrap(fixture.passes.first { $0.pass.culmination.elev > 40 })
+        let date = pass.pass.culmination.julianDate - 2.0 / 86400
+        let results = try await OrbitalService().realtime(satellites: [fixture.info], observer: fixture.observer, date: date)
+        let result = try XCTUnwrap(results.first)
+        let satellite = PlanetariumLiveSatellite(result: result)
+        for offset in [0.0, 0.5, 2.5, 5.0] {
+            let time = date + offset / 86400
+            let interpolated = try XCTUnwrap(satellite.direction(at: time))
+            let actual = try fixture.info.generateSnapshot(julianDate: time, observer: fixture.observer)
+            let expected = PlanetariumGeometry.direction(azimuth: actual.position.azim, elevation: actual.position.elev)
+            let error = atan2(simd_length(simd_cross(interpolated, expected)), simd_dot(interpolated, expected)) * 180 / .pi
+            XCTAssertLessThan(error, 0.05, "Live motion should agree with independent propagation")
+        }
+        XCTAssertNil(satellite.direction(at: date - 1.0 / 86400))
+        XCTAssertNil(satellite.direction(at: date + 6.0 / 86400), "Expired markers must disappear instead of freezing")
+    }
+
+    func testLiveSkyNeedsNoPassAndClearsSatelliteAfterSet() async throws {
+        let fixture = try await Fixture(catalog: AppStarCatalog())
+        let pass = try XCTUnwrap(fixture.passes.first { $0.pass.culmination.elev > 40 })
+        let date = pass.pass.culmination.julianDate
+        let controller = PlanetariumController()
+        defer { controller.stop() }
+        controller.configureSky(observer: fixture.observer, starManager: fixture.catalog, julianDate: date)
+        let results = try await OrbitalService().realtime(satellites: [fixture.info], observer: fixture.observer, date: date)
+        controller.updateLiveSatellites(results)
+        controller.selectLiveSatellite(fixture.info.noradIndex, center: false)
+        XCTAssertEqual(controller.selection?.id, "satellite-25544")
+        XCTAssertNil(controller.previewDate)
+        controller.updateTime(date + 6.0 / 86400)
+        XCTAssertNil(controller.selection)
+        controller.updateLiveSatellites([])
+        controller.updateTime(date + 7.0 / 86400)
+        XCTAssertNotNil(controller.renderer, "The sky remains usable without any passing satellite")
+    }
+
+    /// Opt-in full-tab review on the simulator; real recorded TLEs, no catalog networking.
+    func testLiveSkyNowDarkReview() async throws {
+        let marker = "/tmp/satellite-live-sky-review"
+        guard FileManager.default.fileExists(atPath: marker) else { throw XCTSkip("Visual review not requested") }
+        let fixture = try await Fixture(catalog: await AppStarCatalog.load())
+        let candidates = fixture.passes.flatMap(\.snapshots).filter {
+            $0.position.elev > 10 && $0.position.elev < 45 && $0.sunElevation < -6 && $0.isIlluminated
+        }
+        let snapshot = try XCTUnwrap(candidates.min {
+            min($0.position.azim, 360 - $0.position.azim) < min($1.position.azim, 360 - $1.position.azim)
+        })
+        let date = snapshot.julianDate
+        let results = try await OrbitalService().realtime(satellites: [fixture.info], observer: fixture.observer, date: date)
+        let model = RealtimeSkyModel(state: .init(resources: .init(displayResults: results),
+            satellites: .loaded([fixture.info]), observer: fixture.observer))
+        let root = RootView(selectedTab: .constant(.realtimeSky), settings: fixture.session.settings,
+            context: .init(starManager: fixture.catalog, julianDateProvider: { date }),
+            realtimeSkyViewFactory: {
+                RealtimeSkyViewImpl(viewModel: model, context: $0, backgroundSkyViewFactory: .crash)
+            },
+            satelliteOverviewViewFactory: { _ in LiveSkyReviewForecast() },
+            satelliteCategoryViewFactory: { _ in LiveSkyReviewSatellites() },
+            settingsOverviewFactory: { LiveSkyReviewSettings() })
+        let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.first as? UIWindowScene)
+        let window = UIWindow(windowScene: scene)
+        window.overrideUserInterfaceStyle = .dark
+        window.rootViewController = UIHostingController(rootView: root.preferredColorScheme(.dark).environment(\.scenePhase, .active))
+        window.makeKeyAndVisible()
+        defer { window.isHidden = true; window.rootViewController = nil }
+        try await Task.sleep(for: .seconds(3))
+        try "ready: JD \(date), azimuth \(snapshot.position.azim), elevation \(snapshot.position.elev)".write(toFile: marker + "-ready", atomically: true, encoding: .utf8)
+        for _ in 0..<600 {
+            if !FileManager.default.fileExists(atPath: marker) { return }
+            try await Task.sleep(for: .milliseconds(100))
+        }
+    }
+
     func testFrameRateCountsPresentedFramesAndResets() {
         let monitor = PlanetariumFrameRate()
         monitor.recordPresentation(at: 1)
@@ -374,7 +449,7 @@ extension PlanetariumTests {
 
     func testAnimatedStationCentering() async throws {
         let catalog = try await AppStarCatalog.load()
-        let fixture = try Fixture(catalog: catalog)
+        let fixture = try await Fixture(catalog: catalog)
         let pass = try XCTUnwrap(fixture.passes.first { $0.pass.visibility == .visible })
         let date = pass.pass.culmination.julianDate
         let controller = PlanetariumController()
@@ -560,7 +635,7 @@ extension PlanetariumTests {
     }
 
     func testSatelliteTrackAndMarkerAgree() async throws {
-        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let fixture = try await Fixture(catalog: await AppStarCatalog.load())
         let pass = try XCTUnwrap(fixture.passes.max { $0.pass.culmination.elev < $1.pass.culmination.elev }).pass
         let track = try PlanetariumSatelliteTrack(info: fixture.info, observer: fixture.observer,
                                                   range: pass.rise.julianDate...pass.set.julianDate)
@@ -586,7 +661,7 @@ extension PlanetariumTests {
     }
 
     func testPreviewTrackingAndContinuousSkyRotation() async throws {
-        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let fixture = try await Fixture(catalog: await AppStarCatalog.load())
         let pass = try XCTUnwrap(fixture.passes.first { $0.pass.visibility == .visible })
         let date = pass.pass.culmination.julianDate
         let controller = PlanetariumController()
@@ -665,7 +740,7 @@ extension PlanetariumTests {
     }
 
     func testMoonSelectionCanBeReplacedInHostedView() async throws {
-        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let fixture = try await Fixture(catalog: await AppStarCatalog.load())
         let pass = try XCTUnwrap(fixture.passes.first { $0.pass.visibility == .visible })
         let context = PassViewContext(passIndex: 0, satelliteInfo: fixture.info, satelliteCommonName: "ISS",
             category: .iss, julianDateRange: fixture.range, observer: fixture.observer, passSnapshots: pass,
@@ -732,7 +807,7 @@ extension PlanetariumTests {
 
     func testSelectingCatalogStarAndMoon() async throws {
         let catalog = try await AppStarCatalog.load()
-        let fixture = try Fixture(catalog: catalog)
+        let fixture = try await Fixture(catalog: catalog)
         let pass = try XCTUnwrap(fixture.passes.first { $0.pass.visibility == .visible })
         let date = pass.pass.culmination.julianDate
         let controller = PlanetariumController()
@@ -802,7 +877,7 @@ extension PlanetariumTests {
     func testInteractivePlanetarium() async throws {
         let marker = "/tmp/satellite-planetarium-review"
         guard FileManager.default.fileExists(atPath: marker) else { throw XCTSkip("Interactive review not requested") }
-        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let fixture = try await Fixture(catalog: await AppStarCatalog.load())
         let savedLabels = UserDefaults.standard.object(forKey: "planetariumLabels")
         let savedLines = UserDefaults.standard.object(forKey: "planetariumLines")
         defer {
@@ -1327,7 +1402,7 @@ extension PlanetariumTests {
     }
 
     func testDaytimeStarLabelsAndSelectionMatchRendering() async throws {
-        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let fixture = try await Fixture(catalog: await AppStarCatalog.load())
         let pass = try XCTUnwrap(fixture.passes.first)
         let date = try XCTUnwrap((0..<288).map { fixture.now.julianDate + Double($0) / 288 }.first {
             let sun = SkyChartAtmosphere.sun(observer: fixture.observer, julianDate: $0)
@@ -1392,7 +1467,7 @@ extension PlanetariumTests {
     }
 
     func testGPUStarNameVisibility() async throws {
-        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let fixture = try await Fixture(catalog: await AppStarCatalog.load())
         let pass = try XCTUnwrap(fixture.passes.first { $0.pass.visibility == .visible && $0.pass.sunElevationAtTransit < -10 })
         let date = pass.pass.culmination.julianDate
         let controller = PlanetariumController()
@@ -1472,7 +1547,7 @@ extension PlanetariumTests {
     }
 
     func testGPUZoomRotationOverlaysAndSatelliteTime() async throws {
-        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let fixture = try await Fixture(catalog: await AppStarCatalog.load())
         let pass = try XCTUnwrap(fixture.passes.first { $0.pass.visibility == .visible && $0.pass.culmination.elev > 40 })
         let date = pass.pass.culmination.julianDate
         let controller = PlanetariumController()
@@ -1545,7 +1620,7 @@ extension PlanetariumTests {
     }
 
     func testGPUReviewGallery() async throws {
-        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let fixture = try await Fixture(catalog: await AppStarCatalog.load())
         let pass = try XCTUnwrap(fixture.passes.first { $0.pass.visibility == .visible && $0.pass.sunElevationAtTransit < -10 })
         let date = pass.pass.culmination.julianDate
         let controller = PlanetariumController()
@@ -1713,7 +1788,7 @@ extension PlanetariumTests {
 @MainActor
 extension PlanetariumTests {
     func testRegionalControllerRejectsObsoleteLoads() async throws {
-        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let fixture = try await Fixture(catalog: await AppStarCatalog.load())
         let pass = try XCTUnwrap(fixture.passes.first)
         let controller = PlanetariumController()
         controller.view.frame = CGRect(x: 0, y: 0, width: 440, height: 956)
@@ -1884,3 +1959,7 @@ extension PlanetariumTests {
         XCTAssertEqual(actual, expected, "Direct upload must preserve orientation, color, transparency, and premultiplication")
     }
 }
+
+private struct LiveSkyReviewForecast: SatelliteOverviewView { var body: some View { Color.clear } }
+private struct LiveSkyReviewSatellites: SatelliteCategoryView { var body: some View { Color.clear } }
+private struct LiveSkyReviewSettings: SettingsOverviewView { var body: some View { Color.clear } }

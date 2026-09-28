@@ -10,9 +10,10 @@ import SatelliteCatalog
 @testable import SatelliteCatalogImpl_SQLite
 import SQLite
 
+@MainActor
 class UCSSatTests: XCTestCase {
     func testReadingUSCSat() throws {
-        let DB = try! Connection(Bundle.module.path(forResource: "satellites", ofType: "sqlite")!)
+        let DB = try! Connection(Bundle.module.path(forResource: "satellites", ofType: "sqlite")!, readonly: true)
 
         let rows = try DB.prepare(UCSSat.Table.tableName)
         for row in rows {
@@ -20,8 +21,9 @@ class UCSSatTests: XCTestCase {
         }
     }
 
-    func testDateConversation() throws {
-        let sat = try XCTUnwrap(UCSSat.with(noradCatID: 47302))
+    func testDateConversation() async throws {
+        let loaded = try await UCSSat.with(noradCatID: 47302)
+        let sat = try XCTUnwrap(loaded)
         let formatter = DateFormatter()
         formatter.dateFormat = "YYYY-MM-dd"
         formatter.timeZone = TimeZone(secondsFromGMT: 0)

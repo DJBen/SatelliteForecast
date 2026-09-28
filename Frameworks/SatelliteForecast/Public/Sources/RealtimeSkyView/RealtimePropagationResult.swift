@@ -11,6 +11,8 @@ import Foundation
 public struct RealtimePropagationResult: Sendable {
     public let noradIndex: UInt
     public let snapshot: SatelliteSnapshot
+    /// A short forward sample for smooth live rendering without frame-by-frame propagation.
+    public let nextSnapshot: SatelliteSnapshot?
     public let satelliteInfo: SatelliteInfo
     /// The earliest julian date that we should repropagate a satellite ephemeris again.
     /// This is used to reduce redundant satellite propagation by delaying the next check of satellites that are not probable to be visible.
@@ -21,8 +23,10 @@ public struct RealtimePropagationResult: Sendable {
         noradIndex: UInt,
         snapshot: SatelliteSnapshot,
         satelliteInfo: SatelliteInfo,
-        nextCheckJulianDate: Double
+        nextCheckJulianDate: Double,
+        nextSnapshot: SatelliteSnapshot? = nil
     ) {
+        self.nextSnapshot = nextSnapshot
         self.noradIndex = noradIndex
         self.snapshot = snapshot
         self.satelliteInfo = satelliteInfo

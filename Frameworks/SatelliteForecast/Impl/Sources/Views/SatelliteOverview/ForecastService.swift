@@ -163,34 +163,36 @@ public actor ForecastService {
            let modified = attributes[.modificationDate] as? Date,
            (0...21_600).contains(now().timeIntervalSince(modified)),
            let cached = try? Data(contentsOf: file),
-           let info = try? parse(cached, satellite: satellite) {
+           let info = try? await parse(cached, satellite: satellite) {
             try Task.checkCancellation()
             return info
         }
+        try Task.checkCancellation()
         do {
             let data = try await fetch(satellite.category.url)
             try Task.checkCancellation()
-            let info = try parse(data, satellite: satellite)
+            let info = try await parse(data, satellite: satellite)
             // Validate before replacing a usable offline cache. Atomic writes also protect
             // legacy readers from observing a partially written TLE file.
             try? data.write(to: file, options: .atomic)
             return info
         } catch {
             if error is CancellationError || Task.isCancelled { throw CancellationError() }
-            if let cached = try? Data(contentsOf: file), let info = try? parse(cached, satellite: satellite) {
+            if let cached = try? Data(contentsOf: file), let info = try? await parse(cached, satellite: satellite) {
                 return info
             }
+            try Task.checkCancellation()
             throw error
         }
     }
 
-    private func parse(_ data: Data, satellite: SpecialSatellite) throws -> SatelliteInfo {
+    private func parse(_ data: Data, satellite: SpecialSatellite) async throws -> SatelliteInfo {
         guard let elements = try OrbitalDataCache.elements(from: data)
             .filter({ $0.noradIndex == satellite.rawValue })
             .max(by: { $0.t₀ < $1.t₀ }) else {
             throw ForecastServiceError.missingSatellite(satellite.rawValue)
         }
-        return try SatelliteInfo(elements: elements)
+        return try await SatelliteInfo.load(elements: elements)
     }
 }
 

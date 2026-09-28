@@ -724,3 +724,63 @@ Seven focused checks passed on the dark-mode iPhone 17 Pro Max simulator.
 Thirty rapid preview-time jumps remained responsive in the interactive harness.
 See [validation and visual evidence](DesignReview/Planetarium/RenderCancellation/README.md);
 post-fix physical-device performance has not yet been measured.
+
+## Live Sky Now (2026-09-28)
+
+Sky Now permanently occupies the second tab. It reuses the Metal sky renderer
+with an observer/catalog context independent of a selected pass. Its clock is
+always live (and respects the existing Debug clock); it has no Now/Preview picker,
+scrubber, or pass playback. Individual pass planetariums retain their existing
+preview controls and track geometry.
+
+The Brightest 100 catalog is filtered/capped to 100 LEO candidates, propagated off the main actor, and shown
+above the geometric horizon, including shadowed and unknown-magnitude satellites.
+Sunlit markers are brighter; the passing list and selection card distinguish
+illumination from being above the horizon. This is orbital visibility, not a
+guarantee of naked-eye visibility. The list selects and centers a satellite.
+Pan, pinch, Follow Device, celestial selection, and sky overlay options use the
+shared controller. Missing location and catalog failures have recovery actions.
+
+Near-horizon/overhead satellites receive a five-second forward sample with
+one-second refreshes. Render frames interpolate normalized directions; expired
+samples disappear instead of freezing. Below-horizon candidates use adaptive
+refresh intervals. Label textures are bounded to the brightest 24 candidates
+plus the selection. Leaving the tab or backgrounding cancels requests and pauses
+Metal/motion; changing observer clears old propagation results and creates a new
+observer scene. No per-frame telemetry is added.
+
+Validation and dark-mode visual evidence: [Sky Now review](DesignReview/SkyNow-2026-09-28/README.md).
+
+### Catalog lifetime across tab switches
+
+The app root now retains the Sky Now model and parsed LEO catalog in memory. Tab
+changes stop rendering/propagation and discard dated positions while retaining
+elements. Returning resumes propagation without catalog I/O, parsing, or a
+loading flash. Expiry follows the original file/download timestamp (six hours),
+including when the first load came from disk. Active views check expiry using
+wall-clock time, independent of the Debug sky clock. Refreshes keep old elements
+available until replacement; overlapping refreshes coalesce, and cancelled loads
+cannot overwrite a resumed load. Offline fallback retries after one minute.
+Regression checks cover repeated tab/location changes, expiry and empty results,
+cancellation during reentry, and preserving the disk cache's original expiry.
+
+### Brightest 100 and tab-switch responsiveness
+
+Sky Now uses the existing backend Brightest 100 (`visual`) dataset and caps LEO
+candidates at 100 before SQLite metadata enrichment. Candidates sort by bundled
+standard magnitude (unknown values last; NORAD ID breaks ties), rather than
+propagating all active satellites to choose an instantaneous brightness ranking.
+The six-hour in-memory catalog policy remains unchanged.
+
+Leaving Sky Now requests cancellation and pauses Metal/motion. Parsing checks
+cancellation per TLE record/OMM epoch, and enrichment checks before each record
+and between metadata lookups. Completed catalogs remain cached; interrupted
+initial loads restart on reentry. A dedicated orbital worker separates Sky Now
+from pass-detail requests. Forecast uses its own worker but shares the metadata
+database, so stopping abandoned metadata loops also limits shared contention.
+
+Passes no longer unconditionally recalculates on reentry: completed forecasts
+are reused for one hour with unchanged observer/debug inputs, and countdowns
+advance immediately. Expiry, changed inputs, incomplete/failed calculations,
+and explicit refresh recalculate. Interrupted widget preparation resumes from
+cached passes. No physical-device latency reduction is claimed without profiling.

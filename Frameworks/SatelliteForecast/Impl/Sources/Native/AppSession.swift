@@ -26,6 +26,8 @@ public final class AppSession {
   public let debug = DebugModel()
   public let catalog: AppStarCatalog
   public let orbits = OrbitalService()
+  // Live-sky catalog/propagation must not queue in front of pass-detail requests.
+  let skyOrbits = OrbitalService()
   public let renderer = ChartRenderer()
   public var hasCompletedOnboarding = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
   @ObservationIgnored private var alarmTasks: [UUID: Task<Void, Never>] = [:]

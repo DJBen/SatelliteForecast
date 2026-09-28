@@ -109,7 +109,11 @@ public final class SatelliteListModel {
 public final class RealtimeSkyModel {
   private var local: RealtimeSkyViewState
   private let session: AppSession?
-  private let service: OrbitalService
+  @ObservationIgnored private let loadCatalog:
+    @MainActor () async throws -> (satellites: [SatelliteInfo], refreshAfter: Date)
+  @ObservationIgnored private let now: () -> Date
+  @ObservationIgnored private var refreshAfter: Date
+  @ObservationIgnored private var loadGeneration = 0
   @ObservationIgnored private var loadTask: Task<Void, Never>?
   @ObservationIgnored private var predictionTask: Task<Void, Never>?
   private var lastObserver: LatLonAlt?
@@ -131,38 +135,29 @@ public final class RealtimeSkyModel {
   public init(
     state: RealtimeSkyViewState = .init(), session: AppSession? = nil,
     service: OrbitalService = OrbitalService(),
+    now: @escaping () -> Date = Date.init,
+    loadCatalog: (@MainActor () async throws -> (satellites: [SatelliteInfo], refreshAfter: Date))? = nil,
     predict: (
       @MainActor ([SatelliteInfo], LatLonAlt, Double) async throws -> [RealtimePropagationResult]
     )? = nil
   ) {
     local = state
     self.session = session
-    self.service = service
+    self.now = now
+    self.refreshAfter = state.satellites.content == nil ? .distantPast : now().addingTimeInterval(21600)
+    self.loadCatalog = loadCatalog ?? { try await service.skyCatalog() }
     self.predict = predict ?? { try await service.realtime(satellites: $0, observer: $1, date: $2) }
+  }
+  public func julianDate(at date: Double) -> Double {
+    session?.debug.config.julianDate(at: date) ?? (date + local.julianDateOffset)
   }
   public func send(_ action: RealtimeSkyViewAction) {
     switch action {
     case .loadElements:
-      loadTask?.cancel()
-      local.satellites = .loading
-      loadTask = Task { [weak self, service] in
-        let metric = AppAnalytics.Operation("load_sky_catalog", screen: .skyNow)
-        defer { metric.finish("cancelled") }
-        do {
-          let found = try await service.satellites(.active)
-          try Task.checkCancellation()
-          metric.finish(found.isEmpty ? "empty" : "success", count: found.count)
-          self?.local.satellites = .loaded(found.filter { $0.elements.orbitTypeByAltitude == .leo })
-        } catch {
-          if !Task.isCancelled && !(error is CancellationError) {
-            metric.finish("failure", reason: "load_failed")
-            self?.local.satellites = .failed(.wrapError(error))
-          }
-        }
-      }
+      loadElements()
     case .setRealtimeSkyViewActive(let active):
       local.resources.isRealtimeSkyViewActive = active
-      if active { send(.loadElements) } else { cancel() }
+      if active { refreshCatalogIfNeeded() } else { cancel(); send(.purgeElements) }
     case .purgeElements:
       predictionGeneration += 1
       predictionTask?.cancel()
@@ -200,14 +195,52 @@ public final class RealtimeSkyModel {
             local.resources.results.insert((result.nextCheckJulianDate, result))
           }
           local.resources.displayResults = local.resources.results.map(\.1).filter {
-            $0.snapshot.position.elev > 5
+            $0.snapshot.position.elev > 0 || ($0.nextSnapshot?.position.elev ?? -90) > 0
           }
         } catch {}
       }
     }
   }
+  /// Returning to the tab reuses parsed elements; the live clock never controls cache age.
+  public func refreshCatalogIfNeeded() {
+    guard local.resources.isRealtimeSkyViewActive, now() >= refreshAfter else { return }
+    loadElements()
+  }
+
+  private func loadElements() {
+    guard loadTask == nil else { return }
+    let generation = loadGeneration
+    if local.satellites.content == nil { local.satellites = .loading }
+    loadTask = Task { [weak self, loadCatalog] in
+      let metric = AppAnalytics.Operation("load_sky_catalog", screen: .skyNow)
+      defer {
+        metric.finish("cancelled")
+        if self?.loadGeneration == generation { self?.loadTask = nil }
+      }
+      do {
+        let catalog = try await loadCatalog()
+        try Task.checkCancellation()
+        guard let self, loadGeneration == generation else { return }
+        metric.finish(catalog.satellites.isEmpty ? "empty" : "success", count: catalog.satellites.count)
+        // Only new elements invalidate predictions. The prior catalog stays visible while refreshing.
+        send(.purgeElements)
+        local.satellites = .loaded(Array(catalog.satellites.filter { $0.elements.orbitTypeByAltitude == .leo }.prefix(OrbitalService.liveSkyLimit)))
+        refreshAfter = catalog.refreshAfter
+      } catch {
+        guard !Task.isCancelled, !(error is CancellationError),
+              let self, loadGeneration == generation else { return }
+        metric.finish("failure", reason: "load_failed")
+        refreshAfter = now().addingTimeInterval(60)
+        if local.satellites.content == nil { local.satellites = .failed(.wrapError(error)) }
+      }
+    }
+  }
+
   public func cancel() {
+    loadGeneration += 1
     loadTask?.cancel()
+    loadTask = nil
+    if case .loading = local.satellites { local.satellites = .notLoaded }
     predictionTask?.cancel()
     predictionGeneration += 1
     local.resources.isPropagatingEphemerides = false

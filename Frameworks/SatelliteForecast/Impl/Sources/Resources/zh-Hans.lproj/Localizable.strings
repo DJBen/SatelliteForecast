@@ -739,3 +739,12 @@ The localized string for the status of a spare satellite */
 "Live satellite position. Solid trail: traveled. Dotted trail: still ahead. Gray: in Earth’s shadow." = "卫星实时位置。实线：已通过的轨迹。虚线：尚未通过的轨迹。灰色：位于地球阴影中。";
 
 "%@ passing now" = "%@ 正在过境";
+
+/* Live Sky Now */
+"Choose an observer location to see the sky above you." = "选择观测位置，查看你上方的天空。";
+"Passing now" = "正在过境";
+"%lld above the horizon" = "%lld 颗位于地平线上方";
+"No satellites above the horizon" = "地平线上方暂无卫星";
+"Unable to load satellites" = "无法加载卫星";
+"Sunlit" = "阳光照射中";
+"In Earth's shadow" = "位于地影中";

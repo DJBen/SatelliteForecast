@@ -99,63 +99,6 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
         }
     }
 
-    @ViewBuilder private var experimentalSkyNowCell: some View {
-        Button {
-            settings.showExperimentalSkyNow.toggle()
-        } label: {
-            HStack {
-                Image(systemName: settings.showExperimentalSkyNow ? "star.fill" : "star")
-                    .font(.headline)
-                    .foregroundColor(AppTheme.text)
-
-                let text: String = {
-                    if settings.showExperimentalSkyNow {
-                        return NSLocalizedString(
-                            "SettingsOverviewView.experimentalSkyNowCell.off.title",
-                            tableName: nil,
-                            bundle: .module,
-                            value: "Hide experimental Sky Now tab",
-                            comment: "The title of the toggle that hides the experimental Sky Now tab in the settings view."
-                        )
-                    } else {
-                        return NSLocalizedString(
-                            "SettingsOverviewView.experimentalSkyNowCell.on.title",
-                            tableName: nil,
-                            bundle: .module,
-                            value: "Show experimental Sky Now tab",
-                            comment: "The title of the toggle that shows the experimental Sky Now tab in the settings view."
-                        )
-                    }
-                }()
-
-                Text(
-                    text
-                )
-                .font(.headline)
-                .foregroundColor(AppTheme.text)
-                .multilineTextAlignment(.leading)
-
-                Spacer()
-            }
-            .padding()
-            .background {
-                let colors = [AppTheme.surfaceColor, AppTheme.surfaceColor]
-
-                LinearGradient(
-                    gradient: Gradient(colors: colors.map(Color.init)),
-                    startPoint: UnitPoint(x: 0, y: 0),
-                    endPoint: UnitPoint(x: 1, y: 1)
-                )
-            }
-            .clipShape(
-                RoundedRectangle(
-                    cornerRadius: AppTheme.cardRadius,
-                    style: .continuous
-                )
-            )
-        }
-    }
-
     public var body: some View {
         NavigationStack(path: $navigationPath) {
             ScrollView {
@@ -194,7 +137,6 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                     }
 
                     Section {
-                        experimentalSkyNowCell
                         Button(action: watchOnboardingAgain) {
                             HStack {
                                 Image(systemName: "arrow.counterclockwise")

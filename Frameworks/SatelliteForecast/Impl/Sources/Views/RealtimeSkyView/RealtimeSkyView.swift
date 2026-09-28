@@ -59,311 +59,232 @@ public struct RealtimeSkyViewContext {
 /// A protocol of real time sky view. Preview code can mock the implementation as a depednency.
 public protocol RealtimeSkyView: View {}
 
+/// Always-live planetarium in the second tab. No pass, preview or time-travel controls.
 public struct RealtimeSkyViewImpl: RealtimeSkyView {
-    @State var viewModel: RealtimeSkyModel
+    @State private var viewModel: RealtimeSkyModel
     let context: RealtimeSkyViewContext
-    let backgroundSkyViewFactory: ViewFactory<BackgroundSkyViewContext<EmptyView, EmptyView>, BackgroundSkyView<EmptyView, EmptyView>>
+    private let locationSettings: (() -> AnyView)?
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var visible = false
+    @State private var showingLocation = false
+    private let timer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
 
     public init(
         viewModel: RealtimeSkyModel,
         context: RealtimeSkyViewContext,
-        backgroundSkyViewFactory: ViewFactory<BackgroundSkyViewContext<EmptyView, EmptyView>, BackgroundSkyView<EmptyView, EmptyView>>
+        backgroundSkyViewFactory: ViewFactory<BackgroundSkyViewContext<EmptyView, EmptyView>, BackgroundSkyView<EmptyView, EmptyView>>,
+        locationSettings: (() -> AnyView)? = nil
     ) {
         self.viewModel = viewModel
         self.context = context
-        _julianDate = State(initialValue: context.julianDateProvider() + viewModel.state.julianDateOffset)
-        self.backgroundSkyViewFactory = backgroundSkyViewFactory
-    }
-
-    @State var refreshTimer = Timer.publish(
-        every: 0.5,
-        on: .main,
-        in: .common
-    )
-    .autoconnect()
-    .map(\.julianDate)
-
-    @State var julianDate: Double?
-
-    @ViewBuilder private func locationView<Content: View, NoLocationContent: View>(
-        @ViewBuilder contentBuilder: (LatLonAlt) -> Content,
-        @ViewBuilder noLocationContentBuilder: () -> NoLocationContent
-    ) -> some View {
-        if let observer = viewModel.state.observer {
-            contentBuilder(observer)
-        } else {
-            noLocationContentBuilder()
-        }
-    }
-
-    private var visiblePropagationResults: [RealtimePropagationResult] {
-        viewModel.state.resources.displayResults
-        .filter { ($0.snapshot.visualMagnitude ?? .infinity) <= 5.5 }
-        .sorted { result1, result2 in
-            if let mag1 = result1.snapshot.visualMagnitude, let mag2 = result2.snapshot.visualMagnitude {
-                return mag1 < mag2
-            } else if let _ = result1.snapshot.visualMagnitude {
-                return true
-            } else if let _ = result2.snapshot.visualMagnitude {
-                return false
-            } else {
-                return result1.snapshot.position.dist < result2.snapshot.position.dist
-            }
-        }
-    }
-
-    /// The propagation results that should have labels shown
-    private var showLabelPropagationResults: [RealtimePropagationResult] {
-        let visiblePropagationResults = visiblePropagationResults
-        return viewModel.state.resources.displayResults.filter { result in
-            result.snapshot.position.elev > 15 && !visiblePropagationResults.contains(result)
-        }
-    }
-
-    @ViewBuilder private var satellitePlotLabels: some View {
-        if viewModel.state.resources.isRealtimeSkyViewActive {
-            GeometryReader { geometry in
-                let rect = geometry.frame(in: .local)
-
-                ZStack(alignment: .center) {
-                    ForEach(
-                        showLabelPropagationResults,
-                        id: \.self
-                    ) { result in
-                        Text(
-                            Self.satelliteLabelInGraph(result.satelliteInfo)
-                        )
-                        .font(.system(size: 8, weight: .regular, design: .default))
-                        .foregroundColor(AppTheme.muted)
-                        .offset(y: 8)
-                        .frame(alignment: .leading)
-                        .position(
-                            SkyChartUtils.point(
-                                at: AziEle(result.snapshot.position),
-                                rect: rect
-                            )
-                        )
-                    }
-
-                    ForEach(
-                        visiblePropagationResults,
-                        id: \.self
-                    ) { result in
-                        Text(
-                            Self.satelliteLabelInGraph(result.satelliteInfo)
-                        )
-                        .font(.system(size: 9, weight: .regular, design: .default))
-                        .foregroundColor(AppTheme.accent)
-                        .offset(y: 12)
-                        .frame(alignment: .leading)
-                        .position(
-                            SkyChartUtils.point(
-                                at: AziEle(result.snapshot.position),
-                                rect: rect
-                            )
-                        )
-                    }
-                }
-            }
-        } else {
-            Color.clear
-        }
-    }
-
-    private func satellitePaths(from results: [RealtimePropagationResult], rect: CGRect) -> Path {
-        Path { path in
-            for result in results {
-                let point = SkyChartUtils.point(
-                    at: AziEle(result.snapshot.position),
-                    rect: rect
-                )
-
-                path.addArc(
-                    center: CGPoint(x: point.x, y: point.y),
-                    radius: context.satelliteMagToRadiusFunction.apply(result.snapshot.visualMagnitude ?? 5.5),
-                    startAngle: Angle(degrees: 0),
-                    endAngle: Angle(degrees: 360),
-                    clockwise: false
-                )
-                path.closeSubpath()
-            }
-        }
-    }
-
-    @ViewBuilder private var satellitePlot: some View {
-        if viewModel.state.resources.isRealtimeSkyViewActive {
-            GeometryReader { geometry in
-                let rect = geometry.frame(in: .local)
-
-                satellitePaths(
-                    from: viewModel.state.resources.displayResults,
-                    rect: rect
-                )
-                .fill(AppTheme.accent)
-
-                satellitePaths(
-                    from: visiblePropagationResults,
-                    rect: rect
-                )
-                .fill(.orange)
-
-                Path { path in
-                    for result in visiblePropagationResults {
-                        let point = SkyChartUtils.point(
-                            at: AziEle(result.snapshot.position),
-                            rect: rect
-                        )
-
-                        path.move(to: CGPoint(x: point.x - 4, y: point.y))
-                        path.addLine(to: CGPoint(x: point.x - 8, y: point.y))
-                        path.move(to: CGPoint(x: point.x + 4, y: point.y))
-                        path.addLine(to: CGPoint(x: point.x + 8, y: point.y))
-                        path.move(to: CGPoint(x: point.x, y: point.y - 4))
-                        path.addLine(to: CGPoint(x: point.x, y: point.y - 8))
-                        path.move(to: CGPoint(x: point.x, y: point.y + 4))
-                        path.addLine(to: CGPoint(x: point.x, y: point.y + 8))
-                    }
-                }
-                .stroke(.gray, lineWidth: 1)
-            }
-        } else {
-            Color.clear
-        }
-    }
-
-    @ViewBuilder private func backgroundSkyView(observer: LatLonAlt) -> some View {
-        backgroundSkyViewFactory.view(
-            BackgroundSkyViewContext(
-                observer: observer,
-                basicChartConfigs: context.basicChartConfigs,
-                configs: context.backgroundSkyConfigs,
-                quality: .full,
-                starManager: context.starManager,
-                constellationLabel: { _ in EmptyView() },
-                annotationView: { _ in EmptyView() },
-                starTapped: { _ in }
-            )
-        )
-        .environment(
-            \.backgroundSkyJulianDateKey,
-             julianDate.map { $0.roundJulianDate(.toMins(1)) }
-        )
-        .overlay {
-            satellitePlot
-        }
-        .overlay(
-            satellitePlotLabels
-        )
-        .onReceive(refreshTimer) { timerJulianDate in
-            self.julianDate = context.julianDateProvider() + viewModel.state.julianDateOffset
-
-            guard viewModel.state.resources.isRealtimeSkyViewActive else {
-                return
-            }
-            if viewModel.state.resources.isPropagatingEphemerides {
-                return
-            }
-
-            guard case .loaded(let satellites) = viewModel.state.satellites else {
-                return
-            }
-
-            viewModel.send(
-                .propagateCurrentEphemerides(
-                    satellites,
-                    observer: observer,
-                    julianDate: julianDate!
-                )
-            )
-        }
-    }
-
-    @ViewBuilder private var satelliteLoadingView: some View {
-        VStack {
-            ProgressView {
-                Text(
-                    Self.SatelliteList.loadingText
-                )
-                .foregroundColor(AppTheme.muted)
-            }
-        }
-    }
-
-    @ViewBuilder private var satelliteList: some View {
-        switch viewModel.state.satellites {
-        case .notLoaded:
-            Color.clear
-        case .loading:
-            satelliteLoadingView
-        case .failed(let error):
-            VStack(spacing: 16) {
-                Text(error.localizedDescription)
-
-                Button(
-                    "Retry",
-                    action: {
-                        viewModel.send(
-                            .loadElements
-                        )
-                    }
-                )
-                .font(Font.headline)
-                .foregroundColor(AppTheme.accent)
-            }
-        case .loaded(_):
-            if visiblePropagationResults.isEmpty {
-                Text(
-                    Self.SatelliteList.emptyText
-                )
-                .foregroundColor(AppTheme.muted)
-            } else {
-                List {
-                    ForEach(visiblePropagationResults, id: \.self) { result in
-                        RealtimeSkySatelliteCell(
-                            isFocused: .constant(false),
-                            satelliteInfo: result.satelliteInfo,
-                            snapshot: result.snapshot
-                        )
-                    }
-                }
-                .listStyle(.inset)
-                .scrollContentBackground(.hidden)
-            }
-        }
+        self.locationSettings = locationSettings
     }
 
     public var body: some View {
-        NavigationStack {
-            locationView { observer in
-                GeometryReader { geometry in
-                    let rect = geometry.frame(in: .local)
-                    VStack(spacing: 16) {
-                        backgroundSkyView(
-                            observer: observer,
-                        )
-                        .frame(
-                            width: min(rect.width, rect.height),
-                            height: min(rect.width, rect.height)
-                        )
-
-                        satelliteList.padding(.top, 24)
+        Group {
+            if let observer = viewModel.state.observer {
+                LiveSkyPlanetarium(viewModel: viewModel, context: context, observer: observer,
+                    chooseLocation: locationSettings == nil ? nil : { showingLocation = true })
+                    .id(observer)
+            } else {
+                ContentUnavailableView {
+                    Label(Self.Navigation.title, systemImage: "moon.stars")
+                } description: {
+                    Text("Choose an observer location to see the sky above you.", bundle: .module)
+                } actions: {
+                    if locationSettings != nil {
+                        Button(AppLocalization.text("SettingsOverviewView.observer.header")) { showingLocation = true }
+                            .buttonStyle(.borderedProminent)
                     }
-                    .padding(.top, 16)
                 }
-            } noLocationContentBuilder: {
-                Text("Location not available", bundle: .module)
+                .modifier(AppSurface())
             }
-            .modifier(AppSurface())
-            .navigationTitle(Self.Navigation.title)
+        }
         .analyticsScreen(.skyNow)
-            .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: $showingLocation) {
+            NavigationStack {
+                locationSettings?()
+                    .toolbar {
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button(AppLocalization.text("Done")) { showingLocation = false }
+                        }
+                    }
+            }
         }
         .onAppear {
-            if !SnapshotEnvironment.isEnabled { viewModel.send(.setRealtimeSkyViewActive(true)) }
+            visible = true
+            setActive(scenePhase == .active)
+        }
+        .onDisappear { visible = false; setActive(false) }
+        .onChange(of: scenePhase) { _, phase in setActive(visible && phase == .active) }
+        .onChange(of: viewModel.state.observer) { _, _ in viewModel.send(.purgeElements) }
+        .onReceive(timer) { _ in
+            guard visible, scenePhase == .active else { return }
+            if !SnapshotEnvironment.isEnabled { viewModel.refreshCatalogIfNeeded() }
+            guard let observer = viewModel.state.observer,
+                  case .loaded(let satellites) = viewModel.state.satellites else { return }
+            viewModel.send(.propagateCurrentEphemerides(satellites, observer: observer,
+                julianDate: viewModel.julianDate(at: context.julianDateProvider())))
+        }
+    }
+
+    private func setActive(_ active: Bool) {
+        guard !SnapshotEnvironment.isEnabled else { return }
+        viewModel.send(.setRealtimeSkyViewActive(active))
+    }
+}
+
+private struct LiveSkyPlanetarium: View {
+    let viewModel: RealtimeSkyModel
+    let context: RealtimeSkyViewContext
+    let observer: LatLonAlt
+    let chooseLocation: (() -> Void)?
+    @StateObject private var controller = PlanetariumController()
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var visible = false
+    @State private var showingSatellites = false
+    @AppStorage("planetariumLabels") private var labels = true
+    @AppStorage("planetariumLines") private var lines = true
+    @AppStorage("planetariumFPS") private var showFPS = false
+
+    private var date: Double { viewModel.julianDate(at: context.julianDateProvider()) }
+    private var passing: [RealtimePropagationResult] {
+        viewModel.state.resources.displayResults.filter {
+            PlanetariumLiveSatellite(result: $0).direction(at: date) != nil
+        }.sorted {
+            let a = $0.snapshot.visualMagnitude ?? 99, b = $1.snapshot.visualMagnitude ?? 99
+            return a == b ? $0.noradIndex < $1.noradIndex : a < b
+        }
+    }
+
+    var body: some View {
+        ZStack {
+            PlanetariumSurface(controller: controller).ignoresSafeArea()
+            VStack(spacing: 12) {
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(RealtimeSkyViewImpl.Navigation.title).font(.title2.weight(.semibold))
+                        TimelineView(.periodic(from: .now, by: 1)) { _ in
+                            Text(Date(julianDate: date), format: .dateTime.hour().minute().second())
+                                .font(.caption.monospacedDigit()).foregroundStyle(AppTheme.muted)
+                        }
+                    }
+                    Spacer(minLength: 8)
+                    HStack(spacing: 0) {
+                        Button {
+                            controller.setMotionEnabled(!controller.motionEnabled)
+                        } label: {
+                            Image(systemName: controller.motionEnabled ? "location.north.line.fill" : "location.north.line")
+                                .foregroundStyle(controller.motionEnabled ? AppTheme.accent : AppTheme.text)
+                                .frame(width: 44, height: 44)
+                        }
+                        .accessibilityLabel(AppLocalization.text("Follow Device"))
+                        .accessibilityValue(AppLocalization.text(controller.motionEnabled ? "On" : "Off"))
+                        .accessibilityIdentifier("planetarium.followDevice")
+                        Menu {
+                            Toggle(AppLocalization.text("Constellation labels"), systemImage: "textformat", isOn: $labels)
+                            Toggle(AppLocalization.text("Constellation lines"), systemImage: "star", isOn: $lines)
+                            Toggle(AppLocalization.text("Show FPS"), systemImage: "speedometer", isOn: $showFPS)
+                            if let chooseLocation {
+                                Button(AppLocalization.text("SettingsOverviewView.observer.header"), systemImage: "mappin.and.ellipse", action: chooseLocation)
+                            }
+                        } label: {
+                            Image(systemName: "ellipsis").frame(width: 44, height: 44)
+                        }
+                        .accessibilityLabel(AppLocalization.text("Sky options"))
+                        .accessibilityIdentifier("planetarium.options")
+                    }
+                    .buttonStyle(.plain).padding(.horizontal, 4)
+                    .glassEffect(.regular, in: Capsule())
+                }
+                if controller.motionEnabled && !controller.motionAvailable {
+                    Text("Motion unavailable · Drag to explore the sky", bundle: .module)
+                        .font(.caption).padding(10).background(.ultraThinMaterial, in: Capsule())
+                }
+                Spacer(minLength: 0)
+                PlanetariumSelectionCard(controller: controller, state: controller.selectionState)
+                satelliteStatus
+                if showFPS, let monitor = controller.renderer?.frameRate {
+                    PlanetariumFPSReadout(monitor: monitor)
+                }
+            }
+            .padding(.horizontal, 20).padding(.top, 12).padding(.bottom, 12)
+            if let error = controller.errorMessage {
+                ContentUnavailableView(AppLocalization.text("Planetarium unavailable"), systemImage: "sparkles", description: Text(error))
+            }
+        }
+        .foregroundStyle(AppTheme.text).tint(AppTheme.accent).preferredColorScheme(.dark)
+        .sheet(isPresented: $showingSatellites) {
+            NavigationStack {
+                List(passing, id: \.noradIndex) { result in
+                    Button {
+                        controller.selectLiveSatellite(result.noradIndex)
+                        showingSatellites = false
+                    } label: {
+                        RealtimeSkySatelliteCell(isFocused: .constant(false), satelliteInfo: result.satelliteInfo, snapshot: result.snapshot)
+                    }
+                    .buttonStyle(.plain)
+                }
+                .overlay { if passing.isEmpty { Text("No satellites above the horizon", bundle: .module) } }
+                .scrollContentBackground(.hidden).background(AppTheme.background)
+                .navigationTitle(AppLocalization.text("Passing now"))
+                .toolbar { ToolbarItem(placement: .confirmationAction) { Button(AppLocalization.text("Done")) { showingSatellites = false } } }
+            }
+            .presentationDetents([.medium, .large])
+        }
+        .onAppear {
+            visible = true
+            controller.configureSky(observer: observer, starManager: context.starManager, julianDate: date)
+            controller.liveDateProvider = { viewModel.julianDate(at: context.julianDateProvider()) }
+            controller.updateLiveSatellites(viewModel.state.resources.displayResults)
+            controller.setOverlays(labels: labels, lines: lines)
+            controller.setActive(scenePhase == .active)
+            controller.renderer?.frameRate.setEnabled(showFPS)
         }
         .onDisappear {
-            viewModel.send(.setRealtimeSkyViewActive(false))
+            visible = false
+            controller.renderer?.frameRate.setEnabled(false)
+            controller.stop()
         }
+        .onChange(of: scenePhase) { _, phase in
+            controller.setActive(visible && phase == .active)
+            controller.renderer?.frameRate.setEnabled(showFPS && visible && phase == .active)
+        }
+        .onChange(of: viewModel.state.resources.displayResults) { _, results in controller.updateLiveSatellites(results) }
+        .onChange(of: labels) { _, _ in controller.setOverlays(labels: labels, lines: lines) }
+        .onChange(of: lines) { _, _ in controller.setOverlays(labels: labels, lines: lines) }
+        .onChange(of: showFPS) { _, value in controller.renderer?.frameRate.setEnabled(value && visible && scenePhase == .active) }
+    }
+
+    @ViewBuilder private var satelliteStatus: some View {
+        Group {
+            switch viewModel.state.satellites {
+            case .notLoaded, .loading:
+                HStack(spacing: 10) { ProgressView(); Text(RealtimeSkyViewImpl.SatelliteList.loadingText).font(.subheadline) }
+            case .failed:
+                HStack {
+                    Text("Unable to load satellites", bundle: .module).font(.subheadline)
+                    Spacer()
+                    Button(AppLocalization.text("Retry")) { viewModel.send(.loadElements) }
+                }
+            case .loaded:
+                Button { showingSatellites = true } label: {
+                    HStack(spacing: 12) {
+                        Image("glyph_satellite").renderingMode(.template).foregroundStyle(AppTheme.accent)
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("Passing now", bundle: .module).font(.subheadline.weight(.semibold))
+                            Text(String.localizedStringWithFormat(AppLocalization.text("%lld above the horizon"), passing.count))
+                                .font(.caption).foregroundStyle(AppTheme.muted)
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.up").font(.caption.weight(.semibold))
+                    }
+                }
+                .buttonStyle(.plain).accessibilityIdentifier("skyNow.passingSatellites")
+            }
+        }
+        .frame(maxWidth: .infinity).padding(16)
+        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 22))
     }
 }
 

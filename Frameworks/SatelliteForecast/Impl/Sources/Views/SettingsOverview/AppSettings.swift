@@ -6,10 +6,8 @@ import Observation
 @Observable
 public final class AppSettings {
     public var isNightModeOn: Bool
-    public var showExperimentalSkyNow: Bool
 
-    public init(isNightModeOn: Bool = false, showExperimentalSkyNow: Bool = false) {
+    public init(isNightModeOn: Bool = false) {
         self.isNightModeOn = isNightModeOn
-        self.showExperimentalSkyNow = showExperimentalSkyNow
     }
 }

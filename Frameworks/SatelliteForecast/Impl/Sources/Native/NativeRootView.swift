@@ -5,8 +5,10 @@ import SwiftUI
 public struct NativeRootView: View {
   let session: AppSession
   @State private var forecast: ForecastModel
+  @State private var skyNow: RealtimeSkyModel
   public init(session: AppSession) {
     self.session = session
+    _skyNow = State(initialValue: RealtimeSkyModel(session: session, service: session.skyOrbits))
     _forecast = State(initialValue: ForecastModel(client: .live(service: ForecastService(brightStars: session.catalog.stars(maximumMagnitude: 3)))))
   }
   public var body: some View {
@@ -18,8 +20,16 @@ public struct NativeRootView: View {
         starManager: session.catalog, julianDateProvider: { Date().julianDate }),
       realtimeSkyViewFactory: {
         RealtimeSkyViewImpl(
-          viewModel: RealtimeSkyModel(session: session, service: session.orbits), context: $0,
-          backgroundSkyViewFactory: ViewFactory { factory.background($0) })
+          viewModel: skyNow, context: $0,
+          backgroundSkyViewFactory: ViewFactory { factory.background($0) },
+          locationSettings: {
+            AnyView(LocationSettingsView(
+              state: .init(locationSelection: session.location.resources.selection,
+                currentLocation: session.location.resources.currentLocation,
+                currentLocationPlacemark: session.location.resources.currentLocationPlacemark),
+              selectLocation: { session.location.select($0) },
+              requestCurrentLocation: { session.location.useCurrentLocation() }))
+          })
       },
       satelliteOverviewViewFactory: { NativeForecastView(session: session, context: $0, model: forecast) },
       satelliteCategoryViewFactory: { context in
