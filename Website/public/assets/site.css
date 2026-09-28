@@ -105,31 +105,36 @@ section + section { border-top: 1px solid var(--line); }
 .chip.warm { background: color-mix(in srgb, var(--warm) 18%, transparent); color: var(--warm); }
 .peek.busy .arc, .peek.busy .row, .peek.busy .foot { opacity: .35; }
 
-/* ---------- Showcase: chips choose a screen; the pinned phone follows the steps ---------- */
-.showcase { padding-block: 64px 96px; }
-.show-head h2 { margin-top: 10px; }
-.chips { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-top: 18px; width: 320px; max-width: 100%; }
+/* ---------- Showcase: a pinned stage; vertical scrolling slides the phones sideways ---------- */
+.showcase { height: 420vh; position: relative; padding: 0; }
+.stage { position: sticky; top: env(safe-area-inset-top, 0px); height: 100vh; height: 100dvh; display: grid; grid-template-rows: auto minmax(0, 1fr) auto auto; gap: 10px; overflow: hidden; padding-block: 24px 28px; }
+.stage-head { text-align: center; }
+.stage-head h2 { margin-top: 8px; }
+.track { position: relative; perspective: 1400px; min-height: 0; }
+.slide { position: absolute; left: 50%; top: 50%; margin: 0; height: calc(100% - 16px); max-height: 560px; aspect-ratio: 1320 / 2868; transform: translate(-50%, -50%); will-change: transform, opacity; transition: filter .3s; }
+.slide .phone { width: 100%; height: 100%; }
+.slide .phone img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.slide:not(.on) { filter: saturate(.7); }
+.captions { position: relative; min-height: 7.5rem; text-align: center; }
+.captions.wrap { width: 100%; }
+.cap { position: absolute; top: 0; left: 0; right: 0; width: min(100%, 52ch); margin: 0 auto; opacity: 0; transform: translateY(10px); transition: opacity .35s ease, transform .35s ease; pointer-events: none; }
+.cap.on { opacity: 1; transform: none; pointer-events: auto; }
+.cap .k { font-family: var(--mono); font-size: 0.72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+.cap h3 { font-size: clamp(1.35rem, 2.4vw, 1.9rem); margin-top: 8px; font-variation-settings: "opsz" 72; }
+.cap p { margin-top: 8px; color: var(--muted); font-size: 0.95rem; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
 .chips button { font: inherit; font-size: 0.88rem; font-weight: 500; color: var(--muted); background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 7px 14px; cursor: pointer; transition: color .25s, background .25s, border-color .25s; }
 .chips button:hover { color: var(--text); }
 .chips button.on { color: var(--accent-ink); background: var(--accent); border-color: var(--accent); }
-.show { display: grid; grid-template-columns: 340px 1fr; gap: 72px; margin-top: 36px; align-items: start; }
-.show-phone { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 84px); }
-.frames { position: relative; width: 320px; max-width: 100%; aspect-ratio: 1320 / 2868; }
-.frames img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(.985); transition: opacity .45s ease, transform .45s ease; }
-.frames img.on { opacity: 1; transform: none; }
-.steps { display: grid; }
-.step { min-height: 62vh; display: flex; flex-direction: column; justify-content: center; padding-block: 24px; border-top: 1px solid var(--line); opacity: .38; transition: opacity .4s; cursor: pointer; }
-.step:first-child { border-top: 0; }
-.step.on { opacity: 1; }
-.step .k { font-family: var(--mono); font-size: 0.72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
-.step h3 { font-size: clamp(1.5rem, 2.6vw, 2rem); margin-top: 10px; font-variation-settings: "opsz" 72; }
-.step p { margin-top: 12px; color: var(--muted); max-width: 48ch; }
-.moments { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 18px; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; max-width: 460px; }
-.moments div { padding: 10px 12px; background: var(--card); }
-.moments div + div { border-left: 1px solid var(--line); }
-.moments .k { font-family: var(--mono); font-size: 0.66rem; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
-.moments .v { font-family: var(--mono); font-size: 0.92rem; margin-top: 4px; }
-.moments .d { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); }
+.progress { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); width: 120px; height: 2px; background: var(--line); border-radius: 2px; overflow: hidden; }
+.progress i { display: block; height: 100%; width: 25%; background: var(--accent); transform-origin: left; }
+
+/* ---------- Hero motion ---------- */
+.reveal { animation: rise .8s cubic-bezier(.2,.7,.2,1) both; animation-delay: var(--d, 0s); }
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.arc .trail { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1.6s ease-out .3s forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+.arc .comet { filter: drop-shadow(0 0 6px var(--accent)); }
 
 /* ---------- Stations ---------- */
 .stations { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 28px; }
@@ -192,24 +197,12 @@ footer a { color: var(--muted); }
   .peek .row { grid-template-columns: 1fr; gap: 6px; }
   .peek .row div { display: flex; justify-content: space-between; gap: 10px; }
   .peek .row b { display: inline; }
-  /* Showcase: the phone pins under the nav, the chips sit on its shoulder, and the
-     steps scroll vertically beneath it. No horizontal swiping. */
-  .showcase { padding-block: 48px 64px; }
-  .show { grid-template-columns: 1fr; gap: 0; margin-top: 20px; }
-  .show-phone { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 56px); z-index: 2; display: grid; justify-items: center; padding-block: 12px 16px; background: var(--night); box-shadow: 0 18px 22px -8px var(--night); }
-  .frames { width: min(46vw, 210px); }
-  .phone { border-radius: 26px; box-shadow: 0 24px 48px rgba(0,0,0,.55), 0 0 0 5px var(--night-2); }
-  .chips { width: auto; margin-top: 12px; }
+  .showcase { height: 360vh; }
+  .stage { padding-block: 18px 16px; gap: 6px; }
+  .slide { max-height: 440px; }
+  .captions { min-height: 8.5rem; }
+  .cap p { font-size: 0.9rem; }
   .chips button { padding: 6px 11px; font-size: 0.82rem; }
-  .moments { grid-template-columns: 1fr; }
-  .moments div { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: baseline; }
-  .moments div + div { border-left: 0; border-top: 1px solid var(--line); }
-  .moments .v { margin-top: 0; }
-  .step { min-height: 46vh; padding-block: 28px; justify-content: flex-start; }
-  .steps { padding-bottom: 26vh; }
-  .step p { max-width: none; }
-  .moments { max-width: 100%; }
-  .moments .v { font-size: 0.8rem; }
   .toc { position: static; }
   .tabs a { padding: 6px 9px; font-size: 0.85rem; }
   nav.top .cta { display: none; }
@@ -218,5 +211,7 @@ footer a { color: var(--muted); }
 }
 @media (prefers-reduced-motion: reduce) {
   .live i { animation: none; }
-  .frames img, .step, .chips button { transition: none; }
+  .slide, .cap, .chips button { transition: none; }
+  .reveal { animation: none; }
+  .arc .trail { animation: none; stroke-dashoffset: 0; }
 }

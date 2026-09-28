@@ -16,60 +16,80 @@
     });
   }
 
-  // ---- Star field ----
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---- Star field: slow twinkle, paused when the tab is hidden ----
   var c = document.getElementById('stars');
   if (c) {
-    var ctx = c.getContext('2d');
+    var ctx = c.getContext('2d'), stars = [], W = 0, H = 0;
     var seed = function () {
       var dpr = Math.min(window.devicePixelRatio || 1, 2);
-      c.width = innerWidth * dpr; c.height = innerHeight * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      var n = Math.floor(innerWidth * innerHeight / 3800);
-      ctx.clearRect(0, 0, innerWidth, innerHeight);
-      for (var i = 0; i < n; i++) {
-        var r = Math.random() * 1.1 + 0.2, a = Math.random() * 0.5 + 0.15, warm = Math.random() < 0.08;
-        ctx.beginPath(); ctx.arc(Math.random() * innerWidth, Math.random() * innerHeight, r, 0, Math.PI * 2);
-        ctx.fillStyle = warm ? 'rgba(240,161,132,' + a + ')' : 'rgba(236,238,242,' + a + ')';
+      W = innerWidth; H = innerHeight; c.width = W * dpr; c.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      stars = [];
+      var n = Math.floor(W * H / 3800);
+      for (var i = 0; i < n; i++) stars.push({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 1.1 + 0.2, a: Math.random() * 0.5 + 0.15, w: Math.random() < 0.08, ph: Math.random() * 6.28, sp: 0.4 + Math.random() * 1.2 });
+      paint(0);
+    };
+    var paint = function (t) {
+      ctx.clearRect(0, 0, W, H);
+      for (var i = 0; i < stars.length; i++) {
+        var s = stars[i], a = s.a * (0.75 + 0.25 * Math.sin(s.ph + t * 0.001 * s.sp));
+        ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 6.2832);
+        ctx.fillStyle = (s.w ? 'rgba(240,161,132,' : 'rgba(236,238,242,') + a.toFixed(3) + ')';
         ctx.fill();
       }
     };
+    var loop = function (t) { if (!document.hidden) paint(t); requestAnimationFrame(loop); };
     seed(); window.addEventListener('resize', seed);
+    if (!reduce) requestAnimationFrame(loop);
   }
 
-  // ---- Showcase: the step nearest the viewport middle drives the pinned phone ----
-  var frames = document.querySelectorAll('#frames img'), dots = document.querySelectorAll('#chips button'), steps = document.querySelectorAll('#steps .step');
-  if (steps.length) {
-    var current = 0, lock = 0, ticking = false;
-    var narrow = function () { return innerWidth <= 860; };
-    var setFrame = function (i) {
-      if (i === current) return; current = i;
-      frames.forEach(function (f) { f.classList.toggle('on', +f.dataset.i === i); });
-      dots.forEach(function (d) { d.classList.toggle('on', +d.dataset.i === i); d.setAttribute('aria-selected', +d.dataset.i === i); });
-      steps.forEach(function (st) { st.classList.toggle('on', +st.dataset.i === i); });
+  // ---- Showcase carousel: scroll progress through the tall section drives the slides ----
+  var section = document.getElementById('features'), stage = document.getElementById('stage');
+  if (section && stage) {
+    var slides = document.querySelectorAll('#track .slide'), caps = document.querySelectorAll('#captions .cap'), chips = document.querySelectorAll('#chips button');
+    var N = slides.length, current = -1, ticking = false, p = 0, target = null;
+    var bar = document.createElement('div'); bar.className = 'progress'; bar.innerHTML = '<i></i>'; stage.appendChild(bar);
+    var barFill = bar.firstChild;
+    var progress = function () {
+      var r = section.getBoundingClientRect(), range = section.offsetHeight - innerHeight;
+      return Math.min(1, Math.max(0, -r.top / range)) * (N - 1);
     };
-    var nearest = function () {
-      if (lock > Date.now()) return;
-      var best = 0, bestD = Infinity;
-      steps.forEach(function (st, i) {
-        // On narrow screens the phone pins to the top, so judge steps against the lower part of the viewport.
-        var r = st.getBoundingClientRect(), ref = narrow() ? innerHeight * 0.72 : innerHeight / 2;
-        var d = Math.abs((r.top + r.bottom) / 2 - ref);
-        if (d < bestD) { bestD = d; best = i; }
-      });
-      setFrame(best);
+    var layout = function () {
+      var slot = slides[0].offsetWidth + (innerWidth <= 860 ? 14 : 36);
+      for (var i = 0; i < N; i++) {
+        var d = i - p, ad = Math.abs(d);
+        var x = d * slot, sc = Math.max(0.72, 1 - 0.14 * ad), op = Math.max(0, 1 - 0.38 * ad), ry = Math.max(-28, Math.min(28, -d * 16));
+        slides[i].style.transform = 'translate(-50%, -50%) translateX(' + x.toFixed(1) + 'px) scale(' + sc.toFixed(3) + ') rotateY(' + ry.toFixed(1) + 'deg)';
+        slides[i].style.opacity = op.toFixed(3);
+        slides[i].style.zIndex = String(10 - Math.round(ad * 2));
+      }
+      var idx = Math.round(p);
+      if (idx !== current) {
+        current = idx;
+        slides.forEach(function (el, i) { el.classList.toggle('on', i === idx); });
+        caps.forEach(function (el, i) { el.classList.toggle('on', i === idx); });
+        chips.forEach(function (el, i) { el.classList.toggle('on', i === idx); el.setAttribute('aria-selected', i === idx); });
+      }
+      barFill.style.transform = 'translateX(' + (p / (N - 1) * 300).toFixed(1) + '%)';
     };
-    var onScroll = function () { if (!ticking) { ticking = true; requestAnimationFrame(function () { nearest(); ticking = false; }); } };
+    var update = function () {
+      var goal = progress();
+      p = reduce ? goal : p + (goal - p) * 0.18; // ease toward the scroll position
+      layout();
+      if (Math.abs(goal - p) > 0.002) requestAnimationFrame(update); else { p = goal; layout(); ticking = false; }
+    };
+    var onScroll = function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
     window.addEventListener('scroll', onScroll, { passive: true });
-    document.getElementById('steps').addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll);
-    var goTo = function (i) {
-      setFrame(i); lock = Date.now() + 700;
-      var st = steps[i];
-      var top = st.getBoundingClientRect().top + scrollY - (narrow() ? innerHeight * 0.5 : (innerHeight - st.offsetHeight) / 2);
-      window.scrollTo({ top: top, behavior: 'smooth' });
-    };
-    dots.forEach(function (d) { d.addEventListener('click', function () { goTo(+d.dataset.i); }); });
-    steps.forEach(function (st) { st.addEventListener('click', function () { goTo(+st.dataset.i); }); });
-    nearest();
+    chips.forEach(function (ch, i) {
+      ch.addEventListener('click', function () {
+        var range = section.offsetHeight - innerHeight, top = section.getBoundingClientRect().top + scrollY;
+        window.scrollTo({ top: top + range * (i / (N - 1)), behavior: reduce ? 'auto' : 'smooth' });
+      });
+    });
+    slides.forEach(function (sl, i) { sl.addEventListener('click', function () { chips[i].click(); }); });
+    p = progress(); layout();
   }
 
   // ---- Copy address ----

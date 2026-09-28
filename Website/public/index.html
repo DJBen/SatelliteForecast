@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
-  <link rel="stylesheet" href="/assets/site.css?v=6">
+  <link rel="stylesheet" href="/assets/site.css?v=7">
 </head>
 <body>
 <canvas id="stars" aria-hidden="true"></canvas>
@@ -47,14 +47,14 @@
     <section class="hero">
       <div class="wrap">
         <div>
-          <h1>Know when to <em>look up</em>, and where to look.</h1>
-          <p class="lede measure">The ISS and Tiangong cross your sky for a few minutes at a time. Get the moment, the direction and a reminder.</p>
-          <div class="actions">
+          <h1 class="reveal">Know when to <em>look up</em>, and where to look.</h1>
+          <p class="lede measure reveal" style="--d:.12s">The ISS and Tiangong cross your sky for a few minutes at a time. Get the moment, the direction and a reminder.</p>
+          <div class="actions reveal" style="--d:.24s">
             <a class="cta" href="https://apps.apple.com/app/id1578649430">Download on the App Store</a>
             <a class="cta ghost" href="/privacy">Read the privacy policy</a>
           </div>
         </div>
-        <div class="peek" id="peek">
+        <div class="peek reveal" id="peek" style="--d:.36s">
             <div class="peek-head">
               <div class="where">
                 <span>Next pass over</span>
@@ -79,58 +79,32 @@
       </div>
     </section>
 
-    <section id="features" class="showcase">
-      <div class="wrap">
-        <div class="show-head">
+    <section id="features" class="showcase" aria-label="Screens from the app">
+      <div class="stage" id="stage">
+        <div class="wrap stage-head">
           <span class="eyebrow">In the app</span>
           <h2>Four screens, one evening.</h2>
         </div>
-        <div class="show">
-          <div class="show-phone">
-            <div class="phone frames" id="frames">
-              <img src="/img/01-forecast.webp?v=2" class="on" alt="Home screen with the next observation card and upcoming passes" data-i="0">
-              <img src="/img/02-pass-chart.webp?v=2" alt="Sky chart of one pass across constellations and the Milky Way" data-i="1">
-              <img src="/img/05-planetarium.webp?v=2" alt="Planetarium view of the pass" data-i="2">
-              <img src="/img/06-widgets.webp?v=2" alt="Home Screen widgets in three sizes" data-i="3">
-            </div>
-            <div class="chips" id="chips" role="tablist" aria-label="Choose a screen">
-            <button type="button" class="on" role="tab" aria-selected="true" data-i="0">Forecast</button>
-            <button type="button" role="tab" aria-selected="false" data-i="1">Sky chart</button>
-            <button type="button" role="tab" aria-selected="false" data-i="2">Planetarium</button>
-            <button type="button" role="tab" aria-selected="false" data-i="3">Widgets</button>
-          </div>
-          </div>
-          <div class="steps" id="steps">
-            <div class="step on" data-i="0">
-              <span class="k">01 · Forecast</span>
-              <h3>Your next observation, already waiting.</h3>
-              <p>Open the app and the next visible pass is on screen: time, duration, peak height and a preview of where it rises and sets. The rest of the week sits below, grouped by day.</p>
-            </div>
-            <div class="step" data-i="1">
-              <span class="k">02 · Sky chart</span>
-              <h3>Follow the path across the stars.</h3>
-              <p>Stars, constellations, the Milky Way and the planets, with the station's track drawn through them. Compass mode points the phone at it.</p>
-              <div class="moments">
-                <div><div class="k">Rises</div><div class="v">8:34:57 PM</div><div class="d">239° · 0°</div></div>
-                <div><div class="k">Culminates</div><div class="v">8:40:32 PM</div><div class="d">322° · 56°</div></div>
-                <div><div class="k">Disappears</div><div class="v">8:43:38 PM</div><div class="d">41° · 13°</div></div>
-              </div>
-            </div>
-            <div class="step" data-i="2">
-              <span class="k">03 · Planetarium</span>
-              <h3>Stand under it before you go outside.</h3>
-              <p>A 3D sky you can turn with a finger, showing where the station will be against the horizon you actually have.</p>
-            </div>
-            <div class="step" data-i="3">
-              <span class="k">04 · Widgets</span>
-              <h3>Tonight's answer on the Home Screen.</h3>
-              <p>Small, medium and large widgets show the next pass with its arc and times. No need to open the app to know whether to step outside.</p>
-            </div>
-          </div>
+        <div class="track" id="track">
+          <figure class="slide on" data-i="0"><div class="phone"><img src="/img/01-forecast.webp?v=2" alt="Home screen with the next observation card and upcoming passes"></div></figure>
+          <figure class="slide" data-i="1"><div class="phone"><img src="/img/02-pass-chart.webp?v=2" alt="Sky chart of one pass across constellations and the Milky Way"></div></figure>
+          <figure class="slide" data-i="2"><div class="phone"><img src="/img/05-planetarium.webp?v=2" alt="Planetarium view of the pass"></div></figure>
+          <figure class="slide" data-i="3"><div class="phone"><img src="/img/06-widgets.webp?v=2" alt="Home Screen widgets"></div></figure>
+        </div>
+        <div class="wrap captions" id="captions">
+          <div class="cap on" data-i="0"><span class="k">01 · Forecast</span><h3>Your next observation, already waiting.</h3><p>The next visible pass is on screen the moment you open the app: time, duration, peak height and where it rises and sets.</p></div>
+          <div class="cap" data-i="1"><span class="k">02 · Sky chart</span><h3>Follow the path across the stars.</h3><p>Constellations, the Milky Way and the planets, with the station's track drawn through them. Compass mode points the phone at it.</p></div>
+          <div class="cap" data-i="2"><span class="k">03 · Planetarium</span><h3>Stand under it before you go outside.</h3><p>A 3D sky you can turn with a finger, showing where the station will be against your real horizon.</p></div>
+          <div class="cap" data-i="3"><span class="k">04 · Widgets</span><h3>Tonight's answer on the Home Screen.</h3><p>Small, medium and large widgets show the next pass with its arc and times, so you know whether to step outside.</p></div>
+        </div>
+        <div class="chips" id="chips" role="tablist" aria-label="Choose a screen">
+          <button type="button" class="on" role="tab" aria-selected="true" data-i="0">Forecast</button>
+          <button type="button" role="tab" aria-selected="false" data-i="1">Sky chart</button>
+          <button type="button" role="tab" aria-selected="false" data-i="2">Planetarium</button>
+          <button type="button" role="tab" aria-selected="false" data-i="3">Widgets</button>
         </div>
       </div>
     </section>
-
   </main>
 
   <footer>
@@ -140,8 +114,8 @@
     </div>
   </footer>
 </div>
-<script src="/assets/satellite.min.js?v=6"></script>
-<script src="/assets/site.js?v=6"></script>
-<script src="/assets/peek.js?v=6"></script>
+<script src="/assets/satellite.min.js?v=7"></script>
+<script src="/assets/site.js?v=7"></script>
+<script src="/assets/peek.js?v=7"></script>
 </body>
 </html>

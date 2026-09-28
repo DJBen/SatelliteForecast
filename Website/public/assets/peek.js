@@ -199,9 +199,11 @@
       '<path d="M0 ' + hy + ' Q ' + (W / 2) + ' ' + (hy - 26) + ' ' + W + ' ' + hy + '" fill="none" stroke="#6b7280" stroke-width="1" stroke-dasharray="2 4"/>' +
       [10, 30, 60].map(function (e) { return '<line x1="40" x2="' + (W - 40) + '" y1="' + y(e) + '" y2="' + y(e) + '" stroke="#33363d" stroke-width="1"/><text x="' + (W - 36) + '" y="' + (y(e) + 4) + '" fill="#6b7280" font-size="10" font-family="IBM Plex Mono, monospace">' + e + '°</text>'; }).join('') +
       '<polyline points="' + before + '" fill="none" stroke="#a9b9ce" stroke-width="2" stroke-dasharray="3 6" stroke-linecap="round" opacity=".6"/>' +
-      '<polyline points="' + during + '" fill="none" stroke="#a9b9ce" stroke-width="2.5" stroke-linecap="round"/>' +
+      '<polyline class="trail" pathLength="1" points="' + during + '" fill="none" stroke="#a9b9ce" stroke-width="2.5" stroke-linecap="round"/>' +
       '<polyline points="' + after + '" fill="none" stroke="#a9b9ce" stroke-width="2" stroke-dasharray="3 6" stroke-linecap="round" opacity=".6"/>' +
       '<circle cx="' + x(ps.visEnd.t) + '" cy="' + y(ps.visEnd.el) + '" r="5" fill="#eceef2"/>' +
+      (matchMedia('(prefers-reduced-motion: reduce)').matches ? '' :
+        '<circle class="comet" r="4" fill="#eceef2"><animateMotion dur="7s" begin="1.9s" repeatCount="indefinite" path="M ' + during.split(' ').join(' L ') + '" keyPoints="0;1" keyTimes="0;1" calcMode="linear"/></circle>') +
       '<circle cx="' + x(peak.t) + '" cy="' + y(peak.el) + '" r="3" fill="#a9b9ce"/>' +
       '<text x="' + x(peak.t) + '" y="' + (y(peak.el) - 10) + '" fill="#a9b9ce" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace">' + Math.round(peak.el) + '° highest</text>' +
       '<text x="40" y="' + (hy + 18) + '" fill="#a3a8b2" font-size="11" font-family="IBM Plex Mono, monospace">' + compass(ps.rise.az) + '</text>' +
