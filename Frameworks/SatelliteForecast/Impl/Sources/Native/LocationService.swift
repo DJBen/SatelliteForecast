@@ -17,8 +17,6 @@ public final class LocationService: NSObject, CLLocationManagerDelegate {
   @ObservationIgnored private let manager = CLLocationManager()
   @ObservationIgnored private let geocoder = CLGeocoder()
   @ObservationIgnored private var geocodeTask: Task<Void, Never>?
-  /// Pass times and visibility barely change within this distance.
-  static let widgetForecastInvalidationDistance: CLLocationDistance = 25_000
   public init(
     resources: LocationResources = .init(),
     openSettings: @escaping () -> Void = {
@@ -73,16 +71,9 @@ public final class LocationService: NSObject, CLLocationManagerDelegate {
     if let location = resources.location,
       let data = try? JSONEncoder().encode(LatLonAlt(location: location))
     {
-      let previous = UserDefaults.standard.data(forKey: "lastUsedLocation")
-        .flatMap { try? JSONDecoder().decode(LatLonAlt.self, from: $0) }
-      // GPS jitter and each relaunch's first fix move the observer slightly; only a real move
-      // makes the saved widget forecast wrong enough to discard before a new one is ready.
-      if let previous,
-        CLLocation(latitude: previous.lat, longitude: previous.lon).distance(from: location)
-          > Self.widgetForecastInvalidationDistance
-      {
-        WidgetForecastStore.clear()
-      }
+      // Show the widget forecast cached for this place, or none until the app computes one.
+      WidgetForecastStore.activate(
+        latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
       UserDefaults.standard.set(data, forKey: "lastUsedLocation")
     }
   }

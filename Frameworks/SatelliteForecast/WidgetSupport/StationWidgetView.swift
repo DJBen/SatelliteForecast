@@ -14,6 +14,7 @@ public struct StationWidgetView: View {
     public let chart: Bool
     public let station: Int
     private let accent = MoonstonePalette.accent
+    private let passing = MoonstonePalette.passing
     private let muted = MoonstonePalette.muted
     public static var background: some View { MoonstoneBackground(glowOpacity: 0.08) }
     /// Margins applied by the host in place of the system's 16 pt content inset. The
@@ -147,7 +148,7 @@ public struct StationWidgetView: View {
             }
             if let pass {
                 if pass.rise <= date {
-                    Text(text("now.short")).font(.system(.title3, design: .rounded, weight: .bold)).foregroundStyle(accent)
+                    Text(text("now.short")).font(.system(.title3, design: .rounded, weight: .bold)).foregroundStyle(passing)
                         .lineLimit(1).minimumScaleFactor(0.6)
                 } else {
                     clock(pass).font(.system(size: 26, weight: .bold, design: .rounded)).monospacedDigit()
@@ -165,7 +166,7 @@ public struct StationWidgetView: View {
     private func footerTime(_ pass: WidgetPass, showsDay: Bool) -> some View {
         VStack(alignment: .trailing, spacing: 0) {
             if pass.rise <= date {
-                Text(text("now.short")).foregroundStyle(accent).font(.system(size: 12.5, weight: .semibold, design: .rounded))
+                Text(text("now.short")).foregroundStyle(passing).font(.system(size: 12.5, weight: .semibold, design: .rounded))
             } else {
                 clock(pass).font(.system(size: 12.5, weight: .semibold, design: .rounded)).monospacedDigit()
                 if showsDay, let day = dayLabel(pass) { Text(day).font(.system(size: 10)).foregroundStyle(muted) }
@@ -220,7 +221,7 @@ public struct StationWidgetView: View {
             if let pass {
                 VStack(alignment: .trailing, spacing: 4) {
                     if pass.rise <= date {
-                        Text(text("now.short")).font(.system(size: 20, weight: .bold, design: .rounded)).foregroundStyle(accent)
+                        Text(text("now.short")).font(.system(size: 20, weight: .bold, design: .rounded)).foregroundStyle(passing)
                     } else {
                         clock(pass).font(.system(size: 21, weight: .bold, design: .rounded)).monospacedDigit()
                     }
@@ -258,7 +259,7 @@ public struct StationWidgetView: View {
             if let pass {
                 Group {
                     if pass.rise <= date {
-                        Text(text("now.short")).font(.system(.title3, design: .rounded, weight: .bold)).foregroundStyle(accent)
+                        Text(text("now.short")).font(.system(.title3, design: .rounded, weight: .bold)).foregroundStyle(passing)
                     } else {
                         clock(pass).font(.system(size: 24, weight: .bold, design: .rounded)).monospacedDigit()
                     }
@@ -304,7 +305,7 @@ public struct StationWidgetView: View {
                         clock(pass).monospacedDigit()
                     }
                 }
-                .font(.system(size: 20, weight: .bold, design: .rounded)).foregroundStyle(accent)
+                .font(.system(size: 20, weight: .bold, design: .rounded)).foregroundStyle(pass.rise <= date ? passing : accent)
                 .lineLimit(1).minimumScaleFactor(0.6).layoutPriority(1)
             }
             if let track = pass.skyTrack, track.count >= 2 {
@@ -332,7 +333,7 @@ public struct StationWidgetView: View {
     private func time(_ pass: WidgetPass) -> some View {
         Group {
             if pass.rise <= date {
-                Text(text("now.short")).foregroundStyle(accent).accessibilityLabel(text("now"))
+                Text(text("now.short")).foregroundStyle(passing).accessibilityLabel(text("now"))
             } else if calendar.isDate(pass.rise, inSameDayAs: date) {
                 Text(pass.rise, style: .time)
             } else {

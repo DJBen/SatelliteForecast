@@ -1,3 +1,4 @@
+import CoreLocation
 import Foundation
 import WidgetKit
 
@@ -166,10 +167,15 @@ public struct WidgetForecast: Codable, Sendable {
     public let generated: Date
     public let expires: Date
     public let passes: [WidgetPass]
-    public init(generated: Date, expires: Date, passes: [WidgetPass]) {
+    /// Where the forecast was computed. Optional so forecasts written by earlier app versions still decode.
+    public let latitude: Double?
+    public let longitude: Double?
+    public init(generated: Date, expires: Date, passes: [WidgetPass], latitude: Double? = nil, longitude: Double? = nil) {
         self.generated = generated
         self.expires = expires
         self.passes = passes.sorted { $0.rise < $1.rise }
+        self.latitude = latitude
+        self.longitude = longitude
     }
     public func next(station: Int, at date: Date) -> WidgetPass? {
         guard date >= generated, date < expires else { return nil }
@@ -194,26 +200,81 @@ public struct WidgetForecast: Codable, Sendable {
     }
 }
 
+/// Keeps one forecast per recent place, so returning to a place fills the widget immediately
+/// instead of waiting for the app to recompute it. Each place is its own file, so the widget
+/// only ever decodes the forecast it shows.
 public enum WidgetForecastStore {
     public static let group = "group.io.djben.SatelliteForecast"
     public static let kind = "SatelliteForecastWidget"
-    private static var file: URL? {
-        FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: group)?
-            .appendingPathComponent("widget-forecast-v1.json")
+    /// Returning to one of this many most recently used places needs no recomputation.
+    public static let cachedPlaceLimit = 4
+    /// Pass times and visibility barely change within this distance, so one forecast serves it.
+    public static let placeRadius: CLLocationDistance = 25_000
+    /// Tests point this at a temporary directory.
+    nonisolated(unsafe) public static var directory: URL? =
+        FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: group)
+
+    private struct Place: Codable {
+        let id: UUID
+        let latitude: Double
+        let longitude: Double
+        let expires: Date
+        func contains(latitude: Double, longitude: Double) -> Bool {
+            CLLocation(latitude: self.latitude, longitude: self.longitude)
+                .distance(from: CLLocation(latitude: latitude, longitude: longitude)) <= placeRadius
+        }
     }
+    /// Places are most recently used first; `active` is the one the widget shows.
+    private struct Index: Codable {
+        var active: UUID?
+        var places: [Place]
+    }
+    /// The single forecast written before places were cached.
+    private static let legacyName = "widget-forecast-v1.json"
+    private static let indexName = "widget-forecast-places-v1.json"
+    private static func placeName(_ id: UUID) -> String { "widget-forecast-\(id.uuidString).json" }
+
+    private static func load<T: Decodable>(_ type: T.Type, _ name: String) -> T? {
+        guard let url = directory?.appendingPathComponent(name), let data = try? Data(contentsOf: url) else { return nil }
+        return try? JSONDecoder().decode(type, from: data)
+    }
+    private static func save(_ value: some Encodable, _ name: String) -> Bool {
+        guard let url = directory?.appendingPathComponent(name), let data = try? JSONEncoder().encode(value) else { return false }
+        return (try? data.write(to: url, options: .atomic)) != nil
+    }
+    private static func remove(_ name: String) {
+        if let url = directory?.appendingPathComponent(name) { try? FileManager.default.removeItem(at: url) }
+    }
+
     public static func read() -> WidgetForecast? {
-        guard let file, let data = try? Data(contentsOf: file) else { return nil }
-        return try? JSONDecoder().decode(WidgetForecast.self, from: data)
+        guard let index = load(Index.self, indexName) else { return load(WidgetForecast.self, legacyName) }
+        return index.active.flatMap { load(WidgetForecast.self, placeName($0)) }
     }
-    public static func write(_ forecast: WidgetForecast) {
-        guard let file, let data = try? JSONEncoder().encode(forecast) else { return }
-        do {
-            try data.write(to: file, options: .atomic)
-            WidgetCenter.shared.reloadTimelines(ofKind: kind)
-        } catch { /* The app remains usable if the shared container is unavailable. */ }
+    /// Shows this forecast and caches it for its place, replacing any older one for the same place.
+    public static func write(_ forecast: WidgetForecast, now: Date = Date()) {
+        guard let latitude = forecast.latitude, let longitude = forecast.longitude else { return }
+        let place = Place(id: UUID(), latitude: latitude, longitude: longitude, expires: forecast.expires)
+        guard save(forecast, placeName(place.id)) else { return /* The app remains usable without the shared container. */ }
+        let old = load(Index.self, indexName)?.places ?? []
+        let kept = old.filter { $0.expires > now && !$0.contains(latitude: latitude, longitude: longitude) }
+        let index = Index(active: place.id, places: [place] + kept.prefix(cachedPlaceLimit - 1))
+        guard save(index, indexName) else { return remove(placeName(place.id)) }
+        for evicted in old where !index.places.contains(where: { $0.id == evicted.id }) { remove(placeName(evicted.id)) }
+        remove(legacyName)
+        WidgetCenter.shared.reloadTimelines(ofKind: kind)
     }
-    public static func clear() {
-        if let file { try? FileManager.default.removeItem(at: file) }
+    /// Switches the widget to the forecast cached for the observer's place. Without one it shows
+    /// setup until the app computes a forecast there; an expired one for this place still says refresh.
+    public static func activate(latitude: Double, longitude: Double, now: Date = Date()) {
+        // A legacy forecast has no place; it stays until the app's next forecast replaces it.
+        guard var index = load(Index.self, indexName) else { return }
+        if let active = index.places.first(where: { $0.id == index.active }),
+           active.contains(latitude: latitude, longitude: longitude) { return }
+        let match = index.places.first { $0.expires > now && $0.contains(latitude: latitude, longitude: longitude) }
+        guard match?.id != index.active else { return }
+        index.active = match?.id
+        if let match { index.places = [match] + index.places.filter { $0.id != match.id } }
+        guard save(index, indexName) else { return }
         WidgetCenter.shared.reloadTimelines(ofKind: kind)
     }
 }

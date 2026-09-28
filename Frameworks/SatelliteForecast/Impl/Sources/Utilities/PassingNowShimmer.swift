@@ -1,8 +1,9 @@
+import SatelliteWidgetSupport
 import SwiftUI
 
 /// Shared live-pass emphasis. Only this text overlay ticks; the surrounding sky stays independent.
 struct PassingNowShimmer: ViewModifier {
-    static let coral = Color(red: 1, green: 0.49, blue: 0.43)
+    static let coral = MoonstonePalette.passing
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.scenePhase) private var scenePhase
 

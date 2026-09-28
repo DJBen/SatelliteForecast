@@ -31,6 +31,56 @@ final class ForecastTests: XCTestCase {
         XCTAssertEqual(forecast.entryDates(after: expiry), [expiry])
     }
 
+    func testWidgetForecastStoreCachesRecentPlaces() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let original = WidgetForecastStore.directory
+        WidgetForecastStore.directory = directory
+        defer {
+            WidgetForecastStore.directory = original
+            try? FileManager.default.removeItem(at: directory)
+        }
+        let expires = date.addingTimeInterval(7 * 86_400)
+        func forecast(_ latitude: Double, _ longitude: Double) -> WidgetForecast {
+            .init(generated: date, expires: expires, passes: [], latitude: latitude, longitude: longitude)
+        }
+        // San Francisco, San Jose, Sacramento, Los Angeles, Seattle: each more than 25 km apart.
+        let places = [(37.77, -122.42), (37.34, -121.89), (38.58, -121.49), (34.05, -118.24), (47.61, -122.33)]
+        for (latitude, longitude) in places.prefix(3) {
+            WidgetForecastStore.write(forecast(latitude, longitude), now: date)
+        }
+        XCTAssertEqual(WidgetForecastStore.read()?.latitude, 38.58)
+
+        // A few kilometres of GPS drift keeps the current forecast.
+        WidgetForecastStore.activate(latitude: 38.60, longitude: -121.50, now: date)
+        XCTAssertEqual(WidgetForecastStore.read()?.latitude, 38.58)
+
+        // Returning to an earlier place shows its cached forecast without recomputing.
+        WidgetForecastStore.activate(latitude: 37.77, longitude: -122.42, now: date)
+        XCTAssertEqual(WidgetForecastStore.read()?.latitude, 37.77)
+
+        // A place with no cached forecast shows setup.
+        WidgetForecastStore.activate(latitude: 40.71, longitude: -74.01, now: date)
+        XCTAssertNil(WidgetForecastStore.read())
+
+        // Four places stay cached; the least recently used one (San Jose) is evicted.
+        for (latitude, longitude) in places.suffix(2) {
+            WidgetForecastStore.write(forecast(latitude, longitude), now: date)
+        }
+        for (latitude, longitude) in [places[0], places[2], places[3]] {
+            WidgetForecastStore.activate(latitude: latitude, longitude: longitude, now: date)
+            XCTAssertEqual(WidgetForecastStore.read()?.latitude, latitude)
+        }
+        WidgetForecastStore.activate(latitude: 37.34, longitude: -121.89, now: date)
+        XCTAssertNil(WidgetForecastStore.read())
+
+        // Expired forecasts are not reused for a different place.
+        WidgetForecastStore.activate(latitude: 37.77, longitude: -122.42, now: expires)
+        XCTAssertNil(WidgetForecastStore.read())
+        let json = try FileManager.default.contentsOfDirectory(atPath: directory.path).filter { $0.hasSuffix(".json") }
+        XCTAssertEqual(json.count, 5, "four place forecasts plus the index")
+    }
+
     func testWidgetForecastRoundTrip() throws {
         let forecast = WidgetForecast.preview(at: date)
         let decoded = try JSONDecoder().decode(WidgetForecast.self, from: JSONEncoder().encode(forecast))

@@ -107,7 +107,7 @@ public final class ForecastModel {
         passes = [:]
         // The widget keeps the last saved forecast until this refresh replaces it, so launching
         // and leaving the app before the forecast finishes never blanks it. LocationService
-        // discards the saved forecast when the observer moves far enough to make it wrong.
+        // switches it to the forecast cached for the observer's place when they move.
         upcomingPasses = []
         issNextPass = .loading
         tianheNextPass = .loading
@@ -144,8 +144,8 @@ public final class ForecastModel {
             }
         }
         WidgetForecastStore.write(.init(generated: currentDate,
-            expires: min(Date(julianDate: request.dateRange.upperBound), currentDate.addingTimeInterval(3 * 86_400)),
-            passes: summaries))
+            expires: min(Date(julianDate: request.dateRange.upperBound), currentDate.addingTimeInterval(7 * 86_400)),
+            passes: summaries, latitude: observer.lat, longitude: observer.lon))
     }
 
     private var isWidgetTest: Bool {

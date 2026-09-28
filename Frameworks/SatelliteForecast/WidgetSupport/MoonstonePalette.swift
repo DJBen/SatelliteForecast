@@ -11,6 +11,8 @@ public enum MoonstonePalette {
     public static let accentHex: UInt32 = 0xA9B9CE
     public static let borderHex: UInt32 = 0x33363D
     public static let warningHex: UInt32 = 0xF0A184
+    /// Coral that marks a pass happening now, in the app and the widget.
+    public static let passingHex: UInt32 = 0xFF7D6E
 
     public static func uiColor(_ hex: UInt32) -> UIColor {
         UIColor(red: CGFloat((hex >> 16) & 255) / 255,
@@ -22,6 +24,7 @@ public enum MoonstonePalette {
     public static let text = Color(uiColor: uiColor(textHex))
     public static let muted = Color(uiColor: uiColor(mutedHex))
     public static let accent = Color(uiColor: uiColor(accentHex))
+    public static let passing = Color(uiColor: uiColor(passingHex))
 
     public static func vector(_ hex: UInt32, alpha: Float) -> SIMD4<Float> {
         SIMD4(Float((hex >> 16) & 255) / 255, Float((hex >> 8) & 255) / 255,

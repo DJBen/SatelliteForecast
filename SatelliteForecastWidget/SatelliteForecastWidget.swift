@@ -43,7 +43,9 @@ struct StationProvider: AppIntentTimelineProvider {
     func timeline(for configuration: StationWidgetConfiguration, in context: Context) async -> Timeline<StationEntry> {
         let now = Date()
         let forecast = WidgetForecastStore.read()
-        let dates = forecast?.entryDates(after: now) ?? [now]
+        // Hourly reloads extend the timeline; cap it so a 7-day forecast stays small to archive.
+        let horizon = now.addingTimeInterval(3 * 86_400)
+        let dates = forecast?.entryDates(after: now).filter { $0 <= horizon } ?? [now]
         // Keep each serialized entry small: only the next pass for each station is displayed.
         let entries = dates.map { date in
             let compact = forecast.map { saved in
