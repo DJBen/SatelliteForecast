@@ -50,8 +50,6 @@
     when: document.getElementById('peek-when'),
     sat: document.getElementById('peek-sat'),
     sub: document.getElementById('peek-sub'),
-    arc: document.getElementById('arc'),
-    row: document.getElementById('peek-row'),
     up: document.getElementById('peek-up'),
     tz: document.getElementById('peek-tz'),
     status: document.getElementById('peek-status')
@@ -182,34 +180,6 @@
   function shortDay(t, tz) { var d = dayLabel(t, tz); return d === 'Tonight' || d === 'Tomorrow' ? d.toLowerCase() : d === 'This morning' ? 'this morning' : d; }
   function tzLabel(tz) { try { return new Intl.DateTimeFormat(undefined, { timeZone: tz, timeZoneName: 'short' }).formatToParts(new Date()).filter(function (p) { return p.type === 'timeZoneName'; })[0].value; } catch (e) { return tz; } }
 
-  // ---- Arc, drawn to scale (elevation → height) from the actual samples ----
-  function drawArc(ps) {
-    var W = 520, H = 190, hy = 160, top = 24;
-    var y = function (e) { return hy - (Math.max(e, 0) / 90) * (hy - top); };
-    var s = ps.samples, t0 = s[0].t.getTime(), t1 = s[s.length - 1].t.getTime();
-    var x = function (t) { return 40 + ((t.getTime() - t0) / (t1 - t0)) * (W - 80); };
-    var pt = function (p) { return x(p.t).toFixed(1) + ',' + y(p.el).toFixed(1); };
-    var before = s.filter(function (p) { return p.t <= ps.visStart.t; }).map(pt).join(' ');
-    var during = s.filter(function (p) { return p.t >= ps.visStart.t && p.t <= ps.visEnd.t; }).map(pt).join(' ');
-    var after = s.filter(function (p) { return p.t >= ps.visEnd.t; }).map(pt).join(' ');
-    var peak = ps.visPeak;
-    el.arc.innerHTML =
-      '<defs><linearGradient id="g" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#a9b9ce" stop-opacity=".18"/><stop offset="1" stop-color="#111214" stop-opacity="0"/></linearGradient></defs>' +
-      '<path d="M0 ' + hy + ' Q ' + (W / 2) + ' ' + (hy - 26) + ' ' + W + ' ' + hy + ' L ' + W + ' ' + H + ' L 0 ' + H + ' Z" fill="url(#g)"/>' +
-      '<path d="M0 ' + hy + ' Q ' + (W / 2) + ' ' + (hy - 26) + ' ' + W + ' ' + hy + '" fill="none" stroke="#6b7280" stroke-width="1" stroke-dasharray="2 4"/>' +
-      [10, 30, 60].map(function (e) { return '<line x1="40" x2="' + (W - 40) + '" y1="' + y(e) + '" y2="' + y(e) + '" stroke="#33363d" stroke-width="1"/><text x="' + (W - 36) + '" y="' + (y(e) + 4) + '" fill="#6b7280" font-size="10" font-family="IBM Plex Mono, monospace">' + e + '°</text>'; }).join('') +
-      '<polyline points="' + before + '" fill="none" stroke="#a9b9ce" stroke-width="2" stroke-dasharray="3 6" stroke-linecap="round" opacity=".6"/>' +
-      '<polyline class="trail" pathLength="1" points="' + during + '" fill="none" stroke="#a9b9ce" stroke-width="2.5" stroke-linecap="round"/>' +
-      '<polyline points="' + after + '" fill="none" stroke="#a9b9ce" stroke-width="2" stroke-dasharray="3 6" stroke-linecap="round" opacity=".6"/>' +
-      '<circle cx="' + x(ps.visEnd.t) + '" cy="' + y(ps.visEnd.el) + '" r="5" fill="#eceef2"/>' +
-      (matchMedia('(prefers-reduced-motion: reduce)').matches ? '' :
-        '<circle class="comet" r="4" fill="#eceef2"><animateMotion dur="7s" begin="1.9s" repeatCount="indefinite" path="M ' + during.split(' ').join(' L ') + '" keyPoints="0;1" keyTimes="0;1" calcMode="linear"/></circle>') +
-      '<circle cx="' + x(peak.t) + '" cy="' + y(peak.el) + '" r="3" fill="#a9b9ce"/>' +
-      '<text x="' + x(peak.t) + '" y="' + (y(peak.el) - 10) + '" fill="#a9b9ce" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace">' + Math.round(peak.el) + '° highest</text>' +
-      '<text x="40" y="' + (hy + 18) + '" fill="#a3a8b2" font-size="11" font-family="IBM Plex Mono, monospace">' + compass(ps.rise.az) + '</text>' +
-      '<text x="' + (W - 40) + '" y="' + (hy + 18) + '" fill="#a3a8b2" text-anchor="end" font-size="11" font-family="IBM Plex Mono, monospace">' + compass(ps.set.az) + '</text>';
-  }
-
   function note(msg) { el.status.textContent = msg; el.status.hidden = !msg; }
   function setLive(on, label) { el.live.classList.toggle('off', !on); el.live.lastChild.textContent = label; }
 
@@ -221,18 +191,13 @@
       el.when.textContent = 'No visible pass in the next 7 days';
       el.sat.textContent = 'from ' + observer.name;
       el.sub.textContent = 'Visible passes come in cycles. The app will remind you when the next window opens.';
-      el.arc.innerHTML = ''; el.row.innerHTML = ''; el.up.innerHTML = '';
+      el.up.innerHTML = '';
       return;
     }
     var minutes = Math.max(1, Math.round((next.visEnd.t - next.visStart.t) / 60000));
     el.when.innerHTML = dayLabel(next.visStart.t, tz) + ' <span class="mono">' + clock(next.visStart.t, tz) + '</span>';
     el.sat.textContent = next.station.name;
     el.sub.textContent = 'Visible ' + minutes + ' min · ' + compass(next.visStart.az) + ' to ' + compass(next.visEnd.az) + ' · ' + Math.round(next.visPeak.el) + '° at highest';
-    drawArc(next);
-    el.row.innerHTML =
-      '<div>Appears<b>' + clockS(next.visStart.t, tz) + ' · ' + Math.round(next.visStart.az) + '°</b></div>' +
-      '<div>Highest<b>' + clockS(next.visPeak.t, tz) + ' · ' + Math.round(next.visPeak.el) + '°</b></div>' +
-      '<div>Disappears<b>' + clockS(next.visEnd.t, tz) + ' · ' + Math.round(next.visEnd.az) + '°</b></div>';
     el.up.innerHTML = all.slice(1, 3).map(function (p) {
       return '<span><b>' + p.station.short + '</b> <span class="chip ' + p.station.chip + '">' + Math.round(p.visPeak.el) + '°</span> ' +
         shortDay(p.visStart.t, tz) + ' ' + clock(p.visStart.t, tz) + '</span>';

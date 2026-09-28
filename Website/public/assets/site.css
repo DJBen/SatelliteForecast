@@ -97,13 +97,13 @@ section + section { border-top: 1px solid var(--line); }
 .peek .row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; border-top: 1px solid var(--line); padding-top: 12px; }
 .peek .row div { font-size: 0.82rem; color: var(--muted); }
 .peek .row b { display: block; font-family: var(--mono); font-weight: 500; font-size: 0.84rem; color: var(--text); white-space: nowrap; }
-.peek .foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 14px; font-size: 0.82rem; color: var(--faint); flex-wrap: wrap; }
+.peek .foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 0.82rem; color: var(--faint); flex-wrap: wrap; }
 .peek .foot .up { display: flex; gap: 14px; flex-wrap: wrap; }
 .peek .foot .up span b { color: var(--text); font-weight: 500; }
 .peek .status { margin-top: 14px; color: var(--muted); font-size: 0.92rem; }
 .chip { display: inline-block; font-family: var(--mono); font-size: 0.72rem; background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent); padding: 1px 7px; border-radius: 999px; }
 .chip.warm { background: color-mix(in srgb, var(--warm) 18%, transparent); color: var(--warm); }
-.peek.busy .arc, .peek.busy .row, .peek.busy .foot { opacity: .35; }
+.peek.busy .foot { opacity: .35; }
 
 /* ---------- Showcase: a pinned stage; vertical scrolling slides the phones sideways ---------- */
 .showcase { height: 420vh; position: relative; padding: 0; }
