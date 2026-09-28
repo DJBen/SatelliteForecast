@@ -75,13 +75,18 @@ try:
         groups = simctl('get_app_container', args.simulator, BUNDLE, 'groups', capture=True).stdout
         group_path = next(line.split('\t', 1)[1] for line in groups.splitlines()
                           if line.startswith('group.io.djben.SatelliteForecast\t'))
-        forecast_file = Path(group_path) / 'widget-forecast-v1.json'
+        group_folder = Path(group_path)
         deadline = time.time() + 180
         while True:
             try:
+                index = json.loads((group_folder / 'widget-forecast-places-v1.json').read_text())
+                forecast_file = group_folder / f"widget-forecast-{index['active']}.json"
                 forecast = json.loads(forecast_file.read_text())
-                ready = forecast_file.stat().st_mtime >= refresh_started and bool(forecast.get('passes'))
-            except (OSError, ValueError):
+                ready = (forecast_file.stat().st_mtime >= refresh_started
+                         and bool(forecast.get('passes'))
+                         and abs(forecast.get('latitude', 999) - lat) < 0.1
+                         and abs(forecast.get('longitude', 999) - lon) < 0.1)
+            except (OSError, ValueError, KeyError, TypeError):
                 ready = False
             if ready:
                 break
@@ -90,9 +95,9 @@ try:
             time.sleep(3)
         # Let WidgetKit finish archiving the refreshed timeline before restarting its host.
         time.sleep(30)
-        # Terminating the app would land SpringBoard on the page holding its icon, and restarting
-        # SpringBoard alone leaves the status bar blank for a while. A clean reboot shows the first
-        # page, where the widgets live, with the widget forecast already written.
+        # Stop the app before reboot so state restoration cannot reopen its foreground screen.
+        # A clean reboot then opens the first page, where the widgets live.
+        simctl('terminate', args.simulator, BUNDLE, check=False)
         reboot(tz)
         simctl('ui', args.simulator, 'appearance', 'dark')
         time.sleep(45)
