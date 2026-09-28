@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Space Station Passes</title>
+  <meta name="description" content="Know when the International Space Station and Tiangong will cross your sky, where to look, and get a reminder before each visible pass. For iPhone and iPad.">
+  <meta name="apple-itunes-app" content="app-id=1578649430, app-argument=satelliteforecast://satellite">
+  <meta property="og:title" content="Space Station Passes">
+  <meta property="og:description" content="Know when to look up, and where to look. ISS and Tiangong pass forecasts, sky charts and reminders for iPhone.">
+  <meta property="og:image" content="https://space-station-passes.web.app/img/icon.png">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#111214">
+  <link rel="icon" href="/img/icon.png">
+  <link rel="apple-touch-icon" href="/img/icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="/assets/site.css?v=8">
+</head>
+<body>
+<canvas id="stars" aria-hidden="true"></canvas>
+<div class="page">
+
+  <div class="store" id="store" hidden>
+    <div class="wrap">
+      <img src="/img/icon.png" alt="">
+      <div class="t"><b>Space Station Passes</b><span>Free on the App Store · iPhone and iPad</span></div>
+      <a class="cta" href="https://apps.apple.com/app/id1578649430">View</a>
+      <button class="x" type="button" id="store-x" aria-label="Dismiss">×</button>
+    </div>
+  </div>
+
+  <nav class="top">
+    <div class="wrap">
+      <a class="brand" href="/"><img src="/img/icon.png" alt=""><span>Space Station Passes</span></a>
+      <div class="tabs">
+        <a href="/" class="on" aria-current="page">Overview</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/support">Support</a>
+      </div>
+      <a class="cta" href="https://apps.apple.com/app/id1578649430">Get the app</a>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <div>
+          <h1 class="reveal">Know when to <em>look up</em>, and where to look.</h1>
+          <p class="lede measure reveal" style="--d:.12s">The ISS and Tiangong cross your sky for a few minutes at a time. Get the moment, the direction and a reminder.</p>
+          <div class="actions reveal" style="--d:.24s">
+            <a class="cta" href="https://apps.apple.com/app/id1578649430">Download on the App Store</a>
+            <a class="cta ghost" href="/privacy">Read the privacy policy</a>
+          </div>
+        </div>
+        <div class="peek reveal" id="peek" style="--d:.36s">
+            <div class="peek-head">
+              <div class="where">
+                <span>Next pass over</span>
+                <label class="sr" for="peek-city">City</label>
+                <select id="peek-city"></select>
+                <span class="muted">·</span>
+                <button class="link" type="button" id="peek-locate">Use my location</button>
+              </div>
+              <span class="live" id="peek-live"><i></i>Live</span>
+            </div>
+            <div class="when" id="peek-when">Finding the next pass…</div>
+            <div class="sat" id="peek-sat">&nbsp;</div>
+            <div class="sub" id="peek-sub">&nbsp;</div>
+            <p class="status" id="peek-status" hidden></p>
+            <div class="foot">
+              <div class="up" id="peek-up"></div>
+              <span id="peek-tz">Computed in your browser</span>
+            </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="showcase" aria-label="Screens from the app">
+      <div class="stage" id="stage">
+        <div class="wrap stage-head">
+          <span class="eyebrow">In the app</span>
+          <h2>Four screens, one evening.</h2>
+        </div>
+        <div class="track" id="track">
+          <figure class="slide on" data-i="0"><div class="phone"><img src="/img/01-forecast.webp?v=2" alt="Home screen with the next observation card and upcoming passes"></div></figure>
+          <figure class="slide" data-i="1"><div class="phone"><img src="/img/02-pass-chart.webp?v=2" alt="Sky chart of one pass across constellations and the Milky Way"></div></figure>
+          <figure class="slide" data-i="2"><div class="phone"><img src="/img/05-planetarium.webp?v=2" alt="Planetarium view of the pass"></div></figure>
+          <figure class="slide" data-i="3"><div class="phone"><img src="/img/06-widgets.webp?v=2" alt="Home Screen widgets"></div></figure>
+        </div>
+        <div class="wrap captions" id="captions">
+          <div class="cap on" data-i="0"><span class="k">01 · Forecast</span><h3>Your next observation, already waiting.</h3><p>The next visible pass is on screen the moment you open the app: time, duration, peak height and where it rises and sets.</p></div>
+          <div class="cap" data-i="1"><span class="k">02 · Sky chart</span><h3>Follow the path across the stars.</h3><p>Constellations, the Milky Way and the planets, with the station's track drawn through them. Compass mode points the phone at it.</p></div>
+          <div class="cap" data-i="2"><span class="k">03 · Planetarium</span><h3>Stand under it before you go outside.</h3><p>A 3D sky you can turn with a finger, showing where the station will be against your real horizon.</p></div>
+          <div class="cap" data-i="3"><span class="k">04 · Widgets</span><h3>Tonight's answer on the Home Screen.</h3><p>Small, medium and large widgets show the next pass with its arc and times, so you know whether to step outside.</p></div>
+        </div>
+        <div class="chips" id="chips" role="tablist" aria-label="Choose a screen">
+          <button type="button" class="on" role="tab" aria-selected="true" data-i="0">Forecast</button>
+          <button type="button" role="tab" aria-selected="false" data-i="1">Sky chart</button>
+          <button type="button" role="tab" aria-selected="false" data-i="2">Planetarium</button>
+          <button type="button" role="tab" aria-selected="false" data-i="3">Widgets</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>© 2026 Space Station Passes. Orbital data from CelesTrak.</span>
+      <span><a href="/privacy">Privacy</a> · <a href="/support">Support</a> · <a href="https://apps.apple.com/app/id1578649430">App Store</a></span>
+    </div>
+  </footer>
+</div>
+<script src="/assets/satellite.min.js?v=8"></script>
+<script src="/assets/site.js?v=8"></script>
+<script src="/assets/peek.js?v=8"></script>
+</body>
+</html>

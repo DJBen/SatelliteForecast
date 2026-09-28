@@ -204,3 +204,13 @@ python3 scripts/capture-widget-home-screenshots.py --output Documentation/AppSto
   approved-build replacement.
 - [1.7.1](1.7.1/README.md) and [1.7.0](1.7.0/README.md): first localized screenshot sets
   and the original capture lessons.
+
+## Support website and privacy policy URL
+
+The privacy policy, support page and marketing overview live in [`Website/`](../../Website/README.md)
+and deploy to https://space-station-passes.web.app with `firebase deploy --only hosting
+--project pass-prediction` from that folder. Since 2026-09-27 every locale's app-info
+`privacyPolicyUrl` points to https://space-station-passes.web.app/privacy (pushed with
+`asc metadata push`; the old Square site is retired). Version-level `supportUrl` and
+`marketingUrl` still reference the Square site and should move to `/support` and `/`
+on the next editable version.
