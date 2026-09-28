@@ -139,12 +139,12 @@ struct PlanetariumView: View {
 
 }
 
-private struct PlanetariumFPSReadout: View {
+struct PlanetariumFPSReadout: View {
     @ObservedObject var monitor: PlanetariumFrameRate
 
     var body: some View {
         HStack(spacing: 6) {
-            Text("FPS")
+            Text(verbatim: "FPS")
                 .foregroundStyle(AppTheme.muted)
             Text(monitor.framesPerSecond.map { String(format: "%.0f", $0) } ?? "—")
                 .monospacedDigit()
@@ -159,7 +159,7 @@ private struct PlanetariumFPSReadout: View {
     }
 }
 
-private struct PlanetariumSurface: UIViewRepresentable {
+struct PlanetariumSurface: UIViewRepresentable {
     let controller: PlanetariumController
     func makeUIView(context: Context) -> MTKView { controller.view }
     func updateUIView(_ uiView: MTKView, context: Context) {}
@@ -337,7 +337,7 @@ private struct PlanetariumTimeControls: View {
 }
 
 
-private struct PlanetariumSelectionCard: View {
+struct PlanetariumSelectionCard: View {
     let controller: PlanetariumController
     @ObservedObject var state: PlanetariumSelectionState
     var body: some View {
@@ -350,6 +350,9 @@ private struct PlanetariumSelectionCard: View {
                             PlanetariumGlobe(body: planet, appearance: { controller.planetAppearance(for: planet) })
                                 .frame(width: 48, height: 48)
                                 .accessibilityHidden(true)
+                        } else if selection.id.hasPrefix("satellite-") {
+                            Image("glyph_satellite").renderingMode(.template).foregroundStyle(AppTheme.accent)
+                                .frame(width: 48, height: 48).accessibilityHidden(true)
                         } else {
                             Image(systemName: "sparkle").font(.title2).foregroundStyle(AppTheme.accent)
                                 .frame(width: 48, height: 48)

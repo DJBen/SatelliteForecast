@@ -1,4 +1,5 @@
 import Foundation
+import QSMag
 import SatelliteForecast
 import SatelliteKit
 
@@ -27,10 +28,45 @@ public actor OrbitalService {
   public func satellites(_ category: SatelliteCategory, force: Bool = false) async throws
     -> [SatelliteInfo]
   {
+    try await catalog(category, force: force).satellites
+  }
+
+  /// Carry the disk cache's original expiry into in-memory consumers. Reading a
+  /// five-hour-old file must not grant its elements another six hours of freshness.
+  static let liveSkyLimit = 100
+
+  func skyCatalog() async throws -> (satellites: [SatelliteInfo], refreshAfter: Date) {
+    try await catalog(.brightest100, liveSky: true)
+  }
+
+  /// The small visual dataset is ranked before any SQLite metadata lookup.
+  static func liveSkyCandidates(_ elements: [Elements]) -> [Elements] {
+    elements.filter { $0.orbitTypeByAltitude == .leo }.sorted {
+      let a = QSMag.with(noradIndex: $0.noradIndex)?.magnitude ?? .infinity
+      let b = QSMag.with(noradIndex: $1.noradIndex)?.magnitude ?? .infinity
+      return a == b ? $0.noradIndex < $1.noradIndex : a < b
+    }.prefix(liveSkyLimit).map { $0 }
+  }
+
+  static func enrich(_ elements: [Elements],
+                     makeInfo: (Elements) async throws -> SatelliteInfo = { try await SatelliteInfo.load(elements: $0) }) async throws -> [SatelliteInfo] {
+    var result: [SatelliteInfo] = []
+    result.reserveCapacity(elements.count)
+    for element in elements {
+      try Task.checkCancellation()
+      result.append(try await makeInfo(element))
+    }
+    try Task.checkCancellation()
+    return result
+  }
+
+  func catalog(_ category: SatelliteCategory, force: Bool = false, liveSky: Bool = false) async throws
+    -> (satellites: [SatelliteInfo], refreshAfter: Date)
+  {
     try Task.checkCancellation()
     let file = directory.appendingPathComponent(category.localFilename).appendingPathExtension(
       "txt")
-    func parse(_ data: Data) throws -> [SatelliteInfo] {
+    func parse(_ data: Data) async throws -> [SatelliteInfo] {
       let elements = try OrbitalDataCache.elements(from: data)
       var newest: [UInt: Elements] = [:]
       for element in elements {
@@ -39,26 +75,31 @@ public actor OrbitalService {
           newest[element.noradIndex] = element
         }
       }
-      return try newest.values.sorted { $0.noradIndex < $1.noradIndex }.map {
-        try SatelliteInfo(elements: $0)
-      }
+      let elementsToLoad = liveSky ? Self.liveSkyCandidates(Array(newest.values))
+        : newest.values.sorted { $0.noradIndex < $1.noradIndex }
+      return try await Self.enrich(elementsToLoad)
     }
     if !force, let attrs = try? FileManager.default.attributesOfItem(atPath: file.path),
       let date = attrs[.modificationDate] as? Date,
       (0...21600).contains(Date().timeIntervalSince(date)),
-      let data = try? Data(contentsOf: file), let info = try? parse(data)
+      let data = try? Data(contentsOf: file), let info = try? await parse(data)
     {
-      return info
+      return (info, date.addingTimeInterval(21600))
     }
+    try Task.checkCancellation()
     do {
       let data = try await fetch(category.url)
       try Task.checkCancellation()
-      let info = try parse(data)
+      let info = try await parse(data)
       try? data.write(to: file, options: .atomic)
-      return info
+      return (info, Date().addingTimeInterval(21600))
     } catch {
       if Task.isCancelled || error is CancellationError { throw CancellationError() }
-      if let data = try? Data(contentsOf: file), let info = try? parse(data) { return info }
+      if let data = try? Data(contentsOf: file), let info = try? await parse(data) {
+        // Keep offline data usable, with a short retry delay rather than a new freshness window.
+        return (info, Date().addingTimeInterval(60))
+      }
+      try Task.checkCancellation()
       throw error
     }
   }
@@ -107,14 +148,17 @@ public actor OrbitalService {
         : elevation < -15
           ? 120
           : elevation < -5
-            ? 60
+            ? 15
             : elevation < 0
-              ? 30
+              ? 5
               : elevation < 5
                 ? 5 : elevation < 10 ? 3 : elevation < 15 ? 2 : elevation < 45 ? 1 : 0.5
       return RealtimePropagationResult(
         noradIndex: info.noradIndex, snapshot: snapshot, satelliteInfo: info,
-        nextCheckJulianDate: date + delay * TimeConstants.sec2day)
+        nextCheckJulianDate: date + min(delay, elevation >= -1 ? 1 : delay) * TimeConstants.sec2day,
+        nextSnapshot: elevation >= -1
+          ? try? SatelliteSnapshot(satelliteInfo: info, julianDate: date + 5 * TimeConstants.sec2day, observer: observer)
+          : nil)
     }
   }
 }

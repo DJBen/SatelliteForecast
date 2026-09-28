@@ -21,7 +21,7 @@ Parameters contain fixed labels and numeric counts/timings only. Do not add coor
 | `passes` | Calculated passes for one satellite |
 | `pass_detail` | Individual pass chart and compass |
 | `sky_detail` | Expanded sky chart sheet |
-| `sky_now` | Experimental realtime sky |
+| `sky_now` | Live 3D planetarium in the permanent second tab |
 | `settings` | Settings overview |
 | `location` | Location search and selection |
 | `alarms` | Scheduled alarm list |
@@ -62,7 +62,7 @@ Onboarding replay counts and rescheduling the same alarm count as actions, not n
 | `load_station` | `passes` | Station orbital-data request to accepted result | Satellites returned |
 | `calculate_passes` | `passes` | Pass calculation request to accepted trails | Pass snapshots |
 | `load_catalog` | `satellites` | Catalog request to accepted result, including explicit retry | Satellites returned |
-| `load_sky_catalog` | `sky_now` | Active satellite request to accepted result | Satellites before LEO filtering |
+| `load_sky_catalog` | `sky_now` | Brightest 100 dataset request to accepted result | Selected LEO candidates, capped at 100 |
 | `location_search` | `location` | Suggestions request after debounce to accepted results | Suggestions |
 | `location_resolve` | `location` | Selected suggestion resolution to pending location | — |
 | `schedule_alarm` | `passes` or `alarm_setup` | Authorization request, preview generation, and OS scheduling | — |
@@ -254,3 +254,57 @@ This control does not emit `alarm_scheduled`; manual alarms in the pass list
 retain their existing conversion semantics. No new events are added.
 
 Planetarium Now mode and the observation card resolve the debug clock (mock offset or frozen date). An active pass opens the planetarium in Now mode; its direction arrow announces the station passing now. These presentation updates introduce no events and preserve Debug telemetry suppression.
+
+## Live Sky Now (2026-09-28)
+
+Sky Now is always the second tab. It uses the shared 3D planetarium at the live
+clock with up to 100 bright LEO satellites above the observer horizon; sunlit markers are
+distinguished from shadowed satellites. The passing list, selection cards, and
+sky options remain within `sky_now` and add no events. `load_sky_catalog` still
+measures the Brightest 100 catalog request through candidate selection/enrichment, not propagation,
+interpolation, star loading, or GPU rendering. Leaving the tab or backgrounding
+cancels catalog/propagation work and pauses rendering. Location selection reuses
+the existing `location` screen and conversion boundaries. Routine Debug and
+XCTest runs retain telemetry suppression.
+
+### Sky Now in-memory catalog reuse
+
+The root owns the Sky Now model across tab recreation. Reactivation reuses its
+parsed catalog until the original six-hour disk/download expiry, without
+starting `load_sky_catalog` or rereading/reparsing data. Actual initial loads,
+expired refreshes, and explicit retries retain the existing operation boundaries
+and selected-candidate result counts. Expired refreshes keep the previous catalog available
+while loading. Failed/offline refreshes retry at most once per minute; cancelled
+work emits cancellation and cannot replace a newer result. Memory hits therefore
+reduce operation counts; these counts are requests, not tab visits. Satellite
+propagation still restarts at the current time after tab/background transitions
+and remains excluded from catalog timing. No new events or parameters are added.
+
+### Brightest 100 and forecast reentry
+
+Sky Now now requests the existing `visual` / Brightest 100 dataset, not all active
+satellites. LEO filtering and ranking by known standard magnitude (unknowns last,
+NORAD ID for ties) cap enrichment/propagation at 100. `load_sky_catalog` retains
+its name and start/finish boundaries, but `result_count` now counts selected
+candidates after filtering/capping; do not compare this count to older
+all-active, pre-filter counts. No satellite IDs or magnitudes are logged.
+
+Returning to Passes reuses successful forecasts for unchanged location/debug
+inputs within the existing one-hour window. It advances the countdown and drops
+expired passes without new `forecast_iss`/`forecast_tiangong` operations. Changed
+inputs, expiry, interrupted/failed forecasts, and explicit refresh still request
+predictions. Widget preparation interrupted on departure may resume from these
+cached passes and remains outside forecast timers. Screen visits remain unchanged;
+operation counts therefore no longer track tab reentry. Cancellation checks during
+parsing/metadata loading and Sky Now's separate worker add no events.
+
+### Isolated metadata cache and OMM parsing
+
+Satellite metadata now loads through a shared SQLite actor with a bounded cache
+of decoded records, including absent records. These memory hits remain inside
+the existing catalog/station operation boundaries; unlike the Sky Now model's
+whole-catalog reuse, they do not suppress an already-started operation. The
+faster OMM epoch parser and asynchronous onboarding preparation add no events,
+parameters, or conversion changes. Query/cache counters and local benchmarks
+are test diagnostics only and never sent to analytics. See [DataLayer.md](DataLayer.md)
+for ownership, freshness, cancellation, and measurement details.

@@ -12,12 +12,14 @@ import SQLite
 extension UCSSat {
     typealias Table = SatelliteCatalog.UCSSatTable
 
-    private static func parseLaunchDate(_ string: String) -> Date? {
+    private static let launchDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.calendar = Calendar(identifier: .gregorian)
         formatter.dateFormat = "M/d/yy"
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
-        return formatter.date(from: string)
-    }
+        return formatter
+    }()
 
     init(row: Row) throws {
         self.init(
@@ -40,7 +42,7 @@ extension UCSSat {
             launchMass: try row.get(Table.launchMass),
             dryMass: try row.get(Table.dryMass),
             power: try row.get(Table.power),
-            dateOfLaunch: Self.parseLaunchDate(try row.get(Table.dateOfLaunch)),
+            dateOfLaunch: Self.launchDateFormatter.date(from: try row.get(Table.dateOfLaunch)),
             expectedLifetime: try row.get(Table.expectedLifetime),
             contractor: try row.get(Table.contractor),
             countryOfContractor: try row.get(Table.countryOfContractor),
@@ -68,8 +70,7 @@ extension UCSSat {
     /// Find the satellite with a specified NORAD CAT ID and return its info
     /// - Parameter noradCatID: The NORAD CAT ID>
     /// - Returns: The satellite info.
-    public static func with(noradCatID: Int) throws -> UCSSat? {
-        let query = Table.tableName.filter(Table.noradID == noradCatID)
-        return try SatelliteCatalog.DB.pluck(query).flatMap(UCSSat.init(row:))
+    public static func with(noradCatID: Int) async throws -> UCSSat? {
+        try await SatelliteMetadataStore.shared.metadata(for: noradCatID).ucsSat
     }
 }

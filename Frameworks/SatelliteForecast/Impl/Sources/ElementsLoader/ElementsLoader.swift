@@ -6,14 +6,15 @@ import SatelliteForecast
 import SatelliteKit
 
 extension SatelliteInfo {
-    public init(elements: Elements) throws {
-        let satCat = try SatCat.with(noradCatID: Int(elements.noradIndex))
-        let ucsSat = try UCSSat.with(noradCatID: Int(elements.noradIndex))
+    public static func load(elements: Elements) async throws -> SatelliteInfo {
+        try Task.checkCancellation()
+        let metadata = try await SatelliteMetadataStore.shared.metadata(for: Int(elements.noradIndex))
+        try Task.checkCancellation()
         let qsMag = QSMag.with(noradIndex: elements.noradIndex)
-        self.init(
+        return Self(
             elements: elements,
-            satCat: satCat,
-            ucsSat: ucsSat,
+            satCat: metadata.satCat,
+            ucsSat: metadata.ucsSat,
             qsMag: qsMag
         )
     }
@@ -26,6 +27,7 @@ public extension Elements {
         let lines = chunk.trimmingCharacters(in: .whitespacesAndNewlines)
             .split(whereSeparator: \.isNewline)
         for (i, line) in lines.enumerated() {
+            try Task.checkCancellation()
             if tle.count >= 3 && i % 3 == 0 {
                 result.append(try Elements(tle[0], tle[1], tle[2]))
                 tle = [String(line)]

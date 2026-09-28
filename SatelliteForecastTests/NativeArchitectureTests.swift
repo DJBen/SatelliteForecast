@@ -104,7 +104,7 @@ final class NativeArchitectureTests: XCTestCase {
         XCTAssertEqual(fallback.compactDescription(locale: Locale(identifier: "en")), "Over US")
     }
 
-    func testRootTabVisibilityUpdatesWithoutLegacyStore() async throws {
+    func testSkyNowIsAlwaysTheSecondRootTab() async throws {
         // Root configures application-wide UIKit appearance. Restore it so this test
         // cannot change the independent screen snapshot fixtures that run afterward.
         let navigation = UINavigationBar.appearance()
@@ -140,15 +140,14 @@ final class NativeArchitectureTests: XCTestCase {
             if let bar = view as? UITabBar { return bar }
             return view.subviews.lazy.compactMap { tabBar(in: $0) }.first
         }
-        for (visible, count) in [(false, 3), (true, 4), (false, 3)] {
-            settings.showExperimentalSkyNow = visible
-            for _ in 0..<20 {
-                host.view.layoutIfNeeded()
-                if tabBar(in: host.view)?.items?.count == count { break }
-                try await Task.sleep(for: .milliseconds(50))
-            }
-            XCTAssertEqual(try XCTUnwrap(tabBar(in: host.view)).items?.count, count)
+        for _ in 0..<20 {
+            host.view.layoutIfNeeded()
+            if tabBar(in: host.view)?.items?.count == 4 { break }
+            try await Task.sleep(for: .milliseconds(50))
         }
+        let items = try XCTUnwrap(tabBar(in: host.view)?.items)
+        XCTAssertEqual(items.count, 4)
+        XCTAssertEqual(items[1].title, RealtimeSkyViewImpl.Navigation.title)
     }
 
     func testSharedSettingsNotifyBothAppearanceConsumers() {
@@ -167,20 +166,6 @@ final class NativeArchitectureTests: XCTestCase {
         }
         settings.isNightModeOn = true
         wait(for: [overlay, settingsScreen], timeout: 1)
-    }
-
-    func testSkyVisibilityDoesNotInvalidateNightAppearance() {
-        let settings = AppSettings()
-        let nightChanged = expectation(description: "Unrelated appearance stays untouched")
-        nightChanged.isInverted = true
-        withObservationTracking {
-            _ = settings.isNightModeOn
-        } onChange: {
-            nightChanged.fulfill()
-        }
-        settings.showExperimentalSkyNow = true
-        wait(for: [nightChanged], timeout: 0.05)
-        XCTAssertTrue(settings.showExperimentalSkyNow)
     }
 
     func testLocationSelectionDoesNotPopUnrelatedNavigation() {

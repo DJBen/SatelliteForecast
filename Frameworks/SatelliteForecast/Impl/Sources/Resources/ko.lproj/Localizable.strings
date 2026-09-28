@@ -739,3 +739,12 @@ The localized string for the status of a spare satellite */
 "Live satellite position. Solid trail: traveled. Dotted trail: still ahead. Gray: in Earth’s shadow." = "위성의 실시간 위치. 실선: 지나온 경로. 점선: 앞으로의 경로. 회색: 지구 그림자 안.";
 
 "%@ passing now" = "%@ 통과 중";
+
+/* Live Sky Now */
+"Choose an observer location to see the sky above you." = "관측 위치를 선택하여 머리 위의 하늘을 확인하세요.";
+"Passing now" = "현재 통과 중";
+"%lld above the horizon" = "지평선 위에 %lld개";
+"No satellites above the horizon" = "지평선 위에 위성이 없습니다";
+"Unable to load satellites" = "위성을 불러올 수 없습니다";
+"Sunlit" = "햇빛을 받는 중";
+"In Earth's shadow" = "지구 그림자 안";

@@ -134,7 +134,7 @@ final class ScreenSnapshotTests: XCTestCase {
         let directory = URL(fileURLWithPath: output, isDirectory: true)
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         let catalog = try await AppStarCatalog.load()
-        let fixture = try Fixture(catalog: catalog)
+        let fixture = try await Fixture(catalog: catalog)
         let pass = try XCTUnwrap(fixture.passes.map(\.pass).first {
             $0.sunElevationAtTransit < -6 && ($0.highestIlluminated?.elev ?? 0) > 20 && $0.culmination.elev < 60
         })
@@ -395,7 +395,7 @@ final class ScreenSnapshotTests: XCTestCase {
         }
         UserDefaults.standard.set(true, forKey: "hasCompletedAllPassesOnboarding")
         UserDefaults.standard.set(false, forKey: "passCompassEnabled")
-        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let fixture = try await Fixture(catalog: await AppStarCatalog.load())
         let invisible = fixture.passes.filter { $0.pass.visibility != .visible }
         XCTAssertGreaterThan(invisible.count, 2)
         let trails = SatelliteTrails(observer: fixture.observer, snapshots: fixture.trails.snapshots,
@@ -428,7 +428,7 @@ final class ScreenSnapshotTests: XCTestCase {
     }
 
     func testPlanetariumDebugClockAndLiveEntry() async throws {
-        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let fixture = try await Fixture(catalog: await AppStarCatalog.load())
         let pass = try XCTUnwrap(fixture.passes.first { $0.pass.visibility == .visible })
         let rise = pass.pass.rise.julianDate, set = pass.pass.set.julianDate
         let target = pass.pass.culmination.julianDate
@@ -473,7 +473,7 @@ final class ScreenSnapshotTests: XCTestCase {
     }
 
     func testObservationHomeLivePosition() async throws {
-        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let fixture = try await Fixture(catalog: await AppStarCatalog.load())
         let featured = try XCTUnwrap(fixture.passes.first {
             $0.pass.visibility == .visible && ($0.pass.highestIlluminated?.elev ?? 0) > 30
                 && $0.pass.sunElevationAtTransit < -10
@@ -523,7 +523,7 @@ final class ScreenSnapshotTests: XCTestCase {
 
     func testObservationHomeDarkReview() async throws {
         let catalog = try await AppStarCatalog.load()
-        let fixture = try Fixture(catalog: catalog, now: Date(timeIntervalSince1970: 1789002000), tle: [
+        let fixture = try await Fixture(catalog: catalog, now: Date(timeIntervalSince1970: 1789002000), tle: [
             "ISS (ZARYA)",
             "1 25544U 98067A   26256.62713074  .00005522  00000+0  10793-3 0  9997",
             "2 25544  51.6309 222.3825 0004920 137.6518 222.4851 15.49103177585466"
@@ -574,7 +574,7 @@ final class ScreenSnapshotTests: XCTestCase {
         let savedCompass = UserDefaults.standard.object(forKey: "passCompassEnabled")
         UserDefaults.standard.set(true, forKey: "passCompassEnabled")
         defer { UserDefaults.standard.set(savedCompass, forKey: "passCompassEnabled") }
-        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let fixture = try await Fixture(catalog: await AppStarCatalog.load())
         for (name, view) in fixture.screens() where name.hasPrefix("07-pass") {
             try await assertSnapshot(view, name: name + "-dark", style: .dark,
                 record: FileManager.default.fileExists(atPath: "/tmp/satellite-planetarium-record"))
@@ -591,7 +591,7 @@ final class ScreenSnapshotTests: XCTestCase {
             XCTAssertTrue(zip(radii, radii.dropFirst()).allSatisfy { $0 >= $1 })
         }
         let catalog = try await AppStarCatalog.load()
-        let fixture = try Fixture(catalog: catalog)
+        let fixture = try await Fixture(catalog: catalog)
         let cases: [(String, String, LatLonAlt, Double, Bool)] = [
             ("2020-venus-dusk", "2020-04-28T00:00:00Z", LatLonAlt(37.49, -122.23, 0), -9, false),
             ("2023-venus-dawn", "2023-09-19T00:00:00Z", LatLonAlt(37.49, -122.23, 0), -9, true),
@@ -666,7 +666,7 @@ final class ScreenSnapshotTests: XCTestCase {
     func testPassListLayoutReview() async throws {
         UserDefaults.standard.set(true, forKey: "hasCompletedAllPassesOnboarding")
         NSTimeZone.default = TimeZone(secondsFromGMT: 0)!
-        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let fixture = try await Fixture(catalog: await AppStarCatalog.load())
         let view = try XCTUnwrap(fixture.screens().first { $0.0 == "06-pass-forecast" }?.1)
         let visibleCount = fixture.passes.filter { $0.pass.visibility == .visible }.count
         for style in [UIUserInterfaceStyle.dark] {
@@ -684,7 +684,7 @@ final class ScreenSnapshotTests: XCTestCase {
         let previous = defaults.object(forKey: "hasCompletedHomeOnboarding")
         defer { defaults.set(previous, forKey: "hasCompletedHomeOnboarding") }
         defaults.set(false, forKey: "hasCompletedHomeOnboarding")
-        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let fixture = try await Fixture(catalog: await AppStarCatalog.load())
         let home = try XCTUnwrap(fixture.screens().first { $0.0 == "03-forecast" }?.1)
         for language in ["en", "zh-Hans"] {
             try await assertSnapshot(AnyView(home.environment(\.locale, Locale(identifier: language))),
@@ -707,7 +707,7 @@ final class ScreenSnapshotTests: XCTestCase {
         let previous = defaults.object(forKey: "hasCompletedAllPassesOnboarding")
         defer { defaults.set(previous, forKey: "hasCompletedAllPassesOnboarding") }
         defaults.set(false, forKey: "hasCompletedAllPassesOnboarding")
-        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let fixture = try await Fixture(catalog: await AppStarCatalog.load())
         let view = try XCTUnwrap(fixture.screens().first { $0.0 == "06-pass-forecast" }?.1)
         try await assertSnapshot(view, name: "pass-discovery-glow-dark", style: .dark,
             scrollDistance: 180, checkFullHeight: false)
@@ -720,7 +720,7 @@ final class ScreenSnapshotTests: XCTestCase {
         let previous = defaults.object(forKey: "hasCompletedAllPassesOnboarding")
         defer { defaults.set(previous, forKey: "hasCompletedAllPassesOnboarding") }
         defaults.set(false, forKey: "hasCompletedAllPassesOnboarding")
-        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let fixture = try await Fixture(catalog: await AppStarCatalog.load())
         let detail = try XCTUnwrap(fixture.screens().first { $0.0 == "07-pass-compass-off" }?.1)
         try await assertSnapshot(AnyView(detail.modifier(FirstVisiblePassTutorial(isVisible: false))),
             name: "tutorial-invisible-pass-dark", style: .dark, expectedModal: false)
@@ -732,8 +732,8 @@ final class ScreenSnapshotTests: XCTestCase {
             name: "tutorial-returning-visible-pass-dark", style: .dark, expectedModal: false)
     }
 
-    func testRecordedOnboardingPass() throws {
-        let example = try OnboardingPassExample.load()
+    func testRecordedOnboardingPass() async throws {
+        let example = try await OnboardingPassExample.load()
         XCTAssertEqual(example.pass.pass.highestIlluminated?.elev ?? 0, 55.6, accuracy: 1)
         XCTAssertEqual(example.pass.pass.rise.julianDate,
                        Date(timeIntervalSince1970: 1789011297).julianDate, accuracy: 3.0 / 86400)
@@ -752,7 +752,7 @@ final class ScreenSnapshotTests: XCTestCase {
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: directory) }
         for style in [UIUserInterfaceStyle.dark] {
-            let fixture = try Fixture(catalog: catalog)
+            let fixture = try await Fixture(catalog: catalog)
             for (name, view) in fixture.screens() {
                 let selected = ProcessInfo.processInfo.environment["SNAPSHOT_SCREEN"] ?? ""
                 if !selected.isEmpty && !selected.split(separator: ",").contains(where: { name.hasPrefix($0) }) { continue }
@@ -764,7 +764,7 @@ final class ScreenSnapshotTests: XCTestCase {
     /// Full native sky views at solar-elevation fixtures in both appearances.
     func testAtmosphereScreens() async throws {
         let catalog = try await AppStarCatalog.load()
-        let fixture = try Fixture(catalog: catalog)
+        let fixture = try await Fixture(catalog: catalog)
         let times = (0..<1440).map { fixture.now.julianDate + Double($0) / 1440 }
         for (name, elevation, morning) in [("dawn", -3.0, true), ("dusk", -3.0, false),
                                             ("sunset", 2.0, false), ("daylight", 30.0, false), ("night", -25.0, false)] {
@@ -789,7 +789,7 @@ final class ScreenSnapshotTests: XCTestCase {
 
     func testAtmospherePassPath() async throws {
         let catalog = try await AppStarCatalog.load()
-        let fixture = try Fixture(catalog: catalog)
+        let fixture = try await Fixture(catalog: catalog)
         let pass = try XCTUnwrap(fixture.passes.max {
             $0.pass.sunElevationAtTransit < $1.pass.sunElevationAtTransit
         })
@@ -806,7 +806,7 @@ final class ScreenSnapshotTests: XCTestCase {
 
     func testDaytimeMoonScreens() async throws {
         let catalog = try await AppStarCatalog.load()
-        let fixture = try Fixture(catalog: catalog)
+        let fixture = try await Fixture(catalog: catalog)
         let start = ISO8601DateFormatter().date(from: "2024-04-16T00:00:00Z")!.julianDate
         let dates = (0..<96).map { start + Double($0) / 96 }
         let time = try XCTUnwrap(dates.first {
@@ -824,7 +824,7 @@ final class ScreenSnapshotTests: XCTestCase {
 
     func testFloatingTabScreens() async throws {
         let catalog = try await AppStarCatalog.load()
-        let fixture = try Fixture(catalog: catalog)
+        let fixture = try await Fixture(catalog: catalog)
         for (name, view) in await fixture.storeScreens(tianhePasses: fixture.passes, featured: fixture)
             where ["01-forecast", "03-pass-list", "04-satellites"].contains(name) {
             try await assertSnapshot(view, name: "tabs-\(name)-scrolled", style: .dark, scrollDistance: 180)
@@ -863,7 +863,7 @@ final class ScreenSnapshotTests: XCTestCase {
         }.padding(24).frame(maxWidth: .infinity, maxHeight: .infinity).background(Color.black)
         try await assertSnapshot(AnyView(gallery), name: "moon-phases-dark", style: .dark)
         let catalog = try await AppStarCatalog.load()
-        let fixture = try Fixture(catalog: catalog)
+        let fixture = try await Fixture(catalog: catalog)
         for (name, date) in [("moon-chart", dates[0].1), ("moon-chart-full", dates[2].1)] {
             let time = ISO8601DateFormatter().date(from: date)!.julianDate
             for style in [UIUserInterfaceStyle.dark, .light] {
@@ -932,11 +932,11 @@ final class ScreenSnapshotTests: XCTestCase {
         }
         let now = Date(julianDate: try XCTUnwrap(homeDate, "No real overflight found for \(locale)"))
         let observer = LatLonAlt(location.1, location.2, 0)
-        let fixture = try Fixture(catalog: catalog, now: now, tle: issTLE, observer: observer)
-        let tiangong = try Fixture(catalog: catalog, now: now, tle: tianheTLE, observer: observer)
+        let fixture = try await Fixture(catalog: catalog, now: now, tle: issTLE, observer: observer)
+        let tiangong = try await Fixture(catalog: catalog, now: now, tle: tianheTLE, observer: observer)
         var bestPass: PassSnapshots?
         for dayOffset in [0.0, -7.0, 7.0] {
-            let search = try Fixture(catalog: catalog, now: Date(julianDate: start + dayOffset),
+            let search = try await Fixture(catalog: catalog, now: Date(julianDate: start + dayOffset),
                 tle: selectedTLE, observer: observer)
             for pass in search.passes where pass.pass.visibility == .visible && pass.pass.sunElevationAtTransit < -10 {
                 if (pass.pass.highestIlluminated?.elev ?? 0) > (bestPass?.pass.highestIlluminated?.elev ?? 0) {
@@ -947,7 +947,7 @@ final class ScreenSnapshotTests: XCTestCase {
         }
         let best = try XCTUnwrap(bestPass)
         XCTAssertGreaterThan(best.pass.highestIlluminated?.elev ?? 0, 45, "Choose a spectacular dark-sky pass")
-        let featured = try Fixture(catalog: catalog,
+        let featured = try await Fixture(catalog: catalog,
             now: Date(julianDate: best.pass.rise.julianDate - 1.0 / 24), tle: selectedTLE, observer: observer)
         let report: [String: Any] = ["locale": locale, "country": location.0,
             "homeDateUTC": ISO8601DateFormatter().string(from: now), "geography": geography,
@@ -1210,7 +1210,7 @@ struct Fixture {
     var factory: ScreenFactory { ScreenFactory(session: session) }
     var range: ClosedRange<Double> { now.julianDate...(now.julianDate + 7) }
 
-    init(catalog: AppStarCatalog, now: Date = Date(timeIntervalSince1970: 1622592000), tle: [String]? = nil, observer: LatLonAlt = LatLonAlt(37.486743, -122.226560, 0)) throws {
+    init(catalog: AppStarCatalog, now: Date = Date(timeIntervalSince1970: 1622592000), tle: [String]? = nil, observer: LatLonAlt = LatLonAlt(37.486743, -122.226560, 0)) async throws {
         self.observer = observer
         self.catalog = catalog
         self.now = now
@@ -1220,12 +1220,11 @@ struct Fixture {
         let textURL = FileManager.default.temporaryDirectory.appendingPathComponent("snapshot-ephemeris.tle")
         try "ISS (ZARYA)\n1 25544U 98067A   21152.92855006  .00000952  00000-0  25634-4 0  9993\n2 25544  51.6442 295.0433 0002767  53.3435  75.5612 15.48954251286176".write(to: textURL, atomically: true, encoding: .utf8)
         textResource = EphemerideResource(fileName: "ISS.tle", fullPath: textURL.path, size: 160, modificationDate: nil)
-        info = try SatelliteInfo(elements: elements)
+        info = try await SatelliteInfo.load(elements: elements)
         let snapshots = try info.generateSnapshots(observer: observer, julianDateRange: now.julianDate...(now.julianDate + 7))
         passes = try info.findPasses(observer: observer, coarseSnapshots: snapshots)
         trails = SatelliteTrails(observer: observer, snapshots: snapshots, passSnapshots: passes)
         session = AppSession(catalog: catalog, location: LocationService(resources: .init(authorizationStatus: .authorizedWhenInUse, currentLocation: CLLocation(latitude: observer.lat, longitude: observer.lon))))
-        session.settings.showExperimentalSkyNow = true
 
     }
 
@@ -1333,7 +1332,6 @@ extension Fixture {
         let home = AnyView(ObservationHomeView(session: session, model: homeModel, context: homeContext,
             initialPreview: ObservationPreview(info: info, snapshots: pass)))
         func root(_ content: AnyView, tab: SatelliteForecast.Tab = .forecast) -> AnyView {
-            session.settings.showExperimentalSkyNow = false
             // The Satellites tab keeps the reviewed home instant so the station cards report the
             // catalogued geography (for example "Over California, US").
             return AnyView(RootView(selectedTab: .constant(tab), settings: session.settings,

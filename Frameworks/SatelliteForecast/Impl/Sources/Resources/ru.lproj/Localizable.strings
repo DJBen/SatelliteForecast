@@ -739,3 +739,12 @@ The localized string for the status of a spare satellite */
 "Live satellite position. Solid trail: traveled. Dotted trail: still ahead. Gray: in Earth’s shadow." = "Текущее положение спутника. Сплошная линия: пройденный путь. Пунктир: предстоящий путь. Серый: в тени Земли.";
 
 "%@ passing now" = "%@ пролетает сейчас";
+
+/* Live Sky Now */
+"Choose an observer location to see the sky above you." = "Выберите место наблюдения, чтобы увидеть небо над вами.";
+"Passing now" = "Пролетают сейчас";
+"%lld above the horizon" = "Над горизонтом: %lld";
+"No satellites above the horizon" = "Над горизонтом нет спутников";
+"Unable to load satellites" = "Не удалось загрузить спутники";
+"Sunlit" = "Освещён Солнцем";
+"In Earth's shadow" = "В тени Земли";

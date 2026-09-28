@@ -125,6 +125,30 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
                 )
             }
             
+            SwiftUI.Tab(value: .realtimeSky, role: nil) {
+                realtimeSkyViewFactory(
+                    RealtimeSkyViewContext(
+                        basicChartConfigs: .init(),
+                        backgroundSkyConfigs: .preset,
+                        satelliteMagToRadiusFunction: .satellite,
+                        starManager: context.starManager,
+                        julianDateProvider: context.julianDateProvider
+                    )
+                )
+            } label: {
+                DynamicTabBarItemView(
+                    isSelected: isSelectedBinding(for: .realtimeSky),
+                    content: {
+                        Image(systemName: "moon.stars")
+                        Text(realtimeSkyTabText)
+                    },
+                    selectedContent: {
+                        Image(systemName: "moon.stars.fill")
+                        Text(realtimeSkyTabText)
+                    }
+                )
+            }
+
             SwiftUI.Tab(value: .satellites, role: nil) {
                 satelliteCategoryViewFactory(
                     SatelliteCategoryViewContext(
@@ -146,31 +170,6 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
                 )
             }
             
-            if settings.showExperimentalSkyNow {
-                SwiftUI.Tab(value: .realtimeSky, role: nil) {
-                    realtimeSkyViewFactory(
-                        RealtimeSkyViewContext(
-                            basicChartConfigs: .init(),
-                            backgroundSkyConfigs: .preset,
-                            satelliteMagToRadiusFunction: .satellite,
-                            starManager: context.starManager,
-                            julianDateProvider: context.julianDateProvider
-                        )
-                    )
-                } label: {
-                    DynamicTabBarItemView(
-                        isSelected: isSelectedBinding(for: .realtimeSky),
-                        content: {
-                            Image(systemName: "moon.stars")
-                            Text(realtimeSkyTabText)
-                        },
-                        selectedContent: {
-                            Image(systemName: "moon.stars.fill")
-                            Text(realtimeSkyTabText)
-                        }
-                    )
-                }
-            }
 
             SwiftUI.Tab(value: .settings, role: nil) {
                 settingsOverviewFactory()

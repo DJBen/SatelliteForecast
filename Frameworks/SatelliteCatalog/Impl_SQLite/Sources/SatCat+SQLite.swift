@@ -11,7 +11,10 @@ import SQLite
 
 private let dateFormatter: DateFormatter = {
     let dateFormatter = DateFormatter()
-    dateFormatter.dateFormat = "YYYY-MM-dd"
+    dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+    dateFormatter.calendar = Calendar(identifier: .gregorian)
+    dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+    dateFormatter.dateFormat = "yyyy-MM-dd"
     return dateFormatter
 }()
 
@@ -42,8 +45,7 @@ extension SatCat {
     /// Find the satellite with a specified NORAD CAT ID and return its info
     /// - Parameter noradCatID: The NORAD CAT ID>
     /// - Returns: The satellite info.
-    public static func with(noradCatID: Int) throws -> SatCat? {
-        let query = Table.tableName.filter(Table.noradCatID == noradCatID)
-        return try SatelliteCatalog.DB.pluck(query).flatMap(SatCat.init(row:))
+    public static func with(noradCatID: Int) async throws -> SatCat? {
+        try await SatelliteMetadataStore.shared.metadata(for: noradCatID).satCat
     }
 }

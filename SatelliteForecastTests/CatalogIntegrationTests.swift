@@ -41,7 +41,7 @@ final class CatalogIntegrationTests: XCTestCase {
 final class AppearanceIntegrationTests: XCTestCase {
     func testBackgroundAndPathCachesSeparateLightAndDarkImages() async throws {
         let catalog = try await AppStarCatalog.load()
-        let fixture = try Fixture(catalog: catalog)
+        let fixture = try await Fixture(catalog: catalog)
         let light = BackgroundSkyKey(observer: fixture.observer, configs: .preset, isDark: false)
         let dark = BackgroundSkyKey(observer: fixture.observer, configs: .preset, isDark: true)
         XCTAssertNotEqual(light, dark)

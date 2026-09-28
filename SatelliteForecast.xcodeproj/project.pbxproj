@@ -20,8 +20,8 @@
 		AABBCCDD000000000000000B = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (AACC00000000000000000002, AABBCCDD0000000000000007, AABBCCDD0000000000000008,); runOnlyForDeploymentPostprocessing = 0; };
 		AABBCCDD000000000000000C = { isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (AABBCCDD000000000000000A,); runOnlyForDeploymentPostprocessing = 0; };
 		AABBCCDD000000000000000D = { isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
-		AABBCCDD000000000000000E = { isa = XCBuildConfiguration; buildSettings = { APPLICATION_EXTENSION_API_ONLY = YES; CODE_SIGN_ENTITLEMENTS = SatelliteForecastWidget/SatelliteForecastWidget.entitlements; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 20; DEVELOPMENT_TEAM = 52RD2GH5DP; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_FILE = SatelliteForecastWidget/Info.plist; INFOPLIST_KEY_CFBundleDisplayName = "Space Station Passes"; IPHONEOS_DEPLOYMENT_TARGET = 26.0; LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks", "@executable_path/../../Frameworks",); MARKETING_VERSION = 2.0.0; PRODUCT_BUNDLE_IDENTIFIER = io.djben.SatelliteForecast.Widget; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SKIP_INSTALL = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Debug; };
-		AABBCCDD000000000000000F = { isa = XCBuildConfiguration; buildSettings = { APPLICATION_EXTENSION_API_ONLY = YES; CODE_SIGN_ENTITLEMENTS = SatelliteForecastWidget/SatelliteForecastWidget.entitlements; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 20; DEVELOPMENT_TEAM = 52RD2GH5DP; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_FILE = SatelliteForecastWidget/Info.plist; INFOPLIST_KEY_CFBundleDisplayName = "Space Station Passes"; IPHONEOS_DEPLOYMENT_TARGET = 26.0; LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks", "@executable_path/../../Frameworks",); MARKETING_VERSION = 2.0.0; PRODUCT_BUNDLE_IDENTIFIER = io.djben.SatelliteForecast.Widget; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SKIP_INSTALL = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Release; };
+		AABBCCDD000000000000000E = { isa = XCBuildConfiguration; buildSettings = { APPLICATION_EXTENSION_API_ONLY = YES; CODE_SIGN_ENTITLEMENTS = SatelliteForecastWidget/SatelliteForecastWidget.entitlements; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 21; DEVELOPMENT_TEAM = 52RD2GH5DP; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_FILE = SatelliteForecastWidget/Info.plist; INFOPLIST_KEY_CFBundleDisplayName = "Space Station Passes"; IPHONEOS_DEPLOYMENT_TARGET = 26.0; LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks", "@executable_path/../../Frameworks",); MARKETING_VERSION = 2.0.1; PRODUCT_BUNDLE_IDENTIFIER = io.djben.SatelliteForecast.Widget; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SKIP_INSTALL = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Debug; };
+		AABBCCDD000000000000000F = { isa = XCBuildConfiguration; buildSettings = { APPLICATION_EXTENSION_API_ONLY = YES; CODE_SIGN_ENTITLEMENTS = SatelliteForecastWidget/SatelliteForecastWidget.entitlements; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 21; DEVELOPMENT_TEAM = 52RD2GH5DP; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_FILE = SatelliteForecastWidget/Info.plist; INFOPLIST_KEY_CFBundleDisplayName = "Space Station Passes"; IPHONEOS_DEPLOYMENT_TARGET = 26.0; LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks", "@executable_path/../../Frameworks",); MARKETING_VERSION = 2.0.1; PRODUCT_BUNDLE_IDENTIFIER = io.djben.SatelliteForecast.Widget; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SKIP_INSTALL = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Release; };
 		AABBCCDD0000000000000010 = { isa = XCConfigurationList; buildConfigurations = (AABBCCDD000000000000000E, AABBCCDD000000000000000F,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
 		AABBCCDD0000000000000011 = { isa = PBXNativeTarget; buildConfigurationList = AABBCCDD0000000000000010; buildPhases = (AABBCCDD000000000000000B, AABBCCDD000000000000000C, AABBCCDD000000000000000D,); buildRules = (); dependencies = (); name = SatelliteForecastWidget; packageProductDependencies = (AABBCCDD0000000000000009,); productName = SatelliteForecastWidget; productReference = AABBCCDD0000000000000005; productType = "com.apple.product-type.app-extension"; };
 		AABBCCDD0000000000000012 = { isa = PBXContainerItemProxy; containerPortal = EF9D82752661BBEF00616C97; proxyType = 1; remoteGlobalIDString = AABBCCDD0000000000000011; remoteInfo = SatelliteForecastWidget; };
@@ -458,7 +458,7 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = SatelliteForecastApp/SatelliteForecastApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 20;
+				CURRENT_PROJECT_VERSION = 21;
 				DEVELOPMENT_TEAM = 52RD2GH5DP;
 				INFOPLIST_FILE = "$(SRCROOT)/SatelliteForecastApp/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Space Station";
@@ -468,7 +468,7 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0;
+				MARKETING_VERSION = 2.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = io.djben.SatelliteForecast;
 				PRODUCT_NAME = SatelliteForecastApp;
 				SDKROOT = iphoneos;
@@ -486,7 +486,7 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = SatelliteForecastApp/SatelliteForecastApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 20;
+				CURRENT_PROJECT_VERSION = 21;
 				DEVELOPMENT_TEAM = 52RD2GH5DP;
 				INFOPLIST_FILE = "$(SRCROOT)/SatelliteForecastApp/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Space Station";
@@ -496,7 +496,7 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0;
+				MARKETING_VERSION = 2.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = io.djben.SatelliteForecast;
 				PRODUCT_NAME = SatelliteForecastApp;
 				SDKROOT = iphoneos;

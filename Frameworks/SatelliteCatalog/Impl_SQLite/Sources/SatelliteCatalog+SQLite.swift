@@ -5,73 +5,69 @@
 //  Created by Ben Lu on 6/23/21.
 //
 
-import Foundation
 import SatelliteCatalog
-@preconcurrency import SQLite
+import SQLite
 
 extension SatelliteCatalog {
-    // Bundled catalog data is immutable; never request write access inside the signed app.
-    static let DB = try! Connection(Bundle.module.path(forResource: "satellites", ofType: "sqlite")!, readonly: true)
-
     enum SatCatTable {
-        static let tableName = Table("SatCat")
-        static let name = Expression<String>("OBJECT_NAME")
-        static let objectID = Expression<String>("OBJECT_ID")
-        static let noradCatID = Expression<Int>("NORAD_CAT_ID")
-        static let objectType = Expression<String>("OBJECT_TYPE")
-        static let operationalStatusCode = Expression<String?>("OPS_STATUS_CODE")
-        static let owner = Expression<String>("OWNER")
-        static let launchDate = Expression<String>("LAUNCH_DATE")
-        static let launchSite = Expression<String>("LAUNCH_SITE")
-        static let decayDate = Expression<String?>("DECAY_DATE")
-        static let period = Expression<Double?>("PERIOD")
-        static let inclination = Expression<Double?>("PERIOD")
-        static let apogee = Expression<Double?>("APOGEE")
-        static let perigee = Expression<Double?>("PERIGEE")
-        static let rcs = Expression<Double?>("RCS")
-        static let dataStatusCode = Expression<String?>("DATA_STATUS_CODE")
-        static let orbitCenter = Expression<String>("ORBIT_CENTER")
-        static let orbitType = Expression<String>("ORBIT_TYPE")
+        static var tableName: Table { Table("SatCat") }
+        static var name: Expression<String> { Expression<String>("OBJECT_NAME") }
+        static var objectID: Expression<String> { Expression<String>("OBJECT_ID") }
+        static var noradCatID: Expression<Int> { Expression<Int>("NORAD_CAT_ID") }
+        static var objectType: Expression<String> { Expression<String>("OBJECT_TYPE") }
+        static var operationalStatusCode: Expression<String?> { Expression<String?>("OPS_STATUS_CODE") }
+        static var owner: Expression<String> { Expression<String>("OWNER") }
+        static var launchDate: Expression<String> { Expression<String>("LAUNCH_DATE") }
+        static var launchSite: Expression<String> { Expression<String>("LAUNCH_SITE") }
+        static var decayDate: Expression<String?> { Expression<String?>("DECAY_DATE") }
+        static var period: Expression<Double?> { Expression<Double?>("PERIOD") }
+        static var inclination: Expression<Double?> { Expression<Double?>("INCLINATION") }
+        static var apogee: Expression<Double?> { Expression<Double?>("APOGEE") }
+        static var perigee: Expression<Double?> { Expression<Double?>("PERIGEE") }
+        static var rcs: Expression<Double?> { Expression<Double?>("RCS") }
+        static var dataStatusCode: Expression<String?> { Expression<String?>("DATA_STATUS_CODE") }
+        static var orbitCenter: Expression<String> { Expression<String>("ORBIT_CENTER") }
+        static var orbitType: Expression<String> { Expression<String>("ORBIT_TYPE") }
     }
 
     enum UCSSatTable {
-        static let tableName = Table("UCS")
-        static let name = Expression<String>("NameofSatelliteAlternateNames")
-        static let officialName = Expression<String>("CurrentOfficialNameofSatellite")
-        static let countryOrOrgOfUNRegistry = Expression<String>("Country/OrgofUNRegistry")
-        static let countryOfOperatorOrOwner = Expression<String>("CountryofOperator/Owner")
-        static let operatorOrOwner = Expression<String>("Operator/Owner")
-        static let users = Expression<String>("Users")
-        static let purpose = Expression<String>("Purpose")
-        static let detailedPurpose = Expression<String?>("DetailedPurpose")
-        static let classOfOrbit = Expression<String>("ClassofOrbit")
-        static let typeOfOrbit = Expression<String?>("TypeofOrbit")
-        static let longitudeOfGEO = Expression<Double?>("LongitudeofGEO(degrees)")
-        static let perigee = Expression<Double?>("Perigee(km)")
-        static let apogee = Expression<Double?>("Apogee(km)")
-        static let eccentricity = Expression<Double?>("Eccentricity")
-        static let inclination = Expression<Double?>("Inclination(degrees)")
-        static let period = Expression<Double?>("Period(minutes)")
-        static let launchMass = Expression<Double?>("LaunchMass(kg.)")
-        static let dryMass = Expression<Double?>("DryMass(kg.)")
-        static let power = Expression<Double?>("Power(watts)")
-        static let dateOfLaunch = Expression<String>("DateofLaunch")
-        static let expectedLifetime = Expression<Double?>("ExpectedLifetime(yrs.)")
-        static let contractor = Expression<String?>("Contractor")
-        static let countryOfContractor = Expression<String?>("CountryofContractor")
-        static let launchSite = Expression<String?>("LaunchSite")
-        static let launchVehicle = Expression<String>("LaunchVehicle")
-        static let cosparID = Expression<String>("COSPARNumber")
-        static let noradID = Expression<Int>("NORADNumber")
-        static let comments = Expression<String?>("Comments")
-        static let comments2 = Expression<String?>("Comments2")
-        static let sourceUsedForOrbitalData = Expression<String?>("SourceUsedforOrbitalData")
-        static let source1 = Expression<String?>("Source1")
-        static let source2 = Expression<String?>("Source2")
-        static let source3 = Expression<String?>("Source3")
-        static let source4 = Expression<String?>("Source4")
-        static let source5 = Expression<String?>("Source5")
-        static let source6 = Expression<String?>("Source6")
-        static let source7 = Expression<String?>("Source7")
+        static var tableName: Table { Table("UCS") }
+        static var name: Expression<String> { Expression<String>("NameofSatelliteAlternateNames") }
+        static var officialName: Expression<String> { Expression<String>("CurrentOfficialNameofSatellite") }
+        static var countryOrOrgOfUNRegistry: Expression<String> { Expression<String>("Country/OrgofUNRegistry") }
+        static var countryOfOperatorOrOwner: Expression<String> { Expression<String>("CountryofOperator/Owner") }
+        static var operatorOrOwner: Expression<String> { Expression<String>("Operator/Owner") }
+        static var users: Expression<String> { Expression<String>("Users") }
+        static var purpose: Expression<String> { Expression<String>("Purpose") }
+        static var detailedPurpose: Expression<String?> { Expression<String?>("DetailedPurpose") }
+        static var classOfOrbit: Expression<String> { Expression<String>("ClassofOrbit") }
+        static var typeOfOrbit: Expression<String?> { Expression<String?>("TypeofOrbit") }
+        static var longitudeOfGEO: Expression<Double?> { Expression<Double?>("LongitudeofGEO(degrees)") }
+        static var perigee: Expression<Double?> { Expression<Double?>("Perigee(km)") }
+        static var apogee: Expression<Double?> { Expression<Double?>("Apogee(km)") }
+        static var eccentricity: Expression<Double?> { Expression<Double?>("Eccentricity") }
+        static var inclination: Expression<Double?> { Expression<Double?>("Inclination(degrees)") }
+        static var period: Expression<Double?> { Expression<Double?>("Period(minutes)") }
+        static var launchMass: Expression<Double?> { Expression<Double?>("LaunchMass(kg.)") }
+        static var dryMass: Expression<Double?> { Expression<Double?>("DryMass(kg.)") }
+        static var power: Expression<Double?> { Expression<Double?>("Power(watts)") }
+        static var dateOfLaunch: Expression<String> { Expression<String>("DateofLaunch") }
+        static var expectedLifetime: Expression<Double?> { Expression<Double?>("ExpectedLifetime(yrs.)") }
+        static var contractor: Expression<String?> { Expression<String?>("Contractor") }
+        static var countryOfContractor: Expression<String?> { Expression<String?>("CountryofContractor") }
+        static var launchSite: Expression<String?> { Expression<String?>("LaunchSite") }
+        static var launchVehicle: Expression<String> { Expression<String>("LaunchVehicle") }
+        static var cosparID: Expression<String> { Expression<String>("COSPARNumber") }
+        static var noradID: Expression<Int> { Expression<Int>("NORADNumber") }
+        static var comments: Expression<String?> { Expression<String?>("Comments") }
+        static var comments2: Expression<String?> { Expression<String?>("Comments2") }
+        static var sourceUsedForOrbitalData: Expression<String?> { Expression<String?>("SourceUsedforOrbitalData") }
+        static var source1: Expression<String?> { Expression<String?>("Source1") }
+        static var source2: Expression<String?> { Expression<String?>("Source2") }
+        static var source3: Expression<String?> { Expression<String?>("Source3") }
+        static var source4: Expression<String?> { Expression<String?>("Source4") }
+        static var source5: Expression<String?> { Expression<String?>("Source5") }
+        static var source6: Expression<String?> { Expression<String?>("Source6") }
+        static var source7: Expression<String?> { Expression<String?>("Source7") }
     }
 }

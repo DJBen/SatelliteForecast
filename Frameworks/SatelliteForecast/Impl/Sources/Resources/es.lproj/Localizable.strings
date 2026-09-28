@@ -739,3 +739,12 @@ The localized string for the status of a spare satellite */
 "Live satellite position. Solid trail: traveled. Dotted trail: still ahead. Gray: in Earth’s shadow." = "Posición del satélite en directo. Trazo continuo: recorrido. Punteado: por recorrer. Gris: en la sombra de la Tierra.";
 
 "%@ passing now" = "%@ está pasando ahora";
+
+/* Live Sky Now */
+"Choose an observer location to see the sky above you." = "Elige un lugar de observación para ver el cielo sobre ti.";
+"Passing now" = "Pasando ahora";
+"%lld above the horizon" = "%lld sobre el horizonte";
+"No satellites above the horizon" = "No hay satélites sobre el horizonte";
+"Unable to load satellites" = "No se pudieron cargar los satélites";
+"Sunlit" = "Iluminado por el Sol";
+"In Earth's shadow" = "En la sombra de la Tierra";

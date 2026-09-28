@@ -6,7 +6,7 @@ import SatelliteForecast
 @MainActor
 final class LocationSearchTests: XCTestCase {
     func testAlarmDeletionUsesDisplayedOrderAndStableIdentifiers() async throws {
-        let fixture = try Fixture(catalog: await AppStarCatalog.load())
+        let fixture = try await Fixture(catalog: await AppStarCatalog.load())
         let notification = PassNotification(pass: fixture.passes[0].pass, satelliteName: "ISS",
             category: .iss, observer: fixture.observer, timing: .rise, timeOffset: 0)
         var deleted = Set<String>()

@@ -9,9 +9,9 @@ struct OnboardingPassExample: Sendable {
     let samples: [SatelliteSnapshot]
     static let observer = LatLonAlt(37.486743, -122.226560, 0)
 
-    static func load() throws -> Self {
+    @concurrent static func load() async throws -> Self {
         // Saved ISS elements, epoch September 13, 2026. Replay the September 9 evening pass.
-        let info = try SatelliteInfo(elements: Elements("ISS (ZARYA)",
+        let info = try await SatelliteInfo.load(elements: Elements("ISS (ZARYA)",
             "1 25544U 98067A   26256.62713074  .00005522  00000+0  10793-3 0  9997",
             "2 25544  51.6309 222.3825 0004920 137.6518 222.4851 15.49103177585466"))
         let start = Date(timeIntervalSince1970: 1789002000).julianDate // 2026-09-10 01:00 UTC
@@ -101,11 +101,8 @@ struct OnboardingPassAnimation: View {
         .allowsHitTesting(false)
         .task {
             guard example == nil else { return }
-            let task = Task.detached(priority: .userInitiated) { try OnboardingPassExample.load() }
             do {
-                let result = try await withTaskCancellationHandler {
-                    try await task.value
-                } onCancel: { task.cancel() }
+                let result = try await OnboardingPassExample.load()
                 try Task.checkCancellation()
                 example = result
                 started = Date()
@@ -171,9 +168,13 @@ struct ObservationExamplePreview: View {
         }
         .task {
             guard example == nil else { return }
-            let loaded = await Task.detached(priority: .userInitiated) { try? OnboardingPassExample.load() }.value
-            if let loaded { example = loaded } else { failed = true }
+            do {
+                let loaded = try await OnboardingPassExample.load()
+                try Task.checkCancellation()
+                example = loaded
+            } catch is CancellationError {
+                // Disappearing previews should stop their propagation work.
+            } catch { failed = true }
         }
     }
 }
-

@@ -2,6 +2,7 @@ import XCTest
 import UIKit
 import SwiftUI
 import BTree
+import QSMag
 import SatelliteForecast
 import SatelliteKit
 import SatelliteWidgetSupport
@@ -446,6 +447,67 @@ final class ForecastTests: XCTestCase {
         XCTAssertGreaterThan(requests.last!.dateRange.lowerBound, requests.first!.dateRange.lowerBound)
     }
 
+    func testReturningToPassesKeepsFreshForecastAndUpdatesCountdown() async {
+        var now = date
+        var requests = 0
+        let found = pass(at: date)
+        let model = ForecastModel(client: .init(load: { _, _ in requests += 1; return [found] },
+            now: { now }, sleep: { _ in throw CancellationError() }))
+        let input = ForecastInput(observer: observer)
+        await model.run(input)
+        now = now.addingTimeInterval(900)
+        for _ in 0..<20 { await model.run(input) }
+        XCTAssertEqual(requests, 2, "Returning to the tab must not recalculate either station")
+        XCTAssertEqual(model.currentDate, now)
+        XCTAssertNil(model.issNextPass.content?.nextVisiblePass)
+        XCTAssertTrue(model.upcomingPasses.isEmpty, "Expired passes must still disappear")
+    }
+
+    func testReturningToPassesRefreshesOnExpiryLocationAndDebugTimeChanges() async {
+        var now = date
+        var requests = 0
+        let model = ForecastModel(client: .init(load: { _, _ in requests += 1; return [] },
+            now: { now }, sleep: { _ in throw CancellationError() }))
+        var input = ForecastInput(observer: observer)
+        await model.run(input)
+        now = now.addingTimeInterval(3600)
+        await model.run(input)
+        XCTAssertEqual(requests, 4)
+        input.observer = LatLonAlt(40, -74, 0)
+        await model.run(input)
+        XCTAssertEqual(requests, 6)
+        input.frozenJulianDate = date.julianDate
+        await model.run(input)
+        XCTAssertEqual(requests, 8)
+        await model.refresh(input)
+        XCTAssertEqual(requests, 10, "Pull-to-refresh must still force a new calculation")
+    }
+
+    func testReturningToPassesRetriesAnInterruptedForecast() async {
+        var requests = 0
+        var pending: CheckedContinuation<[Pass], Error>?
+        let started = expectation(description: "ISS prediction started")
+        var interrupt = true
+        let model = ForecastModel(client: .init(load: { station, _ in
+            requests += 1
+            if interrupt && station == .iss {
+                return try await withCheckedThrowingContinuation { pending = $0; started.fulfill() }
+            }
+            return []
+        }, sleep: { _ in throw CancellationError() }))
+        let input = ForecastInput(observer: observer)
+        let first = Task { await model.run(input) }
+        await fulfillment(of: [started], timeout: 1)
+        first.cancel()
+        pending?.resume(returning: [])
+        await first.value
+        interrupt = false
+        await model.run(input)
+        XCTAssertEqual(requests, 4)
+        XCTAssertNotNil(model.issNextPass.content)
+        XCTAssertNotNil(model.tianheNextPass.content)
+    }
+
     func testColdForecastUsesBackendAndPersistsForOfflineLaunch() async throws {
         let folder = try cacheDirectory().appendingPathComponent("nested")
         defer { try? FileManager.default.removeItem(at: folder.deletingLastPathComponent()) }
@@ -469,6 +531,13 @@ final class ForecastTests: XCTestCase {
         let elements = try OrbitalDataCache.elements(from: data)
         XCTAssertEqual(elements.first?.noradIndex, 100001)
         XCTAssertTrue(elements[0].n₀.isFinite)
+        let wholeSecond = Data(String(decoding: data, as: UTF8.self)
+            .replacingOccurrences(of: "00:00:00.123456", with: "00:00:00Z").utf8)
+        let wholeElements = try OrbitalDataCache.elements(from: wholeSecond)
+        XCTAssertEqual(elements[0].t₀ - wholeElements[0].t₀, 0.123456 / 86400, accuracy: 1e-9)
+        let malformedEpoch = Data(String(decoding: data, as: UTF8.self)
+            .replacingOccurrences(of: "2026-09-15T00:00:00.123456", with: "invalid").utf8)
+        XCTAssertThrowsError(try OrbitalDataCache.elements(from: malformedEpoch))
         let invalid = Data(String(decoding: data, as: UTF8.self).replacingOccurrences(of: "100001", with: "-1").utf8)
         XCTAssertThrowsError(try OrbitalDataCache.elements(from: invalid))
         XCTAssertThrowsError(try OrbitalDataCache.elements(from: Data("[]".utf8)))
@@ -543,7 +612,7 @@ final class ForecastTests: XCTestCase {
 
     func testPredictionKernelObservesCancellation() async throws {
         let lines = String(decoding: tle, as: UTF8.self).split(separator: "\n").map(String.init)
-        let info = try SatelliteInfo(elements: Elements(lines[0], lines[1], lines[2]))
+        let info = try await SatelliteInfo.load(elements: Elements(lines[0], lines[1], lines[2]))
         let task = Task {
             withUnsafeCurrentTask { $0?.cancel() }
             return try info.generateSnapshots(observer: observer, julianDateRange: date.julianDate...(date.julianDate + 7))
@@ -554,7 +623,7 @@ final class ForecastTests: XCTestCase {
 
     func testPassListRejectsSupersededObserver() async throws {
         let lines = String(decoding: tle, as: UTF8.self).split(separator: "\n").map(String.init)
-        let info = try SatelliteInfo(elements: Elements(lines[0], lines[1], lines[2]))
+        let info = try await SatelliteInfo.load(elements: Elements(lines[0], lines[1], lines[2]))
         let started = expectation(description: "First prediction started")
         let finished = expectation(description: "Second prediction finished")
         var pending: CheckedContinuation<SatelliteTrails, Error>?
@@ -581,7 +650,7 @@ final class ForecastTests: XCTestCase {
 
     func testPassListPublishesFailureAndCanRetry() async throws {
         let lines = String(decoding: tle, as: UTF8.self).split(separator: "\n").map(String.init)
-        let info = try SatelliteInfo(elements: Elements(lines[0], lines[1], lines[2]))
+        let info = try await SatelliteInfo.load(elements: Elements(lines[0], lines[1], lines[2]))
         let request = CalculatePassesParams(selectedNoradIndex: info.noradIndex, satelliteInfo: info, julianDateRange: date.julianDate...(date.julianDate + 1), observer: observer)
         var failing = true
         let model = PassListModel(load: { request in
@@ -630,7 +699,7 @@ final class ForecastTests: XCTestCase {
     }
 
     func testChartModelKeepsOnlyTheCurrentRenderedImage() async throws {
-        let fixture = try Fixture(catalog: AppStarCatalog())
+        let fixture = try await Fixture(catalog: AppStarCatalog())
         let model = SkyChartModel()
         for snapshots in fixture.passes.prefix(3) {
             let key = SkyPathKey(pass: snapshots.pass, isDark: true)
@@ -661,9 +730,153 @@ final class ForecastTests: XCTestCase {
         XCTAssertEqual(model.state.satellites.content?.map(\.noradIndex), [25544])
     }
 
-    func testSatelliteDestinationSurvivesCatalogReloadAndRemoval() throws {
+    func testSkyCatalogRequestsVisualDatasetAndSelectsBrightestHundred() async throws {
+        let folder = try cacheDirectory()
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let magnitudes = QSMag.localData.values.filter { $0.magnitude != nil && $0.noradIndex < 99999 }
+            .sorted { $0.noradIndex < $1.noradIndex }.prefix(150)
+        XCTAssertEqual(magnitudes.count, 150)
+        let source = String(decoding: tle, as: UTF8.self)
+        let data = Data(magnitudes.map {
+            source.replacingOccurrences(of: "25544", with: String(format: "%05d", $0.noradIndex))
+        }.joined(separator: "\n").utf8)
+        let service = OrbitalService(directory: folder, fetch: { url in
+            XCTAssertEqual(url, SatelliteCategory.brightest100.url, "Do not download the all-active catalog")
+            return data
+        })
+        let catalog = try await service.skyCatalog()
+        let expected = magnitudes.sorted {
+            $0.magnitude == $1.magnitude ? $0.noradIndex < $1.noradIndex : $0.magnitude! < $1.magnitude!
+        }.prefix(100).map(\.noradIndex)
+        XCTAssertEqual(catalog.satellites.map(\.noradIndex), expected)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: folder.appendingPathComponent("active.txt").path))
+    }
+
+    func testCatalogEnrichmentStopsAtTheNextRecordAfterCancellation() async throws {
         let lines = String(decoding: tle, as: UTF8.self).split(separator: "\n").map(String.init)
-        let info = try SatelliteInfo(elements: Elements(lines[0], lines[1], lines[2]))
+        let element = try Elements(lines[0], lines[1], lines[2])
+        let task = Task {
+            var enriched = 0
+            do {
+                _ = try await OrbitalService.enrich(Array(repeating: element, count: 1000)) { element in
+                    enriched += 1
+                    withUnsafeCurrentTask { $0?.cancel() }
+                    return SatelliteInfo(elements: element, satCat: nil, ucsSat: nil, qsMag: nil)
+                }
+                XCTFail("Cancelled catalog work should stop")
+            } catch is CancellationError {
+                XCTAssertEqual(enriched, 1, "Do not finish metadata lookups after leaving Sky Now")
+            } catch { XCTFail("Unexpected error: \(error)") }
+        }
+        await task.value
+    }
+
+    func testSkyCatalogStaysInMemoryAcrossTabAndLocationChanges() async throws {
+        let fixture = try await Fixture(catalog: AppStarCatalog())
+        let loaded = expectation(description: "Catalog loaded")
+        var requests = 0
+        let model = RealtimeSkyModel(state: .init(observer: observer), now: { self.date }, loadCatalog: {
+            requests += 1
+            loaded.fulfill()
+            return ([fixture.info], self.date.addingTimeInterval(21600))
+        })
+        model.send(.setRealtimeSkyViewActive(true))
+        await fulfillment(of: [loaded], timeout: 1)
+        for _ in 0..<20 {
+            model.send(.setRealtimeSkyViewActive(false))
+            model.state.observer = LatLonAlt(40, -74, 0)
+            model.send(.setRealtimeSkyViewActive(true))
+            model.refreshCatalogIfNeeded()
+            await Task.yield()
+        }
+        XCTAssertEqual(requests, 1, "Tab and observer changes must not reread or reparse the catalog")
+        XCTAssertEqual(model.state.satellites.content?.map(\.noradIndex), [25544])
+        XCTAssertTrue(model.state.resources.displayResults.isEmpty, "Old positions are discarded independently of elements")
+        model.cancel()
+    }
+
+    func testSkyCatalogExpiryRefreshesWithoutHidingLoadedElements() async throws {
+        let fixture = try await Fixture(catalog: AppStarCatalog())
+        var now = date
+        var requests = 0
+        var pending: CheckedContinuation<(satellites: [SatelliteInfo], refreshAfter: Date), Error>?
+        let initial = expectation(description: "Initial load")
+        let refresh = expectation(description: "Refresh started")
+        let model = RealtimeSkyModel(now: { now }, loadCatalog: {
+            requests += 1
+            if requests == 1 {
+                initial.fulfill()
+                return ([fixture.info], now.addingTimeInterval(60))
+            }
+            return try await withCheckedThrowingContinuation { pending = $0; refresh.fulfill() }
+        })
+        model.send(.setRealtimeSkyViewActive(true))
+        await fulfillment(of: [initial], timeout: 1)
+        now = now.addingTimeInterval(60)
+        model.refreshCatalogIfNeeded()
+        await fulfillment(of: [refresh], timeout: 1)
+        for _ in 0..<20 { model.refreshCatalogIfNeeded() }
+        XCTAssertEqual(requests, 2, "Repeated timer ticks must share the pending refresh")
+        XCTAssertEqual(model.state.satellites.content?.count, 1, "No loading flash during refresh")
+        pending?.resume(returning: ([], now.addingTimeInterval(21600)))
+        for _ in 0..<100 {
+            if model.state.satellites.content?.isEmpty == true { break }
+            await Task.yield()
+        }
+        XCTAssertEqual(model.state.satellites.content?.count, 0)
+        model.send(.setRealtimeSkyViewActive(false))
+        model.send(.setRealtimeSkyViewActive(true))
+        await Task.yield()
+        XCTAssertEqual(requests, 2, "An empty successful catalog is cached too")
+        model.cancel()
+    }
+
+    func testCancelledSkyCatalogCannotReplaceTheResumedLoad() async throws {
+        let fixture = try await Fixture(catalog: AppStarCatalog())
+        let first = expectation(description: "First request")
+        let second = expectation(description: "Resumed request")
+        var pending: CheckedContinuation<(satellites: [SatelliteInfo], refreshAfter: Date), Error>?
+        var requests = 0
+        let model = RealtimeSkyModel(now: { self.date }, loadCatalog: {
+            requests += 1
+            if requests == 1 {
+                return try await withCheckedThrowingContinuation { pending = $0; first.fulfill() }
+            }
+            second.fulfill()
+            return ([], self.date.addingTimeInterval(21600))
+        })
+        model.send(.setRealtimeSkyViewActive(true))
+        await fulfillment(of: [first], timeout: 1)
+        model.send(.setRealtimeSkyViewActive(false))
+        model.send(.setRealtimeSkyViewActive(true))
+        await fulfillment(of: [second], timeout: 1)
+        pending?.resume(returning: ([fixture.info], date.addingTimeInterval(21600)))
+        for _ in 0..<20 { await Task.yield() }
+        XCTAssertEqual(model.state.satellites.content?.count, 0)
+        model.refreshCatalogIfNeeded()
+        XCTAssertEqual(requests, 2)
+        model.cancel()
+    }
+
+    func testSkyMemoryCacheUsesTheOriginalDiskExpiry() async throws {
+        let folder = try cacheDirectory()
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let file = folder.appendingPathComponent(SatelliteCategory.brightest100.localFilename).appendingPathExtension("txt")
+        try tle.write(to: file)
+        let downloaded = Date().addingTimeInterval(-5 * 3600)
+        try FileManager.default.setAttributes([.modificationDate: downloaded], ofItemAtPath: file.path)
+        let network = NetworkProbe()
+        let service = OrbitalService(directory: folder, fetch: { _ in try await network.fetch() })
+        let catalog = try await service.skyCatalog()
+        XCTAssertEqual(catalog.refreshAfter.timeIntervalSince(downloaded), 21600, accuracy: 1)
+        let requests = await network.requests
+        XCTAssertEqual(requests, 0)
+        XCTAssertEqual(catalog.satellites.map(\.noradIndex), [25544])
+    }
+
+    func testSatelliteDestinationSurvivesCatalogReloadAndRemoval() async throws {
+        let lines = String(decoding: tle, as: UTF8.self).split(separator: "\n").map(String.init)
+        let info = try await SatelliteInfo.load(elements: Elements(lines[0], lines[1], lines[2]))
         let satellites = Map([(info.noradIndex, info)])
         let model = SatelliteListModel(state: .init(satelliteInfo: [.iss: .loaded(satellites)]))
         var rendered: SatelliteInfo?
@@ -691,9 +904,9 @@ final class ForecastTests: XCTestCase {
         XCTAssertNil(rendered)
     }
 
-    func testReturningToSatelliteListKeepsLoadedCatalogButRetryReloads() throws {
+    func testReturningToSatelliteListKeepsLoadedCatalogButRetryReloads() async throws {
         let lines = String(decoding: tle, as: UTF8.self).split(separator: "\n").map(String.init)
-        let info = try SatelliteInfo(elements: Elements(lines[0], lines[1], lines[2]))
+        let info = try await SatelliteInfo.load(elements: Elements(lines[0], lines[1], lines[2]))
         let model = SatelliteListModel(state: .init(satelliteInfo: [.iss: .loaded(Map([(info.noradIndex, info)]))]))
         model.load(.iss)
         XCTAssertEqual(model.state.satelliteInfo[.iss]?.content?[info.noradIndex], info)
@@ -704,7 +917,7 @@ final class ForecastTests: XCTestCase {
 
     func testSatelliteSearchDoesNotPublishASupersededQuery() async throws {
         let lines = String(decoding: tle, as: UTF8.self).split(separator: "\n").map(String.init)
-        let info = try SatelliteInfo(elements: Elements(lines[0], lines[1], lines[2]))
+        let info = try await SatelliteInfo.load(elements: Elements(lines[0], lines[1], lines[2]))
         let model = SatelliteListModel(state: .init(satelliteInfo: [.iss: .loaded(Map([(info.noradIndex, info)]))]))
         model.send(.searchSatellites("ISS", category: .iss))
         model.send(.searchSatellites("not a satellite", category: .iss))

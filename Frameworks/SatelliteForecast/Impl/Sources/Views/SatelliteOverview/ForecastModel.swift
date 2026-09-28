@@ -66,6 +66,9 @@ public final class ForecastModel {
     @ObservationIgnored private var generation = 0
     @ObservationIgnored private var passes: [SpecialSatellite: [Pass]] = [:]
     @ObservationIgnored private var lastRefresh: Date?
+    @ObservationIgnored private var lastInput: ForecastInput?
+    @ObservationIgnored private var lastRequest: ForecastRequest?
+    @ObservationIgnored private var widgetsPublished = false
     /// True once any refresh has started, so a second screen can avoid restarting the forecast.
     public var hasRefreshed: Bool { lastRefresh != nil }
 
@@ -85,7 +88,7 @@ public final class ForecastModel {
     /// The view owns this task. Countdown updates use the injected clock; expensive
     /// forecasts refresh hourly or when location/debug time changes, not every tick.
     public func run(_ input: ForecastInput) async {
-        await refresh(input)
+        await resume(input)
         while !Task.isCancelled {
             do { try await client.sleep(.seconds(1)); try Task.checkCancellation() }
             catch { return }
@@ -98,12 +101,30 @@ public final class ForecastModel {
         }
     }
 
+    /// Tab reentry advances the clock without discarding a completed, still-fresh forecast.
+    func resume(_ input: ForecastInput) async {
+        guard !Task.isCancelled else { return }
+        currentDate = client.now()
+        if lastInput == input, let lastRefresh,
+           (0..<3600).contains(currentDate.timeIntervalSince(lastRefresh)),
+           passes[.iss] != nil, passes[.tianhe] != nil {
+            updateNextPasses(input: input)
+            // If leaving interrupted widget preparation, resume that work from cached passes.
+            if let lastRequest { await publishWidgets(input, request: lastRequest, generation: generation) }
+        } else {
+            await refresh(input)
+        }
+    }
+
     public func refresh(_ input: ForecastInput) async {
         guard !Task.isCancelled else { return }
         generation += 1
         let requestGeneration = generation
         currentDate = client.now()
         lastRefresh = currentDate
+        lastInput = input
+        lastRequest = nil
+        widgetsPublished = false
         passes = [:]
         // The widget keeps the last saved forecast until this refresh replaces it, so launching
         // and leaving the app before the forecast finishes never blanks it. LocationService
@@ -117,11 +138,18 @@ public final class ForecastModel {
         }
         let request = ForecastRequest(observer: observer,
             dateRange: JulianDateUtil.createJulianDateRange(now: input.frozenJulianDate ?? (currentDate.julianDate + input.julianDateOffset)))
+        lastRequest = request
         async let iss: Void = load(.iss, request: request, generation: requestGeneration, input: input)
         async let tianhe: Void = load(.tianhe, request: request, generation: requestGeneration, input: input)
         _ = await (iss, tianhe)
-        guard requestGeneration == generation, !Task.isCancelled, input.julianDateOffset == 0 && input.frozenJulianDate == nil,
+        await publishWidgets(input, request: request, generation: requestGeneration)
+    }
+
+    private func publishWidgets(_ input: ForecastInput, request: ForecastRequest, generation requestGeneration: Int) async {
+        guard !widgetsPublished, requestGeneration == generation, !Task.isCancelled,
+              input.julianDateOffset == 0 && input.frozenJulianDate == nil,
               !isWidgetTest, passes[.iss] != nil, passes[.tianhe] != nil else { return }
+        let observer = request.observer
         var summaries: [WidgetPass] = []
         let loadedPasses = passes
         for (satellite, found) in loadedPasses {
@@ -146,6 +174,7 @@ public final class ForecastModel {
         WidgetForecastStore.write(.init(generated: currentDate,
             expires: min(Date(julianDate: request.dateRange.upperBound), currentDate.addingTimeInterval(7 * 86_400)),
             passes: summaries, latitude: observer.lat, longitude: observer.lon))
+        widgetsPublished = true
     }
 
     private var isWidgetTest: Bool {
