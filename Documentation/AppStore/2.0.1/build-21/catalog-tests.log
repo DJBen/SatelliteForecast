@@ -37,4 +37,3 @@ Metadata benchmark, 100 records: cold 0.025298833 seconds, warm 4.9625e-05 secon
 􁁛  Test warmCatalogAvoidsDatabaseAndDecoding() passed after 0.028 seconds.
 􁁛  Suite SatelliteMetadataStoreTests passed after 0.029 seconds.
 􁁛  Test run with 6 tests in 1 suite passed after 0.029 seconds.
-

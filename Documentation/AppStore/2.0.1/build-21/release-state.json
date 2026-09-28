@@ -1,0 +1,15 @@
+{
+  "verifiedAt": "2026-09-28T19:52:58.464179+00:00",
+  "version": "2.0.1",
+  "build": "21",
+  "buildID": "50262626-3f65-4d5a-a298-b8de2fc76f36",
+  "processingState": "VALID",
+  "internalBuildState": "IN_BETA_TESTING",
+  "internalGroup": "First Light",
+  "externalBuildState": "READY_FOR_BETA_SUBMISSION",
+  "testNotesVerified": true,
+  "pullRequest": "https://github.com/DJBen/SatelliteForecast/pull/86",
+  "mergeCommit": "3a7bb6e5afbb15a83efedb1dc3ae7175d57d1f7b",
+  "appStoreSubmission": false,
+  "publicRelease": false
+}

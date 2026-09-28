@@ -39,7 +39,14 @@ store screenshots or locale moments; existing store assets were not modified.
 
 ## Distribution
 
-Upload committed to App Store Connect. Final processing and internal availability
-verification is pending. Intended audience: internal **First Light** group.
-External TestFlight, App Review submission, and public release are separate actions.
+Build `50262626-3f65-4d5a-a298-b8de2fc76f36` is **VALID** and
+**IN_BETA_TESTING** for the internal **First Light** group. The group automatically
+receives all builds; the CLI correctly skipped an unnecessary explicit assignment.
+The uploaded What to Test notes were read back and match `test-notes.txt`.
+
+External state is `READY_FOR_BETA_SUBMISSION`; no external group was added and no
+beta review was requested. No 2.0.1 App Store review submission or public release
+was performed. Final API responses and the verification time are saved alongside
+this document. Source changes merged through PR #86 at `3a7bb6e5`; release evidence
+is committed separately on main.
 At preflight, version 2.0.0 returned `READY_FOR_SALE` / `READY_FOR_DISTRIBUTION`.

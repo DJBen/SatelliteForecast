@@ -1,7 +1,7 @@
 # App Store Connect publishing guide
 
-Read this before preparing any release. It is the consolidated procedure as of the 2.0.0
-draft (September 27, 2026). Inspect the current remote state and the installed CLI help
+Read this before preparing any release. It is the consolidated procedure as of the 2.0.1
+TestFlight release (September 28, 2026). Inspect the current remote state and the installed CLI help
 before reusing a command; historical IDs in the evidence directories are records, not
 targets. The guide is a procedure, not standing authorization to publish.
 
@@ -198,7 +198,7 @@ python3 scripts/capture-widget-home-screenshots.py --output Documentation/AppSto
 ## Evidence index
 
 - [2.0.1](2.0.1/README.md): live Sky Now, catalog/forecast reuse, and isolated SQLite
-  metadata loading; release validation and TestFlight tracking for build 21.
+  metadata loading; build 21 available on internal First Light TestFlight.
 
 - [2.0.0](2.0.0/README.md): observation home, push reminders, widgets; draft with six
   screenshot slots. Builds 12 and 13 on internal TestFlight.
