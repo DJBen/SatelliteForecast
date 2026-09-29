@@ -1,0 +1,23 @@
+{
+  "version": "2.0.1",
+  "build": "22",
+  "sourceMerge": "4d6d91144ccac139fe56b714ebb94cde4a28e7dd",
+  "ipaSHA256": "0e3a904dab1107f8dfe13f79198a08e2b74d531a8bc1ad95aa99671ff5e584b7",
+  "ipaBytes": 135577982,
+  "behaviorTests": {
+    "total": 151,
+    "passed": 148,
+    "failed": 0,
+    "skipped": 3
+  },
+  "backendTests": {
+    "passed": 5,
+    "failed": 0
+  },
+  "localizationAudit": "passed: 359 Impl keys and 2 Public keys, 8 locales",
+  "simulatorBuildAndRun": "succeeded",
+  "archive": "succeeded",
+  "export": "succeeded",
+  "screenshots": "retained unchanged, 6 per locale, 8 locales",
+  "uploadID": "90d7346a-87ba-466a-8f3c-aad4a6965f40"
+}
