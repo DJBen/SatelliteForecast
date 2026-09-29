@@ -748,3 +748,61 @@ The localized string for the status of a spare satellite */
 "Unable to load satellites" = "Не удалось загрузить спутники";
 "Sunlit" = "Освещён Солнцем";
 "In Earth's shadow" = "В тени Земли";
+
+"Center selection" = "Центрировать выбранный объект";
+
+"Filter" = "Фильтр";
+"Include geosynchronous satellites" = "Включить геосинхронные спутники";
+"No satellites match this filter" = "Нет спутников, соответствующих фильтру";
+
+"Include unlit" = "Включить неосвещённые спутники";
+
+"Search satellites" = "Поиск спутников";
+
+"Passing now: %lld" = "Пролетают сейчас: %lld";
+
+"Report brightness" = "Сообщить о яркости";
+
+"Report" = "Отправить";
+
+"Cancel" = "Отмена";
+
+"Report received" = "Отчёт получен";
+
+"Thank you for reporting your observation." = "Спасибо за ваше наблюдение.";
+
+"Magnitude" = "Звёздная величина";
+
+"Magnitude %.1f" = "Звёздная величина %.1f";
+
+"Estimate the brightness you observed. Lower magnitudes are brighter." = "Оцените наблюдаемую яркость. Чем меньше величина, тем ярче объект.";
+
+"Visibility depends on sky conditions. Report only what you actually observed." = "Видимость зависит от состояния неба. Сообщайте только о том, что наблюдали.";
+
+"Could not send your report. Check your connection and try again." = "Не удалось отправить отчёт. Проверьте соединение и повторите попытку.";
+
+"Very bright — comparable to the brightest stars, such as Vega." = "Очень яркий — сравним с ярчайшими звёздами, например Вегой.";
+
+"Bright — stands out among most nearby stars." = "Яркий — выделяется среди большинства соседних звёзд.";
+
+"Moderately bright — roughly comparable to Polaris." = "Довольно яркий — примерно как Полярная звезда.";
+
+"Moderate — easier to see away from bright city lights." = "Умеренный — лучше виден вдали от городских огней.";
+
+"Dim — best seen under a dark sky with adjusted eyes." = "Тусклый — лучше виден на тёмном небе после привыкания глаз.";
+
+"Faint — may be difficult to see without a clear, dark sky." = "Слабый — трудно увидеть без ясного тёмного неба.";
+
+"Satellite distance" = "Расстояние до спутников";
+
+"LEO only" = "Только LEO";
+
+"Up to MEO" = "До MEO";
+
+"All" = "Все";
+
+"Shows satellites less than 600 km from you, emphasizing nearby low-orbit passes." = "Показывает спутники ближе 600 км от вас, выделяя близкие пролёты на низкой орбите.";
+
+"No distance limit. Includes medium-orbit and geosynchronous satellites." = "Без ограничения расстояния. Включает спутники на средних и геосинхронных орбитах.";
+
+"Shows satellites less than 23,000 km from you, including GPS and other medium-orbit satellites." = "Показывает спутники ближе 23 000 км от вас, включая GPS и другие спутники на средних орбитах.";

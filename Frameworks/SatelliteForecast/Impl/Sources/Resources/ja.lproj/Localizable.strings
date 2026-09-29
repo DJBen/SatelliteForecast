@@ -748,3 +748,61 @@ The localized string for the status of a spare satellite */
 "Unable to load satellites" = "衛星を読み込めません";
 "Sunlit" = "日照中";
 "In Earth's shadow" = "地球の影の中";
+
+"Center selection" = "選択した天体を中央に表示";
+
+"Filter" = "フィルター";
+"Include geosynchronous satellites" = "地球同期衛星を含める";
+"No satellites match this filter" = "このフィルターに一致する衛星はありません";
+
+"Include unlit" = "照らされていない衛星を含める";
+
+"Search satellites" = "衛星を検索";
+
+"Passing now: %lld" = "現在通過中：%lld";
+
+"Report brightness" = "明るさを報告";
+
+"Report" = "報告";
+
+"Cancel" = "キャンセル";
+
+"Report received" = "報告を受信しました";
+
+"Thank you for reporting your observation." = "観測結果のご報告ありがとうございます。";
+
+"Magnitude" = "等級";
+
+"Magnitude %.1f" = "等級 %.1f";
+
+"Estimate the brightness you observed. Lower magnitudes are brighter." = "観測した明るさを推定してください。等級が小さいほど明るくなります。";
+
+"Visibility depends on sky conditions. Report only what you actually observed." = "見え方は空の状態によって変わります。実際に観測した内容だけを報告してください。";
+
+"Could not send your report. Check your connection and try again." = "報告を送信できませんでした。接続を確認して再試行してください。";
+
+"Very bright — comparable to the brightest stars, such as Vega." = "非常に明るい — ベガなどの最も明るい星に匹敵します。";
+
+"Bright — stands out among most nearby stars." = "明るい — 周囲の多くの星より目立ちます。";
+
+"Moderately bright — roughly comparable to Polaris." = "やや明るい — 北極星とほぼ同程度です。";
+
+"Moderate — easier to see away from bright city lights." = "中程度 — 街明かりから離れると見やすくなります。";
+
+"Dim — best seen under a dark sky with adjusted eyes." = "暗い — 暗い空で目が慣れると見やすくなります。";
+
+"Faint — may be difficult to see without a clear, dark sky." = "かすか — 晴れた暗い空でないと見えにくい場合があります。";
+
+"Satellite distance" = "衛星までの距離";
+
+"LEO only" = "LEOのみ";
+
+"Up to MEO" = "MEOまで";
+
+"All" = "すべて";
+
+"Shows satellites less than 600 km from you, emphasizing nearby low-orbit passes." = "距離600 km未満の衛星を表示し、近くを通過する低軌道衛星を中心に確認できます。";
+
+"No distance limit. Includes medium-orbit and geosynchronous satellites." = "距離制限なし。中軌道や地球同期軌道の衛星も含みます。";
+
+"Shows satellites less than 23,000 km from you, including GPS and other medium-orbit satellites." = "距離23,000 km未満の衛星を表示します。GPSなどの中軌道衛星も含みます。";

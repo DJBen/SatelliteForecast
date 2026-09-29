@@ -287,3 +287,9 @@ def register_live_activity(request: https_fn.Request):
 def deliver_live_activity(request: https_fn.Request):
     from common.live_activity_backend import handle_delivery
     return handle_delivery(request, db)
+
+
+@https_fn.on_request(max_instances=5, timeout_sec=30)
+def report_satellite_brightness(request: https_fn.Request):
+    from common.brightness_reports import handle_report
+    return handle_report(request, db)

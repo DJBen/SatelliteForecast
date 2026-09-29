@@ -108,3 +108,9 @@ __pycache__/
 
 # Local capture scratch space; reviewed release assets live under Documentation/AppStore.
 /output/
+
+# Private local crash/device investigation evidence
+/.local/
+# Keep original diagnostic captures local; commit reviewed summaries and images.
+/Documentation/DesignReview/ActivePass-2026-09-27/*.ips
+/Documentation/DesignReview/ActivePass-2026-09-27/*.log

@@ -46,6 +46,7 @@
       <a href="#collect">What we collect</a>
       <a href="#location">Location</a>
       <a href="#notifications">Reminders and push</a>
+      <a href="#brightness">Brightness reports</a>
       <a href="#analytics">Analytics</a>
       <a href="#website">This website</a>
       <a href="#third">Third parties</a>
@@ -56,7 +57,7 @@
     </aside>
     <article class="prose">
       <h1>Privacy Policy</h1>
-      <p class="meta">Space Station Passes for iOS and iPadOS · Effective 27 September 2026</p>
+      <p class="meta">Space Station Passes for iOS and iPadOS · Effective 28 September 2026</p>
 
       <h2 id="summary">Summary</h2>
       <p>Space Station Passes predicts when the International Space Station, Tiangong and other satellites will be visible from where you are. To do that it needs a location. Nothing else about you is required. There is no account, no advertising and no sale of data.</p>
@@ -67,6 +68,7 @@
       <p><strong>Push notification token.</strong> Delivery identifiers used by Apple and Firebase to send the reminders or Live Activity updates you request.</p>
       <p><strong>Device settings.</strong> Time zone offset, language and region, app version and whether the build is a release or debug build. These make reminders arrive at the right local time in the right language.</p>
       <p><strong>Usage analytics.</strong> Which screens are opened, how long forecasts take to load, and whether reminders were enabled. See the Analytics section.</p>
+      <p><strong>Optional brightness reports.</strong> The satellite identifier, estimated magnitude, observation time, an app installation identifier and the Firebase push token, when you choose to submit a report.</p>
       <p><strong>What we do not collect.</strong> Your name, email address, contacts, photos, search text, the exact satellites you browse, or any advertising identifier.</p>
 
       <h2 id="location">Location</h2>
@@ -78,6 +80,9 @@
       <p>Reminders come in two forms. <strong>Local alarms</strong> for a specific pass are scheduled by iOS on your device and involve no server. <strong>Station reminders</strong> for the ISS and Tiangong are sent by our server about five minutes before a visible pass. They contain the local start time, the direction and the peak elevation, and nothing else. We never send advertising or promotions.</p>
 
       <p><strong>Live Activities.</strong> When you follow a pass with the eye button, the app sends a per-activity delivery token, a Firebase delivery token, the pass schedule and its sunlight/shadow intervals to our server. This lets the Live Activity update while the app is in the background. This registration contains no coordinates or satellite name. Firebase App Check verifies that registration requests come from the app. Delivery tokens are removed when the activity ends or its cancellation reaches the server; expiring records are also automatically cleaned up. A cancellation receipt may remain for up to two days, plus the database cleanup delay.</p>
+
+      <h2 id="brightness">Brightness reports</h2>
+      <p>When you tap Report in the brightness dialog, we store your selected satellite, estimated magnitude and observation time. Reports include an app installation identifier and the current Firebase push token so we can associate observations with the reporting installation and limit abuse. Reporting is optional and does not include your coordinates. Firebase App Check verifies the request. Reports are stored on our server and are not publicly accessible. They are retained until deleted; contact us with the satellite and approximate observation time to request deletion.</p>
 
       <h2 id="analytics">Analytics</h2>
       <p>We use Firebase Analytics to understand which parts of the app are used and how quickly they load. Events carry fixed labels, counts and timings only. They never include coordinates, place names, search text, satellite names, notification identifiers or error text. Firebase attaches its standard device and session metadata, such as device model, OS version and country derived from IP address.</p>

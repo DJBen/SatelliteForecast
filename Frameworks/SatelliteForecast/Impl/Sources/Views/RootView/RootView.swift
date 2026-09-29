@@ -139,7 +139,7 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
                 DynamicTabBarItemView(
                     isSelected: isSelectedBinding(for: .realtimeSky),
                     content: {
-                        Image(systemName: "moon.stars")
+                        Image("glyph_sky")
                         Text(realtimeSkyTabText)
                     },
                     selectedContent: {

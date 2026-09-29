@@ -10,6 +10,7 @@ enum AppAnalytics {
         case onboarding, forecast, categories, satellites, passes, passDetail = "pass_detail"
         case skyDetail = "sky_detail", skyNow = "sky_now", settings, location, alarms
         case alarmSetup = "alarm_setup", ephemerides
+        case brightnessReport = "brightness_report"
     }
 
     static func event(_ name: String, screen: Screen, parameters: [String: Any] = [:]) {

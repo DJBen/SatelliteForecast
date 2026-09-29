@@ -179,7 +179,7 @@ private struct StationDirectionArrow: Shape {
 }
 
 
-private struct PlanetariumStationIndicator: View {
+struct PlanetariumStationIndicator: View {
     let controller: PlanetariumController
     @ObservedObject var navigation: PlanetariumNavigationState
     let stationName: String
@@ -338,6 +338,7 @@ private struct PlanetariumTimeControls: View {
 
 
 struct PlanetariumSelectionCard: View {
+    @State private var brightnessTarget: BrightnessReportTarget?
     let controller: PlanetariumController
     @ObservedObject var state: PlanetariumSelectionState
     var body: some View {
@@ -351,24 +352,79 @@ struct PlanetariumSelectionCard: View {
                                 .frame(width: 48, height: 48)
                                 .accessibilityHidden(true)
                         } else if selection.id.hasPrefix("satellite-") {
-                            Image("glyph_satellite").renderingMode(.template).foregroundStyle(AppTheme.accent)
-                                .frame(width: 48, height: 48).accessibilityHidden(true)
+                            PlanetariumSatelliteIcon()
                         } else {
                             Image(systemName: "sparkle").font(.title2).foregroundStyle(AppTheme.accent)
                                 .frame(width: 48, height: 48)
                         }
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(selection.name).font(.system(.headline, design: .serif))
+                            Text(selection.name)
+                                .font(selection.id.hasPrefix("satellite-") ? .subheadline.weight(.semibold) : .system(.headline, design: .serif))
+                                .fixedSize(horizontal: false, vertical: true)
                             Text(selection.detail).font(.caption).foregroundStyle(AppTheme.muted)
                             Text(selection.coordinates).font(.caption2.monospacedDigit()).foregroundStyle(AppTheme.muted)
                         }
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            guard controller.previewDate == nil,
+                                  selection.id.hasPrefix("satellite-"),
+                                  let id = UInt(selection.id.dropFirst("satellite-".count)) else { return }
+                            brightnessTarget = BrightnessReportTarget(noradID: id, name: selection.name)
+                        }
+                        .accessibilityAction(named: AppLocalization.text("Report brightness")) {
+                            guard controller.previewDate == nil,
+                                  selection.id.hasPrefix("satellite-"),
+                                  let id = UInt(selection.id.dropFirst("satellite-".count)) else { return }
+                            brightnessTarget = BrightnessReportTarget(noradID: id, name: selection.name)
+                        }
                         Spacer(minLength: 0)
-                        Button(AppLocalization.text("Dismiss selection"), systemImage: "xmark") { controller.clearSelection() }
-                            .labelStyle(.iconOnly)
+                        HStack(spacing: 0) {
+                            Button { controller.focusSelection() } label: {
+                                Image(systemName: "scope")
+                                    .frame(width: 44, height: 44).contentShape(Rectangle())
+                            }
+                            .foregroundStyle(AppTheme.accent)
+                            .accessibilityLabel(AppLocalization.text("Center selection"))
+                            .accessibilityIdentifier("planetarium.centerSelection")
+                            Button { controller.clearSelection() } label: {
+                                Image(systemName: "xmark")
+                                    .frame(width: 44, height: 44).contentShape(Rectangle())
+                            }
+                            .foregroundStyle(AppTheme.muted)
+                            .accessibilityLabel(AppLocalization.text("Dismiss selection"))
+                        }
+                        .buttonStyle(.plain)
+                        .font(.system(size: 14, weight: .semibold))
                     }
                     .padding(16)
                     .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 22))
                     .accessibilityElement(children: .contain)
+                    .sheet(item: $brightnessTarget) { BrightnessReportSheet(target: $0) }
                 }
+    }
+}
+
+/// Shared leading column keeps the selection and passing-list cards aligned.
+struct PlanetariumSatelliteIcon: View {
+    var body: some View {
+        Image("glyph_satellite").resizable().renderingMode(.template).scaledToFit()
+            .frame(width: 24, height: 24)
+            .foregroundStyle(AppTheme.accent)
+            .frame(width: 40, height: 40)
+            .background(AppTheme.accent.opacity(0.1), in: RoundedRectangle(cornerRadius: 12))
+            .accessibilityHidden(true)
+    }
+}
+
+struct PlanetariumLiveSatelliteIndicator: View {
+    let controller: PlanetariumController
+    @ObservedObject var state: PlanetariumSelectionState
+    var body: some View {
+        if let selection = state.value, selection.id.hasPrefix("satellite-") {
+            PlanetariumStationIndicator(controller: controller, navigation: controller.navigation,
+                stationName: selection.name, passingNow: false)
+        } else {
+            Color.clear.allowsHitTesting(false)
+        }
     }
 }

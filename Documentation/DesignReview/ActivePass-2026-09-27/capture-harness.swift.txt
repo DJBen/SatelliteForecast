@@ -1,0 +1,93 @@
+    func testActivePassExperienceReview() async throws {
+        guard let output = ProcessInfo.processInfo.environment["ACTIVE_PASS_REVIEW_OUTPUT"] else { throw XCTSkip("Review only") }
+        let folder = URL(fileURLWithPath: output)
+        NSTimeZone.default = TimeZone(identifier: "America/Los_Angeles")!
+        let catalog = try await AppStarCatalog.load()
+        let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.first as? UIWindowScene)
+        let window = UIWindow(windowScene: scene)
+        window.overrideUserInterfaceStyle = .dark
+        let host = StoreHostingController(rootView: AnyView(Color.black))
+        window.rootViewController = host
+        window.makeKeyAndVisible()
+        defer { window.isHidden = true; window.rootViewController = nil }
+        func capture(_ name: String, _ view: AnyView) async throws {
+            host.rootView = AnyView(view.id(name)
+                .environment(\.motionManagerKey, CMMotionManager())
+                .environment(\.locale, Locale(identifier: "en_US"))
+                .environment(\.timeZone, TimeZone(identifier: "America/Los_Angeles")!)
+                .environment(\.colorScheme, .dark).transaction { $0.animation = nil })
+            host.view.frame = window.bounds
+            host.view.layoutIfNeeded()
+            try await Task.sleep(for: .seconds(5))
+            let ready = folder.appendingPathComponent("capture-ready.txt")
+            let done = folder.appendingPathComponent("capture-done.txt")
+            try? FileManager.default.removeItem(at: done)
+            try name.write(to: ready, atomically: true, encoding: .utf8)
+            for _ in 0..<300 {
+                if FileManager.default.fileExists(atPath: done.path) { return }
+                try await Task.sleep(for: .milliseconds(200))
+            }
+            XCTFail("Capture timed out")
+        }
+        var records: [[String: String]] = []
+        for station in ["iss", "tiangong"] {
+            let tle = try String(contentsOf: root.appendingPathComponent("SatelliteForecastTests/Fixtures/AppStore/\(station).tle"), encoding: .utf8).split(whereSeparator: \.isNewline).map(String.init)
+            let fixture = try Fixture(catalog: catalog, now: Date(timeIntervalSince1970: 1789002000), tle: tle)
+            let featured = try XCTUnwrap(fixture.passes.first { $0.pass.visibility == .visible && ($0.pass.highestIlluminated?.elev ?? 0) > 45 && $0.pass.sunElevationAtTransit < -10 })
+            let pass = featured.pass
+            let category: SpecialSatellite = station == "iss" ? .iss : .tianhe
+            let start = ObservationOpportunity.start(pass), end = ObservationOpportunity.end(pass)
+            let active = start + (end-start)*0.55
+            var phases = [("active", active)]
+            if end < pass.set.julianDate - 2 / 86400 { phases.append(("shadow", (end + pass.set.julianDate)/2)) }
+            records.append(["station":station,"rise":Date(julianDate:pass.rise.julianDate).description,"visibleStart":Date(julianDate:start).description,"visibleEnd":Date(julianDate:end).description,"set":Date(julianDate:pass.set.julianDate).description,"active":Date(julianDate:active).description])
+            let service = ForecastService(brightStars: catalog.stars(maximumMagnitude: 3))
+            let skies = try await service.widgetSkies(request: .init(observer: fixture.observer, dateRange: fixture.range), passes: [pass])
+            let track: [WidgetSkyPoint] = try (0...80).map { i in
+                let jd = pass.rise.julianDate + (pass.set.julianDate-pass.rise.julianDate)*Double(i)/80
+                let s = try SatelliteSnapshot(satelliteInfo: fixture.info, julianDate: jd, observer: fixture.observer)
+                return WidgetSkyPoint(azimuth:s.position.azim,elevation:s.position.elev,illuminated:pass.isIlluminated(at:jd))
+            }
+            let dome = try await service.widgetDome(pass: pass, info: fixture.info, observer: fixture.observer)
+            let widgetPass = WidgetPass(station: Int(fixture.info.noradIndex), rise: Date(julianDate:pass.rise.julianDate), peak: Date(julianDate:pass.culmination.julianDate), set: Date(julianDate:pass.set.julianDate), elevation:pass.culmination.elev,startDirection:ObservationOpportunity.direction(pass.rise.azim),endDirection:ObservationOpportunity.direction(pass.set.azim),skyTrack:track,skyBackground:skies[pass.rise.julianDate],events:ForecastModel.widgetEvents(pass),dome:dome)
+            let data = WidgetForecast(generated:fixture.now, expires:fixture.now.addingTimeInterval(7*86400), passes:[widgetPass])
+            for (phase,jd) in phases {
+                let now=Date(julianDate:jd)
+                let model=ForecastModel(client:.init(load:{ s,_ in s == category ? fixture.passes.map(\.pass) : [] },now:{now}))
+                await model.refresh(.init(observer:fixture.observer))
+                let home=ObservationHomeView(session:fixture.session,model:model,context:.init(starManager:catalog,julianDateProvider:{jd}),initialPreview:.init(info:fixture.info,snapshots:featured))
+                try await capture("\(station)-\(phase)-home",AnyView(home))
+                let context=PassViewContext(passIndex:0,satelliteInfo:fixture.info,satelliteCommonName:station == "iss" ? "ISS" : "Tiangong",category:station == "iss" ? .iss : .tianhe,julianDateRange:fixture.range,observer:fixture.observer,passSnapshots:featured,starManager:catalog,julianDateProvider:{jd})
+                if phase == "active", ProcessInfo.processInfo.environment["REVIEW_DETAIL"] == "1" {
+                    var detail = fixture.factory.pass(context,isCompassEnabled:false)
+                    let offset = jd - Date().julianDate
+                    detail.skyChartFactory = ViewFactory { chartContext in
+                        SkyChart(viewModel: SkyChartModel(state: .init(julianDateOffset: offset), renderer: fixture.session.renderer), context: chartContext,
+                            backgroundSkyViewFactory: ViewFactory { fixture.factory.background($0) })
+                    }
+                    try await capture("\(station)-detail",AnyView(NavigationStack { detail }))
+                }
+                let controller=PlanetariumController()
+                let planetarium=PlanetariumView(context:context,controller:controller).task {
+                    try? await Task.sleep(for:.milliseconds(750))
+                    controller.setMotionEnabled(false)
+                    controller.pointCamera(azimuth:pass.culmination.azim,elevation:max(25,pass.culmination.elev-30))
+                }
+                try await capture("\(station)-\(phase)-planetarium",AnyView(planetarium))
+                controller.pointCamera(azimuth:pass.culmination.azim+160,elevation:30)
+                try await Task.sleep(for:.seconds(1))
+                let ready=folder.appendingPathComponent("capture-ready.txt"),done=folder.appendingPathComponent("capture-done.txt")
+                try? FileManager.default.removeItem(at:done)
+                try "\(station)-\(phase)-planetarium-offscreen".write(to:ready,atomically:true,encoding:.utf8)
+                for _ in 0..<300 { if FileManager.default.fileExists(atPath:done.path) { break }; try await Task.sleep(for:.milliseconds(200)) }
+                for (name,family,size,chart) in [("small",WidgetFamily.systemSmall,CGSize(width:170,height:170),false),("small-chart",.systemSmall,CGSize(width:170,height:170),true),("medium",.systemMedium,CGSize(width:364,height:170),false),("large",.systemLarge,CGSize(width:364,height:382),false)] {
+                    let view=StationWidgetView(forecast:data,date:now,family:family,chart:chart,station:Int(fixture.info.noradIndex)).padding(StationWidgetView.contentPadding(for:family)).frame(width:size.width,height:size.height).background(StationWidgetView.background).clipShape(RoundedRectangle(cornerRadius:24)).environment(\.colorScheme,.dark).environment(\.locale,Locale(identifier:"en_US")).environment(\.timeZone,TimeZone(identifier:"America/Los_Angeles")!)
+                    let renderer=ImageRenderer(content:view)
+                    renderer.scale=3
+                    try XCTUnwrap(renderer.uiImage?.pngData()).write(to:folder.appendingPathComponent("\(station)-\(phase)-widget-\(name).png"))
+                }
+            }
+        }
+        try JSONSerialization.data(withJSONObject:records,options:[.prettyPrinted,.sortedKeys]).write(to:folder.appendingPathComponent("moments.json"))
+    }
+

@@ -748,3 +748,61 @@ The localized string for the status of a spare satellite */
 "Unable to load satellites" = "无法加载卫星";
 "Sunlit" = "阳光照射中";
 "In Earth's shadow" = "位于地影中";
+
+"Center selection" = "居中显示所选对象";
+
+"Filter" = "筛选";
+"Include geosynchronous satellites" = "包含地球同步卫星";
+"No satellites match this filter" = "没有符合此筛选条件的卫星";
+
+"Include unlit" = "包含未受光照的卫星";
+
+"Search satellites" = "搜索卫星";
+
+"Passing now: %lld" = "正在过境：%lld";
+
+"Report brightness" = "报告亮度";
+
+"Report" = "报告";
+
+"Cancel" = "取消";
+
+"Report received" = "报告已收到";
+
+"Thank you for reporting your observation." = "感谢分享您的观测结果。";
+
+"Magnitude" = "星等";
+
+"Magnitude %.1f" = "星等 %.1f";
+
+"Estimate the brightness you observed. Lower magnitudes are brighter." = "估计您观测到的亮度。星等越小，亮度越高。";
+
+"Visibility depends on sky conditions. Report only what you actually observed." = "可见性取决于天空状况。请仅报告您实际观测到的结果。";
+
+"Could not send your report. Check your connection and try again." = "无法发送报告。请检查网络连接并重试。";
+
+"Very bright — comparable to the brightest stars, such as Vega." = "非常明亮 — 可与织女星等最亮的恒星相比。";
+
+"Bright — stands out among most nearby stars." = "明亮 — 比附近大多数恒星更显眼。";
+
+"Moderately bright — roughly comparable to Polaris." = "较亮 — 大致相当于北极星。";
+
+"Moderate — easier to see away from bright city lights." = "中等 — 远离城市灯光时更容易看见。";
+
+"Dim — best seen under a dark sky with adjusted eyes." = "较暗 — 在黑暗天空下，眼睛适应后更容易看见。";
+
+"Faint — may be difficult to see without a clear, dark sky." = "微弱 — 天空不够晴朗、黑暗时可能难以看见。";
+
+"Satellite distance" = "卫星距离";
+
+"LEO only" = "仅近地轨道";
+
+"Up to MEO" = "至中地轨道";
+
+"All" = "全部";
+
+"Shows satellites less than 600 km from you, emphasizing nearby low-orbit passes." = "显示距您不足 600 公里的卫星，侧重附近的低轨道过境。";
+
+"No distance limit. Includes medium-orbit and geosynchronous satellites." = "不限制距离，包括中地轨道和地球同步轨道卫星。";
+
+"Shows satellites less than 23,000 km from you, including GPS and other medium-orbit satellites." = "显示距您不足 23,000 公里的卫星，包括 GPS 和其他中地轨道卫星。";

@@ -62,7 +62,7 @@ Onboarding replay counts and rescheduling the same alarm count as actions, not n
 | `load_station` | `passes` | Station orbital-data request to accepted result | Satellites returned |
 | `calculate_passes` | `passes` | Pass calculation request to accepted trails | Pass snapshots |
 | `load_catalog` | `satellites` | Catalog request to accepted result, including explicit retry | Satellites returned |
-| `load_sky_catalog` | `sky_now` | Brightest 100 dataset request to accepted result | Selected LEO candidates, capped at 100 |
+| `load_sky_catalog` | `sky_now` | All-active catalog request to accepted result | Deduplicated catalog satellites, without orbit or brightness cap |
 | `location_search` | `location` | Suggestions request after debounce to accepted results | Suggestions |
 | `location_resolve` | `location` | Selected suggestion resolution to pending location | — |
 | `schedule_alarm` | `passes` or `alarm_setup` | Authorization request, preview generation, and OS scheduling | — |
@@ -258,10 +258,10 @@ Planetarium Now mode and the observation card resolve the debug clock (mock offs
 ## Live Sky Now (2026-09-28)
 
 Sky Now is always the second tab. It uses the shared 3D planetarium at the live
-clock with up to 100 bright LEO satellites above the observer horizon; sunlit markers are
+clock with all active-catalog satellites above the observer horizon; sunlit markers are
 distinguished from shadowed satellites. The passing list, selection cards, and
 sky options remain within `sky_now` and add no events. `load_sky_catalog` still
-measures the Brightest 100 catalog request through candidate selection/enrichment, not propagation,
+measures the all-active catalog request through deduplication/enrichment, not propagation,
 interpolation, star loading, or GPU rendering. Leaving the tab or backgrounding
 cancels catalog/propagation work and pauses rendering. Location selection reuses
 the existing `location` screen and conversion boundaries. Routine Debug and
@@ -280,9 +280,9 @@ reduce operation counts; these counts are requests, not tab visits. Satellite
 propagation still restarts at the current time after tab/background transitions
 and remains excluded from catalog timing. No new events or parameters are added.
 
-### Brightest 100 and forecast reentry
+### Previous Brightest 100 policy and forecast reentry
 
-Sky Now now requests the existing `visual` / Brightest 100 dataset, not all active
+The initial September 28 implementation requested the `visual` / Brightest 100 dataset, not all active
 satellites. LEO filtering and ranking by known standard magnitude (unknowns last,
 NORAD ID for ties) cap enrichment/propagation at 100. `load_sky_catalog` retains
 its name and start/finish boundaries, but `result_count` now counts selected
@@ -308,3 +308,58 @@ faster OMM epoch parser and asynchronous onboarding preparation add no events,
 parameters, or conversion changes. Query/cache counters and local benchmarks
 are test diagnostics only and never sent to analytics. See [DataLayer.md](DataLayer.md)
 for ownership, freshness, cancellation, and measurement details.
+
+Sky Now satellite selection adds a rolling trajectory and the shared offscreen
+recenter arrow. These controls retain `sky_now` and add no events or measured
+operations; satellite identities and path samples are not logged.
+
+The selection-card center button recenters the selected star, body, or satellite
+and disengages device following. It adds no screen/event or telemetry parameter.
+
+### All-active catalog and horizon scheduling
+
+Sky Now now requests `active` with no LEO filter or brightness/count cap. The
+sheet includes all successfully propagated catalog objects above the geometric
+horizon, regardless of illumination; it does not claim to include every tracked
+inactive object or debris absent from that upstream catalog. `load_sky_catalog`
+keeps its start/end boundaries. `result_count` now means the entire deduplicated
+active catalog, so it is not comparable to the previous capped count.
+
+Below-horizon objects receive a conservative early recheck based on signed
+distance below the observer's horizon plane and an upper approach-speed estimate
+including Earth rotation. Delays are capped at five minutes; objects within one
+degree of the horizon and above it recheck every half-second. The due-time tree
+selects only ready candidates; display updates visit visible and updated objects,
+not the full catalog. Changed location/elements, backward clock changes, large
+time jumps, or reactivation invalidate the schedule. These local calculations,
+queue sizes, and satellite IDs add no telemetry. Frame/propagation work remains
+outside catalog operation timing.
+
+The Passing now sheet has a local, persisted geosynchronous-inclusion preference,
+off by default. Off excludes observer distances of 30,000 km or more; this is
+an approximate range filter and also excludes distant highly elliptical objects.
+Only the sheet list and its count are filtered. Catalog loading, propagation,
+sky markers, screen names, and analytics event/operation boundaries are unchanged.
+No filter event or distance telemetry is emitted.
+
+The same sheet menu also persists an “Include unlit” preference, on by default. When off, only illuminated satellites remain, combined with the distance filter. This uses the existing illumination result and adds no telemetry.
+
+The expanded Passing now sheet replaces its count subtitle with local search by satellite name (including catalog aliases) or NORAD number. Search combines with both inclusion filters. The collapsed card retains its above-horizon count. Search text is transient and never logged; screen and loading boundaries remain unchanged.
+
+The Passing now inclusion-filter menu now lives in a separate glass button beside the collapsed bar, outside the sheet. It controls the same persisted sheet filters; no analytics boundaries or events change.
+
+Inclusion filters now apply consistently to live planetarium satellites, their selectable markers, the Passing now count, and the sheet. A selected satellite excluded by a toggle is deselected and its track/arrow cleared immediately. Propagation retains the full active catalog, so toggles can restore existing results immediately. Search remains local to the sheet. No analytics events or telemetry fields change. This supersedes the earlier sheet-only filter scope.
+
+The collapsed Passing now control now uses a single-line title and filtered count in a 52-point capsule matching the adjacent filter button. This is a presentation-only change with no analytics changes.
+
+### Brightness reports
+
+The satellite details text in Sky now opens `brightness_report`, recorded through AppAnalytics screen tracking. This is an observation submission, separate from analytics: NORAD ID, magnitude, observation/receipt timestamps, random persisted installation ID, and the current FCM token are stored privately by the App-Check-protected backend. No coordinates, token, identifier, magnitude, or error details are sent to analytics. Only a successful backend write is shown as Report received; tapping Report or a failed attempt is not success. Simulator/test uploads are disabled.
+
+The filter popover now has a persisted three-stop distance slider: LEO only (<6,000 km observer range), Up to MEO (<30,000 km), and All (no distance cutoff). These are explicitly approximate orbit labels based on observer range, not altitude. Existing geosynchronous-off preferences migrate to Up to MEO, and on to All; Include unlit retains its value and uses a trailing checkbox. Both controls still filter the sky, count, and sheet; no analytics events or parameters change.
+
+Sky now preserves its view/controller identity across observer coordinate updates. Fresh GPS fixes refresh the sky projection and invalidate old satellite selections/results without resetting camera pointing or zoom. Existing location and catalog analytics boundaries remain unchanged.
+
+Distance slider cutoffs were adjusted to strictly below 600 km and 23,000 km; All remains unlimited. The second explanatory paragraph was removed. Observer range remains the input; no analytics changes.
+
+The Satellites category stack now owns its navigation path in SwiftUI State, synchronizing changes with the session path. User pushes/pops and pass-grid navigation use the same local binding so the native navigation transaction stays in the view. Destination screen names and loading boundaries are unchanged.

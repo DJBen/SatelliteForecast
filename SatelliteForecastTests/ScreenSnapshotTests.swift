@@ -27,6 +27,48 @@ final class ScreenSnapshotTests: XCTestCase {
         NSTimeZone.default = TimeZone(secondsFromGMT: 0)!
     }
 
+    func testCategoryNavigationPushesAndBackSynchronizes() async throws {
+        let model = SatelliteCategoryModel()
+        let view = SatelliteCategoryViewImpl(viewModel: model,
+            context: .init(starManager: AppStarCatalog(), julianDateProvider: { 2459373.9 }),
+            listViewFactory: ViewFactory { context in
+                SatelliteListView(viewModel: .init(state: .init(satelliteInfo: [context.category: .loaded(Map())])),
+                    context: context, allPassesViewFactory: .crash)
+            })
+        let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.first as? UIWindowScene)
+        let window = UIWindow(windowScene: scene)
+        window.overrideUserInterfaceStyle = .dark
+        window.rootViewController = UIHostingController(rootView: view.preferredColorScheme(.dark))
+        window.makeKeyAndVisible()
+        defer { window.isHidden = true; window.rootViewController = nil }
+        try await Task.sleep(for: .milliseconds(500))
+        func navigation(in parent: UIViewController) -> UINavigationController? {
+            if let nav = parent as? UINavigationController { return nav }
+            return parent.children.lazy.compactMap { navigation(in: $0) }.first
+        }
+        let nav = try XCTUnwrap(navigation(in: try XCTUnwrap(window.rootViewController)))
+        for category in [SatelliteCategory.brightest100, .active, .last30DayLaunches] {
+            var path = NavigationPath()
+            path.append(category)
+            withAnimation { model.send(.navigate(path)) }
+            var animated = false
+            for _ in 0..<30 {
+                try await Task.sleep(for: .milliseconds(20))
+                animated = animated || nav.transitionCoordinator?.isAnimated == true
+            }
+            XCTAssertTrue(animated, "Category push must use a native animated transition")
+            XCTAssertEqual(nav.viewControllers.count, 2)
+            nav.popViewController(animated: true)
+            try await Task.sleep(for: .milliseconds(700))
+            XCTAssertEqual(model.state.navigationPath.count, 0, "Native Back must synchronize the session path")
+            XCTAssertEqual(nav.viewControllers.count, 1)
+        }
+        let image = UIGraphicsImageRenderer(bounds: window.bounds).image { _ in
+            window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
+        }
+        try image.pngData()?.write(to: URL(fileURLWithPath: "/tmp/category-navigation-dark.png"))
+    }
+
     func testLiveActivitySystemLifecycle() async throws {
         XCTAssertTrue(ActivityAuthorizationInfo().areActivitiesEnabled)
         let pass = StationPassActivity.example()
