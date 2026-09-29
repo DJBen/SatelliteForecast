@@ -90,4 +90,3 @@
         }
         try JSONSerialization.data(withJSONObject:records,options:[.prettyPrinted,.sortedKeys]).write(to:folder.appendingPathComponent("moments.json"))
     }
-
