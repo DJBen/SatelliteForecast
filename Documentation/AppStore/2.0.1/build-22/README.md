@@ -26,6 +26,10 @@ experiment-response stack. This release does not claim to fix that unproven
 third-party crash. Raw device diagnostics remain private under .local/.
 
 Published to `main` via PR #87, merge commit
-`4d6d91144ccac139fe56b714ebb94cde4a28e7dd`. Export succeeded and the upload was
-committed in App Store Connect. Public release submission is pending the App
-Privacy correction described in `privacy-review.md` and build processing.
+`4d6d91144ccac139fe56b714ebb94cde4a28e7dd`. Export succeeded. Build `90d7346a-87ba-466a-8f3c-aad4a6965f40` completed processing
+as VALID, is attached to the 2.0.1 App Store draft, and is IN_BETA_TESTING for the
+internal group. ASC validation reports zero errors and zero warnings, with one
+App Privacy verification notice. Public release submission is pending the App
+Privacy correction described in `privacy-review.md`; it has not been submitted
+to App Review. AFTER_APPROVAL remains configured for automatic release once
+submitted and approved.
