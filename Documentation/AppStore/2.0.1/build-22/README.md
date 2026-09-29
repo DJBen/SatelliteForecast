@@ -24,3 +24,8 @@ and is not verifiable through the public App Store Connect API.
 The build 21 TestFlight crash investigation found a Firebase Analytics
 experiment-response stack. This release does not claim to fix that unproven
 third-party crash. Raw device diagnostics remain private under .local/.
+
+Published to `main` via PR #87, merge commit
+`4d6d91144ccac139fe56b714ebb94cde4a28e7dd`. Export succeeded and the upload was
+committed in App Store Connect. Public release submission is pending the App
+Privacy correction described in `privacy-review.md` and build processing.
