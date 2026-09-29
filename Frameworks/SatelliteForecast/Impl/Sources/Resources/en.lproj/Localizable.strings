@@ -389,3 +389,61 @@
 "Unable to load satellites" = "Unable to load satellites";
 "Sunlit" = "Sunlit";
 "In Earth's shadow" = "In Earth's shadow";
+
+"Center selection" = "Center selection";
+
+"Filter" = "Filter";
+"Include geosynchronous satellites" = "Include geosynchronous satellites";
+"No satellites match this filter" = "No satellites match this filter";
+
+"Include unlit" = "Include unlit";
+
+"Search satellites" = "Search satellites";
+
+"Passing now: %lld" = "Passing now: %lld";
+
+"Report brightness" = "Report brightness";
+
+"Report" = "Report";
+
+"Cancel" = "Cancel";
+
+"Report received" = "Report received";
+
+"Thank you for reporting your observation." = "Thank you for reporting your observation.";
+
+"Magnitude" = "Magnitude";
+
+"Magnitude %.1f" = "Magnitude %.1f";
+
+"Estimate the brightness you observed. Lower magnitudes are brighter." = "Estimate the brightness you observed. Lower magnitudes are brighter.";
+
+"Visibility depends on sky conditions. Report only what you actually observed." = "Visibility depends on sky conditions. Report only what you actually observed.";
+
+"Could not send your report. Check your connection and try again." = "Could not send your report. Check your connection and try again.";
+
+"Very bright — comparable to the brightest stars, such as Vega." = "Very bright — comparable to the brightest stars, such as Vega.";
+
+"Bright — stands out among most nearby stars." = "Bright — stands out among most nearby stars.";
+
+"Moderately bright — roughly comparable to Polaris." = "Moderately bright — roughly comparable to Polaris.";
+
+"Moderate — easier to see away from bright city lights." = "Moderate — easier to see away from bright city lights.";
+
+"Dim — best seen under a dark sky with adjusted eyes." = "Dim — best seen under a dark sky with adjusted eyes.";
+
+"Faint — may be difficult to see without a clear, dark sky." = "Faint — may be difficult to see without a clear, dark sky.";
+
+"Satellite distance" = "Satellite distance";
+
+"LEO only" = "LEO only";
+
+"Up to MEO" = "Up to MEO";
+
+"All" = "All";
+
+"Shows satellites less than 600 km from you, emphasizing nearby low-orbit passes." = "Shows satellites less than 600 km from you, emphasizing nearby low-orbit passes.";
+
+"No distance limit. Includes medium-orbit and geosynchronous satellites." = "No distance limit. Includes medium-orbit and geosynchronous satellites.";
+
+"Shows satellites less than 23,000 km from you, including GPS and other medium-orbit satellites." = "Shows satellites less than 23,000 km from you, including GPS and other medium-orbit satellites.";

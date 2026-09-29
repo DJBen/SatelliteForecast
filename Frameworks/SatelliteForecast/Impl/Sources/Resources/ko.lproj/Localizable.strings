@@ -748,3 +748,61 @@ The localized string for the status of a spare satellite */
 "Unable to load satellites" = "위성을 불러올 수 없습니다";
 "Sunlit" = "햇빛을 받는 중";
 "In Earth's shadow" = "지구 그림자 안";
+
+"Center selection" = "선택한 천체를 중앙에 표시";
+
+"Filter" = "필터";
+"Include geosynchronous satellites" = "지구동기 위성 포함";
+"No satellites match this filter" = "이 필터에 맞는 위성이 없습니다";
+
+"Include unlit" = "햇빛을 받지 않는 위성 포함";
+
+"Search satellites" = "위성 검색";
+
+"Passing now: %lld" = "현재 통과 중: %lld";
+
+"Report brightness" = "밝기 보고";
+
+"Report" = "보고";
+
+"Cancel" = "취소";
+
+"Report received" = "보고 접수됨";
+
+"Thank you for reporting your observation." = "관측 결과를 알려 주셔서 감사합니다.";
+
+"Magnitude" = "등급";
+
+"Magnitude %.1f" = "등급 %.1f";
+
+"Estimate the brightness you observed. Lower magnitudes are brighter." = "관측한 밝기를 추정하세요. 등급이 낮을수록 더 밝습니다.";
+
+"Visibility depends on sky conditions. Report only what you actually observed." = "가시성은 하늘 상태에 따라 달라집니다. 실제로 관측한 내용만 보고하세요.";
+
+"Could not send your report. Check your connection and try again." = "보고를 보내지 못했습니다. 연결을 확인하고 다시 시도하세요.";
+
+"Very bright — comparable to the brightest stars, such as Vega." = "매우 밝음 — 베가처럼 가장 밝은 별과 비슷합니다.";
+
+"Bright — stands out among most nearby stars." = "밝음 — 주변 대부분의 별보다 눈에 띕니다.";
+
+"Moderately bright — roughly comparable to Polaris." = "다소 밝음 — 대략 북극성과 비슷합니다.";
+
+"Moderate — easier to see away from bright city lights." = "보통 — 도시 불빛에서 멀어지면 더 잘 보입니다.";
+
+"Dim — best seen under a dark sky with adjusted eyes." = "어두움 — 어두운 하늘에서 눈이 적응한 뒤 더 잘 보입니다.";
+
+"Faint — may be difficult to see without a clear, dark sky." = "희미함 — 맑고 어두운 하늘이 아니면 보기 어려울 수 있습니다.";
+
+"Satellite distance" = "위성 거리";
+
+"LEO only" = "LEO만";
+
+"Up to MEO" = "MEO까지";
+
+"All" = "모두";
+
+"Shows satellites less than 600 km from you, emphasizing nearby low-orbit passes." = "600km 미만 거리의 위성을 표시하여 가까운 저궤도 통과를 중심으로 볼 수 있습니다.";
+
+"No distance limit. Includes medium-orbit and geosynchronous satellites." = "거리 제한 없이 중궤도 및 지구 동기 궤도 위성을 포함합니다.";
+
+"Shows satellites less than 23,000 km from you, including GPS and other medium-orbit satellites." = "23,000km 미만 거리의 위성을 표시합니다. GPS 및 다른 중궤도 위성도 포함합니다.";

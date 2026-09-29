@@ -713,7 +713,7 @@ final class ForecastTests: XCTestCase {
         }
     }
 
-    func testSkyNowLoadsOnlyLowEarthOrbitCandidates() async throws {
+    func testSkyNowIncludesHigherOrbits() async throws {
         let folder = try cacheDirectory()
         defer { try? FileManager.default.removeItem(at: folder) }
         let geostationary = String(decoding: tle, as: UTF8.self)
@@ -727,10 +727,10 @@ final class ForecastTests: XCTestCase {
             if model.state.satellites.content != nil { break }
             try await Task.sleep(for: .milliseconds(10))
         }
-        XCTAssertEqual(model.state.satellites.content?.map(\.noradIndex), [25544])
+        XCTAssertEqual(model.state.satellites.content?.map(\.noradIndex), [25544, 40294])
     }
 
-    func testSkyCatalogRequestsVisualDatasetAndSelectsBrightestHundred() async throws {
+    func testSkyCatalogRequestsAllActiveWithoutLimit() async throws {
         let folder = try cacheDirectory()
         defer { try? FileManager.default.removeItem(at: folder) }
         let magnitudes = QSMag.localData.values.filter { $0.magnitude != nil && $0.noradIndex < 99999 }
@@ -741,15 +741,13 @@ final class ForecastTests: XCTestCase {
             source.replacingOccurrences(of: "25544", with: String(format: "%05d", $0.noradIndex))
         }.joined(separator: "\n").utf8)
         let service = OrbitalService(directory: folder, fetch: { url in
-            XCTAssertEqual(url, SatelliteCategory.brightest100.url, "Do not download the all-active catalog")
+            XCTAssertEqual(url, SatelliteCategory.active.url)
             return data
         })
         let catalog = try await service.skyCatalog()
-        let expected = magnitudes.sorted {
-            $0.magnitude == $1.magnitude ? $0.noradIndex < $1.noradIndex : $0.magnitude! < $1.magnitude!
-        }.prefix(100).map(\.noradIndex)
-        XCTAssertEqual(catalog.satellites.map(\.noradIndex), expected)
-        XCTAssertFalse(FileManager.default.fileExists(atPath: folder.appendingPathComponent("active.txt").path))
+        XCTAssertEqual(catalog.satellites.map(\.noradIndex), magnitudes.map(\.noradIndex))
+        XCTAssertEqual(catalog.satellites.count, 150)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: folder.appendingPathComponent("active.txt").path))
     }
 
     func testCatalogEnrichmentStopsAtTheNextRecordAfterCancellation() async throws {
@@ -861,7 +859,7 @@ final class ForecastTests: XCTestCase {
     func testSkyMemoryCacheUsesTheOriginalDiskExpiry() async throws {
         let folder = try cacheDirectory()
         defer { try? FileManager.default.removeItem(at: folder) }
-        let file = folder.appendingPathComponent(SatelliteCategory.brightest100.localFilename).appendingPathExtension("txt")
+        let file = folder.appendingPathComponent(SatelliteCategory.active.localFilename).appendingPathExtension("txt")
         try tle.write(to: file)
         let downloaded = Date().addingTimeInterval(-5 * 3600)
         try FileManager.default.setAttributes([.modificationDate: downloaded], ofItemAtPath: file.path)
@@ -930,13 +928,14 @@ final class ForecastTests: XCTestCase {
         XCTAssertNil(model.state.filteredSatellites)
     }
 
-    func testSkyLocationChangeDoesNotLeavePredictionPermanentlyBusy() async {
+    func testSkyLocationChangeDoesNotLeavePredictionPermanentlyBusy() async throws {
+        let fixture = try await Fixture(catalog: AppStarCatalog())
         let started = expectation(description: "Prediction started")
         var pending: CheckedContinuation<[RealtimePropagationResult], Error>?
         let model = RealtimeSkyModel(state: .init(observer: observer), predict: { _, _, _ in
             try await withCheckedThrowingContinuation { pending = $0; started.fulfill() }
         })
-        model.send(.propagateCurrentEphemerides([], observer: observer, julianDate: date.julianDate))
+        model.send(.propagateCurrentEphemerides([fixture.info], observer: observer, julianDate: date.julianDate))
         await fulfillment(of: [started], timeout: 1)
         model.state.observer = LatLonAlt(40, -74, 0)
         pending?.resume(returning: [])
@@ -946,6 +945,64 @@ final class ForecastTests: XCTestCase {
         }
         XCTAssertFalse(model.state.resources.isPropagatingEphemerides)
         XCTAssertTrue(model.state.resources.displayResults.isEmpty)
+    }
+
+    func testHorizonRechecksBeforeRiseAgainstDensePropagation() async throws {
+        let lines = String(decoding: tle, as: UTF8.self).split(separator: "\n").map(String.init)
+        let info = SatelliteInfo(elements: try Elements(lines[0], lines[1], lines[2]))
+        var deferred = 0
+        for site in [observer, LatLonAlt(0, 0, 0), LatLonAlt(70, 20, 2)] {
+            // Independent one-second SGP4 reference covering more than one LEO orbit.
+            let samples = try (0...7200).map { second in
+                try info.generateSnapshot(julianDate: date.julianDate + Double(second) / 86400, observer: site)
+            }
+            for second in stride(from: 0, through: 6900, by: 10) {
+                let sample = samples[second]
+                guard sample.position.elev < -1 else { continue }
+                let delay = OrbitalService.horizonRecheckDelay(elevation: sample.position.elev,
+                    distance: sample.position.dist, observerAltitude: site.alt)
+                if delay > 30 { deferred += 1 }
+                for offset in 0...Int(delay) {
+                    XCTAssertLessThanOrEqual(samples[second + offset].position.elev, 0,
+                        "A satellite rose before its scheduled recheck at offset \(second), delay \(delay)")
+                }
+            }
+        }
+        XCTAssertGreaterThan(deferred, 100, "Well-below-horizon objects should skip many frames")
+        XCTAssertEqual(OrbitalService.horizonRecheckDelay(elevation: -.infinity, distance: 1000, observerAltitude: 0), 0.5)
+        XCTAssertEqual(OrbitalService.horizonRecheckDelay(elevation: -0.1, distance: 1000, observerAltitude: 0), 0.5)
+    }
+
+    func testSkyQueueOnlyPropagatesDueCandidatesIncludingExactDeadline() async throws {
+        let lines = String(decoding: tle, as: UTF8.self).split(separator: "\n").map(String.init)
+        let satellites = try (30000..<30200).map { id in
+            SatelliteInfo(elements: try Elements(lines[0], lines[1].replacingOccurrences(of: "25544", with: "\(id)"),
+                lines[2].replacingOccurrences(of: "25544", with: "\(id)")))
+        }
+        var batches: [[UInt]] = []
+        let start = date.julianDate
+        let model = RealtimeSkyModel(state: .init(observer: observer), predict: { candidates, site, time in
+            batches.append(candidates.map(\.noradIndex))
+            return try candidates.map { info in
+                .init(noradIndex: info.noradIndex,
+                    snapshot: try info.generateSnapshot(julianDate: time, observer: site), satelliteInfo: info,
+                    nextCheckJulianDate: time + (info.noradIndex < 30002 ? 1 : 300) / 86400)
+            }
+        })
+        func tick(_ time: Double) async {
+            model.send(.propagateCurrentEphemerides(satellites, observer: observer, julianDate: time))
+            for _ in 0..<1000 where model.state.resources.isPropagatingEphemerides { await Task.yield() }
+            XCTAssertFalse(model.state.resources.isPropagatingEphemerides)
+        }
+        await tick(start)
+        await tick(start + 0.5 / 86400)
+        XCTAssertEqual(batches.count, 1, "No work should be scheduled before the earliest deadline")
+        await tick(start + 1 / 86400)
+        XCTAssertEqual(batches.map(\.count), [200, 2])
+        XCTAssertEqual(Set(batches[1]), [30000, 30001])
+        XCTAssertEqual(model.state.resources.results.count, 200, "Due entries must be replaced, not duplicated")
+        await tick(start - 1 / 86400)
+        XCTAssertEqual(batches.last?.count, 200, "Backward clock changes invalidate deferred work")
     }
 
     private func cacheDirectory() throws -> URL {

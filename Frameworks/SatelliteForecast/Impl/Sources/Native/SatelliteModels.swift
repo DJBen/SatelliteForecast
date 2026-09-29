@@ -176,7 +176,9 @@ public final class RealtimeSkyModel {
       let generation = predictionGeneration
       let candidates =
         local.resources.results.isEmpty
-        ? satellites : local.resources.results.prefix(upTo: date).map(\.1.satelliteInfo)
+        ? satellites : local.resources.results.prefix(through: date).map(\.1.satelliteInfo)
+      guard !candidates.isEmpty else { return }
+      let dueCount = local.resources.results.prefix(through: date).count
       local.resources.isPropagatingEphemerides = true
       predictionTask = Task { [weak self, predict] in
         defer {
@@ -190,11 +192,13 @@ public final class RealtimeSkyModel {
           guard let self, predictionGeneration == generation,
             state.observer == nil || state.observer == observer
           else { return }
-          local.resources.results = local.resources.results.suffix(from: date)
+          local.resources.results = local.resources.results.dropFirst(dueCount)
           for result in results {
             local.resources.results.insert((result.nextCheckJulianDate, result))
           }
-          local.resources.displayResults = local.resources.results.map(\.1).filter {
+          let updatedIDs = Set(candidates.map(\.noradIndex))
+          let retained = local.resources.displayResults.filter { !updatedIDs.contains($0.noradIndex) }
+          local.resources.displayResults = retained + results.filter {
             $0.snapshot.position.elev > 0 || ($0.nextSnapshot?.position.elev ?? -90) > 0
           }
         } catch {}
@@ -224,7 +228,7 @@ public final class RealtimeSkyModel {
         metric.finish(catalog.satellites.isEmpty ? "empty" : "success", count: catalog.satellites.count)
         // Only new elements invalidate predictions. The prior catalog stays visible while refreshing.
         send(.purgeElements)
-        local.satellites = .loaded(Array(catalog.satellites.filter { $0.elements.orbitTypeByAltitude == .leo }.prefix(OrbitalService.liveSkyLimit)))
+        local.satellites = .loaded(catalog.satellites)
         refreshAfter = catalog.refreshAfter
       } catch {
         guard !Task.isCancelled, !(error is CancellationError),

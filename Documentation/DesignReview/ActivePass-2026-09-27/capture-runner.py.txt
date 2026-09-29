@@ -1,0 +1,20 @@
+import subprocess,json,time
+from pathlib import Path
+root=Path.cwd(); out=root/'Documentation/DesignReview/ActivePass-2026-09-27'; out.mkdir(exist_ok=True)
+plan=root/'SatelliteForecast.xctestplan'; original=plan.read_text(); data=json.loads(original)
+data['defaultOptions']['environmentVariableEntries'].append({'key':'ACTIVE_PASS_REVIEW_OUTPUT','value':str(out)})
+sim='0D39CA43-2212-46F4-AE51-A38A3DDDB9BC'
+subprocess.run(['xcrun','simctl','ui',sim,'appearance','dark'],check=True)
+try:
+ plan.write_text(json.dumps(data,indent=2)+'\n')
+ with (out/'capture.log').open('w') as log:
+  p=subprocess.Popen(['xcodebuildmcp','simulator','test','--project-path',str(root/'SatelliteForecast.xcodeproj'),'--scheme','SatelliteForecastApp','--simulator-id',sim,'--derived-data-path','/tmp/SatelliteForecast-build','--json',json.dumps({'extraArgs':['-disableAutomaticPackageResolution','-onlyUsePackageVersionsFromResolvedFile','-skipPackageUpdates','-parallel-testing-enabled','NO','-collect-test-diagnostics','never','-only-testing:SatelliteForecastTests/ScreenSnapshotTests/testActivePassExperienceReview']})],stdout=log,stderr=subprocess.STDOUT)
+  while p.poll() is None:
+   ready=out/'capture-ready.txt'
+   if ready.exists():
+    name=ready.read_text().strip(); subprocess.run(['xcrun','simctl','io',sim,'screenshot',str(out/(name+'.png'))],check=True,capture_output=True)
+    ready.unlink(); (out/'capture-done.txt').write_text(name); print(name,flush=True)
+   time.sleep(.2)
+  print('EXIT',p.returncode,flush=True)
+finally:
+ plan.write_text(original)

@@ -1,0 +1,58 @@
+    func testActivePassExperienceReview() async throws {
+        guard let output = ProcessInfo.processInfo.environment["ACTIVE_PASS_REVIEW_OUTPUT"] else { throw XCTSkip("Review only") }
+        let folder = URL(fileURLWithPath: output)
+        NSTimeZone.default = TimeZone(identifier: "America/Los_Angeles")!
+        let catalog = try await AppStarCatalog.load()
+        let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.first as? UIWindowScene)
+        let window = UIWindow(windowScene: scene)
+        window.overrideUserInterfaceStyle = .dark
+        let host = StoreHostingController(rootView: AnyView(Color.black))
+        window.rootViewController = host
+        window.makeKeyAndVisible()
+        defer { window.isHidden = true; window.rootViewController = nil }
+        func capture(_ name: String, _ view: AnyView) async throws {
+            host.rootView = AnyView(view.id(name)
+                .environment(\.motionManagerKey, CMMotionManager())
+                .environment(\.locale, Locale(identifier: "en_US"))
+                .environment(\.timeZone, TimeZone(identifier: "America/Los_Angeles")!)
+                .environment(\.colorScheme, .dark).transaction { $0.animation = nil })
+            host.view.frame = window.bounds
+            host.view.layoutIfNeeded()
+            try await Task.sleep(for: .seconds(5))
+            let ready = folder.appendingPathComponent("capture-ready.txt")
+            let done = folder.appendingPathComponent("capture-done.txt")
+            try? FileManager.default.removeItem(at: done)
+            try name.write(to: ready, atomically: true, encoding: .utf8)
+            for _ in 0..<300 {
+                if FileManager.default.fileExists(atPath: done.path) { return }
+                try await Task.sleep(for: .milliseconds(200))
+            }
+            XCTFail("Capture timed out")
+        }
+        var records: [[String: String]] = []
+        for station in [ProcessInfo.processInfo.environment["REVIEW_STATION"] ?? "iss"] {
+            let tle = try String(contentsOf: root.appendingPathComponent("SatelliteForecastTests/Fixtures/AppStore/\(station).tle"), encoding: .utf8).split(whereSeparator: \.isNewline).map(String.init)
+            let fixture = try Fixture(catalog: catalog, now: Date(timeIntervalSince1970: 1789002000), tle: tle)
+            let featured = try XCTUnwrap(fixture.passes.first { $0.pass.visibility == .visible && ($0.pass.highestIlluminated?.elev ?? 0) > 45 && $0.pass.sunElevationAtTransit < -10 })
+            let pass = featured.pass
+            let category: SpecialSatellite = station == "iss" ? .iss : .tianhe
+            let start = ObservationOpportunity.start(pass), end = ObservationOpportunity.end(pass)
+            let active = start + (end-start)*0.55
+
+            let context=PassViewContext(passIndex:0,satelliteInfo:fixture.info,satelliteCommonName:station == "iss" ? "ISS" : "Tiangong",category:station == "iss" ? .iss : .tianhe,julianDateRange:fixture.range,observer:fixture.observer,passSnapshots:featured,starManager:catalog,julianDateProvider:{active})
+            let controller=PlanetariumController()
+            let planetarium=PlanetariumView(context:context,controller:controller).task {
+                try? await Task.sleep(for:.milliseconds(750))
+                controller.setMotionEnabled(false)
+                controller.animateToSatellite()
+            }
+            try await capture("\(station)-active-planetarium-centered",AnyView(planetarium))
+            var detail=fixture.factory.pass(context,isCompassEnabled:false)
+            let offset=active-Date().julianDate
+            detail.skyChartFactory=ViewFactory { c in
+                SkyChart(viewModel:SkyChartModel(state:.init(julianDateOffset:offset),renderer:fixture.session.renderer),context:c,backgroundSkyViewFactory:ViewFactory {fixture.factory.background($0)})
+            }
+            try await capture("\(station)-detail",AnyView(NavigationStack {detail}))
+        }
+
+    }

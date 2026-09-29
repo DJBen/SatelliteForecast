@@ -337,6 +337,31 @@ final class PlanetariumTests: XCTestCase {
 
 @MainActor
 extension PlanetariumTests {
+    func testObserverRefreshPreservesCameraAndRenderer() async throws {
+        let fixture = try await Fixture(catalog: AppStarCatalog())
+        let date = 2459373.9975694446
+        let controller = PlanetariumController()
+        defer { controller.stop() }
+        controller.configureSky(observer: fixture.observer, starManager: fixture.catalog, julianDate: date)
+        controller.pointCamera(azimuth: 137, elevation: 43)
+        controller.zoom(by: 0.5)
+        let renderer = try XCTUnwrap(controller.renderer)
+        let forward = renderer.uniforms.forward
+        let fieldOfView = controller.fieldOfView
+        let previousZenith = renderer.uniforms.zenith
+        let moved = LatLonAlt(37.5, -122.2, 0.1)
+        controller.updateObserver(moved, julianDate: date + 5 / 86400)
+        XCTAssertTrue(controller.renderer === renderer)
+        XCTAssertEqual(renderer.uniforms.forward, forward, "GPS refresh must not reset manual pointing")
+        XCTAssertEqual(controller.fieldOfView, fieldOfView)
+        XCTAssertNotEqual(renderer.uniforms.zenith, previousZenith, "The observer projection must still update")
+        controller.configureSky(observer: LatLonAlt(40, -74, 0), starManager: fixture.catalog,
+                                julianDate: date + 10 / 86400)
+        XCTAssertTrue(controller.renderer === renderer)
+        XCTAssertEqual(renderer.uniforms.forward, forward, "Reappearing after a location change preserves the camera")
+        XCTAssertEqual(controller.fieldOfView, fieldOfView)
+    }
+
     func testLiveSatelliteInterpolationAndExpiry() async throws {
         let fixture = try await Fixture(catalog: AppStarCatalog())
         let pass = try XCTUnwrap(fixture.passes.first { $0.pass.culmination.elev > 40 })
@@ -375,6 +400,65 @@ extension PlanetariumTests {
         XCTAssertNotNil(controller.renderer, "The sky remains usable without any passing satellite")
     }
 
+    func testExcludedLiveSatelliteClearsSelectionImmediatelyAndCanReturn() async throws {
+        let fixture = try await Fixture(catalog: AppStarCatalog())
+        let pass = try XCTUnwrap(fixture.passes.first { $0.pass.culmination.elev > 40 })
+        let date = pass.pass.culmination.julianDate
+        let controller = PlanetariumController()
+        defer { controller.stop() }
+        controller.configureSky(observer: fixture.observer, starManager: fixture.catalog, julianDate: date)
+        let results = try await OrbitalService().realtime(satellites: [fixture.info], observer: fixture.observer, date: date)
+        controller.updateLiveSatellites(results)
+        controller.selectLiveSatellite(fixture.info.noradIndex, center: false)
+        XCTAssertNotNil(controller.selection)
+        XCTAssertNotNil(controller.selectedLiveTrack)
+        controller.updateLiveSatellites([])
+        XCTAssertNil(controller.selection, "Filter changes must not wait for another frame")
+        XCTAssertNil(controller.selectedLiveTrack)
+        controller.updateLiveSatellites(results)
+        controller.selectLiveSatellite(fixture.info.noradIndex, center: false)
+        XCTAssertNotNil(controller.selection, "Restoring filtered results must make the satellite selectable again")
+    }
+
+    func testLiveSelectionTrackAndOffscreenNavigation() async throws {
+        let fixture = try await Fixture(catalog: AppStarCatalog())
+        let pass = try XCTUnwrap(fixture.passes.first { $0.pass.culmination.elev > 40 })
+        let date = pass.pass.culmination.julianDate
+        let controller = PlanetariumController()
+        defer { controller.stop() }
+        controller.view.frame = CGRect(x: 0, y: 0, width: 440, height: 956)
+        controller.configureSky(observer: fixture.observer, starManager: fixture.catalog, julianDate: date)
+        controller.updateLiveSatellites(try await OrbitalService().realtime(
+            satellites: [fixture.info], observer: fixture.observer, date: date))
+        controller.selectLiveSatellite(fixture.info.noradIndex, center: false)
+        let track = try XCTUnwrap(controller.selectedLiveTrack)
+        XCTAssertLessThan(try XCTUnwrap(track.samples.first).date, date)
+        XCTAssertGreaterThan(try XCTUnwrap(track.samples.last).date, date)
+        let expected = try fixture.info.generateSnapshot(julianDate: date + 60 / 86400, observer: fixture.observer)
+        let sample = try XCTUnwrap(track.sample(at: date + 60 / 86400))
+        XCTAssertLessThan(simd_length(sample.direction - PlanetariumGeometry.direction(
+            azimuth: expected.position.azim, elevation: expected.position.elev)), 0.001)
+        XCTAssertEqual(controller.renderer?.passElapsedSeconds ?? 0, 300, accuracy: 0.01)
+        let position = try fixture.info.generateSnapshot(julianDate: date, observer: fixture.observer).position
+        controller.pointCamera(azimuth: position.azim + 180, elevation: -position.elev)
+        controller.updateNavigation()
+        try await Task.sleep(for: .milliseconds(50))
+        XCTAssertNotNil(controller.navigation.bearing)
+        controller.focusSelection()
+        let centered = try XCTUnwrap(controller.selectedScreenPosition)
+        XCTAssertEqual(centered.x, 220, accuracy: 0.1)
+        XCTAssertEqual(centered.y, 478, accuracy: 0.1)
+        controller.updateNavigation()
+        try await Task.sleep(for: .milliseconds(50))
+        XCTAssertNil(controller.navigation.bearing)
+        controller.clearSelection()
+        XCTAssertNil(controller.selectedLiveTrack)
+        XCTAssertNil(controller.navigation.bearing)
+        controller.selectLiveSatellite(fixture.info.noradIndex, center: false)
+        controller.updateTime(date + 6 / 86400)
+        XCTAssertNil(controller.selectedLiveTrack, "Expired selections must clear their path as well as their marker")
+    }
+
     /// Opt-in full-tab review on the simulator; real recorded TLEs, no catalog networking.
     func testLiveSkyNowDarkReview() async throws {
         let marker = "/tmp/satellite-live-sky-review"
@@ -390,10 +474,13 @@ extension PlanetariumTests {
         let results = try await OrbitalService().realtime(satellites: [fixture.info], observer: fixture.observer, date: date)
         let model = RealtimeSkyModel(state: .init(resources: .init(displayResults: results),
             satellites: .loaded([fixture.info]), observer: fixture.observer))
-        let root = RootView(selectedTab: .constant(.realtimeSky), settings: fixture.session.settings,
+        let controller = PlanetariumController()
+        defer { controller.stop() }
+        let root = RootView(selectedTab: .constant(FileManager.default.fileExists(atPath: "/tmp/satellite-unselected-tab-review") ? .forecast : .realtimeSky), settings: fixture.session.settings,
             context: .init(starManager: fixture.catalog, julianDateProvider: { date }),
             realtimeSkyViewFactory: {
-                RealtimeSkyViewImpl(viewModel: model, context: $0, backgroundSkyViewFactory: .crash)
+                LiveSkyReviewSky(content: LiveSkyPlanetarium(viewModel: model, context: $0,
+                    observer: fixture.observer, chooseLocation: nil, controller: controller))
             },
             satelliteOverviewViewFactory: { _ in LiveSkyReviewForecast() },
             satelliteCategoryViewFactory: { _ in LiveSkyReviewSatellites() },
@@ -401,13 +488,35 @@ extension PlanetariumTests {
         let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.first as? UIWindowScene)
         let window = UIWindow(windowScene: scene)
         window.overrideUserInterfaceStyle = .dark
-        window.rootViewController = UIHostingController(rootView: root.preferredColorScheme(.dark).environment(\.scenePhase, .active))
+        window.rootViewController = UIHostingController(rootView: root.preferredColorScheme(.dark).environment(\.scenePhase, .active)
+            .overlay(alignment: .bottomTrailing) {
+                if FileManager.default.fileExists(atPath: "/tmp/satellite-filter-panel-review") {
+                    Color.clear.frame(width: 52, height: 52)
+                        .popover(isPresented: .constant(true), arrowEdge: .bottom) {
+                            SkyNowFilterPanel().presentationCompactAdaptation(.popover)
+                        }
+                        .padding(.trailing, 20).padding(.bottom, 96)
+                }
+            }
+            .sheet(isPresented: .constant(FileManager.default.fileExists(atPath: "/tmp/satellite-passing-sheet-review") || FileManager.default.fileExists(atPath: "/tmp/satellite-brightness-review"))) {
+                if FileManager.default.fileExists(atPath: "/tmp/satellite-brightness-review") {
+                    BrightnessReportSheet(target: .init(noradID: fixture.info.noradIndex, name: "International Space Station"))
+                } else {
+                    SkyNowPassingSheet(satellites: results) { _ in }
+                }
+            })
         window.makeKeyAndVisible()
         defer { window.isHidden = true; window.rootViewController = nil }
         try await Task.sleep(for: .seconds(3))
+        controller.selectLiveSatellite(fixture.info.noradIndex, center: false)
         try "ready: JD \(date), azimuth \(snapshot.position.azim), elevation \(snapshot.position.elev)".write(toFile: marker + "-ready", atomically: true, encoding: .utf8)
-        for _ in 0..<600 {
+        for _ in 0..<1800 {
             if !FileManager.default.fileExists(atPath: marker) { return }
+            if FileManager.default.fileExists(atPath: marker + "-offscreen") {
+                controller.pointCamera(azimuth: snapshot.position.azim + 110, elevation: 20)
+            } else if FileManager.default.fileExists(atPath: marker + "-center") {
+                controller.focusSelection()
+            }
             try await Task.sleep(for: .milliseconds(100))
         }
     }
@@ -697,6 +806,10 @@ extension PlanetariumTests {
             XCTAssertEqual(point.x, anchor.x, accuracy: 0.1)
             XCTAssertEqual(point.y, anchor.y, accuracy: 0.1)
         }
+        controller.focusSelection()
+        let centeredStar = try XCTUnwrap(controller.selectedScreenPosition)
+        XCTAssertEqual(centeredStar.x, 220, accuracy: 0.1)
+        XCTAssertEqual(centeredStar.y, 478, accuracy: 0.1)
         controller.clearSelection()
         var clock = 100.0
         controller.animationClock = { clock }
@@ -734,6 +847,10 @@ extension PlanetariumTests {
             try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
             let image = try await renderer.snapshot(size: CGSize(width: 1320, height: 2868), scale: 3)
             try image.pngData()!.write(to: folder.appendingPathComponent("tracked-moon-dark.png"))
+            controller.focusSelection()
+            let centeredMoon = try XCTUnwrap(controller.selectedScreenPosition)
+            XCTAssertEqual(centeredMoon.x, 220, accuracy: 0.1)
+            XCTAssertEqual(centeredMoon.y, 478, accuracy: 0.1)
             return
         }
         XCTFail("Fixture must include an above-horizon Moon")
@@ -1963,3 +2080,8 @@ extension PlanetariumTests {
 private struct LiveSkyReviewForecast: SatelliteOverviewView { var body: some View { Color.clear } }
 private struct LiveSkyReviewSatellites: SatelliteCategoryView { var body: some View { Color.clear } }
 private struct LiveSkyReviewSettings: SettingsOverviewView { var body: some View { Color.clear } }
+
+private struct LiveSkyReviewSky: RealtimeSkyView {
+    let content: LiveSkyPlanetarium
+    var body: some View { content }
+}

@@ -256,3 +256,16 @@ and deploy to https://space-station-passes.web.app with `firebase deploy --only 
 - Keep TestFlight-only releases separate from App Store submissions. Preflight on
   September 28, 2026 confirmed 2.0.0 as `READY_FOR_SALE` / `READY_FOR_DISTRIBUTION`;
   2.0.1 preparation did not change that public version or its screenshots.
+
+## 2.0.1 build 22 follow-up
+
+- For this patch, the user explicitly requested retaining all current store screenshots.
+  Creating 2.0.1 from 2.0.0 inherited six APP_IPHONE_67 images in each of eight locales;
+  no capture or screenshot upload is needed when the user elects to retain them.
+- Use `--release-type AFTER_APPROVAL` when automatic release after App Review is requested.
+- Brightness reports now include an installation ID and raw Firebase messaging token,
+  in addition to satellite, magnitude and observation time. The public privacy page
+  documents this optional submission separately from analytics and reminders.
+- Full behavior tests passed with 148 passed / 3 optional review fixtures skipped.
+  Some behavior tests regenerate design-review images; restore only those incidental
+  image/fixture changes that were clean before the run.

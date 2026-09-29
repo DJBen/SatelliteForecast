@@ -748,3 +748,61 @@ The localized string for the status of a spare satellite */
 "Unable to load satellites" = "No se pudieron cargar los satélites";
 "Sunlit" = "Iluminado por el Sol";
 "In Earth's shadow" = "En la sombra de la Tierra";
+
+"Center selection" = "Centrar selección";
+
+"Filter" = "Filtrar";
+"Include geosynchronous satellites" = "Incluir satélites geosíncronos";
+"No satellites match this filter" = "Ningún satélite coincide con este filtro";
+
+"Include unlit" = "Incluir satélites no iluminados";
+
+"Search satellites" = "Buscar satélites";
+
+"Passing now: %lld" = "Pasando ahora: %lld";
+
+"Report brightness" = "Informar del brillo";
+
+"Report" = "Enviar";
+
+"Cancel" = "Cancelar";
+
+"Report received" = "Informe recibido";
+
+"Thank you for reporting your observation." = "Gracias por compartir tu observación.";
+
+"Magnitude" = "Magnitud";
+
+"Magnitude %.1f" = "Magnitud %.1f";
+
+"Estimate the brightness you observed. Lower magnitudes are brighter." = "Estima el brillo observado. Las magnitudes menores indican mayor brillo.";
+
+"Visibility depends on sky conditions. Report only what you actually observed." = "La visibilidad depende del cielo. Informa solo de lo que hayas observado.";
+
+"Could not send your report. Check your connection and try again." = "No se pudo enviar el informe. Comprueba la conexión e inténtalo de nuevo.";
+
+"Very bright — comparable to the brightest stars, such as Vega." = "Muy brillante — comparable a las estrellas más brillantes, como Vega.";
+
+"Bright — stands out among most nearby stars." = "Brillante — destaca entre la mayoría de las estrellas cercanas.";
+
+"Moderately bright — roughly comparable to Polaris." = "Bastante brillante — aproximadamente como la Estrella Polar.";
+
+"Moderate — easier to see away from bright city lights." = "Moderado — más fácil de ver lejos de las luces de la ciudad.";
+
+"Dim — best seen under a dark sky with adjusted eyes." = "Tenue — se ve mejor con un cielo oscuro y la vista adaptada.";
+
+"Faint — may be difficult to see without a clear, dark sky." = "Débil — puede ser difícil de ver sin un cielo despejado y oscuro.";
+
+"Satellite distance" = "Distancia de satélites";
+
+"LEO only" = "Solo LEO";
+
+"Up to MEO" = "Hasta MEO";
+
+"All" = "Todos";
+
+"Shows satellites less than 600 km from you, emphasizing nearby low-orbit passes." = "Muestra satélites a menos de 600 km de ti, priorizando los pasos cercanos en órbita baja.";
+
+"No distance limit. Includes medium-orbit and geosynchronous satellites." = "Sin límite de distancia. Incluye satélites de órbita media y geosíncrona.";
+
+"Shows satellites less than 23,000 km from you, including GPS and other medium-orbit satellites." = "Muestra satélites a menos de 23.000 km de ti, incluidos los GPS y otros de órbita media.";

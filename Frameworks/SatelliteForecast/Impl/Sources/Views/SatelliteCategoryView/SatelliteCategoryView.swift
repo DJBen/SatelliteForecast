@@ -37,6 +37,7 @@ public struct SatelliteCategoryViewContext {
 
 public struct SatelliteCategoryViewImpl: SatelliteCategoryView {
     @State var viewModel: SatelliteCategoryModel
+    @State private var navigationPath: NavigationPath
     let context: SatelliteCategoryViewContext
     let listViewFactory: ViewFactory<SatelliteListViewContext, SatelliteListView>
     /// Optional content shown above the categories, such as the station cards.
@@ -53,6 +54,7 @@ public struct SatelliteCategoryViewImpl: SatelliteCategoryView {
         stationDestination: ((SpecialSatellite) -> AnyView)? = nil
     ) {
         self.viewModel = viewModel
+        self._navigationPath = State(initialValue: viewModel.state.navigationPath)
         self.context = context
         self.listViewFactory = listViewFactory
         self.header = header
@@ -60,15 +62,7 @@ public struct SatelliteCategoryViewImpl: SatelliteCategoryView {
     }
 
     public var body: some View {
-        NavigationStack(
-            path: Binding<NavigationPath>(
-                get: {
-                    viewModel.state.navigationPath
-                }, set: { navigationPath in
-                    viewModel.send(.navigate(navigationPath))
-                }
-            )
-        ) {
+        NavigationStack(path: $navigationPath) {
             GeometryReader { geometry in
                 ScrollView {
                     LazyVStack(
@@ -143,10 +137,15 @@ public struct SatelliteCategoryViewImpl: SatelliteCategoryView {
                 }
             }
         }
-        .environment(\.passNavigationPath, Binding(
-            get: { viewModel.state.navigationPath },
-            set: { viewModel.send(.navigate($0)) }
-        ))
+        .environment(\.passNavigationPath, $navigationPath)
+        .onChange(of: navigationPath) { _, path in
+            if viewModel.state.navigationPath != path {
+                viewModel.send(.navigate(path))
+            }
+        }
+        .onChange(of: viewModel.state.navigationPath) { _, path in
+            if navigationPath != path { navigationPath = path }
+        }
         .modifier(CompactHeightLayout())
         .tint(AppTheme.accent)
     }

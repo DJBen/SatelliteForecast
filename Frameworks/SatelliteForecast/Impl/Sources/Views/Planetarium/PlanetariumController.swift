@@ -126,6 +126,8 @@ struct PlanetariumLiveSatellite {
     private var liveSatellites: [PlanetariumLiveSatellite] = []
     private var liveSatelliteLabels: [UInt: MTLTexture] = [:]
     private var selectedLiveSatellite: UInt?
+    private(set) var selectedLiveTrack: PlanetariumSatelliteTrack?
+    private var liveTrackDate = -Double.infinity
     var liveDateProvider: (() -> Double)?
     private var catalogTask: Task<Void, Never>?
     private var selectionTask: Task<Void, Never>?
@@ -265,7 +267,11 @@ struct PlanetariumLiveSatellite {
     }
 
     func configureSky(observer: LatLonAlt, starManager: AppStarCatalog, julianDate: Double) {
-        guard self.context == nil, let renderer else { return }
+        if self.context != nil {
+            updateObserver(observer, julianDate: julianDate)
+            return
+        }
+        guard let renderer else { return }
         let context = PlanetariumSkyContext(observer: observer, starManager: starManager)
         self.context = context
         tiers = PlanetariumStarTiers(stars: context.starManager.snapshot.stars)
@@ -303,6 +309,19 @@ struct PlanetariumLiveSatellite {
         updateTime(julianDate)
     }
 
+    /// A fresh GPS fix changes the sky projection, not the user's camera.
+    func updateObserver(_ observer: LatLonAlt, julianDate: Double) {
+        guard let context, context.observer != observer else { return }
+        self.context = PlanetariumSkyContext(observer: observer, starManager: context.starManager)
+        clearSelection()
+        cameraPan = nil
+        updateLiveSatellites([])
+        lastSkyDate = -Double.infinity
+        lastMoonOrbitDate = -Double.infinity
+        moonOrbitKey = ""
+        updateTime(julianDate)
+    }
+
     func updateLiveSatellites(_ results: [RealtimePropagationResult]) {
         liveSatellites = results.sorted {
             let a = $0.snapshot.visualMagnitude ?? 99, b = $1.snapshot.visualMagnitude ?? 99
@@ -318,7 +337,14 @@ struct PlanetariumLiveSatellite {
                 RealtimeSkyViewImpl.satelliteLabelInGraph(satellite.result.satelliteInfo),
                 color: MoonstonePalette.uiColor(MoonstonePalette.accentHex), celestial: false))
         }
-        if let selectedLiveSatellite { selectLiveSatellite(selectedLiveSatellite, center: false) }
+        if let selectedLiveSatellite {
+            if liveSatellites.contains(where: { $0.result.noradIndex == selectedLiveSatellite }) {
+                selectLiveSatellite(selectedLiveSatellite, center: false)
+            } else {
+                clearSelection()
+                satelliteVisible = false
+            }
+        }
     }
 
     func selectLiveSatellite(_ id: UInt, center: Bool = true) {
@@ -326,6 +352,17 @@ struct PlanetariumLiveSatellite {
               let direction = satellite.direction(at: currentSkyDate) else { return }
         if selectedLiveSatellite != id { clearSelection() }
         selectedLiveSatellite = id
+        if selectedLiveTrack == nil || abs(currentSkyDate - liveTrackDate) * 86400 >= 60,
+           let context {
+            // Reuse the pass renderer, but keep this rolling track separate from a forecast pass.
+            liveTrackDate = currentSkyDate
+            selectedLiveTrack = try? PlanetariumSatelliteTrack(info: satellite.result.satelliteInfo,
+                observer: context.observer, range: (currentSkyDate - 300 / 86400)...(currentSkyDate + 300 / 86400))
+            renderer?.setPass(selectedLiveTrack?.vertices ?? [])
+        }
+        if let start = selectedLiveTrack?.samples.first?.date {
+            renderer?.passElapsedSeconds = Float((currentSkyDate - start) * 86400)
+        }
         selectionDirection = direction
         satelliteDirection = direction
         satelliteVisible = true
@@ -344,7 +381,9 @@ struct PlanetariumLiveSatellite {
         if trackingSelection, selectionDirection != nil, motionEnabled { setMotionEnabled(false) }
         let previousSelection = selectionDirection
         currentSkyDate = date
-        if let passStartDate { renderer?.passElapsedSeconds = Float((date - passStartDate) * 86400) }
+        if let start = selectedLiveTrack?.samples.first?.date ?? passStartDate {
+            renderer?.passElapsedSeconds = Float((date - start) * 86400)
+        }
         let interval = fieldOfView < 2 ? 1.0 : 10.0
         if !lastSkyDate.isFinite || date < lastSkyDate || (date - lastSkyDate) * 86400 >= ephemerisInterval || interval != ephemerisInterval {
             ephemerisInterval = interval
@@ -977,6 +1016,13 @@ struct PlanetariumLiveSatellite {
         }
     }
 
+    func focusSelection() {
+        guard let direction = selectionDirection else { return }
+        setMotionEnabled(false)
+        let angles = PlanetariumGeometry.angles(direction)
+        pointCamera(azimuth: angles.azimuth, elevation: angles.elevation)
+    }
+
     func focusSatellite() {
         let angles = PlanetariumGeometry.angles(satelliteDirection)
         pointCamera(azimuth: angles.azimuth, elevation: angles.elevation)
@@ -1065,6 +1111,13 @@ struct PlanetariumLiveSatellite {
     }
     func clearSelection() {
         selectionTask?.cancel(); selectionTask = nil
+        if selectedLiveSatellite != nil {
+            selectedLiveTrack = nil
+            liveTrackDate = -Double.infinity
+            renderer?.setPass(satelliteTrack?.vertices ?? [])
+            satelliteVisible = false
+            navigation.bearing = nil
+        }
         selectedLiveSatellite = nil
         selection = nil; selectionDirection = nil; selectedEquatorial = nil; selectedPlanetName = nil
     }
@@ -1148,7 +1201,7 @@ struct PlanetariumLiveSatellite {
             selectLiveSatellite(satellite.result.noradIndex, center: false)
             return
         }
-        selectedLiveSatellite = nil
+        if selectedLiveSatellite != nil { clearSelection() }
         var bestDistance: CGFloat = 26
         var bestStar: Star?
         var bestBody: Body?

@@ -85,7 +85,6 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
             if let observer = viewModel.state.observer {
                 LiveSkyPlanetarium(viewModel: viewModel, context: context, observer: observer,
                     chooseLocation: locationSettings == nil ? nil : { showingLocation = true })
-                    .id(observer)
             } else {
                 ContentUnavailableView {
                     Label(Self.Navigation.title, systemImage: "moon.stars")
@@ -134,7 +133,7 @@ public struct RealtimeSkyViewImpl: RealtimeSkyView {
     }
 }
 
-private struct LiveSkyPlanetarium: View {
+struct LiveSkyPlanetarium: View {
     let viewModel: RealtimeSkyModel
     let context: RealtimeSkyViewContext
     let observer: LatLonAlt
@@ -146,10 +145,27 @@ private struct LiveSkyPlanetarium: View {
     @AppStorage("planetariumLabels") private var labels = true
     @AppStorage("planetariumLines") private var lines = true
     @AppStorage("planetariumFPS") private var showFPS = false
+    @AppStorage("skyNowOrbitRange") private var orbitRange = SkyNowSatelliteFilter.initialRange
+    @AppStorage("skyNowIncludeUnlit") private var includeUnlit = true
+
+    @MainActor init(viewModel: RealtimeSkyModel, context: RealtimeSkyViewContext, observer: LatLonAlt,
+         chooseLocation: (() -> Void)?, controller: PlanetariumController? = nil) {
+        self.viewModel = viewModel
+        self.context = context
+        self.observer = observer
+        self.chooseLocation = chooseLocation
+        self._controller = StateObject(wrappedValue: controller ?? PlanetariumController())
+    }
 
     private var date: Double { viewModel.julianDate(at: context.julianDateProvider()) }
-    private var passing: [RealtimePropagationResult] {
+    private var filteredResults: [RealtimePropagationResult] {
         viewModel.state.resources.displayResults.filter {
+            SkyNowSatelliteFilter.includes($0, orbitRange: orbitRange, unlit: includeUnlit)
+        }
+    }
+
+    private var passing: [RealtimePropagationResult] {
+        filteredResults.filter {
             PlanetariumLiveSatellite(result: $0).direction(at: date) != nil
         }.sorted {
             let a = $0.snapshot.visualMagnitude ?? 99, b = $1.snapshot.visualMagnitude ?? 99
@@ -201,7 +217,8 @@ private struct LiveSkyPlanetarium: View {
                     Text("Motion unavailable · Drag to explore the sky", bundle: .module)
                         .font(.caption).padding(10).background(.ultraThinMaterial, in: Capsule())
                 }
-                Spacer(minLength: 0)
+                PlanetariumLiveSatelliteIndicator(controller: controller, state: controller.selectionState)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 PlanetariumSelectionCard(controller: controller, state: controller.selectionState)
                 satelliteStatus
                 if showFPS, let monitor = controller.renderer?.frameRate {
@@ -215,28 +232,16 @@ private struct LiveSkyPlanetarium: View {
         }
         .foregroundStyle(AppTheme.text).tint(AppTheme.accent).preferredColorScheme(.dark)
         .sheet(isPresented: $showingSatellites) {
-            NavigationStack {
-                List(passing, id: \.noradIndex) { result in
-                    Button {
-                        controller.selectLiveSatellite(result.noradIndex)
-                        showingSatellites = false
-                    } label: {
-                        RealtimeSkySatelliteCell(isFocused: .constant(false), satelliteInfo: result.satelliteInfo, snapshot: result.snapshot)
-                    }
-                    .buttonStyle(.plain)
-                }
-                .overlay { if passing.isEmpty { Text("No satellites above the horizon", bundle: .module) } }
-                .scrollContentBackground(.hidden).background(AppTheme.background)
-                .navigationTitle(AppLocalization.text("Passing now"))
-                .toolbar { ToolbarItem(placement: .confirmationAction) { Button(AppLocalization.text("Done")) { showingSatellites = false } } }
+            SkyNowPassingSheet(satellites: passing) { id in
+                controller.selectLiveSatellite(id)
+                showingSatellites = false
             }
-            .presentationDetents([.medium, .large])
         }
         .onAppear {
             visible = true
             controller.configureSky(observer: observer, starManager: context.starManager, julianDate: date)
             controller.liveDateProvider = { viewModel.julianDate(at: context.julianDateProvider()) }
-            controller.updateLiveSatellites(viewModel.state.resources.displayResults)
+            controller.updateLiveSatellites(filteredResults)
             controller.setOverlays(labels: labels, lines: lines)
             controller.setActive(scenePhase == .active)
             controller.renderer?.frameRate.setEnabled(showFPS)
@@ -250,13 +255,29 @@ private struct LiveSkyPlanetarium: View {
             controller.setActive(visible && phase == .active)
             controller.renderer?.frameRate.setEnabled(showFPS && visible && phase == .active)
         }
-        .onChange(of: viewModel.state.resources.displayResults) { _, results in controller.updateLiveSatellites(results) }
+        .onChange(of: observer) { _, location in
+            controller.updateObserver(location, julianDate: date)
+        }
+        .onChange(of: viewModel.state.resources.displayResults) { _, _ in controller.updateLiveSatellites(filteredResults) }
+        .onChange(of: orbitRange) { _, _ in controller.updateLiveSatellites(filteredResults) }
+        .onChange(of: includeUnlit) { _, _ in controller.updateLiveSatellites(filteredResults) }
         .onChange(of: labels) { _, _ in controller.setOverlays(labels: labels, lines: lines) }
         .onChange(of: lines) { _, _ in controller.setOverlays(labels: labels, lines: lines) }
         .onChange(of: showFPS) { _, value in controller.renderer?.frameRate.setEnabled(value && visible && scenePhase == .active) }
     }
 
-    @ViewBuilder private var satelliteStatus: some View {
+    private var satelliteStatus: some View {
+        HStack(spacing: 12) {
+            satelliteStatusCard
+            if case .loaded = viewModel.state.satellites {
+                SkyNowPassingFilter()
+                    .frame(width: 52, height: 52)
+                    .glassEffect(.regular.interactive(), in: Circle())
+            }
+        }
+    }
+
+    @ViewBuilder private var satelliteStatusCard: some View {
         Group {
             switch viewModel.state.satellites {
             case .notLoaded, .loading:
@@ -270,21 +291,21 @@ private struct LiveSkyPlanetarium: View {
             case .loaded:
                 Button { showingSatellites = true } label: {
                     HStack(spacing: 12) {
-                        Image("glyph_satellite").renderingMode(.template).foregroundStyle(AppTheme.accent)
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text("Passing now", bundle: .module).font(.subheadline.weight(.semibold))
-                            Text(String.localizedStringWithFormat(AppLocalization.text("%lld above the horizon"), passing.count))
-                                .font(.caption).foregroundStyle(AppTheme.muted)
-                        }
+                        Text(String.localizedStringWithFormat(AppLocalization.text("Passing now: %lld"), passing.count))
+                            .font(.subheadline.weight(.semibold))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
                         Spacer()
-                        Image(systemName: "chevron.up").font(.caption.weight(.semibold))
+                        Image(systemName: "chevron.up").font(.system(size: 14, weight: .semibold))
+                            .foregroundStyle(AppTheme.muted).frame(width: 44, height: 44)
                     }
                 }
                 .buttonStyle(.plain).accessibilityIdentifier("skyNow.passingSatellites")
             }
         }
-        .frame(maxWidth: .infinity).padding(16)
-        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 22))
+        .padding(.horizontal, 20)
+        .frame(maxWidth: .infinity, minHeight: 52)
+        .glassEffect(.regular, in: Capsule())
     }
 }
 
@@ -325,5 +346,150 @@ extension RealtimeSkyViewImpl {
 
     static func satelliteLabelInGraph(_ satelliteInfo: SatelliteInfo) -> String {
         satelliteInfo.ucsSat?.officialName ?? satelliteInfo.satCat?.name ?? satelliteInfo.elements.commonName
+    }
+}
+
+struct SkyNowPassingSheet: View {
+    let satellites: [RealtimePropagationResult]
+    let onSelect: (UInt) -> Void
+    @Environment(\.dismiss) private var dismiss
+    @AppStorage("skyNowOrbitRange") private var orbitRange = SkyNowSatelliteFilter.initialRange
+    @AppStorage("skyNowIncludeUnlit") private var includeUnlit = true
+    @State private var searchText = ""
+
+    private var filteredSatellites: [RealtimePropagationResult] {
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        return satellites.filter { result in
+            let info = result.satelliteInfo
+            let names = [info.ucsSat?.officialName, info.satCat?.name, info.elements.commonName]
+                .compactMap { $0 }
+            let matchesSearch = query.isEmpty
+                || names.contains { $0.localizedStandardContains(query) }
+                || String(result.noradIndex).contains(query)
+            return SkyNowSatelliteFilter.includes(result, orbitRange: orbitRange, unlit: includeUnlit)
+                && matchesSearch
+        }
+    }
+
+    var body: some View {
+        NavigationStack {
+            List(filteredSatellites, id: \.noradIndex) { result in
+                Button { onSelect(result.noradIndex) } label: {
+                    RealtimeSkySatelliteCell(isFocused: .constant(false), satelliteInfo: result.satelliteInfo, snapshot: result.snapshot)
+                }
+                .buttonStyle(.plain)
+            }
+            .overlay { if filteredSatellites.isEmpty {
+                Text(satellites.isEmpty ? "No satellites above the horizon" : "No satellites match this filter", bundle: .module)
+            } }
+            .scrollContentBackground(.hidden)
+            .background(AppTheme.background)
+            .navigationTitle(AppLocalization.text("Passing now"))
+            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always),
+                        prompt: AppLocalization.text("Search satellites"))
+            .toolbarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(AppLocalization.text("Done")) { dismiss() }
+                }
+            }
+        }
+        .foregroundStyle(AppTheme.text).tint(AppTheme.accent)
+        .presentationDetents([.medium, .large])
+        .presentationDragIndicator(.visible)
+    }
+}
+
+
+private struct SkyNowPassingFilter: View {
+    @AppStorage("skyNowOrbitRange") private var orbitRange = SkyNowSatelliteFilter.initialRange
+    @AppStorage("skyNowIncludeUnlit") private var includeUnlit = true
+    @State private var showingFilters = false
+
+    var body: some View {
+        Button { showingFilters.toggle() } label: {
+            Image(systemName: (orbitRange == 2 && includeUnlit)
+                  ? "line.3.horizontal.decrease" : "line.3.horizontal.decrease.circle.fill")
+                .font(.system(size: 21, weight: .medium))
+                .frame(width: 52, height: 52)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(AppLocalization.text("Filter"))
+        .accessibilityIdentifier("skyNow.passingFilter")
+        .popover(isPresented: $showingFilters, arrowEdge: .bottom) {
+            SkyNowFilterPanel()
+                .presentationCompactAdaptation(.popover)
+        }
+    }
+}
+
+struct SkyNowFilterPanel: View {
+    @AppStorage("skyNowOrbitRange") private var orbitRange = SkyNowSatelliteFilter.initialRange
+    @AppStorage("skyNowIncludeUnlit") private var includeUnlit = true
+
+    private var explanation: String {
+        switch orbitRange {
+        case 0: "Shows satellites less than 600 km from you, emphasizing nearby low-orbit passes."
+        case 2: "No distance limit. Includes medium-orbit and geosynchronous satellites."
+        default: "Shows satellites less than 23,000 km from you, including GPS and other medium-orbit satellites."
+        }
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Label(AppLocalization.text("Satellite distance"), systemImage: "globe")
+                .font(.headline)
+            VStack(spacing: 6) {
+                Slider(value: Binding(get: { Double(orbitRange) }, set: { orbitRange = Int($0) }),
+                       in: 0...2, step: 1) {
+                    Text("Satellite distance", bundle: .module)
+                }
+                .accessibilityValue(AppLocalization.text(["LEO only", "Up to MEO", "All"][min(2, max(0, orbitRange))]))
+                HStack {
+                    Text("LEO only", bundle: .module)
+                    Spacer()
+                    Text("Up to MEO", bundle: .module)
+                    Spacer()
+                    Text("All", bundle: .module)
+                }
+                .font(.caption.weight(.medium))
+            }
+            Text(AppLocalization.text(explanation))
+                .font(.caption).foregroundStyle(AppTheme.muted)
+                .fixedSize(horizontal: false, vertical: true)
+            Divider()
+            Button { includeUnlit.toggle() } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: "moon")
+                        .frame(width: 24)
+                    Text("Include unlit", bundle: .module)
+                    Spacer()
+                    Image(systemName: includeUnlit ? "checkmark.square.fill" : "square")
+                        .foregroundStyle(AppTheme.accent)
+                        .font(.title3)
+                }
+                .frame(minHeight: 44)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(AppLocalization.text("Include unlit"))
+            .accessibilityValue(AppLocalization.text(includeUnlit ? "On" : "Off"))
+        }
+        .padding(20)
+        .frame(width: 320)
+        .foregroundStyle(AppTheme.text).tint(AppTheme.accent)
+        .preferredColorScheme(.dark)
+    }
+}
+
+enum SkyNowSatelliteFilter {
+    // Preserve the previous geosynchronous preference for installations upgrading.
+    static var initialRange: Int {
+        UserDefaults.standard.bool(forKey: "skyNowIncludeGeosynchronous") ? 2 : 1
+    }
+
+    static func includes(_ result: RealtimePropagationResult, orbitRange: Int, unlit: Bool) -> Bool {
+        let limit: Double = orbitRange == 0 ? 600 : (orbitRange == 2 ? .infinity : 23_000)
+        return result.snapshot.position.dist < limit && (unlit || result.snapshot.isIlluminated)
     }
 }
