@@ -1,0 +1,17 @@
+{
+  "version": "2.1.0",
+  "build": "23",
+  "buildID": "16d5fb04-39a2-4d78-9af6-2293980fa283",
+  "processingState": "VALID",
+  "internalBuildState": "IN_BETA_TESTING",
+  "externalBuildState": "NOT_APPLICABLE",
+  "internalGroup": "First Light",
+  "internalGroupID": "3b41d8f3-2916-4274-9506-6bcc7cd7ec20",
+  "internalTestingOnlyExport": true,
+  "appStoreDraftCreated": false,
+  "appReviewSubmitted": false,
+  "publicReleasePerformed": false,
+  "sourceCommit": "5677a6c",
+  "screenshots": 8,
+  "testNotesReadbackMatchesIgnoringFinalNewline": true
+}

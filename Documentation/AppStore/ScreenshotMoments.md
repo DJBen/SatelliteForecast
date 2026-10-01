@@ -112,3 +112,21 @@ The new native dark-mode captures live in `2.0.0/build-20/screenshots/`; widget 
 are regenerated using the current forecast. The Chinese installed app and store name
 is now **天宫过境**. Capture runners disable parallel testing and diagnostic collection
 to avoid Xcode 27 hanging after a completed locale.
+
+## 2.1.0 home weather refresh
+
+Only `01-forecast` was regenerated, in all eight locales, into
+`2.1.0/screenshots/`. Every new selection JSON exactly matches the reviewed
+`2.0.0/build-20/screenshots/` record: observer, time zone, clocks, featured pass and
+pinned TLE inputs are unchanged. Native dark iPhone 17 Pro Max images remain
+1320 × 2868.
+
+Historical weather cannot be requested from the future-only forecast API. The
+capture injects illustrative 16°C / PartlyCloudy / daylight=false weather with
+timestamps at the fixture clock into the actual `HomeWeatherModel`. It is a UI
+fixture, not a measured or reconstructed historical forecast. English uses 61°F;
+the other locales format Celsius. Long location labels use the shipped one-line
+icon/temperature fallback; shorter labels also show the localized condition.
+The weather fixture and checksums are recorded in
+`2.1.0/screenshot-verification.json`. These captures accompany an internal-only
+TestFlight release and were not uploaded to an App Store draft.

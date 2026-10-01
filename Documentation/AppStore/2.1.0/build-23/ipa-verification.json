@@ -1,0 +1,39 @@
+{
+  "ipaSHA256": "f89bd28b9aaac70f3a959f5bcb5966cb877ebdb0dfdc450fe9c28cfb9297484f",
+  "ipaBytes": 136668635,
+  "internalTestingOnly": true,
+  "bundles": [
+    {
+      "bundleID": "io.djben.SatelliteForecast",
+      "version": "2.1.0",
+      "build": "23",
+      "entitlements": {
+        "application-identifier": "52RD2GH5DP.io.djben.SatelliteForecast",
+        "aps-environment": "production",
+        "beta-reports-active": true,
+        "com.apple.developer.devicecheck.appattest-environment": "production",
+        "com.apple.developer.team-identifier": "52RD2GH5DP",
+        "com.apple.security.application-groups": [
+          "group.io.djben.SatelliteForecast"
+        ],
+        "get-task-allow": false
+      },
+      "signatureVerified": true
+    },
+    {
+      "bundleID": "io.djben.SatelliteForecast.Widget",
+      "version": "2.1.0",
+      "build": "23",
+      "entitlements": {
+        "application-identifier": "52RD2GH5DP.io.djben.SatelliteForecast.Widget",
+        "beta-reports-active": true,
+        "com.apple.developer.team-identifier": "52RD2GH5DP",
+        "com.apple.security.application-groups": [
+          "group.io.djben.SatelliteForecast"
+        ],
+        "get-task-allow": false
+      },
+      "signatureVerified": true
+    }
+  ]
+}

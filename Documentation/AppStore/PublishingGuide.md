@@ -1,7 +1,7 @@
 # App Store Connect publishing guide
 
-Read this before preparing any release. It is the consolidated procedure as of the 2.0.1
-TestFlight release (September 28, 2026). Inspect the current remote state and the installed CLI help
+Read this before preparing any release. It is the consolidated procedure as of the 2.1.0
+internal TestFlight release (October 1, 2026). Inspect the current remote state and the installed CLI help
 before reusing a command; historical IDs in the evidence directories are records, not
 targets. The guide is a procedure, not standing authorization to publish.
 
@@ -197,6 +197,10 @@ python3 scripts/capture-widget-home-screenshots.py --output Documentation/AppSto
 
 ## Evidence index
 
+- [2.1.0](2.1.0/README.md): one-line home weather and weather-aware station alerts;
+  build 23 available on internal First Light TestFlight, with refreshed weather home
+  screenshots in all eight locales.
+
 - [2.0.1](2.0.1/README.md): live Sky Now, catalog/forecast reuse, and isolated SQLite
   metadata loading; build 21 available on internal First Light TestFlight.
 
@@ -269,3 +273,23 @@ and deploy to https://space-station-passes.web.app with `firebase deploy --only 
 - Full behavior tests passed with 148 passed / 3 optional review fixtures skipped.
   Some behavior tests regenerate design-review images; restore only those incidental
   image/fixture changes that were clean before the run.
+
+## 2.1.0 internal-only TestFlight
+
+- For an explicitly internal-only build, set `testFlightInternalTestingOnly` to true
+  in export options. Xcode confirms this restricts the build from external TestFlight
+  and the App Store. Build 23 processed as VALID with internal state IN_BETA_TESTING
+  and external state NOT_APPLICABLE. A later public release needs a new build number
+  and an export without that restriction.
+- TestFlight has no version-specific store screenshot set. A TestFlight-only request
+  can regenerate and review screenshots in its release evidence directory without
+  creating an App Store draft or modifying public store assets.
+- Capture only the requested home slot with `--screens 01-forecast`, while still
+  passing a fresh version-specific `--output`, explicit simulator and derived data.
+  The home capture uses the native weather model with an illustrative 16°C
+  partly-cloudy fixture at the historical clock; it makes no guest-auth or weather
+  network request. Pinned observer, time zone, TLE and pass selection records stay
+  unchanged. Document illustrative weather rather than claiming historical readings.
+- Version 2.1 home weather shares approximate coordinates with the weather backend
+  even without station reminders. Privacy/support copy now describes this separate
+  weather session and the server rain-suppression policy.

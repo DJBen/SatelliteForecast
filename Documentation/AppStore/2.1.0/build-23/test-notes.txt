@@ -1,0 +1,5 @@
+Please test the home screen weather beside your location, including its one-line layout and localized temperature and condition text. Small location changes should reuse area-based weather caches while fresh.
+
+Automatic ISS and Tiangong reminders now put the time in the title, direction/duration/elevation in the subtitle, and short weather guidance in the body. Fresh high-confidence rain during the visible pass suppresses the reminder; cloudy, uncertain, or unavailable weather uses cautious localized copy. Manual local alarms are unchanged.
+
+Check all eight languages, notification deep links, and the existing Sky Now and widget flows. This build is for internal TestFlight testing only.

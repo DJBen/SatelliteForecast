@@ -1,0 +1,122 @@
+[
+  {
+    "locale": "en-US",
+    "path": "Documentation/AppStore/2.1.0/screenshots/en-US/01-forecast.png",
+    "width": 1320,
+    "height": 2868,
+    "sha256": "838940a88297b04ef58b8c17391e562aa3adb7e86ee06f878e8ac5a88230e600",
+    "reviewedDarkMode": true,
+    "pinnedMomentUnchanged": true,
+    "weatherFixture": {
+      "temperatureC": 16,
+      "conditionCode": "PartlyCloudy",
+      "daylight": false,
+      "illustrative": true
+    }
+  },
+  {
+    "locale": "fr-FR",
+    "path": "Documentation/AppStore/2.1.0/screenshots/fr-FR/01-forecast.png",
+    "width": 1320,
+    "height": 2868,
+    "sha256": "a33f4483edd1681187af83c950d6900d0783e1945bfb832b00ffe975ee3303a7",
+    "reviewedDarkMode": true,
+    "pinnedMomentUnchanged": true,
+    "weatherFixture": {
+      "temperatureC": 16,
+      "conditionCode": "PartlyCloudy",
+      "daylight": false,
+      "illustrative": true
+    }
+  },
+  {
+    "locale": "es-ES",
+    "path": "Documentation/AppStore/2.1.0/screenshots/es-ES/01-forecast.png",
+    "width": 1320,
+    "height": 2868,
+    "sha256": "01d33e3ca932e6588963bfa2651192f6a849a47973bd6d3aa0f20bb6231c9eee",
+    "reviewedDarkMode": true,
+    "pinnedMomentUnchanged": true,
+    "weatherFixture": {
+      "temperatureC": 16,
+      "conditionCode": "PartlyCloudy",
+      "daylight": false,
+      "illustrative": true
+    }
+  },
+  {
+    "locale": "pt-BR",
+    "path": "Documentation/AppStore/2.1.0/screenshots/pt-BR/01-forecast.png",
+    "width": 1320,
+    "height": 2868,
+    "sha256": "0a3d109183116df46856fccbc4437fc6070f0a52b83921d11dc559066101680e",
+    "reviewedDarkMode": true,
+    "pinnedMomentUnchanged": true,
+    "weatherFixture": {
+      "temperatureC": 16,
+      "conditionCode": "PartlyCloudy",
+      "daylight": false,
+      "illustrative": true
+    }
+  },
+  {
+    "locale": "ru",
+    "path": "Documentation/AppStore/2.1.0/screenshots/ru/01-forecast.png",
+    "width": 1320,
+    "height": 2868,
+    "sha256": "185350f2c5cd7d684ec3ce4ba110e49d5a48e9efcecb740cf265ec37688b7754",
+    "reviewedDarkMode": true,
+    "pinnedMomentUnchanged": true,
+    "weatherFixture": {
+      "temperatureC": 16,
+      "conditionCode": "PartlyCloudy",
+      "daylight": false,
+      "illustrative": true
+    }
+  },
+  {
+    "locale": "ja",
+    "path": "Documentation/AppStore/2.1.0/screenshots/ja/01-forecast.png",
+    "width": 1320,
+    "height": 2868,
+    "sha256": "db57dbf9b465ff9d6177ee6de3ea6079437e0e41460e6176dd566d62e2bea1da",
+    "reviewedDarkMode": true,
+    "pinnedMomentUnchanged": true,
+    "weatherFixture": {
+      "temperatureC": 16,
+      "conditionCode": "PartlyCloudy",
+      "daylight": false,
+      "illustrative": true
+    }
+  },
+  {
+    "locale": "ko",
+    "path": "Documentation/AppStore/2.1.0/screenshots/ko/01-forecast.png",
+    "width": 1320,
+    "height": 2868,
+    "sha256": "1bf9ff387e6c04bcdd0f0548be321adcaf58d0cb7318c6d166db6ebb73864f3e",
+    "reviewedDarkMode": true,
+    "pinnedMomentUnchanged": true,
+    "weatherFixture": {
+      "temperatureC": 16,
+      "conditionCode": "PartlyCloudy",
+      "daylight": false,
+      "illustrative": true
+    }
+  },
+  {
+    "locale": "zh-Hans",
+    "path": "Documentation/AppStore/2.1.0/screenshots/zh-Hans/01-forecast.png",
+    "width": 1320,
+    "height": 2868,
+    "sha256": "0539e17566e5cc789c9b67e88619a8832c3751ef5004871fdf9898e2c6fbd714",
+    "reviewedDarkMode": true,
+    "pinnedMomentUnchanged": true,
+    "weatherFixture": {
+      "temperatureC": 16,
+      "conditionCode": "PartlyCloudy",
+      "daylight": false,
+      "illustrative": true
+    }
+  }
+]
