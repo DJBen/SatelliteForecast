@@ -12,6 +12,8 @@ struct ObservationHomeView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.dynamicTypeSize) private var dynamicType
     @State private var showsLocation = false
+    @State private var showsWeather = false
+    @State private var weather: HomeWeatherModel
     @State private var preview: ObservationPreview?
     @State private var previewKey: PreviewKey?
     @State private var previewFailed = false
@@ -24,10 +26,11 @@ struct ObservationHomeView: View {
     @Namespace private var reminderNamespace
 
     init(session: AppSession, model: ForecastModel, context: SatelliteOverviewViewContext,
-         initialPreview: ObservationPreview? = nil) {
+         initialPreview: ObservationPreview? = nil, weather: HomeWeatherModel? = nil) {
         self.session = session
         self.model = model
         self.context = context
+        _weather = State(initialValue: weather ?? HomeWeatherModel())
         _preview = State(initialValue: initialPreview)
         _previewKey = State(initialValue: initialPreview.map {
             PreviewKey(pass: $0.snapshots.pass, observer: session.location.resources.location.map(LatLonAlt.init), attempt: 0)
@@ -65,6 +68,16 @@ struct ObservationHomeView: View {
         if case let .custom(completion, _) = resources.selection { return completion.title }
         return AppLocalization.text(resources.location == nil ? "Choose a location" : "Current location")
     }
+    private var weatherLocation: HomeWeatherLocation? {
+        session.location.resources.location.flatMap { HomeWeatherLocation($0.coordinate) }
+    }
+    private struct WeatherRequest: Equatable {
+        let location: HomeWeatherLocation?
+        let active: Bool
+    }
+    private var weatherRequest: WeatherRequest {
+        .init(location: weatherLocation, active: isVisible && scenePhase == .active)
+    }
 
     var body: some View {
         @Bindable var navigation = session.navigation
@@ -84,6 +97,10 @@ struct ObservationHomeView: View {
                     } else {
                         emptyState
                     }
+                    if let reading = weather.current(for: weatherLocation) {
+                        HomeWeatherAttribution(reading: reading)
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                    }
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 8)
@@ -93,7 +110,9 @@ struct ObservationHomeView: View {
             .toolbar(.hidden, for: .navigationBar)
             .refreshable {
                 AppAnalytics.event("refresh_requested", screen: .forecast)
-                await model.refresh(input)
+                async let forecastRefresh: Void = model.refresh(input)
+                async let weatherRefresh: Void = weather.refresh(weatherLocation, force: true)
+                _ = await (forecastRefresh, weatherRefresh)
             }
             .analyticsScreen(.forecast)
             .navigationDestination(for: ForecastRoute.self) { route in
@@ -121,6 +140,19 @@ struct ObservationHomeView: View {
                 await model.run(input)
             }
             .task(id: request) { await loadPreview(request) }
+            .task(id: weatherRequest) {
+                guard !SnapshotEnvironment.isEnabled, weatherRequest.active else { return }
+                let location = weatherRequest.location
+                repeat {
+                    await weather.refresh(location)
+                    do { try await Task.sleep(for: .seconds(60)) } catch { return }
+                } while !Task.isCancelled
+            }
+            .sheet(isPresented: $showsWeather) {
+                if let reading = weather.current(for: weatherLocation) {
+                    HomeWeatherDetails(reading: reading, locationName: locationName)
+                }
+            }
         }
     }
 
@@ -128,16 +160,52 @@ struct ObservationHomeView: View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Next observation", bundle: .module).font(.largeTitle.bold())
                 .accessibilityAddTraits(.isHeader)
-            Button { showsLocation = true } label: {
-                HStack(spacing: 7) {
-                    Image(systemName: "mappin.and.ellipse").foregroundStyle(AppTheme.muted)
-                    Text(locationName).foregroundStyle(AppTheme.text).lineLimit(2)
-                    Text("Change", bundle: .module).foregroundStyle(AppTheme.accent).font(.subheadline)
+            if dynamicType.isAccessibilitySize {
+                VStack(alignment: .leading, spacing: 4) {
+                    locationButton
+                    weatherBadge.frame(maxWidth: .infinity, alignment: .trailing)
                 }
-                .font(.subheadline)
-                .frame(minHeight: 40, alignment: .leading)
+            } else {
+                HStack(alignment: .center, spacing: 12) {
+                    locationButton
+                        .layoutPriority(1)
+                    Spacer(minLength: 0)
+                    weatherBadge
+                }
             }
-            .buttonStyle(.plain)
+        }
+    }
+
+    private var locationButton: some View {
+        Button { showsLocation = true } label: {
+            HStack(spacing: 7) {
+                Image(systemName: "mappin.and.ellipse").foregroundStyle(AppTheme.muted)
+                Text(locationName).foregroundStyle(AppTheme.text).lineLimit(2)
+                Text("Change", bundle: .module).foregroundStyle(AppTheme.accent).font(.subheadline)
+                    .fixedSize()
+            }
+            .font(.subheadline)
+            .frame(minHeight: 40, alignment: .leading)
+        }
+        .buttonStyle(.plain)
+    }
+
+    @ViewBuilder private var weatherBadge: some View {
+        if let reading = weather.current(for: weatherLocation) {
+            HomeWeatherBadge(reading: reading) { showsWeather = true }
+        } else if weatherLocation != nil {
+            if weather.isLoading && weather.location == weatherLocation {
+                ProgressView().controlSize(.small).accessibilityLabel(Text("Loading weather", bundle: .module))
+            } else if weather.failed && weather.location == weatherLocation {
+                Button {
+                    Task { await weather.refresh(weatherLocation, force: true) }
+                } label: {
+                    Label(AppLocalization.text("Weather unavailable"), systemImage: "cloud.slash")
+                        .font(.caption).foregroundStyle(AppTheme.muted)
+                }
+                .buttonStyle(.plain)
+                .accessibilityHint(Text("Tap to retry", bundle: .module))
+            }
         }
     }
 

@@ -586,6 +586,13 @@ final class ScreenSnapshotTests: XCTestCase {
         try await assertSnapshot(AnyView(home), name: "observation-home-dark", style: .dark, record: true)
         try await assertSnapshot(AnyView(home.environment(\.dynamicTypeSize, .accessibility2)),
             name: "observation-home-large-text-dark", style: .dark, record: true)
+        let weather = HomeWeatherModel(load: { _ in try weatherTestForecast(at: now) }, now: { now })
+        await weather.refresh(HomeWeatherLocation(fixture.session.location.resources.location!.coordinate))
+        let weatherHome = ObservationHomeView(session: fixture.session, model: model, context: context,
+            initialPreview: preview, weather: weather)
+        try await assertSnapshot(AnyView(weatherHome), name: "observation-home-weather-dark", style: .dark, record: true)
+        try await assertSnapshot(AnyView(weatherHome.environment(\.dynamicTypeSize, .accessibility2)),
+            name: "observation-home-weather-large-text-dark", style: .dark, record: true)
         for progress in [0.2, 0.82] {
             let sky = ObservationSkyPreview(preview: preview, observer: fixture.observer, session: fixture.session,
                 reviewProgress: progress)

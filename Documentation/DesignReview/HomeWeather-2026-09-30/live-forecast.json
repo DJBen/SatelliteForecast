@@ -1,0 +1,173 @@
+{
+  "schemaVersion": 1,
+  "location": {
+    "latitude": 37.77,
+    "longitude": -122.42
+  },
+  "start": "2026-10-01T03:00:00.000Z",
+  "hours": [
+    {
+      "time": "2026-10-01T03:00:00.000Z",
+      "astronomy": {
+        "time": "2026-10-01T03:00:00.000Z",
+        "seeing": {
+          "value": 4,
+          "label": "Good seeing",
+          "status": "ok",
+          "gridLocation": {
+            "longitude": -122.4028,
+            "latitude": 37.7896
+          }
+        },
+        "transparency": {
+          "value": 5,
+          "label": "Excellent transparency",
+          "status": "ok",
+          "gridLocation": {
+            "longitude": -122.4028,
+            "latitude": 37.7896
+          }
+        },
+        "cloudCover": {
+          "value": 0,
+          "label": "0% cloud coverage",
+          "status": "ok",
+          "gridLocation": {
+            "longitude": -122.4028,
+            "latitude": 37.7896
+          }
+        }
+      },
+      "weather": {
+        "conditionCode": "Clear",
+        "daylight": false,
+        "time": "2026-10-01T03:00:00.000Z",
+        "temperatureC": 16.05,
+        "apparentTemperatureC": 14.5,
+        "dewPointC": 12.98,
+        "humidityPercent": 82,
+        "cloudCoverPercent": 5,
+        "windSpeedKmh": 8.49,
+        "windGustKmh": 22.09,
+        "windDirectionDegrees": 258,
+        "precipitationChancePercent": 0,
+        "precipitationAmountMm": 0
+      },
+      "sky": {
+        "sunAltitudeDegrees": -13.878963594790534,
+        "moonAltitudeDegrees": -11.759349753450678,
+        "moonIlluminationFraction": 0.7667977362562785,
+        "astronomicalNight": false,
+        "moonBelowHorizon": true
+      }
+    },
+    {
+      "time": "2026-10-01T04:00:00.000Z",
+      "astronomy": {
+        "time": "2026-10-01T04:00:00.000Z",
+        "seeing": {
+          "value": 4,
+          "label": "Good seeing",
+          "status": "ok",
+          "gridLocation": {
+            "longitude": -122.4028,
+            "latitude": 37.7896
+          }
+        },
+        "transparency": {
+          "value": 5,
+          "label": "Excellent transparency",
+          "status": "ok",
+          "gridLocation": {
+            "longitude": -122.4028,
+            "latitude": 37.7896
+          }
+        },
+        "cloudCover": {
+          "value": 0,
+          "label": "0% cloud coverage",
+          "status": "ok",
+          "gridLocation": {
+            "longitude": -122.4028,
+            "latitude": 37.7896
+          }
+        }
+      },
+      "weather": {
+        "conditionCode": "Clear",
+        "daylight": false,
+        "time": "2026-10-01T04:00:00.000Z",
+        "temperatureC": 15.57,
+        "apparentTemperatureC": 13.01,
+        "dewPointC": 13.06,
+        "humidityPercent": 85,
+        "cloudCoverPercent": 8,
+        "windSpeedKmh": 12.16,
+        "windGustKmh": 24.47,
+        "windDirectionDegrees": 248,
+        "precipitationChancePercent": 0,
+        "precipitationAmountMm": 0
+      },
+      "sky": {
+        "sunAltitudeDegrees": -25.48299500138657,
+        "moonAltitudeDegrees": -3.1297637739511543,
+        "moonIlluminationFraction": 0.7627258838069764,
+        "astronomicalNight": true,
+        "moonBelowHorizon": true
+      }
+    }
+  ],
+  "generatedAt": "2026-10-01T03:29:02.128Z",
+  "status": "ok",
+  "providers": {
+    "eccc": {
+      "cacheLocation": {
+        "h3Index": "86283082fffffff",
+        "h3Resolution": 6,
+        "latitude": 37.77351509723815,
+        "longitude": -122.41827103692466
+      },
+      "stale": false,
+      "ageSeconds": 0,
+      "staleReason": null,
+      "status": "ok",
+      "modelRun": "2026-10-01T00:00:00.000Z",
+      "fetchedAt": "2026-10-01T03:29:05.057Z"
+    },
+    "weatherkit": {
+      "cacheLocation": {
+        "h3Index": "872830828ffffff",
+        "h3Resolution": 7,
+        "latitude": 37.773515097238146,
+        "longitude": -122.4182710369247
+      },
+      "stale": false,
+      "ageSeconds": 0,
+      "status": "ok",
+      "fetchedAt": "2026-10-01T03:29:02.481Z"
+    }
+  },
+  "attribution": {
+    "eccc": {
+      "text": "Data Source: Environment and Climate Change Canada",
+      "url": "https://eccc-msc.github.io/open-data/licence/readme_en/"
+    },
+    "weatherkit": {
+      "logoDark@3x": "https://weatherkit.apple.com/assets/branding/en/Apple_Weather_wht_en_3X_090122.png",
+      "logoLight@1x": "https://weatherkit.apple.com/assets/branding/en/Apple_Weather_blk_en_1X_090122.png",
+      "logoDark@2x": "https://weatherkit.apple.com/assets/branding/en/Apple_Weather_wht_en_2X_090122.png",
+      "logoDark@1x": "https://weatherkit.apple.com/assets/branding/en/Apple_Weather_wht_en_1X_090122.png",
+      "logoLight@2x": "https://weatherkit.apple.com/assets/branding/en/Apple_Weather_blk_en_2X_090122.png",
+      "logoLight@3x": "https://weatherkit.apple.com/assets/branding/en/Apple_Weather_blk_en_3X_090122.png",
+      "logoSquare@2x": "https://weatherkit.apple.com/assets/branding/square-mark@2x.png",
+      "serviceName": "Apple Weather",
+      "logoSquare@1x": "https://weatherkit.apple.com/assets/branding/square-mark.png",
+      "logoSquare@3x": "https://weatherkit.apple.com/assets/branding/square-mark@3x.png",
+      "legalPageURL": "https://developer.apple.com/weatherkit/data-source-attribution/"
+    },
+    "astronomy": {
+      "library": "Astronomy Engine",
+      "url": "https://github.com/cosinekitty/astronomy"
+    }
+  }
+}

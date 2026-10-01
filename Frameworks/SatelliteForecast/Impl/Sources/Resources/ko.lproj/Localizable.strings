@@ -806,3 +806,35 @@ The localized string for the status of a spare satellite */
 "No distance limit. Includes medium-orbit and geosynchronous satellites." = "거리 제한 없이 중궤도 및 지구 동기 궤도 위성을 포함합니다.";
 
 "Shows satellites less than 23,000 km from you, including GPS and other medium-orbit satellites." = "23,000km 미만 거리의 위성을 표시합니다. GPS 및 다른 중궤도 위성도 포함합니다.";
+
+// Home location weather
+"Weather" = "날씨";
+"Clear" = "맑음";
+"Mostly clear" = "대체로 맑음";
+"Partly cloudy" = "구름 조금";
+"Mostly cloudy" = "대체로 흐림";
+"Cloudy" = "흐림";
+"Drizzle" = "이슬비";
+"Rain" = "비";
+"Heavy rain" = "폭우";
+"Thunderstorms" = "뇌우";
+"Snow" = "눈";
+"Heavy snow" = "폭설";
+"Wintry mix" = "눈과 비";
+"Freezing rain" = "어는 비";
+"Hail" = "우박";
+"Fog" = "안개";
+"Haze" = "연무";
+"Smoke" = "연기";
+"Windy" = "강풍";
+"Blowing dust" = "날리는 먼지";
+"Hot" = "더움";
+"Frigid" = "매우 추움";
+"Hurricane" = "허리케인";
+"Tropical storm" = "열대 폭풍";
+"Show weather details" = "날씨 상세 정보 보기";
+"Apple Weather data sources" = "Apple Weather 데이터 출처";
+"Hourly forecast" = "시간별 예보";
+"Loading weather" = "날씨 불러오는 중";
+"Weather unavailable" = "날씨를 불러올 수 없음";
+"Tap to retry" = "탭하여 다시 시도";

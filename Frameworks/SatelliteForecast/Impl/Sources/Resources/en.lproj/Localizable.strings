@@ -447,3 +447,35 @@
 "No distance limit. Includes medium-orbit and geosynchronous satellites." = "No distance limit. Includes medium-orbit and geosynchronous satellites.";
 
 "Shows satellites less than 23,000 km from you, including GPS and other medium-orbit satellites." = "Shows satellites less than 23,000 km from you, including GPS and other medium-orbit satellites.";
+
+// Home location weather
+"Weather" = "Weather";
+"Clear" = "Clear";
+"Mostly clear" = "Mostly clear";
+"Partly cloudy" = "Partly cloudy";
+"Mostly cloudy" = "Mostly cloudy";
+"Cloudy" = "Cloudy";
+"Drizzle" = "Drizzle";
+"Rain" = "Rain";
+"Heavy rain" = "Heavy rain";
+"Thunderstorms" = "Thunderstorms";
+"Snow" = "Snow";
+"Heavy snow" = "Heavy snow";
+"Wintry mix" = "Wintry mix";
+"Freezing rain" = "Freezing rain";
+"Hail" = "Hail";
+"Fog" = "Fog";
+"Haze" = "Haze";
+"Smoke" = "Smoke";
+"Windy" = "Windy";
+"Blowing dust" = "Blowing dust";
+"Hot" = "Hot";
+"Frigid" = "Frigid";
+"Hurricane" = "Hurricane";
+"Tropical storm" = "Tropical storm";
+"Show weather details" = "Show weather details";
+"Apple Weather data sources" = "Apple Weather data sources";
+"Hourly forecast" = "Hourly forecast";
+"Loading weather" = "Loading weather";
+"Weather unavailable" = "Weather unavailable";
+"Tap to retry" = "Tap to retry";

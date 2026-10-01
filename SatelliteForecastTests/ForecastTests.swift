@@ -8,6 +8,119 @@ import SatelliteKit
 import SatelliteWidgetSupport
 @testable import SatelliteForecastImpl
 
+
+@MainActor
+func weatherTestForecast(at date: Date, condition: String? = "PartlyCloudy", daylight: Bool = false,
+                         stale: Bool = false, status: String = "ok", temperature: Double? = 16) throws -> HomeWeatherForecast {
+    let formatter = ISO8601DateFormatter()
+    formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+    let hour = Date(timeIntervalSince1970: floor(date.timeIntervalSince1970 / 3600) * 3600)
+    let value: [String: Any] = [
+        "schemaVersion": 1,
+        "providers": ["weatherkit": ["status": status, "stale": stale, "fetchedAt": formatter.string(from: date)]],
+        "hours": [["time": formatter.string(from: hour), "weather": ["temperatureC": temperature as Any? ?? NSNull(),
+            "conditionCode": condition as Any? ?? NSNull(), "daylight": daylight]]],
+        "attribution": ["weatherkit": ["legalPageURL": "https://weatherkit.apple.com/legal-attribution.html"]]
+    ]
+    return try HomeWeatherForecast.decode(JSONSerialization.data(withJSONObject: value))
+}
+
+@MainActor
+final class HomeWeatherTests: XCTestCase {
+    private let date = Date(timeIntervalSince1970: 1_800_000_000)
+    private let sf = HomeWeatherLocation(CLLocationCoordinate2D(latitude: 37.77, longitude: -122.42))!
+    private let la = HomeWeatherLocation(CLLocationCoordinate2D(latitude: 34.05, longitude: -118.24))!
+
+    func testFreshnessAndMissingWeather() throws {
+        let forecast = try weatherTestForecast(at: date)
+        XCTAssertNotNil(forecast.current(at: date))
+        XCTAssertNil(forecast.current(at: date.addingTimeInterval(900)))
+        XCTAssertNil(forecast.current(at: date.addingTimeInterval(-121)))
+        XCTAssertNil(try weatherTestForecast(at: date, stale: true).current(at: date))
+        XCTAssertNil(try weatherTestForecast(at: date, status: "unavailable").current(at: date))
+        XCTAssertNil(try weatherTestForecast(at: date, temperature: nil).current(at: date))
+        XCTAssertNotNil(try weatherTestForecast(at: date, status: "partial").current(at: date))
+        let boundary = Date(timeIntervalSince1970: floor(date.timeIntervalSince1970 / 3600) * 3600 + 3599)
+        XCTAssertNil(try weatherTestForecast(at: boundary).current(at: boundary.addingTimeInterval(1)))
+    }
+
+    func testLocalizedTemperatureAndDayNightIcons() throws {
+        let night = try XCTUnwrap(weatherTestForecast(at: date, condition: "Clear", temperature: 0).current(at: date))
+        XCTAssertTrue(night.temperature(locale: Locale(identifier: "en_US")).contains("32"))
+        XCTAssertTrue(night.temperature(locale: Locale(identifier: "fr_FR")).contains("0"))
+        XCTAssertEqual(night.condition.symbol, "moon.stars.fill")
+        let day = try XCTUnwrap(weatherTestForecast(at: date, condition: "Clear", daylight: true).current(at: date))
+        XCTAssertEqual(day.condition.symbol, "sun.max.fill")
+        let unknown = try XCTUnwrap(weatherTestForecast(at: date, condition: "FutureCondition").current(at: date))
+        XCTAssertEqual(unknown.condition.title, "Weather")
+    }
+
+    func testLocationRoundingAndUnsupportedCoordinates() {
+        XCTAssertEqual(sf, HomeWeatherLocation(CLLocationCoordinate2D(latitude: 37.7701, longitude: -122.4201)))
+        XCTAssertNil(HomeWeatherLocation(CLLocationCoordinate2D(latitude: 90, longitude: 0)))
+        XCTAssertNil(HomeWeatherLocation(CLLocationCoordinate2D(latitude: .nan, longitude: 0)))
+    }
+
+    func testCacheExpiresAndLocationSwitchClearsReading() async throws {
+        var clock = date
+        var calls = 0
+        let model = HomeWeatherModel(load: { _ in calls += 1; return try weatherTestForecast(at: clock) }, now: { clock })
+        await model.refresh(sf)
+        await model.refresh(sf)
+        XCTAssertEqual(calls, 1)
+        XCTAssertNotNil(model.current(for: sf))
+        XCTAssertNil(model.current(for: la))
+        clock = clock.addingTimeInterval(901)
+        await model.refresh(sf)
+        XCTAssertEqual(calls, 2)
+        await model.refresh(la)
+        XCTAssertNil(model.current(for: sf))
+        XCTAssertNotNil(model.current(for: la))
+        await model.refresh(nil)
+        XCTAssertNil(model.current(for: la))
+    }
+
+    func testSupersededLocationCannotPublishOrStopLoading() async throws {
+        var pending: [HomeWeatherLocation: CheckedContinuation<HomeWeatherForecast, Error>] = [:]
+        let model = HomeWeatherModel(load: { coordinate in
+            try await withCheckedThrowingContinuation { pending[coordinate] = $0 }
+        }, now: { self.date })
+        let first = Task { await model.refresh(sf) }
+        while pending[sf] == nil { await Task.yield() }
+        let second = Task { await model.refresh(la) }
+        while pending[la] == nil { await Task.yield() }
+        XCTAssertNil(model.current(for: sf))
+        pending[sf]?.resume(returning: try weatherTestForecast(at: date))
+        await first.value
+        XCTAssertTrue(model.isLoading)
+        XCTAssertNil(model.current(for: la))
+        pending[la]?.resume(returning: try weatherTestForecast(at: date, condition: "Rain"))
+        await second.value
+        XCTAssertEqual(model.current(for: la)?.condition.title, "Rain")
+        XCTAssertFalse(model.isLoading)
+    }
+
+    func testFailuresBackOffAndCancellationAllowsImmediateRetry() async throws {
+        var calls = 0
+        let failing = HomeWeatherModel(load: { _ in calls += 1; throw URLError(.notConnectedToInternet) }, now: { self.date })
+        await failing.refresh(sf)
+        await failing.refresh(sf)
+        XCTAssertEqual(calls, 1)
+        XCTAssertTrue(failing.failed)
+        await failing.refresh(sf, force: true)
+        XCTAssertEqual(calls, 2)
+        var cancelled = true
+        let model = HomeWeatherModel(load: { _ in
+            if cancelled { cancelled = false; throw URLError(.cancelled) }
+            return try weatherTestForecast(at: self.date)
+        }, now: { self.date })
+        await model.refresh(sf)
+        XCTAssertFalse(model.failed)
+        await model.refresh(sf)
+        XCTAssertNotNil(model.current(for: sf))
+    }
+}
+
 @MainActor
 final class ForecastTests: XCTestCase {
     private let date = Date(timeIntervalSince1970: 1_622_592_000)

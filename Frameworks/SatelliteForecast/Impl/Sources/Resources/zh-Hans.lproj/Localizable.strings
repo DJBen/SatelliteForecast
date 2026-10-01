@@ -806,3 +806,35 @@ The localized string for the status of a spare satellite */
 "No distance limit. Includes medium-orbit and geosynchronous satellites." = "不限制距离，包括中地轨道和地球同步轨道卫星。";
 
 "Shows satellites less than 23,000 km from you, including GPS and other medium-orbit satellites." = "显示距您不足 23,000 公里的卫星，包括 GPS 和其他中地轨道卫星。";
+
+// Home location weather
+"Weather" = "天气";
+"Clear" = "晴朗";
+"Mostly clear" = "大部晴朗";
+"Partly cloudy" = "局部多云";
+"Mostly cloudy" = "大部多云";
+"Cloudy" = "多云";
+"Drizzle" = "毛毛雨";
+"Rain" = "雨";
+"Heavy rain" = "大雨";
+"Thunderstorms" = "雷暴";
+"Snow" = "雪";
+"Heavy snow" = "大雪";
+"Wintry mix" = "雨雪混合";
+"Freezing rain" = "冻雨";
+"Hail" = "冰雹";
+"Fog" = "雾";
+"Haze" = "霾";
+"Smoke" = "烟雾";
+"Windy" = "大风";
+"Blowing dust" = "扬沙";
+"Hot" = "炎热";
+"Frigid" = "严寒";
+"Hurricane" = "飓风";
+"Tropical storm" = "热带风暴";
+"Show weather details" = "显示天气详情";
+"Apple Weather data sources" = "Apple Weather 数据来源";
+"Hourly forecast" = "逐小时预报";
+"Loading weather" = "正在加载天气";
+"Weather unavailable" = "天气暂不可用";
+"Tap to retry" = "轻点重试";

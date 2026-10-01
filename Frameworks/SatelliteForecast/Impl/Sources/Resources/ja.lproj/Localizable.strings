@@ -806,3 +806,35 @@ The localized string for the status of a spare satellite */
 "No distance limit. Includes medium-orbit and geosynchronous satellites." = "距離制限なし。中軌道や地球同期軌道の衛星も含みます。";
 
 "Shows satellites less than 23,000 km from you, including GPS and other medium-orbit satellites." = "距離23,000 km未満の衛星を表示します。GPSなどの中軌道衛星も含みます。";
+
+// Home location weather
+"Weather" = "天気";
+"Clear" = "晴れ";
+"Mostly clear" = "おおむね晴れ";
+"Partly cloudy" = "晴れ時々曇り";
+"Mostly cloudy" = "おおむね曇り";
+"Cloudy" = "曇り";
+"Drizzle" = "霧雨";
+"Rain" = "雨";
+"Heavy rain" = "大雨";
+"Thunderstorms" = "雷雨";
+"Snow" = "雪";
+"Heavy snow" = "大雪";
+"Wintry mix" = "雨雪混合";
+"Freezing rain" = "着氷性の雨";
+"Hail" = "ひょう";
+"Fog" = "霧";
+"Haze" = "もや";
+"Smoke" = "煙";
+"Windy" = "強風";
+"Blowing dust" = "砂じん";
+"Hot" = "暑い";
+"Frigid" = "極寒";
+"Hurricane" = "ハリケーン";
+"Tropical storm" = "熱帯暴風雨";
+"Show weather details" = "天気の詳細を表示";
+"Apple Weather data sources" = "Apple Weatherのデータ提供元";
+"Hourly forecast" = "1時間ごとの予報";
+"Loading weather" = "天気を読み込み中";
+"Weather unavailable" = "天気を取得できません";
+"Tap to retry" = "タップして再試行";

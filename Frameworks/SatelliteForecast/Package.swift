@@ -76,6 +76,7 @@ let package = Package(
                 .product(name: "FirebaseAppCheck", package: "firebase-ios-sdk"),
                 .product(name: "FirebaseFirestore", package: "firebase-ios-sdk"),
                 .product(name: "FirebaseAnalytics", package: "firebase-ios-sdk"),
+                .product(name: "FirebaseAuth", package: "firebase-ios-sdk"),
                 .product(name: "CustomDump", package: "swift-custom-dump"),
             ],
             path: "Impl/Sources",

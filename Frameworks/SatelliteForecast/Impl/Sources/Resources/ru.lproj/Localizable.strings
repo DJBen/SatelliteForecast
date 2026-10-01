@@ -806,3 +806,35 @@ The localized string for the status of a spare satellite */
 "No distance limit. Includes medium-orbit and geosynchronous satellites." = "Без ограничения расстояния. Включает спутники на средних и геосинхронных орбитах.";
 
 "Shows satellites less than 23,000 km from you, including GPS and other medium-orbit satellites." = "Показывает спутники ближе 23 000 км от вас, включая GPS и другие спутники на средних орбитах.";
+
+// Home location weather
+"Weather" = "Погода";
+"Clear" = "Ясно";
+"Mostly clear" = "Преимущественно ясно";
+"Partly cloudy" = "Переменная облачность";
+"Mostly cloudy" = "Преимущественно облачно";
+"Cloudy" = "Облачно";
+"Drizzle" = "Морось";
+"Rain" = "Дождь";
+"Heavy rain" = "Сильный дождь";
+"Thunderstorms" = "Грозы";
+"Snow" = "Снег";
+"Heavy snow" = "Сильный снег";
+"Wintry mix" = "Смешанные осадки";
+"Freezing rain" = "Ледяной дождь";
+"Hail" = "Град";
+"Fog" = "Туман";
+"Haze" = "Дымка";
+"Smoke" = "Дым";
+"Windy" = "Ветрено";
+"Blowing dust" = "Пыльная позёмка";
+"Hot" = "Жарко";
+"Frigid" = "Очень холодно";
+"Hurricane" = "Ураган";
+"Tropical storm" = "Тропический шторм";
+"Show weather details" = "Показать сведения о погоде";
+"Apple Weather data sources" = "Источники данных Apple Weather";
+"Hourly forecast" = "Почасовой прогноз";
+"Loading weather" = "Загрузка погоды";
+"Weather unavailable" = "Погода недоступна";
+"Tap to retry" = "Нажмите, чтобы повторить";

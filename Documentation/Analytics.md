@@ -363,3 +363,23 @@ Sky now preserves its view/controller identity across observer coordinate update
 Distance slider cutoffs were adjusted to strictly below 600 km and 23,000 km; All remains unlimited. The second explanatory paragraph was removed. Observer range remains the input; no analytics changes.
 
 The Satellites category stack now owns its navigation path in SwiftUI State, synchronizing changes with the session path. User pushes/pops and pass-grid navigation use the same local binding so the native navigation transaction stays in the view. Destination screen names and loading boundaries are unchanged.
+
+## Home weather (2026-09-30)
+
+The forecast header shows the selected location's current-hour weather forecast,
+condition icon, and temperature in one line. Narrow rows show the icon and
+temperature, with the full condition in VoiceOver and weather details. Source
+credit lives at the bottom of the forecast and in weather details. The weather
+details sheet belongs to the existing `forecast` screen and adds no event, conversion, or timed operation. Weather
+loading runs independently and is excluded from ISS/Tiangong forecast timers.
+Pull-to-refresh still emits one `refresh_requested` event while refreshing both
+weather and station passes.
+
+Weather uses the `clear-sky-chart` Firebase project's authenticated HTTPS API,
+with a named secondary Firebase app and a persistent anonymous Auth session.
+The default Firebase project continues to own analytics and push registration.
+Rounded selected coordinates are sent as operational weather inputs; they,
+weather values, guest IDs, and Auth tokens are never included in AppAnalytics.
+Backend request-limit/cache records are operational data, not product telemetry.
+Snapshot tests, XCTest hosts, and previews never authenticate or request live
+weather. No weather screen events or additional analytics collection are added.

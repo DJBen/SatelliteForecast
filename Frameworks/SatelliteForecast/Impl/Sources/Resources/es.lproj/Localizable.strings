@@ -806,3 +806,35 @@ The localized string for the status of a spare satellite */
 "No distance limit. Includes medium-orbit and geosynchronous satellites." = "Sin límite de distancia. Incluye satélites de órbita media y geosíncrona.";
 
 "Shows satellites less than 23,000 km from you, including GPS and other medium-orbit satellites." = "Muestra satélites a menos de 23.000 km de ti, incluidos los GPS y otros de órbita media.";
+
+// Home location weather
+"Weather" = "Tiempo";
+"Clear" = "Despejado";
+"Mostly clear" = "Mayormente despejado";
+"Partly cloudy" = "Parcialmente nublado";
+"Mostly cloudy" = "Mayormente nublado";
+"Cloudy" = "Nublado";
+"Drizzle" = "Llovizna";
+"Rain" = "Lluvia";
+"Heavy rain" = "Lluvia intensa";
+"Thunderstorms" = "Tormentas";
+"Snow" = "Nieve";
+"Heavy snow" = "Nieve intensa";
+"Wintry mix" = "Precipitación mixta";
+"Freezing rain" = "Lluvia helada";
+"Hail" = "Granizo";
+"Fog" = "Niebla";
+"Haze" = "Bruma";
+"Smoke" = "Humo";
+"Windy" = "Viento";
+"Blowing dust" = "Polvo en suspensión";
+"Hot" = "Calor";
+"Frigid" = "Frío intenso";
+"Hurricane" = "Huracán";
+"Tropical storm" = "Tormenta tropical";
+"Show weather details" = "Mostrar detalles del tiempo";
+"Apple Weather data sources" = "Fuentes de datos de Apple Weather";
+"Hourly forecast" = "Pronóstico por hora";
+"Loading weather" = "Cargando el tiempo";
+"Weather unavailable" = "Tiempo no disponible";
+"Tap to retry" = "Toca para reintentar";

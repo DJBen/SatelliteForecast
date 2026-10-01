@@ -1,0 +1,14 @@
+{
+  "checks": [
+    "GPS jitter reused the WeatherKit H3 cell",
+    "App rounding-boundary crossing reused the same WeatherKit H3 cell",
+    "All three requests returned identical provider fetchedAt and weather"
+  ],
+  "requestedLatitudes": [
+    37.77,
+    37.7701,
+    37.78
+  ],
+  "weatherCell": "872830828ffffff",
+  "sourceFetchedAt": "2026-10-01T06:52:43.566Z"
+}
