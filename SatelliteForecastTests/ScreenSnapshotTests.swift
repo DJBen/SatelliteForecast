@@ -1378,8 +1378,13 @@ extension Fixture {
             }, now: { homeNow }))
         await cardsModel.refresh(.init(observer: passObserver))
         let homeContext = SatelliteOverviewViewContext(starManager: catalog, julianDateProvider: passDate)
+        // Historical store moments cannot use a live hourly forecast. Render the
+        // real weather UI with a deterministic illustrative 16°C partly-cloudy
+        // forecast at the fixture clock, without creating a Firebase guest session.
+        let homeWeather = HomeWeatherModel(load: { _ in try weatherTestForecast(at: homeNow) }, now: { homeNow })
+        await homeWeather.refresh(HomeWeatherLocation(session.location.resources.location!.coordinate))
         let home = AnyView(ObservationHomeView(session: session, model: homeModel, context: homeContext,
-            initialPreview: ObservationPreview(info: info, snapshots: pass)))
+            initialPreview: ObservationPreview(info: info, snapshots: pass), weather: homeWeather))
         func root(_ content: AnyView, tab: SatelliteForecast.Tab = .forecast) -> AnyView {
             // The Satellites tab keeps the reviewed home instant so the station cards report the
             // catalogued geography (for example "Over California, US").
