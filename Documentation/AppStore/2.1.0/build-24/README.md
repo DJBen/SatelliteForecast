@@ -16,7 +16,8 @@ The live App Store listing checked October 1 still declares **Data Not Collected
 including after version 2.0.1 became public. This conflicts with the app's retained
 reminder locations, identifiers, brightness reports, analytics, and anonymous weather
 account. Safari App Store Connect and the CLI web session are signed out. Safari's
-saved sign-in requires user authentication. The public API cannot read or edit this
+saved sign-in requires user authentication. At the final browser check, the Mac was
+locked and Computer Use could not automatically unlock it. The public API cannot read or edit this
 label. The user has been asked to sign in so the declaration can be corrected before
 submission; no additional release approval is required.
 
