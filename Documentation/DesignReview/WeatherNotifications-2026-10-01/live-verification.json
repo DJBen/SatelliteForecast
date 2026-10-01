@@ -1,0 +1,12 @@
+{
+  "authenticatedStatus": 200,
+  "hourCount": 2,
+  "nearbyLocationCacheReused": true,
+  "passHourRequested": "2026-10-01T14:00:00+00:00",
+  "runtimeIdentity": "notification-service-account",
+  "schemaVersion": 1,
+  "weatherStatus": "ok",
+  "unauthenticatedStatus": 403,
+  "smokeExecution": "codex-weather-smoke-rx85r",
+  "smokeExecutionStatus": "SUCCEEDED"
+}

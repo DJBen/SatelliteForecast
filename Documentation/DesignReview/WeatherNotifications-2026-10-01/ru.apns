@@ -1,0 +1,16 @@
+{
+  "Simulator Target Bundle": "io.djben.SatelliteForecast",
+  "aps": {
+    "alert": {
+      "title": "МКС · 18:21",
+      "subtitle": "Смотрите ЮЗ · 4 мин · До 62°",
+      "body": "Облака могут помешать наблюдению."
+    },
+    "category": "PASS"
+  },
+  "noradIndex": "25544",
+  "satelliteCategory": "iss",
+  "lat": "37.77",
+  "lon": "-122.42",
+  "alt": "0"
+}

@@ -1,0 +1,16 @@
+{
+  "Simulator Target Bundle": "io.djben.SatelliteForecast",
+  "aps": {
+    "alert": {
+      "title": "EEI · 18:21",
+      "subtitle": "Mira al SO · 4 min · Hasta 62°",
+      "body": "Las nubes podrían dificultar la observación."
+    },
+    "category": "PASS"
+  },
+  "noradIndex": "25544",
+  "satelliteCategory": "iss",
+  "lat": "37.77",
+  "lon": "-122.42",
+  "alt": "0"
+}

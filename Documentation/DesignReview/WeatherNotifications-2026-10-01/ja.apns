@@ -1,0 +1,16 @@
+{
+  "Simulator Target Bundle": "io.djben.SatelliteForecast",
+  "aps": {
+    "alert": {
+      "title": "ISS · 18:21",
+      "subtitle": "南西の空 · 4分 · 最大62°",
+      "body": "雲で見えにくい可能性があります。"
+    },
+    "category": "PASS"
+  },
+  "noradIndex": "25544",
+  "satelliteCategory": "iss",
+  "lat": "37.77",
+  "lon": "-122.42",
+  "alt": "0"
+}

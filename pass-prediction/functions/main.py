@@ -15,7 +15,8 @@ import pygeohash as geohash
 
 from common.prediction_pipeline import enqueue_region, region_for_user, refresh_region
 from common.satellite import find_visible_satellite_transits
-from common.description import describe_transit, describe_prominent_transit, get_localized_satellite_title
+from common.notification_copy import notification_content
+from common.notification_weather import weather_for_pass
 from common.deep_link import pass_time_data
 from common.delivery import claim_delivery, finish_delivery
 from common.prediction_pipeline import utc, orbital_sources, stale_regions
@@ -42,7 +43,7 @@ def _get_satellite_category(sat_id):
     else:
         return "satellite"
 
-def _send_fcm_notification(push_token, title, body, sat_id=None, observer_data=None, transit=None, collapse_id=None):
+def _send_fcm_notification(push_token, title, body, sat_id=None, observer_data=None, transit=None, collapse_id=None, subtitle=None):
     """
     Sends FCM notification and handles common error cases.
     Returns tuple of (success, error_response) where error_response is None if successful.
@@ -68,6 +69,7 @@ def _send_fcm_notification(push_token, title, body, sat_id=None, observer_data=N
             apns_payload = messaging.APNSPayload(
                 aps=messaging.Aps(
                     category="PASS",
+                    alert=messaging.ApsAlert(title=title, subtitle=subtitle, body=body),
                 )
             )
             
@@ -209,11 +211,15 @@ def _deliver_notification(request, prominent=False):
             return jsonify({'status': 'skipped'}), 200
         locale = user.get('locale', 'en')
         offset = int(user.get('tzOffset', data['tz_offset']))
-        title = get_localized_satellite_title(sat_id, locale=locale, is_rising=not prominent)
-        body = describe_prominent_transit(sat_id, transit, offset, locale) if prominent else describe_transit(transit, offset, locale)
         observer = {key: float(user.get(key, 0)) for key in ('lat', 'lon', 'alt')}
+        weather = weather_for_pass(transit, observer, now)
+        if weather == 'rain':
+            finish_delivery(ref, 'skipped', now, 'weather_rain')
+            logger.info('notification_skipped', reason='weather_rain')
+            return jsonify({'status': 'skipped'}), 200
+        title, subtitle, body = notification_content(sat_id, transit, offset, locale, weather)
         success, error_response = _send_fcm_notification(token, title, body, sat_id, observer,
-            transit=transit, collapse_id=hashlib.sha256(ref.path.encode()).hexdigest())
+            transit=transit, collapse_id=hashlib.sha256(ref.path.encode()).hexdigest(), subtitle=subtitle)
         if success:
             finish_delivery(ref, 'sent', now)
             return jsonify({'status': 'sent'}), 200

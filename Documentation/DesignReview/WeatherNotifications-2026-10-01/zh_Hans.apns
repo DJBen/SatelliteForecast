@@ -1,0 +1,16 @@
+{
+  "Simulator Target Bundle": "io.djben.SatelliteForecast",
+  "aps": {
+    "alert": {
+      "title": "国际空间站 · 18:21",
+      "subtitle": "朝西南看 · 4分钟 · 最高62°",
+      "body": "云层可能遮挡视线。"
+    },
+    "category": "PASS"
+  },
+  "noradIndex": "25544",
+  "satelliteCategory": "iss",
+  "lat": "37.77",
+  "lon": "-122.42",
+  "alt": "0"
+}

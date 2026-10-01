@@ -1,0 +1,16 @@
+{
+  "Simulator Target Bundle": "io.djben.SatelliteForecast",
+  "aps": {
+    "alert": {
+      "title": "ISS · 18:21",
+      "subtitle": "Vers SO · 4 min · Jusqu’à 62°",
+      "body": "Les nuages pourraient gêner la vue."
+    },
+    "category": "PASS"
+  },
+  "noradIndex": "25544",
+  "satelliteCategory": "iss",
+  "lat": "37.77",
+  "lon": "-122.42",
+  "alt": "0"
+}

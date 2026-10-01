@@ -83,12 +83,35 @@ class LocationEnqueueTests(unittest.TestCase):
 
 
 class DeliveryEndpointTests(unittest.TestCase):
-    def call(self, *, moved=False, expired=False, success=True, code=500, claim='claimed'):
+    def test_apns_encodes_subtitle_and_preserves_deep_link_and_collapse_id(self):
+        from firebase_admin import messaging
+        with patch.object(messaging, 'send', return_value='accepted') as send:
+            success, error = main._send_fcm_notification('test-device', 'ISS · 18:21',
+                'Clouds may obscure the view.', '25544', {'lat': 0, 'lon': 0, 'alt': 0},
+                collapse_id='pass-one', subtitle='Look SW · 4 min · Up to 62°')
+        self.assertTrue(success)
+        self.assertIsNone(error)
+        message = send.call_args.args[0]
+        self.assertEqual(message.apns.payload.aps.alert.subtitle, 'Look SW · 4 min · Up to 62°')
+        self.assertEqual(message.apns.payload.aps.alert.body, 'Clouds may obscure the view.')
+        self.assertEqual(message.apns.payload.aps.alert.title, 'ISS · 18:21')
+        self.assertEqual(message.apns.payload.aps.category, 'PASS')
+        self.assertEqual(message.apns.headers['apns-collapse-id'], 'pass-one')
+        self.assertEqual(message.data['noradIndex'], '25544')
+        wire = messaging._MessagingService.encode_message(message)
+        self.assertEqual(wire['apns']['payload']['aps']['alert'], {
+            'title': 'ISS · 18:21', 'subtitle': 'Look SW · 4 min · Up to 62°',
+            'body': 'Clouds may obscure the view.'})
+        self.assertEqual(wire['apns']['payload']['aps']['category'], 'PASS')
+
+    def call(self, *, moved=False, expired=False, success=True, code=500, claim='claimed', weather='unknown', prominent=False):
         now = datetime.datetime.now(datetime.timezone.utc)
         peak = now + datetime.timedelta(minutes=-1 if expired else 5)
         payload = {'push_token': 'test-device', 'sat_id': '25544', 'tz_offset': 0,
                    'notification_id': 'pass-one', 'geo_hash_5': 'xxxxx' if moved else '7zzzz',
-                   'transit': {'culmination': {'time': peak.isoformat()}, 'visible_culmination_elev': 45}}
+                   'transit': {'culmination': {'time': peak.isoformat()}, 'visible_culmination_elev': 65,
+                               'visible_above_10_deg_duration_sec': 240,
+                               'elev10_rise': {'time': (peak - datetime.timedelta(minutes=2)).isoformat(), 'obs': {'azimuth': 225}}}}
         app = Flask(__name__)
         database = MagicMock()
         user_ref = MagicMock()
@@ -104,9 +127,10 @@ class DeliveryEndpointTests(unittest.TestCase):
         database.collection.side_effect = collection
         with patch.object(main, 'db', database), patch.object(main, 'claim_delivery', return_value=claim), \
              patch.object(main, 'finish_delivery') as finish, \
+             patch.object(main, 'weather_for_pass', return_value=weather), \
              patch.object(main, '_send_fcm_notification', return_value=(success, None if success else ('failed', code))) as send, \
              app.test_request_context('/', method='POST', json=payload, headers={'X-CloudTasks-TaskName': 'task-one'}):
-            response = main._deliver_notification(request)
+            response = main._deliver_notification(request, prominent=prominent)
         return response, finish, send, receipt, user_ref
 
     def test_success_is_recorded_after_fcm_accepts(self):
@@ -116,6 +140,22 @@ class DeliveryEndpointTests(unittest.TestCase):
         self.assertEqual(finish.call_args.args[1], 'sent')
         self.assertEqual(len(send.call_args.kwargs['collapse_id']), 64)
         receipt.delete.assert_not_called()
+
+    def test_rain_is_terminal_skip_for_regular_and_prominent_alerts(self):
+        for prominent in (False, True):
+            response, finish, send, receipt, _ = self.call(weather='rain', prominent=prominent)
+            self.assertEqual(response[1], 200)
+            self.assertEqual(finish.call_args.args[1], 'skipped')
+            self.assertEqual(finish.call_args.args[3], 'weather_rain')
+            send.assert_not_called()
+            receipt.set.assert_not_called()
+
+    def test_cloudy_and_unknown_weather_send_subtitle_with_short_body(self):
+        for state, body in (('cloudy', 'Clouds may obscure the view.'), ('unknown', 'Check the sky before heading out.')):
+            response, _, send, _, _ = self.call(weather=state)
+            self.assertEqual(response[1], 200)
+            self.assertEqual(send.call_args.args[2], body)
+            self.assertEqual(send.call_args.kwargs['subtitle'], 'Look SW · 4 min · Up to 65°')
 
     def test_moved_and_expired_notifications_are_acknowledged_without_sending(self):
         for options, reason in (({'moved': True}, 'location_changed'), ({'expired': True}, 'pass_expired')):

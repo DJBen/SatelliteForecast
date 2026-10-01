@@ -178,6 +178,16 @@ metric. Reduced server-alert exposure changes the population eligible for
 `notification_opened`; account for this policy when comparing reminder-return
 funnels across rollout. No new events, identifiers, or coordinates are logged.
 
+The 2026-10-01 automatic station-alert policy also suppresses delivery when fresh
+pass-window weather has a rainy condition and at least 80% precipitation
+probability in every overlapping hour. The server records the fixed operational
+skip reason `weather_rain`; no custom app Analytics event is added. Cloudy and
+unavailable weather still produce reminders with localized cautious copy. This
+changes automatic-alert exposure and therefore the population eligible for
+`notification_opened`; compare reminder-return funnels with this policy in mind.
+Manual local alarms, `alarm_scheduled`, permission conversion, and notification
+deep-link measurement boundaries remain unchanged.
+
 
 ## Home Screen widgets
 

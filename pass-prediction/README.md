@@ -16,14 +16,54 @@ Firebase / Google Cloud project is still `pass-prediction`. Pass
 
 ### Push notification copy
 
-Regular pushes are scheduled five minutes before culmination, so their titles
-say the satellite passes by soon rather than claiming it is rising now. Prominent
-pushes use a short invitation to observe. Both use localized viewing details with
-the local start time, direction, highest illuminated elevation, and approximate
-viewing duration. The start is the later of reaching 10° elevation and leaving
-Earth's shadow. Clear-sky wording avoids promising visibility regardless of weather.
-Exact local times avoid ambiguous “tonight” labels; copy does not infer an overhead
-pass from its duration. Alert eligibility remains unchanged; scheduling and delivery reliability are
+Regular pushes retain their five-minutes-before-culmination schedule; prominent
+pushes retain their afternoon schedule. Both now use the same compact layout:
+
+```text
+ISS · 18:21
+Look SW · 4 min · Up to 62°
+Clouds may obscure the view.
+```
+
+The title uses the localized short station name and local visible start time.
+The APNs subtitle contains the abbreviated direction, approximate duration in a
+single unit, and highest illuminated elevation. The body is reserved for weather.
+Full directions remain in the pass detail opened by the existing notification
+deep link. All eight app languages have complete weather and subtitle copy in
+`functions/common/notification_copy.py`; regional locale aliases use the existing
+language fallback rules. Manual local alarms are unchanged.
+
+At delivery, the private ClearSkyChart `notificationWeather` service obtains two
+WeatherKit hours beginning at the visible start's UTC hour. It uses the same H3
+resolution-7 area and UTC-window cache as the home weather endpoint, including
+cross-instance refresh leases. Only the notification runtime service account may
+invoke the service through Cloud Run IAM with an audience-bound identity token.
+No anonymous Firebase users are created for notification delivery. Cloud Run's
+standard access logs may include request parameters, as with the existing forecast
+API; weather requests are not custom app analytics.
+
+The visible window begins at the later of 10° elevation and leaving Earth's
+shadow and lasts the predicted illuminated duration. An afternoon reminder checks
+the evening pass's weather. Every hour intersecting that window must be present,
+non-stale, and fetched less than 15 minutes ago. A rainy condition with at least
+80% precipitation probability in **every** overlapping hour suppresses the alert
+and records terminal skip reason `weather_rain`. This product threshold indicates
+high forecast confidence, not a guarantee of observed rain. Partial rain coverage,
+any rain condition with lower confidence, or precipitation probability of at least
+30% produces the possible-rain body. Otherwise the highest overlapping cloud
+cover selects mostly clear (<30%), cloudy (30–<70%), or mostly cloudy (≥70%).
+Missing/invalid fields needed for classification, stale data, lookup failures,
+and an unavailable pass-hour window use “Check the sky before heading out.” in
+the user's language and do not suppress the alert. A valid rainy condition may
+still yield possible-rain copy when its probability is unavailable. An end exactly on an hour boundary does
+not require the next hour. A skipped task is acknowledged without a replacement
+notification; regular and prominent tasks make their own decision at delivery.
+Snow, wintry mix, fog, haze, smoke, dust, and tropical storm conditions use neutral
+copy rather than inferring rain from precipitation probability or clear skies from
+cloud fraction alone. These conditions do not suppress reminders under the rain policy.
+
+`NOTIFICATION_WEATHER_URL` may override the default private service URI; its exact
+base URI is also the OIDC audience. Scheduling and delivery reliability are
 described in the architecture guide.
 
 Run the notification copy regression tests without Firebase credentials:
