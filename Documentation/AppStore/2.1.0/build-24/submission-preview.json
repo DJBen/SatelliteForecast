@@ -1,0 +1,15 @@
+{
+  "appId": "1578649430",
+  "version": "2.1.0",
+  "versionId": "51de3472-bfd1-434c-ba5e-c1d963719301",
+  "buildId": "5c463010-9438-421b-91fe-c613836c51a0",
+  "platform": "IOS",
+  "dryRun": true,
+  "wouldSubmit": true,
+  "buildAttachment": {
+    "versionId": "51de3472-bfd1-434c-ba5e-c1d963719301",
+    "buildId": "5c463010-9438-421b-91fe-c613836c51a0",
+    "currentBuildId": "5c463010-9438-421b-91fe-c613836c51a0",
+    "alreadyAttached": true
+  }
+}

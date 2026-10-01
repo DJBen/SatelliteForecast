@@ -1,0 +1,80 @@
+{
+  "appId": "1578649430",
+  "version": "2.1.0",
+  "status": "Prepared for entry in App Store Connect; not applied or published",
+  "collected": true,
+  "declarations": [
+    {
+      "dataType": "Precise Location",
+      "purposes": [
+        "App Functionality"
+      ],
+      "linkedToUser": true,
+      "usedForTracking": false,
+      "sourceEvidence": "Optional server-generated station reminders retain selected coordinates with a push identifier."
+    },
+    {
+      "dataType": "Coarse Location",
+      "purposes": [
+        "App Functionality",
+        "Analytics"
+      ],
+      "linkedToUser": true,
+      "usedForTracking": false,
+      "sourceEvidence": "Rounded home-weather coordinates and reminder area grouping; Firebase Analytics derives approximate region from IP."
+    },
+    {
+      "dataType": "User ID",
+      "purposes": [
+        "App Functionality"
+      ],
+      "linkedToUser": true,
+      "usedForTracking": false,
+      "sourceEvidence": "Firebase Authentication creates a persistent anonymous account for weather authentication and request limiting."
+    },
+    {
+      "dataType": "Device ID",
+      "purposes": [
+        "App Functionality",
+        "Analytics"
+      ],
+      "linkedToUser": true,
+      "usedForTracking": false,
+      "sourceEvidence": "Push/APNs/FCM tokens, Firebase installation identifiers, brightness-report installation identity, analytics app-instance identity."
+    },
+    {
+      "dataType": "Other User Content",
+      "purposes": [
+        "App Functionality"
+      ],
+      "linkedToUser": true,
+      "usedForTracking": false,
+      "sourceEvidence": "Optional brightness observations: satellite, estimated magnitude and observation time, associated with an installation and FCM token."
+    },
+    {
+      "dataType": "Product Interaction",
+      "purposes": [
+        "Analytics"
+      ],
+      "linkedToUser": true,
+      "usedForTracking": false,
+      "sourceEvidence": "Screen views, interactions and automatic Firebase lifecycle/notification events."
+    },
+    {
+      "dataType": "Performance Data",
+      "purposes": [
+        "Analytics"
+      ],
+      "linkedToUser": true,
+      "usedForTracking": false,
+      "sourceEvidence": "Custom forecast/catalog loading durations and technical outcome measurements."
+    }
+  ],
+  "sourceReferences": [
+    "https://developer.apple.com/app-store/app-privacy-details/",
+    "https://firebase.google.com/docs/ios/app-store-data-collection",
+    "Website/public/privacy/index.html",
+    "Documentation/Analytics.md",
+    "Frameworks/SatelliteForecast/Impl/Sources/Native/HomeWeather.swift"
+  ]
+}

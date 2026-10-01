@@ -1,0 +1,11 @@
+{
+  "id": "c58223e5-fe1e-4f34-ae3b-fe441f33da93",
+  "providedFields": {
+    "contactFirstName": true,
+    "contactLastName": true,
+    "contactEmail": true,
+    "contactPhone": true
+  },
+  "demoAccountRequired": null,
+  "notes": "Version 2.0.1 build 22 adds the live Sky now tab. No account or login is required. Choose an observer location in Settings or allow location access, then open Sky now. Passing now opens the searchable list; the adjacent filter controls distance and unlit satellites. Tap a satellite to see its trajectory and use the target button to center it. Tapping the selected satellite details opens the optional brightness-report slider; Report sends the observation to our Firebase backend with installation and messaging identifiers, as described in the privacy policy. The submission uses the existing store screenshots. Category navigation and camera stability are also improved."
+}

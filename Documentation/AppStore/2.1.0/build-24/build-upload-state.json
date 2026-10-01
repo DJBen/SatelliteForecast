@@ -1,0 +1,62 @@
+{
+  "data": [
+    {
+      "type": "buildUploads",
+      "id": "5c463010-9438-421b-91fe-c613836c51a0",
+      "attributes": {
+        "cfBundleShortVersionString": "2.1.0",
+        "cfBundleVersion": "24",
+        "platform": "IOS",
+        "createdDate": "2026-10-01T09:03:37-07:00",
+        "uploadedDate": "2026-10-01T09:04:10-07:00",
+        "state": {
+          "state": "COMPLETE"
+        }
+      },
+      "relationships": {
+        "buildUploadFiles": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/buildUploads/5c463010-9438-421b-91fe-c613836c51a0/relationships/buildUploadFiles",
+            "related": "https://api.appstoreconnect.apple.com/v1/buildUploads/5c463010-9438-421b-91fe-c613836c51a0/buildUploadFiles"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/buildUploads/5c463010-9438-421b-91fe-c613836c51a0"
+      }
+    },
+    {
+      "type": "buildUploads",
+      "id": "970b4b54-38cc-48cc-9ec2-90eb8f78d45a",
+      "attributes": {
+        "cfBundleShortVersionString": "2.1.0",
+        "cfBundleVersion": "24",
+        "platform": "IOS",
+        "createdDate": "2026-10-01T09:02:09-07:00",
+        "state": {
+          "state": "AWAITING_UPLOAD"
+        }
+      },
+      "relationships": {
+        "buildUploadFiles": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/buildUploads/970b4b54-38cc-48cc-9ec2-90eb8f78d45a/relationships/buildUploadFiles",
+            "related": "https://api.appstoreconnect.apple.com/v1/buildUploads/970b4b54-38cc-48cc-9ec2-90eb8f78d45a/buildUploadFiles"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/buildUploads/970b4b54-38cc-48cc-9ec2-90eb8f78d45a"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://api.appstoreconnect.apple.com/v1/apps/1578649430/buildUploads?filter%5BcfBundleVersion%5D=24&filter%5BcfBundleShortVersionString%5D=2.1.0"
+  },
+  "meta": {
+    "paging": {
+      "total": 2,
+      "limit": 50
+    }
+  }
+}

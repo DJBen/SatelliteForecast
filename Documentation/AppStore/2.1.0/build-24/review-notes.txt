@@ -1,0 +1,5 @@
+Version 2.1.0 build 24. No account or login is required. Choose an observer location in Settings or allow location access.
+
+The home screen displays forecast weather beside the selected location. Tap the weather row for details and source attribution. Weather is loaded from our Firebase backend using approximate coordinates and a separate anonymous session. Automatic ISS/Tiangong reminders include brief weather guidance and are skipped when fresh forecasts show a high probability of rain throughout the visible pass. Manually scheduled individual-pass reminders remain unchanged. Updated home screenshots use illustrative weather with the previously reviewed orbital/observer moments.
+
+Open Sky now for the live planetarium. Passing now opens the searchable satellite list; the adjacent filter controls distance and unlit satellites. Tap a satellite to see its trajectory and use the target button to center it. Tapping the selected satellite details opens the optional brightness-report slider; Report sends the observation to our Firebase backend with installation and messaging identifiers, as described in the privacy policy.

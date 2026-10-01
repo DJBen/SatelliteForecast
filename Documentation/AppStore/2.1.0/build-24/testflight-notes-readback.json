@@ -1,0 +1,158 @@
+{
+  "data": [
+    {
+      "type": "betaBuildLocalizations",
+      "id": "ee84d655-bfef-4b42-ab8b-cffb0702e341",
+      "attributes": {
+        "locale": "ru"
+      },
+      "relationships": {
+        "build": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/ee84d655-bfef-4b42-ab8b-cffb0702e341/relationships/build",
+            "related": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/ee84d655-bfef-4b42-ab8b-cffb0702e341/build"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/ee84d655-bfef-4b42-ab8b-cffb0702e341"
+      }
+    },
+    {
+      "type": "betaBuildLocalizations",
+      "id": "5998f137-4073-474a-addf-965ac2da43ff",
+      "attributes": {
+        "locale": "pt-BR"
+      },
+      "relationships": {
+        "build": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/5998f137-4073-474a-addf-965ac2da43ff/relationships/build",
+            "related": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/5998f137-4073-474a-addf-965ac2da43ff/build"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/5998f137-4073-474a-addf-965ac2da43ff"
+      }
+    },
+    {
+      "type": "betaBuildLocalizations",
+      "id": "df3dcf17-3908-4f93-a2b1-34e183fe8572",
+      "attributes": {
+        "locale": "ja"
+      },
+      "relationships": {
+        "build": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/df3dcf17-3908-4f93-a2b1-34e183fe8572/relationships/build",
+            "related": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/df3dcf17-3908-4f93-a2b1-34e183fe8572/build"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/df3dcf17-3908-4f93-a2b1-34e183fe8572"
+      }
+    },
+    {
+      "type": "betaBuildLocalizations",
+      "id": "d7dd9f81-05e4-4798-8682-672dbd11d348",
+      "attributes": {
+        "locale": "fr-FR"
+      },
+      "relationships": {
+        "build": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/d7dd9f81-05e4-4798-8682-672dbd11d348/relationships/build",
+            "related": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/d7dd9f81-05e4-4798-8682-672dbd11d348/build"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/d7dd9f81-05e4-4798-8682-672dbd11d348"
+      }
+    },
+    {
+      "type": "betaBuildLocalizations",
+      "id": "4a6a9478-9035-4bf3-9615-7693f6285ebd",
+      "attributes": {
+        "locale": "en-US",
+        "whatsNew": "Home screen weather and weather-aware station reminders. Please verify localized weather, compact notification directions and rain suppression."
+      },
+      "relationships": {
+        "build": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/4a6a9478-9035-4bf3-9615-7693f6285ebd/relationships/build",
+            "related": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/4a6a9478-9035-4bf3-9615-7693f6285ebd/build"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/4a6a9478-9035-4bf3-9615-7693f6285ebd"
+      }
+    },
+    {
+      "type": "betaBuildLocalizations",
+      "id": "20720fc8-3a1a-4a1c-9f1a-b0ebf786b2ac",
+      "attributes": {
+        "locale": "ko"
+      },
+      "relationships": {
+        "build": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/20720fc8-3a1a-4a1c-9f1a-b0ebf786b2ac/relationships/build",
+            "related": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/20720fc8-3a1a-4a1c-9f1a-b0ebf786b2ac/build"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/20720fc8-3a1a-4a1c-9f1a-b0ebf786b2ac"
+      }
+    },
+    {
+      "type": "betaBuildLocalizations",
+      "id": "8c4c0687-7b2d-4aaf-8252-97db37b19137",
+      "attributes": {
+        "locale": "zh-Hans"
+      },
+      "relationships": {
+        "build": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/8c4c0687-7b2d-4aaf-8252-97db37b19137/relationships/build",
+            "related": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/8c4c0687-7b2d-4aaf-8252-97db37b19137/build"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/8c4c0687-7b2d-4aaf-8252-97db37b19137"
+      }
+    },
+    {
+      "type": "betaBuildLocalizations",
+      "id": "7944a064-f1a9-4550-8b64-e1380fd47e79",
+      "attributes": {
+        "locale": "es-ES"
+      },
+      "relationships": {
+        "build": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/7944a064-f1a9-4550-8b64-e1380fd47e79/relationships/build",
+            "related": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/7944a064-f1a9-4550-8b64-e1380fd47e79/build"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/7944a064-f1a9-4550-8b64-e1380fd47e79"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations?filter%5Bbuild%5D=5c463010-9438-421b-91fe-c613836c51a0"
+  },
+  "meta": {
+    "paging": {
+      "total": 8,
+      "limit": 50
+    }
+  }
+}

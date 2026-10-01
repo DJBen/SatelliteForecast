@@ -1,4 +1,13 @@
-# iOS 2.1.0 — internal TestFlight
+# iOS 2.1.0
+
+Build **24** is prepared for the App Store with automatic release (**AFTER_APPROVAL**),
+new weather home screenshots in all eight locales, and zero API validation errors or
+warnings. It is attached to the **PREPARE_FOR_SUBMISSION** draft and available to
+internal First Light testers. **Not submitted for App Review yet**: the public privacy
+label still says Data Not Collected, and an authenticated website session is needed
+to publish the prepared correction. See [build 24 preparation and remaining access](build-24/README.md).
+
+## Initial internal-only release
 
 Build **23** (`16d5fb04-39a2-4d78-9af6-2293980fa283`) is VALID and
 **IN_BETA_TESTING** for internal **First Light**. The group automatically receives
@@ -6,8 +15,9 @@ all builds. Export set `testFlightInternalTestingOnly=true`; Apple reports exter
 state **NOT_APPLICABLE**. What to Test notes were read back and match the saved
 text, ignoring the final newline trimmed by the CLI.
 
-No 2.1.0 App Store draft, App Review submission, external distribution, or public
-release was created. Public version 2.0.1 and its store screenshots are unchanged.
+The initial build 23 request created no App Store draft, review submission or public
+release. The later build 24 preparation above creates the draft; public version 2.0.1
+and its live store screenshots remain unchanged pending review.
 
 ## Included changes
 
@@ -50,7 +60,9 @@ moments. Weather is an illustrative 16°C partly-cloudy UI fixture at each histo
 clock, not a claimed historical observation. English formats 61°F; the other
 locales format Celsius. French, Spanish, Portuguese and Russian use the shipped
 compact weather fallback; English, Japanese, Korean and Chinese also show condition
-text. Other screenshot slots were not regenerated or uploaded.
+text. Other screenshot slots were not regenerated. Build 24 uploaded the new weather home
+images to the App Store draft alongside byte-identical copies of the other five
+public slots, preserving their reviewed gallery order.
 
 | Locale | Home screenshot |
 | --- | --- |

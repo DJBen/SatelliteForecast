@@ -128,5 +128,9 @@ fixture, not a measured or reconstructed historical forecast. English uses 61°F
 the other locales format Celsius. Long location labels use the shipped one-line
 icon/temperature fallback; shorter labels also show the localized condition.
 The weather fixture and checksums are recorded in
-`2.1.0/screenshot-verification.json`. These captures accompany an internal-only
-TestFlight release and were not uploaded to an App Store draft.
+`2.1.0/screenshot-verification.json`. These captures initially accompanied internal-only
+TestFlight build 23. The later App Store preparation for build 24 uploaded them in all
+eight locales, retaining the other five public images and the widget-first gallery
+order. `2.1.0/build-24/screenshot-sources.json` records exact source paths and hashes;
+its screenshot folders use relative symlinks to the reviewed PNGs. No moment inputs
+or weather fixture values changed.

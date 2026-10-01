@@ -1,7 +1,7 @@
 # App Store Connect publishing guide
 
 Read this before preparing any release. It is the consolidated procedure as of the 2.1.0
-internal TestFlight release (October 1, 2026). Inspect the current remote state and the installed CLI help
+App Store preparation (October 1, 2026). Inspect the current remote state and the installed CLI help
 before reusing a command; historical IDs in the evidence directories are records, not
 targets. The guide is a procedure, not standing authorization to publish.
 
@@ -198,8 +198,9 @@ python3 scripts/capture-widget-home-screenshots.py --output Documentation/AppSto
 ## Evidence index
 
 - [2.1.0](2.1.0/README.md): one-line home weather and weather-aware station alerts;
-  build 23 available on internal First Light TestFlight, with refreshed weather home
-  screenshots in all eight locales.
+  builds 23 and 24 available on internal First Light TestFlight; build 24 is attached
+  to an auto-release draft with uploaded weather home screenshots in all eight locales.
+  App Review submission awaits authenticated correction of the public privacy label.
 
 - [2.0.1](2.0.1/README.md): live Sky Now, catalog/forecast reuse, and isolated SQLite
   metadata loading; build 21 available on internal First Light TestFlight.
@@ -293,3 +294,20 @@ and deploy to https://space-station-passes.web.app with `firebase deploy --only 
 - Version 2.1 home weather shares approximate coordinates with the weather backend
   even without station reminders. Privacy/support copy now describes this separate
   weather session and the server rain-suppression policy.
+
+## 2.1.0 App Store build 24 preparation
+
+- Build 23 cannot be submitted to the App Store because its export was internal-only.
+  Build 24 uses `testFlightInternalTestingOnly=false`, is VALID, and is attached to the
+  2.1.0 draft with `AFTER_APPROVAL` verified through `versions list` (the compact
+  `versions view` response does not expose release type).
+- Reuse the reviewed weather home captures without changing their historical inputs.
+  Inventoried inherited screenshots were MD5-identical to build 20; preserve all five
+  other slots and the widget-first gallery order. The new build evidence uses relative
+  symlinks to those reviewed PNGs plus a source/hash manifest to avoid binary duplication.
+- API validation's App Privacy notice is informational, but does not establish that the
+  label is accurate. On October 1 the live 2.0.1 listing still said Data Not Collected.
+  Source and the policy demonstrate collection, and 2.1 adds a persistent anonymous
+  Firebase account (User ID) for weather. Preparation is complete, but the correction
+  and authorized submission await an authenticated website session. The plan and
+  exact resume command are in `2.1.0/build-24/README.md`; no new release approval is needed.

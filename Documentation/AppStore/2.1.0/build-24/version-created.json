@@ -1,0 +1,19 @@
+{
+  "id": "51de3472-bfd1-434c-ba5e-c1d963719301",
+  "versionString": "2.1.0",
+  "platform": "IOS",
+  "state": "PREPARE_FOR_SUBMISSION",
+  "metadataCopy": {
+    "sourceVersion": "2.0.1",
+    "sourceVersionId": "67bdd8fa-5064-4045-b63b-c4fed001b238",
+    "selectedFields": [
+      "description",
+      "keywords",
+      "marketingUrl",
+      "promotionalText",
+      "supportUrl"
+    ],
+    "copiedLocales": 8,
+    "copiedFieldUpdates": 40
+  }
+}

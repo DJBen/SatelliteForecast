@@ -1,0 +1,1274 @@
+{
+  "ko": {
+    "versionLocalizationId": "0831f9c1-b7e1-4a02-b0cf-05705249689d",
+    "sets": [
+      {
+        "set": {
+          "type": "appScreenshotSets",
+          "id": "57109fc4-b616-4c75-ae5c-b21d6f196c48",
+          "attributes": {
+            "screenshotDisplayType": "APP_IPHONE_67"
+          },
+          "relationships": {
+            "appScreenshots": {
+              "links": {
+                "self": "https://api.appstoreconnect.apple.com/v1/appScreenshotSets/57109fc4-b616-4c75-ae5c-b21d6f196c48/relationships/appScreenshots",
+                "related": "https://api.appstoreconnect.apple.com/v1/appScreenshotSets/57109fc4-b616-4c75-ae5c-b21d6f196c48/appScreenshots"
+              }
+            }
+          },
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appScreenshotSets/57109fc4-b616-4c75-ae5c-b21d6f196c48"
+          }
+        },
+        "screenshots": [
+          {
+            "type": "appScreenshots",
+            "id": "610686fe-2d85-4ee9-ac67-57c9b6f73f37",
+            "attributes": {
+              "fileSize": 3989029,
+              "fileName": "1-06-widgets.png",
+              "sourceFileChecksum": "34f3d97a6ad5f59a898cd61322f3693b",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/b7/88/54/b7885402-ae02-1caf-6def-06c14f2fc4c6/1-06-widgets.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource221/v4/b7/88/54/b7885402-ae02-1caf-6def-06c14f2fc4c6/1-06-widgets.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/610686fe-2d85-4ee9-ac67-57c9b6f73f37"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "e4efd0e9-2877-4a69-8cf2-68b8289b159c",
+            "attributes": {
+              "fileSize": 2121080,
+              "fileName": "2-01-forecast.png",
+              "sourceFileChecksum": "492667f86d5d28616037886cec08309f",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/42/ed/e7/42ede789-6204-5d56-4fee-9ea7bf39292c/2-01-forecast.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource211/v4/42/ed/e7/42ede789-6204-5d56-4fee-9ea7bf39292c/2-01-forecast.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/e4efd0e9-2877-4a69-8cf2-68b8289b159c"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "852f5108-671d-40b4-9b73-d2198fffe1b9",
+            "attributes": {
+              "fileSize": 3673428,
+              "fileName": "3-05-planetarium.png",
+              "sourceFileChecksum": "935eef67c31cb1ee59588d949e2d387c",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/99/11/74/99117483-03ed-5c0f-cc7b-8e49273dcb05/3-05-planetarium.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource221/v4/99/11/74/99117483-03ed-5c0f-cc7b-8e49273dcb05/3-05-planetarium.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/852f5108-671d-40b4-9b73-d2198fffe1b9"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "71bd8632-5b13-473a-9ec4-04083057d275",
+            "attributes": {
+              "fileSize": 2568143,
+              "fileName": "4-02-pass-chart.png",
+              "sourceFileChecksum": "4da3cbe3be5ed67c7348dca82b6e1486",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/8e/12/4a/8e124a33-bdb9-d873-2982-ded7e8215639/4-02-pass-chart.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource211/v4/8e/12/4a/8e124a33-bdb9-d873-2982-ded7e8215639/4-02-pass-chart.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/71bd8632-5b13-473a-9ec4-04083057d275"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "741a6948-a583-429d-9373-95c503d1b32e",
+            "attributes": {
+              "fileSize": 1782757,
+              "fileName": "5-03-pass-list.png",
+              "sourceFileChecksum": "e17da5f8c965ca04956fe8933134d7ca",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/d4/e3/aa/d4e3aa1b-7f10-5087-01b4-aa444a377970/5-03-pass-list.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource211/v4/d4/e3/aa/d4e3aa1b-7f10-5087-01b4-aa444a377970/5-03-pass-list.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/741a6948-a583-429d-9373-95c503d1b32e"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "763da6b5-989e-4573-b244-4d2af81ededf",
+            "attributes": {
+              "fileSize": 2627462,
+              "fileName": "6-04-satellites.png",
+              "sourceFileChecksum": "0e27004804cc1dbd8c342cc9e681ab23",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/5d/e2/a6/5de2a68a-5314-e01d-5df3-c4f4d29e9379/6-04-satellites.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource211/v4/5d/e2/a6/5de2a68a-5314-e01d-5df3-c4f4d29e9379/6-04-satellites.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/763da6b5-989e-4573-b244-4d2af81ededf"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "es-ES": {
+    "versionLocalizationId": "ee7c691e-7a49-4488-be64-6e6400fd5b39",
+    "sets": [
+      {
+        "set": {
+          "type": "appScreenshotSets",
+          "id": "ab9c824b-4a63-4eac-b2a8-6378c66bcf30",
+          "attributes": {
+            "screenshotDisplayType": "APP_IPHONE_67"
+          },
+          "relationships": {
+            "appScreenshots": {
+              "links": {
+                "self": "https://api.appstoreconnect.apple.com/v1/appScreenshotSets/ab9c824b-4a63-4eac-b2a8-6378c66bcf30/relationships/appScreenshots",
+                "related": "https://api.appstoreconnect.apple.com/v1/appScreenshotSets/ab9c824b-4a63-4eac-b2a8-6378c66bcf30/appScreenshots"
+              }
+            }
+          },
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appScreenshotSets/ab9c824b-4a63-4eac-b2a8-6378c66bcf30"
+          }
+        },
+        "screenshots": [
+          {
+            "type": "appScreenshots",
+            "id": "61f0d3e2-c7fa-4ae4-88ad-538c53fbda6a",
+            "attributes": {
+              "fileSize": 3973940,
+              "fileName": "1-06-widgets.png",
+              "sourceFileChecksum": "85f478e0dbb4deb82f15e5c992912793",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/6d/eb/c9/6debc96f-fca7-6542-aaf9-e81c57194528/1-06-widgets.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource211/v4/6d/eb/c9/6debc96f-fca7-6542-aaf9-e81c57194528/1-06-widgets.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/61f0d3e2-c7fa-4ae4-88ad-538c53fbda6a"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "b27019a8-c1a4-48ce-ab67-3e13a5170cac",
+            "attributes": {
+              "fileSize": 2130583,
+              "fileName": "2-01-forecast.png",
+              "sourceFileChecksum": "830522aa62c9dfc2d6891ef688ccb7de",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/47/9f/ed/479fedee-f46d-200e-6200-ddddde61055b/2-01-forecast.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource221/v4/47/9f/ed/479fedee-f46d-200e-6200-ddddde61055b/2-01-forecast.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/b27019a8-c1a4-48ce-ab67-3e13a5170cac"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "9dfa97c7-1212-40fd-ac4e-f2aa0c370890",
+            "attributes": {
+              "fileSize": 3614174,
+              "fileName": "3-05-planetarium.png",
+              "sourceFileChecksum": "e9fbfccae668faee771a2922f8d23386",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/c0/62/3d/c0623d43-3c7a-dbb0-aa79-a8e3b3bd58b8/3-05-planetarium.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource211/v4/c0/62/3d/c0623d43-3c7a-dbb0-aa79-a8e3b3bd58b8/3-05-planetarium.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/9dfa97c7-1212-40fd-ac4e-f2aa0c370890"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "181041d4-d9ac-4b7d-97a2-d30f275af90e",
+            "attributes": {
+              "fileSize": 2672453,
+              "fileName": "4-02-pass-chart.png",
+              "sourceFileChecksum": "ca89673f8c1ab37e3a0fe45471b43aad",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/21/21/22/2121225d-081c-ea9e-d9bf-1940d8c5e280/4-02-pass-chart.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource211/v4/21/21/22/2121225d-081c-ea9e-d9bf-1940d8c5e280/4-02-pass-chart.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/181041d4-d9ac-4b7d-97a2-d30f275af90e"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "783f2f77-2e5c-4c34-8c07-1918d7b5ebd1",
+            "attributes": {
+              "fileSize": 1983474,
+              "fileName": "5-03-pass-list.png",
+              "sourceFileChecksum": "2cdd4c109550c9cbcd0031074800a8b0",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/b4/54/45/b45445cb-5254-1a90-5cd9-87b879b9ce39/5-03-pass-list.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource211/v4/b4/54/45/b45445cb-5254-1a90-5cd9-87b879b9ce39/5-03-pass-list.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/783f2f77-2e5c-4c34-8c07-1918d7b5ebd1"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "28129f48-a3ef-4036-921a-a60060ad5c31",
+            "attributes": {
+              "fileSize": 2706478,
+              "fileName": "6-04-satellites.png",
+              "sourceFileChecksum": "f8ad3d413d2e6dc857b1ca54c2658078",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/6d/8e/a7/6d8ea746-9708-b641-5af5-2864a9d4914b/6-04-satellites.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource211/v4/6d/8e/a7/6d8ea746-9708-b641-5af5-2864a9d4914b/6-04-satellites.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/28129f48-a3ef-4036-921a-a60060ad5c31"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "ja": {
+    "versionLocalizationId": "f78e93b6-45f2-46e6-8a2e-6bfdf98160eb",
+    "sets": [
+      {
+        "set": {
+          "type": "appScreenshotSets",
+          "id": "ad65bd4f-a398-4077-ab51-7f78eaf537a4",
+          "attributes": {
+            "screenshotDisplayType": "APP_IPHONE_67"
+          },
+          "relationships": {
+            "appScreenshots": {
+              "links": {
+                "self": "https://api.appstoreconnect.apple.com/v1/appScreenshotSets/ad65bd4f-a398-4077-ab51-7f78eaf537a4/relationships/appScreenshots",
+                "related": "https://api.appstoreconnect.apple.com/v1/appScreenshotSets/ad65bd4f-a398-4077-ab51-7f78eaf537a4/appScreenshots"
+              }
+            }
+          },
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appScreenshotSets/ad65bd4f-a398-4077-ab51-7f78eaf537a4"
+          }
+        },
+        "screenshots": [
+          {
+            "type": "appScreenshots",
+            "id": "a0d4e999-d47e-46a6-826e-f34a83455bf3",
+            "attributes": {
+              "fileSize": 3981252,
+              "fileName": "1-06-widgets.png",
+              "sourceFileChecksum": "496bc790c29ef21ef930ef3725618179",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/c4/c4/ad/c4c4add3-9a24-d923-b8c0-4a294a795acf/1-06-widgets.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource211/v4/c4/c4/ad/c4c4add3-9a24-d923-b8c0-4a294a795acf/1-06-widgets.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/a0d4e999-d47e-46a6-826e-f34a83455bf3"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "d36db42c-9548-4d2a-a663-00b8185ba615",
+            "attributes": {
+              "fileSize": 2141046,
+              "fileName": "2-01-forecast.png",
+              "sourceFileChecksum": "074c10d180f2e6af2bd307aeea5b1801",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/e9/ce/78/e9ce7898-8833-8dd6-1224-4966efb57e2b/2-01-forecast.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource221/v4/e9/ce/78/e9ce7898-8833-8dd6-1224-4966efb57e2b/2-01-forecast.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/d36db42c-9548-4d2a-a663-00b8185ba615"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "696e0c34-f647-44f9-aff8-dc289c68420d",
+            "attributes": {
+              "fileSize": 2652580,
+              "fileName": "3-05-planetarium.png",
+              "sourceFileChecksum": "3256678502349b570135fb5db318c24e",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/7a/5d/9b/7a5d9b38-c6eb-782e-924b-598015c77055/3-05-planetarium.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource221/v4/7a/5d/9b/7a5d9b38-c6eb-782e-924b-598015c77055/3-05-planetarium.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/696e0c34-f647-44f9-aff8-dc289c68420d"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "315bfe8f-4f3c-401f-a675-9d330f2a5039",
+            "attributes": {
+              "fileSize": 2811442,
+              "fileName": "4-02-pass-chart.png",
+              "sourceFileChecksum": "249ada5ec2f3dee42ce9d65fe24d552c",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/36/f3/66/36f36659-a6e6-c325-a795-8de8816e142c/4-02-pass-chart.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource211/v4/36/f3/66/36f36659-a6e6-c325-a795-8de8816e142c/4-02-pass-chart.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/315bfe8f-4f3c-401f-a675-9d330f2a5039"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "a55df239-802e-4960-85c3-5898dcaaa0af",
+            "attributes": {
+              "fileSize": 1817605,
+              "fileName": "5-03-pass-list.png",
+              "sourceFileChecksum": "62cb268e5919d51d7e183d5825abd816",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/2f/88/cf/2f88cfef-462d-4492-02c3-a86893d3b17d/5-03-pass-list.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource221/v4/2f/88/cf/2f88cfef-462d-4492-02c3-a86893d3b17d/5-03-pass-list.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/a55df239-802e-4960-85c3-5898dcaaa0af"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "78fa6f0a-92a4-4ffd-b942-b4224fb57502",
+            "attributes": {
+              "fileSize": 2657464,
+              "fileName": "6-04-satellites.png",
+              "sourceFileChecksum": "4ce0ad6fbac882fedc40301b3cd0fb12",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/f2/6d/f2/f26df2fa-972a-8b8f-ac46-6fd89c1823a8/6-04-satellites.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource211/v4/f2/6d/f2/f26df2fa-972a-8b8f-ac46-6fd89c1823a8/6-04-satellites.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/78fa6f0a-92a4-4ffd-b942-b4224fb57502"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "fr-FR": {
+    "versionLocalizationId": "934867a1-6458-41cd-9c5e-4ef33500a65c",
+    "sets": [
+      {
+        "set": {
+          "type": "appScreenshotSets",
+          "id": "2b1d45fc-481c-4828-8811-2d2501a743bd",
+          "attributes": {
+            "screenshotDisplayType": "APP_IPHONE_67"
+          },
+          "relationships": {
+            "appScreenshots": {
+              "links": {
+                "self": "https://api.appstoreconnect.apple.com/v1/appScreenshotSets/2b1d45fc-481c-4828-8811-2d2501a743bd/relationships/appScreenshots",
+                "related": "https://api.appstoreconnect.apple.com/v1/appScreenshotSets/2b1d45fc-481c-4828-8811-2d2501a743bd/appScreenshots"
+              }
+            }
+          },
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appScreenshotSets/2b1d45fc-481c-4828-8811-2d2501a743bd"
+          }
+        },
+        "screenshots": [
+          {
+            "type": "appScreenshots",
+            "id": "04080587-9e76-4a24-89db-1e1c91cd7e3e",
+            "attributes": {
+              "fileSize": 3970170,
+              "fileName": "1-06-widgets.png",
+              "sourceFileChecksum": "13301be4260fbaf52ebd84720d1625ab",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/7e/24/91/7e249179-1056-c8bb-4ba7-429bc43bf088/1-06-widgets.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource221/v4/7e/24/91/7e249179-1056-c8bb-4ba7-429bc43bf088/1-06-widgets.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/04080587-9e76-4a24-89db-1e1c91cd7e3e"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "1021d208-f34e-4e36-8377-4943ade279f6",
+            "attributes": {
+              "fileSize": 2127943,
+              "fileName": "2-01-forecast.png",
+              "sourceFileChecksum": "f5bbdff889d966bd65b9328d5bae75df",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/14/2d/7e/142d7eae-e986-255b-833f-0de65c5136bb/2-01-forecast.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource221/v4/14/2d/7e/142d7eae-e986-255b-833f-0de65c5136bb/2-01-forecast.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/1021d208-f34e-4e36-8377-4943ade279f6"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "23bee45b-644d-4a66-a109-6a71b192f23b",
+            "attributes": {
+              "fileSize": 3207387,
+              "fileName": "3-05-planetarium.png",
+              "sourceFileChecksum": "2811a5d639c031d248a99772db891360",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/52/ea/73/52ea7330-2f4e-380d-6f0e-6361b58cddd2/3-05-planetarium.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource221/v4/52/ea/73/52ea7330-2f4e-380d-6f0e-6361b58cddd2/3-05-planetarium.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/23bee45b-644d-4a66-a109-6a71b192f23b"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "69d0c07b-4a97-4e8f-9417-6ee9afa28e14",
+            "attributes": {
+              "fileSize": 2750031,
+              "fileName": "4-02-pass-chart.png",
+              "sourceFileChecksum": "3bf6f4bfca4c58521755e2e4f4ec0389",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/c1/09/d2/c109d296-aca1-409f-9d96-da8d7b30ca58/4-02-pass-chart.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource211/v4/c1/09/d2/c109d296-aca1-409f-9d96-da8d7b30ca58/4-02-pass-chart.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/69d0c07b-4a97-4e8f-9417-6ee9afa28e14"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "b3e8674c-d44a-406c-8416-ff562a3867dd",
+            "attributes": {
+              "fileSize": 1996138,
+              "fileName": "5-03-pass-list.png",
+              "sourceFileChecksum": "0d3cea8de340b09ede2306c3eb6a022c",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/88/c4/62/88c462cc-a027-e28c-e7d7-a8230f25622c/5-03-pass-list.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource211/v4/88/c4/62/88c462cc-a027-e28c-e7d7-a8230f25622c/5-03-pass-list.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/b3e8674c-d44a-406c-8416-ff562a3867dd"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "1651c490-c475-4aea-9a2b-074baee8461e",
+            "attributes": {
+              "fileSize": 2698374,
+              "fileName": "6-04-satellites.png",
+              "sourceFileChecksum": "f4ae0e1b503345ccef2779842097918b",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/74/af/1c/74af1cba-e5ac-bf9e-e551-09ac93517906/6-04-satellites.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource221/v4/74/af/1c/74af1cba-e5ac-bf9e-e551-09ac93517906/6-04-satellites.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/1651c490-c475-4aea-9a2b-074baee8461e"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "en-US": {
+    "versionLocalizationId": "816e9876-e5b8-43d3-b9a0-25f7b5eecca3",
+    "sets": [
+      {
+        "set": {
+          "type": "appScreenshotSets",
+          "id": "696d1cb7-b3b5-4cb8-8a8b-1d609223c983",
+          "attributes": {
+            "screenshotDisplayType": "APP_IPHONE_67"
+          },
+          "relationships": {
+            "appScreenshots": {
+              "links": {
+                "self": "https://api.appstoreconnect.apple.com/v1/appScreenshotSets/696d1cb7-b3b5-4cb8-8a8b-1d609223c983/relationships/appScreenshots",
+                "related": "https://api.appstoreconnect.apple.com/v1/appScreenshotSets/696d1cb7-b3b5-4cb8-8a8b-1d609223c983/appScreenshots"
+              }
+            }
+          },
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appScreenshotSets/696d1cb7-b3b5-4cb8-8a8b-1d609223c983"
+          }
+        },
+        "screenshots": [
+          {
+            "type": "appScreenshots",
+            "id": "c9240e20-627d-4de8-a196-72882e923deb",
+            "attributes": {
+              "fileSize": 3982551,
+              "fileName": "1-06-widgets.png",
+              "sourceFileChecksum": "4049e1c37131089e2cb33dddc38a788b",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/c9/55/38/c95538c8-308a-82f3-e7a3-6185ea159012/1-06-widgets.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource211/v4/c9/55/38/c95538c8-308a-82f3-e7a3-6185ea159012/1-06-widgets.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/c9240e20-627d-4de8-a196-72882e923deb"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "d53ca70a-cc1c-466e-9f28-01f48f1fa67e",
+            "attributes": {
+              "fileSize": 2104048,
+              "fileName": "2-01-forecast.png",
+              "sourceFileChecksum": "6a781fc8fc00f4668949d671d5b1640e",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/f6/35/0b/f6350bfa-fa38-28f2-be21-3fce9751d7b3/2-01-forecast.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource221/v4/f6/35/0b/f6350bfa-fa38-28f2-be21-3fce9751d7b3/2-01-forecast.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/d53ca70a-cc1c-466e-9f28-01f48f1fa67e"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "0573170b-50a0-43e8-ad5e-6e3b5e82fc46",
+            "attributes": {
+              "fileSize": 2455375,
+              "fileName": "3-05-planetarium.png",
+              "sourceFileChecksum": "563600755d9a3b5a13228122d789a316",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/40/b4/f1/40b4f181-4977-a368-c5ab-5272c1a44099/3-05-planetarium.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource211/v4/40/b4/f1/40b4f181-4977-a368-c5ab-5272c1a44099/3-05-planetarium.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/0573170b-50a0-43e8-ad5e-6e3b5e82fc46"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "a5c56824-55ec-4215-ba8f-38cf4e79abe2",
+            "attributes": {
+              "fileSize": 2742281,
+              "fileName": "4-02-pass-chart.png",
+              "sourceFileChecksum": "d2dbd2601bae2a071b243abf8aa0da92",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/18/36/80/18368044-3667-2439-7b92-4d5eec334be0/4-02-pass-chart.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource221/v4/18/36/80/18368044-3667-2439-7b92-4d5eec334be0/4-02-pass-chart.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/a5c56824-55ec-4215-ba8f-38cf4e79abe2"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "f11e5327-1862-4245-a517-ee7dae8df537",
+            "attributes": {
+              "fileSize": 1943628,
+              "fileName": "5-03-pass-list.png",
+              "sourceFileChecksum": "f85398130a84437ea50d61c273577ca3",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/eb/59/62/eb5962a8-4eba-f7a6-6a58-5864d233a63a/5-03-pass-list.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource221/v4/eb/59/62/eb5962a8-4eba-f7a6-6a58-5864d233a63a/5-03-pass-list.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/f11e5327-1862-4245-a517-ee7dae8df537"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "f8a82d2b-0cfb-4863-9f2d-ec0bd086ca6a",
+            "attributes": {
+              "fileSize": 2664357,
+              "fileName": "6-04-satellites.png",
+              "sourceFileChecksum": "758ca1d2ca3b955e0de10cdddba57c40",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/5c/c3/66/5cc366f1-7bfe-944d-3d56-89abab7e376a/6-04-satellites.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource211/v4/5c/c3/66/5cc366f1-7bfe-944d-3d56-89abab7e376a/6-04-satellites.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/f8a82d2b-0cfb-4863-9f2d-ec0bd086ca6a"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "ru": {
+    "versionLocalizationId": "3d246de1-b810-4cdf-b8e8-1de3246869c1",
+    "sets": [
+      {
+        "set": {
+          "type": "appScreenshotSets",
+          "id": "d9a04a2e-e881-4987-ac44-524e34a61dc3",
+          "attributes": {
+            "screenshotDisplayType": "APP_IPHONE_67"
+          },
+          "relationships": {
+            "appScreenshots": {
+              "links": {
+                "self": "https://api.appstoreconnect.apple.com/v1/appScreenshotSets/d9a04a2e-e881-4987-ac44-524e34a61dc3/relationships/appScreenshots",
+                "related": "https://api.appstoreconnect.apple.com/v1/appScreenshotSets/d9a04a2e-e881-4987-ac44-524e34a61dc3/appScreenshots"
+              }
+            }
+          },
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appScreenshotSets/d9a04a2e-e881-4987-ac44-524e34a61dc3"
+          }
+        },
+        "screenshots": [
+          {
+            "type": "appScreenshots",
+            "id": "9c7c7b65-8360-4d1f-82b2-7a6bb87847c2",
+            "attributes": {
+              "fileSize": 3979541,
+              "fileName": "1-06-widgets.png",
+              "sourceFileChecksum": "6171f73dfa438518b752dd3f3edb7f32",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/7e/84/c1/7e84c1f8-1d74-7fc0-e2fb-9cca33cb1d63/1-06-widgets.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource221/v4/7e/84/c1/7e84c1f8-1d74-7fc0-e2fb-9cca33cb1d63/1-06-widgets.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/9c7c7b65-8360-4d1f-82b2-7a6bb87847c2"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "08ed6f5e-3e9f-4c43-89ea-896a76001790",
+            "attributes": {
+              "fileSize": 2130760,
+              "fileName": "2-01-forecast.png",
+              "sourceFileChecksum": "74da3216021ea1bbe72dc6b673f2d36a",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/4f/ec/05/4fec05b9-821d-49ab-0157-5c850321f5b0/2-01-forecast.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource221/v4/4f/ec/05/4fec05b9-821d-49ab-0157-5c850321f5b0/2-01-forecast.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/08ed6f5e-3e9f-4c43-89ea-896a76001790"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "3fc253a5-504b-4c61-9a13-3cb743b53130",
+            "attributes": {
+              "fileSize": 3510917,
+              "fileName": "3-05-planetarium.png",
+              "sourceFileChecksum": "eee9abf8b46e52bd151d6d79f9cf0cb9",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/92/08/24/92082428-18cf-d4b9-9d2a-a771813932d3/3-05-planetarium.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource221/v4/92/08/24/92082428-18cf-d4b9-9d2a-a771813932d3/3-05-planetarium.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/3fc253a5-504b-4c61-9a13-3cb743b53130"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "5cef455f-6efd-4b8e-b34a-66900b4b6cbc",
+            "attributes": {
+              "fileSize": 2647232,
+              "fileName": "4-02-pass-chart.png",
+              "sourceFileChecksum": "231f22590441f21593aa1a3ab5b94a6a",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/b5/c5/fb/b5c5fb8c-5482-8709-48fd-b819a58a1ced/4-02-pass-chart.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource221/v4/b5/c5/fb/b5c5fb8c-5482-8709-48fd-b819a58a1ced/4-02-pass-chart.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/5cef455f-6efd-4b8e-b34a-66900b4b6cbc"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "053d0291-ce3b-492a-8a6d-8818482b65fc",
+            "attributes": {
+              "fileSize": 1800442,
+              "fileName": "5-03-pass-list.png",
+              "sourceFileChecksum": "b52cfa506d82395df521ccfdd4c4a724",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/2d/88/4e/2d884e09-7efe-3dbb-ff61-612eab2ba072/5-03-pass-list.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource211/v4/2d/88/4e/2d884e09-7efe-3dbb-ff61-612eab2ba072/5-03-pass-list.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/053d0291-ce3b-492a-8a6d-8818482b65fc"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "d373d627-0c57-499b-8a10-4af06788cde1",
+            "attributes": {
+              "fileSize": 2567636,
+              "fileName": "6-04-satellites.png",
+              "sourceFileChecksum": "84542f6491b3921ff883c202d81f29fa",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/95/5d/7d/955d7d68-eae8-ac47-6456-746e3e444a2d/6-04-satellites.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource221/v4/95/5d/7d/955d7d68-eae8-ac47-6456-746e3e444a2d/6-04-satellites.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/d373d627-0c57-499b-8a10-4af06788cde1"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "zh-Hans": {
+    "versionLocalizationId": "aa410c38-129b-4bf5-b873-56f2eee8bff0",
+    "sets": [
+      {
+        "set": {
+          "type": "appScreenshotSets",
+          "id": "88dbfcfc-8836-49ef-bad1-e84bab903d4e",
+          "attributes": {
+            "screenshotDisplayType": "APP_IPHONE_67"
+          },
+          "relationships": {
+            "appScreenshots": {
+              "links": {
+                "self": "https://api.appstoreconnect.apple.com/v1/appScreenshotSets/88dbfcfc-8836-49ef-bad1-e84bab903d4e/relationships/appScreenshots",
+                "related": "https://api.appstoreconnect.apple.com/v1/appScreenshotSets/88dbfcfc-8836-49ef-bad1-e84bab903d4e/appScreenshots"
+              }
+            }
+          },
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appScreenshotSets/88dbfcfc-8836-49ef-bad1-e84bab903d4e"
+          }
+        },
+        "screenshots": [
+          {
+            "type": "appScreenshots",
+            "id": "86eedcd3-1626-4d8b-bfd1-3f1087c25af8",
+            "attributes": {
+              "fileSize": 3997524,
+              "fileName": "1-06-widgets.png",
+              "sourceFileChecksum": "5c79dade0ea80128a404526d2f5efbae",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/e8/34/b3/e834b316-805f-f1fc-c3de-04ee4d88eff7/1-06-widgets.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource221/v4/e8/34/b3/e834b316-805f-f1fc-c3de-04ee4d88eff7/1-06-widgets.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/86eedcd3-1626-4d8b-bfd1-3f1087c25af8"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "dc586dd7-0bd4-4eca-99d3-77f81753b803",
+            "attributes": {
+              "fileSize": 2110250,
+              "fileName": "2-01-forecast.png",
+              "sourceFileChecksum": "e65aed003237334241870ff579ffd429",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/51/e4/5c/51e45c36-f517-f7bf-1cdf-18fbdf06b2fc/2-01-forecast.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource221/v4/51/e4/5c/51e45c36-f517-f7bf-1cdf-18fbdf06b2fc/2-01-forecast.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/dc586dd7-0bd4-4eca-99d3-77f81753b803"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "a8cc1dd1-92b1-4fd4-9d43-8e42a4b82db3",
+            "attributes": {
+              "fileSize": 3302414,
+              "fileName": "3-05-planetarium.png",
+              "sourceFileChecksum": "60c56aa100765ac138924ba5c711bad1",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/6c/0f/ed/6c0fed6c-ee6a-36b5-32b4-b2d1d3c0f29c/3-05-planetarium.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource211/v4/6c/0f/ed/6c0fed6c-ee6a-36b5-32b4-b2d1d3c0f29c/3-05-planetarium.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/a8cc1dd1-92b1-4fd4-9d43-8e42a4b82db3"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "f6714567-f51d-4c17-9702-2d70e033dd64",
+            "attributes": {
+              "fileSize": 2799217,
+              "fileName": "4-02-pass-chart.png",
+              "sourceFileChecksum": "7b2310486d1dd88d5fed632b67c47fd7",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/20/75/cd/2075cdd6-efd1-00db-9967-3f6512360ada/4-02-pass-chart.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource221/v4/20/75/cd/2075cdd6-efd1-00db-9967-3f6512360ada/4-02-pass-chart.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/f6714567-f51d-4c17-9702-2d70e033dd64"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "198bd3a4-7865-4b31-91b9-5272f8eef3db",
+            "attributes": {
+              "fileSize": 1713286,
+              "fileName": "5-03-pass-list.png",
+              "sourceFileChecksum": "aff83cb0756431dbb2b8f9ac253daa72",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/29/04/9b/29049b4f-70ef-09f5-29e6-de25a6da1766/5-03-pass-list.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource211/v4/29/04/9b/29049b4f-70ef-09f5-29e6-de25a6da1766/5-03-pass-list.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/198bd3a4-7865-4b31-91b9-5272f8eef3db"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "2c1c5849-ea84-40b1-afb0-de7e63756f36",
+            "attributes": {
+              "fileSize": 2719051,
+              "fileName": "6-04-satellites.png",
+              "sourceFileChecksum": "4d42938365541bacf7f78f7270ef4583",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/cf/1f/3e/cf1f3e69-000a-67d0-278a-5e2fc03321a5/6-04-satellites.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource211/v4/cf/1f/3e/cf1f3e69-000a-67d0-278a-5e2fc03321a5/6-04-satellites.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/2c1c5849-ea84-40b1-afb0-de7e63756f36"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "pt-BR": {
+    "versionLocalizationId": "c1194c49-2342-44e4-bced-ecab599c1ace",
+    "sets": [
+      {
+        "set": {
+          "type": "appScreenshotSets",
+          "id": "027e2fa5-2f25-46db-9b40-f0681473074d",
+          "attributes": {
+            "screenshotDisplayType": "APP_IPHONE_67"
+          },
+          "relationships": {
+            "appScreenshots": {
+              "links": {
+                "self": "https://api.appstoreconnect.apple.com/v1/appScreenshotSets/027e2fa5-2f25-46db-9b40-f0681473074d/relationships/appScreenshots",
+                "related": "https://api.appstoreconnect.apple.com/v1/appScreenshotSets/027e2fa5-2f25-46db-9b40-f0681473074d/appScreenshots"
+              }
+            }
+          },
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/appScreenshotSets/027e2fa5-2f25-46db-9b40-f0681473074d"
+          }
+        },
+        "screenshots": [
+          {
+            "type": "appScreenshots",
+            "id": "d3baf004-f2d9-4045-9c4a-863bcface6bc",
+            "attributes": {
+              "fileSize": 3991395,
+              "fileName": "1-06-widgets.png",
+              "sourceFileChecksum": "7311f1703c4e8f440603cd9051950ee2",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/d0/07/ec/d007ec2a-318e-298c-c383-1546906d1eb3/1-06-widgets.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource211/v4/d0/07/ec/d007ec2a-318e-298c-c383-1546906d1eb3/1-06-widgets.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/d3baf004-f2d9-4045-9c4a-863bcface6bc"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "891a0c3b-8d23-4a78-aa89-2c4a8af7b815",
+            "attributes": {
+              "fileSize": 2122742,
+              "fileName": "2-01-forecast.png",
+              "sourceFileChecksum": "fc88a7133b259db2e1404b2c117488e6",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/84/7e/21/847e2108-42e1-2783-f0ec-ec2b27ed18c3/2-01-forecast.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource221/v4/84/7e/21/847e2108-42e1-2783-f0ec-ec2b27ed18c3/2-01-forecast.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/891a0c3b-8d23-4a78-aa89-2c4a8af7b815"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "9eee5a44-4563-4e10-b6d8-2e387ffeab1c",
+            "attributes": {
+              "fileSize": 3660345,
+              "fileName": "3-05-planetarium.png",
+              "sourceFileChecksum": "809f9d16e5f2cdbba476a6ce6ff23495",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/a6/57/eb/a657eb6c-8ed4-358a-c0c2-846b9efc67d9/3-05-planetarium.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource221/v4/a6/57/eb/a657eb6c-8ed4-358a-c0c2-846b9efc67d9/3-05-planetarium.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/9eee5a44-4563-4e10-b6d8-2e387ffeab1c"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "c0bdb2b8-28ec-4bbd-9802-bb7fc08520f1",
+            "attributes": {
+              "fileSize": 2538358,
+              "fileName": "4-02-pass-chart.png",
+              "sourceFileChecksum": "f600ceafb2e220c02e33516dcb51b806",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/1d/11/ed/1d11edda-ebcb-19d7-68a1-9814aeea2693/4-02-pass-chart.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource211/v4/1d/11/ed/1d11edda-ebcb-19d7-68a1-9814aeea2693/4-02-pass-chart.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/c0bdb2b8-28ec-4bbd-9802-bb7fc08520f1"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "482e1f69-0d02-43e7-b25e-a45080a488e3",
+            "attributes": {
+              "fileSize": 1860440,
+              "fileName": "5-03-pass-list.png",
+              "sourceFileChecksum": "f1c6759b3707b846301051ff400c4b3f",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/69/c4/98/69c4982e-1220-2d7e-a323-44a92dd97300/5-03-pass-list.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource211/v4/69/c4/98/69c4982e-1220-2d7e-a323-44a92dd97300/5-03-pass-list.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/482e1f69-0d02-43e7-b25e-a45080a488e3"
+            }
+          },
+          {
+            "type": "appScreenshots",
+            "id": "022c5cdc-a5aa-4f22-9edb-21d43303b98b",
+            "attributes": {
+              "fileSize": 2705227,
+              "fileName": "6-04-satellites.png",
+              "sourceFileChecksum": "80a61cc099272b24d8fa147114e9ab02",
+              "imageAsset": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/fc/cd/83/fccd838a-11a8-e9bb-e936-2ee264a460be/6-04-satellites.png/{w}x{h}bb.{f}",
+                "width": 1320,
+                "height": 2868
+              },
+              "assetToken": "PurpleSource211/v4/fc/cd/83/fccd838a-11a8-e9bb-e936-2ee264a460be/6-04-satellites.png",
+              "assetType": "SortedD74ScreenShot",
+              "assetDeliveryState": {
+                "state": "COMPLETE"
+              }
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/appScreenshots/022c5cdc-a5aa-4f22-9edb-21d43303b98b"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "ipa": "/tmp/SatelliteForecast-2.1.0-24.ipa",
+  "size": 136668595,
+  "sha256": "77c82b43647cdbf0195c988c39204bcd58e8a49f0062eb059a9de24acb692feb",
+  "testFlightInternalTestingOnly": false,
+  "bundles": [
+    {
+      "bundleId": "io.djben.SatelliteForecast",
+      "version": "2.1.0",
+      "build": "24",
+      "signatureVerified": true,
+      "debuggingAllowed": false,
+      "appGroups": [
+        "group.io.djben.SatelliteForecast"
+      ],
+      "apnsEnvironment": "production"
+    },
+    {
+      "bundleId": "io.djben.SatelliteForecast.Widget",
+      "version": "2.1.0",
+      "build": "24",
+      "signatureVerified": true,
+      "debuggingAllowed": false,
+      "appGroups": [
+        "group.io.djben.SatelliteForecast"
+      ],
+      "apnsEnvironment": null
+    }
+  ]
+}
