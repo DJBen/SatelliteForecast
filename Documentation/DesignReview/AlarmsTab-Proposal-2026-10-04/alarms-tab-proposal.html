@@ -1,0 +1,143 @@
+<style>
+#sf-alarms-proposal .stage{padding:22px 10px;min-height:950px;display:flex;justify-content:center;align-items:flex-start}
+#sf-alarms-proposal .phone{--sf-bg:#101113;--sf-surface:#1e2024;--sf-text:#f2f3f5;--sf-muted:#a5a9b0;--sf-accent:#a9bad1;--sf-line:#33363c;--sf-red:#ff635e;color-scheme:dark;width:100%;max-width:410px;min-width:0;position:relative;background:var(--sf-bg);color:var(--sf-text);border:4px solid #35383e;border-radius:34px;box-shadow:0 12px 35px #00000035;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;overflow:hidden;font-size:16px;line-height:1.4}
+#sf-alarms-proposal .phone *{box-sizing:border-box}
+#sf-alarms-proposal .screen{display:flex;flex-direction:column;min-height:860px}
+#sf-alarms-proposal .status{display:flex;justify-content:space-between;align-items:center;padding:16px 24px 8px;font-size:14px;font-weight:600}
+#sf-alarms-proposal .island{height:22px;width:88px;background:#050506;border-radius:20px}
+#sf-alarms-proposal .status-icons{display:flex;gap:5px;align-items:center}
+#sf-alarms-proposal .app-main{padding:14px 20px 24px;flex:1;min-width:0}
+#sf-alarms-proposal .app-header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:22px}
+#sf-alarms-proposal .phone h1{font-size:32px;font-weight:700;letter-spacing:-.8px;line-height:1.2;margin:0}
+#sf-alarms-proposal .phone h2{font-size:19px;font-weight:600;line-height:1.3;margin:0}
+#sf-alarms-proposal .phone h3{font-size:17px;font-weight:600;line-height:1.35;margin:0}
+#sf-alarms-proposal .phone p{margin:8px 0 0}
+#sf-alarms-proposal .phone button,#sf-alarms-proposal .phone input,#sf-alarms-proposal .phone select{font:inherit}
+#sf-alarms-proposal .phone button{color:inherit;border:0;background:transparent;min-height:44px;appearance:none}
+#sf-alarms-proposal .phone button:focus-visible{outline:2px solid var(--sf-accent);outline-offset:2px}
+#sf-alarms-proposal .phone .round-button{display:flex;align-items:center;justify-content:center;gap:5px;background:#292c31;border-radius:30px;padding:0 14px;color:var(--sf-accent);font-size:15px;font-weight:600}
+#sf-alarms-proposal .notice{padding:18px;background:var(--sf-surface);border-radius:20px;margin-bottom:28px}
+#sf-alarms-proposal .notice-head{display:flex;gap:11px;align-items:center}
+#sf-alarms-proposal .notice-head .notice-icon{color:var(--sf-accent);display:flex;align-items:center}
+#sf-alarms-proposal .eyebrow{font-size:13px;color:var(--sf-muted);margin-bottom:3px}
+#sf-alarms-proposal .notice p{color:var(--sf-muted);font-size:14px;line-height:1.5;margin:12px 0 16px}
+#sf-alarms-proposal .phone .primary{width:100%;background:var(--sf-accent);color:#101113;min-height:46px;font-size:15px;font-weight:600;border-radius:24px;padding:10px 14px}
+#sf-alarms-proposal .phone .secondary{width:100%;background:#30343b;color:var(--sf-text);min-height:46px;font-size:15px;font-weight:500;border-radius:24px;padding:10px 14px}
+#sf-alarms-proposal .section-heading{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px}
+#sf-alarms-proposal .section-heading span,#sf-alarms-proposal .subtext{color:var(--sf-muted);font-size:13px}
+#sf-alarms-proposal .section-caption{color:var(--sf-muted);font-size:14px;margin:0 0 16px!important}
+#sf-alarms-proposal .alarm-stack{display:flex;flex-direction:column;gap:12px}
+#sf-alarms-proposal .phone .alarm-row{width:100%;text-align:left;display:block;border-radius:20px;padding:18px;background:var(--sf-surface)}
+#sf-alarms-proposal .alarm-top{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:16px;font-weight:600}
+#sf-alarms-proposal .date{font-size:13px;font-weight:400;color:var(--sf-muted)}
+#sf-alarms-proposal .ring-time{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:9px 0}
+#sf-alarms-proposal .ring-time strong{font-size:30px;font-weight:600;letter-spacing:-.6px;font-variant-numeric:tabular-nums}
+#sf-alarms-proposal .ring-time .chevron{color:var(--sf-muted)}
+#sf-alarms-proposal .lead-time{display:flex;gap:7px;align-items:center;font-size:14px;color:var(--sf-text)}
+#sf-alarms-proposal .pass-context{padding-top:9px;margin-top:10px;border-top:1px solid var(--sf-line);font-size:13px;color:var(--sf-muted)}
+#sf-alarms-proposal .grouped-list{background:var(--sf-surface);border-radius:20px;overflow:hidden}
+#sf-alarms-proposal .grouped-list .alarm-row{border-radius:0;padding:18px 16px;background:transparent;display:grid;grid-template-columns:52px 1fr 18px;gap:12px;align-items:center}
+#sf-alarms-proposal .grouped-list .alarm-row+.alarm-row{border-top:1px solid var(--sf-line)}
+#sf-alarms-proposal .date-box{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-right:1px solid var(--sf-line);padding-right:10px;font-size:12px;color:var(--sf-muted)}
+#sf-alarms-proposal .date-box strong{font-size:22px;color:var(--sf-text);font-weight:600;line-height:1.2}
+#sf-alarms-proposal .grouped-main{min-width:0}
+#sf-alarms-proposal .grouped-main strong{display:block;font-weight:600;font-size:20px;font-variant-numeric:tabular-nums}
+#sf-alarms-proposal .grouped-main .lead-time{font-size:13px;margin-top:5px}
+#sf-alarms-proposal .grouped-main .pass-context{border:0;padding:0;margin-top:6px}
+#sf-alarms-proposal .empty{padding:30px 20px;text-align:center;border-radius:20px;background:var(--sf-surface)}
+#sf-alarms-proposal .empty .empty-icon{display:flex;justify-content:center;color:var(--sf-accent);margin-bottom:14px}
+#sf-alarms-proposal .empty p{color:var(--sf-muted);font-size:14px;margin:9px 0 20px}
+#sf-alarms-proposal .list-footer{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--sf-muted);margin-top:16px}
+#sf-alarms-proposal .tabbar{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:10px 8px 23px;background:#1b1d21;border-top:1px solid var(--sf-line);gap:1px}
+#sf-alarms-proposal .phone .tab{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;min-height:48px;padding:5px 1px;color:#8c929b;font-size:11px;border-radius:20px;white-space:nowrap}
+#sf-alarms-proposal .phone .tab svg{width:22px;height:22px}
+#sf-alarms-proposal .status-icons svg{width:14px;height:14px}
+#sf-alarms-proposal .phone .tab.active{background:#303947;color:#c2d2e7}
+#sf-alarms-proposal .tabbar[hidden]{display:none}
+#sf-alarms-proposal .home-indicator{position:absolute;bottom:7px;left:35%;width:30%;height:4px;border-radius:3px;background:#e4e5e9}
+#sf-alarms-proposal .settings-list{background:var(--sf-surface);border-radius:18px;padding:0 16px;margin-bottom:24px}
+#sf-alarms-proposal .settings-row{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:17px 0;font-size:15px}
+#sf-alarms-proposal .settings-row+.settings-row{border-top:1px solid var(--sf-line)}
+#sf-alarms-proposal .settings-row div{display:flex;align-items:center;gap:10px}
+#sf-alarms-proposal .sheet-overlay{position:absolute;inset:0;background:#0009;display:flex;align-items:flex-end;z-index:3}
+#sf-alarms-proposal .edit-sheet{width:100%;background:var(--sf-bg);border-radius:28px 28px 0 0;padding:16px 20px 30px}
+#sf-alarms-proposal .sheet-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+#sf-alarms-proposal .phone .text-action{font-size:15px;color:var(--sf-accent);padding:0 8px}
+#sf-alarms-proposal .edit-card{padding:16px;background:var(--sf-surface);border-radius:18px;margin:18px 0}
+#sf-alarms-proposal .edit-card label{display:block;color:var(--sf-muted);font-size:13px;margin-bottom:10px}
+#sf-alarms-proposal .phone .time-input{display:block;width:100%;border:0;color:var(--sf-text);background:#2d3037;padding:13px;border-radius:12px;font-size:27px;font-weight:600;min-height:52px}
+#sf-alarms-proposal .phone .moment-input{width:100%;color:var(--sf-text);border:0;background:#2d3037;border-radius:12px;padding:12px;min-height:46px}
+#sf-alarms-proposal .shortcuts{display:flex;gap:7px;margin-top:14px}
+#sf-alarms-proposal .phone .shortcut{flex:1;border:1px solid var(--sf-line);border-radius:12px;font-size:12px;min-height:44px;padding:6px}
+#sf-alarms-proposal .phone .shortcut.chosen{background:#303947;border-color:var(--sf-accent);color:var(--sf-accent)}
+#sf-alarms-proposal .phone .delete{width:100%;color:var(--sf-red);margin-top:9px}
+#sf-alarms-proposal .system-prompt{margin:auto 26px;background:#303237;border-radius:20px;text-align:center;overflow:hidden;width:calc(100% - 52px)}
+#sf-alarms-proposal .prompt-copy{padding:22px 17px;font-size:14px}
+#sf-alarms-proposal .prompt-copy h3{margin-bottom:9px}
+#sf-alarms-proposal .prompt-actions{display:flex;border-top:1px solid #4c4e53}
+#sf-alarms-proposal .phone .prompt-actions button{flex:1;color:#a9c8ff;border-radius:0;padding:10px 4px}
+#sf-alarms-proposal .phone .prompt-actions button+button{border-left:1px solid #4c4e53;font-weight:600}
+#sf-alarms-proposal .ios-title{text-align:center;font-size:16px;font-weight:600;flex:1}
+#sf-alarms-proposal .ios-toggle{position:relative;width:48px;height:30px;display:block;flex-shrink:0}
+#sf-alarms-proposal .ios-toggle input{appearance:none;width:48px;height:30px;border-radius:20px;background:#41444b;margin:0}
+#sf-alarms-proposal .ios-toggle input:checked{background:#3cba64}
+#sf-alarms-proposal .ios-toggle input:before{content:'';position:absolute;left:3px;top:3px;width:24px;height:24px;background:#fff;border-radius:50%;transition:transform .15s}
+#sf-alarms-proposal .ios-toggle input:checked:before{transform:translateX(18px)}
+#sf-alarms-proposal .error-note{color:var(--sf-red);font-size:13px;margin:14px 0}
+@media(max-width:380px){#sf-alarms-proposal .stage{padding:14px 0;min-height:1040px}#sf-alarms-proposal .app-main{padding:14px 16px 24px}#sf-alarms-proposal .phone .alarm-row{padding:16px}#sf-alarms-proposal .notice{padding:16px}#sf-alarms-proposal .grouped-list .alarm-row{grid-template-columns:45px 1fr 15px;gap:9px;padding:16px 12px}#sf-alarms-proposal .tabbar{padding-left:3px;padding-right:3px}#sf-alarms-proposal .phone .tab{font-size:11px}#sf-alarms-proposal .screen{min-height:900px}}
+@media(prefers-reduced-motion:reduce){#sf-alarms-proposal .ios-toggle input:before{transition:none}}
+</style>
+<div id="sf-alarms-proposal">
+  <div class="viz-controls">
+    <label class="form-label">Notification permission
+      <select class="form-select" data-preview="permission"><option value="unasked">Not yet asked · 未授权</option><option value="denied">Denied · 已拒绝</option><option value="allowed">Allowed · 已授权</option></select>
+    </label>
+    <label class="form-label">Local alarms
+      <select class="form-select" data-preview="list"><option value="saved">Example saved alarms</option><option value="empty">Empty list</option></select>
+    </label>
+  </div>
+  <div class="viz-carousel viz-dotted-background" aria-label="Alarms tab proposals">
+    <section data-variant="Time-first" aria-label="Time-first alarm list">
+      <div class="stage"><div class="phone" data-layout="time" aria-label="Time-first Alarms tab"><div class="screen"><div class="status"><span>9:41</span><span class="island" aria-hidden="true"></span><span class="status-icons"><i data-lucide="wifi" aria-hidden="true"></i><i data-lucide="battery-full" aria-hidden="true"></i></span></div><main class="app-main"></main><nav class="tabbar" aria-label="App tabs"></nav></div><div class="home-indicator" aria-hidden="true"></div><div class="overlay-root"></div></div></div>
+    </section>
+    <section data-variant="Grouped list" aria-label="Grouped alarm list" hidden>
+      <div class="stage"><div class="phone" data-layout="grouped" aria-label="Grouped list Alarms tab"><div class="screen"><div class="status"><span>9:41</span><span class="island" aria-hidden="true"></span><span class="status-icons"><i data-lucide="wifi" aria-hidden="true"></i><i data-lucide="battery-full" aria-hidden="true"></i></span></div><main class="app-main"></main><nav class="tabbar" aria-label="App tabs"></nav></div><div class="home-indicator" aria-hidden="true"></div><div class="overlay-root"></div></div></div>
+    </section>
+  </div>
+  <span class="sr-only" data-live aria-live="polite"></span>
+</div>
+<script>
+(() => {
+ const root = document.getElementById('sf-alarms-proposal');
+ const examples = [{id:'iss',name:'ISS',date:'Sun, Oct 11',day:'11',month:'OCT',time:'06:32',event:'06:37',lead:5,peak:16},{id:'tiangong',name:'Tiangong',date:'Mon, Oct 12',day:'12',month:'OCT',time:'19:50',event:'20:00',lead:10,peak:42}];
+ const state = {permission:'unasked',list:'saved',alarms:examples.map(a=>({...a})),devices:[]};
+ const phones = [...root.querySelectorAll('.phone')];
+ const models = phones.map((phone,index)=>({phone,index,tab:'Alarms',showPassDetails:true,modal:null,editing:null,draft:null,pendingSave:false,notice:null}));
+ const icons = () => { if(globalThis.lucide) globalThis.lucide.createIcons({attrs:{width:18,height:18}}); };
+ const icon = name => `<i data-lucide="${name}" aria-hidden="true"></i>`;
+ const momentNames={rise:'Pass starts',transit:'Highest point',illuminated:'Highest illuminated',set:'Pass ends'};
+ const momentLeadNames={rise:'pass start',transit:'highest point',illuminated:'highest illuminated point',set:'pass end'};
+ const momentOffsets={rise:0,transit:6,illuminated:6,set:10};
+ const momentTime=a=>shift(a.event,-momentOffsets[a.moment||'rise']);
+ const timeLabel = value => { const [h,m]=value.split(':').map(Number); return `${h%12||12}:${String(m).padStart(2,'0')} ${h<12?'AM':'PM'}`; };
+ const shift = (value,minutes) => {const [h,m]=value.split(':').map(Number);const n=((h*60+m-minutes)%1440+1440)%1440;return `${String(Math.floor(n/60)).padStart(2,'0')}:${String(n%60).padStart(2,'0')}`;};
+ function restore(saved){if(!saved)return; const s=saved.modelContent||saved;if(['unasked','denied','allowed'].includes(s.permission))state.permission=s.permission;if(['saved','empty'].includes(s.list))state.list=s.list; if(Array.isArray(s.alarms)&&s.alarms.every(a=>examples.some(e=>e.id===a.id)&&/^\d\d:\d\d$/.test(a.time))){state.alarms=examples.filter(e=>s.alarms.some(a=>a.id===e.id)).map(e=>({...e,...s.alarms.find(a=>a.id===e.id)}));}if(Array.isArray(s.passDetails))models.forEach((m,i)=>m.showPassDetails=s.passDetails[i]!==false);}
+ function persist(){if(window.openai?.setWidgetState)window.openai.setWidgetState({modelContent:{permission:state.permission,list:state.list,alarms:state.alarms.map(a=>({id:a.id,time:a.time,lead:a.lead,moment:a.moment||'rise'})),passDetails:models.map(m=>m.showPassDetails)},privateContent:null}).catch(()=>{});}
+ function notice(){if(state.permission==='allowed')return ''; const denied=state.permission==='denied'; return `<section class="notice" aria-label="Notification permission"><div class="notice-head"><span class="notice-icon">${icon(denied?'bell-off':'bell-ring')}</span><div><div class="eyebrow">Automatic pass alerts</div><h3>${denied?'Notifications are off':'Know when to look up'}</h3></div></div><p>${denied?'Enable notifications in iPhone Settings to receive pass alerts and hear your local alarms.':'Get automatic ISS and Tiangong pass alerts, plus sound for the local alarms you set.'}</p><button class="primary cursor-interaction" data-action="permission">${denied?'Open notification settings':'Enable notifications'}</button></section>`;}
+ function row(a,m){let details=m.showPassDetails?`<div class="pass-context">Pass starts ${timeLabel(a.event)} · ${a.peak}° peak</div>`:'';let lead=a.lead===0?`At ${momentLeadNames[a.moment||'rise']||'pass start'}`:a.lead===null?'Custom alarm time':`${a.lead} min before ${momentLeadNames[a.moment||'rise']||'pass start'}`; if(m.phone.dataset.layout==='grouped')return `<button class="alarm-row cursor-interaction" data-action="edit" data-id="${a.id}" aria-label="Edit ${a.name} alarm, ${a.date}, ${timeLabel(a.time)}"><span class="date-box"><span>${a.month}</span><strong>${a.day}</strong></span><span class="grouped-main"><span class="subtext">${a.name}</span><strong>${timeLabel(a.time)}</strong><span class="lead-time">${lead}</span>${details}</span><span class="chevron">${icon('chevron-right')}</span></button>`;return `<button class="alarm-row cursor-interaction" data-action="edit" data-id="${a.id}" aria-label="Edit ${a.name} alarm, ${a.date}, ${timeLabel(a.time)}"><div class="alarm-top"><span>${a.name}</span><span class="date">${a.date}</span></div><div class="ring-time"><strong>${timeLabel(a.time)}</strong><span class="chevron">${icon('chevron-right')}</span></div><div class="lead-time">${icon('alarm-clock')}<span>${lead}</span></div>${details}</button>`;}
+ function alarms(m){const list=state.list==='empty'?[]:state.alarms; return `<header class="app-header"><h1>Alarms</h1><button class="round-button cursor-interaction" data-action="add" aria-label="Add a local alarm">${icon('plus')}<span>Add</span></button></header>${notice()}<section aria-label="Local alarms"><div class="section-heading"><h2>Local alarms</h2><span>${list.length?list.length+' upcoming':''}</span></div><p class="section-caption">One alarm for each pass you choose.</p>${list.length?`<div class="${m.phone.dataset.layout==='grouped'?'grouped-list':'alarm-stack'}">${list.map(a=>row(a,m)).join('')}</div><div class="list-footer">${icon('volume-2')}<span>Default notification sound</span></div>`:`<div class="empty"><div class="empty-icon">${icon('alarm-clock')}</div><h3>No local alarms yet</h3><p>Choose an upcoming pass and set the time you want your alarm to sound.</p><button class="primary cursor-interaction" data-action="add">Choose a pass</button></div>`}</section>`;}
+ function settings(){return `<header class="app-header"><h1>Settings</h1></header><div class="eyebrow">Observer location</div><section class="settings-list"><div class="settings-row"><div>${icon('map-pin')}<span>Current location</span></div>${icon('chevron-right')}</div></section><div class="eyebrow">Orbital data</div><section class="settings-list"><div class="settings-row"><div>${icon('database')}<span>Downloaded ephemerides</span></div>${icon('chevron-right')}</div></section><section class="settings-list"><div class="settings-row"><div>${icon('rotate-ccw')}<span>Replay onboarding</span></div>${icon('chevron-right')}</div></section>`;}
+ function forecast(){return `<header class="app-header"><h1>Forecast</h1></header><div class="section-heading"><h2>Choose a pass</h2></div><p class="section-caption">Set a local alarm for an upcoming pass.</p><div class="alarm-stack">${examples.map(a=>`<button class="alarm-row cursor-interaction" data-action="new" data-id="${a.id}"><div class="alarm-top"><span>${a.name}</span><span class="date">${a.date}</span></div><div class="ring-time"><strong>${timeLabel(a.event)}</strong>${icon('chevron-right')}</div><div class="subtext">Pass starts · ${a.peak}° peak elevation</div></button>`).join('')}</div>`;}
+ function systemSettings(m){return `<header class="app-header"><button class="text-action cursor-interaction" data-action="return">${icon('chevron-left')} Back</button><span class="ios-title">Notifications</span></header><h2>Space Station</h2><section class="settings-list" style="margin-top:20px"><div class="settings-row"><span>Allow Notifications</span><label class="ios-toggle"><input type="checkbox" data-action="os-toggle" aria-label="Allow notifications" ${state.permission==='allowed'?'checked':''}></label></div></section>${state.permission==='allowed'?`<section class="settings-list"><div class="settings-row"><span>Sounds</span><span>On</span></div><div class="settings-row"><span>Lock Screen</span>${icon('check')}</div><div class="settings-row"><span>Banners</span>${icon('check')}</div></section>`:''}<button class="secondary cursor-interaction" data-action="return">Return to Alarms</button>`;}
+ function editor(m){const a=m.draft;return `<div class="sheet-overlay"><section class="edit-sheet" role="dialog" aria-modal="true" aria-label="${m.editing?'Edit alarm':'Set local alarm'}"><header class="sheet-header"><button class="text-action cursor-interaction" data-action="cancel">Cancel</button><h3>${m.editing?'Edit alarm':'Set local alarm'}</h3><span style="width:52px"></span></header><h2>${a.name}</h2><p class="subtext">${a.date} · pass starts ${timeLabel(a.event)}</p><div class="edit-card"><label>Pass moment</label><select class="moment-input" aria-label="Pass moment" data-action="moment">${Object.entries(momentNames).map(([key,name])=>`<option value="${key}" ${key===(a.moment||'rise')?'selected':''}>${name} · ${timeLabel(shift(a.event,-momentOffsets[key]))}</option>`).join('')}</select></div><div class="edit-card"><label for="alarm-time-${m.index}">Alarm time</label><input class="time-input" id="alarm-time-${m.index}" type="time" value="${a.time}" data-action="time"><div class="shortcuts">${[0,5,10].map(n=>`<button class="shortcut cursor-interaction ${a.lead===n?'chosen':''}" data-action="shortcut" data-lead="${n}">${n===0?'At event':n+' min before'}</button>`).join('')}</div></div><div class="list-footer">${icon('volume-2')}<span>Default notification sound</span></div>${m.notice?`<p class="error-note" role="alert">${m.notice}</p>`:''}<button class="primary cursor-interaction" data-action="save" style="margin-top:20px">${m.editing?'Save changes':'Set alarm'}</button>${m.notice?'<button class="text-action cursor-interaction" data-action="permission">Open notification settings</button>':''}${m.editing?'<button class="delete cursor-interaction" data-action="delete">Delete alarm</button>':''}</section></div>`;}
+ function prompt(){return `<div class="sheet-overlay"><section class="system-prompt" role="dialog" aria-modal="true" aria-label="Notification permission prompt"><div class="prompt-copy"><h3>“Space Station” Would Like to Send You Notifications</h3><p>Notifications may include alerts, sounds, and icon badges. These can be configured in Settings.</p></div><div class="prompt-actions"><button class="cursor-interaction" data-action="deny">Don’t Allow</button><button class="cursor-interaction" data-action="allow">Allow</button></div></section></div>`;}
+ function render(){root.querySelector('[data-preview="permission"]').value=state.permission;root.querySelector('[data-preview="list"]').value=state.list;models.forEach(m=>{m.phone.querySelector('.app-main').innerHTML=m.tab==='Alarms'?alarms(m):m.tab==='Settings'?settings():m.tab==='Notification settings'?systemSettings(m):m.tab==='Forecast'?forecast():`<header class="app-header"><h1>${m.tab}</h1></header>`;m.phone.querySelector('.tabbar').innerHTML=[['Forecast','calendar-days'],['Sky now','orbit'],['Satellites','satellite'],['Alarms','bell'],['Settings','settings']].map(([label,symbol])=>`<button class="tab cursor-interaction ${m.tab===label?'active':''}" data-action="tab" data-tab="${label}" aria-label="${label}" aria-current="${m.tab===label?'page':'false'}">${icon(symbol)}<span>${label}</span></button>`).join('');m.phone.querySelector('.tabbar').hidden=m.tab==='Notification settings';m.phone.querySelector('.overlay-root').innerHTML=m.modal==='editor'?editor(m):m.modal==='prompt'?prompt():'';m.phone.querySelector('.app-main').inert=!!m.modal;m.phone.querySelector('.tabbar').inert=!!m.modal;});icons();}
+ function commit(m){const a={...m.draft};state.alarms=state.alarms.filter(x=>x.id!==a.id);state.alarms.push(a);state.alarms.sort((a,b)=>a.day.localeCompare(b.day)||a.time.localeCompare(b.time));state.list='saved';m.tab='Alarms';m.modal=null;m.pendingSave=false;m.notice=null;root.querySelector('[data-live]').textContent='Alarm time saved in the preview.';}
+ function startEdit(m,id,isNew){const a=isNew?examples.find(a=>a.id===id):state.alarms.find(a=>a.id===id);if(!a)return;m.editing=!isNew;m.draft={...a,...(isNew?{time:a.event,lead:0}:{})};m.modal='editor';m.notice=null;}
+ root.addEventListener('change',e=>{const preview=e.target.dataset.preview;if(preview){state[preview==='permission'?'permission':'list']=e.target.value;models.forEach(m=>{m.modal=null;m.tab='Alarms';m.notice=null;});render();persist();return;}const phone=e.target.closest('.phone');const m=models.find(m=>m.phone===phone);if(!m)return;if(e.target.dataset.action==='os-toggle'){state.permission=e.target.checked?'allowed':'denied';render();persist();}if(e.target.dataset.action==='time' && /^([01]\d|2[0-3]):[0-5]\d$/.test(e.target.value)){m.draft.time=e.target.value;m.draft.lead=null;render();persist();}if(e.target.dataset.action==='moment'){m.draft.moment=e.target.value;if(m.draft.lead!==null)m.draft.time=shift(momentTime(m.draft),m.draft.lead);render();persist();}});
+ root.addEventListener('click',e=>{const button=e.target.closest('button[data-action]');if(!button)return;const m=models.find(m=>m.phone===button.closest('.phone'));if(!m)return;const action=button.dataset.action;if(action==='tab'){m.tab=button.dataset.tab;m.modal=null;}if(action==='add'){m.tab='Forecast';m.modal=null;}if(action==='edit')startEdit(m,button.dataset.id,false);if(action==='new')startEdit(m,button.dataset.id,true);if(action==='cancel'){m.modal=null;m.notice=null;m.pendingSave=false;}if(action==='shortcut'){m.draft.lead=Number(button.dataset.lead);m.draft.time=shift(momentTime(m.draft),m.draft.lead);}if(action==='permission'){if(state.permission==='denied'){m.resumeEditor=m.modal==='editor';m.modal=null;m.tab='Notification settings';}else m.modal='prompt';}if(action==='return'){m.tab='Alarms';m.modal=m.resumeEditor?'editor':null;m.resumeEditor=false;if(state.permission==='allowed')m.notice=null;}if(action==='deny'){state.permission='denied';m.modal=m.pendingSave?'editor':null;m.notice=m.pendingSave?'Notifications are off. Enable them to save this alarm.':null;m.pendingSave=false;}if(action==='allow'){state.permission='allowed';m.modal=null;if(m.pendingSave)commit(m);}if(action==='save'){if(state.permission==='unasked'){m.pendingSave=true;m.modal='prompt';}else if(state.permission==='denied'){m.notice='Notifications are off. Enable them to save this alarm.';}else commit(m);}if(action==='delete'){state.alarms=state.alarms.filter(a=>a.id!==m.draft.id);m.modal=null;m.tab='Alarms';if(!state.alarms.length)state.list='empty';}render();persist();});
+ restore(window.openai?.widgetState);render();
+ window.addEventListener('openai:set_globals',e=>{if(e.detail?.globals?.widgetState){restore(e.detail.globals.widgetState);render();}});
+ if(globalThis.Tweak)models.forEach(m=>{const tweak=new Tweak({container:m.phone,onChange:()=>{render();persist();}});tweak.addToggle(m,'showPassDetails',{label:'Show pass time and elevation'});});
+})();
+</script>

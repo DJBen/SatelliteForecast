@@ -1,0 +1,8 @@
+en-US: captured 4 screens
+fr-FR: captured 4 screens
+es-ES: captured 4 screens
+Traceback (most recent call last):
+  File "/Users/sihaolu/Developments/SatelliteForecast/scripts/capture-store-screenshots.py", line 69, in <module>
+    time.sleep(0.2)
+    ~~~~~~~~~~^^^^^
+KeyboardInterrupt

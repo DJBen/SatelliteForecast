@@ -52,6 +52,7 @@ struct PassChartControls: View {
                     : AppTheme.accent)
         }
         .accessibilityLabel(Text("Compass", bundle: .module))
+        .accessibilityIdentifier("pass.compass")
         .accessibilityValue(isCompassEnabled ? "On" : "Off")
         .accessibilityAddTraits(isCompassEnabled ? .isSelected : [])
     }

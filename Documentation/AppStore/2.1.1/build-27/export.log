@@ -1,0 +1,5 @@
+2026-10-04 15:28:36.017 xcodebuild[45424:3759886] [MT] IDEDistribution: -[IDEDistributionLogging _createLoggingBundleAtPath:]: Created bundle at path "/var/folders/k5/3_hnbssd6pggrm3j4vhmvz_40000gn/T/SatelliteForecastApp_2026-10-04_15-28-36.016.xcdistributionlogs".
+Exported SatelliteForecastApp to: /tmp/.asc-xcode-export-2341210073
+** EXPORT SUCCEEDED **
+
+{"archive_path":"/tmp/SatelliteForecast-2.1.1-27.xcarchive","ipa_path":"/tmp/SatelliteForecast-2.1.1-27.ipa","bundle_id":"io.djben.SatelliteForecast","version":"2.1.1","build_number":"27"}

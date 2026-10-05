@@ -1,0 +1,6 @@
+App launched successfully in simulator 0D39CA43-2212-46F4-AE51-A38A3DDDB9BC.
+
+Next steps:
+1. Open Simulator app to see it: xcodebuildmcp simulator-management open
+2. Capture structured logs (app continues running): xcodebuildmcp logging start-simulator-log-capture --simulator-id "0D39CA43-2212-46F4-AE51-A38A3DDDB9BC" --bundle-id "io.djben.SatelliteForecast"
+3. Capture console + structured logs (app restarts): xcodebuildmcp logging start-simulator-log-capture --simulator-id "0D39CA43-2212-46F4-AE51-A38A3DDDB9BC" --bundle-id "io.djben.SatelliteForecast" --capture-console

@@ -11,6 +11,7 @@ import SolarSystem
 import SatelliteWidgetSupport
 import WidgetKit
 import ActivityKit
+import UserNotifications
 
 /// Native view snapshots at a fixed phone size, locale, timezone and orbital epoch.
 /// No live store middleware, location permissions, notifications or network loaders.
@@ -761,24 +762,60 @@ final class ScreenSnapshotTests: XCTestCase {
         try await assertSnapshot(view, name: "pass-discovery-glow-dark", style: .dark,
             scrollDistance: 180, checkFullHeight: false)
         XCTAssertFalse(defaults.bool(forKey: "hasCompletedAllPassesOnboarding"),
-            "Viewing the list must not consume the first visible-pass tutorial")
+            "Viewing the list must not consume the Compass tutorial")
     }
 
-    func testFirstVisiblePassVideo() async throws {
+    func testFirstCompassUseVideo() async throws {
         let defaults = UserDefaults.standard
         let previous = defaults.object(forKey: "hasCompletedAllPassesOnboarding")
         defer { defaults.set(previous, forKey: "hasCompletedAllPassesOnboarding") }
         defaults.set(false, forKey: "hasCompletedAllPassesOnboarding")
         let fixture = try await Fixture(catalog: await AppStarCatalog.load())
-        let detail = try XCTUnwrap(fixture.screens().first { $0.0 == "07-pass-compass-off" }?.1)
-        try await assertSnapshot(AnyView(detail.modifier(FirstVisiblePassTutorial(isVisible: false))),
-            name: "tutorial-invisible-pass-dark", style: .dark, expectedModal: false)
+        // Use an invisible pass to ensure this gate no longer depends on visibility.
+        let pass = try XCTUnwrap(fixture.passes.first { $0.pass.visibility != .visible })
+        func detail(compass: Bool) -> AnyView {
+            AnyView(NavigationStack {
+                fixture.factory.pass(.init(passIndex: 0, satelliteInfo: fixture.info,
+                    satelliteCommonName: "ISS", category: .iss, julianDateRange: fixture.range,
+                    observer: fixture.observer, passSnapshots: pass, starManager: fixture.catalog,
+                    julianDateProvider: { fixture.now.julianDate }), isCompassEnabled: compass)
+            })
+        }
+        try await assertSnapshot(detail(compass: false),
+            name: "tutorial-compass-off-dark", style: .dark, expectedModal: false)
         XCTAssertFalse(defaults.bool(forKey: "hasCompletedAllPassesOnboarding"))
-        try await assertSnapshot(AnyView(detail.modifier(FirstVisiblePassTutorial(isVisible: true))),
-            name: "tutorial-first-visible-pass-dark", style: .dark, expectedModal: true)
+        try await assertSnapshot(detail(compass: true),
+            name: "tutorial-first-compass-use-dark", style: .dark, expectedModal: true)
         XCTAssertTrue(defaults.bool(forKey: "hasCompletedAllPassesOnboarding"))
-        try await assertSnapshot(AnyView(detail.modifier(FirstVisiblePassTutorial(isVisible: true))),
-            name: "tutorial-returning-visible-pass-dark", style: .dark, expectedModal: false)
+        try await assertSnapshot(detail(compass: true),
+            name: "tutorial-returning-compass-use-dark", style: .dark, expectedModal: false)
+    }
+
+    func testCompassTutorialEnableCancellationAndSeenFlag() async throws {
+        let defaults = UserDefaults.standard
+        let previous = defaults.object(forKey: "hasCompletedAllPassesOnboarding")
+        defer { defaults.set(previous, forKey: "hasCompletedAllPassesOnboarding") }
+        defaults.set(false, forKey: "hasCompletedAllPassesOnboarding")
+        let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.first as? UIWindowScene)
+        let state = CompassTutorialTestState()
+        let host = UIHostingController(rootView: CompassTutorialTriggerHarness(state: state))
+        let window = UIWindow(windowScene: scene)
+        window.overrideUserInterfaceStyle = .dark
+        window.rootViewController = host
+        window.makeKeyAndVisible()
+        defer { window.isHidden = true; window.rootViewController = nil }
+        try await Task.sleep(for: .milliseconds(500))
+        XCTAssertNil(host.presentedViewController)
+        state.enabled = true
+        try await Task.sleep(for: .milliseconds(150))
+        state.enabled = false
+        try await Task.sleep(for: .milliseconds(700))
+        XCTAssertNil(host.presentedViewController)
+        XCTAssertFalse(defaults.bool(forKey: "hasCompletedAllPassesOnboarding"), "Cancelled first use must not consume the tutorial")
+        state.enabled = true
+        try await Task.sleep(for: .milliseconds(1200))
+        XCTAssertNotNil(host.presentedViewController, "Enabling Compass should present the tutorial")
+        XCTAssertTrue(defaults.bool(forKey: "hasCompletedAllPassesOnboarding"))
     }
 
     func testRecordedOnboardingPass() async throws {
@@ -1115,10 +1152,15 @@ final class ScreenSnapshotTests: XCTestCase {
         defaults.set(false, forKey: keys[0])
         defaults.set(2, forKey: keys[1])
         defaults.set(false, forKey: keys[2])
-        let folder = root.appendingPathComponent("Documentation/Localization")
+        let reviewMarker = URL(fileURLWithPath: "/tmp/satellite-orientation-review")
+        let folder = FileManager.default.fileExists(atPath: reviewMarker.path)
+            ? URL(fileURLWithPath: try String(contentsOf: reviewMarker, encoding: .utf8).trimmingCharacters(in: .whitespacesAndNewlines))
+            : root.appendingPathComponent("Documentation/Localization")
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
-        for locale in ["en", "fr", "es", "pt-BR", "ru", "zh-Hans", "ja", "ko"] {
-            let view = DeviceOrientationGuidanceView(deviceMotionResult: .notLoaded)
+        for name in ["en", "fr", "es", "pt-BR", "ru", "zh-Hans", "ja", "ko", "en-accessibility"] {
+            let locale = name == "en-accessibility" ? "en" : name
+            let view = DeviceOrientationGuidanceView(deviceMotionResult: .notLoaded, initiallyExpanded: true)
+                .environment(\.dynamicTypeSize, name == "en-accessibility" ? .accessibility3 : .large)
                 .frame(width: 375, height: 440)
                 .background(Color.black)
                 .environment(\.locale, Locale(identifier: locale))
@@ -1131,14 +1173,252 @@ final class ScreenSnapshotTests: XCTestCase {
             window.rootViewController = host
             window.makeKeyAndVisible()
             host.view.frame = window.bounds
-            try await Task.sleep(for: .milliseconds(250))
+            try await Task.sleep(for: .milliseconds(750))
             host.view.layoutIfNeeded()
             let format = UIGraphicsImageRendererFormat()
             format.scale = 1
             let image = UIGraphicsImageRenderer(size: window.bounds.size, format: format).image { _ in
                 host.view.drawHierarchy(in: host.view.bounds, afterScreenUpdates: true)
             }
-            try XCTUnwrap(image.pngData()).write(to: folder.appendingPathComponent("guidance-\(locale)-dark.png"))
+            try XCTUnwrap(image.pngData()).write(to: folder.appendingPathComponent("guidance-\(name)-dark.png"))
+            window.isHidden = true
+            window.rootViewController = nil
+        }
+    }
+
+    /// Opt-in review of the real chart overlay and persisted close/suppression behavior.
+    func testInteractiveOrientationGuidanceReview() async throws {
+        let marker = URL(fileURLWithPath: "/tmp/satellite-orientation-interaction")
+        guard FileManager.default.fileExists(atPath: marker.path) else {
+            throw XCTSkip("Orientation interaction review was not requested")
+        }
+        let defaults = UserDefaults.standard
+        let keys = ["hasDismissedOrientationGuidance", "orientationGuidanceDismissalCount", "orientationGuidanceSuppressed"]
+        let previous = keys.map { defaults.object(forKey: $0) }
+        defer {
+            for (key, value) in zip(keys, previous) {
+                if let value { defaults.set(value, forKey: key) } else { defaults.removeObject(forKey: key) }
+            }
+        }
+        keys.forEach { defaults.removeObject(forKey: $0) }
+        let fixture = try await Fixture(catalog: AppStarCatalog())
+        let pass = try XCTUnwrap(fixture.passes.first { $0.pass.visibility == .visible })
+        let view = NavigationStack {
+            fixture.factory.pass(.init(passIndex: 0, satelliteInfo: fixture.info, satelliteCommonName: "ISS",
+                category: .iss, julianDateRange: fixture.range, observer: fixture.observer,
+                passSnapshots: pass, starManager: fixture.catalog, julianDateProvider: { pass.pass.rise.julianDate }),
+                isCompassEnabled: true)
+        }
+        .environment(\.motionManagerKey, CMMotionManager())
+        .environment(\.colorScheme, .dark)
+        let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.first as? UIWindowScene)
+        let window = UIWindow(windowScene: scene)
+        window.overrideUserInterfaceStyle = .dark
+        window.rootViewController = UIHostingController(rootView: view)
+        window.makeKeyAndVisible()
+        defer { window.isHidden = true; window.rootViewController = nil }
+        try await Task.sleep(for: .milliseconds(800))
+        try "ready".write(to: marker, atomically: true, encoding: .utf8)
+        let deadline = Date().addingTimeInterval(240)
+        var firstClose = false
+        var secondClose = false
+        var suppressed = false
+        while Date() < deadline, !suppressed {
+            let command = try String(contentsOf: marker, encoding: .utf8)
+            if command == "first-close" {
+                XCTAssertEqual(defaults.integer(forKey: keys[1]), 1)
+                XCTAssertFalse(defaults.bool(forKey: keys[2]))
+                firstClose = true
+                try "first-verified".write(to: marker, atomically: true, encoding: .utf8)
+            } else if command == "second-close" {
+                XCTAssertEqual(defaults.integer(forKey: keys[1]), 2)
+                XCTAssertFalse(defaults.bool(forKey: keys[2]))
+                secondClose = true
+                try "second-verified".write(to: marker, atomically: true, encoding: .utf8)
+            } else if command == "suppressed" {
+                XCTAssertTrue(defaults.bool(forKey: keys[2]), "Don't show again must persist suppression")
+                suppressed = true
+            }
+            try await Task.sleep(for: .milliseconds(200))
+        }
+        XCTAssertTrue(firstClose)
+        XCTAssertTrue(secondClose)
+        XCTAssertTrue(suppressed)
+    }
+
+    /// Review fixtures only: permission states, localized grouped rows and accessible sizes.
+    /// The marker contains the explicit output directory, so no earlier release is overwritten.
+    func testAlarmsTabDesignReview() async throws {
+        let marker = URL(fileURLWithPath: "/tmp/satellite-alarms-tab-review")
+        guard FileManager.default.fileExists(atPath: marker.path) else {
+            throw XCTSkip("Alarms tab visual review was not requested")
+        }
+        let folder = URL(fileURLWithPath: try String(contentsOf: marker, encoding: .utf8).trimmingCharacters(in: .whitespacesAndNewlines))
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        let fixture = try await Fixture(catalog: AppStarCatalog())
+        let saved = fixture.passes.prefix(3).enumerated().map { index, snapshots in
+            let pass = snapshots.pass
+            return ScheduledPassNotification(id: pass.notificationIdentifier, notification:
+                PassNotification(pass: pass, satelliteName: "ISS", category: .iss, observer: fixture.observer,
+                                 timing: index == 1 ? .rise : .transit, timeOffset: index == 1 ? 0 : -300))
+        }
+        var cases: [(String, UNAuthorizationStatus, Bool, CGSize, DynamicTypeSize)] = []
+        for locale in ["en", "fr", "es", "pt-BR", "ru", "zh-Hans", "ja", "ko"] {
+            cases.append((locale, .notDetermined, true, CGSize(width: 440, height: 956), .large))
+        }
+        cases += [("en", .denied, true, CGSize(width: 440, height: 956), .large),
+                  ("en", .authorized, true, CGSize(width: 440, height: 956), .large),
+                  ("en", .authorized, false, CGSize(width: 440, height: 956), .large),
+                  ("en", .denied, true, CGSize(width: 375, height: 667), .large),
+                  ("en", .notDetermined, true, CGSize(width: 440, height: 956), .accessibility3)]
+        for (locale, permission, hasAlarm, bounds, textSize) in cases {
+            let view = NavigationStack {
+                AlarmSettingsView(notifications: hasAlarm ? saved : [], deleteNotifications: { _ in }, choosePass: {},
+                    alarmEditor: { PassAlarmSettingsModalView(viewModel: PassAlarmModel(session: fixture.session), context: .init(notification: $0.notification)) },
+                    authorizationStatus: permission, enableNotifications: {}, openNotificationSettings: {})
+            }
+                .environment(\.locale, Locale(identifier: locale))
+                .environment(\.timeZone, TimeZone(secondsFromGMT: 0)!)
+                .environment(\.colorScheme, .dark)
+                .environment(\.dynamicTypeSize, textSize)
+            let host = UIHostingController(rootView: view)
+            let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.first as? UIWindowScene)
+            let window = UIWindow(windowScene: scene)
+            window.frame = CGRect(origin: .zero, size: bounds)
+            window.overrideUserInterfaceStyle = .dark
+            window.rootViewController = host
+            window.makeKeyAndVisible()
+            host.view.frame = window.bounds
+            try await Task.sleep(for: .milliseconds(700))
+            host.view.layoutIfNeeded()
+            let name = "\(locale)-permission\(permission.rawValue)-\(hasAlarm ? "saved" : "empty")-\(Int(bounds.width))-\(textSize.isAccessibilitySize ? "accessibility" : "normal")"
+            func capture(_ suffix: String) throws {
+                let format = UIGraphicsImageRendererFormat(); format.scale = 1
+                let image = UIGraphicsImageRenderer(size: bounds, format: format).image { _ in
+                    host.view.drawHierarchy(in: host.view.bounds, afterScreenUpdates: true)
+                }
+                try XCTUnwrap(image.pngData()).write(to: folder.appendingPathComponent(name + suffix + "-dark.png"))
+            }
+            try capture("")
+            if textSize.isAccessibilitySize || bounds.width < 400 {
+                func scrollViews(_ view: UIView) -> [UIScrollView] {
+                    (view as? UIScrollView).map { [$0] } ?? view.subviews.flatMap { scrollViews($0) }
+                }
+                let scroll = try XCTUnwrap(scrollViews(host.view).max { $0.bounds.height < $1.bounds.height })
+                let bottom = max(-scroll.adjustedContentInset.top, scroll.contentSize.height - scroll.bounds.height + scroll.adjustedContentInset.bottom)
+                scroll.setContentOffset(CGPoint(x: 0, y: bottom), animated: false)
+                try await Task.sleep(for: .milliseconds(200))
+                try capture("-scrolled")
+            }
+            window.isHidden = true
+            window.rootViewController = nil
+        }
+    }
+
+    /// Native Alarms tab interaction, driven with the simulator UI tools.
+    /// Create /tmp/satellite-alarm-settings-review to run; remove it after deleting the fixture alarm.
+    func testInteractiveAlarmSettingsEditing() async throws {
+        let marker = URL(fileURLWithPath: "/tmp/satellite-alarm-settings-review")
+        guard FileManager.default.fileExists(atPath: marker.path) else {
+            throw XCTSkip("Interactive alarm settings review was not requested")
+        }
+        let fixture = try await Fixture(catalog: AppStarCatalog())
+        let snapshots = try XCTUnwrap(fixture.passes.first)
+        let notification = PassNotification(pass: snapshots.pass, satelliteName: "ISS", category: .iss,
+            observer: fixture.observer, timing: .transit, timeOffset: -300)
+        let saved = ScheduledPassNotification(id: notification.pass.notificationIdentifier, notification: notification)
+        let suite = "alarm-settings-review-" + UUID().uuidString
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let notifications = NotificationService(defaults: defaults)
+        notifications.scheduled = [saved]
+        notifications.persist()
+        let session = AppSession(catalog: fixture.catalog, location: fixture.session.location, notifications: notifications)
+        let host = UIHostingController(rootView: NavigationStack { AlarmSettingsView(notifications: Array(notifications.scheduled), deleteNotifications: { notifications.cancel(Array($0)) }, alarmEditor: { PassAlarmSettingsModalView(viewModel: PassAlarmModel(session: session), context: .init(notification: $0.notification)) }, authorizationStatus: .authorized) }.preferredColorScheme(.dark))
+        let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.first as? UIWindowScene)
+        let window = UIWindow(windowScene: scene)
+        window.overrideUserInterfaceStyle = .dark
+        window.rootViewController = host
+        window.makeKeyAndVisible()
+        defer { window.isHidden = true; window.rootViewController = nil }
+        try await Task.sleep(for: .milliseconds(800))
+        try "ready".write(to: marker, atomically: true, encoding: .utf8)
+        let deadline = Date().addingTimeInterval(180)
+        var cancelled = false
+        while FileManager.default.fileExists(atPath: marker.path), Date() < deadline {
+            let command = try String(contentsOf: marker, encoding: .utf8)
+            if command == "cancelled" {
+                XCTAssertEqual(notifications.scheduled, [saved], "Cancelling must keep the original alarm")
+                cancelled = true
+                try "cancel-verified".write(to: marker, atomically: true, encoding: .utf8)
+            }
+            try await Task.sleep(for: .milliseconds(200))
+        }
+        XCTAssertTrue(cancelled, "The review must check cancel after changing the alarm time")
+        XCTAssertTrue(notifications.scheduled.isEmpty, "Deleting from the editor must update shared alarm state")
+        let persisted = try JSONDecoder().decode([ScheduledPassNotification].self,
+            from: XCTUnwrap(defaults.data(forKey: "scheduledLocalNotifications")))
+        XCTAssertTrue(persisted.isEmpty, "Deleted alarm must also be removed from persistence")
+    }
+
+    /// Opt-in visual review for new/saved alarms, translations, narrow phones and large text.
+    func testAlarmPickerDesignReview() async throws {
+        guard FileManager.default.fileExists(atPath: "/tmp/satellite-alarm-picker-review") else {
+            throw XCTSkip("Alarm picker design review was not requested")
+        }
+        let fixture = try await Fixture(catalog: AppStarCatalog())
+        let snapshots = try XCTUnwrap(fixture.passes.first)
+        let saved = PassNotification(pass: snapshots.pass, satelliteName: "ISS", category: .iss,
+            observer: fixture.observer, timing: .transit, timeOffset: -300)
+        let context = PassAlarmSettingsModalViewContext(satelliteName: "ISS", category: .iss,
+            passSnapshots: snapshots, observer: fixture.observer)
+        let folder = URL(fileURLWithPath: try String(contentsOfFile: "/tmp/satellite-alarm-picker-review", encoding: .utf8).trimmingCharacters(in: .whitespacesAndNewlines), isDirectory: true)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        var cases = [ (String, Bool, CGSize, DynamicTypeSize) ]()
+        for locale in ["en", "fr", "es", "pt-BR", "ru", "zh-Hans", "ja", "ko"] {
+            cases.append((locale, false, CGSize(width: 440, height: 956), .large))
+        }
+        cases.append(("en", true, CGSize(width: 440, height: 956), .large))
+        cases.append(("en", false, CGSize(width: 375, height: 667), .large))
+        cases.append(("en", true, CGSize(width: 440, height: 956), .accessibility3))
+        for (locale, editing, bounds, textSize) in cases {
+            let model = PassAlarmModel(state: .init(scheduledPassNotifications: editing ? [
+                ScheduledPassNotification(id: snapshots.pass.notificationIdentifier, notification: saved)
+            ] : []))
+            let view = PassAlarmSettingsModalView(viewModel: model, context: context)
+                .environment(\.locale, Locale(identifier: locale))
+                .environment(\.timeZone, TimeZone(secondsFromGMT: 0)!)
+                .environment(\.colorScheme, .dark)
+                .environment(\.dynamicTypeSize, textSize)
+            let host = UIHostingController(rootView: view)
+            let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.first as? UIWindowScene)
+            let window = UIWindow(windowScene: scene)
+            window.frame = CGRect(origin: .zero, size: bounds)
+            window.overrideUserInterfaceStyle = .dark
+            window.rootViewController = host
+            window.makeKeyAndVisible()
+            host.view.frame = window.bounds
+            try await Task.sleep(for: .milliseconds(700))
+            host.view.layoutIfNeeded()
+            let name = "\(locale)-\(editing ? "edit" : "new")-\(Int(bounds.width))-\(textSize.isAccessibilitySize ? "accessibility" : "normal")"
+            func capture(_ suffix: String) throws {
+                let format = UIGraphicsImageRendererFormat(); format.scale = 1
+                let image = UIGraphicsImageRenderer(size: bounds, format: format).image { _ in
+                    host.view.drawHierarchy(in: host.view.bounds, afterScreenUpdates: true)
+                }
+                try XCTUnwrap(image.pngData()).write(to: folder.appendingPathComponent(name + suffix + "-dark.png"))
+            }
+            try capture("")
+            if textSize.isAccessibilitySize || bounds.width < 400 {
+                func scrollViews(_ view: UIView) -> [UIScrollView] {
+                    (view as? UIScrollView).map { [$0] } ?? view.subviews.flatMap { scrollViews($0) }
+                }
+                let scroll = try XCTUnwrap(scrollViews(host.view).max { $0.bounds.height < $1.bounds.height })
+                let bottom = scroll.contentSize.height - scroll.bounds.height + scroll.adjustedContentInset.bottom
+                scroll.setContentOffset(CGPoint(x: 0, y: bottom), animated: false)
+                try await Task.sleep(for: .milliseconds(200))
+                try capture("-scrolled")
+            }
             window.isHidden = true
             window.rootViewController = nil
         }
@@ -1186,7 +1466,7 @@ final class ScreenSnapshotTests: XCTestCase {
         }
         if let expectedModal {
             XCTAssertEqual(host.presentedViewController != nil, expectedModal,
-                "Only the first visible pass should present the tutorial video")
+                "Only unseen Compass use should automatically present the tutorial video")
         }
         let format = UIGraphicsImageRendererFormat()
         format.scale = 1
@@ -1204,15 +1484,17 @@ final class ScreenSnapshotTests: XCTestCase {
         attachment.lifetime = .keepAlways
         add(attachment)
         let mode = ProcessInfo.processInfo.environment["SNAPSHOT_RECORD"] ?? ""
-        let defaultFolder = root.appendingPathComponent(name.hasPrefix("point-source-") ? "Documentation/DesignReview/PointSources" : "Documentation/DesignReview/\(mode == "before" ? "before" : "after")")
+        let reviewFolder = "/tmp/satellite-compass-tutorial-review"
+        let reviewPath = try? String(contentsOfFile: reviewFolder, encoding: .utf8).trimmingCharacters(in: .whitespacesAndNewlines)
+        let defaultFolder = reviewPath.map { URL(fileURLWithPath: $0, isDirectory: true) } ?? root.appendingPathComponent(name.hasPrefix("point-source-") ? "Documentation/DesignReview/PointSources" : "Documentation/DesignReview/\(mode == "before" ? "before" : "after")")
         let baseFolder = ProcessInfo.processInfo.environment["SNAPSHOT_OUTPUT"].map { URL(fileURLWithPath: $0, isDirectory: true) } ?? defaultFolder
         let folder = isSEReview ? baseFolder.appendingPathComponent("se3") : baseFolder
         let url = folder.appendingPathComponent(name + ".png")
         let data = try XCTUnwrap(image.pngData())
         // Playback timing is intentionally live. Assert modal presentation above,
         // and keep a review capture instead of pixel-comparing video frames.
-        if expectedModal == true, mode != "before", mode != "after" { return }
-        if record || mode == "before" || mode == "after" || name.hasPrefix("point-source-") {
+        if expectedModal == true, mode != "before", mode != "after", reviewPath == nil { return }
+        if record || mode == "before" || mode == "after" || name.hasPrefix("point-source-") || reviewPath != nil {
             try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
             try data.write(to: url)
         } else {
@@ -1243,6 +1525,19 @@ final class ScreenSnapshotTests: XCTestCase {
         let a = try pixels(lhs), b = try pixels(rhs)
         guard a.count == b.count else { return 1 }
         return Double(zip(a, b).reduce(0) { $0 + abs(Int($1.0) - Int($1.1)) }) / Double(a.count * 255)
+    }
+}
+
+@MainActor @Observable
+private final class CompassTutorialTestState {
+    var enabled = false
+}
+
+private struct CompassTutorialTriggerHarness: View {
+    @Bindable var state: CompassTutorialTestState
+    var body: some View {
+        PassChartControls(isCompassEnabled: $state.enabled, openChart: {}, openPlanetarium: {})
+            .modifier(FirstCompassUseTutorial(isCompassEnabled: state.enabled))
     }
 }
 
@@ -1398,7 +1693,8 @@ extension Fixture {
                         listViewFactory: ViewFactory { factory.list($0) },
                         header: AnyView(cards), stationDestination: { AnyView(cards.destination($0)) })
                 },
-                settingsOverviewFactory: { NativeSettingsView(session: session) }))
+                settingsOverviewFactory: { NativeSettingsView(session: session) },
+                alarmsFactory: { AnyView(NativeAlarmsView(session: session)) }))
         }
         let planetariumController = PlanetariumController()
         let planetariumContext = PassViewContext(passIndex: 0, satelliteInfo: info,

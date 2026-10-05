@@ -1,0 +1,14 @@
+{
+  "sources": {
+    "01-next-observation.jpg": "Documentation/AppStore/2.1.0/screenshots/en-US/01-forecast.png",
+    "02-pass-sky-chart.jpg": "Documentation/AppStore/2.0.0/build-20/screenshots/en-US/02-pass-chart.png",
+    "03-planetarium-preview.jpg": "Documentation/AppStore/2.0.0/build-20/screenshots/en-US/05-planetarium.png",
+    "04-home-screen-widgets.jpg": "Documentation/AppStore/2.0.0/build-20/screenshots/en-US/06-widgets.png"
+  },
+  "dimensions": [
+    660,
+    1434
+  ],
+  "appearance": "dark",
+  "home_weather": "Illustrative UI fixture, not measured historical weather."
+}

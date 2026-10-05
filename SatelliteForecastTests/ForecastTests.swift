@@ -1,5 +1,6 @@
 import XCTest
 import UIKit
+import UserNotifications
 import SwiftUI
 import BTree
 import QSMag
@@ -1135,4 +1136,182 @@ ISS (ZARYA)
 private actor NetworkProbe {
     private(set) var requests = 0
     func fetch() throws -> Data { requests += 1; throw Failure.unexpectedNetwork }
+}
+
+@MainActor
+final class PassAlarmDraftTests: XCTestCase {
+    // A pass just after midnight makes calendar-day mistakes observable.
+    private func pass(shift: TimeInterval = 0, illuminated: Bool = true) -> Pass {
+        let midnight = Date(timeIntervalSince1970: 1_800_057_600) // 2027-01-16 00:00 UTC
+        func position(_ seconds: TimeInterval, elevation: Double) -> Pass.DatePosition {
+            .init(julianDate: midnight.addingTimeInterval(shift + seconds).julianDate,
+                  azim: 0, elev: elevation)
+        }
+        return Pass(noradIndex: 25544, rise: position(120, elevation: 0),
+                    set: position(720, elevation: 0), culmination: position(420, elevation: 60),
+                    illumination: .init(initiallyIlluminated: illuminated, changes: []),
+                    sunElevationAtTransit: -12)
+    }
+
+    private func notification(_ pass: Pass, timing: PassNotification.Timing = .rise,
+                              offset: TimeInterval = -600) -> PassNotification {
+        .init(pass: pass, satelliteName: "ISS", category: .iss,
+              observer: LatLonAlt(0, 0, 0), timing: timing, timeOffset: offset)
+    }
+
+    func testPickedTimePersistsAcrossMidnight() {
+        let pass = pass()
+        var draft = PassAlarmDraft(pass: pass)
+        let chosen = draft.eventDate.addingTimeInterval(-600)
+        draft.date = chosen
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        XCTAssertFalse(calendar.isDate(chosen, inSameDayAs: draft.eventDate))
+        let saved = notification(pass, timing: draft.timing, offset: draft.timeOffset)
+        XCTAssertEqual(Date(julianDate: saved.alertJulianDate).timeIntervalSince1970,
+                       chosen.timeIntervalSince1970, accuracy: 0.0001)
+    }
+
+    func testMomentSelectionKeepsPickedLeadTime() {
+        var draft = PassAlarmDraft(pass: pass())
+        draft.date = draft.eventDate.addingTimeInterval(-300)
+        draft.select(.transit)
+        XCTAssertEqual(draft.date.timeIntervalSince(draft.eventDate), -300, accuracy: 0.0001)
+        draft.date = draft.eventDate
+        XCTAssertEqual(draft.date, draft.eventDate)
+        draft.date = draft.eventDate.addingTimeInterval(-600)
+        XCTAssertEqual(draft.timeOffset, -600, accuracy: 0.0001)
+    }
+
+    func testEditingRetainsSavedAbsoluteTimeWhenOrbitalPredictionMoves() {
+        let saved = notification(pass(), timing: .transit)
+        let draft = PassAlarmDraft(pass: pass(shift: 35), notification: saved)
+        XCTAssertEqual(draft.timing, .transit)
+        XCTAssertEqual(draft.date.timeIntervalSince1970,
+                       Date(julianDate: saved.alertJulianDate).timeIntervalSince1970, accuracy: 0.0001)
+        XCTAssertEqual(draft.timeOffset, -635, accuracy: 0.0001)
+    }
+
+    func testMissingIlluminatedMomentPreservesTimeUsingRiseAnchor() {
+        let saved = notification(pass(), timing: .highestIlluminated)
+        let draft = PassAlarmDraft(pass: pass(illuminated: false), notification: saved)
+        XCTAssertEqual(draft.timing, .rise)
+        XCTAssertEqual(draft.date.timeIntervalSince1970,
+                       Date(julianDate: saved.alertJulianDate).timeIntervalSince1970, accuracy: 0.0001)
+    }
+
+    func testSettingsEditorRetainsSavedPassLocationAndAlarmIdentity() {
+        let saved = notification(pass(), timing: .transit, offset: -300)
+        let context = PassAlarmSettingsModalViewContext(notification: saved)
+        XCTAssertEqual(context.pass, saved.pass)
+        XCTAssertEqual(context.observer, saved.observer)
+        XCTAssertEqual(context.category, saved.category)
+        XCTAssertEqual(context.satelliteName, saved.satelliteName)
+        XCTAssertNil(context.passSnapshots, "Opening a saved alarm must not need a new orbital prediction")
+        let draft = PassAlarmDraft(pass: context.pass, notification: saved)
+        let edited = PassNotification(pass: context.pass, satelliteName: context.satelliteName,
+            category: context.category, observer: context.observer,
+            timing: draft.timing, timeOffset: draft.timeOffset)
+        XCTAssertEqual(edited.pass.notificationIdentifier, saved.pass.notificationIdentifier)
+        XCTAssertEqual(edited.alertJulianDate, saved.alertJulianDate, accuracy: 0.00000001)
+    }
+
+    func testLegacyPassEndAlarmRetainsTimeWithoutOfferingPassEnd() throws {
+        let saved = notification(pass(), timing: .set, offset: -60)
+        var json = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(saved)) as? [String: Any])
+        var savedPass = try XCTUnwrap(json["pass"] as? [String: Any])
+        savedPass.removeValue(forKey: "reachesTenDegrees")
+        json["pass"] = savedPass
+        let decoded = try JSONDecoder().decode(PassNotification.self, from: JSONSerialization.data(withJSONObject: json))
+        let draft = PassAlarmDraft(pass: decoded.pass, notification: decoded)
+        XCTAssertEqual(draft.timing, .rise)
+        XCTAssertFalse(draft.availableMoments.contains(.set))
+        XCTAssertFalse(draft.availableMoments.contains(.reachesTenDegrees))
+        XCTAssertEqual(draft.date.timeIntervalSince1970,
+            Date(julianDate: saved.alertJulianDate).timeIntervalSince1970, accuracy: 0.0001)
+    }
+
+    func testTenDegreeMomentUsesAscendingOrbitCrossingAndSurvivesPersistence() throws {
+        let info = SatelliteInfo(elements: try SatelliteKit.Elements("ISS (ZARYA)",
+            "1 25544U 98067A   26163.80312906  .00000000  00000-0  16106-3 0  9994",
+            "2 25544  51.6335 321.7912 0004900 178.5917 181.5086 15.49196054    48"))
+        let observer = LatLonAlt(-33.8688, 151.2093, 0.020)
+        let start = try XCTUnwrap(ISO8601DateFormatter().date(from: "2026-06-14T07:40:00Z"))
+        let coarse = try info.generateSnapshots(observer: observer,
+            julianDateRange: start.julianDate...start.addingTimeInterval(1200).julianDate)
+        let snapshots = try XCTUnwrap(info.findPasses(observer: observer, coarseSnapshots: coarse).first)
+        let crossing = try XCTUnwrap(snapshots.pass.reachesTenDegrees)
+        XCTAssertGreaterThan(crossing.julianDate, snapshots.pass.rise.julianDate)
+        XCTAssertLessThan(crossing.julianDate, snapshots.pass.culmination.julianDate)
+        let atCrossing = try info.generateSnapshot(julianDate: crossing.julianDate, observer: observer)
+        let before = try info.generateSnapshot(julianDate: crossing.julianDate - 0.1 * TimeConstants.sec2day, observer: observer)
+        XCTAssertGreaterThanOrEqual(atCrossing.position.elev, 10)
+        XCTAssertLessThan(atCrossing.position.elev, 10.05)
+        XCTAssertLessThan(before.position.elev, 10)
+        var draft = PassAlarmDraft(pass: snapshots.pass)
+        XCTAssertTrue(draft.availableMoments.contains(.reachesTenDegrees))
+        XCTAssertFalse(draft.availableMoments.contains(.set))
+        draft.select(.reachesTenDegrees)
+        XCTAssertEqual(draft.eventDate.julianDate, crossing.julianDate, accuracy: 0.00000001)
+        let saved = notification(snapshots.pass, timing: .reachesTenDegrees, offset: -120)
+        let restored = try JSONDecoder().decode(PassNotification.self, from: JSONEncoder().encode(saved))
+        let reopened = PassAlarmDraft(pass: restored.pass, notification: restored)
+        XCTAssertEqual(reopened.timing, .reachesTenDegrees)
+        XCTAssertEqual(reopened.date.julianDate, crossing.julianDate - 120 * TimeConstants.sec2day, accuracy: 0.00000001)
+    }
+
+    func testAlarmsPermissionCardOnlyAppearsWhenActionIsNeeded() {
+        XCTAssertFalse(AlarmSettingsView.showsPermissionCard(nil), "Unknown permission should not flash a prompt")
+        XCTAssertTrue(AlarmSettingsView.showsPermissionCard(.notDetermined))
+        XCTAssertTrue(AlarmSettingsView.showsPermissionCard(.denied))
+        for status in [UNAuthorizationStatus.authorized, .provisional, .ephemeral] {
+            XCTAssertFalse(AlarmSettingsView.showsPermissionCard(status))
+        }
+    }
+
+    func testSavingEditedAlarmReplacesItsStoredTimeAndSurvivesReload() throws {
+        let suite = "alarm-update-test-" + UUID().uuidString
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let service = NotificationService(defaults: defaults)
+        let original = notification(pass(), offset: -300)
+        let edited = notification(pass(), offset: -600)
+        service.recordScheduled(original)
+        service.recordScheduled(edited)
+        XCTAssertEqual(service.scheduled.count, 1, "An edit must not leave the old alarm in the list")
+        XCTAssertEqual(service.scheduled.first?.notification, edited)
+        let restored = NotificationService(defaults: defaults)
+        XCTAssertEqual(restored.scheduled.count, 1)
+        XCTAssertEqual(restored.scheduled.first?.notification, edited)
+    }
+
+    func testAlarmRowsSortAndDeleteByActualAlertTime() {
+        let earlierPass = notification(pass(), offset: 0)
+        let laterPassEarlierAlarm = notification(pass(shift: 3600), offset: -7200)
+        let first = ScheduledPassNotification(id: "first", notification: earlierPass)
+        let second = ScheduledPassNotification(id: "second", notification: laterPassEarlierAlarm)
+        var deleted = Set<String>()
+        let view = AlarmSettingsView(notifications: [first, second], deleteNotifications: { deleted = $0 })
+        XCTAssertEqual(view.notifications.map(\.id), ["second", "first"])
+        view.deleteAlarms(at: IndexSet(integer: 0))
+        XCTAssertEqual(deleted, ["second"], "Deletion must follow the displayed alert order")
+    }
+
+    func testPositiveAlarmOffsetIsNotDescribedAsBefore() {
+        let description = AlarmSettingsView.alarmOffsetDescription(timing: .rise, offset: 300)
+        XCTAssertEqual(description, String(format: AppLocalization.text("%@ after %@"), { let formatter = DateComponentsFormatter(); formatter.allowedUnits = [.hour, .minute]; formatter.unitsStyle = .short; return formatter.string(from: 300)! }(), AppLocalization.text("Pass starts")))
+        XCTAssertEqual(AlarmSettingsView.alarmOffsetDescription(timing: .rise, offset: 0), AppLocalization.text("Pass starts"))
+    }
+
+    func testLegacyLongLeadTimeRemainsSelectable() {
+        let saved = notification(pass(), timing: .transit, offset: -172800)
+        var draft = PassAlarmDraft(pass: pass(), notification: saved)
+        let originalDate = draft.date
+        XCTAssertTrue(draft.dateRange.contains(draft.date))
+        XCTAssertEqual(draft.date.timeIntervalSince(draft.eventDate), -172800, accuracy: 0.0001)
+        draft.select(.rise)
+        XCTAssertTrue(draft.dateRange.contains(draft.date), "Switching moments must retain the long lead time")
+        draft.date = draft.eventDate.addingTimeInterval(-300)
+        XCTAssertTrue(draft.dateRange.contains(originalDate), "Editing must allow returning to the saved time")
+    }
 }

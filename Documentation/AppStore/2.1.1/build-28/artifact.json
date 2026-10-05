@@ -1,0 +1,9 @@
+{
+  "version": "2.1.1",
+  "build": "28",
+  "archive": "/tmp/SatelliteForecast-2.1.1-28.xcarchive/Products/Applications/SatelliteForecastApp.app",
+  "ipa": "/tmp/SatelliteForecast-2.1.1-28-final.ipa",
+  "sha256": "b40921abe13cb06ba77c05e9611ee98369d06d8ca3626dd094e3bfad8faa0194",
+  "gitHead": "ed8180c3772b195bcc47d1aa497ae354df890bca",
+  "appStoreCompatible": true
+}

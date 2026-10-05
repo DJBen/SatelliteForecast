@@ -838,3 +838,45 @@ The localized string for the status of a spare satellite */
 "Loading weather" = "Chargement de la météo";
 "Weather unavailable" = "Météo indisponible";
 "Tap to retry" = "Toucher pour réessayer";
+
+/* Manual local pass alarms */
+"Set local alarm" = "Définir une alarme locale";
+"View local alarm" = "Voir l’alarme locale";
+"One local alarm with sound for this pass." = "Une alarme locale avec son pour ce passage.";
+
+/* Manual alarm time picker */
+"Pass starts" = "Début du passage";
+"Pass ends" = "Fin du passage";
+"Pass moment" = "Moment du passage";
+"Alarm time" = "Heure de l’alarme";
+"At event" = "Au moment choisi";
+"5 min before" = "5 min avant";
+"10 min before" = "10 min avant";
+"Default notification sound" = "Son de notification par défaut";
+"Save changes" = "Enregistrer les modifications";
+"Set alarm" = "Créer l’alarme";
+"Edit alarm" = "Modifier l’alarme";
+"Couldn't set alarm" = "Impossible de créer l’alarme";
+
+"Never miss a station pass" = "Ne manquez aucun passage";
+"Turn notifications back on" = "Réactiver les notifications";
+"Get automatic alerts for visible ISS and Tiangong passes. Allow notifications to receive these alerts and local alarms with sound." = "Recevez des alertes automatiques pour les passages visibles de l’ISS et de Tiangong. Autorisez les notifications pour recevoir ces alertes et vos alarmes locales avec son.";
+"Notifications are off. Allow notifications in iOS Settings to receive automatic ISS and Tiangong alerts and your local alarms." = "Les notifications sont désactivées. Autorisez-les dans les réglages iOS pour recevoir les alertes de l’ISS et de Tiangong et vos alarmes locales.";
+"Enable notifications" = "Activer les notifications";
+"Local alarms" = "Alarmes locales";
+"No local alarms yet" = "Aucune alarme locale";
+"One-off reminders for passes you choose. Tap an alarm to change its time." = "Des rappels uniques pour les passages choisis. Touchez une alarme pour modifier son heure.";
+"Sound on" = "Son activé";
+"%@ after %@" = "%@ après %@";
+
+/* Ascending pass moment and its alarm offset. */
+"Reaches 10°" = "Atteint 10°";
+"%@ before reaching 10°" = "%@ avant d’atteindre 10°";
+
+/* Release localization audit: pass and alarm controls. */
+"Please try again." = "Veuillez réessayer.";
+"Choose an upcoming pass to set a one-off reminder." = "Choisissez un prochain passage pour définir un rappel ponctuel.";
+"Choose a pass" = "Choisir un passage";
+"Live orbit globe" = "Globe orbital en direct";
+"Open pass chart" = "Ouvrir la carte du passage";
+"Automatic alerts for ISS and Tiangong." = "Alertes automatiques pour l’ISS et Tiangong.";

@@ -1,3 +1,3 @@
 public enum Tab: Equatable, Hashable {
-    case realtimeSky, forecast, satellites, settings
+    case realtimeSky, forecast, satellites, alarms, settings
 }

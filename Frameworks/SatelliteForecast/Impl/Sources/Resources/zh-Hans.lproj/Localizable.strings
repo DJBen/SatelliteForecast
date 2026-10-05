@@ -838,3 +838,45 @@ The localized string for the status of a spare satellite */
 "Loading weather" = "正在加载天气";
 "Weather unavailable" = "天气暂不可用";
 "Tap to retry" = "轻点重试";
+
+/* Manual local pass alarms */
+"Set local alarm" = "设置本地闹钟";
+"View local alarm" = "查看本地闹钟";
+"One local alarm with sound for this pass." = "为此次过境设置一次带声音的本地闹钟。";
+
+/* Manual alarm time picker */
+"Pass starts" = "过境开始";
+"Pass ends" = "过境结束";
+"Pass moment" = "过境时刻";
+"Alarm time" = "闹钟时间";
+"At event" = "所选时刻";
+"5 min before" = "提前5分钟";
+"10 min before" = "提前10分钟";
+"Default notification sound" = "默认通知声音";
+"Save changes" = "保存更改";
+"Set alarm" = "设置闹钟";
+"Edit alarm" = "编辑闹钟";
+"Couldn't set alarm" = "无法设置闹钟";
+
+"Never miss a station pass" = "不错过空间站过境";
+"Turn notifications back on" = "重新开启通知";
+"Get automatic alerts for visible ISS and Tiangong passes. Allow notifications to receive these alerts and local alarms with sound." = "接收国际空间站和天宫的可见过境自动提醒。允许通知后，你也可以收到带声音的本地闹钟提醒。";
+"Notifications are off. Allow notifications in iOS Settings to receive automatic ISS and Tiangong alerts and your local alarms." = "通知已关闭。请在 iOS 设置中允许通知，以接收国际空间站、天宫的自动提醒和本地闹钟。";
+"Enable notifications" = "开启通知";
+"Local alarms" = "本地闹钟";
+"No local alarms yet" = "还没有本地闹钟";
+"One-off reminders for passes you choose. Tap an alarm to change its time." = "为你选择的过境设置一次性提醒。轻点闹钟即可修改时间。";
+"Sound on" = "声音已开启";
+"%@ after %@" = "%@ 后：%@";
+
+/* Ascending pass moment and its alarm offset. */
+"Reaches 10°" = "升至 10°";
+"%@ before reaching 10°" = "升至 10° 前 %@";
+
+/* Release localization audit: pass and alarm controls. */
+"Please try again." = "请重试。";
+"Choose an upcoming pass to set a one-off reminder." = "选择一次即将到来的过境，设置单次提醒。";
+"Choose a pass" = "选择过境";
+"Live orbit globe" = "实时轨道地球仪";
+"Open pass chart" = "打开过境星图";
+"Automatic alerts for ISS and Tiangong." = "接收国际空间站和天宫的自动提醒。";

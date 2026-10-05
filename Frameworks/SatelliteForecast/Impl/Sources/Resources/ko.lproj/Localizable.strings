@@ -838,3 +838,45 @@ The localized string for the status of a spare satellite */
 "Loading weather" = "날씨 불러오는 중";
 "Weather unavailable" = "날씨를 불러올 수 없음";
 "Tap to retry" = "탭하여 다시 시도";
+
+/* Manual local pass alarms */
+"Set local alarm" = "로컬 알람 설정";
+"View local alarm" = "로컬 알람 보기";
+"One local alarm with sound for this pass." = "이 통과에 대해 소리가 나는 로컬 알람을 한 번 울립니다.";
+
+/* Manual alarm time picker */
+"Pass starts" = "통과 시작";
+"Pass ends" = "통과 종료";
+"Pass moment" = "통과 시점";
+"Alarm time" = "알람 시간";
+"At event" = "선택한 시점";
+"5 min before" = "5분 전";
+"10 min before" = "10분 전";
+"Default notification sound" = "기본 알림 소리";
+"Save changes" = "변경 사항 저장";
+"Set alarm" = "알람 설정";
+"Edit alarm" = "알람 편집";
+"Couldn't set alarm" = "알람을 설정할 수 없습니다";
+
+"Never miss a station pass" = "우주정거장 통과를 놓치지 마세요";
+"Turn notifications back on" = "알림을 다시 켜세요";
+"Get automatic alerts for visible ISS and Tiangong passes. Allow notifications to receive these alerts and local alarms with sound." = "ISS와 톈궁의 관측 가능한 통과를 자동으로 알려 드립니다. 알림을 허용하면 자동 알림과 소리가 있는 로컬 알람을 받을 수 있습니다.";
+"Notifications are off. Allow notifications in iOS Settings to receive automatic ISS and Tiangong alerts and your local alarms." = "알림이 꺼져 있습니다. iOS 설정에서 알림을 허용하면 ISS와 톈궁 자동 알림 및 로컬 알람을 받을 수 있습니다.";
+"Enable notifications" = "알림 활성화";
+"Local alarms" = "로컬 알람";
+"No local alarms yet" = "아직 로컬 알람이 없습니다";
+"One-off reminders for passes you choose. Tap an alarm to change its time." = "선택한 통과에 대한 일회성 알림입니다. 알람을 탭하여 시간을 변경하세요.";
+"Sound on" = "소리 켜짐";
+"%@ after %@" = "%@ 후: %@";
+
+/* Ascending pass moment and its alarm offset. */
+"Reaches 10°" = "고도 10° 도달";
+"%@ before reaching 10°" = "고도 10° 도달 %@ 전";
+
+/* Release localization audit: pass and alarm controls. */
+"Please try again." = "다시 시도해 주세요.";
+"Choose an upcoming pass to set a one-off reminder." = "다가오는 통과를 선택하여 일회성 미리 알림을 설정하세요.";
+"Choose a pass" = "통과 선택";
+"Live orbit globe" = "실시간 궤도 지구본";
+"Open pass chart" = "통과 차트 열기";
+"Automatic alerts for ISS and Tiangong." = "ISS와 톈궁의 자동 알림.";

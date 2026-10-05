@@ -16,6 +16,7 @@ public final class NotificationService {
   public var isAuthorized = false
   /// Raw OS state, so views can tell "never asked" from "explicitly denied".
   public var authorizationStatus: UNAuthorizationStatus = .notDetermined
+  public private(set) var hasLoadedAuthorization = false
   public var isDenied: Bool { authorizationStatus == .denied }
   public var isRequestingAuthorization = false
   private var revision = 0
@@ -55,32 +56,44 @@ public final class NotificationService {
   public func checkAuthorization() async -> Bool {
     let status = await center.notificationSettings().authorizationStatus
     authorizationStatus = status
-    return [.authorized, .provisional, .ephemeral].contains(status)
+    isAuthorized = [.authorized, .provisional, .ephemeral].contains(status)
+    hasLoadedAuthorization = true
+    return isAuthorized
   }
   /// Requests notification permission for ISS and Tiangong push reminders. The prompt appears
   /// only from an explicit user action; nothing is scheduled locally. Returns the OS decision.
-  public func enableStationReminders() async -> Bool {
+  public func enableStationReminders(fromAlarms: Bool = false) async -> Bool {
     guard !isRequestingAuthorization else { return isAuthorized }
     isRequestingAuthorization = true
     defer { isRequestingAuthorization = false }
-    let metric = AppAnalytics.Operation("enable_station_reminders", screen: .forecast)
+    let source: AppAnalytics.Screen = fromAlarms ? .alarms : .forecast
+    let metric = AppAnalytics.Operation("enable_station_reminders", screen: source)
     do {
       let granted = try await center.requestAuthorization(options: [.alert, .sound, .badge])
       isAuthorized = granted
-      authorizationStatus = await center.notificationSettings().authorizationStatus
+      _ = await checkAuthorization()
       guard granted else {
         metric.finish("blocked", reason: "notification_permission_denied")
-        errorMessage = AppLocalization.text("Notifications are disabled. Enable them in Settings to get station reminders.")
+        if !fromAlarms { errorMessage = AppLocalization.text("Notifications are disabled. Enable them in Settings to get station reminders.") }
         return false
       }
       metric.finish("success")
-      AppAnalytics.event("station_reminders_enabled", screen: .forecast)
+      AppAnalytics.event("station_reminders_enabled", screen: source)
       return true
     } catch {
       metric.finish("failure", reason: "authorization_failed")
       errorMessage = error.localizedDescription
       return false
     }
+  }
+  /// Called only after the OS accepts a request. Value equality includes the time,
+  /// so Set.update alone would retain an older alarm with the same identifier.
+  func recordScheduled(_ notification: PassNotification) {
+    revision += 1
+    let id = notification.pass.notificationIdentifier
+    scheduled = scheduled.filter { $0.id != id }
+    scheduled.insert(ScheduledPassNotification(id: id, notification: notification))
+    persist()
   }
   public func cancel(_ ids: [String]) {
     if scheduled.contains(where: { ids.contains($0.id) }) {
@@ -95,10 +108,12 @@ public final class NotificationService {
     scheduled = scheduled.filter { !ids.contains($0.id) }
     persist()
   }
+  @discardableResult
   public func schedule(
-    _ notification: PassNotification, snapshots: PassSnapshots, catalog: AppStarCatalog,
+    _ notification: PassNotification, snapshots: PassSnapshots?, catalog: AppStarCatalog,
     offset: Double = 0, rapid: Bool = false, fromAlarmSetup: Bool = false, fromForecast: Bool = false
-  ) async {
+  ) async -> Bool {
+    errorMessage = nil
     let source: AppAnalytics.Screen = fromForecast ? .forecast : (fromAlarmSetup ? .alarmSetup : .passes)
     let metric = AppAnalytics.Operation("schedule_alarm", screen: source)
     defer { metric.finish("cancelled") }
@@ -106,7 +121,7 @@ public final class NotificationService {
       guard try await center.requestAuthorization(options: [.alert, .sound, .badge]) else {
         metric.finish("blocked", reason: "notification_permission_denied")
         errorMessage = AppLocalization.text("Notifications are disabled. Enable them in Settings to schedule an alarm.")
-        return
+        return false
       }
       let seconds =
         rapid
@@ -114,10 +129,19 @@ public final class NotificationService {
       guard seconds > 0 else {
         metric.finish("blocked", reason: "alert_time_passed")
         errorMessage = AppLocalization.text("This alert time has already passed.")
-        return
+        return false
       }
-      let content = UNMutableNotificationContent()
+      var content = UNMutableNotificationContent()
+      if snapshots == nil,
+        let existing = await center.pendingNotificationRequests().first(where: {
+          $0.identifier == notification.pass.notificationIdentifier
+        }), let savedContent = existing.content.mutableCopy() as? UNMutableNotificationContent
+      {
+        // Settings edits use the saved pass and retain its existing chart attachment.
+        content = savedContent
+      }
       content.categoryIdentifier = "PASS"
+      content.sound = .default
       content.title = LocalizedStrings.Notification.title(passNotification: notification)
       content.body = LocalizedStrings.Notification.description(passNotification: notification)
       content.userInfo = [
@@ -127,7 +151,7 @@ public final class NotificationService {
         "observer": try JSONEncoder().encode(notification.observer),
       ]
       // Attachment failure must not prevent an otherwise valid alarm.
-      if let image = try? await NotificationPreview.render(
+      if let snapshots, let image = try? await NotificationPreview.render(
         notification, snapshots: snapshots, catalog: catalog), let data = image.pngData()
       {
         let url = notification.pass.attachmentImageURL(extension: "png")
@@ -143,16 +167,14 @@ public final class NotificationService {
         UNNotificationRequest(
           identifier: notification.pass.notificationIdentifier, content: content,
           trigger: UNTimeIntervalNotificationTrigger(timeInterval: seconds, repeats: false)))
-      revision += 1
-      scheduled.update(
-        with: ScheduledPassNotification(
-          id: notification.pass.notificationIdentifier, notification: notification))
-      persist()
+      recordScheduled(notification)
       metric.finish("success")
       AppAnalytics.event("alarm_scheduled", screen: source)
+      return true
     } catch is CancellationError {} catch {
       metric.finish("failure", reason: "scheduling_failed")
       errorMessage = error.localizedDescription
     }
+    return false
   }
 }

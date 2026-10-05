@@ -1,0 +1,105 @@
+diff --git a/SatelliteForecast.xctestplan b/SatelliteForecast.xctestplan
+index 1b4621c3..4a583db8 100644
+--- a/SatelliteForecast.xctestplan
++++ b/SatelliteForecast.xctestplan
+@@ -15,6 +15,14 @@
+       {
+         "key": "SNAPSHOT_RECORD",
+         "value": ""
++      },
++      {
++        "key": "DUO_REVIEW_COMMAND",
++        "value": "/tmp/duo-review-command.json"
++      },
++      {
++        "key": "SNAPSHOT_PLANETARIUM",
++        "value": "1"
+       }
+     ]
+   },
+diff --git a/SatelliteForecastTests/ScreenSnapshotTests.swift b/SatelliteForecastTests/ScreenSnapshotTests.swift
+index adefa3f4..7f1d5cb5 100644
+--- a/SatelliteForecastTests/ScreenSnapshotTests.swift
++++ b/SatelliteForecastTests/ScreenSnapshotTests.swift
+@@ -27,6 +27,81 @@ final class ScreenSnapshotTests: XCTestCase {
+         NSTimeZone.default = TimeZone(secondsFromGMT: 0)!
+     }
+ 
++    /// Temporary review harness: real scene geometry, no fixed phone frame.
++    /// A command file chooses native screens while Device Hub changes the pose.
++    func testInteractiveDuoReview() async throws {
++        guard let commandPath = ProcessInfo.processInfo.environment["DUO_REVIEW_COMMAND"] else {
++            throw XCTSkip("Duo review command file is not configured")
++        }
++        UserDefaults.standard.set(true, forKey: "hasCompletedAllPassesOnboarding")
++        UserDefaults.standard.set(true, forKey: "hasCompletedHomeOnboarding")
++        let catalog = try await AppStarCatalog.load()
++        let fixture = try await Fixture(catalog: catalog, now: Date(timeIntervalSince1970: 1789002000), tle: [
++            "ISS (ZARYA)",
++            "1 25544U 98067A   26256.62713074  .00005522  00000+0  10793-3 0  9997",
++            "2 25544  51.6309 222.3825 0004920 137.6518 222.4851 15.49103177585466"
++        ])
++        var screens = Dictionary(uniqueKeysWithValues: fixture.screens())
++        for (name, view) in await fixture.storeScreens(tianhePasses: [], featured: fixture) {
++            screens["tabs-" + name] = view
++        }
++        let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.first as? UIWindowScene)
++        let window = UIWindow(windowScene: scene)
++        window.overrideUserInterfaceStyle = .dark
++        let host = UIHostingController(rootView: AnyView(Color.black))
++        window.rootViewController = host
++        window.makeKeyAndVisible()
++        defer { window.isHidden = true; window.rootViewController = nil }
++        var lastToken = ""
++        var lastScreen = ""
++        var lastLargeText = false
++        let directory = FileManager.default.temporaryDirectory.appendingPathComponent("duo-empty-ephemerides")
++        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
++        for _ in 0..<12000 {
++            if let data = try? Data(contentsOf: URL(fileURLWithPath: commandPath)),
++               let command = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
++               let token = command["token"] as? String, token != lastToken {
++                if command["finish"] as? Bool == true { return }
++                let name = command["screen"] as? String ?? "tabs-01-forecast"
++                let largeText = command["largeText"] as? Bool ?? false
++                let view = try XCTUnwrap(screens[name], "Unknown review screen: \(name)")
++                if name != lastScreen || largeText != lastLargeText {
++                    host.rootView = AnyView(view
++                        .id(name + (largeText ? "-large" : "-normal"))
++                        .environment(\.motionManagerKey, CMMotionManager())
++                        .environment(\.locale, Locale(identifier: "en_US"))
++                        .environment(\.timeZone, TimeZone(secondsFromGMT: 0)!)
++                        .environment(\.dynamicTypeSize, largeText ? .accessibility2 : .large)
++                        .environment(\.ephemerisDirectory, directory)
++                        .preferredColorScheme(.dark))
++                    lastScreen = name
++                    lastLargeText = largeText
++                }
++                try await Task.sleep(for: .seconds(3))
++                host.view.layoutIfNeeded()
++                var metadata: [String: Any] = [
++                    "token": token, "screen": name, "largeText": largeText,
++                    "windowBounds": [window.bounds.minX, window.bounds.minY, window.bounds.width, window.bounds.height],
++                    "sceneBounds": [scene.coordinateSpace.bounds.minX, scene.coordinateSpace.bounds.minY, scene.coordinateSpace.bounds.width, scene.coordinateSpace.bounds.height],
++                    "safeAreaInsets": [host.view.safeAreaInsets.top, host.view.safeAreaInsets.left, host.view.safeAreaInsets.bottom, host.view.safeAreaInsets.right],
++                    "horizontalSizeClass": host.traitCollection.horizontalSizeClass.rawValue,
++                    "verticalSizeClass": host.traitCollection.verticalSizeClass.rawValue,
++                    "appearance": "dark", "fixtureEpoch": fixture.now.timeIntervalSince1970
++                ]
++                if #available(iOS 27.1, *) {
++                    metadata["divisionRegions"] = host.view.reservedRegions(kind: .division, options: .includeInactive).map {
++                        ["frame": [$0.frame.minX, $0.frame.minY, $0.frame.width, $0.frame.height], "active": $0.isActive] as [String: Any]
++                    }
++                }
++                let response = try JSONSerialization.data(withJSONObject: metadata, options: [.prettyPrinted, .sortedKeys])
++                try response.write(to: URL(fileURLWithPath: commandPath + ".ready"), options: .atomic)
++                lastToken = token
++            }
++            try await Task.sleep(for: .milliseconds(200))
++        }
++        XCTFail("Duo interactive review timed out")
++    }
++
+     func testCategoryNavigationPushesAndBackSynchronizes() async throws {
+         let model = SatelliteCategoryModel()
+         let view = SatelliteCategoryViewImpl(viewModel: model,

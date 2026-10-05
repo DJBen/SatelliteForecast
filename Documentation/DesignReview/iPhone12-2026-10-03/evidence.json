@@ -1,0 +1,404 @@
+{
+  "date": "2026-10-03",
+  "app_version": "2.1.0 (24)",
+  "commit": "ed8180c3",
+  "xcode": "27.0 (27A266a)",
+  "runtime": "iOS 27.0",
+  "simulator_id": "077A131A-1CD3-4371-BBB4-803F185B690F",
+  "device_type": "iPhone 12",
+  "appearance": "dark",
+  "layout_points": [
+    390,
+    844
+  ],
+  "fixture_locale": "en_US",
+  "fixture_timezone": "UTC",
+  "fixture_dynamic_type": [
+    "large",
+    "accessibility2 (home variants)"
+  ],
+  "tests": {
+    "passed": 3,
+    "failed": 0,
+    "mode": "isolated evidence recording; no baseline comparisons"
+  },
+  "images": [
+    {
+      "id": "01-onboarding-welcome",
+      "title": "Welcome \u00b7 live simulator",
+      "group": "Onboarding",
+      "note": "The video gives the app personality. Its embedded playback text can sit behind the description in some frames.",
+      "kind": "Live simulator",
+      "path": "screenshots/01-onboarding-welcome.png",
+      "dimensions": [
+        1170,
+        2532
+      ],
+      "sha256": "bb70a891fd9d3788d2af602ef9ef0bf2b4c8df40f2107d7e5c132b036075f231"
+    },
+    {
+      "id": "02-live-location-home",
+      "title": "Location prompt \u00b7 live simulator",
+      "group": "Location",
+      "note": "The notch, status bar, home indicator and four-tab navigation fit. Both location choices remain visible.",
+      "kind": "Live simulator",
+      "path": "screenshots/02-live-location-home.png",
+      "dimensions": [
+        1170,
+        2532
+      ],
+      "sha256": "80e97ad87d77197e0f1fcc422972e8435f11944716edcabaaab390c093d55e4c"
+    },
+    {
+      "id": "01-welcome-dark",
+      "title": "Welcome \u00b7 native fixture",
+      "group": "Onboarding",
+      "note": "Readable title and generous Continue button. Offer a shortcut to location selection.",
+      "kind": "Native fixture",
+      "path": "fixtures/01-welcome-dark.png",
+      "dimensions": [
+        390,
+        844
+      ],
+      "sha256": "629ca05e9373c9ee5a475ff473de4aa412a642846b3d9c95795fe54afb1857fc"
+    },
+    {
+      "id": "02-predictions-intro-dark",
+      "title": "Prediction introduction",
+      "group": "Onboarding",
+      "note": "A real chart preview explains the product; this is the second page before the user chooses a place.",
+      "kind": "Native fixture",
+      "path": "fixtures/02-predictions-intro-dark.png",
+      "dimensions": [
+        390,
+        844
+      ],
+      "sha256": "3212d5edeaa6cf8bff0fc1ccaa08f1ffe2809fb3d3ae93ae45d2d19448d121da"
+    },
+    {
+      "id": "04-satellites-dark",
+      "title": "Satellite categories",
+      "group": "Browse",
+      "note": "Strong photography and clear category rows. These isolated fixtures omit the station cards and tab bar.",
+      "kind": "Native fixture",
+      "path": "fixtures/04-satellites-dark.png",
+      "dimensions": [
+        390,
+        844
+      ],
+      "sha256": "cf0101411d7badce37efe9d7e9cf1c25af7bcf4cf193040c1311348f9eea0abb"
+    },
+    {
+      "id": "05-satellite-list-dark",
+      "title": "Satellite list",
+      "group": "Browse",
+      "note": "The one-item fixture reveals dense metadata. Prioritize name and observing information; move historical metadata into details.",
+      "kind": "Native fixture",
+      "path": "fixtures/05-satellite-list-dark.png",
+      "dimensions": [
+        390,
+        844
+      ],
+      "sha256": "cc8ebd9d374c8f629dff7fc5568c110b783532d7c0bd5c7df55a493541e97b8c"
+    },
+    {
+      "id": "06-pass-forecast-dark",
+      "title": "Station pass forecast",
+      "group": "Browse",
+      "note": "Globe and repeated circular previews look good but use substantial vertical space.",
+      "kind": "Native fixture",
+      "path": "fixtures/06-pass-forecast-dark.png",
+      "dimensions": [
+        390,
+        844
+      ],
+      "sha256": "f8418ff2bca8bbac1ed4716e550a068aa37e2c510ee1ef6df3a9c9e5f4f4496b"
+    },
+    {
+      "id": "07-pass-compass-off-dark",
+      "title": "Pass detail \u00b7 compass off",
+      "group": "Charts",
+      "note": "The full chart is clear without the guidance overlay. Technical azimuth and elevation data can be secondary.",
+      "kind": "Native fixture",
+      "path": "fixtures/07-pass-compass-off-dark.png",
+      "dimensions": [
+        390,
+        844
+      ],
+      "sha256": "0d6f87c89ac256fc05e9b5ef5440226c76f28a01999de5561794bd39cf37d612"
+    },
+    {
+      "id": "07-pass-dark",
+      "title": "Pass detail \u00b7 compass on",
+      "group": "Charts",
+      "note": "The orientation instruction overlays the central sky chart. The eye control has no visible text label.",
+      "kind": "Native fixture",
+      "path": "fixtures/07-pass-dark.png",
+      "dimensions": [
+        390,
+        844
+      ],
+      "sha256": "e7a18acc03568f9f3fd0faa87cf681b4d968cdb28ccbd87e1dec700881eaeffd"
+    },
+    {
+      "id": "08-detailed-sky-dark",
+      "title": "Expanded chart",
+      "group": "Charts",
+      "note": "An enlarged crop makes the stars readable. The still image does not establish pan/zoom behavior.",
+      "kind": "Native fixture",
+      "path": "fixtures/08-detailed-sky-dark.png",
+      "dimensions": [
+        390,
+        844
+      ],
+      "sha256": "5dd58efe4071929cfc0aed33092724ba351b6ffa7d37a78d2d9516146beb2c75"
+    },
+    {
+      "id": "09-sky-now-dark",
+      "title": "Sky now \u00b7 loading fixture",
+      "group": "Charts",
+      "note": "Loading state only. The fixture has not settled its live sky; this is not evidence of a production blank-screen defect.",
+      "kind": "Native fixture",
+      "path": "fixtures/09-sky-now-dark.png",
+      "dimensions": [
+        390,
+        844
+      ],
+      "sha256": "dff34405089d6a7ac3dbb179a1e36871445b5dc7e149d38db77292ca9036b841"
+    },
+    {
+      "id": "10-settings-dark",
+      "title": "Settings",
+      "group": "Settings",
+      "note": "Location, alarms and data are grouped clearly. The large blank top area may reflect unresolved map content; investigate live before treating it as a layout bug.",
+      "kind": "Native fixture",
+      "path": "fixtures/10-settings-dark.png",
+      "dimensions": [
+        390,
+        844
+      ],
+      "sha256": "e6f4a7cc2a3a43a77893e9604732be92e57005850a7ef8fcc70dcc058fc2e8d5"
+    },
+    {
+      "id": "11-location-dark",
+      "title": "Location chooser \u00b7 idle",
+      "group": "Location",
+      "note": "The search prompt says Enter address. A city-oriented prompt would better match the home action Choose a city.",
+      "kind": "Native fixture",
+      "path": "fixtures/11-location-dark.png",
+      "dimensions": [
+        390,
+        844
+      ],
+      "sha256": "5a560892a524c7a233ada73f347ffdee0eb613391ec036bab2a86c9bb67e2d69"
+    },
+    {
+      "id": "12-alarms-dark",
+      "title": "Alarms \u00b7 empty",
+      "group": "Reminders",
+      "note": "The empty state explains the bell path, but offers no direct route to find a pass. Edit appears even with no alarms.",
+      "kind": "Native fixture",
+      "path": "fixtures/12-alarms-dark.png",
+      "dimensions": [
+        390,
+        844
+      ],
+      "sha256": "448199724e6aee99c9192e6c2c0f69ab9e5664a22d21576b4915e57b14f849a1"
+    },
+    {
+      "id": "13-pass-alarm-dark",
+      "title": "Alarm creation",
+      "group": "Reminders",
+      "note": "View alarm appears above an unscheduled Schedule alarm action. Four technical timing choices and a seconds wheel complicate a common task.",
+      "kind": "Native fixture",
+      "path": "fixtures/13-pass-alarm-dark.png",
+      "dimensions": [
+        390,
+        844
+      ],
+      "sha256": "2c1f1a4cad48add84dd6fbb1303a8774d35ec2e5c291ca960801acdca5c84d1e"
+    },
+    {
+      "id": "14-ephemerides-dark",
+      "title": "Orbital data \u00b7 empty",
+      "group": "Settings",
+      "note": "Ephemerides is specialist vocabulary. Keep it in advanced settings with a plain-language explanation.",
+      "kind": "Native fixture",
+      "path": "fixtures/14-ephemerides-dark.png",
+      "dimensions": [
+        390,
+        844
+      ],
+      "sha256": "451552b45c9906ed94b8a963e3303f6dfe2688daeea17da3acdc313e525a98ec"
+    },
+    {
+      "id": "19-planetarium-dark",
+      "title": "3D pass preview",
+      "group": "Charts",
+      "note": "The immersive horizon is a highlight. A star label is visible through the upper-right control. Motion unavailable is expected on a simulator.",
+      "kind": "Native fixture",
+      "path": "fixtures/19-planetarium-dark.png",
+      "dimensions": [
+        390,
+        844
+      ],
+      "sha256": "9d981c949a98c951f0c3a4f5d0dd5ea5f50209ca24957f3c017091fcb9ad75a6"
+    },
+    {
+      "id": "observation-empty-dark",
+      "title": "Home \u00b7 no visible passes",
+      "group": "Home",
+      "note": "The message distinguishes a real empty forecast from an error and offers two recovery paths.",
+      "kind": "Native fixture",
+      "path": "fixtures/observation-empty-dark.png",
+      "dimensions": [
+        390,
+        844
+      ],
+      "sha256": "3aa559de63de9a7b4bca7194b90f364d22fd9310f0575dc827713ec8b43d0f2e"
+    },
+    {
+      "id": "observation-home-dark",
+      "title": "Home \u00b7 upcoming pass",
+      "group": "Home",
+      "note": "The next observation is visually dominant. The prominent Remind me action enables station alerts, rather than scheduling this specific pass.",
+      "kind": "Native fixture",
+      "path": "fixtures/observation-home-dark.png",
+      "dimensions": [
+        390,
+        844
+      ],
+      "sha256": "7b47018e9e6750f25123748bbb3b52d70f79fd0b2969d39de9423cef8bc3d434"
+    },
+    {
+      "id": "observation-home-large-text-dark",
+      "title": "Home \u00b7 accessibility text",
+      "group": "Accessibility",
+      "note": "Text wraps rather than truncates. The reminder row is large and Coming up moves below the fold; scrolling is expected.",
+      "kind": "Native fixture",
+      "path": "fixtures/observation-home-large-text-dark.png",
+      "dimensions": [
+        390,
+        844
+      ],
+      "sha256": "550ecfbf10e050eebdfaca2897a82aeeabac5318844b4345b2f83d3e583d7f98"
+    },
+    {
+      "id": "observation-home-weather-dark",
+      "title": "Home \u00b7 weather",
+      "group": "Home",
+      "note": "Weather fits beside the location. The current-weather badge can be mistaken for conditions at the future pass time.",
+      "kind": "Native fixture",
+      "path": "fixtures/observation-home-weather-dark.png",
+      "dimensions": [
+        390,
+        844
+      ],
+      "sha256": "31fde318ebf4066d7c98ab2a1e6513bd3bde6b634fe4e725b734825586cc90db"
+    },
+    {
+      "id": "observation-home-weather-large-text-dark",
+      "title": "Home \u00b7 weather + accessibility text",
+      "group": "Accessibility",
+      "note": "Weather correctly moves to its own row. The reminder action extends below the first viewport and needs a scroll.",
+      "kind": "Native fixture",
+      "path": "fixtures/observation-home-weather-large-text-dark.png",
+      "dimensions": [
+        390,
+        844
+      ],
+      "sha256": "ebb6179bf316f17714a46d9b7efbddd9dcea112377399713536aef8c558b9571"
+    },
+    {
+      "id": "observation-location-dark",
+      "title": "Home \u00b7 no location fixture",
+      "group": "Location",
+      "note": "Example is explicitly labeled and both location choices fit. The live capture includes the actual system chrome.",
+      "kind": "Native fixture",
+      "path": "fixtures/observation-location-dark.png",
+      "dimensions": [
+        390,
+        844
+      ],
+      "sha256": "0476b4cac2a711089a9d697b8c6cd992c211b08c13859acccea029e83509c91f"
+    },
+    {
+      "id": "observation-path-20-dark",
+      "title": "Path animation \u00b7 early",
+      "group": "Charts",
+      "note": "An isolated rendering fixture at 20% playback, not a full app screen.",
+      "kind": "Native fixture",
+      "path": "fixtures/observation-path-20-dark.png",
+      "dimensions": [
+        390,
+        844
+      ],
+      "sha256": "9e121c48632d5018617540c2e9c61698af5b7aa3ba9aa696f4f917ba56699eb9"
+    },
+    {
+      "id": "observation-path-82-dark",
+      "title": "Path animation \u00b7 late",
+      "group": "Charts",
+      "note": "An isolated rendering fixture at 82% playback. Solid/dotted path states carry meaning that merits a small legend.",
+      "kind": "Native fixture",
+      "path": "fixtures/observation-path-82-dark.png",
+      "dimensions": [
+        390,
+        844
+      ],
+      "sha256": "3b265023156f7026228eb558e0abfd9c9e6515229fd8db91b74ec5c7e7002d0c"
+    },
+    {
+      "id": "observation-sky-twilight-dark",
+      "title": "Sky preview \u00b7 twilight",
+      "group": "Charts",
+      "note": "The purple horizon adds depth. This is an isolated sky component, not a full screen.",
+      "kind": "Native fixture",
+      "path": "fixtures/observation-sky-twilight-dark.png",
+      "dimensions": [
+        390,
+        844
+      ],
+      "sha256": "18d1d2c579e78f3c99099f1ae34b5b653a638e7a7ffb60e358f45c711731c1f3"
+    },
+    {
+      "id": "tabs-01-forecast-scrolled",
+      "title": "Home \u00b7 scrolled with tabs",
+      "group": "Home",
+      "note": "The floating navigation remains readable. Compare All passes and reminder affordances in a full tab context.",
+      "kind": "Native fixture",
+      "path": "fixtures/tabs-01-forecast-scrolled.png",
+      "dimensions": [
+        390,
+        844
+      ],
+      "sha256": "8f6c34052ceea9b90bb2f8fc7b181cda31b85c8850e398ba02c85d9445191a39"
+    },
+    {
+      "id": "tabs-03-pass-list-scrolled",
+      "title": "Pass list \u00b7 scrolled with tabs",
+      "group": "Browse",
+      "note": "Large circular thumbnails yield about two complete pass rows in this viewport. The third continues behind the floating tabs.",
+      "kind": "Native fixture",
+      "path": "fixtures/tabs-03-pass-list-scrolled.png",
+      "dimensions": [
+        390,
+        844
+      ],
+      "sha256": "936e69534424973c79a80d2d449a0561548fc8acf42156cd1b0b7c3647ebad08"
+    },
+    {
+      "id": "tabs-04-satellites-scrolled",
+      "title": "Satellites \u00b7 scrolled with tabs",
+      "group": "Browse",
+      "note": "Station cards and category photos look cohesive; a compact summary would make scan-and-compare easier.",
+      "kind": "Native fixture",
+      "path": "fixtures/tabs-04-satellites-scrolled.png",
+      "dimensions": [
+        390,
+        844
+      ],
+      "sha256": "ab72284d15ba6c1f28eaff266a5a640d62754c88f40bc2a816a3d42868caaee8"
+    }
+  ]
+}

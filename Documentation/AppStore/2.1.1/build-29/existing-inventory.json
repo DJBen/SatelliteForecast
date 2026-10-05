@@ -1,0 +1,344 @@
+{
+  "versionId": "8f11c25d-5714-4753-957b-79d185c2632c",
+  "displayType": "APP_IPHONE_67",
+  "width": 1320,
+  "height": 2868,
+  "locales": {
+    "ja": {
+      "localizationId": "a7ebc293-f3ea-41d5-9dc9-25a500fbe88a",
+      "setId": "27b506a5-24f4-408f-9f7c-1fb7271ceff3",
+      "screenshots": [
+        {
+          "slot": "06-widgets",
+          "id": "d19da5bf-396f-4526-b3e7-14a9942ead08",
+          "fileName": "1-06-widgets.png",
+          "checksum": null
+        },
+        {
+          "slot": "01-forecast",
+          "id": "cb2aefe1-af9a-4ec0-8a69-7c9660d0f16a",
+          "fileName": "2-01-forecast.png",
+          "checksum": null
+        },
+        {
+          "slot": "05-planetarium",
+          "id": "603353a0-db7a-49bb-b080-3b3ec02d880d",
+          "fileName": "3-05-planetarium.png",
+          "checksum": null
+        },
+        {
+          "slot": "02-pass-chart",
+          "id": "d60e545b-9f48-469a-80d1-057bcdd37737",
+          "fileName": "4-02-pass-chart.png",
+          "checksum": null
+        },
+        {
+          "slot": "03-pass-list",
+          "id": "20612933-713e-4171-81e4-89c9cf2fcdac",
+          "fileName": "5-03-pass-list.png",
+          "checksum": null
+        },
+        {
+          "slot": "04-satellites",
+          "id": "e34ab8e2-c11e-4d70-b6e5-29eb54ae7169",
+          "fileName": "6-04-satellites.png",
+          "checksum": null
+        }
+      ]
+    },
+    "ru": {
+      "localizationId": "4eefff4c-cb41-4439-b9a2-442c9201479f",
+      "setId": "66b9aae6-da5b-47e0-a2e1-68073163e9e8",
+      "screenshots": [
+        {
+          "slot": "06-widgets",
+          "id": "ced7b087-4a50-494c-815a-86af29ced934",
+          "fileName": "1-06-widgets.png",
+          "checksum": null
+        },
+        {
+          "slot": "01-forecast",
+          "id": "0c7957ff-3182-488a-8087-edfc67a4819f",
+          "fileName": "2-01-forecast.png",
+          "checksum": null
+        },
+        {
+          "slot": "05-planetarium",
+          "id": "c93a6b29-d7bb-4b84-a9a5-1a5892b0aa93",
+          "fileName": "3-05-planetarium.png",
+          "checksum": null
+        },
+        {
+          "slot": "02-pass-chart",
+          "id": "916df0eb-2f17-4933-bac1-29e72aa265a8",
+          "fileName": "4-02-pass-chart.png",
+          "checksum": null
+        },
+        {
+          "slot": "03-pass-list",
+          "id": "bfc1fdae-2157-4663-86a6-28777a38d8f2",
+          "fileName": "5-03-pass-list.png",
+          "checksum": null
+        },
+        {
+          "slot": "04-satellites",
+          "id": "28ece037-0890-469f-ae3f-a625a43c85e6",
+          "fileName": "6-04-satellites.png",
+          "checksum": null
+        }
+      ]
+    },
+    "zh-Hans": {
+      "localizationId": "696968dd-89e5-43de-9334-c0aae065c867",
+      "setId": "2b059633-af17-45cb-b7a2-cef52407ae71",
+      "screenshots": [
+        {
+          "slot": "06-widgets",
+          "id": "4e8171da-bbb2-4ca4-86c8-6609523ce67e",
+          "fileName": "1-06-widgets.png",
+          "checksum": null
+        },
+        {
+          "slot": "01-forecast",
+          "id": "7a384a48-566f-42c1-95a5-dbbc0ca0f964",
+          "fileName": "2-01-forecast.png",
+          "checksum": null
+        },
+        {
+          "slot": "05-planetarium",
+          "id": "c883777f-582b-436e-a364-ae135e686d99",
+          "fileName": "3-05-planetarium.png",
+          "checksum": null
+        },
+        {
+          "slot": "02-pass-chart",
+          "id": "2cde2ccc-fe8d-4a6a-8ad8-f8afff8e1021",
+          "fileName": "4-02-pass-chart.png",
+          "checksum": null
+        },
+        {
+          "slot": "03-pass-list",
+          "id": "5b65b052-201d-452d-a211-68ca924bd6d2",
+          "fileName": "5-03-pass-list.png",
+          "checksum": null
+        },
+        {
+          "slot": "04-satellites",
+          "id": "b7ddf05e-ea32-46fa-9a0a-6e10ac54eb5c",
+          "fileName": "6-04-satellites.png",
+          "checksum": null
+        }
+      ]
+    },
+    "es-ES": {
+      "localizationId": "aa86a79f-fe6b-4fe5-8664-14ef7861f6a7",
+      "setId": "edc9ff68-6093-4964-892a-e805f5397519",
+      "screenshots": [
+        {
+          "slot": "06-widgets",
+          "id": "c3e39d21-c856-4e80-bb0e-99ecf96418e0",
+          "fileName": "1-06-widgets.png",
+          "checksum": null
+        },
+        {
+          "slot": "01-forecast",
+          "id": "e255e304-a80f-468d-a9f5-bf809fd7c027",
+          "fileName": "2-01-forecast.png",
+          "checksum": null
+        },
+        {
+          "slot": "05-planetarium",
+          "id": "77da7608-a50d-4716-94a7-071ff440880a",
+          "fileName": "3-05-planetarium.png",
+          "checksum": null
+        },
+        {
+          "slot": "02-pass-chart",
+          "id": "b15dee73-685f-41d6-a277-865f21791b9d",
+          "fileName": "4-02-pass-chart.png",
+          "checksum": null
+        },
+        {
+          "slot": "03-pass-list",
+          "id": "754241be-e705-4102-bcf1-9ad04676b9c8",
+          "fileName": "5-03-pass-list.png",
+          "checksum": null
+        },
+        {
+          "slot": "04-satellites",
+          "id": "f9eed352-3df7-4f4d-b073-e66413f015e8",
+          "fileName": "6-04-satellites.png",
+          "checksum": null
+        }
+      ]
+    },
+    "en-US": {
+      "localizationId": "fbf09233-2928-4641-980f-543a86dcc9ff",
+      "setId": "a108d3d5-c037-45e5-9fd8-88541c99a0b9",
+      "screenshots": [
+        {
+          "slot": "06-widgets",
+          "id": "7941e54a-7112-4748-944e-6e67c0efed89",
+          "fileName": "1-06-widgets.png",
+          "checksum": null
+        },
+        {
+          "slot": "01-forecast",
+          "id": "5a90f665-b9d3-4f68-a610-7bf5eeefebf7",
+          "fileName": "2-01-forecast.png",
+          "checksum": null
+        },
+        {
+          "slot": "05-planetarium",
+          "id": "1c5bcbbb-9a5b-4f67-a379-4c10a52f82ac",
+          "fileName": "3-05-planetarium.png",
+          "checksum": null
+        },
+        {
+          "slot": "02-pass-chart",
+          "id": "5a77f23f-5d9b-4624-bbdf-492fed8d6c7e",
+          "fileName": "4-02-pass-chart.png",
+          "checksum": null
+        },
+        {
+          "slot": "03-pass-list",
+          "id": "511d6a35-9df5-41e4-a25e-76ded9d046a0",
+          "fileName": "5-03-pass-list.png",
+          "checksum": null
+        },
+        {
+          "slot": "04-satellites",
+          "id": "ab1e2e9d-a932-462f-acff-9678565d8d9a",
+          "fileName": "6-04-satellites.png",
+          "checksum": null
+        }
+      ]
+    },
+    "ko": {
+      "localizationId": "b4369d8b-d570-4a58-951c-f9d3892746fb",
+      "setId": "b2b5ea4a-244d-4769-87fc-4519fab586db",
+      "screenshots": [
+        {
+          "slot": "06-widgets",
+          "id": "97783ca9-3946-4882-b995-5930697ad65a",
+          "fileName": "1-06-widgets.png",
+          "checksum": null
+        },
+        {
+          "slot": "01-forecast",
+          "id": "5d72449f-0a50-4f14-abd5-a338ae63bb3c",
+          "fileName": "2-01-forecast.png",
+          "checksum": null
+        },
+        {
+          "slot": "05-planetarium",
+          "id": "6f89cfa5-32c5-4058-ab7b-79473ec669c1",
+          "fileName": "3-05-planetarium.png",
+          "checksum": null
+        },
+        {
+          "slot": "02-pass-chart",
+          "id": "153a0986-40da-42d4-baca-d298352c598f",
+          "fileName": "4-02-pass-chart.png",
+          "checksum": null
+        },
+        {
+          "slot": "03-pass-list",
+          "id": "7d0c0a26-f139-4854-bafc-9f2d4517f1f3",
+          "fileName": "5-03-pass-list.png",
+          "checksum": null
+        },
+        {
+          "slot": "04-satellites",
+          "id": "c5dc9070-438d-402d-9ebb-069c6e1a6181",
+          "fileName": "6-04-satellites.png",
+          "checksum": null
+        }
+      ]
+    },
+    "pt-BR": {
+      "localizationId": "f81288dd-2659-42cd-83eb-46a133fcc4de",
+      "setId": "7fa5d06c-e72a-4b22-b9a8-dc1da88f1d29",
+      "screenshots": [
+        {
+          "slot": "06-widgets",
+          "id": "3ec6f7a3-cd3d-4021-95a0-77d1441996f6",
+          "fileName": "1-06-widgets.png",
+          "checksum": null
+        },
+        {
+          "slot": "01-forecast",
+          "id": "78b01896-73ef-4584-ae03-bc46586bf6a2",
+          "fileName": "2-01-forecast.png",
+          "checksum": null
+        },
+        {
+          "slot": "05-planetarium",
+          "id": "bfbd4d36-6f12-43c1-ac73-4fe374df089f",
+          "fileName": "3-05-planetarium.png",
+          "checksum": null
+        },
+        {
+          "slot": "02-pass-chart",
+          "id": "9d1f30aa-ed7a-4d11-baa9-f374c50034a1",
+          "fileName": "4-02-pass-chart.png",
+          "checksum": null
+        },
+        {
+          "slot": "03-pass-list",
+          "id": "6e738047-a0be-4cee-a869-0f4ab9dec448",
+          "fileName": "5-03-pass-list.png",
+          "checksum": null
+        },
+        {
+          "slot": "04-satellites",
+          "id": "d9949c8e-6cc4-4d82-958f-29f2e5a9b704",
+          "fileName": "6-04-satellites.png",
+          "checksum": null
+        }
+      ]
+    },
+    "fr-FR": {
+      "localizationId": "e1b1f0e1-6f94-4ac9-8705-30bb990d6234",
+      "setId": "6b07f468-db3a-48fd-be9f-865ca816c11c",
+      "screenshots": [
+        {
+          "slot": "06-widgets",
+          "id": "429ace44-b32f-4421-acb5-d7567c507d66",
+          "fileName": "1-06-widgets.png",
+          "checksum": null
+        },
+        {
+          "slot": "01-forecast",
+          "id": "80d3f843-d2ee-495d-8dd2-b925bb43b6fd",
+          "fileName": "2-01-forecast.png",
+          "checksum": "f5bbdff889d966bd65b9328d5bae75df"
+        },
+        {
+          "slot": "05-planetarium",
+          "id": "cbc2e51c-f08e-42db-a6ae-db9e1ee24ac4",
+          "fileName": "3-05-planetarium.png",
+          "checksum": null
+        },
+        {
+          "slot": "02-pass-chart",
+          "id": "88e3adc1-1385-46f9-a0c1-2484dd58aef2",
+          "fileName": "4-02-pass-chart.png",
+          "checksum": null
+        },
+        {
+          "slot": "03-pass-list",
+          "id": "0c28970d-bcde-42cb-94a8-cbf9572b3bcf",
+          "fileName": "5-03-pass-list.png",
+          "checksum": null
+        },
+        {
+          "slot": "04-satellites",
+          "id": "cec664b2-c600-492d-bc10-bb3e31e589ee",
+          "fileName": "6-04-satellites.png",
+          "checksum": null
+        }
+      ]
+    }
+  }
+}

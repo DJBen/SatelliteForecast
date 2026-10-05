@@ -1,0 +1,540 @@
+{
+  "version": "2.1.1",
+  "build": 29,
+  "appearance": "dark",
+  "simulator": "iPhone 17 Pro Max",
+  "selectionsMatchReviewedBuild20": true,
+  "visuallyReviewedNewImages": 32,
+  "retainedReviewedImages": 16,
+  "knownFollowUp": "Existing English Peak elevation caption in localized pass lists",
+  "images": [
+    {
+      "path": "screenshots/en-US/06-widgets.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/en-US/06-widgets.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "4049e1c37131089e2cb33dddc38a788b",
+      "sha256": "176c792445db33c823ab5933a8dd0b246b31aac161b2a12a7d5856a733947c65",
+      "capture": "retained reviewed image"
+    },
+    {
+      "path": "screenshots/en-US/01-forecast.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/en-US/01-forecast.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "7453dc2bf7b8c0659109cf3d986525c0",
+      "sha256": "cc4341ae38a7da7b7b26d427d4582143e371fb3583b2697723ff79376315ea9c",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/en-US/05-planetarium.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/en-US/05-planetarium.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "563600755d9a3b5a13228122d789a316",
+      "sha256": "1435b31ad1fbfca9030ce09020e7d734e9c8b201978a3f711854339e03f6d3d0",
+      "capture": "retained reviewed image"
+    },
+    {
+      "path": "screenshots/en-US/02-pass-chart.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/en-US/02-pass-chart.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "df8800b8dc005b672a96cee0aee72aa9",
+      "sha256": "7833720c3dfadc5a6ea0d140c79f8aad75cde51555cc02396990914a06a601c6",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/en-US/03-pass-list.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/en-US/03-pass-list.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "044b2934f88fba1413d577cd53b9da4e",
+      "sha256": "52be5cf03bc4b51aa1598ac13c7ce87594f136fa33929e1a85dbf602481a267e",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/en-US/04-satellites.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/en-US/04-satellites.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "06a925852f076f064b9622f18427b6cc",
+      "sha256": "ef55a296d760ede4b1a04fd269064ab8bd1f3b6244ec8be962666666bdfb4d70",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/fr-FR/06-widgets.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/fr-FR/06-widgets.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "13301be4260fbaf52ebd84720d1625ab",
+      "sha256": "33b1a6d9f92e2500bfa5cc1c54ae66b12909a3d981e4b4035399dab1e14a52db",
+      "capture": "retained reviewed image"
+    },
+    {
+      "path": "screenshots/fr-FR/01-forecast.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/fr-FR/01-forecast.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "ff56ad434f9e341a1ee719fe239fc6e9",
+      "sha256": "dd8a9ef4348d587ddfb53915973b3a3337cff00d2d64a7ad131620c983ff364f",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/fr-FR/05-planetarium.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/fr-FR/05-planetarium.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "2811a5d639c031d248a99772db891360",
+      "sha256": "7c863eb9fa1d3780cc17f6ced5e81c3245d3caa6fe327872f8912d76b85a79fb",
+      "capture": "retained reviewed image"
+    },
+    {
+      "path": "screenshots/fr-FR/02-pass-chart.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/fr-FR/02-pass-chart.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "8ca08bb1c2533a01bab51d57fee99adf",
+      "sha256": "cd0ec8e84555e5c1f2e57c49ed5244b6da82c0bd3dc56b0be37f6ee5b7e69c6f",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/fr-FR/03-pass-list.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/fr-FR/03-pass-list.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "a053054fb36a1269f3157545ff4236f7",
+      "sha256": "28ddc60252c7cf60ac87da4889cab6069797429a64c9378e5ed9f6036e31a4f4",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/fr-FR/04-satellites.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/fr-FR/04-satellites.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "0ae3bf2d9ff0c41ee6a423f5646e65e1",
+      "sha256": "4d2ac1390d238bea86995012b90d420cc6c3c49aa2c238be9b7ab71918e9c9e4",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/es-ES/06-widgets.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/es-ES/06-widgets.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "85f478e0dbb4deb82f15e5c992912793",
+      "sha256": "1fd083ed1f27b580d0c9605b3f39c9453edfaaf769ee69eea0d306e9ac8ba057",
+      "capture": "retained reviewed image"
+    },
+    {
+      "path": "screenshots/es-ES/01-forecast.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/es-ES/01-forecast.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "de29550bc0a09a72ddf344b7a8b80220",
+      "sha256": "34612f38ded1351e5bfaac3ab3a1d2e6e72c73a20688a011c837ffef7273d52c",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/es-ES/05-planetarium.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/es-ES/05-planetarium.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "e9fbfccae668faee771a2922f8d23386",
+      "sha256": "8f5fb2f07629d5d3b7a7e3015c968bbec5896c279ab02e8b46ee82e5c7e98459",
+      "capture": "retained reviewed image"
+    },
+    {
+      "path": "screenshots/es-ES/02-pass-chart.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/es-ES/02-pass-chart.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "22e5f5741e6a1f0eb419313f9df595e3",
+      "sha256": "0f529c034fc5d566a260b98ab8fadb2bf7653b2bae28d3ada446b3d4afc52c82",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/es-ES/03-pass-list.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/es-ES/03-pass-list.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "2b1da3131596bd2dd9142bd9279c5488",
+      "sha256": "b2c2ce08afd425aed54d73db29b7525f4051bdf2273a35329689bf3e9bd4e21f",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/es-ES/04-satellites.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/es-ES/04-satellites.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "3d24bf90dbb1892a5bcecdd7c3a46383",
+      "sha256": "8b2fbf828cfbd9280ebdecb6614b407c218330855c386edcfb194e56f54623b6",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/pt-BR/06-widgets.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/pt-BR/06-widgets.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "7311f1703c4e8f440603cd9051950ee2",
+      "sha256": "7d1beb90ae7d9b20d1ce23b5dea33324a1a40bb07d93a830dacea9fcffec621a",
+      "capture": "retained reviewed image"
+    },
+    {
+      "path": "screenshots/pt-BR/01-forecast.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/pt-BR/01-forecast.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "e21d59665c72a414fde9616e4b73baea",
+      "sha256": "5c13da0ab6bfc175131474386e5f18264a0475b964f355016295608a2a7dc198",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/pt-BR/05-planetarium.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/pt-BR/05-planetarium.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "809f9d16e5f2cdbba476a6ce6ff23495",
+      "sha256": "6c0b7892fbe44193fc2b7013cf491af13198da9174367c9d48484d487f9d3929",
+      "capture": "retained reviewed image"
+    },
+    {
+      "path": "screenshots/pt-BR/02-pass-chart.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/pt-BR/02-pass-chart.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "c2f9d402ce6e33e4ba4d980efe51bb4f",
+      "sha256": "8741d28e6b02678994c7a982d3835f24d609c5d455aa60a776549a61c09076b2",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/pt-BR/03-pass-list.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/pt-BR/03-pass-list.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "7b62b5ad851d56be4f4d3c5db879234d",
+      "sha256": "a5091a052ac0af549a66e4ffcb91dd775d54808df2db8a194c695a910de8bd29",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/pt-BR/04-satellites.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/pt-BR/04-satellites.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "8c1f5f6290c0c58267f14dbd1f041ac5",
+      "sha256": "be9d7acd5da39139fb4203297fa369aaf80a09e352ec3109a77727b8e7c10a82",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/ru/06-widgets.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/ru/06-widgets.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "6171f73dfa438518b752dd3f3edb7f32",
+      "sha256": "3ce98be898e17863c4fc84938cbc163e00e8d1a7b89ebc0630755209b02eff95",
+      "capture": "retained reviewed image"
+    },
+    {
+      "path": "screenshots/ru/01-forecast.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/ru/01-forecast.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "e5b7154db306caeeef711a8c7ee4ed8d",
+      "sha256": "60752b10513aee744cafe57101e27770ee66c6aef3b54c148c0f2b56b93e237c",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/ru/05-planetarium.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/ru/05-planetarium.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "eee9abf8b46e52bd151d6d79f9cf0cb9",
+      "sha256": "90b1a930ec54116bf2cdd354024a0e8182dffb09d3cc507afa96cc3c47eaaaa8",
+      "capture": "retained reviewed image"
+    },
+    {
+      "path": "screenshots/ru/02-pass-chart.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/ru/02-pass-chart.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "e982c97c1c8a9f07d17a0771f66de89e",
+      "sha256": "3bb726829ca391a8b1b4741d98203c4d91a66c9943c184e385a4b4072068f4b9",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/ru/03-pass-list.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/ru/03-pass-list.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "bd269075a8cc4c7a17fd632ef61fe22b",
+      "sha256": "8a7a86f51fe33df88e06c73df0946ec0899a669cc58b9dcc02406903d2d66591",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/ru/04-satellites.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/ru/04-satellites.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "496b9a5a57bdb5ea986b38e5fae898bf",
+      "sha256": "f9c3530983614042155d93887241004487baab4bade6ee5f4ea35b89b6a0313d",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/ja/06-widgets.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/ja/06-widgets.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "496bc790c29ef21ef930ef3725618179",
+      "sha256": "012ffbc7f28df7a11ce1f9eafc575ad4109005d9ed8171649bb4d889731877f0",
+      "capture": "retained reviewed image"
+    },
+    {
+      "path": "screenshots/ja/01-forecast.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/ja/01-forecast.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "b3023160dfafaea6adcac6f2f454aebc",
+      "sha256": "a681fa92223b9ed260e0a5b0e517e6cffad432ad9057ac09906a77c1b1481bac",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/ja/05-planetarium.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/ja/05-planetarium.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "3256678502349b570135fb5db318c24e",
+      "sha256": "7aa9c96685bd3e10fc22e4bdbe4618e0125bac6546a7580cfef3d74f5ab2e9d1",
+      "capture": "retained reviewed image"
+    },
+    {
+      "path": "screenshots/ja/02-pass-chart.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/ja/02-pass-chart.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "72fe00c5fee1d5b839e2e8237491ef22",
+      "sha256": "6ebfb685405c9a27b107354a01c11aeb37eca1bcd90fa834bf7c835d7f86494d",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/ja/03-pass-list.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/ja/03-pass-list.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "f3da1220b145c4ebc23f902c742e2498",
+      "sha256": "1ba5a3080a94a9eb5312761c08095c2ee0053e3dad798242b618090ffeae099f",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/ja/04-satellites.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/ja/04-satellites.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "c6cdacc36944a5490281acc6c1df5087",
+      "sha256": "7dcc46d89368335047e4f85746b9ebe56fd3880fec15f82fe244d02c8c41de99",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/ko/06-widgets.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/ko/06-widgets.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "34f3d97a6ad5f59a898cd61322f3693b",
+      "sha256": "a7c32e1f74b76c89b2c2d1ae52221450887708d616ebafbafeaa9db6d65d9f3e",
+      "capture": "retained reviewed image"
+    },
+    {
+      "path": "screenshots/ko/01-forecast.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/ko/01-forecast.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "95553e7c482814243f5f034e182e7b67",
+      "sha256": "e3c595808fc4ff2b30b102ae7e2e8d3804854e52d92f102158510f0757967ed8",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/ko/05-planetarium.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/ko/05-planetarium.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "935eef67c31cb1ee59588d949e2d387c",
+      "sha256": "6bea6ee76fa840771d69c9f43c83a98d7e7ee896deec983d06fda1ab677c21e3",
+      "capture": "retained reviewed image"
+    },
+    {
+      "path": "screenshots/ko/02-pass-chart.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/ko/02-pass-chart.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "47d46547f2ac3c864c96d2f06644131b",
+      "sha256": "588dbc413bbe7a9e532971b3c587edff57f9619e9d8a4aabdf56f72dd1b51abe",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/ko/03-pass-list.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/ko/03-pass-list.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "c32ca8e69cc071e8af98d9ee7c796da0",
+      "sha256": "7d7ffe720f2b1d1146e3ae892b551d9c72373ba30549e474b1d33f6b86c600ff",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/ko/04-satellites.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/ko/04-satellites.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "9f17a3a8460d85a835236e56038daafb",
+      "sha256": "dc862df7453cd101ba5424cf6b10d4b60df1ec47bbf6c2b316670c65c7376365",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/zh-Hans/06-widgets.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/zh-Hans/06-widgets.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "5c79dade0ea80128a404526d2f5efbae",
+      "sha256": "e73fac9de0c919753f41eea4570a0f7367acedd1007f6a5e889b09e388645dcf",
+      "capture": "retained reviewed image"
+    },
+    {
+      "path": "screenshots/zh-Hans/01-forecast.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/zh-Hans/01-forecast.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "198de02214f1f0c752b9d49be0d1f42f",
+      "sha256": "da88e4b1cb98baf66957f3a7d5d25ff1cdc266573b8bada36e030751cc6dd1db",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/zh-Hans/05-planetarium.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/zh-Hans/05-planetarium.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "60c56aa100765ac138924ba5c711bad1",
+      "sha256": "a7d8448402842554ece8c7a74c4e59220a3ae143f5e651f69759fd564113e72e",
+      "capture": "retained reviewed image"
+    },
+    {
+      "path": "screenshots/zh-Hans/02-pass-chart.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/zh-Hans/02-pass-chart.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "ccbab039bd33f53b2d58785dfce5c119",
+      "sha256": "c8dd2e637266f65edcc845adb7cbfa0db045b2c291a52786a4b976c8d42fb2a7",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/zh-Hans/03-pass-list.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/zh-Hans/03-pass-list.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "816bf17e88ec09b96e0143317425bcbb",
+      "sha256": "6b185e25aef37260f3eee5ebfe489bfa6be45af13e3be756b17c98a6d1132d19",
+      "capture": "build 29 native dark capture"
+    },
+    {
+      "path": "screenshots/zh-Hans/04-satellites.png",
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.1.1/build-29/screenshots/zh-Hans/04-satellites.png",
+      "size": [
+        1320,
+        2868
+      ],
+      "md5": "a88c1708f07338763ce91768927bcedf",
+      "sha256": "c02dcfed1507fae411ba3ffb660be268c24fd7d87374d5a7ca9d0f239ab7271a",
+      "capture": "build 29 native dark capture"
+    }
+  ]
+}

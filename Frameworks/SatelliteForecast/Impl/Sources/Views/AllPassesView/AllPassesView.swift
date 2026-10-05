@@ -119,6 +119,7 @@ public struct AllPassesView: View {
         }
     }
 
+    @State private var showsGlobe = false
     @State var viewModel: PassListModel
 
     let context: AllPassesViewContext
@@ -240,9 +241,8 @@ public struct AllPassesView: View {
                             passSnapshots: item.passSnapshots
                         )
                     ) {
-                        previewCell(item, observer: observer)
+                        compactPassCell(item)
                     }
-                    .modifier(VisiblePassRowHeight())
                     .overlay {
                         if !hasOpenedVisiblePass, item.index == items.first?.index,
                            item.passSnapshots.pass.visibility == .visible {
@@ -270,6 +270,29 @@ public struct AllPassesView: View {
             }
             .listRowBackground(AppTheme.surface)
         }
+    }
+
+    private func compactPassCell(_ item: Item) -> some View {
+        let pass = item.passSnapshots.pass
+        return VStack(alignment: .leading, spacing: 6) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(Date(julianDate: pass.rise.julianDate), format: .dateTime.month(.abbreviated).day().hour().minute())
+                    .font(.headline).fixedSize(horizontal: false, vertical: true)
+                if item.hasScheduledAlert {
+                    Image(systemName: "bell.fill").foregroundStyle(AppTheme.accent)
+                        .accessibilityLabel(Text("Alarm scheduled", bundle: .module))
+                }
+            }
+            Text(PassPreviewCell.visibleDurationText(for: pass, locale: .current))
+                .font(.subheadline).foregroundStyle(AppTheme.muted)
+            Text(PassView.descriptionToolbarText(for: pass))
+                .font(.subheadline).foregroundStyle(AppTheme.muted)
+                .fixedSize(horizontal: false, vertical: true)
+            Text("Peak elevation: \(Int(pass.culmination.elev.rounded()))°", bundle: .module)
+                .font(.subheadline).foregroundStyle(AppTheme.accent)
+        }
+        .padding(.vertical, 8)
+        .accessibilityElement(children: .combine)
     }
 
     private func previewCell(_ item: Item, observer: LatLonAlt) -> some View {
@@ -323,7 +346,6 @@ public struct AllPassesView: View {
                     julianDateProvider: context.julianDateProvider)
             )
         }
-        .modifier(FirstVisiblePassTutorial(isVisible: navigation.passSnapshots.pass.visibility == .visible))
     }
 
     private var visiblePassHeader: some View {
@@ -344,9 +366,7 @@ public struct AllPassesView: View {
                 }
                 .accessibilityLabel(Text("Show help", bundle: .module, comment: "Accessibility label for help button"))
             }
-            Text(AllPassesView.Section.VisiblePasses.headerCaption)
-                .font(.caption)
-                .foregroundColor(AppTheme.muted)
+
         }
         .textCase(nil)
     }
@@ -388,8 +408,11 @@ public struct AllPassesView: View {
                 }
 
                 SwiftUI.List {
-                    SwiftUI.Section(header: mapHeader()) {
-                        EmptyView()
+                    SwiftUI.Section {
+                        DisclosureGroup(isExpanded: $showsGlobe) { mapHeader() } label: {
+                            Label(AppLocalization.text("Live orbit globe"), systemImage: "globe")
+                        }
+                        .listRowBackground(AppTheme.surface)
                     }
 
                     SwiftUI.Section(header: visiblePassHeader) {

@@ -1,0 +1,96 @@
+Command line invocation:
+    /Applications/Xcode-27.1-beta.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /tmp/SatelliteForecast-duo-review/Build/Products/SatelliteForecastApp_SatelliteForecast_iphonesimulator27.1-arm64-x86_64.xctestrun -destination "platform=iOS Simulator,id=7C40B063-AE4F-4981-9915-EDCD4DF343A5" "-only-testing:SatelliteForecastTests/ScreenSnapshotTests/testInteractiveDuoReview" -parallel-testing-enabled NO -collect-test-diagnostics never -resultBundlePath /tmp/SatelliteForecast-duo-review/DuoReviewFinal.xcresult
+
+Writing result bundle at path:
+	/tmp/SatelliteForecast-duo-review/DuoReviewFinal.xcresult
+
+2026-10-03 14:07:29.754 xcodebuild[61043:2633275] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94403>, error = invalidDigitCount(94403).
+2026-10-03 14:07:29.754 xcodebuild[61043:2633275] [MT] IDESchemeActionDeviceRecord: versionAndBuild = 27.1 (24A94401), error = invalidDigitCount(94401).
+2026-10-03 14:08:06.461021-0700 SatelliteForecastApp[61152:2635128] You've implemented -[<UIApplicationDelegate> application:didReceiveRemoteNotification:fetchCompletionHandler:], but you still need to add "remote-notification" to the list of your supported UIBackgroundModes in your Info.plist.
+Test Suite 'Selected tests' started at 2026-10-03 14:08:09.265.
+Test Suite 'SatelliteForecastTests.xctest' started at 2026-10-03 14:08:09.266.
+Test Suite 'ScreenSnapshotTests' started at 2026-10-03 14:08:09.267.
+Test Case '-[SatelliteForecastTests.ScreenSnapshotTests testInteractiveDuoReview]' started.
+2026-10-03 14:08:10.149215-0700 SatelliteForecastApp[61152:2635927] [Core] {"msg":"file does not exist... clearing", "file":/private/var/run/com.apple.security.cryptexd/mnt/iOS_24A94401/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.1.simruntime/Contents/Resources/RuntimeRoot/private/var/Managed Preferences/kCFPreferencesCurrentUser/com.apple.CoreMotion.plist, "error":Error Domain=NSCocoaErrorDomain Code=260 "The file “com.apple.CoreMotion.plist” couldn’t be opened because there is no such file." UserInfo={NSFilePath=/private/var/run/com.apple.security.cryptexd/mnt/iOS_24A94401/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.1.simruntime/Contents/Resources/RuntimeRoot/private/var/Managed Preferences/kCFPreferencesCurrentUser/com.apple.CoreMotion.plist, NSURL=file:///private/var/run/com.apple.security.cryptexd/mnt/iOS_24A94401/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS%2027.1.simruntime/Contents/Resources/RuntimeRoot/private/var/Managed%20Preferences/kCFPreferencesCurrentUser/com.apple.CoreMotion.plist, NSUnderlyingError=0x10f0cc900 {Error Domain=NSPOSIXErrorDomain Code=2 "No such file or directory"}}}
+2026-10-03 14:08:15.198914-0700 SatelliteForecastApp[61152:2635128] [] CVPixelBufferCreate returned err -6680. width 1024, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:08:15.520476-0700 SatelliteForecastApp[61152:2635128] [Invalid Configuration] Update NavigationRequestObserver tried to update multiple times per frame.
+2026-10-03 14:08:16.087028-0700 SatelliteForecastApp[61152:2635128] [Invalid Configuration] onChange(of: Bool) action tried to update multiple times per frame.
+IOSurfaceClientSetSurfaceNotify failed e00002c7
+2026-10-03 14:08:16.266118-0700 SatelliteForecastApp[61152:2635128] [XPCErrors] non-launching port is incompatible with service identifier "com.apple.PointerUI.pointeruid.default-service"
+2026-10-03 14:09:35.629488-0700 SatelliteForecastApp[61152:2635720] [] CVPixelBufferCreate returned err -6680. width 1024, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.354803-0700 SatelliteForecastApp[61152:2635128] [ResourceManifest] Failed to locate resource named "default.csv"
+2026-10-03 14:09:39.449113-0700 SatelliteForecastApp[61152:2635128] [API] CAMetalLayer ignoring invalid setDrawableSize width=0.000000 height=0.000000
+2026-10-03 14:09:39.564793-0700 SatelliteForecastApp[61152:2639146] [UserDefaults] Unable set value for key "NeedsFallbackRegions": GeoServices.GEODXPCError(domain: "GEOConfigErrorDomain", code: 2, description: "missing entitlement \"\" to set \"NeedsFallbackRegions\"", userInfo: [:])
+2026-10-03 14:09:39.565460-0700 SatelliteForecastApp[61152:2639147] [UserDefaults] Unable set value for key "FifteenMonthDeviceSessionData": GeoServices.GEODXPCError(domain: "GEOConfigErrorDomain", code: 2, description: "missing entitlement \"\" to set \"FifteenMonthDeviceSessionData\"", userInfo: [:])
+2026-10-03 14:09:39.620467-0700 SatelliteForecastApp[61152:2635128] [Unknown process name] clip: empty path.
+2026-10-03 14:09:39.692838-0700 SatelliteForecastApp[61152:2639363] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.692938-0700 SatelliteForecastApp[61152:2639366] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.692967-0700 SatelliteForecastApp[61152:2635718] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.692745-0700 SatelliteForecastApp[61152:2639360] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.692768-0700 SatelliteForecastApp[61152:263932026-10-03 14:09:39.693241-0700 SatelliteForecastApp[61152:2635720] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.693558-0700 SatelliteForecastApp[61152:2639146] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.693751-0700 SatelliteForecastApp[61152:2639358] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.693774-0700 SatelliteForecastApp[61152:2639355] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.693874-0700 SatelliteForecastApp[61152:263912026-10-03 14:09:39.694028-0700 SatelliteForecastApp[61152:2639352] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+62] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.694009-0700 SatelliteForecastApp[61152:2639353] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.693537-0700 SatelliteForecastApp[61152:2639364] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.693357-0700 SatelliteForecastApp[61152:2639354] [] CVPixelBufferCreate returned err -6680. width 512, height2026-10-03 14:09:39.693085-0700 SatelliteForecastApp[61152:2639357] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.697457-0700 SatelliteForecastApp[61152:2639147] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.693039-0700 SatelliteForecastApp[61152:2639367] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.697538-0700 SatelliteForecastApp[61152:2639146] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.693203-0700 SatelliteForecastApp[61152:263932026-10-03 14:09:39.698088-0700 SatelliteForecastApp[61152:2639381] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.698222-0700 SatelliteForecastApp[61152:2639384] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.698241-0700 SatelliteForecastApp[61152:2635725] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.698188-0700 SatelliteForecastApp[61152:2639363] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.698406-0700 SatelliteForecastApp[61152:263932026-10-03 14:09:39.693892-0700 SatelliteForecastApp[61152:2639365] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.693908-0700 SatelliteForecastApp[61152:2639356] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+66] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+49] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+69] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+ 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.697595-0700 SatelliteForecastApp[61152:2639355] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.693290-0700 SatelliteForecastApp[61152:2639359] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.697621-0700 SatelliteForecastApp[61152:2639358] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.697792-0700 SatelliteForecastApp[61152:2639144] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.697873-0700 SatelliteForecastApp[61152:2639360] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.697948-0700 SatelliteForecastApp[61152:2635720] [] CVPixelBufferCreate returned err -6680. width 512, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.719658-0700 SatelliteForecastApp[61152:2635128] [Unknown process name] clip: empty path.
+2026-10-03 14:09:39.871689-0700 SatelliteForecastApp[61152:2639355] [] CVPixelBufferCreate returned err -6680. width 16, height 16, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.871745-0700 SatelliteForecastApp[61152:2639359] [] CVPixelBufferCreate returned err -6680. width 16, height 16, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.871776-0700 SatelliteForecastApp[61152:2639366] [] CVPixelBufferCreate returned err -6680. width 16, height 16, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.871805-0700 SatelliteForecastApp[61152:2639358] [] CVPixelBufferCreate returned err -6680. width 16, height 16, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.871832-0700 SatelliteForecastApp[61152:2639354] [] CVPixelBufferCreate returned err -6680. width 16, height 16, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.871920-0700 SatelliteForecastApp[61152:2639144] [] CVPixelBufferCreate returned err -6680. width 16, height 16, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.872004-0700 SatelliteForecastApp[61152:2639147] [] CVPixelBufferCreate returned err -6680. width 16, height 16, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:39.872044-0700 SatelliteForecastApp[61152:2639360] [] CVPixelBufferCreate returned err -6680. width 16, height 16, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:42.720314-0700 SatelliteForecastApp[61152:2635128] [] (Fig) signalled err=-12900 at <>:1250
+2026-10-03 14:09:42.720382-0700 SatelliteForecastApp[61152:2635128] [] (Fig) signalled err=-12900 at <>:1250
+2026-10-03 14:09:43.073176-0700 SatelliteForecastApp[61152:2635128] [] (Fig) signalled err=-12900 at <>:1250
+2026-10-03 14:09:43.073259-0700 SatelliteForecastApp[61152:2635128] [] (Fig) signalled err=-12900 at <>:1250
+<unknown>:0: warning: -[SatelliteForecastTests.ScreenSnapshotTests testInteractiveDuoReview] : [Internal] Thread running at User-interactive quality-of-service class waiting on a thread without a QoS class specified (base priority 31). Investigate ways to avoid priority inversions
+2026-10-03 14:09:46.377180-0700 SatelliteForecastApp[61152:2635128] [] CVPixelBufferCreate returned err -6680. width 512, height 256, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 14:09:46.528007-0700 SatelliteForecastApp[61152:2639384] [] CVPixelBufferCreate returned err -6680. width 4096, height 2048, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+unrecognised property keyunrecognised property keyunrecognised property keyunrecognised property keyTest Case '-[SatelliteForecastTests.ScreenSnapshotTests testInteractiveDuoReview]' passed (217.761 seconds).
+Test Suite 'ScreenSnapshotTests' passed at 2026-10-03 21:11:47.036.
+	 Executed 1 test, with 0 failures (0 unexpected) in 217.761 (217.770) seconds
+Test Suite 'SatelliteForecastTests.xctest' passed at 2026-10-03 21:11:47.039.
+	 Executed 1 test, with 0 failures (0 unexpected) in 217.761 (217.773) seconds
+Test Suite 'Selected tests' passed at 2026-10-03 21:11:47.039.
+	 Executed 1 test, with 0 failures (0 unexpected) in 217.761 (217.774) seconds
+2026-10-03 14:11:47.142 xcodebuild[61043:2633275] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94403>, error = invalidDigitCount(94403).
+2026-10-03 14:11:47.142 xcodebuild[61043:2633275] [MT] IDESchemeActionDeviceRecord: versionAndBuild = 27.1 (24A94401), error = invalidDigitCount(94401).
+2026-10-03 14:11:47.144 xcodebuild[61043:2633275] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94403>, error = invalidDigitCount(94403).
+2026-10-03 14:11:47.144 xcodebuild[61043:2633275] [MT] IDESchemeActionDeviceRecord: versionAndBuild = 27.1 (24A94401), error = invalidDigitCount(94401).
+2026-10-03 14:11:47.150 xcodebuild[61043:2633275] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94403>, error = invalidDigitCount(94403).
+2026-10-03 14:11:47.150 xcodebuild[61043:2633275] [MT] IDESchemeActionDeviceRecord: versionAndBuild = 27.1 (24A94401), error = invalidDigitCount(94401).
+2026-10-03 14:11:47.423 xcodebuild[61043:2633275] [MT] IDETestOperationsObserverDebug: 259.431 elapsed -- Testing started completed.
+2026-10-03 14:11:47.423 xcodebuild[61043:2633275] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-03 14:11:47.423 xcodebuild[61043:2633275] [MT] IDETestOperationsObserverDebug: 259.431 sec, +259.431 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/SatelliteForecast-duo-review/DuoReviewFinal.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

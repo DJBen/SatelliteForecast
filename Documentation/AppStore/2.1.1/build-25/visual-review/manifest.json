@@ -1,0 +1,17 @@
+{
+  "simulator": "iPhone 17 Pro Max",
+  "simulatorID": "0D39CA43-2212-46F4-AE51-A38A3DDDB9BC",
+  "appearance": "dark",
+  "version": "2.1.1",
+  "build": "25",
+  "files": [
+    {
+      "file": "visual-review/build-25-alarm-form-dark.png",
+      "sha256": "57b819b0f377bcda06c4cd25bc083a4241af236f65bc47b5e2773a5afb195fc3"
+    },
+    {
+      "file": "visual-review/build-25-pass-dark.png",
+      "sha256": "b261639b95866d8d934b248f4545b16595422553e6272a3c67642e3aae7c8f46"
+    }
+  ]
+}

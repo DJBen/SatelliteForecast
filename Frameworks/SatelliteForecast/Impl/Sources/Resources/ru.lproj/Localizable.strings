@@ -838,3 +838,45 @@ The localized string for the status of a spare satellite */
 "Loading weather" = "Загрузка погоды";
 "Weather unavailable" = "Погода недоступна";
 "Tap to retry" = "Нажмите, чтобы повторить";
+
+/* Manual local pass alarms */
+"Set local alarm" = "Установить локальный будильник";
+"View local alarm" = "Посмотреть локальный будильник";
+"One local alarm with sound for this pass." = "Один локальный будильник со звуком для этого пролёта.";
+
+/* Manual alarm time picker */
+"Pass starts" = "Начало пролёта";
+"Pass ends" = "Конец пролёта";
+"Pass moment" = "Момент пролёта";
+"Alarm time" = "Время будильника";
+"At event" = "В выбранный момент";
+"5 min before" = "За 5 мин";
+"10 min before" = "За 10 мин";
+"Default notification sound" = "Стандартный звук уведомления";
+"Save changes" = "Сохранить изменения";
+"Set alarm" = "Установить будильник";
+"Edit alarm" = "Изменить будильник";
+"Couldn't set alarm" = "Не удалось установить будильник";
+
+"Never miss a station pass" = "Не пропустите пролёт станции";
+"Turn notifications back on" = "Включите уведомления снова";
+"Get automatic alerts for visible ISS and Tiangong passes. Allow notifications to receive these alerts and local alarms with sound." = "Получайте автоматические оповещения о видимых пролётах МКС и «Тяньгун». Разрешите уведомления, чтобы получать их и локальные напоминания со звуком.";
+"Notifications are off. Allow notifications in iOS Settings to receive automatic ISS and Tiangong alerts and your local alarms." = "Уведомления отключены. Разрешите их в настройках iOS, чтобы получать оповещения МКС и «Тяньгун» и локальные напоминания.";
+"Enable notifications" = "Включить уведомления";
+"Local alarms" = "Локальные напоминания";
+"No local alarms yet" = "Пока нет локальных напоминаний";
+"One-off reminders for passes you choose. Tap an alarm to change its time." = "Разовые напоминания о выбранных пролётах. Нажмите на напоминание, чтобы изменить время.";
+"Sound on" = "Звук включён";
+"%@ after %@" = "%@ после %@";
+
+/* Ascending pass moment and its alarm offset. */
+"Reaches 10°" = "Достигает 10°";
+"%@ before reaching 10°" = "%@ до достижения 10°";
+
+/* Release localization audit: pass and alarm controls. */
+"Please try again." = "Попробуйте ещё раз.";
+"Choose an upcoming pass to set a one-off reminder." = "Выберите предстоящий пролёт, чтобы задать разовое напоминание.";
+"Choose a pass" = "Выбрать пролёт";
+"Live orbit globe" = "Орбитальный глобус в реальном времени";
+"Open pass chart" = "Открыть карту пролёта";
+"Automatic alerts for ISS and Tiangong." = "Автоматические уведомления о МКС и Тяньгуне.";

@@ -32,20 +32,21 @@ struct DiscoveryGlow: View {
     }
 }
 
-/// Present over the selected pass so closing the video reveals the tapped item.
-struct FirstVisiblePassTutorial: ViewModifier {
-    let isVisible: Bool
-    @AppStorage("hasCompletedAllPassesOnboarding") private var hasOpenedVisiblePass = false
+/// Shared by every pass chart, regardless of the tab or pass visibility.
+struct FirstCompassUseTutorial: ViewModifier {
+    let isCompassEnabled: Bool
+    @AppStorage("hasCompletedAllPassesOnboarding") private var hasSeenTutorial = false
     @State private var showsVideo = false
 
     func body(content: Content) -> some View {
         content
-            .task {
-                guard isVisible, !hasOpenedVisiblePass else { return }
-                // Let the navigation transition finish before presenting the video.
+            .task(id: isCompassEnabled) {
+                guard isCompassEnabled, !hasSeenTutorial else { return }
+                // Allow navigation or the Compass control transition to finish.
+                // Turning Compass off cancels this pending presentation.
                 do { try await Task.sleep(for: .milliseconds(450)) } catch { return }
-                guard !hasOpenedVisiblePass else { return }
-                hasOpenedVisiblePass = true
+                guard !hasSeenTutorial else { return }
+                hasSeenTutorial = true
                 showsVideo = true
             }
             .fullScreenCover(isPresented: $showsVideo) {
@@ -55,6 +56,7 @@ struct FirstVisiblePassTutorial: ViewModifier {
 }
 
 struct PassTutorialVideo: View {
+    @AppStorage("hasCompletedAllPassesOnboarding") private var hasSeenTutorial = false
     let onDismiss: () -> Void
 
     var body: some View {
@@ -63,5 +65,6 @@ struct PassTutorialVideo: View {
                 .ignoresSafeArea(.container, edges: .top)
         }
         .preferredColorScheme(.dark)
+        .onAppear { hasSeenTutorial = true }
     }
 }

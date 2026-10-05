@@ -153,6 +153,24 @@ public final class PassModel {
 
 @MainActor @Observable
 public final class PassAlarmModel {
+  public private(set) var isSaving = false
+  public private(set) var saveError: String?
+  public func save(_ notification: PassNotification, snapshots: PassSnapshots?) async -> Bool {
+    guard !isSaving else { return false }
+    guard let session else {
+      saveError = AppLocalization.text("Please try again.")
+      return false
+    }
+    isSaving = true
+    saveError = nil
+    defer { isSaving = false }
+    let saved = await session.notifications.schedule(notification, snapshots: snapshots,
+      catalog: session.catalog, offset: session.debug.config.effectiveOffset,
+      rapid: session.debug.config.rapidNotificationDelivery, fromAlarmSetup: true)
+    if !saved { saveError = session.notifications.errorMessage }
+    return saved
+  }
+
   private var local: PassAlarmSettingsModalViewState
   private let session: AppSession?
   public var state: PassAlarmSettingsModalViewState {

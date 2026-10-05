@@ -1,0 +1,1162 @@
+[
+  {
+    "AXFrame" : "{{0, 0}, {440, 956}}",
+    "AXUniqueId" : null,
+    "frame" : {
+      "y" : 0,
+      "x" : 0,
+      "width" : 440,
+      "height" : 956
+    },
+    "role_description" : "application",
+    "AXLabel" : "Space Station",
+    "content_required" : false,
+    "type" : "Application",
+    "title" : null,
+    "help" : null,
+    "custom_actions" : [
+
+    ],
+    "AXValue" : null,
+    "enabled" : true,
+    "role" : "AXApplication",
+    "children" : [
+      {
+        "AXFrame" : "{{128.83333333333331, 57.666666666666671}, {182, 20.333333333333329}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 57.666666666666671,
+          "x" : 128.83333333333331,
+          "width" : 182,
+          "height" : 20.333333333333329
+        },
+        "role_description" : "text",
+        "AXLabel" : "Jun 2, 2021 at 4:45 AM",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{93.333333333333314, 82}, {253, 14.333333333333343}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 82,
+          "x" : 93.333333333333314,
+          "width" : 253,
+          "height" : 14.333333333333343
+        },
+        "role_description" : "text",
+        "AXLabel" : "Rises from southeast and sets into northeast",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{383.66666666666669, 66}, {28.666666666666629, 36}}",
+        "AXUniqueId" : "pass.manualAlarm",
+        "frame" : {
+          "y" : 66,
+          "x" : 383.66666666666669,
+          "width" : 28.666666666666629,
+          "height" : 36
+        },
+        "role_description" : "button",
+        "AXLabel" : "Set local alarm",
+        "content_required" : false,
+        "type" : "Button",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXButton",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{154.56985473632812, 132.65072631835938}, {20.193634033203125, 17.365203857421875}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 132.65072631835938,
+          "x" : 154.56985473632812,
+          "width" : 20.193634033203125,
+          "height" : 17.365203857421875
+        },
+        "role_description" : "text",
+        "AXLabel" : "15°",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{213.83333333333334, 127.33333333333334}, {12.333333333333343, 13.333333333333343}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 127.33333333333334,
+          "x" : 213.83333333333334,
+          "width" : 12.333333333333343,
+          "height" : 13.333333333333343
+        },
+        "role_description" : "text",
+        "AXLabel" : "0°",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{260.88986206054688, 131.48603820800781}, {28.886962890625, 19.694580078125}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 131.48603820800781,
+          "x" : 260.88986206054688,
+          "width" : 28.886962890625,
+          "height" : 19.694580078125
+        },
+        "role_description" : "text",
+        "AXLabel" : "345°",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{101.29508972167969, 152.05982971191406}, {23.409820556640625, 21.213668823242188}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 152.05982971191406,
+          "x" : 101.29508972167969,
+          "width" : 23.409820556640625,
+          "height" : 21.213668823242188
+        },
+        "role_description" : "text",
+        "AXLabel" : "30°",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{312.26400756835938, 150.30982971191406}, {29.47198486328125, 24.713668823242188}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 150.30982971191406,
+          "x" : 312.26400756835938,
+          "width" : 29.47198486328125,
+          "height" : 24.713668823242188
+        },
+        "role_description" : "text",
+        "AXLabel" : "330°",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{41.3494873046875, 169.3494873046875}, {26.634353637695312, 26.634353637695312}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 169.3494873046875,
+          "x" : 41.3494873046875,
+          "width" : 26.634353637695312,
+          "height" : 26.634353637695312
+        },
+        "role_description" : "text",
+        "AXLabel" : "NE",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{57.117256164550781, 185.11724853515625}, {23.098823547363281, 23.098831176757812}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 185.11724853515625,
+          "x" : 57.117256164550781,
+          "width" : 23.098823547363281,
+          "height" : 23.098831176757812
+        },
+        "role_description" : "text",
+        "AXLabel" : "45°",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{358.01614379882812, 183.3494873046875}, {26.634368896484375, 26.634353637695312}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 183.3494873046875,
+          "x" : 358.01614379882812,
+          "width" : 26.634368896484375,
+          "height" : 26.634353637695312
+        },
+        "role_description" : "text",
+        "AXLabel" : "315°",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{370.0126953125, 167.34602355957031}, {30.64129638671875, 30.64129638671875}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 167.34602355957031,
+          "x" : 370.0126953125,
+          "width" : 30.64129638671875,
+          "height" : 30.64129638671875
+        },
+        "role_description" : "text",
+        "AXLabel" : "NW",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{24.059829711914062, 229.29508972167969}, {21.213672637939453, 23.409820556640625}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 229.29508972167969,
+          "x" : 24.059829711914062,
+          "width" : 21.213672637939453,
+          "height" : 23.409820556640625
+        },
+        "role_description" : "text",
+        "AXLabel" : "60°",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{392.97650146484375, 226.26399230957031}, {24.713653564453125, 29.472015380859375}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 226.26399230957031,
+          "x" : 392.97650146484375,
+          "width" : 24.713653564453125,
+          "height" : 29.472015380859375
+        },
+        "role_description" : "text",
+        "AXLabel" : "300°",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{4.4781832695007324, 281.9259033203125}, {17.710300445556641, 21.481536865234375}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 281.9259033203125,
+          "x" : 4.4781832695007324,
+          "width" : 17.710300445556641,
+          "height" : 21.481536865234375
+        },
+        "role_description" : "text",
+        "AXLabel" : "75°",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{-0.66666668653488159, 338.33334350585938}, {13.333333969116211, 19.33331298828125}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 338.33334350585938,
+          "x" : -0.66666668653488159,
+          "width" : 13.333333969116211,
+          "height" : 19.33331298828125
+        },
+        "role_description" : "text",
+        "AXLabel" : "90°",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{3.7448627948760986, 389.85577392578125}, {19.17694091796875, 26.955108642578125}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 389.85577392578125,
+          "x" : 3.7448627948760986,
+          "width" : 19.17694091796875,
+          "height" : 26.955108642578125
+        },
+        "role_description" : "text",
+        "AXLabel" : "105°",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{16, 144}, {408, 408}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 144,
+          "x" : 16,
+          "width" : 408,
+          "height" : 408
+        },
+        "role_description" : "image",
+        "AXLabel" : null,
+        "content_required" : false,
+        "type" : "Image",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXImage",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{22.809829711914062, 441.13003540039062}, {23.713672637939453, 27.73992919921875}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 441.13003540039062,
+          "x" : 22.809829711914062,
+          "width" : 23.713672637939453,
+          "height" : 27.73992919921875
+        },
+        "role_description" : "text",
+        "AXLabel" : "120°",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{128.38072200460564, 437.3056296308381}, {30.666666666666657, 13.333333333333314}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 437.3056296308381,
+          "x" : 128.38072200460564,
+          "width" : 30.666666666666657,
+          "height" : 13.333333333333314
+        },
+        "role_description" : "text",
+        "AXLabel" : "Moon",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{393.05984497070312, 440.4083251953125}, {24.5469970703125, 29.183349609375}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 440.4083251953125,
+          "x" : 393.05984497070312,
+          "width" : 24.5469970703125,
+          "height" : 29.183349609375
+        },
+        "role_description" : "text",
+        "AXLabel" : "240°",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{55.3494873046875, 486.01614379882812}, {26.634353637695312, 26.634368896484375}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 486.01614379882812,
+          "x" : 55.3494873046875,
+          "width" : 26.634353637695312,
+          "height" : 26.634368896484375
+        },
+        "role_description" : "text",
+        "AXLabel" : "135°",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{357.54473876953125, 485.54473876953125}, {27.577178955078125, 27.5771484375}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 485.54473876953125,
+          "x" : 357.54473876953125,
+          "width" : 27.577178955078125,
+          "height" : 27.5771484375
+        },
+        "role_description" : "text",
+        "AXLabel" : "225°",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{99.130027770996094, 521.47650146484375}, {27.739944458007812, 23.71368408203125}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 521.47650146484375,
+          "x" : 99.130027770996094,
+          "width" : 27.739944458007812,
+          "height" : 23.71368408203125
+        },
+        "role_description" : "text",
+        "AXLabel" : "150°",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{313.13003540039062, 521.47650146484375}, {27.73992919921875, 23.71368408203125}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 521.47650146484375,
+          "x" : 313.13003540039062,
+          "width" : 27.73992919921875,
+          "height" : 23.71368408203125
+        },
+        "role_description" : "text",
+        "AXLabel" : "210°",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{16, 144}, {408, 408}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 144,
+          "x" : 16,
+          "width" : 408,
+          "height" : 408
+        },
+        "role_description" : "image",
+        "AXLabel" : "Moon",
+        "content_required" : false,
+        "type" : "Image",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXImage",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{16, 144}, {408, 408}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 144,
+          "x" : 16,
+          "width" : 408,
+          "height" : 408
+        },
+        "role_description" : "image",
+        "AXLabel" : null,
+        "content_required" : false,
+        "type" : "Image",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXImage",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{416.86251831054688, 278.38418579101562}, {19.608306884765625, 28.564971923828125}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 278.38418579101562,
+          "x" : 416.86251831054688,
+          "width" : 19.608306884765625,
+          "height" : 28.564971923828125
+        },
+        "role_description" : "text",
+        "AXLabel" : "285°",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{427.33334350585938, 335.33334350585938}, {13.33331298828125, 25.33331298828125}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 335.33334350585938,
+          "x" : 427.33334350585938,
+          "width" : 13.33331298828125,
+          "height" : 25.33331298828125
+        },
+        "role_description" : "text",
+        "AXLabel" : "270°",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{416.86251831054688, 389.05084228515625}, {19.608306884765625, 28.564971923828125}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 389.05084228515625,
+          "x" : 416.86251831054688,
+          "width" : 19.608306884765625,
+          "height" : 28.564971923828125
+        },
+        "role_description" : "text",
+        "AXLabel" : "255°",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{41.820892333984375, 500.487548828125}, {25.691551208496094, 25.6915283203125}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 500.487548828125,
+          "x" : 41.820892333984375,
+          "width" : 25.691551208496094,
+          "height" : 25.6915283203125
+        },
+        "role_description" : "text",
+        "AXLabel" : "SE",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{370.6019287109375, 498.6019287109375}, {29.462799072265625, 29.4627685546875}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 498.6019287109375,
+          "x" : 370.6019287109375,
+          "width" : 29.462799072265625,
+          "height" : 29.4627685546875
+        },
+        "role_description" : "text",
+        "AXLabel" : "SW",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{151.02812194824219, 545.0350341796875}, {27.277084350585938, 19.26324462890625}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 545.0350341796875,
+          "x" : 151.02812194824219,
+          "width" : 27.277084350585938,
+          "height" : 19.26324462890625
+        },
+        "role_description" : "text",
+        "AXLabel" : "165°",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{207.66666666666671, 555.33333333333326}, {24.666666666666657, 13.333333333333371}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 555.33333333333326,
+          "x" : 207.66666666666671,
+          "width" : 24.666666666666657,
+          "height" : 13.333333333333371
+        },
+        "role_description" : "text",
+        "AXLabel" : "180°",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{261.69479370117188, 545.0350341796875}, {27.277099609375, 19.26324462890625}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 545.0350341796875,
+          "x" : 261.69479370117188,
+          "width" : 27.277099609375,
+          "height" : 19.26324462890625
+        },
+        "role_description" : "text",
+        "AXLabel" : "195°",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{364, 487.33333333333331}, {56, 84.666666666666686}}",
+        "AXUniqueId" : "pass.orientationGuidance.open",
+        "frame" : {
+          "y" : 487.33333333333331,
+          "x" : 364,
+          "width" : 56,
+          "height" : 84.666666666666686
+        },
+        "role_description" : "button",
+        "AXLabel" : "Lift your iPhone",
+        "content_required" : false,
+        "type" : "Button",
+        "title" : null,
+        "help" : "Show orientation guidance",
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXButton",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{20, 590}, {124.66666666666666, 42}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 590,
+          "x" : 20,
+          "width" : 124.66666666666666,
+          "height" : 42
+        },
+        "role_description" : "button",
+        "AXLabel" : "Compass",
+        "content_required" : false,
+        "type" : "Button",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : "On",
+        "enabled" : true,
+        "role" : "AXButton",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{152.66666666666666, 590}, {124.66666666666666, 42}}",
+        "AXUniqueId" : "pass.chart",
+        "frame" : {
+          "y" : 590,
+          "x" : 152.66666666666666,
+          "width" : 124.66666666666666,
+          "height" : 42
+        },
+        "role_description" : "button",
+        "AXLabel" : "Chart",
+        "content_required" : false,
+        "type" : "Button",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXButton",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{285.33333333333331, 590}, {134.66666666666669, 42}}",
+        "AXUniqueId" : "pass.planetarium",
+        "frame" : {
+          "y" : 590,
+          "x" : 285.33333333333331,
+          "width" : 134.66666666666669,
+          "height" : 42
+        },
+        "role_description" : "button",
+        "AXLabel" : "Planetarium",
+        "content_required" : false,
+        "type" : "Button",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXButton",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{20, 662}, {400, 36}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 662,
+          "x" : 20,
+          "width" : 400,
+          "height" : 36
+        },
+        "role_description" : "text",
+        "AXLabel" : "Becomes visible, 171° azimuth · 3° elevation, 4:46:27 AM",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{20, 718.33331298828125}, {400, 36}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 718.33331298828125,
+          "x" : 20,
+          "width" : 400,
+          "height" : 36
+        },
+        "role_description" : "text",
+        "AXLabel" : "Culminates, 126° azimuth · 10° elevation, 4:49:54 AM",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      },
+      {
+        "AXFrame" : "{{20, 774.66668701171875}, {400, 36}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 774.66668701171875,
+          "x" : 20,
+          "width" : 400,
+          "height" : 36
+        },
+        "role_description" : "text",
+        "AXLabel" : "Sets, 73° azimuth · 0° elevation, 4:54:21 AM",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 57372
+      }
+    ],
+    "subrole" : null,
+    "pid" : 57372
+  }
+]

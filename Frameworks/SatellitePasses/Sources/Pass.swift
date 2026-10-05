@@ -44,6 +44,10 @@ public struct Pass: Sendable {
     /// Note that the culmination point is not always illuminated. Use `highestIlluminatedElevation` to get the highest illuminated elevation.
     public let culmination: DatePosition
 
+    /// The first upward crossing of 10° above the horizon, when the pass reaches it.
+    /// Optional so passes saved by earlier app versions remain decodable.
+    public let reachesTenDegrees: DatePosition?
+
     /// The highest illuminated date and position. If the entire pass is not illuminated, return `nil`.
     public var highestIlluminated: DatePosition? {
         let segments = illuminationSegments
@@ -161,7 +165,8 @@ public struct Pass: Sendable {
         set: Pass.DatePosition,
         culmination: Pass.DatePosition,
         illumination: Pass.Illumination,
-        sunElevationAtTransit: Double
+        sunElevationAtTransit: Double,
+        reachesTenDegrees: DatePosition? = nil
     ) {
         self.noradIndex = noradIndex
         self.rise = rise
@@ -169,6 +174,7 @@ public struct Pass: Sendable {
         self.culmination = culmination
         self.illumination = illumination
         self.sunElevationAtTransit = sunElevationAtTransit
+        self.reachesTenDegrees = reachesTenDegrees
     }
 }
 

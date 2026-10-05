@@ -91,9 +91,15 @@ public class AppDelegateImpl: NSObject, AppDelegateProtocol, MessagingHandlerPro
     
     public func willPresent(notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         // TODO: hide when the information is currently visible to the user
-        completionHandler([.banner, .list])
+        completionHandler(Self.presentationOptions(categoryIdentifier: notification.request.content.categoryIdentifier))
     }
     
+    static func presentationOptions(categoryIdentifier: String) -> UNNotificationPresentationOptions {
+        var options: UNNotificationPresentationOptions = [.banner, .list]
+        if categoryIdentifier == "PASS" { options.insert(.sound) }
+        return options
+    }
+
     public func didReceive(response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         let categoryIdentifier = response.notification.request.content.categoryIdentifier
         

@@ -1,0 +1,68 @@
+Command line invocation:
+    /Applications/Xcode-27.1-beta.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /tmp/SatelliteForecast-duo-review/Build/Products/SatelliteForecastApp_SatelliteForecast_iphonesimulator27.1-arm64-x86_64.xctestrun -destination "platform=iOS Simulator,id=7C40B063-AE4F-4981-9915-EDCD4DF343A5" "-only-testing:SatelliteForecastTests/ScreenSnapshotTests/testInteractiveDuoReview" "-only-testing:SatelliteForecastTests/NativeArchitectureTests" -parallel-testing-enabled NO -collect-test-diagnostics never -resultBundlePath /tmp/DuoImplementationPass1Final.xcresult
+
+Writing result bundle at path:
+	/tmp/DuoImplementationPass1Final.xcresult
+
+2026-10-03 15:10:59.714 xcodebuild[67997:2712660] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94403>, error = invalidDigitCount(94403).
+2026-10-03 15:10:59.714 xcodebuild[67997:2712660] [MT] IDESchemeActionDeviceRecord: versionAndBuild = 27.1 (24A94401), error = invalidDigitCount(94401).
+2026-10-03 15:11:05.503151-0700 SatelliteForecastApp[68018:2713034] You've implemented -[<UIApplicationDelegate> application:didReceiveRemoteNotification:fetchCompletionHandler:], but you still need to add "remote-notification" to the list of your supported UIBackgroundModes in your Info.plist.
+Test Suite 'Selected tests' started at 2026-10-03 15:11:05.925.
+Test Suite 'SatelliteForecastTests.xctest' started at 2026-10-03 15:11:05.927.
+Test Suite 'NativeArchitectureTests' started at 2026-10-03 15:11:05.927.
+Test Case '-[SatelliteForecastTests.NativeArchitectureTests testGeographicLocalization]' started.
+Test Case '-[SatelliteForecastTests.NativeArchitectureTests testGeographicLocalization]' passed (0.451 seconds).
+Test Case '-[SatelliteForecastTests.NativeArchitectureTests testLocationSelectionDoesNotPopUnrelatedNavigation]' started.
+Test Case '-[SatelliteForecastTests.NativeArchitectureTests testLocationSelectionDoesNotPopUnrelatedNavigation]' passed (0.048 seconds).
+Test Case '-[SatelliteForecastTests.NativeArchitectureTests testOfflineGeographicContext]' started.
+Test Case '-[SatelliteForecastTests.NativeArchitectureTests testOfflineGeographicContext]' passed (0.590 seconds).
+Test Case '-[SatelliteForecastTests.NativeArchitectureTests testSharedSettingsNotifyBothAppearanceConsumers]' started.
+Test Case '-[SatelliteForecastTests.NativeArchitectureTests testSharedSettingsNotifyBothAppearanceConsumers]' passed (0.001 seconds).
+Test Case '-[SatelliteForecastTests.NativeArchitectureTests testSkyNowIsAlwaysTheSecondRootTab]' started.
+Test Case '-[SatelliteForecastTests.NativeArchitectureTests testSkyNowIsAlwaysTheSecondRootTab]' passed (0.367 seconds).
+Test Case '-[SatelliteForecastTests.NativeArchitectureTests testSubdivisionsAndShortCountryNames]' started.
+2026-10-03 15:11:07.389885-0700 SatelliteForecastApp[68018:2713034] [XPCErrors] non-launching port is incompatible with service identifier "com.apple.PointerUI.pointeruid.default-service"
+2026-10-03 15:11:07.395737-0700 SatelliteForecastApp[68018:2713034] Unbalanced calls to begin/end appearance transitions for <_TtGC7SwiftUI19UIHostingControllerGV21SatelliteForecastImpl8RootViewV22SatelliteForecastTestsP10$1088456a88EmptySkyVS3_P10$1088456d013EmptyForecastVS3_P10$10884572013EmptySettingsVS3_P10$1088456f815EmptySatellites__: 0x107284f00>.
+Test Case '-[SatelliteForecastTests.NativeArchitectureTests testSubdivisionsAndShortCountryNames]' passed (0.594 seconds).
+Test Case '-[SatelliteForecastTests.NativeArchitectureTests testUnavailableCurrentLocationKeepsExistingSelection]' started.
+Test Case '-[SatelliteForecastTests.NativeArchitectureTests testUnavailableCurrentLocationKeepsExistingSelection]' passed (0.001 seconds).
+Test Suite 'NativeArchitectureTests' passed at 2026-10-03 15:11:07.984.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 2.052 (2.057) seconds
+Test Suite 'ScreenSnapshotTests' started at 2026-10-03 15:11:07.984.
+Test Case '-[SatelliteForecastTests.ScreenSnapshotTests testInteractiveDuoReview]' started.
+2026-10-03 15:11:08.307037-0700 SatelliteForecastApp[68018:2713319] [Core] {"msg":"file does not exist... clearing", "file":/private/var/run/com.apple.security.cryptexd/mnt/iOS_24A94401/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.1.simruntime/Contents/Resources/RuntimeRoot/private/var/Managed Preferences/kCFPreferencesCurrentUser/com.apple.CoreMotion.plist, "error":Error Domain=NSCocoaErrorDomain Code=260 "The file “com.apple.CoreMotion.plist” couldn’t be opened because there is no such file." UserInfo={NSFilePath=/private/var/run/com.apple.security.cryptexd/mnt/iOS_24A94401/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.1.simruntime/Contents/Resources/RuntimeRoot/private/var/Managed Preferences/kCFPreferencesCurrentUser/com.apple.CoreMotion.plist, NSURL=file:///private/var/run/com.apple.security.cryptexd/mnt/iOS_24A94401/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS%2027.1.simruntime/Contents/Resources/RuntimeRoot/private/var/Managed%20Preferences/kCFPreferencesCurrentUser/com.apple.CoreMotion.plist, NSUnderlyingError=0x107f96130 {Error Domain=NSPOSIXErrorDomain Code=2 "No such file or directory"}}}
+2026-10-03 15:11:09.497950-0700 SatelliteForecastApp[68018:2713034] [] CVPixelBufferCreate returned err -6680. width 1024, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 15:11:09.584458-0700 SatelliteForecastApp[68018:2713034] [Invalid Configuration] Update NavigationRequestObserver tried to update multiple times per frame.
+2026-10-03 15:11:09.670317-0700 SatelliteForecastApp[68018:2713034] [Invalid Configuration] onChange(of: Bool) action tried to update multiple times per frame.
+IOSurfaceClientSetSurfaceNotify failed e00002c7
+2026-10-03 15:11:40.096867-0700 SatelliteForecastApp[68018:2713325] [] CVPixelBufferCreate returned err -6680. width 1024, height 512, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 15:11:58.979440-0700 SatelliteForecastApp[68018:2713034] [] (Fig) signalled err=-12900 at <>:1250
+2026-10-03 15:11:58.979514-0700 SatelliteForecastApp[68018:2713034] [] (Fig) signalled err=-12900 at <>:1250
+2026-10-03 15:11:59.305558-0700 SatelliteForecastApp[68018:2713034] [] (Fig) signalled err=-12900 at <>:1250
+2026-10-03 15:11:59.305626-0700 SatelliteForecastApp[68018:2713034] [] (Fig) signalled err=-12900 at <>:1250
+<unknown>:0: warning: -[SatelliteForecastTests.ScreenSnapshotTests testInteractiveDuoReview] : [Internal] Thread running at User-interactive quality-of-service class waiting on a thread without a QoS class specified (base priority 31). Investigate ways to avoid priority inversions
+2026-10-03 15:12:02.853499-0700 SatelliteForecastApp[68018:2713034] [] CVPixelBufferCreate returned err -6680. width 512, height 256, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+2026-10-03 15:12:03.008318-0700 SatelliteForecastApp[68018:2714694] [] CVPixelBufferCreate returned err -6680. width 4096, height 2048, pixel format RGBA, options [ExtendedPixelsRight = 0, ExtendedPixelsBottom = 0, BytesPerRowAlignment = 64]
+unrecognised property keyunrecognised property keyunrecognised property keyunrecognised property keyTest Case '-[SatelliteForecastTests.ScreenSnapshotTests testInteractiveDuoReview]' passed (148.320 seconds).
+Test Suite 'ScreenSnapshotTests' passed at 2026-10-03 22:13:36.305.
+	 Executed 1 test, with 0 failures (0 unexpected) in 148.320 (148.321) seconds
+Test Suite 'SatelliteForecastTests.xctest' passed at 2026-10-03 22:13:36.306.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 150.372 (150.379) seconds
+Test Suite 'Selected tests' passed at 2026-10-03 22:13:36.306.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 150.372 (150.381) seconds
+2026-10-03 15:13:36.350 xcodebuild[67997:2712660] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94403>, error = invalidDigitCount(94403).
+2026-10-03 15:13:36.350 xcodebuild[67997:2712660] [MT] IDESchemeActionDeviceRecord: versionAndBuild = 27.1 (24A94401), error = invalidDigitCount(94401).
+2026-10-03 15:13:36.350 xcodebuild[67997:2712660] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94403>, error = invalidDigitCount(94403).
+2026-10-03 15:13:36.350 xcodebuild[67997:2712660] [MT] IDESchemeActionDeviceRecord: versionAndBuild = 27.1 (24A94401), error = invalidDigitCount(94401).
+2026-10-03 15:13:36.356 xcodebuild[67997:2712660] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94403>, error = invalidDigitCount(94403).
+2026-10-03 15:13:36.356 xcodebuild[67997:2712660] [MT] IDESchemeActionDeviceRecord: versionAndBuild = 27.1 (24A94401), error = invalidDigitCount(94401).
+2026-10-03 15:13:36.635 xcodebuild[67997:2712660] [MT] IDETestOperationsObserverDebug: 157.026 elapsed -- Testing started completed.
+2026-10-03 15:13:36.635 xcodebuild[67997:2712660] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-03 15:13:36.635 xcodebuild[67997:2712660] [MT] IDETestOperationsObserverDebug: 157.026 sec, +157.026 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/DuoImplementationPass1Final.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

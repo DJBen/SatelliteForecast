@@ -134,3 +134,19 @@ eight locales, retaining the other five public images and the widget-first galle
 order. `2.1.0/build-24/screenshot-sources.json` records exact source paths and hashes;
 its screenshot folders use relative symlinks to the reviewed PNGs. No moment inputs
 or weather fixture values changed.
+
+## 2.1.1 build 29 Alarms refresh
+
+Regenerate `01-forecast`, `02-pass-chart`, `03-pass-list` and `04-satellites` in all
+eight locales into `2.1.1/build-29/screenshots/` to show the fourth Alarms tab and
+manual alarm toolbar. Preserve the reviewed `2.0.0/build-20` selection records,
+including each observer, time zone, featured pass, clocks and pinned TLEs. Use the
+same illustrative weather fixture as 2.1.0. Retain the reviewed planetarium and
+widget PNGs through relative symlinks, with provenance in
+`inherited-screenshot-sources.json`. Keep the widget-first gallery order.
+
+Review the unselected bell on pushed pass-detail screens as well as root tabs:
+SwiftUI may otherwise substitute a filled symbol in the native tab bar. Build 29
+uses a resolved template bitmap to preserve the outlined unselected bell. The
+existing English “Peak elevation” caption in non-English pass lists remains a
+localization follow-up; the added navigation controls are localized.

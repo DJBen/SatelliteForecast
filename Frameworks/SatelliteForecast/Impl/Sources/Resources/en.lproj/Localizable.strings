@@ -479,3 +479,45 @@
 "Loading weather" = "Loading weather";
 "Weather unavailable" = "Weather unavailable";
 "Tap to retry" = "Tap to retry";
+
+/* Manual local pass alarms */
+"Set local alarm" = "Set local alarm";
+"View local alarm" = "View local alarm";
+"One local alarm with sound for this pass." = "One local alarm with sound for this pass.";
+
+/* Manual alarm time picker */
+"Pass starts" = "Pass starts";
+"Pass ends" = "Pass ends";
+"Pass moment" = "Pass moment";
+"Alarm time" = "Alarm time";
+"At event" = "At event";
+"5 min before" = "5 min before";
+"10 min before" = "10 min before";
+"Default notification sound" = "Default notification sound";
+"Save changes" = "Save changes";
+"Set alarm" = "Set alarm";
+"Edit alarm" = "Edit alarm";
+"Couldn't set alarm" = "Couldn't set alarm";
+
+"Never miss a station pass" = "Never miss a station pass";
+"Turn notifications back on" = "Turn notifications back on";
+"Get automatic alerts for visible ISS and Tiangong passes. Allow notifications to receive these alerts and local alarms with sound." = "Get automatic alerts for visible ISS and Tiangong passes. Allow notifications to receive these alerts and local alarms with sound.";
+"Notifications are off. Allow notifications in iOS Settings to receive automatic ISS and Tiangong alerts and your local alarms." = "Notifications are off. Allow notifications in iOS Settings to receive automatic ISS and Tiangong alerts and your local alarms.";
+"Enable notifications" = "Enable notifications";
+"Local alarms" = "Local alarms";
+"No local alarms yet" = "No local alarms yet";
+"One-off reminders for passes you choose. Tap an alarm to change its time." = "One-off reminders for passes you choose. Tap an alarm to change its time.";
+"Sound on" = "Sound on";
+"%@ after %@" = "%@ after %@";
+
+/* Ascending pass moment and its alarm offset. */
+"Reaches 10°" = "Reaches 10°";
+"%@ before reaching 10°" = "%@ before reaching 10°";
+
+/* Release localization audit: pass and alarm controls. */
+"Please try again." = "Please try again.";
+"Choose an upcoming pass to set a one-off reminder." = "Choose an upcoming pass to set a one-off reminder.";
+"Choose a pass" = "Choose a pass";
+"Live orbit globe" = "Live orbit globe";
+"Open pass chart" = "Open pass chart";
+"Automatic alerts for ISS and Tiangong." = "Automatic alerts for ISS and Tiangong.";

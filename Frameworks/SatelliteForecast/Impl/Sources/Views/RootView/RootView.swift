@@ -59,6 +59,8 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
     public let satelliteCategoryViewFactory: (SatelliteCategoryViewContext) -> SatelliteCategoryViewType
     public let settingsOverviewFactory: () -> SettingsOverViewViewType
 
+    public let alarmsFactory: () -> AnyView
+
     public init(
         selectedTab: Binding<SatelliteForecast.Tab>,
         settings: AppSettings,
@@ -66,7 +68,8 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
         realtimeSkyViewFactory: @escaping (RealtimeSkyViewContext) -> RealtimeSkyViewType,
         satelliteOverviewViewFactory: @escaping (SatelliteOverviewViewContext) -> SatelliteOverviewViewType,
         satelliteCategoryViewFactory: @escaping (SatelliteCategoryViewContext) -> SatelliteCategoryViewType,
-        settingsOverviewFactory: @escaping () -> SettingsOverViewViewType
+        settingsOverviewFactory: @escaping () -> SettingsOverViewViewType,
+        alarmsFactory: @escaping () -> AnyView = { AnyView(EmptyView()) }
     ) {
         self._selectedTab = selectedTab
         self.settings = settings
@@ -75,6 +78,7 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
         self.satelliteOverviewViewFactory = satelliteOverviewViewFactory
         self.satelliteCategoryViewFactory = satelliteCategoryViewFactory
         self.settingsOverviewFactory = settingsOverviewFactory
+        self.alarmsFactory = alarmsFactory
 
         let navBarAppearance = UINavigationBarAppearance()
         navBarAppearance.configureWithOpaqueBackground()
@@ -171,6 +175,17 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
             }
             
 
+            SwiftUI.Tab(value: .alarms, role: nil) {
+                alarmsFactory()
+            } label: {
+                Label {
+                    Text("Alarms", bundle: .module)
+                } icon: {
+                    Image(uiImage: selectedTab == .alarms ? AlarmTabIcon.filledAlarmBell : AlarmTabIcon.alarmBell)
+                        .renderingMode(.template)
+                }
+            }
+
             SwiftUI.Tab(value: .settings, role: nil) {
                 settingsOverviewFactory()
             } label: {
@@ -191,4 +206,22 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
         .foregroundStyle(AppTheme.text)
         .background(AppTheme.pageBackground.ignoresSafeArea())
     }
+}
+
+@MainActor
+private enum AlarmTabIcon {
+    // Rasterize the resolved SF Symbol so TabView cannot substitute its fill
+    // variant when an unselected tab hosts a pushed navigation destination.
+    static let alarmBell = tabBell("bell")
+    static let filledAlarmBell = tabBell("bell.fill")
+
+    private static func tabBell(_ name: String) -> UIImage {
+        let symbol = UIImage(systemName: name,
+            withConfiguration: UIImage.SymbolConfiguration(pointSize: 25, weight: .regular))!
+        return UIGraphicsImageRenderer(size: symbol.size).image { _ in
+            symbol.withTintColor(.black, renderingMode: .alwaysOriginal)
+                .draw(at: .zero)
+        }
+    }
+
 }

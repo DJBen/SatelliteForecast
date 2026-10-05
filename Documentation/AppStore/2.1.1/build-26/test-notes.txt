@@ -1,0 +1,5 @@
+Alarms is now the fourth tab with a bell icon, and alarm management has moved out of Settings.
+
+Test notification permission: Enable notifications should show the iOS prompt; denied access should offer Open notification settings; the card should disappear after permission is allowed, including when returning from iOS Settings.
+
+Local alarms use the grouped list with prominent times and date columns. Tap a saved alarm to edit its date/time with the same native picker used from pass details. Check that cancelling preserves the alarm, saving updates it in place, deleting removes it, and a scheduled local alarm plays the default notification sound on your device.

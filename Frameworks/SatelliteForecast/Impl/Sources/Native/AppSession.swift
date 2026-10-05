@@ -62,10 +62,16 @@ public final class AppSession {
   }
   /// Asks for notification permission and, once granted, registers this device for ISS and
   /// Tiangong push reminders. The backend delivers reminders to every registered device.
-  public func enableStationReminders() async -> Bool {
-    let granted = await notifications.enableStationReminders()
+  public func enableStationReminders(fromAlarms: Bool = false) async -> Bool {
+    let granted = await notifications.enableStationReminders(fromAlarms: fromAlarms)
     if granted, let token = debug.fcmToken { updateRegistration(token) }
     return granted
+  }
+  /// Enabling permission in iOS Settings must also activate the station push registration.
+  public func refreshNotifications() async {
+    let wasAuthorized = notifications.isAuthorized
+    await notifications.refresh()
+    if !wasAuthorized, notifications.isAuthorized, let token = debug.fcmToken { updateRegistration(token) }
   }
   public func handle(_ event: AppDelegateAction) {
     switch event {
@@ -73,13 +79,13 @@ public final class AppSession {
       notifications.register()
       BGTaskScheduler.shared.register(forTaskWithIdentifier: "calculateUpcomingPasses", using: nil)
       { $0.setTaskCompleted(success: true) }
-      Task { await notifications.refresh() }
+      Task { await refreshNotifications() }
     case .didRegisterForRemoteNotificationsWithDeviceToken: break
     case .didReceiveFCMToken(let token):
       debug.fcmToken = token
       updateRegistration(token)
     case .scenePhaseDidChange(_, let phase):
-      if phase == .active { Task { await notifications.refresh() } }
+      if phase == .active { Task { await refreshNotifications() } }
       if phase == .background {
         notifications.persist()
         let request = BGProcessingTaskRequest(identifier: "calculateUpcomingPasses")

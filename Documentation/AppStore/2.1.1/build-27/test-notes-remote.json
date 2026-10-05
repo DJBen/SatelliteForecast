@@ -1,0 +1,158 @@
+{
+  "data": [
+    {
+      "type": "betaBuildLocalizations",
+      "id": "10999641-ca38-494a-8694-79c72cccb2db",
+      "attributes": {
+        "locale": "ru"
+      },
+      "relationships": {
+        "build": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/10999641-ca38-494a-8694-79c72cccb2db/relationships/build",
+            "related": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/10999641-ca38-494a-8694-79c72cccb2db/build"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/10999641-ca38-494a-8694-79c72cccb2db"
+      }
+    },
+    {
+      "type": "betaBuildLocalizations",
+      "id": "b298c856-3880-42ca-abb3-57eda7e47aab",
+      "attributes": {
+        "locale": "ko"
+      },
+      "relationships": {
+        "build": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/b298c856-3880-42ca-abb3-57eda7e47aab/relationships/build",
+            "related": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/b298c856-3880-42ca-abb3-57eda7e47aab/build"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/b298c856-3880-42ca-abb3-57eda7e47aab"
+      }
+    },
+    {
+      "type": "betaBuildLocalizations",
+      "id": "fae8f01d-0e39-47de-b7f7-9f5923ef2615",
+      "attributes": {
+        "locale": "fr-FR"
+      },
+      "relationships": {
+        "build": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/fae8f01d-0e39-47de-b7f7-9f5923ef2615/relationships/build",
+            "related": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/fae8f01d-0e39-47de-b7f7-9f5923ef2615/build"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/fae8f01d-0e39-47de-b7f7-9f5923ef2615"
+      }
+    },
+    {
+      "type": "betaBuildLocalizations",
+      "id": "0b263a35-ea90-4935-9b95-64b438f546f5",
+      "attributes": {
+        "locale": "ja"
+      },
+      "relationships": {
+        "build": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/0b263a35-ea90-4935-9b95-64b438f546f5/relationships/build",
+            "related": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/0b263a35-ea90-4935-9b95-64b438f546f5/build"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/0b263a35-ea90-4935-9b95-64b438f546f5"
+      }
+    },
+    {
+      "type": "betaBuildLocalizations",
+      "id": "ddb1d018-224d-46bc-8b1a-301c6bb612da",
+      "attributes": {
+        "locale": "es-ES"
+      },
+      "relationships": {
+        "build": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/ddb1d018-224d-46bc-8b1a-301c6bb612da/relationships/build",
+            "related": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/ddb1d018-224d-46bc-8b1a-301c6bb612da/build"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/ddb1d018-224d-46bc-8b1a-301c6bb612da"
+      }
+    },
+    {
+      "type": "betaBuildLocalizations",
+      "id": "bbc5066a-b365-4ac9-a170-4be2357c97fe",
+      "attributes": {
+        "locale": "pt-BR"
+      },
+      "relationships": {
+        "build": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/bbc5066a-b365-4ac9-a170-4be2357c97fe/relationships/build",
+            "related": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/bbc5066a-b365-4ac9-a170-4be2357c97fe/build"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/bbc5066a-b365-4ac9-a170-4be2357c97fe"
+      }
+    },
+    {
+      "type": "betaBuildLocalizations",
+      "id": "efb15551-ba99-4088-a0e3-2f8562d164bf",
+      "attributes": {
+        "locale": "en-US",
+        "whatsNew": "Alarms is now the fourth tab with a bell icon, and alarm management has moved out of Settings.\n\nTest notification permission: Enable notifications should show the iOS prompt; denied access should offer Open notification settings; the card should disappear after permission is allowed, including when returning from iOS Settings.\n\nLocal alarms use the grouped list with prominent times and date columns. Tap a saved alarm to edit its date/time with the same native picker used from pass details. Check that cancelling preserves the alarm, saving updates it in place, deleting removes it, and a scheduled local alarm plays the default notification sound on your device."
+      },
+      "relationships": {
+        "build": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/efb15551-ba99-4088-a0e3-2f8562d164bf/relationships/build",
+            "related": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/efb15551-ba99-4088-a0e3-2f8562d164bf/build"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/efb15551-ba99-4088-a0e3-2f8562d164bf"
+      }
+    },
+    {
+      "type": "betaBuildLocalizations",
+      "id": "9d773b4d-6223-4dc8-a325-dab3c4563c31",
+      "attributes": {
+        "locale": "zh-Hans"
+      },
+      "relationships": {
+        "build": {
+          "links": {
+            "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/9d773b4d-6223-4dc8-a325-dab3c4563c31/relationships/build",
+            "related": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/9d773b4d-6223-4dc8-a325-dab3c4563c31/build"
+          }
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations/9d773b4d-6223-4dc8-a325-dab3c4563c31"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://api.appstoreconnect.apple.com/v1/betaBuildLocalizations?filter%5Bbuild%5D=6a516f46-91bd-41f4-b171-f2b141e16914"
+  },
+  "meta": {
+    "paging": {
+      "total": 8,
+      "limit": 50
+    }
+  }
+}

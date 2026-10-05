@@ -1,0 +1,1091 @@
+diff --git a/Documentation/Analytics.md b/Documentation/Analytics.md
+index 40fe16b8..96f3171e 100644
+--- a/Documentation/Analytics.md
++++ b/Documentation/Analytics.md
+@@ -393,3 +393,12 @@ weather values, guest IDs, and Auth tokens are never included in AppAnalytics.
+ Backend request-limit/cache records are operational data, not product telemetry.
+ Snapshot tests, XCTest hosts, and previews never authenticate or request live
+ weather. No weather screen events or additional analytics collection are added.
++
++### Duo UX implementation pass (2026-10-03)
++
++- Home labels the existing permission opt-in “Enable alerts” and explains that ISS and Tiangong automatic push notifications are enabled. It still does not schedule a local alarm; existing `station_reminders_enabled` semantics are unchanged.
++- Empty Alarms’ “Choose a pass” selects Forecast and opens its existing all-passes route. No alarm conversion is logged from navigation. Edit appears only when a saved alarm exists.
++- The single-pass form now awaits the notification service’s success result, stays open on failure, and disables repeated submission while saving. `alarm_scheduled` remains after OS acceptance and persistence, with `screen=alarm_setup`. Dismissal alone never logs a successful conversion.
++- Chart guidance and compact pass rows retain the existing screen names and measurement boundaries. Debug capture fixtures remain excluded from production telemetry.
++
++The pass-detail top-right alarm control opens the existing `alarm_setup` screen for any satellite pass. Its filled icon reflects an existing local alarm. Manual local notifications include the default notification sound. Opening the form is not an alarm conversion; `schedule_alarm` and `alarm_scheduled` retain `screen=alarm_setup` and the existing OS-acceptance and persistence boundary. No new events or parameters are introduced.
+diff --git a/Frameworks/SatelliteForecast/Impl/Sources/Native/NotificationService.swift b/Frameworks/SatelliteForecast/Impl/Sources/Native/NotificationService.swift
+index af85b872..fe417af5 100644
+--- a/Frameworks/SatelliteForecast/Impl/Sources/Native/NotificationService.swift
++++ b/Frameworks/SatelliteForecast/Impl/Sources/Native/NotificationService.swift
+@@ -95,10 +95,12 @@ public final class NotificationService {
+     scheduled = scheduled.filter { !ids.contains($0.id) }
+     persist()
+   }
++  @discardableResult
+   public func schedule(
+     _ notification: PassNotification, snapshots: PassSnapshots, catalog: AppStarCatalog,
+     offset: Double = 0, rapid: Bool = false, fromAlarmSetup: Bool = false, fromForecast: Bool = false
+-  ) async {
++  ) async -> Bool {
++    errorMessage = nil
+     let source: AppAnalytics.Screen = fromForecast ? .forecast : (fromAlarmSetup ? .alarmSetup : .passes)
+     let metric = AppAnalytics.Operation("schedule_alarm", screen: source)
+     defer { metric.finish("cancelled") }
+@@ -106,7 +108,7 @@ public final class NotificationService {
+       guard try await center.requestAuthorization(options: [.alert, .sound, .badge]) else {
+         metric.finish("blocked", reason: "notification_permission_denied")
+         errorMessage = AppLocalization.text("Notifications are disabled. Enable them in Settings to schedule an alarm.")
+-        return
++        return false
+       }
+       let seconds =
+         rapid
+@@ -114,10 +116,11 @@ public final class NotificationService {
+       guard seconds > 0 else {
+         metric.finish("blocked", reason: "alert_time_passed")
+         errorMessage = AppLocalization.text("This alert time has already passed.")
+-        return
++        return false
+       }
+       let content = UNMutableNotificationContent()
+       content.categoryIdentifier = "PASS"
++      content.sound = .default
+       content.title = LocalizedStrings.Notification.title(passNotification: notification)
+       content.body = LocalizedStrings.Notification.description(passNotification: notification)
+       content.userInfo = [
+@@ -150,9 +153,11 @@ public final class NotificationService {
+       persist()
+       metric.finish("success")
+       AppAnalytics.event("alarm_scheduled", screen: source)
++      return true
+     } catch is CancellationError {} catch {
+       metric.finish("failure", reason: "scheduling_failed")
+       errorMessage = error.localizedDescription
+     }
++    return false
+   }
+ }
+diff --git a/Frameworks/SatelliteForecast/Impl/Sources/Native/PassModels.swift b/Frameworks/SatelliteForecast/Impl/Sources/Native/PassModels.swift
+index 35c29dea..1abc96b0 100644
+--- a/Frameworks/SatelliteForecast/Impl/Sources/Native/PassModels.swift
++++ b/Frameworks/SatelliteForecast/Impl/Sources/Native/PassModels.swift
+@@ -153,6 +153,24 @@ public final class PassModel {
+ 
+ @MainActor @Observable
+ public final class PassAlarmModel {
++  public private(set) var isSaving = false
++  public private(set) var saveError: String?
++  public func save(_ notification: PassNotification, snapshots: PassSnapshots) async -> Bool {
++    guard !isSaving else { return false }
++    guard let session else {
++      saveError = AppLocalization.text("Please try again.")
++      return false
++    }
++    isSaving = true
++    saveError = nil
++    defer { isSaving = false }
++    let saved = await session.notifications.schedule(notification, snapshots: snapshots,
++      catalog: session.catalog, offset: session.debug.config.effectiveOffset,
++      rapid: session.debug.config.rapidNotificationDelivery, fromAlarmSetup: true)
++    if !saved { saveError = session.notifications.errorMessage }
++    return saved
++  }
++
+   private var local: PassAlarmSettingsModalViewState
+   private let session: AppSession?
+   public var state: PassAlarmSettingsModalViewState {
+diff --git a/Frameworks/SatelliteForecast/Impl/Sources/Native/ScreenFactory.swift b/Frameworks/SatelliteForecast/Impl/Sources/Native/ScreenFactory.swift
+index 51d316f3..5766341e 100644
+--- a/Frameworks/SatelliteForecast/Impl/Sources/Native/ScreenFactory.swift
++++ b/Frameworks/SatelliteForecast/Impl/Sources/Native/ScreenFactory.swift
+@@ -96,7 +96,12 @@ public struct NativeSettingsView: SettingsOverviewView {
+       alarmSettingsViewFactory: {
+         AlarmSettingsView(
+           notifications: Array(session.notifications.scheduled),
+-          deleteNotifications: { session.notifications.cancel(Array($0)) })
++          deleteNotifications: { session.notifications.cancel(Array($0)) },
++          choosePass: {
++            session.navigation.tab = .forecast
++            session.navigation.forecastPath = NavigationPath()
++            session.navigation.forecastPath.append(ForecastRoute.allPasses)
++          })
+       })
+   }
+ }
+diff --git a/Frameworks/SatelliteForecast/Impl/Sources/Resources/en.lproj/Localizable.strings b/Frameworks/SatelliteForecast/Impl/Sources/Resources/en.lproj/Localizable.strings
+index 4e57f170..e8353b22 100644
+--- a/Frameworks/SatelliteForecast/Impl/Sources/Resources/en.lproj/Localizable.strings
++++ b/Frameworks/SatelliteForecast/Impl/Sources/Resources/en.lproj/Localizable.strings
+@@ -479,3 +479,8 @@
+ "Loading weather" = "Loading weather";
+ "Weather unavailable" = "Weather unavailable";
+ "Tap to retry" = "Tap to retry";
++
++/* Manual local pass alarms */
++"Set local alarm" = "Set local alarm";
++"View local alarm" = "View local alarm";
++"One local alarm with sound for this pass." = "One local alarm with sound for this pass.";
+diff --git a/Frameworks/SatelliteForecast/Impl/Sources/Resources/es.lproj/Localizable.strings b/Frameworks/SatelliteForecast/Impl/Sources/Resources/es.lproj/Localizable.strings
+index 92e9e324..16750d12 100644
+--- a/Frameworks/SatelliteForecast/Impl/Sources/Resources/es.lproj/Localizable.strings
++++ b/Frameworks/SatelliteForecast/Impl/Sources/Resources/es.lproj/Localizable.strings
+@@ -838,3 +838,8 @@ The localized string for the status of a spare satellite */
+ "Loading weather" = "Cargando el tiempo";
+ "Weather unavailable" = "Tiempo no disponible";
+ "Tap to retry" = "Toca para reintentar";
++
++/* Manual local pass alarms */
++"Set local alarm" = "Configurar alarma local";
++"View local alarm" = "Ver alarma local";
++"One local alarm with sound for this pass." = "Una alarma local con sonido para este paso.";
+diff --git a/Frameworks/SatelliteForecast/Impl/Sources/Resources/fr.lproj/Localizable.strings b/Frameworks/SatelliteForecast/Impl/Sources/Resources/fr.lproj/Localizable.strings
+index 2d47c559..8badfc3d 100644
+--- a/Frameworks/SatelliteForecast/Impl/Sources/Resources/fr.lproj/Localizable.strings
++++ b/Frameworks/SatelliteForecast/Impl/Sources/Resources/fr.lproj/Localizable.strings
+@@ -838,3 +838,8 @@ The localized string for the status of a spare satellite */
+ "Loading weather" = "Chargement de la météo";
+ "Weather unavailable" = "Météo indisponible";
+ "Tap to retry" = "Toucher pour réessayer";
++
++/* Manual local pass alarms */
++"Set local alarm" = "Définir une alarme locale";
++"View local alarm" = "Voir l’alarme locale";
++"One local alarm with sound for this pass." = "Une alarme locale avec son pour ce passage.";
+diff --git a/Frameworks/SatelliteForecast/Impl/Sources/Resources/ja.lproj/Localizable.strings b/Frameworks/SatelliteForecast/Impl/Sources/Resources/ja.lproj/Localizable.strings
+index 28a1aa31..1cbb6fb3 100644
+--- a/Frameworks/SatelliteForecast/Impl/Sources/Resources/ja.lproj/Localizable.strings
++++ b/Frameworks/SatelliteForecast/Impl/Sources/Resources/ja.lproj/Localizable.strings
+@@ -838,3 +838,8 @@ The localized string for the status of a spare satellite */
+ "Loading weather" = "天気を読み込み中";
+ "Weather unavailable" = "天気を取得できません";
+ "Tap to retry" = "タップして再試行";
++
++/* Manual local pass alarms */
++"Set local alarm" = "ローカルアラームを設定";
++"View local alarm" = "ローカルアラームを表示";
++"One local alarm with sound for this pass." = "この通過に対して音付きのローカルアラームを1回鳴らします。";
+diff --git a/Frameworks/SatelliteForecast/Impl/Sources/Resources/ko.lproj/Localizable.strings b/Frameworks/SatelliteForecast/Impl/Sources/Resources/ko.lproj/Localizable.strings
+index 351dccdf..a8262ca8 100644
+--- a/Frameworks/SatelliteForecast/Impl/Sources/Resources/ko.lproj/Localizable.strings
++++ b/Frameworks/SatelliteForecast/Impl/Sources/Resources/ko.lproj/Localizable.strings
+@@ -838,3 +838,8 @@ The localized string for the status of a spare satellite */
+ "Loading weather" = "날씨 불러오는 중";
+ "Weather unavailable" = "날씨를 불러올 수 없음";
+ "Tap to retry" = "탭하여 다시 시도";
++
++/* Manual local pass alarms */
++"Set local alarm" = "로컬 알람 설정";
++"View local alarm" = "로컬 알람 보기";
++"One local alarm with sound for this pass." = "이 통과에 대해 소리가 나는 로컬 알람을 한 번 울립니다.";
+diff --git a/Frameworks/SatelliteForecast/Impl/Sources/Resources/pt-BR.lproj/Localizable.strings b/Frameworks/SatelliteForecast/Impl/Sources/Resources/pt-BR.lproj/Localizable.strings
+index 532f7a8e..89325598 100644
+--- a/Frameworks/SatelliteForecast/Impl/Sources/Resources/pt-BR.lproj/Localizable.strings
++++ b/Frameworks/SatelliteForecast/Impl/Sources/Resources/pt-BR.lproj/Localizable.strings
+@@ -837,3 +837,8 @@ The localized string for the status of a spare satellite */
+ "Loading weather" = "Carregando o tempo";
+ "Weather unavailable" = "Tempo indisponível";
+ "Tap to retry" = "Toque para tentar novamente";
++
++/* Manual local pass alarms */
++"Set local alarm" = "Definir alarme local";
++"View local alarm" = "Ver alarme local";
++"One local alarm with sound for this pass." = "Um alarme local com som para esta passagem.";
+diff --git a/Frameworks/SatelliteForecast/Impl/Sources/Resources/ru.lproj/Localizable.strings b/Frameworks/SatelliteForecast/Impl/Sources/Resources/ru.lproj/Localizable.strings
+index 23456321..a9fdf0ba 100644
+--- a/Frameworks/SatelliteForecast/Impl/Sources/Resources/ru.lproj/Localizable.strings
++++ b/Frameworks/SatelliteForecast/Impl/Sources/Resources/ru.lproj/Localizable.strings
+@@ -838,3 +838,8 @@ The localized string for the status of a spare satellite */
+ "Loading weather" = "Загрузка погоды";
+ "Weather unavailable" = "Погода недоступна";
+ "Tap to retry" = "Нажмите, чтобы повторить";
++
++/* Manual local pass alarms */
++"Set local alarm" = "Установить локальный будильник";
++"View local alarm" = "Посмотреть локальный будильник";
++"One local alarm with sound for this pass." = "Один локальный будильник со звуком для этого пролёта.";
+diff --git a/Frameworks/SatelliteForecast/Impl/Sources/Resources/zh-Hans.lproj/Localizable.strings b/Frameworks/SatelliteForecast/Impl/Sources/Resources/zh-Hans.lproj/Localizable.strings
+index 6fe93e8d..656856a5 100644
+--- a/Frameworks/SatelliteForecast/Impl/Sources/Resources/zh-Hans.lproj/Localizable.strings
++++ b/Frameworks/SatelliteForecast/Impl/Sources/Resources/zh-Hans.lproj/Localizable.strings
+@@ -838,3 +838,8 @@ The localized string for the status of a spare satellite */
+ "Loading weather" = "正在加载天气";
+ "Weather unavailable" = "天气暂不可用";
+ "Tap to retry" = "轻点重试";
++
++/* Manual local pass alarms */
++"Set local alarm" = "设置本地闹钟";
++"View local alarm" = "查看本地闹钟";
++"One local alarm with sound for this pass." = "为此次过境设置一次带声音的本地闹钟。";
+diff --git a/Frameworks/SatelliteForecast/Impl/Sources/Views/AlarmSettingsView/AlarmSettingsView.swift b/Frameworks/SatelliteForecast/Impl/Sources/Views/AlarmSettingsView/AlarmSettingsView.swift
+index 4536484d..913124d1 100644
+--- a/Frameworks/SatelliteForecast/Impl/Sources/Views/AlarmSettingsView/AlarmSettingsView.swift
++++ b/Frameworks/SatelliteForecast/Impl/Sources/Views/AlarmSettingsView/AlarmSettingsView.swift
+@@ -12,17 +12,20 @@ import SatelliteForecast
+ 
+ public struct AlarmSettingsView: View {
+     let notifications: [ScheduledPassNotification]
++    let choosePass: (() -> Void)?
+     let deleteNotifications: (Set<String>) -> Void
+ 
+     public init(
+         notifications: [ScheduledPassNotification],
+-        deleteNotifications: @escaping (Set<String>) -> Void
++        deleteNotifications: @escaping (Set<String>) -> Void,
++        choosePass: (() -> Void)? = nil
+     ) {
+         self.notifications = notifications.sorted {
+             if $0.notification.pass.rise.julianDate == $1.notification.pass.rise.julianDate { return $0.id < $1.id }
+             return $0.notification.pass.rise.julianDate < $1.notification.pass.rise.julianDate
+         }
+         self.deleteNotifications = deleteNotifications
++        self.choosePass = choosePass
+     }
+     
+     @ViewBuilder private func itemView(_ item: ScheduledPassNotification) -> some View {
+@@ -76,20 +79,26 @@ public struct AlarmSettingsView: View {
+                         .foregroundColor(AppTheme.muted)
+                     Text(
+                     """
+-                    Your alarms will appear here. Schedule an alarm by tapping the \(Image(systemName: "bell")) inside a pass.
++                    Choose an upcoming pass to set a one-off reminder.
+                     """,
+                     bundle: .module
+                     )
+                     .foregroundColor(AppTheme.muted)
+                     .multilineTextAlignment(.center)
++                    if let choosePass {
++                        Button(action: choosePass) { Text("Choose a pass", bundle: .module) }
++                            .buttonStyle(.borderedProminent)
++                            .foregroundStyle(Color(uiColor: .systemBackground))
++                            .frame(minHeight: 44)
++                    }
+                 }
+                 .listRowBackground(AppTheme.surface)
+                 .padding(
+                     EdgeInsets(
+                         top: 16,
+-                        leading: 32,
++                        leading: 8,
+                         bottom: 16,
+-                        trailing: 32
++                        trailing: 8
+                     )
+                 )
+             } else {
+@@ -118,7 +127,7 @@ public struct AlarmSettingsView: View {
+         .analyticsScreen(.alarms)
+         .navigationBarTitleDisplayMode(.inline)
+         .toolbar {
+-            EditButton()
++            if !notifications.isEmpty { EditButton() }
+         }
+     }
+ }
+diff --git a/Frameworks/SatelliteForecast/Impl/Sources/Views/AlarmSettingsView/PassAlarmSettingsModalView.swift b/Frameworks/SatelliteForecast/Impl/Sources/Views/AlarmSettingsView/PassAlarmSettingsModalView.swift
+index 3a2bb5e9..d095f9aa 100644
+--- a/Frameworks/SatelliteForecast/Impl/Sources/Views/AlarmSettingsView/PassAlarmSettingsModalView.swift
++++ b/Frameworks/SatelliteForecast/Impl/Sources/Views/AlarmSettingsView/PassAlarmSettingsModalView.swift
+@@ -48,6 +48,8 @@ public struct PassAlarmSettingsModalView: View {
+     @Environment(\.dismiss) private var dismiss
+     @State var viewModel: PassAlarmModel
+     private func send(_ action: PassAlarmSettingsModalViewAction) { viewModel.send(action); dismiss() }
++    @State private var showsCustomLeadTime = false
++    @State private var showsSaveError = false
+     let context: PassAlarmSettingsModalViewContext
+ 
+     @State var selectedTiming: PassNotification.Timing = .rise
+@@ -114,32 +116,19 @@ public struct PassAlarmSettingsModalView: View {
+         Button {
+             selectedTiming = timing
+         } label: {
+-            HStack {
+-                Text(
+-                    description(for: timing)
+-                )
+-                .if(isNotificationScheduled) { text in
+-                    text.foregroundColor(AppTheme.muted)
+-                }
+-
+-                Spacer()
+-
+-                Text(
+-                    TimingCell.formattedDatePosition(datePosition(for: timing)!)
+-                )
+-                .foregroundColor(AppTheme.muted)
+-
+-                if selectedTiming == timing {
+-                    Image(
+-                        systemName: "circle.inset.filled"
+-                    )
+-                    .foregroundColor(AppTheme.muted)
+-                } else {
+-                    Image(
+-                        systemName: "circle"
+-                    )
+-                    .foregroundColor(AppTheme.muted)
++            HStack(alignment: .top, spacing: 12) {
++                VStack(alignment: .leading, spacing: 4) {
++                    Text(description(for: timing))
++                        .foregroundStyle(AppTheme.text)
++                    Text(TimingCell.formattedDatePosition(datePosition(for: timing)!))
++                        .font(.subheadline.monospacedDigit())
++                        .foregroundStyle(AppTheme.muted)
+                 }
++                .fixedSize(horizontal: false, vertical: true)
++                Spacer(minLength: 4)
++                Image(systemName: selectedTiming == timing ? "circle.inset.filled" : "circle")
++                    .foregroundStyle(AppTheme.accent)
++                    .accessibilityHidden(true)
+             }
+             .padding(.horizontal, 16)
+             .padding(.vertical, 12)
+@@ -151,134 +140,122 @@ public struct PassAlarmSettingsModalView: View {
+             }
+         }
+         .buttonStyle(AlarmTimingButtonStyle())
+-        .disabled(isNotificationScheduled)
++        .disabled(isNotificationScheduled || viewModel.isSaving)
++        .accessibilityAddTraits(selectedTiming == timing ? .isSelected : [])
++    }
++
++    private var preset: Binding<TimeInterval> {
++        Binding(get: { showsCustomLeadTime || ![0, 300, 600].contains(offsetDuration) ? -1 : offsetDuration },
++                set: { value in
++                    showsCustomLeadTime = value == -1
++                    if value >= 0 { offsetDuration = value }
++                })
++    }
++
++    private func component(_ unit: Int, maximum: Int) -> Binding<Int> {
++        Binding(get: { Int(offsetDuration) / unit % (maximum + 1) },
++                set: { value in
++                    let old = Int(offsetDuration) / unit % (maximum + 1)
++                    offsetDuration += TimeInterval((value - old) * unit)
++                })
+     }
+ 
+     public var body: some View {
+         NavigationStack {
+-            VStack(alignment: .center) {
+-                VStack(spacing: 0) {
+-                    ForEach(Array(sortedTimings.enumerated()), id: \.element) { index, timing in
+-                        timingCell(
+-                            timing,
+-                            isFirst: index == 0,
+-                            isLast: index == sortedTimings.count - 1
+-                        )
+-
+-                        if index != sortedTimings.count - 1 {
+-                            Divider()
++            ScrollView {
++                VStack(alignment: .leading, spacing: 16) {
++                    VStack(alignment: .leading, spacing: 4) {
++                        Text(context.satelliteName).font(.headline)
++                        Text(Date(julianDate: context.passSnapshots.pass.rise.julianDate), format: .dateTime.month().day().year())
++                            .font(.subheadline).foregroundStyle(AppTheme.muted)
++                    }
++                    .fixedSize(horizontal: false, vertical: true)
++                    VStack(spacing: 0) {
++                        ForEach(Array(sortedTimings.enumerated()), id: \.element) { index, timing in
++                            timingCell(timing, isFirst: index == 0, isLast: index == sortedTimings.count - 1)
++                            if index != sortedTimings.count - 1 { Divider() }
+                         }
+                     }
++                    .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
++
++                    Text("Remind me", bundle: .module).font(.headline)
++                    Picker(selection: preset) {
++                        Text("At the event", bundle: .module).tag(TimeInterval(0))
++                        Text("5 minutes before", bundle: .module).tag(TimeInterval(300))
++                        Text("10 minutes before", bundle: .module).tag(TimeInterval(600))
++                        Text("Custom lead time", bundle: .module).tag(TimeInterval(-1))
++                    } label: { Text("Lead time", bundle: .module) }
++                    .pickerStyle(.menu)
++                    .disabled(isNotificationScheduled || viewModel.isSaving)
++                    if showsCustomLeadTime || ![0, 300, 600].contains(offsetDuration) {
++                        VStack(spacing: 12) {
++                            Stepper(value: component(3600, maximum: 24), in: 0...24) {
++                                Text("Hours: \(Int(offsetDuration) / 3600)", bundle: .module)
++                            }
++                            Stepper(value: component(60, maximum: 59), in: 0...59) {
++                                Text("Minutes: \(Int(offsetDuration) / 60 % 60)", bundle: .module)
++                            }
++                            Stepper(value: component(1, maximum: 59), in: 0...59) {
++                                Text("Seconds: \(Int(offsetDuration) % 60)", bundle: .module)
++                            }
++                        }
++                        .disabled(isNotificationScheduled || viewModel.isSaving)
++                    }
++                    Label(Self.alarmLabelText(date: Date(julianDate: datePosition(for: selectedTiming)!.julianDate)
++                        .addingTimeInterval(-offsetDuration)), systemImage: "bell")
++                        .font(.subheadline).foregroundStyle(AppTheme.muted)
++                        .fixedSize(horizontal: false, vertical: true)
++                    Text("One local alarm with sound for this pass.", bundle: .module)
++                        .font(.footnote).foregroundStyle(AppTheme.muted)
+                 }
+-                .background(AppTheme.surface)
+-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+-                .padding(.horizontal, 16)
+-
+-                HStack {
+-                    Text(
+-                        Self.leadTimeLabel
+-                    )
+-                    .font(.headline.lowercaseSmallCaps().weight(.regular))
+-                    .foregroundColor(AppTheme.text)
+-
+-                    Spacer()
+-                }
+-                .padding(.horizontal, 16)
+-                .padding(.top, 16)
+-
+-                TimeDurationPicker(
+-                    duration: $offsetDuration,
+-                    isDisabled: isNotificationScheduled
+-                )
+-
+-                Spacer()
+-
+-                HStack {
+-                    Image(
+-                        systemName: "bell"
+-                    )
+-                    .font(.callout.weight(.semibold))
+-                    .foregroundColor(AppTheme.muted)
+-
+-                    Text(
+-                        Self.alarmLabelText(
+-                            date: Date(
+-                                julianDate: datePosition(
+-                                    for: selectedTiming
+-                                )!.julianDate
+-                            )
+-                            .addingTimeInterval(-offsetDuration)
+-                        )
+-                    )
+-                    .font(.callout.weight(.semibold))
+-                    .foregroundColor(AppTheme.muted)
+-                }
+-                .padding(.horizontal, 16)
+-                .padding(.bottom, 16)
+-
+-                if isNotificationScheduled {
+-                    Button(role: .destructive) {
+-                        send(
+-                            .unscheduleAlarm(
+-                                context.passSnapshots.pass
+-                            )
+-                        )
+-                    } label: {
+-                        Text(
+-                            DeleteButton.title
+-                        )
+-                        // Inverse the foreground color because bordered prominent will be entirely white
+-                        .foregroundColor(Color(uiColor: .label.inversed()))
+-                        .padding(.horizontal, 16)
+-                        .padding(.vertical, 8)
+-                        .font(.headline.weight(.bold))
++                .padding(16)
++            }
++            .safeAreaInset(edge: .bottom, spacing: 0) {
++                Button(role: isNotificationScheduled ? .destructive : nil) {
++                    if isNotificationScheduled {
++                        send(.unscheduleAlarm(context.passSnapshots.pass))
++                    } else {
++                        let notification = PassNotification(pass: context.passSnapshots.pass,
++                            satelliteName: context.satelliteName, category: context.category,
++                            observer: context.observer, timing: selectedTiming, timeOffset: -offsetDuration)
++                        Task {
++                            guard !viewModel.isSaving else { return }
++                            if await viewModel.save(notification, snapshots: context.passSnapshots) { dismiss() }
++                            else { showsSaveError = true }
++                        }
+                     }
+-                    .buttonStyle(.borderedProminent)
+-                } else {
+-                    Button {
+-                        let passNotification = PassNotification(
+-                            pass: context.passSnapshots.pass,
+-                            satelliteName: context.satelliteName,
+-                            category: context.category,
+-                            observer: context.observer,
+-                            timing: selectedTiming,
+-                            timeOffset: -offsetDuration
+-                        )
+-                        send(
+-                            .scheduleAlarm(
+-                                passNotification,
+-                                passSnapshots: context.passSnapshots
+-                            )
+-                        )
+-                    } label: {
+-                        Text(
+-                            ConfirmButton.title
+-                        )
+-                        // Inverse the foreground color because bordered prominent will be entirely white
+-                        .foregroundColor(Color(uiColor: .label.inversed()))
+-                        .padding(.horizontal, 16)
+-                        .padding(.vertical, 8)
+-                        .font(.headline.weight(.bold))
++                } label: {
++                    HStack {
++                        if viewModel.isSaving { ProgressView() }
++                        Text(isNotificationScheduled ? DeleteButton.title : ConfirmButton.title)
++                            .fixedSize(horizontal: false, vertical: true)
+                     }
+-                    .buttonStyle(.borderedProminent)
++                    .font(.headline)
++                    .frame(maxWidth: .infinity, minHeight: 44)
+                 }
++                .buttonStyle(.borderedProminent)
++                .foregroundStyle(Color(uiColor: .systemBackground))
++                .disabled(viewModel.isSaving)
++                .padding(16)
++                .background(AppTheme.background)
+             }
+             .modifier(AppSurface())
+-        .navigationTitle(Text(isNotificationScheduled ? NavigationBar.viewAlarmTitle : NavigationBar.title))
+-        .analyticsScreen(.alarmSetup)
+-            .navigationBarTitleDisplayMode(UIScreen.main.bounds.height > 700 ? .automatic : .inline)
++            .navigationTitle(Text(isNotificationScheduled ? NavigationBar.viewAlarmTitle : NavigationBar.title))
++            .analyticsScreen(.alarmSetup)
++            .navigationBarTitleDisplayMode(.inline)
++            .interactiveDismissDisabled(viewModel.isSaving)
+             .toolbar {
+                 ToolbarItem(placement: .cancellationAction) {
+-                    Button(
+-                        NavigationBar.dismiss,
+-                        role: .cancel
+-                    ) {
+-                        send(.dismissModal)
+-                    }
++                    Button(NavigationBar.dismiss, role: .cancel) { send(.dismissModal) }
++                        .disabled(viewModel.isSaving)
+                 }
+             }
++            .alert(Text("Couldn't set reminder", bundle: .module), isPresented: $showsSaveError) {
++                Button(AppLocalization.text("OK"), role: .cancel) { }
++            } message: { Text(viewModel.saveError ?? AppLocalization.text("Please try again.")) }
+         }
+     }
++
+ }
+ 
+ struct AlarmTimingButtonStyle: ButtonStyle {
+@@ -294,18 +271,18 @@ struct AlarmTimingButtonStyle: ButtonStyle {
+ extension PassAlarmSettingsModalView {
+     enum NavigationBar {
+         static let title = NSLocalizedString(
+-            "PassAlarmSettingsModalView.navigationBar.title",
++            "PassAlarmSettingsModalView.navigationBar.createReminder",
+             tableName: nil,
+             bundle: .module,
+-            value: "Schedule alarm",
++            value: "Set reminder",
+             comment: "Navigation title of pass alarm settings."
+         )
+ 
+         static let viewAlarmTitle = NSLocalizedString(
+-            "PassAlarmSettingsModalView.navigationBar.title",
++            "PassAlarmSettingsModalView.navigationBar.viewReminder",
+             tableName: nil,
+             bundle: .module,
+-            value: "View alarm",
++            value: "View reminder",
+             comment: "Navigation title of pass alarm settings, view alarm"
+         )
+ 
+@@ -335,10 +312,10 @@ extension PassAlarmSettingsModalView {
+ 
+     enum ConfirmButton {
+         static let title = NSLocalizedString(
+-            "PassAlarmSettingsModalView.confirmButton.title",
++            "PassAlarmSettingsModalView.confirmButton.setReminder",
+             tableName: nil,
+             bundle: .module,
+-            value: "Schedule alarm",
++            value: "Set reminder",
+             comment: "Title of confirm button of pass alarm settings."
+         )
+     }
+diff --git a/Frameworks/SatelliteForecast/Impl/Sources/Views/AllPassesView/AllPassesView.swift b/Frameworks/SatelliteForecast/Impl/Sources/Views/AllPassesView/AllPassesView.swift
+index 06eeed5c..496e0309 100644
+--- a/Frameworks/SatelliteForecast/Impl/Sources/Views/AllPassesView/AllPassesView.swift
++++ b/Frameworks/SatelliteForecast/Impl/Sources/Views/AllPassesView/AllPassesView.swift
+@@ -119,6 +119,7 @@ public struct AllPassesView: View {
+         }
+     }
+ 
++    @State private var showsGlobe = false
+     @State var viewModel: PassListModel
+ 
+     let context: AllPassesViewContext
+@@ -240,9 +241,8 @@ public struct AllPassesView: View {
+                             passSnapshots: item.passSnapshots
+                         )
+                     ) {
+-                        previewCell(item, observer: observer)
++                        compactPassCell(item)
+                     }
+-                    .modifier(VisiblePassRowHeight())
+                     .overlay {
+                         if !hasOpenedVisiblePass, item.index == items.first?.index,
+                            item.passSnapshots.pass.visibility == .visible {
+@@ -272,6 +272,29 @@ public struct AllPassesView: View {
+         }
+     }
+ 
++    private func compactPassCell(_ item: Item) -> some View {
++        let pass = item.passSnapshots.pass
++        return VStack(alignment: .leading, spacing: 6) {
++            HStack(alignment: .firstTextBaseline) {
++                Text(Date(julianDate: pass.rise.julianDate), format: .dateTime.month(.abbreviated).day().hour().minute())
++                    .font(.headline).fixedSize(horizontal: false, vertical: true)
++                if item.hasScheduledAlert {
++                    Image(systemName: "bell.fill").foregroundStyle(AppTheme.accent)
++                        .accessibilityLabel(Text("Alarm scheduled", bundle: .module))
++                }
++            }
++            Text(PassPreviewCell.visibleDurationText(for: pass, locale: .current))
++                .font(.subheadline).foregroundStyle(AppTheme.muted)
++            Text(PassView.descriptionToolbarText(for: pass))
++                .font(.subheadline).foregroundStyle(AppTheme.muted)
++                .fixedSize(horizontal: false, vertical: true)
++            Text("Peak elevation: \(Int(pass.culmination.elev.rounded()))°", bundle: .module)
++                .font(.subheadline).foregroundStyle(AppTheme.accent)
++        }
++        .padding(.vertical, 8)
++        .accessibilityElement(children: .combine)
++    }
++
+     private func previewCell(_ item: Item, observer: LatLonAlt) -> some View {
+         PassPreviewCell(satelliteInfo: context.satelliteInfo, observer: observer,
+             passSnapshots: item.passSnapshots, hasScheduledAlert: item.hasScheduledAlert,
+@@ -344,9 +367,7 @@ public struct AllPassesView: View {
+                 }
+                 .accessibilityLabel(Text("Show help", bundle: .module, comment: "Accessibility label for help button"))
+             }
+-            Text(AllPassesView.Section.VisiblePasses.headerCaption)
+-                .font(.caption)
+-                .foregroundColor(AppTheme.muted)
++
+         }
+         .textCase(nil)
+     }
+@@ -388,8 +409,11 @@ public struct AllPassesView: View {
+                 }
+ 
+                 SwiftUI.List {
+-                    SwiftUI.Section(header: mapHeader()) {
+-                        EmptyView()
++                    SwiftUI.Section {
++                        DisclosureGroup(isExpanded: $showsGlobe) { mapHeader() } label: {
++                            Label(AppLocalization.text("Live orbit globe"), systemImage: "globe")
++                        }
++                        .listRowBackground(AppTheme.surface)
+                     }
+ 
+                     SwiftUI.Section(header: visiblePassHeader) {
+diff --git a/Frameworks/SatelliteForecast/Impl/Sources/Views/PassView/DeviceOrientationGuidanceView.swift b/Frameworks/SatelliteForecast/Impl/Sources/Views/PassView/DeviceOrientationGuidanceView.swift
+index 3ff6d351..1ef4ceda 100644
+--- a/Frameworks/SatelliteForecast/Impl/Sources/Views/PassView/DeviceOrientationGuidanceView.swift
++++ b/Frameworks/SatelliteForecast/Impl/Sources/Views/PassView/DeviceOrientationGuidanceView.swift
+@@ -4,6 +4,7 @@ import SatelliteForecast
+ 
+ /// A short, dismissible demonstration that stays with the chart it controls.
+ struct DeviceOrientationGuidanceView: View {
++    var useFixedChart: () -> Void = {}
+     let deviceMotionResult: Loadable<CMDeviceMotion, Error>
+     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+     @AppStorage("hasDismissedOrientationGuidance") private var hasDismissedGuidance = false
+@@ -25,73 +26,39 @@ struct DeviceOrientationGuidanceView: View {
+     var body: some View {
+         Group {
+             if !suppressed && !dismissed && !hasAligned && !isAligned {
+-                if hasDismissedGuidance && !expanded {
+-                    Button {
+-                        expanded = true
+-                    } label: {
+-                        phoneDemonstration
+-                            .frame(width: 64, height: 100)
+-                            .scaleEffect(0.65)
+-                            .frame(width: 56, height: 88)
+-                            .contentShape(RoundedRectangle(cornerRadius: 16))
+-                            .accessibilityHidden(true)
++                VStack(alignment: .leading, spacing: 10) {
++                    Button { expanded.toggle() } label: {
++                        Label(AppLocalization.text("Lift your iPhone"), systemImage: "iphone.gen3")
++                            .font(.subheadline.weight(.medium))
++                            .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                     }
+                     .buttonStyle(.plain)
+-                    .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 16))
+-                    .accessibilityLabel(AppLocalization.text("Lift your iPhone"))
+                     .accessibilityHint(AppLocalization.text("Show orientation guidance"))
+-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+-                    .transition(.opacity)
+-                } else {
+-                    VStack(spacing: 16) {
+-                        HStack(spacing: 16) {
+-                            phoneDemonstration
+-                                .frame(width: 64, height: 100)
+-                                .accessibilityHidden(true)
+-
+-                            VStack(alignment: .leading, spacing: 6) {
+-                                Text("Lift your iPhone", bundle: .module)
+-                                    .font(.headline)
+-                                    .fixedSize(horizontal: false, vertical: true)
+-                                Text("Camera up. Screen down.", bundle: .module)
+-                                    .font(.subheadline)
+-                                    .foregroundStyle(AppTheme.muted)
+-                                    .fixedSize(horizontal: false, vertical: true)
+-                            }
+-                            .padding(.trailing, 8)
+-                        }
+-                        if dismissalCount >= 2 {
+-                            Button {
+-                                suppressed = true
+-                            } label: {
+-                                Text("Don't show again", bundle: .module)
+-                                    .frame(maxWidth: .infinity)
+-                            }
+-                            .buttonStyle(.glass)
++                    if expanded {
++                        HStack(spacing: 12) {
++                            phoneDemonstration.frame(width: 64, height: 100).accessibilityHidden(true)
++                            Text("Camera up. Screen down.", bundle: .module)
++                                .font(.subheadline).fixedSize(horizontal: false, vertical: true)
+                         }
+-                    }
+-                    .padding(20)
+-                    .padding(.trailing, 8)
+-                    .frame(maxWidth: 310)
+-                    .glassEffect(.regular, in: .rect(cornerRadius: 26))
+-                    .overlay(alignment: .topTrailing) {
+                         Button {
+                             dismissalCount = min(dismissalCount + 1, 2)
+                             hasDismissedGuidance = true
+-                            expanded = false
+                             dismissed = true
+-                        } label: {
+-                            Image(systemName: "xmark")
+-                                .font(.caption.weight(.semibold))
+-                                .foregroundStyle(AppTheme.muted)
+-                                .frame(width: 44, height: 44)
+-                                .contentShape(Rectangle())
++                        } label: { Text("Dismiss orientation guidance", bundle: .module) }
++                        .frame(minHeight: 44)
++                        if dismissalCount >= 2 {
++                            Button { suppressed = true } label: { Text("Don't show again", bundle: .module) }
++                                .frame(minHeight: 44)
+                         }
+-                        .buttonStyle(.plain)
+-                        .accessibilityLabel(AppLocalization.text("Dismiss orientation guidance"))
+                     }
+-                    .transition(.opacity.combined(with: .scale(scale: 0.96)))
++                    Button(action: useFixedChart) { Text("Use fixed chart", bundle: .module) }
++                        .font(.subheadline).frame(minHeight: 44)
+                 }
++                .padding(.horizontal, 14)
++                .padding(.vertical, 4)
++                .frame(maxWidth: .infinity, alignment: .leading)
++                .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
++
+             }
+         }
+         .animation(reduceMotion ? nil : .easeInOut(duration: 0.25), value: hasDismissedGuidance)
+diff --git a/Frameworks/SatelliteForecast/Impl/Sources/Views/PassView/PassView.swift b/Frameworks/SatelliteForecast/Impl/Sources/Views/PassView/PassView.swift
+index d7d13bab..3ab4a0de 100644
+--- a/Frameworks/SatelliteForecast/Impl/Sources/Views/PassView/PassView.swift
++++ b/Frameworks/SatelliteForecast/Impl/Sources/Views/PassView/PassView.swift
+@@ -11,7 +11,6 @@ import SatelliteForecast
+ import SwiftUI
+ import StarryNight
+ import CoreMotion
+-import SatelliteWidgetSupport
+ 
+ public struct PassViewState {
+     public var scheduledPassNotifications: Set<ScheduledPassNotification>
+@@ -37,7 +36,6 @@ public struct PassView: View {
+     @AppStorage("passCompassEnabled") private var savedCompassEnabled = true
+     @State private var compassOverride: Bool?
+     @State private var showsPlanetarium = false
+-    @State private var liveActivityError: String?
+ 
+     private var isCompassEnabled: Bool {
+         get { compassOverride ?? savedCompassEnabled }
+@@ -105,15 +103,13 @@ public struct PassView: View {
+                 )
+                 // Azimuth labels sit outside the circle, including after compass rotation.
+                 .padding(.vertical, 20)
+-                .overlay {
+-                    if isCompassEnabled {
+-                        DeviceOrientationGuidanceView(deviceMotionResult: deviceMotionResult)
+-                            .padding(.horizontal, 4)
+-                    }
+-                }
+ 
+                 VStack(spacing: 20) {
+                     chartControls
++                    if isCompassEnabled {
++                        DeviceOrientationGuidanceView(useFixedChart: { isCompassEnabled = false },
++                            deviceMotionResult: deviceMotionResult)
++                    }
+                     eventTable
+                 }
+                 .padding(.horizontal, 20)
+@@ -121,38 +117,21 @@ public struct PassView: View {
+         }
+     }
+ 
+-    @ViewBuilder private var liveActivityControl: some View {
+-        if let session = viewModel.session,
+-           [25544, 48274].contains(context.passSnapshots.pass.noradIndex),
+-           context.passSnapshots.pass.visibility == .visible,
+-           session.debug.config.effectiveOffset == 0 {
+-            let service = session.liveActivity
+-            let followed = service.followedID == context.passSnapshots.pass.notificationIdentifier
+-            Button {
+-                Task {
+-                    if followed { await service.stop() } else { await service.follow(context) }
+-                    liveActivityError = service.errorKey
+-                }
+-            } label: {
+-                Image(systemName: followed ? "eye.fill" : "eye")
+-            }
+-            .disabled(service.busy)
+-            .accessibilityLabel(WidgetStrings.text(followed ? "live.stop" : "live.follow", locale: locale))
+-            .accessibilityAddTraits(followed ? [.isSelected] : [])
+-            .accessibilityIdentifier("pass.followLive")
+-            .alert(WidgetStrings.text("live.follow", locale: locale), isPresented: Binding(
+-                get: { liveActivityError != nil }, set: { if !$0 { liveActivityError = nil } }
+-            )) {
+-                if liveActivityError == "live.alreadyFollowing" {
+-                    Button(WidgetStrings.text("live.stop", locale: locale), role: .destructive) {
+-                        Task { await service.stop() }
+-                    }
+-                }
+-                Button(AppLocalization.text("OK"), role: .cancel) { liveActivityError = nil }
+-            } message: {
+-                Text(WidgetStrings.text(liveActivityError ?? "live.failed", locale: locale))
+-            }
++    private var isAlarmScheduled: Bool {
++        viewModel.state.scheduledPassNotifications.contains {
++            $0.id == context.passSnapshots.pass.notificationIdentifier
++        }
++    }
++
++    private var manualAlarmControl: some View {
++        Button {
++            viewModel.send(.showAlarmConfiguration(true))
++        } label: {
++            Image(systemName: isAlarmScheduled ? "alarm.fill" : "alarm")
+         }
++        .accessibilityLabel(Text(isAlarmScheduled ? "View local alarm" : "Set local alarm", bundle: .module))
++        .accessibilityAddTraits(isAlarmScheduled ? [.isSelected] : [])
++        .accessibilityIdentifier("pass.manualAlarm")
+     }
+ 
+     private var eventTable: some View {
+@@ -223,7 +202,7 @@ public struct PassView: View {
+                 ToolbarItem(
+                     placement: .primaryAction
+                 ) {
+-                    liveActivityControl
++                    manualAlarmControl
+                 }
+             }
+         }
+diff --git a/Frameworks/SatelliteForecast/Impl/Sources/Views/SatelliteOverview/ObservationHomeView.swift b/Frameworks/SatelliteForecast/Impl/Sources/Views/SatelliteOverview/ObservationHomeView.swift
+index 7e95456e..e9bd188d 100644
+--- a/Frameworks/SatelliteForecast/Impl/Sources/Views/SatelliteOverview/ObservationHomeView.swift
++++ b/Frameworks/SatelliteForecast/Impl/Sources/Views/SatelliteOverview/ObservationHomeView.swift
+@@ -89,6 +89,7 @@ struct ObservationHomeView: View {
+                         locationPrompt
+                     } else if let pass = passes.first {
+                         hero(pass)
++                        if dynamicType.isAccessibilitySize { weatherBadge }
+                         upcoming
+                         if hasFailure { failureNotice }
+                     } else if isLoading {
+@@ -158,12 +159,11 @@ struct ObservationHomeView: View {
+ 
+     private var header: some View {
+         VStack(alignment: .leading, spacing: 6) {
+-            Text("Next observation", bundle: .module).font(.largeTitle.bold())
++            Text("Next observation", bundle: .module).font(dynamicType.isAccessibilitySize ? .title2.bold() : .largeTitle.bold())
+                 .accessibilityAddTraits(.isHeader)
+             if dynamicType.isAccessibilitySize {
+                 VStack(alignment: .leading, spacing: 4) {
+                     locationButton
+-                    weatherBadge.frame(maxWidth: .infinity, alignment: .trailing)
+                 }
+             } else {
+                 HStack(alignment: .center, spacing: 12) {
+@@ -235,13 +235,24 @@ struct ObservationHomeView: View {
+                         .fixedSize(horizontal: false, vertical: true)
+                     }
+                     Text(ObservationOpportunity.name(pass)).font(.headline).foregroundStyle(AppTheme.text)
+-                    Text(summary(pass)).font(.subheadline).foregroundStyle(AppTheme.muted)
+-                        .fixedSize(horizontal: false, vertical: true)
++                }
++                .frame(maxWidth: .infinity, alignment: .leading)
++                .contentShape(Rectangle())
++            }
++            .buttonStyle(.plain)
++            .accessibilityHint(Text("Opens the sky chart for this pass", bundle: .module))
++            if !live { reminderButton(pass).padding(.vertical, 10) }
++            Text(summary(pass)).font(.subheadline).foregroundStyle(AppTheme.muted)
++                .fixedSize(horizontal: false, vertical: true)
++                .frame(maxWidth: .infinity, alignment: .leading)
++                .padding(.bottom, 8)
++            Button { open(pass) } label: {
++                VStack {
+                     if let preview = currentPreview, let observer = input.observer {
+                         ObservationSkyPreview(preview: preview, observer: observer, session: session,
+                             extendsSkyUpward: true, liveJulianDate: live ? now : nil,
+                             isActive: isVisible && skyIsVisible && !showsLocation && session.navigation.forecastPath.isEmpty && session.navigation.deepLink == nil)
+-                            .frame(height: dynamicType.isAccessibilitySize ? 180 : 194)
++                            .frame(height: dynamicType.isAccessibilitySize ? 120 : 194)
+                             .onScrollVisibilityChange(threshold: 0.1) { skyIsVisible = $0 }
+                     } else if previewFailed {
+                         Label(AppLocalization.text("Pass preview unavailable"), systemImage: "cloud")
+@@ -255,6 +266,7 @@ struct ObservationHomeView: View {
+                 .contentShape(Rectangle())
+             }
+             .buttonStyle(.plain)
++            .accessibilityLabel(Text("Open pass chart", bundle: .module))
+             .accessibilityHint(Text("Opens the sky chart for this pass", bundle: .module))
+             if previewFailed {
+                 Button(AppLocalization.text("Retry preview")) { previewAttempt += 1 }
+@@ -268,9 +280,6 @@ struct ObservationHomeView: View {
+                 }
+                 .foregroundStyle(AppTheme.accent)
+                 .padding(.top, 4)
+-            } else {
+-                reminderButton(pass)
+-                    .padding(.top, 4)
+             }
+         }
+         .padding(20)
+@@ -301,12 +310,12 @@ struct ObservationHomeView: View {
+             Image(systemName: "bell")
+                 .font(.subheadline.weight(.semibold))
+                 .foregroundStyle(AppTheme.accent)
+-                .frame(width: 36, height: 36)
++                .frame(width: 44, height: 44)
+                 .background(AppTheme.accent.opacity(0.14), in: Circle())
+                 .matchedGeometryEffect(id: "reminderBell", in: reminderNamespace)
+         }
+         .buttonStyle(.plain)
+-        .accessibilityLabel(Text(session.notifications.isDenied ? "Open notification settings" : "Remind me", bundle: .module))
++        .accessibilityLabel(Text(session.notifications.isDenied ? "Open notification settings" : "Enable station reminders", bundle: .module))
+     }
+ 
+     private func openNotificationSettings() {
+@@ -325,25 +334,28 @@ struct ObservationHomeView: View {
+         if tooLate {
+             primaryButton(title: "Start observing", icon: "location.north.line", requesting: false) { open(pass) }
+         } else if showsReminderRow(pass) {
+-            HStack(spacing: 10) {
+-                Button {
+-                    withAnimation(.spring(duration: 0.45, bounce: 0.2)) { reminderDismissed = true }
+-                } label: {
+-                    Image(systemName: "xmark")
+-                        .font(.headline.weight(.semibold))
+-                        .foregroundStyle(AppTheme.muted)
+-                        .frame(width: 52)
+-                        .frame(maxHeight: .infinity)
+-                }
+-                .buttonStyle(.bordered)
+-                .tint(AppTheme.muted)
+-                .buttonBorderShape(.roundedRectangle(radius: 16))
+-                .accessibilityLabel(Text("Hide reminder button", bundle: .module))
+-                primaryButton(title: requesting ? "Turning on reminders…" : "Remind me", icon: "bell", requesting: requesting,
++            VStack(alignment: .leading, spacing: 8) {
++                primaryButton(title: requesting ? "Turning on alerts…" : "Enable alerts", icon: "bell", requesting: requesting,
+                     matched: true) { enableReminders() }
+                     .disabled(requesting)
+                     .accessibilityHint(Text("Allows notifications for ISS and Tiangong passes", bundle: .module))
++                HStack(alignment: .center, spacing: 8) {
++                    Text("Automatic alerts for ISS and Tiangong.", bundle: .module)
++                        .font(.footnote).foregroundStyle(AppTheme.muted)
++                        .fixedSize(horizontal: false, vertical: true)
++                    Spacer(minLength: 0)
++                    Button {
++                        withAnimation(.spring(duration: 0.45, bounce: 0.2)) { reminderDismissed = true }
++                    } label: {
++                        Image(systemName: "xmark").font(.subheadline)
++                            .foregroundStyle(AppTheme.muted)
++                            .frame(width: 44, height: 44)
++                    }
++                    .buttonStyle(.plain)
++                    .accessibilityLabel(Text("Hide reminder button", bundle: .module))
++                }
+             }
++
+             .fixedSize(horizontal: false, vertical: true)
+             .transition(.opacity.combined(with: .scale(scale: 0.96)))
+         }
+@@ -359,7 +371,7 @@ struct ObservationHomeView: View {
+                 } else { Image(systemName: icon) }
+                 Text(AppLocalization.text(title)).fixedSize(horizontal: false, vertical: true)
+             }
+-            .font(.title3.weight(.semibold))
++            .font(.body.weight(.semibold))
+             .frame(maxWidth: .infinity, minHeight: 32)
+             .padding(.vertical, 10)
+         }
+diff --git a/SatelliteForecast.xcodeproj/project.pbxproj b/SatelliteForecast.xcodeproj/project.pbxproj
+index 72fd4932..e1253f2e 100644
+--- a/SatelliteForecast.xcodeproj/project.pbxproj
++++ b/SatelliteForecast.xcodeproj/project.pbxproj
+@@ -20,8 +20,8 @@
+ 		AABBCCDD000000000000000B = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (AACC00000000000000000002, AABBCCDD0000000000000007, AABBCCDD0000000000000008,); runOnlyForDeploymentPostprocessing = 0; };
+ 		AABBCCDD000000000000000C = { isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (AABBCCDD000000000000000A,); runOnlyForDeploymentPostprocessing = 0; };
+ 		AABBCCDD000000000000000D = { isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+-		AABBCCDD000000000000000E = { isa = XCBuildConfiguration; buildSettings = { APPLICATION_EXTENSION_API_ONLY = YES; CODE_SIGN_ENTITLEMENTS = SatelliteForecastWidget/SatelliteForecastWidget.entitlements; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 24; DEVELOPMENT_TEAM = 52RD2GH5DP; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_FILE = SatelliteForecastWidget/Info.plist; INFOPLIST_KEY_CFBundleDisplayName = "Space Station Passes"; IPHONEOS_DEPLOYMENT_TARGET = 26.0; LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks", "@executable_path/../../Frameworks",); MARKETING_VERSION = 2.1.0; PRODUCT_BUNDLE_IDENTIFIER = io.djben.SatelliteForecast.Widget; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SKIP_INSTALL = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Debug; };
+-		AABBCCDD000000000000000F = { isa = XCBuildConfiguration; buildSettings = { APPLICATION_EXTENSION_API_ONLY = YES; CODE_SIGN_ENTITLEMENTS = SatelliteForecastWidget/SatelliteForecastWidget.entitlements; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 24; DEVELOPMENT_TEAM = 52RD2GH5DP; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_FILE = SatelliteForecastWidget/Info.plist; INFOPLIST_KEY_CFBundleDisplayName = "Space Station Passes"; IPHONEOS_DEPLOYMENT_TARGET = 26.0; LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks", "@executable_path/../../Frameworks",); MARKETING_VERSION = 2.1.0; PRODUCT_BUNDLE_IDENTIFIER = io.djben.SatelliteForecast.Widget; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SKIP_INSTALL = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Release; };
++		AABBCCDD000000000000000E = { isa = XCBuildConfiguration; buildSettings = { APPLICATION_EXTENSION_API_ONLY = YES; CODE_SIGN_ENTITLEMENTS = SatelliteForecastWidget/SatelliteForecastWidget.entitlements; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 25; DEVELOPMENT_TEAM = 52RD2GH5DP; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_FILE = SatelliteForecastWidget/Info.plist; INFOPLIST_KEY_CFBundleDisplayName = "Space Station Passes"; IPHONEOS_DEPLOYMENT_TARGET = 26.0; LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks", "@executable_path/../../Frameworks",); MARKETING_VERSION = 2.1.1; PRODUCT_BUNDLE_IDENTIFIER = io.djben.SatelliteForecast.Widget; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SKIP_INSTALL = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Debug; };
++		AABBCCDD000000000000000F = { isa = XCBuildConfiguration; buildSettings = { APPLICATION_EXTENSION_API_ONLY = YES; CODE_SIGN_ENTITLEMENTS = SatelliteForecastWidget/SatelliteForecastWidget.entitlements; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 25; DEVELOPMENT_TEAM = 52RD2GH5DP; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_FILE = SatelliteForecastWidget/Info.plist; INFOPLIST_KEY_CFBundleDisplayName = "Space Station Passes"; IPHONEOS_DEPLOYMENT_TARGET = 26.0; LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks", "@executable_path/../../Frameworks",); MARKETING_VERSION = 2.1.1; PRODUCT_BUNDLE_IDENTIFIER = io.djben.SatelliteForecast.Widget; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SKIP_INSTALL = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Release; };
+ 		AABBCCDD0000000000000010 = { isa = XCConfigurationList; buildConfigurations = (AABBCCDD000000000000000E, AABBCCDD000000000000000F,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+ 		AABBCCDD0000000000000011 = { isa = PBXNativeTarget; buildConfigurationList = AABBCCDD0000000000000010; buildPhases = (AABBCCDD000000000000000B, AABBCCDD000000000000000C, AABBCCDD000000000000000D,); buildRules = (); dependencies = (); name = SatelliteForecastWidget; packageProductDependencies = (AABBCCDD0000000000000009,); productName = SatelliteForecastWidget; productReference = AABBCCDD0000000000000005; productType = "com.apple.product-type.app-extension"; };
+ 		AABBCCDD0000000000000012 = { isa = PBXContainerItemProxy; containerPortal = EF9D82752661BBEF00616C97; proxyType = 1; remoteGlobalIDString = AABBCCDD0000000000000011; remoteInfo = SatelliteForecastWidget; };
+@@ -458,7 +458,7 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
+ 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+ 				CODE_SIGN_ENTITLEMENTS = SatelliteForecastApp/SatelliteForecastApp.entitlements;
+ 				CODE_SIGN_STYLE = Automatic;
+-				CURRENT_PROJECT_VERSION = 24;
++				CURRENT_PROJECT_VERSION = 25;
+ 				DEVELOPMENT_TEAM = 52RD2GH5DP;
+ 				INFOPLIST_FILE = "$(SRCROOT)/SatelliteForecastApp/Info.plist";
+ 				INFOPLIST_KEY_CFBundleDisplayName = "Space Station";
+@@ -468,7 +468,7 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
+ 					"$(inherited)",
+ 					"@executable_path/Frameworks",
+ 				);
+-				MARKETING_VERSION = 2.1.0;
++				MARKETING_VERSION = 2.1.1;
+ 				PRODUCT_BUNDLE_IDENTIFIER = io.djben.SatelliteForecast;
+ 				PRODUCT_NAME = SatelliteForecastApp;
+ 				SDKROOT = iphoneos;
+@@ -486,7 +486,7 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
+ 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+ 				CODE_SIGN_ENTITLEMENTS = SatelliteForecastApp/SatelliteForecastApp.entitlements;
+ 				CODE_SIGN_STYLE = Automatic;
+-				CURRENT_PROJECT_VERSION = 24;
++				CURRENT_PROJECT_VERSION = 25;
+ 				DEVELOPMENT_TEAM = 52RD2GH5DP;
+ 				INFOPLIST_FILE = "$(SRCROOT)/SatelliteForecastApp/Info.plist";
+ 				INFOPLIST_KEY_CFBundleDisplayName = "Space Station";
+@@ -496,7 +496,7 @@ B2F4B5B5F08C675DFC828325 = {isa = PBXBuildFile; productRef = 45EAD84EC1E498F9043
+ 					"$(inherited)",
+ 					"@executable_path/Frameworks",
+ 				);
+-				MARKETING_VERSION = 2.1.0;
++				MARKETING_VERSION = 2.1.1;
+ 				PRODUCT_BUNDLE_IDENTIFIER = io.djben.SatelliteForecast;
+ 				PRODUCT_NAME = SatelliteForecastApp;
+ 				SDKROOT = iphoneos;

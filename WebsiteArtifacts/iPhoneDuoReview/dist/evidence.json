@@ -1,0 +1,1524 @@
+{
+  "before": {
+    "device": "iPhone Duo",
+    "scope": "outer display only; inner and folded poses unverified",
+    "captureCount": 17,
+    "captures": [
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": false,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "tabs-01-forecast",
+        "token": "outer-default-tabs-01-forecast-1791061770907816000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "tabs-01-forecast.png",
+        "pixelDimensions": [
+          1398,
+          2034
+        ],
+        "appVersion": "2.1.0 (24)",
+        "appCommit": "ed8180c3",
+        "title": "Next observation",
+        "viewIdentityReset": true
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": true,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "tabs-01-forecast",
+        "token": "outer-default-tabs-01-forecast+large-1791061824014484000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "tabs-01-forecast+large.png",
+        "pixelDimensions": [
+          1398,
+          2034
+        ],
+        "appVersion": "2.1.0 (24)",
+        "appCommit": "ed8180c3",
+        "title": "Next observation",
+        "viewIdentityReset": true
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": false,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "tabs-02-pass-chart",
+        "token": "outer-default-tabs-02-pass-chart-1791061774818051000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "tabs-02-pass-chart.png",
+        "pixelDimensions": [
+          1398,
+          2034
+        ],
+        "appVersion": "2.1.0 (24)",
+        "appCommit": "ed8180c3",
+        "title": "Pass chart \u00b7 with tabs",
+        "viewIdentityReset": true
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": false,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "tabs-03-pass-list",
+        "token": "outer-default-tabs-03-pass-list-1791061778645131000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "tabs-03-pass-list.png",
+        "pixelDimensions": [
+          1398,
+          2034
+        ],
+        "appVersion": "2.1.0 (24)",
+        "appCommit": "ed8180c3",
+        "title": "Upcoming pass list",
+        "viewIdentityReset": true
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": false,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "tabs-04-satellites",
+        "token": "outer-default-tabs-04-satellites-1791061782450814000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "tabs-04-satellites.png",
+        "pixelDimensions": [
+          1398,
+          2034
+        ],
+        "appVersion": "2.1.0 (24)",
+        "appCommit": "ed8180c3",
+        "title": "Satellites",
+        "viewIdentityReset": true
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": false,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "tabs-05-planetarium",
+        "token": "outer-default-tabs-05-planetarium-1791061786004239000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "tabs-05-planetarium.png",
+        "pixelDimensions": [
+          1398,
+          2034
+        ],
+        "appVersion": "2.1.0 (24)",
+        "appCommit": "ed8180c3",
+        "title": "Planetarium",
+        "viewIdentityReset": true
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": false,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "07-pass",
+        "token": "outer-default-07-pass-1791061789874611000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "07-pass.png",
+        "pixelDimensions": [
+          1398,
+          2034
+        ],
+        "appVersion": "2.1.0 (24)",
+        "appCommit": "ed8180c3",
+        "title": "Pass chart \u00b7 motion guidance",
+        "viewIdentityReset": true
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": false,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "07-pass-compass-off",
+        "token": "outer-default-07-pass-compass-off-1791061793686318000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "07-pass-compass-off.png",
+        "pixelDimensions": [
+          1398,
+          2034
+        ],
+        "appVersion": "2.1.0 (24)",
+        "appCommit": "ed8180c3",
+        "title": "Pass chart \u00b7 fixed compass",
+        "viewIdentityReset": true
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": true,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "07-pass-compass-off",
+        "token": "outer-default-07-pass-compass-off+large-1791061831592802000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "07-pass-compass-off+large.png",
+        "pixelDimensions": [
+          1398,
+          2034
+        ],
+        "appVersion": "2.1.0 (24)",
+        "appCommit": "ed8180c3",
+        "title": "Pass chart \u00b7 fixed compass",
+        "viewIdentityReset": true
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": false,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "08-detailed-sky",
+        "token": "outer-default-08-detailed-sky-1791061820174473000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "08-detailed-sky.png",
+        "pixelDimensions": [
+          1398,
+          2034
+        ],
+        "appVersion": "2.1.0 (24)",
+        "appCommit": "ed8180c3",
+        "title": "Detailed sky canvas",
+        "viewIdentityReset": true
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": false,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "10-settings",
+        "token": "outer-default-10-settings-1791061797504390000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "10-settings.png",
+        "pixelDimensions": [
+          1398,
+          2034
+        ],
+        "appVersion": "2.1.0 (24)",
+        "appCommit": "ed8180c3",
+        "title": "Settings",
+        "viewIdentityReset": true
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": false,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "11-location",
+        "token": "outer-default-11-location-1791061801287576000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "11-location.png",
+        "pixelDimensions": [
+          1398,
+          2034
+        ],
+        "appVersion": "2.1.0 (24)",
+        "appCommit": "ed8180c3",
+        "title": "Choose location",
+        "viewIdentityReset": true
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": false,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "12-alarms",
+        "token": "outer-default-12-alarms-1791061805066259000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "12-alarms.png",
+        "pixelDimensions": [
+          1398,
+          2034
+        ],
+        "appVersion": "2.1.0 (24)",
+        "appCommit": "ed8180c3",
+        "title": "Alarms \u00b7 empty",
+        "viewIdentityReset": true
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": false,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "13-pass-alarm",
+        "token": "outer-default-13-pass-alarm-1791061808852253000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "13-pass-alarm.png",
+        "pixelDimensions": [
+          1398,
+          2034
+        ],
+        "appVersion": "2.1.0 (24)",
+        "appCommit": "ed8180c3",
+        "title": "Set a pass reminder",
+        "viewIdentityReset": true
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": true,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "13-pass-alarm",
+        "token": "outer-default-13-pass-alarm+large-1791061827792389000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "13-pass-alarm+large.png",
+        "pixelDimensions": [
+          1398,
+          2034
+        ],
+        "appVersion": "2.1.0 (24)",
+        "appCommit": "ed8180c3",
+        "title": "Set a pass reminder",
+        "viewIdentityReset": true
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": false,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "01-welcome",
+        "token": "outer-default-01-welcome-1791061812571728000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "01-welcome.png",
+        "pixelDimensions": [
+          1398,
+          2034
+        ],
+        "appVersion": "2.1.0 (24)",
+        "appCommit": "ed8180c3",
+        "title": "Onboarding \u00b7 welcome",
+        "viewIdentityReset": true
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": false,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "02-predictions-intro",
+        "token": "outer-default-02-predictions-intro-1791061816351015000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "02-predictions-intro.png",
+        "pixelDimensions": [
+          1398,
+          2034
+        ],
+        "appVersion": "2.1.0 (24)",
+        "appCommit": "ed8180c3",
+        "title": "Onboarding \u00b7 pass introduction",
+        "viewIdentityReset": true
+      }
+    ]
+  },
+  "after": {
+    "baseline": "ed8180c3772b195bcc47d1aa497ae354df890bca",
+    "patchSHA256": "da136a23dd2426f87813577399a76947dec06b4ff7fb7cd2973b5dd8afdee74a",
+    "captures": [
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": false,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "01-welcome",
+        "token": "outer-default-01-welcome-1791065537804353000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "01-welcome.png",
+        "baseline": "ed8180c3772b195bcc47d1aa497ae354df890bca",
+        "implementation": "pass-1"
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": false,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "02-predictions-intro",
+        "token": "outer-default-02-predictions-intro-1791065541386495000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "02-predictions-intro.png",
+        "baseline": "ed8180c3772b195bcc47d1aa497ae354df890bca",
+        "implementation": "pass-1"
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": true,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "07-pass",
+        "token": "outer-default-07-pass+large-1791065503390578000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "07-pass+large.png",
+        "baseline": "ed8180c3772b195bcc47d1aa497ae354df890bca",
+        "implementation": "pass-1"
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": true,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "07-pass-compass-off",
+        "token": "outer-default-07-pass-compass-off+large-1791065510862386000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "07-pass-compass-off+large.png",
+        "baseline": "ed8180c3772b195bcc47d1aa497ae354df890bca",
+        "implementation": "pass-1"
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": false,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "07-pass-compass-off",
+        "token": "outer-default-07-pass-compass-off-1791065507246834000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "07-pass-compass-off.png",
+        "baseline": "ed8180c3772b195bcc47d1aa497ae354df890bca",
+        "implementation": "pass-1"
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": false,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "07-pass",
+        "token": "outer-default-07-pass-1791065499547281000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "07-pass.png",
+        "baseline": "ed8180c3772b195bcc47d1aa497ae354df890bca",
+        "implementation": "pass-1"
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": false,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "08-detailed-sky",
+        "token": "outer-default-08-detailed-sky-1791065526256706000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "08-detailed-sky.png",
+        "baseline": "ed8180c3772b195bcc47d1aa497ae354df890bca",
+        "implementation": "pass-1"
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": false,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "10-settings",
+        "token": "outer-default-10-settings-1791065530147606000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "10-settings.png",
+        "baseline": "ed8180c3772b195bcc47d1aa497ae354df890bca",
+        "implementation": "pass-1"
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": false,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "11-location",
+        "token": "outer-default-11-location-1791065533986669000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "11-location.png",
+        "baseline": "ed8180c3772b195bcc47d1aa497ae354df890bca",
+        "implementation": "pass-1"
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": true,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "12-alarms",
+        "token": "outer-default-12-alarms+large-1791065488321913000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "12-alarms+large.png",
+        "baseline": "ed8180c3772b195bcc47d1aa497ae354df890bca",
+        "implementation": "pass-1"
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": false,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "12-alarms",
+        "token": "outer-default-12-alarms-1791065484480696000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "12-alarms.png",
+        "baseline": "ed8180c3772b195bcc47d1aa497ae354df890bca",
+        "implementation": "pass-1"
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": true,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "13-pass-alarm",
+        "token": "outer-default-13-pass-alarm+large-1791065480647373000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "13-pass-alarm+large.png",
+        "baseline": "ed8180c3772b195bcc47d1aa497ae354df890bca",
+        "implementation": "pass-1"
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": false,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "13-pass-alarm",
+        "token": "outer-default-13-pass-alarm-1791065476813050000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "13-pass-alarm.png",
+        "baseline": "ed8180c3772b195bcc47d1aa497ae354df890bca",
+        "implementation": "pass-1"
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": true,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "tabs-01-forecast",
+        "token": "outer-default-tabs-01-forecast+large-1791065472945586000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "tabs-01-forecast+large.png",
+        "baseline": "ed8180c3772b195bcc47d1aa497ae354df890bca",
+        "implementation": "pass-1"
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": false,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "tabs-01-forecast",
+        "token": "outer-default-tabs-01-forecast-1791065459971410000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "tabs-01-forecast.png",
+        "baseline": "ed8180c3772b195bcc47d1aa497ae354df890bca",
+        "implementation": "pass-1"
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": false,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "tabs-02-pass-chart",
+        "token": "outer-default-tabs-02-pass-chart-1791065514706722000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "tabs-02-pass-chart.png",
+        "baseline": "ed8180c3772b195bcc47d1aa497ae354df890bca",
+        "implementation": "pass-1"
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": true,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "tabs-03-pass-list",
+        "token": "outer-default-tabs-03-pass-list+large-1791065495697769000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "tabs-03-pass-list+large.png",
+        "baseline": "ed8180c3772b195bcc47d1aa497ae354df890bca",
+        "implementation": "pass-1"
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": false,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "tabs-03-pass-list",
+        "token": "outer-default-tabs-03-pass-list-1791065492137222000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "tabs-03-pass-list.png",
+        "baseline": "ed8180c3772b195bcc47d1aa497ae354df890bca",
+        "implementation": "pass-1"
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": false,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "tabs-04-satellites",
+        "token": "outer-default-tabs-04-satellites-1791065518554759000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "tabs-04-satellites.png",
+        "baseline": "ed8180c3772b195bcc47d1aa497ae354df890bca",
+        "implementation": "pass-1"
+      },
+      {
+        "appearance": "dark",
+        "divisionRegions": [],
+        "fixtureEpoch": 1789002000,
+        "horizontalSizeClass": 1,
+        "largeText": false,
+        "safeAreaInsets": [
+          0,
+          0,
+          34,
+          84
+        ],
+        "sceneBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "screen": "tabs-05-planetarium",
+        "token": "outer-default-tabs-05-planetarium-1791065522411513000",
+        "verticalSizeClass": 2,
+        "windowBounds": [
+          0,
+          0,
+          466,
+          678
+        ],
+        "pose": "outer-default",
+        "simulator": "iPhone Duo",
+        "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+        "displayPort": "1",
+        "xcode": "27.1 beta (27A9269)",
+        "runtime": "iOS 27.1 beta (24A94401)",
+        "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+        "file": "tabs-05-planetarium.png",
+        "baseline": "ed8180c3772b195bcc47d1aa497ae354df890bca",
+        "implementation": "pass-1"
+      }
+    ],
+    "scope": "outer display; dark mode; deterministic fixtures"
+  }
+}

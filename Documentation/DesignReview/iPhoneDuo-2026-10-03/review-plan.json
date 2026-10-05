@@ -1,0 +1,118 @@
+{
+  "device": "iPhone Duo",
+  "appearance": "dark",
+  "status": "outer_review_captured_inner_pose_controls_blocked",
+  "requiredXcode": "27.1 beta (27A9269)",
+  "installedXcode": "27.1 beta (27A9269)",
+  "screenshotsCaptured": 17,
+  "reuseIPhone12Evidence": false,
+  "sources": [
+    "https://developer.apple.com/iphone-duo/",
+    "https://developer.apple.com/documentation/technologyoverviews/preparing-your-app-for-iphone-duo",
+    "https://developer.apple.com/videos/play/tech-talks/111461/",
+    "https://developer.apple.com/videos/play/tech-talks/111463/"
+  ],
+  "captureMatrix": {
+    "poses": [
+      "outer portrait",
+      "outer landscape",
+      "inner flat wide",
+      "inner flat tall",
+      "inner partially folded book",
+      "inner partially folded tabletop"
+    ],
+    "screens": [
+      "onboarding",
+      "next observation",
+      "all passes",
+      "pass chart",
+      "planetarium",
+      "sky now",
+      "satellite categories",
+      "location sheet",
+      "alarm settings",
+      "pass reminder"
+    ],
+    "transitions": [
+      "open and close with a pass selected",
+      "fold while planetarium is active",
+      "rotate with a sheet presented",
+      "retain navigation and scroll position across display changes"
+    ],
+    "additionalChecks": [
+      "large Dynamic Type",
+      "long localized labels",
+      "vertical bars and overflow actions",
+      "controls near hinge and reserved regions"
+    ]
+  },
+  "sourceAuditCandidatesNotVisuallyVerified": [
+    {
+      "file": "Frameworks/SatelliteForecast/Impl/Sources/Views/SatelliteOverview/ObservationHomeView.swift",
+      "candidate": "Single-column home layout may underuse the inner display. Evaluate observation preview beside upcoming passes."
+    },
+    {
+      "file": "Frameworks/SatelliteForecast/Impl/Sources/Views/PassView/PassView.swift",
+      "candidate": "Centered circular chart, orientation guidance and controls need review around the active fold. Custom principal toolbar content needs review when bars present vertically."
+    },
+    {
+      "file": "Frameworks/SatelliteForecast/Impl/Sources/Views/Planetarium/PlanetariumView.swift",
+      "candidate": "Custom top overlays and bottom controls need review in folded book and tabletop poses."
+    },
+    {
+      "file": "Frameworks/SatelliteForecast/Impl/Sources/Views/AlarmSettingsView/PassAlarmSettingsModalView.swift",
+      "candidate": "Navigation-title layout uses UIScreen.main.bounds.height; evaluate the scene's current geometry instead."
+    }
+  ],
+  "captureRequirements": [
+    "Use the actual Duo device type and its supported runtime, never resized iPhone 12 or iPad captures.",
+    "Set simulator dark mode before inspection.",
+    "Use native scene bounds for fixtures; existing ScreenSnapshotTests defaults are fixed phone dimensions.",
+    "Store pose, display, dimensions, Xcode/runtime version, app commit and capture provenance for every image.",
+    "Publish a new mobile-readable website artifact after the real device review."
+  ],
+  "cleanup": {
+    "availableStorageGB": 114,
+    "removalCurrentlyNecessary": false,
+    "disposablePreviousReviewSimulator": "077A131A-1CD3-4371-BBB4-803F185B690F",
+    "preserveReleaseAndOtherActiveSimulators": true
+  },
+  "installedReviewXcode": "27.1 beta (27A9269)",
+  "installedReviewXcodePath": "/Applications/Xcode-27.1-beta.app",
+  "runtime": "iOS 27.1 beta (24A94401)",
+  "verifiedPoses": [
+    "outer default orientation"
+  ],
+  "unverifiedPoses": [
+    "outer rotated",
+    "inner flat wide",
+    "inner flat tall",
+    "inner book",
+    "inner tabletop"
+  ],
+  "unverifiedTransitions": [
+    "open and close with a pass selected",
+    "fold while planetarium is active",
+    "rotate with a sheet presented",
+    "retain navigation and scroll position across display changes"
+  ],
+  "publishedGalleryScreens": 14,
+  "appCommit": "ed8180c3772b195bcc47d1aa497ae354df890bca",
+  "websiteProjectID": "appgprj_6ac16c6bbc388191986ecdd780948f1f",
+  "websiteURL": "https://satellite-iphone-duo-review.swifty-ben.chatgpt.site",
+  "websiteDeploymentID": "appgdep_6ac16fe87ab8819194d4af1e03a7c8d2",
+  "websiteCommit": "df695131dc6052e5cd21d5d80f0feab7e92e6076",
+  "websiteStatus": "succeeded",
+  "captureHarnessTestResult": "TEST EXECUTE SUCCEEDED",
+  "temporaryTestChangesRestored": true,
+  "implementationPass1": {
+    "status": "implemented_and_reviewed_outer_display",
+    "captureCount": 20,
+    "websiteSourceCommit": "9fa29eb89174a4792e4180425c6810e2e0d55379",
+    "deploymentID": "appgdep_6ac17f3b4d50819183670146de51344f",
+    "deploymentStatus": "succeeded",
+    "evidenceDirectory": "implementation-pass-1",
+    "innerPoses": "unverified",
+    "normalApp": "rebuilt_and_running_dark"
+  }
+}

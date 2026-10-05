@@ -9,7 +9,6 @@ import Foundation
 
 public enum SettingsOverviewItem {
     case observer
-    case alarms
     case ephemeridesManager
 }
 

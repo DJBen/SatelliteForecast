@@ -1,0 +1,21 @@
+{
+  "appID": "1578649430",
+  "bundleID": "io.djben.SatelliteForecast",
+  "version": "2.1.1",
+  "build": "25",
+  "internalOnly": true,
+  "internalGroup": "First Light",
+  "internalGroupID": "3b41d8f3-2916-4274-9506-6bcc7cd7ec20",
+  "appAndWidgetVersionEntries": [
+    "2.1.1",
+    "2.1.1",
+    "2.1.1",
+    "2.1.1"
+  ],
+  "appAndWidgetBuildEntries": [
+    "25",
+    "25",
+    "25",
+    "25"
+  ]
+}

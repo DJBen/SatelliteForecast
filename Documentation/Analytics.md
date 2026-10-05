@@ -393,3 +393,46 @@ weather values, guest IDs, and Auth tokens are never included in AppAnalytics.
 Backend request-limit/cache records are operational data, not product telemetry.
 Snapshot tests, XCTest hosts, and previews never authenticate or request live
 weather. No weather screen events or additional analytics collection are added.
+
+### Duo UX implementation pass (2026-10-03)
+
+- Home labels the existing permission opt-in “Enable alerts” and explains that ISS and Tiangong automatic push notifications are enabled. It still does not schedule a local alarm; existing `station_reminders_enabled` semantics are unchanged.
+- Empty Alarms’ “Choose a pass” selects Forecast and opens its existing all-passes route. No alarm conversion is logged from navigation. Edit appears only when a saved alarm exists.
+- The single-pass form now awaits the notification service’s success result, stays open on failure, and disables repeated submission while saving. `alarm_scheduled` remains after OS acceptance and persistence, with `screen=alarm_setup`. Dismissal alone never logs a successful conversion.
+- Chart guidance and compact pass rows retain the existing screen names and measurement boundaries. Debug capture fixtures remain excluded from production telemetry.
+
+The pass-detail top-right alarm control opens the existing `alarm_setup` screen for any satellite pass. Its filled icon reflects an existing local alarm. Manual local notifications include the default notification sound. Opening the form is not an alarm conversion; `schedule_alarm` and `alarm_scheduled` retain `screen=alarm_setup` and the existing OS-acceptance and persistence boundary. No new events or parameters are introduced.
+
+The alarm form now edits an explicit date/time through a native picker, with pass-moment and lead-time shortcuts. Saved alarms can be updated in place under the same notification identifier. `alarm_setup`, `schedule_alarm`, and `alarm_scheduled` retain their existing boundaries; successful updates count as scheduling actions, not new unique alarms. Cancelling the form or changing the picker adds no telemetry. Dates and picker values are never logged.
+
+Settings → Manage alarms now opens the shared `alarm_setup` sheet when a saved alarm is tapped. It edits the saved pass and observer without an orbital-data request. Opening or cancelling the editor is not a conversion; saving uses the existing `schedule_alarm` and `alarm_scheduled` boundaries under `alarm_setup`, replacing the same notification identifier. Deleting uses the existing `alarm_cancelled` event under `alarms`. The notification's chart attachment is retained when editing without pass snapshots. No new events or telemetry values are added.
+
+
+## Alarms tab (2026-10-04)
+
+Alarms is now the fourth root tab, between Satellites and Settings. Alarm management
+is removed from Settings; the stable screen name remains `alarms`. Saved rows open
+the same `alarm_setup` editor as pass details, retain their stored pass/observer and
+notification identifier, and preserve the existing scheduling/deletion boundaries.
+The grouped list sorts by actual alert time. Dates and times remain local view data.
+
+The permission card is shown only for not-determined or denied OS permission.
+Enabling automatic station alerts uses `enable_station_reminders` and
+`station_reminders_enabled` with `screen=alarms`; Home retains `screen=forecast`.
+A denied response, opening iOS notification settings, or returning with permission
+enabled does not emit a conversion. Returning refreshes permission and activates
+the existing authorized push registration. These actions never schedule a local
+alarm. No new events or identifiers are introduced; tests and routine Debug builds
+remain excluded from production telemetry.
+
+Saving an edited local alarm replaces all stored entries with the same pass notification identifier after OS acceptance. The existing `alarm_scheduled` event is emitted once for that accepted update; removing the obsolete stored value is not an `alarm_cancelled` event.
+
+Local `PASS` notifications also allow foreground sound presentation, using the existing default notification sound. Presentation is not a conversion; opening still uses the existing `notification_opened` boundary.
+
+The compact alarm rows prioritize alert time, satellite and relative timing. Sound indicators have been removed from the list; the rise/set summary remains in VoiceOver. This is a presentation change only: screen names and scheduling/deletion measurement boundaries are unchanged.
+
+Orientation guidance is again an overlay on the pass chart. Its compact bottom-right glass cue opens a centered panel; closing twice makes persistent suppression available. This remains part of `pass_detail`, with no new screen, event, conversion or motion/dismissal telemetry. The existing stored dismissal count and suppression preference are reused.
+
+The alarm editor offers the first upward 10° crossing in addition to rise and peak moments; the crossing is calculated from orbital propagation and retained with the saved pass. Pass end is no longer selectable. Legacy pass-end alarms keep their absolute alert time when opened, anchored to rise for editing. Older saved passes without a retained crossing omit the 10° option until a fresh prediction is opened. The wheel picker replaces the lead-time shortcuts, and redundant sound copy is removed. Scheduling still uses the default sound and the existing `alarm_setup`/OS-acceptance event boundaries; no telemetry parameters are added.
+
+The Skychart tutorial now belongs to the shared pass chart and appears on first Compass use from either Passes or Satellites, independent of pass visibility. Opening a list or a chart with Compass off does not consume it. New users start with Compass off; existing saved Compass preferences and the `hasCompletedAllPassesOnboarding` seen flag are retained. An unseen tutorial also appears when entering with an existing enabled Compass preference. Manual help replay marks the same seen flag. Disabling Compass before the delayed presentation cancels it without marking it seen. The tutorial adds no screen/event; existing pass-detail screen names and measurement boundaries remain unchanged. Alarm sound behavior is unchanged when its row indicator is removed.

@@ -1,0 +1,18 @@
+Impl: 392 strings across 8 locales
+Public: 2 strings across 8 locales
+/Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/PassModels.swift: missing key 'Please try again.'
+/Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/PassView/DeviceOrientationGuidanceView.swift: missing key 'Use fixed chart'
+/Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/AlarmSettingsView/AlarmSettingsView.swift: missing key 'Choose a pass'
+/Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/AlarmSettingsView/PassAlarmSettingsModalView.swift: missing key 'At the event'
+/Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/AlarmSettingsView/PassAlarmSettingsModalView.swift: missing key '5 minutes before'
+/Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/AlarmSettingsView/PassAlarmSettingsModalView.swift: missing key '10 minutes before'
+/Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/AlarmSettingsView/PassAlarmSettingsModalView.swift: missing key 'Custom lead time'
+/Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/AlarmSettingsView/PassAlarmSettingsModalView.swift: missing key 'Lead time'
+/Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/AlarmSettingsView/PassAlarmSettingsModalView.swift: missing key "Couldn't set reminder"
+/Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/AlarmSettingsView/PassAlarmSettingsModalView.swift: missing key 'Please try again.'
+/Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/AlarmSettingsView/PassAlarmSettingsModalView.swift: missing key 'PassAlarmSettingsModalView.navigationBar.createReminder'
+/Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/AlarmSettingsView/PassAlarmSettingsModalView.swift: missing key 'PassAlarmSettingsModalView.navigationBar.viewReminder'
+/Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/AlarmSettingsView/PassAlarmSettingsModalView.swift: missing key 'PassAlarmSettingsModalView.confirmButton.setReminder'
+/Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/AllPassesView/AllPassesView.swift: missing key 'Live orbit globe'
+/Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/SatelliteOverview/ObservationHomeView.swift: missing key 'Open pass chart'
+/Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/SatelliteOverview/ObservationHomeView.swift: missing key 'Automatic alerts for ISS and Tiangong.'

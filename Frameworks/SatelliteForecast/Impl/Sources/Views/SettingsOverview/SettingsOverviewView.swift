@@ -8,8 +8,6 @@
 import SatelliteForecast
 import SwiftUI
 
-struct SettingsOverviewAlarmNavigation: Equatable, Hashable, Codable {}
-
 struct SettingsOverviewObserverNavigation: Equatable, Hashable, Codable {}
 
 struct EphemeridesManagerNavigation: Equatable, Hashable, Codable {}
@@ -22,28 +20,21 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
     let watchOnboardingAgain: () -> Void
     let observerCellViewFactory: () -> ObserverCell
     let locationSettingsViewFactory: () -> LocationSettingsView
-    let alarmSettingsCellFactory: () -> AlarmSettingsCell
-    let alarmSettingsViewFactory: () -> AlarmSettingsView
 
     public init(
         settings: AppSettings,
         watchOnboardingAgain: @escaping () -> Void,
         observerCellViewFactory: @escaping () -> ObserverCell,
-        locationSettingsViewFactory: @escaping () -> LocationSettingsView,
-        alarmSettingsCellFactory: @escaping () -> AlarmSettingsCell,
-        alarmSettingsViewFactory: @escaping () -> AlarmSettingsView
+        locationSettingsViewFactory: @escaping () -> LocationSettingsView
     ) {
         self.settings = settings
         self.watchOnboardingAgain = watchOnboardingAgain
         self.observerCellViewFactory = observerCellViewFactory
         self.locationSettingsViewFactory = locationSettingsViewFactory
-        self.alarmSettingsCellFactory = alarmSettingsCellFactory
-        self.alarmSettingsViewFactory = alarmSettingsViewFactory
     }
 
     let items: [SettingsOverviewItem] = [
         .observer,
-        .alarms,
         .ephemeridesManager
     ]
 
@@ -51,8 +42,6 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
         switch item {
         case .observer:
             locationSettingsViewFactory()
-        case .alarms:
-            alarmSettingsViewFactory()
         case .ephemeridesManager:
             EphemeridesManagementView()
         }
@@ -60,18 +49,6 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
 
     @ViewBuilder private func sectionHeader(for item: SettingsOverviewItem) -> some View {
         switch item {
-        case .alarms:
-            Text(
-                NSLocalizedString(
-                    "SettingsOverviewView.alarms.header",
-                    tableName: nil,
-                    bundle: .module,
-                    value: "Alarms",
-                    comment: "The section header of the alarms section in settings"
-                )
-            )
-            .font(.subheadline.weight(.semibold))
-            .foregroundColor(AppTheme.muted)
         case .observer:
             Text(
                 NSLocalizedString(
@@ -117,14 +94,6 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                             } header: {
                                 sectionHeader(for: item)
                             }
-                        case .alarms:
-                            Section {
-                                NavigationLink(value: SettingsOverviewAlarmNavigation()) {
-                                    alarmSettingsCellFactory()
-                                }
-                            } header: {
-                                sectionHeader(for: item)
-                            }
                         case .ephemeridesManager:
                             Section {
                                 NavigationLink(value: EphemeridesManagerNavigation()) {
@@ -161,11 +130,6 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                 .navigationDestination(for: SettingsOverviewObserverNavigation.self) { _ in
                     LazyView {
                         locationSettingsViewFactory()
-                    }
-                }
-                .navigationDestination(for: SettingsOverviewAlarmNavigation.self) { _ in
-                    LazyView {
-                        alarmSettingsViewFactory()
                     }
                 }
                 .navigationDestination(for: EphemeridesManagerNavigation.self) { _ in

@@ -136,6 +136,7 @@ extension SatelliteInfo {
         var setSnapshots: SnapshotsAroundPass!
         var maxElevDatePos: Pass.DatePosition!
         var transitSnapshots: SnapshotsAroundPass!
+        var reachesTenDegrees: Pass.DatePosition?
         var illuminationChanges = [Pass.Illumination.Change]()
         var illuminationChangesAndSnapshots = [NotableSnapshots.IlluminationChangeAndSnapshots]()
 
@@ -145,6 +146,22 @@ extension SatelliteInfo {
 
             guard snapshot1.position.elev > 0 || snapshot2.position.elev > 0 else {
                 continue
+            }
+
+            if reachesTenDegrees == nil && snapshot1.position.elev < 10 && snapshot2.position.elev >= 10 {
+                // Refine the ascending crossing using orbital propagation, rather than
+                // assuming elevation changes linearly between sampled positions.
+                var lower = snapshot1.julianDate
+                var upper = snapshot2.julianDate
+                while (upper - lower) * TimeConstants.day2sec > 0.1 {
+                    try Task.checkCancellation()
+                    let middle = (lower + upper) / 2
+                    let sample = try generateSnapshot(julianDate: middle, observer: observer)
+                    if sample.position.elev < 10 { lower = middle } else { upper = middle }
+                }
+                let crossing = try generateSnapshot(julianDate: upper, observer: observer)
+                reachesTenDegrees = .init(julianDate: crossing.julianDate,
+                    azim: crossing.position.azim, elev: crossing.position.elev)
             }
 
             if snapshot1.position.elev <= 0 && snapshot2.position.elev > 0 {
@@ -226,7 +243,8 @@ extension SatelliteInfo {
                 initiallyIlluminated: fineSnapshots.first!.isIlluminated,
                 changes: illuminationChanges
             ),
-            sunElevationAtTransit: sunElev
+            sunElevationAtTransit: sunElev,
+            reachesTenDegrees: reachesTenDegrees
         )
 
         return PassSnapshots(

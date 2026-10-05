@@ -89,14 +89,39 @@ public struct NativeSettingsView: SettingsOverviewView {
             currentLocationPlacemark: session.location.resources.currentLocationPlacemark),
           selectLocation: { session.location.select($0) },
           requestCurrentLocation: { session.location.useCurrentLocation() })
-      },
-      alarmSettingsCellFactory: {
-        AlarmSettingsCell(numberOfAlerts: session.notifications.scheduled.count)
-      },
-      alarmSettingsViewFactory: {
-        AlarmSettingsView(
-          notifications: Array(session.notifications.scheduled),
-          deleteNotifications: { session.notifications.cancel(Array($0)) })
       })
+  }
+}
+
+/// A dedicated tab sharing the same notification service and pass editor as pass details.
+public struct NativeAlarmsView: View {
+  let session: AppSession
+  @Environment(\.scenePhase) private var scenePhase
+  public init(session: AppSession) { self.session = session }
+  public var body: some View {
+    NavigationStack {
+      AlarmSettingsView(
+        notifications: Array(session.notifications.scheduled),
+        deleteNotifications: { session.notifications.cancel(Array($0)) },
+        choosePass: {
+          session.navigation.tab = .forecast
+          session.navigation.forecastPath = NavigationPath()
+          session.navigation.forecastPath.append(ForecastRoute.allPasses)
+        },
+        alarmEditor: { alarm in
+          PassAlarmSettingsModalView(viewModel: PassAlarmModel(session: session),
+            context: .init(notification: alarm.notification))
+        },
+        authorizationStatus: session.notifications.hasLoadedAuthorization ? session.notifications.authorizationStatus : nil,
+        isRequestingAuthorization: session.notifications.isRequestingAuthorization,
+        enableNotifications: { Task { _ = await session.enableStationReminders(fromAlarms: true) } },
+        openNotificationSettings: {
+          if let url = URL(string: UIApplication.openNotificationSettingsURLString) { UIApplication.shared.open(url) }
+        })
+    }
+    .task { await session.refreshNotifications() }
+    .onChange(of: scenePhase) { _, phase in
+      if phase == .active { Task { await session.refreshNotifications() } }
+    }
   }
 }

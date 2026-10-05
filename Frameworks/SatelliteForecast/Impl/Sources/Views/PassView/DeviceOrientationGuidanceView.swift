@@ -2,16 +2,23 @@ import SwiftUI
 import CoreMotion
 import SatelliteForecast
 
-/// A short, dismissible demonstration that stays with the chart it controls.
+/// Chart-local guidance: a compact glass cue opens into the center of the chart.
 struct DeviceOrientationGuidanceView: View {
     let deviceMotionResult: Loadable<CMDeviceMotion, Error>
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var textSize
     @AppStorage("hasDismissedOrientationGuidance") private var hasDismissedGuidance = false
     @AppStorage("orientationGuidanceDismissalCount") private var dismissalCount = 0
     @AppStorage("orientationGuidanceSuppressed") private var suppressed = false
-    @State private var expanded = false
-    @State private var dismissed = false
+    @State private var expanded: Bool
     @State private var hasAligned = false
+    @Namespace private var transition
+
+    init(deviceMotionResult: Loadable<CMDeviceMotion, Error>,
+         initiallyExpanded: Bool = false) {
+        self.deviceMotionResult = deviceMotionResult
+        self._expanded = State(initialValue: initiallyExpanded)
+    }
 
     // Positive device Z gravity means the screen faces down and the back faces up.
     static func isAligned(gravityZ: Double) -> Bool {
@@ -22,81 +29,96 @@ struct DeviceOrientationGuidanceView: View {
         deviceMotionResult.content.map { Self.isAligned(gravityZ: $0.gravity.z) } ?? false
     }
 
+    private var compactCue: some View {
+        Button { expanded = true } label: {
+            VStack(spacing: 0) {
+                phoneDemonstration
+                    .frame(width: 64, height: 100)
+                    .scaleEffect(0.6)
+                    .frame(width: 56, height: 70)
+                Image(systemName: "ellipsis")
+                    .font(.caption.weight(.bold))
+                    .padding(.bottom, 10)
+            }
+            .accessibilityHidden(true)
+        }
+        .buttonStyle(.plain)
+        .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 16))
+        .glassEffectID("orientationGuidance", in: transition)
+        .glassEffectTransition(reduceMotion ? .identity : .matchedGeometry)
+        .accessibilityLabel(Text("Lift your iPhone", bundle: .module))
+        .accessibilityHint(Text("Show orientation guidance", bundle: .module))
+        .accessibilityIdentifier("pass.orientationGuidance.open")
+    }
+
+    private var expandedGuidance: some View {
+        VStack(spacing: 16) {
+            let layout = textSize.isAccessibilitySize
+                ? AnyLayout(VStackLayout(spacing: 12)) : AnyLayout(HStackLayout(spacing: 16))
+            layout {
+                if !textSize.isAccessibilitySize {
+                    phoneDemonstration.frame(width: 64, height: 100).accessibilityHidden(true)
+                }
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Lift your iPhone", bundle: .module).font(.headline)
+                    Text("Camera up. Screen down.", bundle: .module)
+                        .font(.subheadline).foregroundStyle(AppTheme.muted)
+                }
+                .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(.trailing, 8)
+            if dismissalCount >= 2 {
+                Button { suppressed = true } label: {
+                    Text("Don't show again", bundle: .module)
+                        .frame(maxWidth: .infinity, minHeight: 28)
+                }
+                .buttonStyle(.glass)
+                .accessibilityIdentifier("pass.orientationGuidance.suppress")
+            }
+        }
+        .padding(20)
+        .padding(.trailing, 8)
+        .frame(maxWidth: 310)
+        .glassEffect(.regular, in: .rect(cornerRadius: 26))
+        .glassEffectID("orientationGuidance", in: transition)
+        .glassEffectTransition(reduceMotion ? .identity : .matchedGeometry)
+        .overlay(alignment: .topTrailing) {
+            Button {
+                dismissalCount = min(dismissalCount + 1, 2)
+                hasDismissedGuidance = true
+                expanded = false
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.caption.weight(.semibold))
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(Text("Dismiss orientation guidance", bundle: .module))
+            .accessibilityIdentifier("pass.orientationGuidance.close")
+        }
+    }
+
     var body: some View {
         Group {
-            if !suppressed && !dismissed && !hasAligned && !isAligned {
-                if hasDismissedGuidance && !expanded {
-                    Button {
-                        expanded = true
-                    } label: {
-                        phoneDemonstration
-                            .frame(width: 64, height: 100)
-                            .scaleEffect(0.65)
-                            .frame(width: 56, height: 88)
-                            .contentShape(RoundedRectangle(cornerRadius: 16))
-                            .accessibilityHidden(true)
-                    }
-                    .buttonStyle(.plain)
-                    .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 16))
-                    .accessibilityLabel(AppLocalization.text("Lift your iPhone"))
-                    .accessibilityHint(AppLocalization.text("Show orientation guidance"))
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
-                    .transition(.opacity)
-                } else {
-                    VStack(spacing: 16) {
-                        HStack(spacing: 16) {
-                            phoneDemonstration
-                                .frame(width: 64, height: 100)
-                                .accessibilityHidden(true)
-
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text("Lift your iPhone", bundle: .module)
-                                    .font(.headline)
-                                    .fixedSize(horizontal: false, vertical: true)
-                                Text("Camera up. Screen down.", bundle: .module)
-                                    .font(.subheadline)
-                                    .foregroundStyle(AppTheme.muted)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                            .padding(.trailing, 8)
-                        }
-                        if dismissalCount >= 2 {
-                            Button {
-                                suppressed = true
-                            } label: {
-                                Text("Don't show again", bundle: .module)
-                                    .frame(maxWidth: .infinity)
-                            }
-                            .buttonStyle(.glass)
+            if !suppressed && !hasAligned && !isAligned {
+                // Morph the glass surface without stretching the text or demonstration.
+                GlassEffectContainer {
+                    ZStack {
+                        if expanded {
+                            expandedGuidance
+                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                                .transition(.opacity)
+                        } else {
+                            compactCue
+                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+                                .transition(.opacity)
                         }
                     }
-                    .padding(20)
-                    .padding(.trailing, 8)
-                    .frame(maxWidth: 310)
-                    .glassEffect(.regular, in: .rect(cornerRadius: 26))
-                    .overlay(alignment: .topTrailing) {
-                        Button {
-                            dismissalCount = min(dismissalCount + 1, 2)
-                            hasDismissedGuidance = true
-                            expanded = false
-                            dismissed = true
-                        } label: {
-                            Image(systemName: "xmark")
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(AppTheme.muted)
-                                .frame(width: 44, height: 44)
-                                .contentShape(Rectangle())
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityLabel(AppLocalization.text("Dismiss orientation guidance"))
-                    }
-                    .transition(.opacity.combined(with: .scale(scale: 0.96)))
                 }
             }
         }
-        .animation(reduceMotion ? nil : .easeInOut(duration: 0.25), value: hasDismissedGuidance)
-        .animation(reduceMotion ? nil : .easeInOut(duration: 0.25), value: expanded)
-        .animation(reduceMotion ? nil : .easeInOut(duration: 0.25), value: dismissed)
+        .animation(reduceMotion ? nil : .smooth(duration: 0.35), value: expanded)
         .animation(reduceMotion ? nil : .easeInOut(duration: 0.25), value: suppressed)
         .animation(reduceMotion ? nil : .easeInOut(duration: 0.25), value: isAligned)
         .onChange(of: isAligned, initial: true) { _, aligned in

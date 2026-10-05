@@ -89,6 +89,7 @@ struct ObservationHomeView: View {
                         locationPrompt
                     } else if let pass = passes.first {
                         hero(pass)
+                        if dynamicType.isAccessibilitySize { weatherBadge }
                         upcoming
                         if hasFailure { failureNotice }
                     } else if isLoading {
@@ -158,12 +159,11 @@ struct ObservationHomeView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Next observation", bundle: .module).font(.largeTitle.bold())
+            Text("Next observation", bundle: .module).font(dynamicType.isAccessibilitySize ? .title2.bold() : .largeTitle.bold())
                 .accessibilityAddTraits(.isHeader)
             if dynamicType.isAccessibilitySize {
                 VStack(alignment: .leading, spacing: 4) {
                     locationButton
-                    weatherBadge.frame(maxWidth: .infinity, alignment: .trailing)
                 }
             } else {
                 HStack(alignment: .center, spacing: 12) {
@@ -235,13 +235,24 @@ struct ObservationHomeView: View {
                         .fixedSize(horizontal: false, vertical: true)
                     }
                     Text(ObservationOpportunity.name(pass)).font(.headline).foregroundStyle(AppTheme.text)
-                    Text(summary(pass)).font(.subheadline).foregroundStyle(AppTheme.muted)
-                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityHint(Text("Opens the sky chart for this pass", bundle: .module))
+            if !live { reminderButton(pass).padding(.vertical, 10) }
+            Text(summary(pass)).font(.subheadline).foregroundStyle(AppTheme.muted)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.bottom, 8)
+            Button { open(pass) } label: {
+                VStack {
                     if let preview = currentPreview, let observer = input.observer {
                         ObservationSkyPreview(preview: preview, observer: observer, session: session,
                             extendsSkyUpward: true, liveJulianDate: live ? now : nil,
                             isActive: isVisible && skyIsVisible && !showsLocation && session.navigation.forecastPath.isEmpty && session.navigation.deepLink == nil)
-                            .frame(height: dynamicType.isAccessibilitySize ? 180 : 194)
+                            .frame(height: dynamicType.isAccessibilitySize ? 120 : 194)
                             .onScrollVisibilityChange(threshold: 0.1) { skyIsVisible = $0 }
                     } else if previewFailed {
                         Label(AppLocalization.text("Pass preview unavailable"), systemImage: "cloud")
@@ -255,6 +266,7 @@ struct ObservationHomeView: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
+            .accessibilityLabel(Text("Open pass chart", bundle: .module))
             .accessibilityHint(Text("Opens the sky chart for this pass", bundle: .module))
             if previewFailed {
                 Button(AppLocalization.text("Retry preview")) { previewAttempt += 1 }
@@ -268,9 +280,6 @@ struct ObservationHomeView: View {
                 }
                 .foregroundStyle(AppTheme.accent)
                 .padding(.top, 4)
-            } else {
-                reminderButton(pass)
-                    .padding(.top, 4)
             }
         }
         .padding(20)
@@ -301,12 +310,12 @@ struct ObservationHomeView: View {
             Image(systemName: "bell")
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(AppTheme.accent)
-                .frame(width: 36, height: 36)
+                .frame(width: 44, height: 44)
                 .background(AppTheme.accent.opacity(0.14), in: Circle())
                 .matchedGeometryEffect(id: "reminderBell", in: reminderNamespace)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(Text(session.notifications.isDenied ? "Open notification settings" : "Remind me", bundle: .module))
+        .accessibilityLabel(Text(session.notifications.isDenied ? "Open notification settings" : "Enable station reminders", bundle: .module))
     }
 
     private func openNotificationSettings() {
@@ -325,25 +334,28 @@ struct ObservationHomeView: View {
         if tooLate {
             primaryButton(title: "Start observing", icon: "location.north.line", requesting: false) { open(pass) }
         } else if showsReminderRow(pass) {
-            HStack(spacing: 10) {
-                Button {
-                    withAnimation(.spring(duration: 0.45, bounce: 0.2)) { reminderDismissed = true }
-                } label: {
-                    Image(systemName: "xmark")
-                        .font(.headline.weight(.semibold))
-                        .foregroundStyle(AppTheme.muted)
-                        .frame(width: 52)
-                        .frame(maxHeight: .infinity)
-                }
-                .buttonStyle(.bordered)
-                .tint(AppTheme.muted)
-                .buttonBorderShape(.roundedRectangle(radius: 16))
-                .accessibilityLabel(Text("Hide reminder button", bundle: .module))
-                primaryButton(title: requesting ? "Turning on reminders…" : "Remind me", icon: "bell", requesting: requesting,
+            VStack(alignment: .leading, spacing: 8) {
+                primaryButton(title: requesting ? "Turning on alerts…" : "Enable alerts", icon: "bell", requesting: requesting,
                     matched: true) { enableReminders() }
                     .disabled(requesting)
                     .accessibilityHint(Text("Allows notifications for ISS and Tiangong passes", bundle: .module))
+                HStack(alignment: .center, spacing: 8) {
+                    Text("Automatic alerts for ISS and Tiangong.", bundle: .module)
+                        .font(.footnote).foregroundStyle(AppTheme.muted)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Spacer(minLength: 0)
+                    Button {
+                        withAnimation(.spring(duration: 0.45, bounce: 0.2)) { reminderDismissed = true }
+                    } label: {
+                        Image(systemName: "xmark").font(.subheadline)
+                            .foregroundStyle(AppTheme.muted)
+                            .frame(width: 44, height: 44)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(Text("Hide reminder button", bundle: .module))
+                }
             }
+
             .fixedSize(horizontal: false, vertical: true)
             .transition(.opacity.combined(with: .scale(scale: 0.96)))
         }
@@ -359,7 +371,7 @@ struct ObservationHomeView: View {
                 } else { Image(systemName: icon) }
                 Text(AppLocalization.text(title)).fixedSize(horizontal: false, vertical: true)
             }
-            .font(.title3.weight(.semibold))
+            .font(.body.weight(.semibold))
             .frame(maxWidth: .infinity, minHeight: 32)
             .padding(.vertical, 10)
         }

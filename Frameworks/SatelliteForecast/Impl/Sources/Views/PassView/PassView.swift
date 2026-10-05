@@ -11,7 +11,6 @@ import SatelliteForecast
 import SwiftUI
 import StarryNight
 import CoreMotion
-import SatelliteWidgetSupport
 
 public struct PassViewState {
     public var scheduledPassNotifications: Set<ScheduledPassNotification>
@@ -34,10 +33,9 @@ extension PassViewState: Equatable {}
 /// The satellite detail view shows satellite passes and the sky chart during the first visible pass (if available).
 public struct PassView: View {
     @State var viewModel: PassModel
-    @AppStorage("passCompassEnabled") private var savedCompassEnabled = true
+    @AppStorage("passCompassEnabled") private var savedCompassEnabled = false
     @State private var compassOverride: Bool?
     @State private var showsPlanetarium = false
-    @State private var liveActivityError: String?
 
     private var isCompassEnabled: Bool {
         get { compassOverride ?? savedCompassEnabled }
@@ -121,38 +119,21 @@ public struct PassView: View {
         }
     }
 
-    @ViewBuilder private var liveActivityControl: some View {
-        if let session = viewModel.session,
-           [25544, 48274].contains(context.passSnapshots.pass.noradIndex),
-           context.passSnapshots.pass.visibility == .visible,
-           session.debug.config.effectiveOffset == 0 {
-            let service = session.liveActivity
-            let followed = service.followedID == context.passSnapshots.pass.notificationIdentifier
-            Button {
-                Task {
-                    if followed { await service.stop() } else { await service.follow(context) }
-                    liveActivityError = service.errorKey
-                }
-            } label: {
-                Image(systemName: followed ? "eye.fill" : "eye")
-            }
-            .disabled(service.busy)
-            .accessibilityLabel(WidgetStrings.text(followed ? "live.stop" : "live.follow", locale: locale))
-            .accessibilityAddTraits(followed ? [.isSelected] : [])
-            .accessibilityIdentifier("pass.followLive")
-            .alert(WidgetStrings.text("live.follow", locale: locale), isPresented: Binding(
-                get: { liveActivityError != nil }, set: { if !$0 { liveActivityError = nil } }
-            )) {
-                if liveActivityError == "live.alreadyFollowing" {
-                    Button(WidgetStrings.text("live.stop", locale: locale), role: .destructive) {
-                        Task { await service.stop() }
-                    }
-                }
-                Button(AppLocalization.text("OK"), role: .cancel) { liveActivityError = nil }
-            } message: {
-                Text(WidgetStrings.text(liveActivityError ?? "live.failed", locale: locale))
-            }
+    private var isAlarmScheduled: Bool {
+        viewModel.state.scheduledPassNotifications.contains {
+            $0.id == context.passSnapshots.pass.notificationIdentifier
         }
+    }
+
+    private var manualAlarmControl: some View {
+        Button {
+            viewModel.send(.showAlarmConfiguration(true))
+        } label: {
+            Image(systemName: isAlarmScheduled ? "alarm.fill" : "alarm")
+        }
+        .accessibilityLabel(Text(isAlarmScheduled ? "View local alarm" : "Set local alarm", bundle: .module))
+        .accessibilityAddTraits(isAlarmScheduled ? [.isSelected] : [])
+        .accessibilityIdentifier("pass.manualAlarm")
     }
 
     private var eventTable: some View {
@@ -223,10 +204,11 @@ public struct PassView: View {
                 ToolbarItem(
                     placement: .primaryAction
                 ) {
-                    liveActivityControl
+                    manualAlarmControl
                 }
             }
         }
+        .modifier(FirstCompassUseTutorial(isCompassEnabled: isCompassEnabled))
         .fullScreenCover(isPresented: $showsPlanetarium) {
             PlanetariumView(context: context, debug: viewModel.session?.debug)
         }

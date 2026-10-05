@@ -1,0 +1,7 @@
+{
+  "app": "io.djben.SatelliteForecast",
+  "widget": "io.djben.SatelliteForecast.Widget",
+  "version": "2.1.1",
+  "build": "25",
+  "archive": "/tmp/SatelliteForecast-2.1.1-25.xcarchive"
+}

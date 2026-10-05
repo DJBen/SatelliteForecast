@@ -197,6 +197,16 @@ python3 scripts/capture-widget-home-screenshots.py --output Documentation/AppSto
 
 ## Evidence index
 
+- [2.1.1 build 29](2.1.1/build-29/README.md): Alarms tab, local alarm timing and
+  compass onboarding update; includes a fresh four-screen capture in eight locales.
+  First Light TestFlight verified VALID / IN_BETA_TESTING; submitted to App Review
+  and verified WAITING_FOR_REVIEW on October 4, 2026. Manual release after approval.
+
+- [2.1.1 build 25](2.1.1/build-25/README.md): manual local pass alarm control and
+  default notification sound, plus current checkout UX updates. Internal-only First
+  Light TestFlight verified VALID / IN_BETA_TESTING on October 4, 2026; external
+  state NOT_APPLICABLE. The preflight also verified 2.1.0 is now the public release.
+
 - [2.1.0](2.1.0/README.md): one-line home weather and weather-aware station alerts;
   builds 23 and 24 available on internal First Light TestFlight; build 24 is attached
   to an auto-release draft with uploaded weather home screenshots in all eight locales.
@@ -311,3 +321,36 @@ and deploy to https://space-station-passes.web.app with `firebase deploy --only 
   Firebase account (User ID) for weather. Preparation is complete, but the correction
   and authorized submission await an authenticated website session. The plan and
   exact resume command are in `2.1.0/build-24/README.md`; no new release approval is needed.
+
+
+## Alarm UI release verification (2.1.1 builds 26–27)
+
+- Capture the Alarms tab through the full app root, as well as isolated screen
+  fixtures. The shared tab/navigation environment hid the native title in build
+  26; its replacement uses an explicit page header with accessible Edit/Add
+  controls. Build 26 was expired rather than left as an alternate internal build.
+- Check edited-alarm persistence by notification identifier: value equality
+  includes the alarm time, so Set.update alone does not replace an older value.
+  Verify a single entry after changing time and after reloading storage.
+- A default sound in the local notification content also needs foreground
+  presentation permission (`.sound`) for PASS notifications. Include foreground
+  and background audible-delivery checks in physical-device TestFlight testing.
+- The public UIKit notification-settings URL opened the Settings root in the
+  iOS 27 simulator during this review, without resolving the notification leaf;
+  verify the notification destination and permission-return behavior on the
+  physical device. Avoid treating a Settings root screenshot as proof of the
+  notification leaf. Permission-state fixtures, actual first-time prompt and
+  denied-state UI are still useful simulator checks.
+
+## 2.1.1 release checks
+
+- Verify tab icon selection on both root screens and pushed navigation destinations.
+  A dynamic SF Symbol name alone did not prevent native TabView from filling the
+  unselected Alarms icon on a pass detail. Build 29 resolves the requested SF Symbol
+  into a template bitmap; review captures confirm outlined and filled states.
+- Copied screenshot assets in a new version can have COMPLETE delivery state but
+  omit sourceFileChecksum. Compare their assetToken to the previous public version
+  and retain locally verified hashes as provenance; after replacing screenshots,
+  verify returned checksums, delivery state and gallery order as usual.
+- Build 28 was uploaded before the navigation-specific tab icon correction. Build
+  29 supersedes it for release; do not re-upload either committed build.

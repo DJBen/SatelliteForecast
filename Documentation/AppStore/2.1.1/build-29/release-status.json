@@ -1,0 +1,25 @@
+{
+  "version": "2.1.1",
+  "build": 29,
+  "buildId": "c84a5037-850c-40f5-9c52-5d402514c349",
+  "internalTestFlight": "IN_BETA_TESTING",
+  "group": "First Light",
+  "appStoreVersionId": "8f11c25d-5714-4753-957b-79d185c2632c",
+  "submissionId": "6c0c289d-d5e9-40b6-98eb-baa866ef25cd",
+  "appReview": "WAITING_FOR_REVIEW",
+  "releaseType": "MANUAL",
+  "publicVersion": "2.1.0",
+  "screenshots": {
+    "locales": 8,
+    "total": 48,
+    "reviewedFresh": 32,
+    "retainedReviewed": 16,
+    "allCompleteWithVerifiedOrderAndChecksums": true
+  },
+  "tests": {
+    "passed": 167,
+    "skipped": 3,
+    "failed": 0
+  },
+  "iPhone": "Debug build 29 installed; launch denied while locked"
+}

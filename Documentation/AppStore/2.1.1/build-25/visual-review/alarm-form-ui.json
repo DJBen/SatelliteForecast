@@ -1,0 +1,379 @@
+[
+  {
+    "AXFrame" : "{{0, 0}, {440, 956}}",
+    "AXUniqueId" : null,
+    "frame" : {
+      "y" : 0,
+      "x" : 0,
+      "width" : 440,
+      "height" : 956
+    },
+    "role_description" : "application",
+    "AXLabel" : "Space Station",
+    "content_required" : false,
+    "type" : "Application",
+    "title" : null,
+    "help" : null,
+    "custom_actions" : [
+
+    ],
+    "AXValue" : null,
+    "enabled" : true,
+    "role" : "AXApplication",
+    "children" : [
+      {
+        "AXFrame" : "{{24, 66}, {83.333333333333329, 36}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 66,
+          "x" : 24,
+          "width" : 83.333333333333329,
+          "height" : 36
+        },
+        "role_description" : "button",
+        "AXLabel" : "Dismiss",
+        "content_required" : false,
+        "type" : "Button",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXButton",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 95920
+      },
+      {
+        "AXFrame" : "{{168.66666666666669, 73.666666666666657}, {102.66666666666669, 20.666666666666671}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 73.666666666666657,
+          "x" : 168.66666666666669,
+          "width" : 102.66666666666669,
+          "height" : 20.666666666666671
+        },
+        "role_description" : "heading",
+        "AXLabel" : "Set reminder",
+        "content_required" : false,
+        "type" : "Heading",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXHeading",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 95920
+      },
+      {
+        "AXFrame" : "{{16, 132}, {211.33333333333331, 20.333333333333314}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 132,
+          "x" : 16,
+          "width" : 211.33333333333331,
+          "height" : 20.333333333333314
+        },
+        "role_description" : "text",
+        "AXLabel" : "International space station",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 95920
+      },
+      {
+        "AXFrame" : "{{16, 156.33333333333331}, {86.333333333333329, 18}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 156.33333333333331,
+          "x" : 16,
+          "width" : 86.333333333333329,
+          "height" : 18
+        },
+        "role_description" : "text",
+        "AXLabel" : "Oct 11, 2026",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 95920
+      },
+      {
+        "AXFrame" : "{{16, 190.33333333333331}, {408, 70.333333333333314}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 190.33333333333331,
+          "x" : 16,
+          "width" : 408,
+          "height" : 70.333333333333314
+        },
+        "role_description" : "button",
+        "AXLabel" : "Upon rising, 6:37:06 AM",
+        "content_required" : false,
+        "type" : "Button",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXButton",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 95920
+      },
+      {
+        "AXFrame" : "{{16, 261}, {408, 66.333333333333314}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 261,
+          "x" : 16,
+          "width" : 408,
+          "height" : 66.333333333333314
+        },
+        "role_description" : "button",
+        "AXLabel" : "Highest point, 6:42:06 AM",
+        "content_required" : false,
+        "type" : "Button",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXButton",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 95920
+      },
+      {
+        "AXFrame" : "{{16, 327.66666666666663}, {408, 66.333333333333314}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 327.66666666666663,
+          "x" : 16,
+          "width" : 408,
+          "height" : 66.333333333333314
+        },
+        "role_description" : "button",
+        "AXLabel" : "Highest illuminated, 6:42:06 AM",
+        "content_required" : false,
+        "type" : "Button",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXButton",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 95920
+      },
+      {
+        "AXFrame" : "{{16, 394.33333333333331}, {408, 70.333333333333314}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 394.33333333333331,
+          "x" : 16,
+          "width" : 408,
+          "height" : 70.333333333333314
+        },
+        "role_description" : "button",
+        "AXLabel" : "Upon setting, 6:47:09 AM",
+        "content_required" : false,
+        "type" : "Button",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXButton",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 95920
+      },
+      {
+        "AXFrame" : "{{16, 480.66666666666669}, {89, 20.333333333333314}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 480.66666666666669,
+          "x" : 16,
+          "width" : 89,
+          "height" : 20.333333333333314
+        },
+        "role_description" : "text",
+        "AXLabel" : "Remind me",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 95920
+      },
+      {
+        "AXFrame" : "{{16, 517}, {132, 34.333333333333258}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 517,
+          "x" : 16,
+          "width" : 132,
+          "height" : 34.333333333333258
+        },
+        "role_description" : "pop up button",
+        "AXLabel" : "Lead time, At the event",
+        "content_required" : false,
+        "type" : "PopUpButton",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXPopUpButton",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 95920
+      },
+      {
+        "AXFrame" : "{{17.666666030883789, 567.33331298828125}, {209.66665649414062, 18}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 567.33331298828125,
+          "x" : 17.666666030883789,
+          "width" : 209.66665649414062,
+          "height" : 18
+        },
+        "role_description" : "text",
+        "AXLabel" : "Oct 11, 2026 at 6:37:06 AM",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 95920
+      },
+      {
+        "AXFrame" : "{{16, 601.38224283854163}, {245.66666666666663, 15.666666666666629}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 601.38224283854163,
+          "x" : 16,
+          "width" : 245.66666666666663,
+          "height" : 15.666666666666629
+        },
+        "role_description" : "text",
+        "AXLabel" : "One local alarm with sound for this pass.",
+        "content_required" : false,
+        "type" : "StaticText",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXStaticText",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 95920
+      },
+      {
+        "AXFrame" : "{{16, 848}, {408, 58}}",
+        "AXUniqueId" : null,
+        "frame" : {
+          "y" : 848,
+          "x" : 16,
+          "width" : 408,
+          "height" : 58
+        },
+        "role_description" : "button",
+        "AXLabel" : "Set reminder",
+        "content_required" : false,
+        "type" : "Button",
+        "title" : null,
+        "help" : null,
+        "custom_actions" : [
+
+        ],
+        "AXValue" : null,
+        "enabled" : true,
+        "role" : "AXButton",
+        "children" : [
+
+        ],
+        "subrole" : null,
+        "pid" : 95920
+      }
+    ],
+    "subrole" : null,
+    "pid" : 95920
+  }
+]

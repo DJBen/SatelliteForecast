@@ -6,6 +6,11 @@
 - Set the simulator to dark mode before visual inspection.
 - After every app code change, rebuild and rerun the app in the simulator so the updated version is available for review.
 
+# iPhone delivery
+
+- After every app code change, also build, install, and launch the latest Debug app on the user's connected device named “Sihao’s iPhone”. Discover its current device identifier before installing.
+- This is the default delivery workflow, in addition to simulator review. If the iPhone is unavailable or locked, report the blocker and keep the build ready for installation.
+
 # App Store Connect releases
 
 - Before preparing a release, uploading store screenshots, or publishing to TestFlight/App Store Connect, read [the publishing guide](Documentation/AppStore/PublishingGuide.md).

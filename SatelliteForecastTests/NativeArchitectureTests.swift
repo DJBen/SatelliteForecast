@@ -3,6 +3,8 @@ import MapKit
 import SwiftUI
 import Observation
 import XCTest
+import UserNotifications
+@testable import AppDelegateImpl
 import SatelliteForecast
 @testable import SatelliteForecastImpl
 import SatelliteKit
@@ -11,6 +13,14 @@ import simd
 
 @MainActor
 final class NativeArchitectureTests: XCTestCase {
+    func testPassAlarmsAllowSoundWhileTheAppIsInForeground() {
+        let pass = AppDelegateImpl.presentationOptions(categoryIdentifier: "PASS")
+        XCTAssertTrue(pass.contains(.sound))
+        XCTAssertTrue(pass.contains(.banner))
+        XCTAssertTrue(pass.contains(.list))
+        XCTAssertFalse(AppDelegateImpl.presentationOptions(categoryIdentifier: "").contains(.sound))
+    }
+
     func testOfflineGeographicContext() async throws {
         let lookup = GeographicRegionLookup()
         for (latitude, longitude, name) in [(48.85, 2.35, "France"),
@@ -142,11 +152,13 @@ final class NativeArchitectureTests: XCTestCase {
         }
         for _ in 0..<20 {
             host.view.layoutIfNeeded()
-            if tabBar(in: host.view)?.items?.count == 4 { break }
+            if tabBar(in: host.view)?.items?.count == 5 { break }
             try await Task.sleep(for: .milliseconds(50))
         }
         let items = try XCTUnwrap(tabBar(in: host.view)?.items)
-        XCTAssertEqual(items.count, 4)
+        XCTAssertEqual(items.count, 5)
+        XCTAssertEqual(items[3].title, AppLocalization.text("Alarms"))
+        XCTAssertEqual(items[4].title, AppLocalization.text("Settings"))
         XCTAssertEqual(items[1].title, RealtimeSkyViewImpl.Navigation.title)
     }
 

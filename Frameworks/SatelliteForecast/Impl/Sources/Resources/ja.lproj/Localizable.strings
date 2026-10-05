@@ -838,3 +838,45 @@ The localized string for the status of a spare satellite */
 "Loading weather" = "天気を読み込み中";
 "Weather unavailable" = "天気を取得できません";
 "Tap to retry" = "タップして再試行";
+
+/* Manual local pass alarms */
+"Set local alarm" = "ローカルアラームを設定";
+"View local alarm" = "ローカルアラームを表示";
+"One local alarm with sound for this pass." = "この通過に対して音付きのローカルアラームを1回鳴らします。";
+
+/* Manual alarm time picker */
+"Pass starts" = "通過開始";
+"Pass ends" = "通過終了";
+"Pass moment" = "通過のタイミング";
+"Alarm time" = "アラーム時刻";
+"At event" = "選択した時刻";
+"5 min before" = "5分前";
+"10 min before" = "10分前";
+"Default notification sound" = "デフォルトの通知音";
+"Save changes" = "変更を保存";
+"Set alarm" = "アラームを設定";
+"Edit alarm" = "アラームを編集";
+"Couldn't set alarm" = "アラームを設定できませんでした";
+
+"Never miss a station pass" = "宇宙ステーションの通過を見逃さない";
+"Turn notifications back on" = "通知を再びオンにする";
+"Get automatic alerts for visible ISS and Tiangong passes. Allow notifications to receive these alerts and local alarms with sound." = "ISSと天宮の見える通過を自動でお知らせします。通知を許可すると、自動通知と音付きのローカルアラームを受け取れます。";
+"Notifications are off. Allow notifications in iOS Settings to receive automatic ISS and Tiangong alerts and your local alarms." = "通知がオフになっています。iOSの設定で通知を許可して、ISSと天宮の自動通知やローカルアラームを受け取りましょう。";
+"Enable notifications" = "通知を有効にする";
+"Local alarms" = "ローカルアラーム";
+"No local alarms yet" = "ローカルアラームはまだありません";
+"One-off reminders for passes you choose. Tap an alarm to change its time." = "選んだ通過のための一度限りのリマインダーです。アラームをタップすると時刻を変更できます。";
+"Sound on" = "サウンドオン";
+"%@ after %@" = "%@ 後：%@";
+
+/* Ascending pass moment and its alarm offset. */
+"Reaches 10°" = "高度 10° に到達";
+"%@ before reaching 10°" = "高度 10° に到達する %@ 前";
+
+/* Release localization audit: pass and alarm controls. */
+"Please try again." = "もう一度お試しください。";
+"Choose an upcoming pass to set a one-off reminder." = "今後の通過を選んで、一度だけのリマインダーを設定します。";
+"Choose a pass" = "通過を選択";
+"Live orbit globe" = "リアルタイム軌道の地球儀";
+"Open pass chart" = "通過チャートを開く";
+"Automatic alerts for ISS and Tiangong." = "ISSと天宮の自動通知。";

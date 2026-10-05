@@ -1,0 +1,21 @@
+[
+  "Documentation/DesignReview/Planetarium/BodyTrailFlow/past-solid-future-dotted.png",
+  "Documentation/DesignReview/Planetarium/Daytime/daytime-overlays-hidden-dark-ui.png",
+  "Documentation/DesignReview/Planetarium/DaytimeStars/daytime-star-selected-dark.png",
+  "Documentation/DesignReview/Planetarium/GalaxyStability/filtered-metrics.json",
+  "Documentation/DesignReview/Planetarium/ObservedInclinations/planet-openings-2026-dark.png",
+  "Documentation/DesignReview/Planetarium/PhysicalPhases/phases-and-rings-dark.png",
+  "Documentation/DesignReview/Planetarium/PreviewTracking/tracked-moon-dark.png",
+  "Documentation/DesignReview/Planetarium/SelectionGlobes/01-milky-way-wide-dark.png",
+  "Documentation/DesignReview/Planetarium/SelectionGlobes/02-milky-way-zoom-dark.png",
+  "Documentation/DesignReview/Planetarium/SelectionGlobes/03-horizon-0-dark.png",
+  "Documentation/DesignReview/Planetarium/SelectionGlobes/03-horizon-180-dark.png",
+  "Documentation/DesignReview/Planetarium/SelectionGlobes/03-horizon-270-dark.png",
+  "Documentation/DesignReview/Planetarium/SelectionGlobes/03-horizon-90-dark.png",
+  "Documentation/DesignReview/Planetarium/SelectionGlobes/04-moon-dark.png",
+  "Documentation/DesignReview/Planetarium/SelectionGlobes/05-atmosphere-and-flare-dark-ui.png",
+  "Documentation/DesignReview/Planetarium/SelectionGlobes/globe-materials-dark.png",
+  "Documentation/DesignReview/Planetarium/SelectionGlobes/water-20-dark.png",
+  "Documentation/DesignReview/Planetarium/Typography/viewport-star-names-dark.png",
+  "Documentation/DesignReview/Planetarium/Typography/zoomed-star-names-dark.png"
+]

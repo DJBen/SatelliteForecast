@@ -39,7 +39,8 @@ public struct NativeRootView: View {
           listViewFactory: ViewFactory { factory.list($0) },
           header: AnyView(cards), stationDestination: { AnyView(cards.destination($0)) })
       },
-      settingsOverviewFactory: { NativeSettingsView(session: session) }
+      settingsOverviewFactory: { NativeSettingsView(session: session) },
+      alarmsFactory: { AnyView(NativeAlarmsView(session: session)) }
     )
     .sheet(
       item: Binding(get: { session.navigation.deepLink }, set: { session.navigation.deepLink = $0 })

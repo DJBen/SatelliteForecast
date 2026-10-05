@@ -40,6 +40,7 @@ public struct PassNotification: Sendable {
         case set
         case transit
         case highestIlluminated
+        case reachesTenDegrees
     }
 
     public init(
@@ -69,6 +70,8 @@ public struct PassNotification: Sendable {
             baseJulianDate = pass.culmination.julianDate
         case .highestIlluminated:
             baseJulianDate = pass.highestIlluminated?.julianDate ?? 0
+        case .reachesTenDegrees:
+            baseJulianDate = pass.reachesTenDegrees?.julianDate ?? pass.rise.julianDate
         }
         return baseJulianDate + timeOffset * TimeConstants.sec2day
     }

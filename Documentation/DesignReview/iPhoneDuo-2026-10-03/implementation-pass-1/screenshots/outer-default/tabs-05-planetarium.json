@@ -1,0 +1,36 @@
+{
+  "appearance": "dark",
+  "divisionRegions": [],
+  "fixtureEpoch": 1789002000,
+  "horizontalSizeClass": 1,
+  "largeText": false,
+  "safeAreaInsets": [
+    0,
+    0,
+    34,
+    84
+  ],
+  "sceneBounds": [
+    0,
+    0,
+    466,
+    678
+  ],
+  "screen": "tabs-05-planetarium",
+  "token": "outer-default-tabs-05-planetarium-1791065522411513000",
+  "verticalSizeClass": 2,
+  "windowBounds": [
+    0,
+    0,
+    466,
+    678
+  ],
+  "pose": "outer-default",
+  "simulator": "iPhone Duo",
+  "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+  "displayPort": "1",
+  "xcode": "27.1 beta (27A9269)",
+  "runtime": "iOS 27.1 beta (24A94401)",
+  "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+  "file": "tabs-05-planetarium.png"
+}

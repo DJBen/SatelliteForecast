@@ -1,0 +1,11 @@
+✅ App launched successfully
+
+Launched application with io.djben.SatelliteForecast bundle identifier.
+
+
+Process ID: 18733
+
+Interact with your app on the device.
+
+Next steps:
+1. Stop the app: xcodebuildmcp device stop --device-id "C3458ABB-8C5F-50FC-AC3F-C9C3815810C7" --process-id "18733"

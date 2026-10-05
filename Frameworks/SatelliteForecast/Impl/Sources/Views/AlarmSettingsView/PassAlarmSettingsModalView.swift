@@ -27,7 +27,8 @@ extension PassAlarmSettingsModalViewState: Equatable {}
 public struct PassAlarmSettingsModalViewContext {
     public let satelliteName: String
     public let category: SatelliteCategory
-    public let passSnapshots: PassSnapshots
+    public let pass: Pass
+    public let passSnapshots: PassSnapshots?
     public let observer: LatLonAlt
 
     public init(
@@ -38,365 +39,252 @@ public struct PassAlarmSettingsModalViewContext {
     ) {
         self.satelliteName = satelliteName
         self.category = category
+        self.pass = passSnapshots.pass
         self.passSnapshots = passSnapshots
         self.observer = observer
     }
+
+    /// Saved alarms retain their pass and observer, without requiring a fresh orbit lookup.
+    public init(notification: PassNotification) {
+        satelliteName = notification.satelliteName
+        category = notification.category
+        pass = notification.pass
+        passSnapshots = nil
+        observer = notification.observer
+    }
+
 }
 
-/// A modal view for alarm settings of an individual pass
+/// The draft preserves saved absolute times while editing a pass-relative moment
+/// and an explicit date, including across midnight.
+struct PassAlarmDraft {
+    let pass: Pass
+    var timing: PassNotification.Timing
+    private(set) var timeOffset: TimeInterval
+    private let savedDate: Date?
+
+    init(pass: Pass, notification: PassNotification? = nil) {
+        self.pass = pass
+        timing = notification?.timing ?? .rise
+        if timing == .set || (timing == .highestIlluminated && pass.highestIlluminated == nil)
+            || (timing == .reachesTenDegrees && pass.reachesTenDegrees == nil) { timing = .rise }
+        timeOffset = 0
+        savedDate = notification.map { Date(julianDate: $0.alertJulianDate) }
+        if let savedDate {
+            // Preserve the saved absolute time if a fresh TLE slightly moves the event.
+            timeOffset = savedDate.timeIntervalSince(eventDate)
+        }
+    }
+
+    var eventDate: Date {
+        let position: Pass.DatePosition
+        switch timing {
+        case .rise: position = pass.rise
+        case .transit: position = pass.culmination
+        case .set: position = pass.set
+        case .reachesTenDegrees: position = pass.reachesTenDegrees ?? pass.rise
+        case .highestIlluminated: position = pass.highestIlluminated ?? pass.rise
+        }
+        return Date(julianDate: position.julianDate)
+    }
+
+    var date: Date {
+        get { eventDate.addingTimeInterval(timeOffset) }
+        set { timeOffset = newValue.timeIntervalSince(eventDate) }
+    }
+
+    var dateRange: ClosedRange<Date> {
+        // Retain legacy alarms with longer lead times instead of silently moving them.
+        let retainedDate = savedDate ?? eventDate
+        return min(date, min(retainedDate, eventDate.addingTimeInterval(-86400)))...max(date, max(retainedDate, eventDate))
+    }
+
+    mutating func select(_ moment: PassNotification.Timing) { timing = moment }
+
+    var availableMoments: [PassNotification.Timing] {
+        [.rise, .reachesTenDegrees, .transit, .highestIlluminated].filter {
+            ($0 != .highestIlluminated || pass.highestIlluminated != nil)
+                && ($0 != .reachesTenDegrees || pass.reachesTenDegrees != nil)
+        }.sorted {
+            var lhs = self; lhs.select($0)
+            var rhs = self; rhs.select($1)
+            return lhs.eventDate < rhs.eventDate
+        }
+    }
+}
+
+/// A modal view for alarm settings of an individual pass.
 public struct PassAlarmSettingsModalView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.locale) private var locale
+    @Environment(\.timeZone) private var timeZone
     @State var viewModel: PassAlarmModel
-    private func send(_ action: PassAlarmSettingsModalViewAction) { viewModel.send(action); dismiss() }
+    @State private var draft: PassAlarmDraft
+    @State private var showsSaveError = false
     let context: PassAlarmSettingsModalViewContext
+    private let initialDraft: PassAlarmDraft
 
-    @State var selectedTiming: PassNotification.Timing = .rise
-    @State var offsetDuration: TimeInterval = 0
-
-    public init(
-        viewModel: PassAlarmModel,
-        context: PassAlarmSettingsModalViewContext
-    ) {
+    public init(viewModel: PassAlarmModel, context: PassAlarmSettingsModalViewContext) {
         self.viewModel = viewModel
         self.context = context
-
-        if let scheduledPassNotification = viewModel.state.scheduledPassNotifications.first(where: { $0.id == context.passSnapshots.pass.notificationIdentifier }) {
-            _selectedTiming = State(initialValue: scheduledPassNotification.notification.timing)
-            _offsetDuration = State(initialValue: -scheduledPassNotification.notification.timeOffset)
-        } else {
-            _selectedTiming = State(initialValue: .rise)
-            _offsetDuration = State(initialValue: 0)
-        }
+        let saved = viewModel.state.scheduledPassNotifications.first {
+            $0.id == context.pass.notificationIdentifier
+        }?.notification
+        let draft = PassAlarmDraft(pass: context.pass, notification: saved)
+        self.initialDraft = draft
+        self._draft = State(initialValue: draft)
     }
 
     private var isNotificationScheduled: Bool {
-        return viewModel.state.scheduledPassNotifications.contains(where: { $0.id == context.passSnapshots.pass.notificationIdentifier })
+        viewModel.state.scheduledPassNotifications.contains {
+            $0.id == context.pass.notificationIdentifier
+        }
     }
 
-    private func description(for timing: PassNotification.Timing) -> String {
+    private var hasChanges: Bool {
+        draft.timing != initialDraft.timing || abs(draft.date.timeIntervalSince(initialDraft.date)) > 0.5
+    }
+
+    private var moments: [PassNotification.Timing] { draft.availableMoments }
+
+    private func momentName(_ timing: PassNotification.Timing) -> Text {
         switch timing {
-        case .rise:
-            return TimingCell.rise
-        case .transit:
-            return TimingCell.transit
-        case .highestIlluminated:
-            return TimingCell.highestIlluminated
-        case .set:
-            return TimingCell.set
+        case .rise: return Text("Pass starts", bundle: .module)
+        case .transit: return Text("PassAlarmSettingsModalView.timingCell.transit", bundle: .module)
+        case .highestIlluminated: return Text("PassAlarmSettingsModalView.timingCell.highestIlluminated", bundle: .module)
+        case .set: return Text("Pass ends", bundle: .module)
+        case .reachesTenDegrees: return Text("Reaches 10°", bundle: .module)
         }
     }
 
-    private func datePosition(for timing: PassNotification.Timing) -> Pass.DatePosition? {
-        switch timing {
-        case .rise:
-            return context.passSnapshots.pass.rise
-        case .transit:
-            return context.passSnapshots.pass.culmination
-        case .highestIlluminated:
-            return context.passSnapshots.pass.highestIlluminated
-        case .set:
-            return context.passSnapshots.pass.set
-        }
+    private func formattedTime(_ date: Date) -> String {
+        date.formatted(Date.FormatStyle(date: .omitted, time: .shortened, locale: locale, timeZone: timeZone))
     }
 
-    private var sortedTimings: [PassNotification.Timing] {
-        PassNotification.Timing.allCases.filter { timing -> Bool in
-            datePosition(for: timing) != nil
+    private var passHeader: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(context.satelliteName).font(.title3.weight(.semibold))
+            Text(Date(julianDate: context.pass.rise.julianDate),
+                 format: Date.FormatStyle(date: .complete, time: .omitted, locale: locale, timeZone: timeZone))
+                .font(.subheadline).foregroundStyle(AppTheme.muted)
         }
-        .sorted(by: { datePosition(for: $0)!.julianDate < datePosition(for: $1)!.julianDate })
+        .fixedSize(horizontal: false, vertical: true)
     }
 
-    @ViewBuilder private func timingCell(
-        _ timing: PassNotification.Timing,
-        isFirst: Bool,
-        isLast: Bool
-    ) -> some View {
-        Button {
-            selectedTiming = timing
-        } label: {
-            HStack {
-                Text(
-                    description(for: timing)
-                )
-                .if(isNotificationScheduled) { text in
-                    text.foregroundColor(AppTheme.muted)
+    private var momentPicker: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Pass moment", bundle: .module).font(.subheadline).foregroundStyle(AppTheme.muted)
+            Picker(selection: Binding(get: { draft.timing }, set: { draft.select($0) })) {
+                ForEach(moments, id: \.self) { moment in
+                    let date = { var value = draft; value.select(moment); return value.eventDate }()
+                    (momentName(moment) + Text(verbatim: " · " + formattedTime(date))).tag(moment)
                 }
+            } label: { Text("Pass moment", bundle: .module) }
+            .pickerStyle(.menu)
+            .labelsHidden()
+            .font(.headline)
+            .accessibilityIdentifier("alarm.passMoment")
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(16)
+        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppTheme.cardRadius))
+    }
 
-                Spacer()
+    private var timePicker: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Label { Text("Alarm time", bundle: .module) } icon: { Image(systemName: "alarm") }
+                .font(.headline)
+            Text(draft.date, format: Date.FormatStyle(date: .abbreviated, time: .shortened,
+                                                     locale: locale, timeZone: timeZone))
+                .font(.title3.weight(.semibold).monospacedDigit())
+                .foregroundStyle(AppTheme.accent)
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityIdentifier("alarm.selectedTime")
+            DatePicker(selection: $draft.date, in: draft.dateRange, displayedComponents: [.date, .hourAndMinute]) {
+                Text("Alarm time", bundle: .module)
+            }
+            .datePickerStyle(.wheel)
+            .labelsHidden()
+            .accessibilityIdentifier("alarm.timePicker")
+            .frame(maxWidth: .infinity)
+        }
+        .padding(16)
+        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppTheme.cardRadius))
+    }
 
-                Text(
-                    TimingCell.formattedDatePosition(datePosition(for: timing)!)
-                )
-                .foregroundColor(AppTheme.muted)
+    private func save() {
+        let notification = PassNotification(pass: context.pass,
+            satelliteName: context.satelliteName, category: context.category,
+            observer: context.observer, timing: draft.timing, timeOffset: draft.timeOffset)
+        Task {
+            guard !viewModel.isSaving else { return }
+            if await viewModel.save(notification, snapshots: context.passSnapshots) { dismiss() }
+            else { showsSaveError = true }
+        }
+    }
 
-                if selectedTiming == timing {
-                    Image(
-                        systemName: "circle.inset.filled"
-                    )
-                    .foregroundColor(AppTheme.muted)
-                } else {
-                    Image(
-                        systemName: "circle"
-                    )
-                    .foregroundColor(AppTheme.muted)
+    private var footer: some View {
+        VStack(spacing: 8) {
+            Button(action: save) {
+                HStack {
+                    if viewModel.isSaving { ProgressView() }
+                    Text(isNotificationScheduled ? "Save changes" : "Set alarm", bundle: .module)
                 }
+                .font(.headline)
+                .frame(maxWidth: .infinity, minHeight: 48)
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .if(isFirst) {
-                $0.padding(.top, 4)
-            }
-            .if(isLast) {
-                $0.padding(.bottom, 4)
+            .buttonStyle(.borderedProminent)
+            .foregroundStyle(viewModel.isSaving || (isNotificationScheduled && !hasChanges)
+                             ? AppTheme.muted : Color(uiColor: .systemBackground))
+            .disabled(viewModel.isSaving || (isNotificationScheduled && !hasChanges))
+            .accessibilityIdentifier("alarm.save")
+            if isNotificationScheduled {
+                Button(role: .destructive) {
+                    viewModel.send(.unscheduleAlarm(context.pass))
+                    dismiss()
+                } label: {
+                    Text("PassAlarmSettingsModalView.deleteButton.title", bundle: .module)
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                }
+                .buttonStyle(.plain)
+                .foregroundStyle(.red)
+                .disabled(viewModel.isSaving)
+                .accessibilityIdentifier("alarm.delete")
             }
         }
-        .buttonStyle(AlarmTimingButtonStyle())
-        .disabled(isNotificationScheduled)
+        .padding(16)
+        .background(AppTheme.background)
     }
 
     public var body: some View {
         NavigationStack {
-            VStack(alignment: .center) {
-                VStack(spacing: 0) {
-                    ForEach(Array(sortedTimings.enumerated()), id: \.element) { index, timing in
-                        timingCell(
-                            timing,
-                            isFirst: index == 0,
-                            isLast: index == sortedTimings.count - 1
-                        )
-
-                        if index != sortedTimings.count - 1 {
-                            Divider()
-                        }
-                    }
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    passHeader
+                    momentPicker
+                    timePicker
                 }
-                .background(AppTheme.surface)
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                .padding(.horizontal, 16)
-
-                HStack {
-                    Text(
-                        Self.leadTimeLabel
-                    )
-                    .font(.headline.lowercaseSmallCaps().weight(.regular))
-                    .foregroundColor(AppTheme.text)
-
-                    Spacer()
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 16)
-
-                TimeDurationPicker(
-                    duration: $offsetDuration,
-                    isDisabled: isNotificationScheduled
-                )
-
-                Spacer()
-
-                HStack {
-                    Image(
-                        systemName: "bell"
-                    )
-                    .font(.callout.weight(.semibold))
-                    .foregroundColor(AppTheme.muted)
-
-                    Text(
-                        Self.alarmLabelText(
-                            date: Date(
-                                julianDate: datePosition(
-                                    for: selectedTiming
-                                )!.julianDate
-                            )
-                            .addingTimeInterval(-offsetDuration)
-                        )
-                    )
-                    .font(.callout.weight(.semibold))
-                    .foregroundColor(AppTheme.muted)
-                }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 16)
-
-                if isNotificationScheduled {
-                    Button(role: .destructive) {
-                        send(
-                            .unscheduleAlarm(
-                                context.passSnapshots.pass
-                            )
-                        )
-                    } label: {
-                        Text(
-                            DeleteButton.title
-                        )
-                        // Inverse the foreground color because bordered prominent will be entirely white
-                        .foregroundColor(Color(uiColor: .label.inversed()))
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .font(.headline.weight(.bold))
-                    }
-                    .buttonStyle(.borderedProminent)
-                } else {
-                    Button {
-                        let passNotification = PassNotification(
-                            pass: context.passSnapshots.pass,
-                            satelliteName: context.satelliteName,
-                            category: context.category,
-                            observer: context.observer,
-                            timing: selectedTiming,
-                            timeOffset: -offsetDuration
-                        )
-                        send(
-                            .scheduleAlarm(
-                                passNotification,
-                                passSnapshots: context.passSnapshots
-                            )
-                        )
-                    } label: {
-                        Text(
-                            ConfirmButton.title
-                        )
-                        // Inverse the foreground color because bordered prominent will be entirely white
-                        .foregroundColor(Color(uiColor: .label.inversed()))
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .font(.headline.weight(.bold))
-                    }
-                    .buttonStyle(.borderedProminent)
-                }
+                .padding(20)
+                .disabled(viewModel.isSaving)
             }
+            .safeAreaInset(edge: .bottom, spacing: 0) { footer }
             .modifier(AppSurface())
-        .navigationTitle(Text(isNotificationScheduled ? NavigationBar.viewAlarmTitle : NavigationBar.title))
-        .analyticsScreen(.alarmSetup)
-            .navigationBarTitleDisplayMode(UIScreen.main.bounds.height > 700 ? .automatic : .inline)
+            .navigationTitle(Text(isNotificationScheduled ? "Edit alarm" : "Set local alarm", bundle: .module))
+            .analyticsScreen(.alarmSetup)
+            .navigationBarTitleDisplayMode(.inline)
+            .interactiveDismissDisabled(viewModel.isSaving)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button(
-                        NavigationBar.dismiss,
-                        role: .cancel
-                    ) {
-                        send(.dismissModal)
-                    }
+                    Button { dismiss() } label: { Text("Cancel", bundle: .module) }
+                        .disabled(viewModel.isSaving)
                 }
             }
+            .alert(Text("Couldn't set alarm", bundle: .module), isPresented: $showsSaveError) {
+                Button(AppLocalization.text("OK"), role: .cancel) { }
+            } message: { Text(viewModel.saveError ?? AppLocalization.text("Please try again.")) }
         }
     }
 }
-
-struct AlarmTimingButtonStyle: ButtonStyle {
-    func makeBody(configuration: Self.Configuration) -> some View {
-        if configuration.isPressed {
-            return configuration.label.background(AppTheme.border)
-        } else {
-            return configuration.label.background(AppTheme.surface)
-        }
-    }
-}
-
-extension PassAlarmSettingsModalView {
-    enum NavigationBar {
-        static let title = NSLocalizedString(
-            "PassAlarmSettingsModalView.navigationBar.title",
-            tableName: nil,
-            bundle: .module,
-            value: "Schedule alarm",
-            comment: "Navigation title of pass alarm settings."
-        )
-
-        static let viewAlarmTitle = NSLocalizedString(
-            "PassAlarmSettingsModalView.navigationBar.title",
-            tableName: nil,
-            bundle: .module,
-            value: "View alarm",
-            comment: "Navigation title of pass alarm settings, view alarm"
-        )
-
-        static let dismiss = NSLocalizedString(
-            "PassAlarmSettingsModalView.navigationBar.discard",
-            tableName: nil,
-            bundle: .module,
-            value: "Dismiss",
-            comment: "Title of discard button of pass alarm settings."
-        )
-    }
-
-    static let leadTimeLabel = NSLocalizedString(
-        "PassAlarmSettingsModalView.leadTimeLabel.title",
-        tableName: nil,
-        bundle: .module,
-        value: "Remind me ahead of time...",
-        comment: "Title of lead time label of pass alarm settings."
-    )
-
-    static func alarmLabelText(date: Date) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        dateFormatter.timeStyle = .medium
-        return dateFormatter.string(from: date)
-    }
-
-    enum ConfirmButton {
-        static let title = NSLocalizedString(
-            "PassAlarmSettingsModalView.confirmButton.title",
-            tableName: nil,
-            bundle: .module,
-            value: "Schedule alarm",
-            comment: "Title of confirm button of pass alarm settings."
-        )
-    }
-
-    enum DeleteButton {
-        static let title = NSLocalizedString(
-            "PassAlarmSettingsModalView.deleteButton.title",
-            tableName: nil,
-            bundle: .module,
-            value: "Delete alarm",
-            comment: "Title of delete button of pass alarm settings."
-        )
-    }
-
-    enum TimingCell {
-        static func formattedDatePosition(
-            _ datePosition: Pass.DatePosition
-        ) -> String {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateStyle = .none
-            dateFormatter.timeStyle = .medium
-            return dateFormatter.string(from: Date(julianDate: datePosition.julianDate))
-        }
-
-        static let rise = NSLocalizedString(
-            "PassAlarmSettingsModalView.timingCell.rise",
-            tableName: nil,
-            bundle: .module,
-            value: "Upon rising",
-            comment: "Description of the alarm timing, rise."
-        )
-
-        static let transit = NSLocalizedString(
-            "PassAlarmSettingsModalView.timingCell.transit",
-            tableName: nil,
-            bundle: .module,
-            value: "Highest point",
-            comment: "Description of the alarm timing, transit."
-        )
-
-        static let set = NSLocalizedString(
-            "PassAlarmSettingsModalView.timingCell.set",
-            tableName: nil,
-            bundle: .module,
-            value: "Upon setting",
-            comment: "Description of the alarm timing, set."
-        )
-
-        static let highestIlluminated = NSLocalizedString(
-            "PassAlarmSettingsModalView.timingCell.highestIlluminated",
-            tableName: nil,
-            bundle: .module,
-            value: "Highest illuminated",
-            comment: "Description of the alarm timing, highest illuminated."
-        )
-    }
-}
-
 
 extension View {
     /// Applies the given transform if the given condition evaluates to `true`.

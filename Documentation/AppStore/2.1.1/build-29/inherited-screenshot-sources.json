@@ -1,0 +1,114 @@
+{
+  "ko": {
+    "05-planetarium": {
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/ko/05-planetarium.png",
+      "md5": "935eef67c31cb1ee59588d949e2d387c",
+      "inheritedPublicAssetToken": "PurpleSource221/v4/99/11/74/99117483-03ed-5c0f-cc7b-8e49273dcb05/3-05-planetarium.png",
+      "unchanged": true
+    },
+    "06-widgets": {
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/ko/06-widgets.png",
+      "md5": "34f3d97a6ad5f59a898cd61322f3693b",
+      "inheritedPublicAssetToken": "PurpleSource221/v4/b7/88/54/b7885402-ae02-1caf-6def-06c14f2fc4c6/1-06-widgets.png",
+      "unchanged": true
+    }
+  },
+  "es-ES": {
+    "05-planetarium": {
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/es-ES/05-planetarium.png",
+      "md5": "e9fbfccae668faee771a2922f8d23386",
+      "inheritedPublicAssetToken": "PurpleSource211/v4/c0/62/3d/c0623d43-3c7a-dbb0-aa79-a8e3b3bd58b8/3-05-planetarium.png",
+      "unchanged": true
+    },
+    "06-widgets": {
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/es-ES/06-widgets.png",
+      "md5": "85f478e0dbb4deb82f15e5c992912793",
+      "inheritedPublicAssetToken": "PurpleSource211/v4/6d/eb/c9/6debc96f-fca7-6542-aaf9-e81c57194528/1-06-widgets.png",
+      "unchanged": true
+    }
+  },
+  "ja": {
+    "05-planetarium": {
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/ja/05-planetarium.png",
+      "md5": "3256678502349b570135fb5db318c24e",
+      "inheritedPublicAssetToken": "PurpleSource221/v4/7a/5d/9b/7a5d9b38-c6eb-782e-924b-598015c77055/3-05-planetarium.png",
+      "unchanged": true
+    },
+    "06-widgets": {
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/ja/06-widgets.png",
+      "md5": "496bc790c29ef21ef930ef3725618179",
+      "inheritedPublicAssetToken": "PurpleSource211/v4/c4/c4/ad/c4c4add3-9a24-d923-b8c0-4a294a795acf/1-06-widgets.png",
+      "unchanged": true
+    }
+  },
+  "fr-FR": {
+    "05-planetarium": {
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/fr-FR/05-planetarium.png",
+      "md5": "2811a5d639c031d248a99772db891360",
+      "inheritedPublicAssetToken": "PurpleSource221/v4/52/ea/73/52ea7330-2f4e-380d-6f0e-6361b58cddd2/3-05-planetarium.png",
+      "unchanged": true
+    },
+    "06-widgets": {
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/fr-FR/06-widgets.png",
+      "md5": "13301be4260fbaf52ebd84720d1625ab",
+      "inheritedPublicAssetToken": "PurpleSource221/v4/7e/24/91/7e249179-1056-c8bb-4ba7-429bc43bf088/1-06-widgets.png",
+      "unchanged": true
+    }
+  },
+  "en-US": {
+    "05-planetarium": {
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/en-US/05-planetarium.png",
+      "md5": "563600755d9a3b5a13228122d789a316",
+      "inheritedPublicAssetToken": "PurpleSource211/v4/40/b4/f1/40b4f181-4977-a368-c5ab-5272c1a44099/3-05-planetarium.png",
+      "unchanged": true
+    },
+    "06-widgets": {
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/en-US/06-widgets.png",
+      "md5": "4049e1c37131089e2cb33dddc38a788b",
+      "inheritedPublicAssetToken": "PurpleSource211/v4/c9/55/38/c95538c8-308a-82f3-e7a3-6185ea159012/1-06-widgets.png",
+      "unchanged": true
+    }
+  },
+  "ru": {
+    "05-planetarium": {
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/ru/05-planetarium.png",
+      "md5": "eee9abf8b46e52bd151d6d79f9cf0cb9",
+      "inheritedPublicAssetToken": "PurpleSource221/v4/92/08/24/92082428-18cf-d4b9-9d2a-a771813932d3/3-05-planetarium.png",
+      "unchanged": true
+    },
+    "06-widgets": {
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/ru/06-widgets.png",
+      "md5": "6171f73dfa438518b752dd3f3edb7f32",
+      "inheritedPublicAssetToken": "PurpleSource221/v4/7e/84/c1/7e84c1f8-1d74-7fc0-e2fb-9cca33cb1d63/1-06-widgets.png",
+      "unchanged": true
+    }
+  },
+  "zh-Hans": {
+    "05-planetarium": {
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/zh-Hans/05-planetarium.png",
+      "md5": "60c56aa100765ac138924ba5c711bad1",
+      "inheritedPublicAssetToken": "PurpleSource211/v4/6c/0f/ed/6c0fed6c-ee6a-36b5-32b4-b2d1d3c0f29c/3-05-planetarium.png",
+      "unchanged": true
+    },
+    "06-widgets": {
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/zh-Hans/06-widgets.png",
+      "md5": "5c79dade0ea80128a404526d2f5efbae",
+      "inheritedPublicAssetToken": "PurpleSource221/v4/e8/34/b3/e834b316-805f-f1fc-c3de-04ee4d88eff7/1-06-widgets.png",
+      "unchanged": true
+    }
+  },
+  "pt-BR": {
+    "05-planetarium": {
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/pt-BR/05-planetarium.png",
+      "md5": "809f9d16e5f2cdbba476a6ce6ff23495",
+      "inheritedPublicAssetToken": "PurpleSource221/v4/a6/57/eb/a657eb6c-8ed4-358a-c0c2-846b9efc67d9/3-05-planetarium.png",
+      "unchanged": true
+    },
+    "06-widgets": {
+      "source": "/Users/sihaolu/Developments/SatelliteForecast/Documentation/AppStore/2.0.0/build-20/screenshots/pt-BR/06-widgets.png",
+      "md5": "7311f1703c4e8f440603cd9051950ee2",
+      "inheritedPublicAssetToken": "PurpleSource211/v4/d0/07/ec/d007ec2a-318e-298c-c383-1546906d1eb3/1-06-widgets.png",
+      "unchanged": true
+    }
+  }
+}

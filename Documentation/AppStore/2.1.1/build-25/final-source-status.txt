@@ -1,0 +1,25 @@
+ M Documentation/Analytics.md
+ M Documentation/AppStore/PublishingGuide.md
+ M Frameworks/SatelliteForecast/Impl/Sources/Native/NotificationService.swift
+ M Frameworks/SatelliteForecast/Impl/Sources/Native/PassModels.swift
+ M Frameworks/SatelliteForecast/Impl/Sources/Native/ScreenFactory.swift
+ M Frameworks/SatelliteForecast/Impl/Sources/Resources/en.lproj/Localizable.strings
+ M Frameworks/SatelliteForecast/Impl/Sources/Resources/es.lproj/Localizable.strings
+ M Frameworks/SatelliteForecast/Impl/Sources/Resources/fr.lproj/Localizable.strings
+ M Frameworks/SatelliteForecast/Impl/Sources/Resources/ja.lproj/Localizable.strings
+ M Frameworks/SatelliteForecast/Impl/Sources/Resources/ko.lproj/Localizable.strings
+ M Frameworks/SatelliteForecast/Impl/Sources/Resources/pt-BR.lproj/Localizable.strings
+ M Frameworks/SatelliteForecast/Impl/Sources/Resources/ru.lproj/Localizable.strings
+ M Frameworks/SatelliteForecast/Impl/Sources/Resources/zh-Hans.lproj/Localizable.strings
+ M Frameworks/SatelliteForecast/Impl/Sources/Views/AlarmSettingsView/AlarmSettingsView.swift
+ M Frameworks/SatelliteForecast/Impl/Sources/Views/AlarmSettingsView/PassAlarmSettingsModalView.swift
+ M Frameworks/SatelliteForecast/Impl/Sources/Views/AllPassesView/AllPassesView.swift
+ M Frameworks/SatelliteForecast/Impl/Sources/Views/PassView/DeviceOrientationGuidanceView.swift
+ M Frameworks/SatelliteForecast/Impl/Sources/Views/PassView/PassView.swift
+ M Frameworks/SatelliteForecast/Impl/Sources/Views/SatelliteOverview/ObservationHomeView.swift
+ M SatelliteForecast.xcodeproj/project.pbxproj
+?? Documentation/Announcements/
+?? Documentation/AppStore/2.1.1/
+?? Documentation/DesignReview/iPhone12-2026-10-03/
+?? Documentation/DesignReview/iPhoneDuo-2026-10-03/
+?? WebsiteArtifacts/

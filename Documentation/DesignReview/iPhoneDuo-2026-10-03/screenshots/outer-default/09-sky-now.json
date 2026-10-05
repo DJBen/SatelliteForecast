@@ -1,0 +1,36 @@
+{
+  "appearance": "dark",
+  "divisionRegions": [],
+  "fixtureEpoch": 1789002000,
+  "horizontalSizeClass": 1,
+  "largeText": false,
+  "safeAreaInsets": [
+    0,
+    0,
+    34,
+    84
+  ],
+  "sceneBounds": [
+    0,
+    0,
+    466,
+    678
+  ],
+  "screen": "09-sky-now",
+  "token": "outer-default-09-sky-now-1791060927391738000",
+  "verticalSizeClass": 2,
+  "windowBounds": [
+    0,
+    0,
+    466,
+    678
+  ],
+  "pose": "outer-default",
+  "simulator": "iPhone Duo",
+  "simulatorID": "7C40B063-AE4F-4981-9915-EDCD4DF343A5",
+  "displayPort": "C5756B6D-282C-4447-8A31-44F3D9C21A11",
+  "xcode": "27.1 beta (27A9269)",
+  "runtime": "iOS 27.1 beta (24A94401)",
+  "captureMethod": "Native simulator display; app view fixture in real UIWindowScene",
+  "file": "09-sky-now.png"
+}

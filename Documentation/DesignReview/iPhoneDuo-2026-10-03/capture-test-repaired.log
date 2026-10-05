@@ -1,0 +1,359 @@
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/Planetarium/PlanetariumView.swift:256:17: warning: cannot use generic class 'Autoconnect' in a property declaration member of a type not marked '@_implementationOnly'; 'Combine' was not imported by this file
+⚠️ Warning:     |                 `- warning: cannot use generic class 'Autoconnect' in a property declaration member of a type not marked '@_implementationOnly'; 'Combine' was not imported by this file
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/Planetarium/PlanetariumView.swift:256:17: warning: cannot use enum 'Publishers' in a property declaration member of a type not marked '@_implementationOnly'; 'Combine' was not imported by this file
+⚠️ Warning:     |                 `- warning: cannot use enum 'Publishers' in a property declaration member of a type not marked '@_implementationOnly'; 'Combine' was not imported by this file
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/AppAnalytics.swift:47:72: warning: converting function value of type '@MainActor (String, AppAnalytics.Screen, [String : Any]) -> ()' to '(String, AppAnalytics.Screen, [String : Any]) -> Void' loses global actor 'MainActor'; this is an error in the Swift 6 language mode
+⚠️ Warning:    |                                                                        `- warning: converting function value of type '@MainActor (String, AppAnalytics.Screen, [String : Any]) -> ()' to '(String, AppAnalytics.Screen, [String : Any]) -> Void' loses global actor 'MainActor'; this is an error in the Swift 6 language mode
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:18:46: warning: 'CLGeocoder' was deprecated in iOS 26.0: Use MapKit [#DeprecatedDeclaration]
+⚠️ Warning:     |                                              `- warning: 'CLGeocoder' was deprecated in iOS 26.0: Use MapKit [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:23:28: warning: call to main actor-isolated instance method 'open(_:options:completionHandler:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+⚠️ Warning:     |                            `- warning: call to main actor-isolated instance method 'open(_:options:completionHandler:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:23:21: warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+⚠️ Warning:     |                     `- warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:23:59: warning: main actor-isolated class property 'unifiedSettingsURLString' can not be referenced from a nonisolated context
+⚠️ Warning:     |                                                           `- warning: main actor-isolated class property 'unifiedSettingsURLString' can not be referenced from a nonisolated context
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:9:47: warning: conformance of 'LocationService' to protocol 'CLLocationManagerDelegate' crosses into main actor-isolated code and can cause data races; this is an error in the Swift 6 language mode [#ConformanceIsolation]
+⚠️ Warning:     |                                               |- warning: conformance of 'LocationService' to protocol 'CLLocationManagerDelegate' crosses into main actor-isolated code and can cause data races; this is an error in the Swift 6 language mode [#ConformanceIsolation]
+❌ Error:  90 |   public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+❌ Error:     |               |- note: main actor-isolated instance method 'locationManager(_:didFailWithError:)' cannot satisfy nonisolated requirement
+❌ Error:     |               `- note: mark instance method 'locationManager(_:didFailWithError:)' 'nonisolated'
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/LocationSettingsView/LocationSearchModel.swift:9:78: warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning:     |                                                                              `- warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/LocationSettingsView/LocationSearchModel.swift:14:81: warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning:     |                                                                                 `- warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/Planetarium/PlanetariumView.swift:256:17: warning: cannot use generic class 'Autoconnect' in a property declaration member of a type not marked '@_implementationOnly'; 'Combine' was not imported by this file
+⚠️ Warning:     |                 `- warning: cannot use generic class 'Autoconnect' in a property declaration member of a type not marked '@_implementationOnly'; 'Combine' was not imported by this file
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/Planetarium/PlanetariumView.swift:256:17: warning: cannot use enum 'Publishers' in a property declaration member of a type not marked '@_implementationOnly'; 'Combine' was not imported by this file
+⚠️ Warning:     |                 `- warning: cannot use enum 'Publishers' in a property declaration member of a type not marked '@_implementationOnly'; 'Combine' was not imported by this file
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/SettingsOverview/ObserverCell/ObserverCell.swift:38:23: warning: 'MapMarker' was deprecated in iOS 17.0: Use Marker along with Map initializers that take a MapContentBuilder instead. [#DeprecatedDeclaration]
+⚠️ Warning:     |                       `- warning: 'MapMarker' was deprecated in iOS 17.0: Use Marker along with Map initializers that take a MapContentBuilder instead. [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:18:46: warning: 'CLGeocoder' was deprecated in iOS 26.0: Use MapKit [#DeprecatedDeclaration]
+⚠️ Warning:     |                                              `- warning: 'CLGeocoder' was deprecated in iOS 26.0: Use MapKit [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:23:28: warning: call to main actor-isolated instance method 'open(_:options:completionHandler:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+⚠️ Warning:     |                            `- warning: call to main actor-isolated instance method 'open(_:options:completionHandler:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:23:21: warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+⚠️ Warning:     |                     `- warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:23:59: warning: main actor-isolated class property 'unifiedSettingsURLString' can not be referenced from a nonisolated context
+⚠️ Warning:     |                                                           `- warning: main actor-isolated class property 'unifiedSettingsURLString' can not be referenced from a nonisolated context
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:9:47: warning: conformance of 'LocationService' to protocol 'CLLocationManagerDelegate' crosses into main actor-isolated code and can cause data races; this is an error in the Swift 6 language mode [#ConformanceIsolation]
+⚠️ Warning:     |                                               |- warning: conformance of 'LocationService' to protocol 'CLLocationManagerDelegate' crosses into main actor-isolated code and can cause data races; this is an error in the Swift 6 language mode [#ConformanceIsolation]
+❌ Error:  90 |   public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+❌ Error:     |               |- note: main actor-isolated instance method 'locationManager(_:didFailWithError:)' cannot satisfy nonisolated requirement
+❌ Error:     |               `- note: mark instance method 'locationManager(_:didFailWithError:)' 'nonisolated'
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:105:14: warning: 'cancelGeocode()' was deprecated in iOS 26.0: Use MKGeocodingRequest [#DeprecatedDeclaration]
+⚠️ Warning:     |              `- warning: 'cancelGeocode()' was deprecated in iOS 26.0: Use MKGeocodingRequest [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:109:41: warning: 'reverseGeocodeLocation' was deprecated in iOS 26.0: Use MKReverseGeocodingRequest [#DeprecatedDeclaration]
+⚠️ Warning:     |                                         `- warning: 'reverseGeocodeLocation' was deprecated in iOS 26.0: Use MKReverseGeocodingRequest [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/AppAnalytics.swift:47:72: warning: converting function value of type '@MainActor (String, AppAnalytics.Screen, [String : Any]) -> ()' to '(String, AppAnalytics.Screen, [String : Any]) -> Void' loses global actor 'MainActor'; this is an error in the Swift 6 language mode
+⚠️ Warning:    |                                                                        `- warning: converting function value of type '@MainActor (String, AppAnalytics.Screen, [String : Any]) -> ()' to '(String, AppAnalytics.Screen, [String : Any]) -> Void' loses global actor 'MainActor'; this is an error in the Swift 6 language mode
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/AppAnalytics.swift:47:72: warning: converting function value of type '@MainActor (String, AppAnalytics.Screen, [String : Any]) -> ()' to '(String, AppAnalytics.Screen, [String : Any]) -> Void' loses global actor 'MainActor'; this is an error in the Swift 6 language mode
+⚠️ Warning:    |                                                                        `- warning: converting function value of type '@MainActor (String, AppAnalytics.Screen, [String : Any]) -> ()' to '(String, AppAnalytics.Screen, [String : Any]) -> Void' loses global actor 'MainActor'; this is an error in the Swift 6 language mode
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/AppAnalytics.swift:47:72: warning: converting function value of type '@MainActor (String, AppAnalytics.Screen, [String : Any]) -> ()' to '(String, AppAnalytics.Screen, [String : Any]) -> Void' loses global actor 'MainActor'; this is an error in the Swift 6 language mode
+⚠️ Warning:    |                                                                        `- warning: converting function value of type '@MainActor (String, AppAnalytics.Screen, [String : Any]) -> ()' to '(String, AppAnalytics.Screen, [String : Any]) -> Void' loses global actor 'MainActor'; this is an error in the Swift 6 language mode
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:23:28: warning: call to main actor-isolated instance method 'open(_:options:completionHandler:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+⚠️ Warning:     |                            `- warning: call to main actor-isolated instance method 'open(_:options:completionHandler:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:23:21: warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+⚠️ Warning:     |                     `- warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:23:59: warning: main actor-isolated class property 'unifiedSettingsURLString' can not be referenced from a nonisolated context
+⚠️ Warning:     |                                                           `- warning: main actor-isolated class property 'unifiedSettingsURLString' can not be referenced from a nonisolated context
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/LocationService.swift:18:46: warning: 'CLGeocoder' was deprecated in iOS 26.0: Use MapKit [#DeprecatedDeclaration]
+⚠️ Warning:     |                                              `- warning: 'CLGeocoder' was deprecated in iOS 26.0: Use MapKit [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/PassView/DeviceOrientationGuidanceView.swift:123:21: warning: call to main actor-isolated instance method 'phone(pose:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+⚠️ Warning:     |                     `- warning: call to main actor-isolated instance method 'phone(pose:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/Planetarium/PlanetariumController.swift:1062:51: warning: 'interfaceOrientation' was deprecated in iOS 26.0: Use effectiveGeometry.interfaceOrientation instead. [#DeprecatedDeclaration]
+⚠️ Warning:      |                                                   `- warning: 'interfaceOrientation' was deprecated in iOS 26.0: Use effectiveGeometry.interfaceOrientation instead. [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Utilities/SnapshotEnvironment.swift:19:42: warning: 'copyCGImage(at:actualTime:)' was deprecated in iOS 18.0: Use generateCGImageAsynchronouslyForTime:completionHandler: instead [#DeprecatedDeclaration]
+⚠️ Warning:    |                                          `- warning: 'copyCGImage(at:actualTime:)' was deprecated in iOS 18.0: Use generateCGImageAsynchronouslyForTime:completionHandler: instead [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/AlarmSettingsView/PassAlarmSettingsModalView.swift:269:53: warning: 'main' was deprecated in iOS 26.0: Use a UIScreen instance found through context instead (i.e, view.window.windowScene.screen), or for properties like UIScreen.scale with trait equivalents, use a traitCollection found through context. [#DeprecatedDeclaration]
+⚠️ Warning:     |                                                     `- warning: 'main' was deprecated in iOS 26.0: Use a UIScreen instance found through context instead (i.e, view.window.windowScene.screen), or for properties like UIScreen.scale with trait equivalents, use a traitCollection found through context. [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/AllPassesView/TutorialVideoView.swift:248:19: warning: value 'view' was defined but never used; consider replacing with boolean test [#NoUsage]
+⚠️ Warning:     |                   `- warning: value 'view' was defined but never used; consider replacing with boolean test [#NoUsage]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/SatelliteOverview/ObservationSkyBackground.swift:61:38: warning: call to main actor-isolated static method 'sun(observer:julianDate:)' in a synchronous actor-isolated context [#ActorIsolatedCall]
+⚠️ Warning:     |                                      `- warning: call to main actor-isolated static method 'sun(observer:julianDate:)' in a synchronous actor-isolated context [#ActorIsolatedCall]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/SatelliteOverview/SatelliteOverviewCell.swift:239:29: warning: '+' was deprecated in iOS 26.0: Use string interpolation on `Text` instead: `Text("Hello \(name)")` [#DeprecatedDeclaration]
+⚠️ Warning:     |                             `- warning: '+' was deprecated in iOS 26.0: Use string interpolation on `Text` instead: `Text("Hello \(name)")` [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/SettingsOverview/ObserverCell/ObserverCell.swift:38:23: warning: 'MapMarker' was deprecated in iOS 17.0: Use Marker along with Map initializers that take a MapContentBuilder instead. [#DeprecatedDeclaration]
+⚠️ Warning:     |                       `- warning: 'MapMarker' was deprecated in iOS 17.0: Use Marker along with Map initializers that take a MapContentBuilder instead. [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/SettingsOverview/ObserverCell/ObserverCell.swift:52:31: warning: 'MapMarker' was deprecated in iOS 17.0: Use Marker along with Map initializers that take a MapContentBuilder instead. [#DeprecatedDeclaration]
+⚠️ Warning:     |                               `- warning: 'MapMarker' was deprecated in iOS 17.0: Use Marker along with Map initializers that take a MapContentBuilder instead. [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/SettingsOverview/ObserverCell/ObserverCell.swift:61:9: warning: 'init(coordinateRegion:interactionModes:showsUserLocation:userTrackingMode:annotationItems:annotationContent:)' was deprecated in iOS 17.0: Use Map initializers that take a MapContentBuilder instead. [#DeprecatedDeclaration]
+⚠️ Warning:     |         `- warning: 'init(coordinateRegion:interactionModes:showsUserLocation:userTrackingMode:annotationItems:annotationContent:)' was deprecated in iOS 17.0: Use Map initializers that take a MapContentBuilder instead. [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/LocationSettingsView/LocationSearchModel.swift:9:78: warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning:     |                                                                              `- warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/LocationSettingsView/LocationSearchModel.swift:14:81: warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning:     |                                                                                 `- warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/LocationSettingsView/LocationSearchModel.swift:28:64: warning: 'placemark' was deprecated in iOS 26.0: Use location, address and addressRepresentations instead [#DeprecatedDeclaration]
+⚠️ Warning:     |                                                                `- warning: 'placemark' was deprecated in iOS 26.0: Use location, address and addressRepresentations instead [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Native/AppAnalytics.swift:47:72: warning: converting function value of type '@MainActor (String, AppAnalytics.Screen, [String : Any]) -> ()' to '(String, AppAnalytics.Screen, [String : Any]) -> Void' loses global actor 'MainActor'; this is an error in the Swift 6 language mode
+⚠️ Warning:    |                                                                        `- warning: converting function value of type '@MainActor (String, AppAnalytics.Screen, [String : Any]) -> ()' to '(String, AppAnalytics.Screen, [String : Any]) -> Void' loses global actor 'MainActor'; this is an error in the Swift 6 language mode
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/Frameworks/SatelliteForecast/Impl/Sources/Views/LoadableView.swift:80:17: warning: will never be executed
+⚠️ Warning:    |                 `- warning: will never be executed
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/SatelliteForecastTests/LocationSearchTests.swift:87:42: warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning:     |                                          `- warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/SatelliteForecastTests/LocationSearchTests.swift:93:20: warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning:     |                    `- warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/SatelliteForecastTests/LocationSearchTests.swift:98:36: warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning:     |                                    `- warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/SatelliteForecastTests/LocationSearchTests.swift:107:42: warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning:     |                                          `- warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/SatelliteForecastTests/LocationSearchTests.swift:114:36: warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning:     |                                    `- warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/SatelliteForecastTests/NativeArchitectureTests.swift:177:25: warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning:     |                         `- warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/SatelliteForecastTests/NativeArchitectureTests.swift:196:13: warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning:     |             `- warning: 'MKPlacemark' was deprecated in iOS 26.0: Use MKMapItem's location, address and addressRepresentations properties instead. Use MKAddressRepresentations for formatted address strings for MapKit provided MKMapItems [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/SatelliteForecastTests/NativeArchitectureTests.swift:192:13: warning: initialization of immutable value 'navigation' was never used; consider replacing with assignment to '_' or removing it [#NoUsage]
+⚠️ Warning:     |             `- warning: initialization of immutable value 'navigation' was never used; consider replacing with assignment to '_' or removing it [#NoUsage]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/SatelliteForecastTests/ScreenSnapshotTests.swift:85:43: warning: 'coordinateSpace' was deprecated in iOS 26.0: Use effectiveGeometry.coordinateSpace instead. [#DeprecatedDeclaration]
+⚠️ Warning:      |                                           `- warning: 'coordinateSpace' was deprecated in iOS 26.0: Use effectiveGeometry.coordinateSpace instead. [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/SatelliteForecastTests/ScreenSnapshotTests.swift:85:78: warning: 'coordinateSpace' was deprecated in iOS 26.0: Use effectiveGeometry.coordinateSpace instead. [#DeprecatedDeclaration]
+⚠️ Warning:      |                                                                              `- warning: 'coordinateSpace' was deprecated in iOS 26.0: Use effectiveGeometry.coordinateSpace instead. [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/SatelliteForecastTests/ScreenSnapshotTests.swift:85:113: warning: 'coordinateSpace' was deprecated in iOS 26.0: Use effectiveGeometry.coordinateSpace instead. [#DeprecatedDeclaration]
+⚠️ Warning:      |                                                                                                                 `- warning: 'coordinateSpace' was deprecated in iOS 26.0: Use effectiveGeometry.coordinateSpace instead. [#DeprecatedDeclaration]
+⚠️ Warning: /Users/sihaolu/Developments/SatelliteForecast/SatelliteForecastTests/ScreenSnapshotTests.swift:85:149: warning: 'coordinateSpace' was deprecated in iOS 26.0: Use effectiveGeometry.coordinateSpace instead. [#DeprecatedDeclaration]
+⚠️ Warning:      |                                                                                                                                                     `- warning: 'coordinateSpace' was deprecated in iOS 26.0: Use effectiveGeometry.coordinateSpace instead. [#DeprecatedDeclaration]
+❌ [stderr] 2026-10-03 14:03:57.044 xcodebuild[59168:2615302] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94403>, error = invalidDigitCount(94403).
+❌ [stderr] 2026-10-03 14:03:57.045 xcodebuild[59168:2615302] [MT] IDESchemeActionDeviceRecord: versionAndBuild = 27.1 (24A94401), error = invalidDigitCount(94401).
+❌ [stderr] 2026-10-03 14:04:06.847 xcodebuild[59168:2625106]  iOSSimulator: 7C40B063-AE4F-4981-9915-EDCD4DF343A5: Failed to launch app with identifier: io.djben.SatelliteForecast and options: {
+❌ [stderr]     "activate_suspended" = 0;
+❌ [stderr]     arguments =     (
+❌ [stderr]     );
+❌ [stderr]     environment =     {
+❌ [stderr]         "APP_DISTRIBUTOR_ID_OVERRIDE" = "com.apple.AppStore";
+❌ [stderr]         "CA_ASSERT_MAIN_THREAD_TRANSACTIONS" = 0;
+❌ [stderr]         "CA_DEBUG_TRANSACTIONS" = 0;
+❌ [stderr]         "DUO_REVIEW_COMMAND" = "/tmp/duo-review-command.json";
+❌ [stderr]         "DYLD_FRAMEWORK_PATH" = "/tmp/SatelliteForecast-duo-review/Build/Products/Debug-iphonesimulator:/tmp/SatelliteForecast-duo-review/Build/Products/Debug-iphonesimulator/PackageFrameworks:/Applications/Xcode-27.1-beta.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks";
+❌ [stderr]         "DYLD_INSERT_LIBRARIES" = "/usr/lib/libRPAC.dylib:/tmp/SatelliteForecast-duo-review/Build/Products/Debug-iphonesimulator/SatelliteForecastApp.app/Frameworks/libXCTestBundleInject.dylib:/var/run/com.apple.security.cryptexd/mnt/iOS_24A94401/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.1.simruntime/Contents/Resources/RuntimeRoot/usr/lib/libMainThreadChecker.dylib:/usr/lib/libRPAC.dylib";
+❌ [stderr]         "DYLD_LIBRARY_PATH" = "/tmp/SatelliteForecast-duo-review/Build/Products/Debug-iphonesimulator:/Applications/Xcode-27.1-beta.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib";
+❌ [stderr]         "IDE_CHOSEN_LOGGING_METHOD" = 1;
+❌ [stderr]         "LLVM_PROFILE_FILE" = "/var/folders/k5/3_hnbssd6pggrm3j4vhmvz_40000gn/T/io.djben.SatelliteForecast/FAC9BCCF-5F14-452D-B91E-68041E62059A-59168-000002F75D3CC066/641E8B25-EDD5-4A9D-927D-5F75F9A49C1E-%p%c.profraw";
+❌ [stderr]         NSApplicationQuitWithoutSuddenTermination = YES;
+❌ [stderr]         NSUnbufferedIO = YES;
+❌ [stderr]         "OS_ACTIVITY_DT_MODE" = YES;
+❌ [stderr]         "PERFC_ENABLE_EXTENDED_DIAGNOSTIC_FORMAT" = 1;
+❌ [stderr]         "PERFC_ENABLE_PROFILE_MODE" = 1;
+❌ [stderr]         "PERFC_RESET_INSERT_LIBRARIES" = 1;
+❌ [stderr]         "PERFC_SUPPRESS_SYSTEM_REPORTS" = 1;
+❌ [stderr]         "RUN_DESTINATION_DEVICE_NAME" = "iPhone Duo \U2014 Design Review";
+❌ [stderr]         "RUN_DESTINATION_DEVICE_PLATFORM_IDENTIFIER" = "com.apple.platform.iphonesimulator";
+❌ [stderr]         "RUN_DESTINATION_DEVICE_UDID" = "7C40B063-AE4F-4981-9915-EDCD4DF343A5";
+❌ [stderr]         "SATELLITE_SNAPSHOT_TESTS" = 1;
+❌ [stderr]         "SNAPSHOT_PLANETARIUM" = 1;
+❌ [stderr]         "SNAPSHOT_RECORD" = "";
+❌ [stderr]         "SQLITE_ENABLE_THREAD_ASSERTIONS" = 1;
+❌ [stderr]         "SWIFT_BACKTRACE" = "enable=no";
+❌ [stderr]         TERM = dumb;
+❌ [stderr]         XCInjectBundleInto = unused;
+❌ [stderr]         "XCODE_SCHEME_NAME" = SatelliteForecastApp;
+❌ [stderr]         "XCODE_TEST_PLAN_NAME" = SatelliteForecast;
+❌ [stderr]         XCTestBundleInjectPath = "/usr/lib/libRPAC.dylib:/tmp/SatelliteForecast-duo-review/Build/Products/Debug-iphonesimulator/SatelliteForecastApp.app/Frameworks/libXCTestBundleInject.dylib:/var/run/com.apple.security.cryptexd/mnt/iOS_24A94401/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.1.simruntime/Contents/Resources/RuntimeRoot/usr/lib/libMainThreadChecker.dylib:/usr/lib/libRPAC.dylib";
+❌ [stderr]         XCTestBundlePath = "PlugIns/SatelliteForecastTests.xctest";
+❌ [stderr]         XCTestConfigurationFilePath = "";
+❌ [stderr]         XCTestSessionIdentifier = "0E8B1310-3E2F-4159-9C58-966748112133";
+❌ [stderr]         "__XCODE_BUILT_PRODUCTS_DIR_PATHS" = "/tmp/SatelliteForecast-duo-review/Build/Products/Debug-iphonesimulator";
+❌ [stderr]         "__XPC_DYLD_FRAMEWORK_PATH" = "/tmp/SatelliteForecast-duo-review/Build/Products/Debug-iphonesimulator";
+❌ [stderr]         "__XPC_DYLD_LIBRARY_PATH" = "/tmp/SatelliteForecast-duo-review/Build/Products/Debug-iphonesimulator";
+❌ [stderr]         "__XPC_LLVM_PROFILE_FILE" = "/var/folders/k5/3_hnbssd6pggrm3j4vhmvz_40000gn/T/io.djben.SatelliteForecast/FAC9BCCF-5F14-452D-B91E-68041E62059A-59168-000002F75D3CC066/641E8B25-EDD5-4A9D-927D-5F75F9A49C1E-%p%c.profraw";
+❌ [stderr]     };
+❌ [stderr]     stderr = "/dev/ttys001";
+❌ [stderr]     stdout = "/dev/ttys001";
+❌ [stderr]     "terminate_running_process" = 1;
+❌ [stderr]     "wait_for_debugger" = 1;
+❌ [stderr] } (error = Error Domain=FBSOpenApplicationServiceErrorDomain Code=5 "Simulator device failed to launch io.djben.SatelliteForecast." UserInfo={BSErrorCodeDescription=InvalidResponse, NSUnderlyingError=0x78b1961650 {Error Domain=FBSOpenApplicationServiceErrorDomain Code=5 "The system shell (SpringBoard:58962) probably crashed." UserInfo={NSLocalizedFailureReason=The system shell (SpringBoard:58962) probably crashed., BSErrorCodeDescription=InvalidResponse, NSLocalizedFailure=The request to open "io.djben.SatelliteForecast" failed., NSUnderlyingError=0x78b19616b0 {Error Domain=BSServiceConnectionErrorDomain Code=3 "XPC error received on message reply handler" UserInfo={BSErrorCodeDescription=OperationFailed, NSLocalizedFailureReason=XPC error received on message reply handler}}}}, NSLocalizedDescription=Simulator device failed to launch io.djben.SatelliteForecast., NSLocalizedFailure=The request to open "io.djben.SatelliteForecast" failed., SimCallingSelector=launchApplicationWithID:options:pid:error:, NSLocalizedFailureReason=The system shell (SpringBoard:58962) probably crashed.})
+❌ [stderr] 2026-10-03 14:04:06.848 xcodebuild[59168:2615302] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94403>, error = invalidDigitCount(94403).
+❌ [stderr] 2026-10-03 14:04:06.848 xcodebuild[59168:2615302] [MT] IDESchemeActionDeviceRecord: versionAndBuild = 27.1 (24A94401), error = invalidDigitCount(94401).
+❌ [stderr] 2026-10-03 14:04:06.853 xcodebuild[59168:2615302] [MT] IDELaunchReport: cd1ad111e9a46200:cd1ad111e9a46440:Launching SatelliteForecastTests Finished with error: Simulator device failed to launch io.djben.SatelliteForecast.
+❌ [stderr] Domain: FBSOpenApplicationServiceErrorDomain
+❌ [stderr] Code: 5
+❌ [stderr] Failure Reason: The system shell (SpringBoard:58962) probably crashed.
+❌ [stderr] User Info: {
+❌ [stderr]     BSErrorCodeDescription = InvalidResponse;
+❌ [stderr]     DVTErrorCreationDateKey = "2026-10-03 21:04:06 +0000";
+❌ [stderr]     IDERunOperationFailingWorker = IDELaunchiPhoneSimulatorLauncher;
+❌ [stderr]     NSLocalizedFailure = "The request to open \"io.djben.SatelliteForecast\" failed.";
+❌ [stderr]     SimCallingSelector = "launchApplicationWithID:options:pid:error:";
+❌ [stderr] }
+❌ [stderr] --
+❌ [stderr] The request to open "io.djben.SatelliteForecast" failed. The system shell (SpringBoard:58962) probably crashed.
+❌ [stderr] Domain: FBSOpenApplicationServiceErrorDomain
+❌ [stderr] Code: 5
+❌ [stderr] Failure Reason: The system shell (SpringBoard:58962) probably crashed.
+❌ [stderr] User Info: {
+❌ [stderr]     BSErrorCodeDescription = InvalidResponse;
+❌ [stderr]     NSLocalizedFailure = "The request to open \"io.djben.SatelliteForecast\" failed.";
+❌ [stderr] }
+❌ [stderr] --
+❌ [stderr] The operation couldn’t be completed. XPC error received on message reply handler
+❌ [stderr] Domain: BSServiceConnectionErrorDomain
+❌ [stderr] Code: 3
+❌ [stderr] Failure Reason: XPC error received on message reply handler
+❌ [stderr] User Info: {
+❌ [stderr]     BSErrorCodeDescription = OperationFailed;
+❌ [stderr] }
+❌ [stderr] --
+❌ [stderr] 2026-10-03 14:04:06.854 xcodebuild[59168:2615302] [MT] IDELaunchReport: cd1ad111e9a46200:cd1ad111e9a46440:Launching SatelliteForecastTests com.apple.dt.IDERunOperationWorkerFinished {
+❌ [stderr]     "device_identifier" = "7C40B063-AE4F-4981-9915-EDCD4DF343A5";
+❌ [stderr]     "device_model" = "iPhone19,4";
+❌ [stderr]     "device_osBuild" = "27.1 (24A94401)";
+❌ [stderr]     "device_os_variant" = 1;
+❌ [stderr]     "device_platform" = "com.apple.platform.iphonesimulator";
+❌ [stderr]     "device_platform_family" = 2;
+❌ [stderr]     "device_reality" = 2;
+❌ [stderr]     "device_thinningType" = "iPhone19,4";
+❌ [stderr]     "device_transport" = 4;
+❌ [stderr]     "launchSession_initiator" = 1;
+❌ [stderr]     "launchSession_schemeCommand" = Test;
+❌ [stderr]     "launchSession_schemeCommand_enum" = 2;
+❌ [stderr]     "launchSession_targetArch" = arm64;
+❌ [stderr]     "launchSession_targetArch_enum" = 6;
+❌ [stderr]     "operation_duration_ms" = 9801;
+❌ [stderr]     "operation_errorCode" = 5;
+❌ [stderr]     "operation_errorDomain" = FBSOpenApplicationServiceErrorDomain;
+❌ [stderr]     "operation_errorWorker" = IDELaunchiPhoneSimulatorLauncher;
+❌ [stderr]     "operation_error_reportable" = 1;
+❌ [stderr]     "operation_name" = IDELaunchiPhoneSimulatorLauncher;
+❌ [stderr]     "param_consoleMode" = 0;
+❌ [stderr]     "param_debugger_attachToExtensions" = 0;
+❌ [stderr]     "param_debugger_attachToXPC" = 0;
+❌ [stderr]     "param_debugger_type" = 1;
+❌ [stderr]     "param_destination_isProxy" = 0;
+❌ [stderr]     "param_destination_platform" = "com.apple.platform.iphonesimulator";
+❌ [stderr]     "param_diag_MTE_enable" = 0;
+❌ [stderr]     "param_diag_MainThreadChecker_stopOnIssue" = 0;
+❌ [stderr]     "param_diag_MallocStackLogging_enableDuringAttach" = 0;
+❌ [stderr]     "param_diag_MallocStackLogging_enableForXPC" = 0;
+❌ [stderr]     "param_diag_allowLocationSimulation" = 1;
+❌ [stderr]     "param_diag_checker_mtc_enable" = 0;
+❌ [stderr]     "param_diag_checker_tpc_enable" = 0;
+❌ [stderr]     "param_diag_gpu_frameCapture_enable" = 3;
+❌ [stderr]     "param_diag_gpu_shaderValidation_enable" = 0;
+❌ [stderr]     "param_diag_gpu_validation_enable" = 1;
+❌ [stderr]     "param_diag_guardMalloc_enable" = 0;
+❌ [stderr]     "param_diag_memoryGraphOnResourceException" = 0;
+❌ [stderr]     "param_diag_queueDebugging_enable" = 0;
+❌ [stderr]     "param_diag_runtimeProfile_generate" = 1;
+❌ [stderr]     "param_diag_sanitizer_asan_enable" = 0;
+❌ [stderr]     "param_diag_sanitizer_mtasan_enable" = 0;
+❌ [stderr]     "param_diag_sanitizer_tsan_enable" = 0;
+❌ [stderr]     "param_diag_sanitizer_tsan_stopOnIssue" = 0;
+❌ [stderr]     "param_diag_sanitizer_ubsan_enable" = 0;
+❌ [stderr]     "param_diag_sanitizer_ubsan_stopOnIssue" = 0;
+❌ [stderr]     "param_diag_showNonLocalizedStrings" = 0;
+❌ [stderr]     "param_diag_viewDebugging_enabled" = 0;
+❌ [stderr]     "param_diag_viewDebugging_insertDylibOnLaunch" = 0;
+❌ [stderr]     "param_install_style" = 2;
+❌ [stderr]     "param_launcher_UID" = 2;
+❌ [stderr]     "param_launcher_allowDeviceSensorReplayData" = 0;
+❌ [stderr]     "param_launcher_kind" = 0;
+❌ [stderr]     "param_launcher_style" = 0;
+❌ [stderr]     "param_launcher_substyle" = 0;
+❌ [stderr]     "param_runnable_appExtensionHostRunMode" = 0;
+❌ [stderr]     "param_runnable_productType" = "com.apple.product-type.application";
+❌ [stderr]     "param_testing_launchedForTesting" = 1;
+❌ [stderr]     "param_testing_suppressSimulatorApp" = 1;
+❌ [stderr]     "param_testing_usingCLI" = 0;
+❌ [stderr]     "sdk_canonicalName" = "iphonesimulator27.1";
+❌ [stderr]     "sdk_osVersion" = "27.1";
+❌ [stderr]     "sdk_platformID" = 7;
+❌ [stderr]     "sdk_variant" = iphonesimulator;
+❌ [stderr] }
+❌ [stderr] 2026-10-03 14:04:06.854 xcodebuild[59168:2615302] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94403>, error = invalidDigitCount(94403).
+❌ [stderr] 2026-10-03 14:04:06.855 xcodebuild[59168:2615302] [MT] IDESchemeActionDeviceRecord: versionAndBuild = 27.1 (24A94401), error = invalidDigitCount(94401).
+❌ [stderr] 2026-10-03 14:04:06.856 xcodebuild[59168:2615302] [MT] IDELaunchReport: cd1ad111e9a46200:cd1ad111e9a46200: Finished with error: Simulator device failed to launch io.djben.SatelliteForecast.
+❌ [stderr] Domain: FBSOpenApplicationServiceErrorDomain
+❌ [stderr] Code: 5
+❌ [stderr] Failure Reason: The system shell (SpringBoard:58962) probably crashed.
+❌ [stderr] User Info: {
+❌ [stderr]     BSErrorCodeDescription = InvalidResponse;
+❌ [stderr]     DVTErrorCreationDateKey = "2026-10-03 21:04:06 +0000";
+❌ [stderr]     IDERunOperationFailingWorker = IDELaunchiPhoneSimulatorLauncher;
+❌ [stderr]     NSLocalizedFailure = "The request to open \"io.djben.SatelliteForecast\" failed.";
+❌ [stderr]     SimCallingSelector = "launchApplicationWithID:options:pid:error:";
+❌ [stderr] }
+❌ [stderr] --
+❌ [stderr] The request to open "io.djben.SatelliteForecast" failed. The system shell (SpringBoard:58962) probably crashed.
+❌ [stderr] Domain: FBSOpenApplicationServiceErrorDomain
+❌ [stderr] Code: 5
+❌ [stderr] Failure Reason: The system shell (SpringBoard:58962) probably crashed.
+❌ [stderr] User Info: {
+❌ [stderr]     BSErrorCodeDescription = InvalidResponse;
+❌ [stderr]     NSLocalizedFailure = "The request to open \"io.djben.SatelliteForecast\" failed.";
+❌ [stderr] }
+❌ [stderr] --
+❌ [stderr] The operation couldn’t be completed. XPC error received on message reply handler
+❌ [stderr] Domain: BSServiceConnectionErrorDomain
+❌ [stderr] Code: 3
+❌ [stderr] Failure Reason: XPC error received on message reply handler
+❌ [stderr] User Info: {
+❌ [stderr]     BSErrorCodeDescription = OperationFailed;
+❌ [stderr] }
+❌ [stderr] --
+❌ [stderr] 2026-10-03 14:04:06.856 xcodebuild[59168:2615302] [MT] IDELaunchReport: cd1ad111e9a46200:cd1ad111e9a46200: com.apple.dt.IDERunOperationWorkerFinished {
+❌ [stderr]     "device_identifier" = "7C40B063-AE4F-4981-9915-EDCD4DF343A5";
+❌ [stderr]     "device_model" = "iPhone19,4";
+❌ [stderr]     "device_osBuild" = "27.1 (24A94401)";
+❌ [stderr]     "device_os_variant" = 1;
+❌ [stderr]     "device_platform" = "com.apple.platform.iphonesimulator";
+❌ [stderr]     "device_platform_family" = 2;
+❌ [stderr]     "device_reality" = 2;
+❌ [stderr]     "device_thinningType" = "iPhone19,4";
+❌ [stderr]     "device_transport" = 4;
+❌ [stderr]     "launchSession_initiator" = 1;
+❌ [stderr]     "launchSession_schemeCommand" = Test;
+❌ [stderr]     "launchSession_schemeCommand_enum" = 2;
+❌ [stderr]     "launchSession_targetArch" = arm64;
+❌ [stderr]     "launchSession_targetArch_enum" = 6;
+❌ [stderr]     "operation_duration_ms" = 9826;
+❌ [stderr]     "operation_errorCode" = 5;
+❌ [stderr]     "operation_errorDomain" = FBSOpenApplicationServiceErrorDomain;
+❌ [stderr]     "operation_errorWorker" = IDELaunchiPhoneSimulatorLauncher;
+❌ [stderr]     "operation_error_reportable" = 1;
+❌ [stderr]     "operation_name" = IDERunOperationWorkerGroup;
+❌ [stderr]     "param_consoleMode" = 0;
+❌ [stderr]     "param_debugger_attachToExtensions" = 0;
+❌ [stderr]     "param_debugger_attachToXPC" = 0;
+❌ [stderr]     "param_debugger_type" = 1;
+❌ [stderr]     "param_destination_isProxy" = 0;
+❌ [stderr]     "param_destination_platform" = "com.apple.platform.iphonesimulator";
+❌ [stderr]     "param_diag_MTE_enable" = 0;
+❌ [stderr]     "param_diag_MainThreadChecker_stopOnIssue" = 0;
+❌ [stderr]     "param_diag_MallocStackLogging_enableDuringAttach" = 0;
+❌ [stderr]     "param_diag_MallocStackLogging_enableForXPC" = 0;
+❌ [stderr]     "param_diag_allowLocationSimulation" = 1;
+❌ [stderr]     "param_diag_checker_mtc_enable" = 0;
+❌ [stderr]     "param_diag_checker_tpc_enable" = 0;
+❌ [stderr]     "param_diag_gpu_frameCapture_enable" = 3;
+❌ [stderr]     "param_diag_gpu_shaderValidation_enable" = 0;
+❌ [stderr]     "param_diag_gpu_validation_enable" = 1;
+❌ [stderr]     "param_diag_guardMalloc_enable" = 0;
+❌ [stderr]     "param_diag_memoryGraphOnResourceException" = 0;
+❌ [stderr]     "param_diag_queueDebugging_enable" = 0;
+❌ [stderr]     "param_diag_runtimeProfile_generate" = 1;
+❌ [stderr]     "param_diag_sanitizer_asan_enable" = 0;
+❌ [stderr]     "param_diag_sanitizer_mtasan_enable" = 0;
+❌ [stderr]     "param_diag_sanitizer_tsan_enable" = 0;
+❌ [stderr]     "param_diag_sanitizer_tsan_stopOnIssue" = 0;
+❌ [stderr]     "param_diag_sanitizer_ubsan_enable" = 0;
+❌ [stderr]     "param_diag_sanitizer_ubsan_stopOnIssue" = 0;
+❌ [stderr]     "param_diag_showNonLocalizedStrings" = 0;
+❌ [stderr]     "param_diag_viewDebugging_enabled" = 0;
+❌ [stderr]     "param_diag_viewDebugging_insertDylibOnLaunch" = 0;
+❌ [stderr]     "param_install_style" = 2;
+❌ [stderr]     "param_launcher_UID" = 2;
+❌ [stderr]     "param_launcher_allowDeviceSensorReplayData" = 0;
+❌ [stderr]     "param_launcher_kind" = 0;
+❌ [stderr]     "param_launcher_style" = 0;
+❌ [stderr]     "param_launcher_substyle" = 0;
+❌ [stderr]     "param_runnable_appExtensionHostRunMode" = 0;
+❌ [stderr]     "param_runnable_productType" = "com.apple.product-type.application";
+❌ [stderr]     "param_testing_launchedForTesting" = 1;
+❌ [stderr]     "param_testing_suppressSimulatorApp" = 1;
+❌ [stderr]     "param_testing_usingCLI" = 0;
+❌ [stderr]     "sdk_canonicalName" = "iphonesimulator27.1";
+❌ [stderr]     "sdk_osVersion" = "27.1";
+❌ [stderr]     "sdk_platformID" = 7;
+❌ [stderr]     "sdk_variant" = iphonesimulator;
+❌ [stderr] }
+❌ [stderr] ** BUILD INTERRUPTED **
+❌ Test Run test failed for scheme SatelliteForecastApp.
