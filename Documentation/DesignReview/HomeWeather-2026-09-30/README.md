@@ -63,3 +63,8 @@ expiry can fetch upstream data. There is currently no radius/hysteresis rule
 that guarantees reuse for every small movement near a boundary. App memory
 cache is scoped to the current weather model, while the backend cache is shared
 and persisted in Firestore.
+
+Endpoint lifecycle: the October 2026 site-based ClearSkyChart rebuild removed
+the app's v1 route. See [the recovery investigation](../HomeWeather-2026-10-13/README.md)
+for the compatibility fix and regression coverage. Keep the v1 coordinate
+contract available for installed SatelliteForecast clients.
