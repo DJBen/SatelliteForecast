@@ -824,7 +824,20 @@ final class ForecastTests: XCTestCase {
             }
             XCTAssertEqual(model.state.resources.previewSatellitePaths.count, 1)
             XCTAssertEqual(model.state.resources.previewSatellitePaths[key]?.size, CGSize(width: 100, height: 100))
+            XCTAssertGreaterThanOrEqual(model.state.resources.previewSatellitePaths[key]?.cgImage?.width ?? 0, 200,
+                "Chart paths must retain Retina detail rather than scaling a one-pixel-per-point image")
         }
+    }
+
+    func testMilkyWayRasterKeepsRetinaDetailWithBoundedMemory() async throws {
+        let observer = LatLonAlt(37.49, -122.23, 0)
+        let images = await Task.detached {
+            [CGSize(width: 512, height: 512), CGSize(width: 1600, height: 1600)].map {
+                MilkyWayBackground.image(size: $0, observer: observer, julianDate: 2459372.8, dark: true)
+            }
+        }.value
+        XCTAssertEqual(try XCTUnwrap(images[0]?.cgImage).width, 1024)
+        XCTAssertEqual(try XCTUnwrap(images[1]?.cgImage).width, 1280)
     }
 
     func testSkyNowIncludesHigherOrbits() async throws {

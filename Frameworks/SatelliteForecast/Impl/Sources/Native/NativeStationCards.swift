@@ -9,6 +9,8 @@ struct NativeStationCards: View {
   let model: ForecastModel
   let context: SatelliteCategoryViewContext
   @Environment(\.locale) private var locale
+  @Environment(\.horizontalSizeClass) private var sizeClass
+  @Environment(\.dynamicTypeSize) private var textSize
 
   private var input: ForecastInput {
     .init(observer: session.location.resources.location.map(LatLonAlt.init),
@@ -17,7 +19,8 @@ struct NativeStationCards: View {
   }
 
   var body: some View {
-    LazyVStack(alignment: .leading, spacing: 20) {
+    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 20),
+        count: sizeClass == .regular && !textSize.isAccessibilitySize ? 2 : 1), alignment: .leading, spacing: 20) {
       ForEach(SatelliteOverviewViewImpl.stationOrder(for: locale), id: \.self) { satellite in
         NavigationLink(value: SpecialSatellite(satellite)) {
           SatelliteOverviewCell(

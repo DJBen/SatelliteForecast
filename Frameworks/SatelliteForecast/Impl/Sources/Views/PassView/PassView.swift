@@ -51,6 +51,7 @@ public struct PassView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.timeZone) private var timeZone
     @Environment(\.locale) private var locale
+    @Environment(\.dynamicTypeSize) private var textSize
 
     var context: PassViewContext
     var skyChartFactory: ViewFactory<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>>
@@ -74,49 +75,67 @@ public struct PassView: View {
         self.detailedPassViewFactory = detailedPassViewFactory
     }
     
-    private var chartControls: some View {
+    private func chartControls(vertical: Bool = false) -> some View {
         PassChartControls(
             isCompassEnabled: Binding(get: { isCompassEnabled }, set: { isCompassEnabled = $0 }),
             openChart: { viewModel.send(.showDetailPassView(true)) },
-            openPlanetarium: { showsPlanetarium = true }
+            openPlanetarium: { showsPlanetarium = true }, vertical: vertical
         )
     }
 
     private func skyChart(in rect: CGRect) -> some View {
-        MotionManagerView { deviceMotionResult in
-            VStack(spacing: 18) {
-                skyChartFactory.view(
-                    SkyChartContext(
-                        satelliteInfo: context.satelliteInfo,
-                        observer: context.observer,
-                        passSnapshots: context.passSnapshots,
-                        configs: .init(showPassInfoLabels: false),
-                        quality: .full,
-                        starManager: context.starManager,
-                        julianDateProvider: context.julianDateProvider
-                    )
-                )
-                .frame(width: max(0, min(rect.width, rect.height) - 32),
-                       height: max(0, min(rect.width, rect.height) - 32))
-                .rotationEffect(
-                    isCompassEnabled ? .degrees(deviceMotionResult.content?.heading ?? 0) : .zero
-                )
-                // Azimuth labels sit outside the circle, including after compass rotation.
-                .padding(.vertical, 20)
-                .overlay {
-                    if isCompassEnabled {
-                        DeviceOrientationGuidanceView(deviceMotionResult: deviceMotionResult)
-                            .padding(.horizontal, 4)
+        let wide = rect.width >= 880 && !textSize.isAccessibilitySize
+        let side = wide
+            ? max(240, min(700, min(rect.width - 388, rect.height - 80)))
+            : max(220, min(620, min(rect.width - 64, rect.height - 340)))
+        let layout = wide ? AnyLayout(HStackLayout(alignment: .center, spacing: 32)) : AnyLayout(VStackLayout(spacing: 20))
+        return MotionManagerView { deviceMotionResult in
+            layout {
+                chart(deviceMotionResult: deviceMotionResult, diameter: side)
+                    .frame(width: side, height: side)
+                    .padding(24)
+                VStack(alignment: .leading, spacing: 20) {
+                    if wide {
+                        Text(context.satelliteCommonName).font(.title2.weight(.semibold))
+                        Text(Self.descriptionToolbarText(for: context.passSnapshots.pass))
+                            .font(.subheadline).foregroundStyle(AppTheme.muted)
                     }
+                    chartControls(vertical: wide)
+                    eventTable.padding(.horizontal, 16)
+                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 20))
+                        .overlay { RoundedRectangle(cornerRadius: 20).strokeBorder(AppTheme.border, lineWidth: 1) }
                 }
+                .frame(width: wide ? 300 : nil)
+                .frame(maxWidth: wide ? 300 : 620)
+                .padding(.horizontal, wide ? 0 : 20)
+            }
+            .frame(maxWidth: .infinity)
+        }
+    }
 
-                VStack(spacing: 20) {
-                    chartControls
-                    eventTable
-                }
-                .padding(.horizontal, 20)
+    private func chart(deviceMotionResult: Loadable<CMDeviceMotion, Error>, diameter: CGFloat) -> some View {
+        skyChartFactory.view(
+            SkyChartContext(
+                satelliteInfo: context.satelliteInfo,
+                observer: context.observer,
+                passSnapshots: context.passSnapshots,
+                configs: .init(backgroundSkyConfigs: SkyChartDetail.configs(diameter: diameter), showPassInfoLabels: false),
+                quality: .full,
+                starManager: context.starManager,
+                julianDateProvider: context.julianDateProvider
+            )
+        )
+        .rotationEffect(
+            isCompassEnabled ? .degrees(deviceMotionResult.content?.heading ?? 0) : .zero
+        )
+        // Azimuth labels sit outside the circle, including after compass rotation.
+        .overlay {
+            if isCompassEnabled {
+                DeviceOrientationGuidanceView(deviceMotionResult: deviceMotionResult)
+                    .padding(.horizontal, 4)
             }
         }
+
     }
 
     private var isAlarmScheduled: Bool {
@@ -197,7 +216,6 @@ public struct PassView: View {
                             .font(.caption)
                             .frame(alignment: .center)
                             .multilineTextAlignment(.center)
-                        Color.clear
                     }
                 }
 
@@ -212,7 +230,7 @@ public struct PassView: View {
         .fullScreenCover(isPresented: $showsPlanetarium) {
             PlanetariumView(context: context, debug: viewModel.session?.debug)
         }
-        .fullScreenCover(
+        .sheet(
             isPresented: $viewModel.state.showAlarmConfigurationModal,
             onDismiss: {
                 viewModel.send(.showAlarmConfiguration(false))
@@ -225,7 +243,7 @@ public struct PassView: View {
                         passSnapshots: context.passSnapshots,
                         observer: context.observer
                     )
-                )
+                ).presentationSizing(.form)
             }
         )
         .fullScreenCover(

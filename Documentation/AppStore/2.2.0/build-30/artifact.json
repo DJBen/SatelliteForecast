@@ -1,0 +1,22 @@
+{
+  "appID": "1578649430",
+  "bundleID": "io.djben.SatelliteForecast",
+  "version": "2.2.0",
+  "build": "30",
+  "distribution": "internal-only",
+  "groupID": "3b41d8f3-2916-4274-9506-6bcc7cd7ec20",
+  "sourceCommit": "eafc22d12bc34981b14ecf5b3569234db0610bc1",
+  "projectSha256": "78bcea6478d2520dde1f0d2c1c38f1cf6224fa80c777d450437dca774038fa43",
+  "archive": "/tmp/SatelliteForecast-2.2.0-30.xcarchive",
+  "ipa": "/tmp/SatelliteForecast-2.2.0-30.ipa",
+  "reviewManifestSha256": "c29db9f6d909651c411b681b2e97387112369b19e995a0323faa7bcd1d5e0cfc",
+  "ipaSha256": "b254bece477ba5fadb4aa6584bb5b5aa76e35acd352af87a845c613c0d1b9664",
+  "ipaBytes": 140132274,
+  "exportOptionsSha256": "218655bb8bc0cfac3f06643f21f1559173376505e36a9dcbbe7d4673f558da27",
+  "buildID": "ffefda60-9849-40fa-a01f-7d5062b7dc85",
+  "processingState": "VALID",
+  "internalBuildState": "IN_BETA_TESTING",
+  "externalBuildState": "NOT_APPLICABLE",
+  "verifiedAt": "2026-10-13T19:37:32.819960+00:00",
+  "reviewCaptureCount": 60
+}

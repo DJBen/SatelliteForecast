@@ -126,7 +126,9 @@ public struct SettingsOverviewViewImpl: SettingsOverviewView {
                         }
                     }
                 }
+                .frame(maxWidth: 680)
                 .padding()
+                .frame(maxWidth: .infinity, alignment: .top)
                 .navigationDestination(for: SettingsOverviewObserverNavigation.self) { _ in
                     LazyView {
                         locationSettingsViewFactory()

@@ -28,6 +28,7 @@ public struct LocationSettingsViewState: Equatable {
 }
 
 public struct LocationSettingsView: View {
+    @State private var searchPresented = false
     @Environment(\.dismiss) private var dismiss
     let state: LocationSettingsViewState
     let selectLocation: (LocationResources.Selection) -> Void
@@ -132,10 +133,17 @@ public struct LocationSettingsView: View {
         }
         .searchable(
             text: $search.query,
+            isPresented: $searchPresented,
             placement: .navigationBarDrawer(displayMode: .always),
             prompt: Text("Enter address", bundle: .module)
         )
+        .background {
+            Button(AppLocalization.text("Enter address")) { searchPresented = true }
+                .keyboardShortcut("f").frame(width: 0, height: 0).clipped().accessibilityHidden(true)
+        }
+        .modifier(BoundedContent())
         .modifier(AppSurface())
+        .searchPresentationToolbarBehavior(.avoidHidingContent)
         .navigationTitle(Text("Select Location", bundle: .module))
         .navigationBarTitleDisplayMode(.inline)
         .analyticsScreen(.location)

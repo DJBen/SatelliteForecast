@@ -116,18 +116,18 @@ enum MilkyWayBackground {
               let source = CGImageSourceCreateWithURL(url as CFURL, nil),
               let image = CGImageSourceCreateThumbnailAtIndex(source, 0, [
                 kCGImageSourceCreateThumbnailFromImageAlways: true,
-                kCGImageSourceThumbnailMaxPixelSize: 1024
+                kCGImageSourceThumbnailMaxPixelSize: 2048
               ] as CFDictionary) else { return nil }
-        return Texture(image: image)?.smoothed(radius: 2)
+        return Texture(image: image)?.smoothed(radius: 1)
     }()
 
-    /// Bounded low-frequency raster. Rotation/zoom reuse the enclosing sky image;
+    /// Bounded Retina raster. Rotation/zoom reuse the enclosing sky image;
     /// this runs with stars on ChartRenderer's actor, never per animation frame.
     static func image(size: CGSize, observer: LatLonAlt, julianDate: Double, dark: Bool) -> UIImage? {
         guard let texture, size.width.isFinite, size.height.isFinite,
               size.width > 0, size.height > 0, julianDate.isFinite,
               observer.lat.isFinite, observer.lon.isFinite else { return nil }
-        let dimension = Int(min(512, max(96, max(size.width, size.height))))
+        let dimension = Int(min(1280, max(96, max(size.width, size.height) * 2)))
         let scale = Double(dimension) / max(size.width, size.height)
         let width = max(1, Int(size.width * scale))
         let height = max(1, Int(size.height * scale))

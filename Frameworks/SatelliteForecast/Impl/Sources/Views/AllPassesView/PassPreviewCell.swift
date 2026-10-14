@@ -19,10 +19,18 @@ struct PassPreviewCell: View {
     private var pass: Pass { passSnapshots.pass }
     private var bestDate: Date { Date(julianDate: Self.bestViewTime(for: pass)) }
 
-    private var chart: some View {
-        skyChartFactory.view(
+    private func chart(diameter: CGFloat) -> some View {
+        var configs = SkyChartConfigs.preview
+        configs.backgroundSkyConfigs = BackgroundSkyConfigs(
+            stars: .limitedMagnitude(SkyChartDetail.maximumMagnitude(diameter: diameter)),
+            starMagToDisplayRadiusMappingFunction: configs.backgroundSkyConfigs.starMagToDisplayRadiusMappingFunction,
+            showConstellationLines: configs.backgroundSkyConfigs.showConstellationLines,
+            showStarNames: configs.backgroundSkyConfigs.showStarNames,
+            visibleBodies: configs.backgroundSkyConfigs.visibleBodies,
+            bodySymbol: configs.backgroundSkyConfigs.bodySymbol)
+        return skyChartFactory.view(
             SkyChartContext(satelliteInfo: satelliteInfo, observer: observer,
-                passSnapshots: passSnapshots, configs: .preview, quality: .onboarding,
+                passSnapshots: passSnapshots, configs: configs, quality: .onboarding,
                 starManager: starManager, julianDateProvider: julianDateProvider)
         )
         .allowsHitTesting(false)
@@ -34,7 +42,7 @@ struct PassPreviewCell: View {
             GeometryReader { geometry in
                 HStack(spacing: 16) {
                     let chartSize = min(190, geometry.size.width * 0.47) * 1.1
-                    chart
+                    chart(diameter: chartSize)
                         .frame(width: chartSize, height: chartSize)
                     VStack(alignment: .leading, spacing: 7) {
                         HStack(alignment: .firstTextBaseline, spacing: 5) {
@@ -72,7 +80,11 @@ struct PassPreviewCell: View {
             .accessibilityElement(children: .combine)
         } else {
             VStack(spacing: 8) {
-                chart.aspectRatio(1, contentMode: .fit)
+                GeometryReader { geometry in
+                    chart(diameter: geometry.size.width)
+                        .frame(width: geometry.size.width, height: geometry.size.width)
+                }
+                .aspectRatio(1, contentMode: .fit)
                 VStack(spacing: 3) {
                     Text(bestDate, format: .dateTime.month(.abbreviated).day().year())
                         .font(.subheadline.weight(.medium))

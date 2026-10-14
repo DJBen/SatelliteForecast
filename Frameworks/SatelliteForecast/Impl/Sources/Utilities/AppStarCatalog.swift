@@ -27,8 +27,30 @@ public struct AppStarCatalog: Sendable {
             named[star.id] = star
         }
         let stars = snapshot.stars.map { named[$0.id] ?? $0 }
+        var byID = snapshot.starsByID
+        for star in stars { byID[star.id] = star }
         return Self(snapshot: SkySnapshot(stars: stars, constellations: snapshot.constellations,
-            lines: snapshot.lines, starsByID: Dictionary(uniqueKeysWithValues: stars.map { ($0.id, $0) })), catalog: catalog)
+            lines: snapshot.lines, starsByID: byID), catalog: catalog)
+    }
+
+    /// Load a bounded deeper chart snapshot on the catalog actor, without enlarging
+    /// the shared startup/planetarium catalog or doing database work while drawing.
+    public func expanded(maximumMagnitude: Double) async throws -> Self {
+        guard maximumMagnitude.isFinite, maximumMagnitude > 6.5 else { return self }
+        let deeper = try await catalog.snapshot(maximumMagnitude: min(8, maximumMagnitude))
+        try Task.checkCancellation()
+        let infoByID = Dictionary(uniqueKeysWithValues: snapshot.stars.compactMap { star in
+            star.info.map { (star.id, $0) }
+        })
+        let stars = deeper.stars.map { original in
+            var star = original
+            star.info = infoByID[star.id]
+            return star
+        }
+        var byID = deeper.starsByID
+        for star in stars { byID[star.id] = star }
+        return Self(snapshot: .init(stars: stars, constellations: deeper.constellations,
+            lines: deeper.lines, starsByID: byID), catalog: catalog)
     }
 
     public init() {

@@ -29,13 +29,12 @@ public struct DetailedPassView: View {
     }
 
     public var body: some View {
-        let magFunc = BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction(
-            id: "detail"
-        ) { mag in
-            BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction.pointSourceRadius(magnitude: mag, scale: 1.35)
-        }
-
         NavigationStack {
+            GeometryReader { geometry in
+                // The scrollable canvas is 1000 pt, but density follows the visible window.
+                let diameter = min(1000, min(geometry.size.width, geometry.size.height))
+                let background = SkyChartDetail.configs(diameter: diameter)
+                let magFunc = background.starMagToDisplayRadiusMappingFunction
             VStack {
                 ScrollView(
                     [.horizontal, .vertical],
@@ -47,13 +46,7 @@ public struct DetailedPassView: View {
                             observer: context.observer,
                             passSnapshots: context.passSnapshots,
                             configs: SkyChartConfigs(
-                                backgroundSkyConfigs: BackgroundSkyConfigs(
-                                    stars: .limitedMagnitude(6),
-                                    starMagToDisplayRadiusMappingFunction: magFunc,
-                                    hidesStarsDuringDay: true,
-                                    showConstellationLines: true,
-                                    bodySymbol: .text
-                                ),
+                                backgroundSkyConfigs: background,
                                 basicChartConfigs: BasicChartConfigs(),
                                 showPassInfoLabels: true
                             ),
@@ -91,6 +84,7 @@ public struct DetailedPassView: View {
                     )
                     .padding(.horizontal, 16)
                 }
+            }
             }
             .modifier(AppSurface())
             .toolbar {

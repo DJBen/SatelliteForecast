@@ -61,6 +61,7 @@ public struct BackgroundSkyConfigs: Equatable, Hashable, Sendable {
     public var hidesStarsDuringDay: Bool = true
     public var showConstellationLines: Bool = true
     public var showStarNames: Bool = true
+    public var showConstellationNames: Bool = false
 
     public var visibleBodies: [SolarSystemBody] = [
         .sun,
@@ -91,6 +92,7 @@ public struct BackgroundSkyConfigs: Equatable, Hashable, Sendable {
         hidesStarsDuringDay: Bool = true,
         showConstellationLines: Bool = true,
         showStarNames: Bool = true,
+        showConstellationNames: Bool = false,
         visibleBodies: [SolarSystemBody] = [
             .sun,
             .moon,
@@ -108,6 +110,7 @@ public struct BackgroundSkyConfigs: Equatable, Hashable, Sendable {
         self.hidesStarsDuringDay = hidesStarsDuringDay
         self.showConstellationLines = showConstellationLines
         self.showStarNames = showStarNames
+        self.showConstellationNames = showConstellationNames
         self.visibleBodies = visibleBodies
         self.bodySymbol = bodySymbol
     }
@@ -161,7 +164,7 @@ public struct SkyChartConfigs: Equatable, Hashable, Sendable {
     public static var preview: SkyChartConfigs {
         SkyChartConfigs(
             backgroundSkyConfigs: BackgroundSkyConfigs(
-                stars: .limitedMagnitude(2.8),
+                stars: .limitedMagnitude(3),
                 starMagToDisplayRadiusMappingFunction: BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction(id: "preview", apply: { mag in
                     BackgroundSkyConfigs.StarMagToDisplayRadiusMappingFunction.pointSourceRadius(magnitude: mag, scale: 0.75)
                 }),

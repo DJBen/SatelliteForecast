@@ -1,3 +1,4 @@
+import StarryNight
 import CoreLocation
 import MapKit
 import SwiftUI
@@ -263,8 +264,8 @@ final class MilkyWayProjectionTests: XCTestCase {
         XCTAssertEqual(uv(SIMD3(0, 0, 1)).y, 0)
         XCTAssertEqual(uv(SIMD3(0, 0, -1)).y, 1)
         let texture = try XCTUnwrap(MilkyWayBackground.texture)
-        XCTAssertEqual(texture.width, 1024)
-        XCTAssertEqual(texture.height, 512)
+        XCTAssertEqual(texture.width, 2048)
+        XCTAssertEqual(texture.height, 1024)
         XCTAssertLessThan(simd_length(texture.sample(SIMD2(1 - 1e-10, 0.5)) - texture.sample(SIMD2(1e-10, 0.5))), 1e-6)
         XCTAssertGreaterThan(simd_length(texture.sample(SIMD2(0.5, 0.45))), simd_length(texture.sample(SIMD2(0.5, 0))))
     }
@@ -306,7 +307,7 @@ final class MilkyWayProjectionTests: XCTestCase {
         let observer = LatLonAlt(37.49, -122.23, 0)
         let first = try XCTUnwrap(MilkyWayBackground.image(size: CGSize(width: 900, height: 900), observer: observer, julianDate: 2461297.5, dark: true))
         let second = try XCTUnwrap(MilkyWayBackground.image(size: CGSize(width: 900, height: 900), observer: observer, julianDate: 2461297.5, dark: true))
-        XCTAssertEqual(first.cgImage?.width, 512)
+        XCTAssertEqual(first.cgImage?.width, 1280)
         XCTAssertEqual(first.pngData(), second.pngData())
         let data = try XCTUnwrap(first.cgImage?.dataProvider?.data) as Data
         XCTAssertEqual(data[3], 0)
@@ -407,5 +408,76 @@ final class AnalyticsTests: XCTestCase {
             XCTAssertEqual(terminal["outcome"] as? String, outcome)
             XCTAssertNil(terminal["result_count"])
         }
+    }
+}
+
+@MainActor
+final class SkyChartDetailTests: XCTestCase {
+    func testFainterCatalogIsLoadedOnDemandAndRetainsNamedStars() async throws {
+        let base = try await AppStarCatalog.load()
+        let originalCount = base.snapshot.stars.count
+        let raw = try await StarCatalog().snapshot(maximumMagnitude: 6.5)
+        XCTAssertEqual(Set(base.snapshot.starsByID.keys), Set(raw.starsByID.keys),
+            "Constellation endpoints outside the visible-star limit must be retained")
+        let deeper = try await base.expanded(maximumMagnitude: 7.5)
+        XCTAssertGreaterThan(deeper.snapshot.stars.count, originalCount * 2)
+        XCTAssertTrue(deeper.snapshot.stars.contains { $0.magnitude > 6.5 && $0.magnitude <= 7.5 })
+        XCTAssertEqual(base.snapshot.stars.count, originalCount)
+        XCTAssertTrue(base.snapshot.stars.allSatisfy { $0.magnitude <= 6.5 })
+        for star in base.namedBrightStars {
+            XCTAssertEqual(deeper.star(withId: star.id)?.info?.displayName, star.info?.displayName)
+        }
+        XCTAssertEqual(Set(base.snapshot.starsByID.keys).subtracting(deeper.snapshot.starsByID.keys), [])
+        let bounded = try await base.expanded(maximumMagnitude: 20)
+        XCTAssertTrue(bounded.snapshot.stars.allSatisfy { $0.magnitude <= 8 })
+    }
+
+    func testLabelsAvoidReservedPathSpaceAndStayInsideHorizon() throws {
+        let reserved = CGRect(x: 270, y: 270, width: 60, height: 60)
+        var layout = SkyChartLabelLayout(bounds: CGRect(x: 0, y: 0, width: 600, height: 600), occupied: [reserved])
+        let box = try XCTUnwrap(layout.place(size: CGSize(width: 90, height: 20), near: CGPoint(x: 300, y: 300)))
+        XCTAssertFalse(box.intersects(reserved))
+        XCTAssertNil(layout.place(size: CGSize(width: 90, height: 20), near: CGPoint(x: box.midX, y: box.midY), canMove: false))
+        XCTAssertNil(layout.place(size: CGSize(width: 90, height: 20), near: CGPoint(x: 0, y: 0), canMove: false))
+        XCTAssertNil(layout.place(size: CGSize(width: CGFloat.nan, height: 20), near: CGPoint(x: 300, y: 300)))
+        for corner in [CGPoint(x: box.minX, y: box.minY), CGPoint(x: box.maxX, y: box.maxY)] {
+            XCTAssertLessThan(hypot(corner.x - 300, corner.y - 300), 292)
+        }
+    }
+
+    func testLabelPlacementIsDeterministicAtLargerText() {
+        var first = SkyChartLabelLayout(bounds: CGRect(x: 0, y: 0, width: 700, height: 700))
+        var second = first
+        let anchors = [CGPoint(x: 350, y: 300), CGPoint(x: 355, y: 310), CGPoint(x: 200, y: 400)]
+        for anchor in anchors {
+            XCTAssertEqual(first.place(size: CGSize(width: 150, height: 38), near: anchor),
+                second.place(size: CGSize(width: 150, height: 38), near: anchor))
+        }
+        for i in first.occupied.indices {
+            for j in first.occupied.indices where j > i { XCTAssertFalse(first.occupied[i].intersects(first.occupied[j])) }
+        }
+    }
+
+    func testDeepRenderAndHitTestingUseTheSameCatalog() async throws {
+        let base = try await AppStarCatalog.load()
+        let model = BackgroundSkyModel(catalog: base)
+        let key = BackgroundSkyKey(observer: .init(37.49, -122.23, 0), configs: SkyChartDetail.configs(magnitude: 7.5, names: true), isDark: true)
+        model.send(.requestRasterizedBackgroundSky(size: .init(width: 120, height: 120), quality: .full,
+            julianDate: 2461297.5, key: key, traitCollection: .init(userInterfaceStyle: .dark)))
+        for _ in 0..<400 where model.state.resources.rasterizedBackgroundSky[key] == nil {
+            try await Task.sleep(for: .milliseconds(25))
+        }
+        XCTAssertNotNil(model.state.resources.rasterizedBackgroundSky[key])
+        XCTAssertTrue(model.visibleCatalog?.snapshot.stars.contains { $0.magnitude > 6.5 } == true)
+    }
+
+    func testCancelledDeepRenderCannotPublishAResult() async throws {
+        let model = BackgroundSkyModel(catalog: try await AppStarCatalog.load())
+        let key = BackgroundSkyKey(observer: .init(37.49, -122.23, 0), configs: SkyChartDetail.configs(magnitude: 7.5, names: true), isDark: true)
+        model.send(.requestRasterizedBackgroundSky(size: .init(width: 120, height: 120), quality: .full,
+            julianDate: 2461297.5, key: key, traitCollection: .init(userInterfaceStyle: .dark)))
+        model.cancel()
+        try await Task.sleep(for: .milliseconds(250))
+        XCTAssertNil(model.state.resources.rasterizedBackgroundSky[key])
     }
 }

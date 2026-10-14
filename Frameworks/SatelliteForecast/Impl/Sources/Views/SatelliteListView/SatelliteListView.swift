@@ -83,6 +83,10 @@ public struct SatelliteListView: View {
     let allPassesViewFactory: ViewFactory<AllPassesViewContext, AllPassesView>
 
     @StateObject var textObserver = TextFieldObserver(delay: 0.5)
+    @State private var tabletSelection: UInt?
+    @State private var usesSplitLayout = false
+    @State private var searchPresented = false
+    @Environment(\.dynamicTypeSize) private var textSize
 
     public init(
         viewModel: SatelliteListModel,
@@ -117,13 +121,43 @@ public struct SatelliteListView: View {
     }
 
     private func satellitesView(_ satellites: Map<UInt, SatelliteInfo>) -> some View {
-        List {
+        GeometryReader { geometry in
+            let wide = geometry.size.width >= 1000 && !textSize.isAccessibilitySize
+            HStack(spacing: 0) {
+                satelliteRows(satellites).frame(width: wide ? 340 : nil)
+                if wide {
+                    Divider().overlay(AppTheme.border)
+                    NavigationStack {
+                        if let id = tabletSelection.flatMap({ satellites[$0] == nil ? nil : $0 }) ?? satellites.keys.first {
+                            satelliteDestination(.init(noradIndex: id), in: satellites).id(id)
+                        } else {
+                            ContentUnavailableView.search(text: textObserver.searchText)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+            }
+            .onChange(of: wide, initial: true) { _, value in usesSplitLayout = value }
+        }
+    }
+
+    private func satelliteRows(_ satellites: Map<UInt, SatelliteInfo>) -> some View {
+        let selected = tabletSelection.flatMap { satellites[$0] == nil ? nil : $0 } ?? satellites.keys.first
+        return List {
             ForEach(Array(satellites.keys), id: \.self) { noradIndex in
                 let satelliteInfo = satellites[noradIndex]!
-                NavigationLink(value: SatelliteListSelectedSatellite(noradIndex: noradIndex)) {
-                    SatelliteCell(info: satelliteInfo)
+                Group {
+                    if usesSplitLayout {
+                        Button { tabletSelection = noradIndex } label: { SatelliteCell(info: satelliteInfo) }
+                            .buttonStyle(.plain)
+                            .accessibilityAddTraits(selected == noradIndex ? .isSelected : [])
+                    } else {
+                        NavigationLink(value: SatelliteListSelectedSatellite(noradIndex: noradIndex)) {
+                            SatelliteCell(info: satelliteInfo)
+                        }
+                    }
                 }
-                .listRowBackground(AppTheme.surface)
+                .listRowBackground(usesSplitLayout && selected == noradIndex ? AppTheme.accent.opacity(0.12) : AppTheme.surface)
                 .listRowSeparatorTint(AppTheme.border)
             }
         }
@@ -191,9 +225,14 @@ public struct SatelliteListView: View {
         .analyticsScreen(.satellites)
         .searchable(
             text: $textObserver.searchText,
+            isPresented: $searchPresented,
             placement: .navigationBarDrawer(displayMode: .always),
             prompt: Text("Filter by name, ID, country, year...", bundle: .module)
         )
+        .background {
+            Button(AppLocalization.text("Filter by name, ID, country, year...")) { searchPresented = true }
+                .keyboardShortcut("f").frame(width: 0, height: 0).clipped().accessibilityHidden(true)
+        }
         .onChange(of: textObserver.debouncedText) { _, searchText in
             viewModel.send(.searchSatellites(searchText, category: context.category))
         }

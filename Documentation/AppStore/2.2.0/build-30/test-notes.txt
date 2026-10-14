@@ -1,0 +1,5 @@
+2.2.0 adds native iPad layouts and sharper sky rendering.
+
+Please test Home with upcoming passes beside the sky, pass charts with their actions and timeline, satellite list/detail browsing, card grids, location search, and alarm creation/editing. Try portrait, landscape, narrow windows, larger text, and a hardware keyboard. Confirm the iPhone layouts and alarms still work well.
+
+Charts have higher-resolution Milky Way textures, denser stars, and finer orbit paths. Buttons now share consistent sizing and a muted cyan accent.

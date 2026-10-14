@@ -4,6 +4,8 @@
 - Always capture and review app screenshots in dark mode.
 - Do not spend time capturing, reviewing, or fixing light-mode appearance unless the user explicitly requests it.
 - Set the simulator to dark mode before visual inspection.
+- Developer screenshots and comparison galleries are encouraged for visual review, before/after comparisons and regression checks.
+- Store generated screenshots, thumbnails, galleries, capture manifests and logs in a local cache outside the repository, such as `~/Library/Caches/SatelliteForecast/UX/YYYY-MM-DD/<review-name>/`. Explicitly pass the cache path to capture and gallery scripts. Keep generated evidence out of Git; commit capture scripts, source fixtures and concise text review notes.
 - After every app code change, rebuild and rerun the app in the simulator so the updated version is available for review.
 
 # iPhone delivery

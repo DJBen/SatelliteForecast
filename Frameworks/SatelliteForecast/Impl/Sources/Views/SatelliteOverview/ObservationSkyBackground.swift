@@ -17,7 +17,7 @@ struct ObservationSkyBackground: View {
               let source = CGImageSourceCreateWithURL(url as CFURL, nil),
               let image = CGImageSourceCreateThumbnailAtIndex(source, 0, [
                 kCGImageSourceCreateThumbnailFromImageAlways: true,
-                kCGImageSourceThumbnailMaxPixelSize: 1024
+                kCGImageSourceThumbnailMaxPixelSize: 2048
               ] as CFDictionary) else { return nil }
         return Image(decorative: image, scale: 1)
     }()

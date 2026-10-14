@@ -37,8 +37,7 @@ struct SatelliteCategoryCell: View {
                     .fontWeight(.semibold)
                     .foregroundColor(AppTheme.text)
                     .multilineTextAlignment(.leading)
-                    .minimumScaleFactor(0.8)
-                    .lineLimit(1)
+                    .fixedSize(horizontal: false, vertical: true)
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.title3)
@@ -54,7 +53,7 @@ struct SatelliteCategoryCell: View {
                     .frame(width: geometry.size.width, height: geometry.size.height)
                     .clipped()
             }
-            .frame(height: 156 * (compactHeight ? 0.85 : 1))
+            .aspectRatio(16.0 / 9.0, contentMode: .fit)
         }
         .background(AppTheme.surface)
         .clipShape(RoundedRectangle(cornerRadius: AppTheme.cardRadius))

@@ -97,7 +97,9 @@ public enum SkyChartUtils {
     public static func rasterizedSatellitePassPath(
         params: SatellitePassPathRenderParams
     ) -> UIImage {
-        let renderer = UIGraphicsImageRenderer(size: params.rect.size)
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = max(2, UITraitCollection.current.displayScale)
+        let renderer = UIGraphicsImageRenderer(size: params.rect.size, format: format)
 
         return renderer.image { ctx in
             addRasterizedSatellitePassPath(to: ctx, params: params)
@@ -272,7 +274,9 @@ public enum SkyChartUtils {
         params: BackgroundSkyRenderParams,
         starManager: AppStarCatalog?
     ) -> UIImage {
-        let renderer = UIGraphicsImageRenderer(size: params.rect.size)
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = max(2, UITraitCollection.current.displayScale)
+        let renderer = UIGraphicsImageRenderer(size: params.rect.size, format: format)
 
         return renderer.image { ctx in
             addRasterizedBackgroundSkyPath(

@@ -120,6 +120,9 @@ public struct AllPassesView: View {
     }
 
     @State private var showsGlobe = false
+    @State private var usesSplitLayout = false
+    @State private var tabletSelection: AllPassViewNavigation?
+    @Environment(\.dynamicTypeSize) private var textSize
     @State var viewModel: PassListModel
 
     let context: AllPassesViewContext
@@ -235,13 +238,18 @@ public struct AllPassesView: View {
                 .listRowBackground(AppTheme.surface)
             } else {
                 ForEach(items) { item in
-                    NavigationLink(
-                        value: AllPassViewNavigation(
-                            passIndex: item.index,
-                            passSnapshots: item.passSnapshots
-                        )
-                    ) {
-                        compactPassCell(item)
+                    Group {
+                        if usesSplitLayout {
+                            Button { tabletSelection = .init(passIndex: item.index, passSnapshots: item.passSnapshots) } label: {
+                                compactPassCell(item).frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityAddTraits(effectiveTabletSelection?.passIndex == item.index ? .isSelected : [])
+                        } else {
+                            NavigationLink(value: AllPassViewNavigation(passIndex: item.index, passSnapshots: item.passSnapshots)) {
+                                compactPassCell(item)
+                            }
+                        }
                     }
                     .overlay {
                         if !hasOpenedVisiblePass, item.index == items.first?.index,
@@ -251,7 +259,7 @@ public struct AllPassesView: View {
                                 .padding(.vertical, -12)
                         }
                     }
-                    .listRowBackground(AppTheme.surface)
+                    .listRowBackground(usesSplitLayout && effectiveTabletSelection?.passIndex == item.index ? AppTheme.accent.opacity(0.12) : AppTheme.surface)
                     .id(item.id)
                     .swipeActions(
                         edge: .leading
@@ -311,6 +319,10 @@ public struct AllPassesView: View {
                         // Both cards append to the owning stack, like visible-pass links.
                         // Separate Buttons also prevent List from activating both links in a row.
                         Button {
+                            if usesSplitLayout {
+                                tabletSelection = .init(passIndex: item.index, passSnapshots: item.passSnapshots)
+                                return
+                            }
                             guard let navigationPath else {
                                 assertionFailure("Pass grid requires its owning navigation path")
                                 return
@@ -504,7 +516,30 @@ public struct AllPassesView: View {
     }
     
     public var body: some View {
-        allPassesList
+        GeometryReader { geometry in
+            let wide = geometry.size.width >= 980 && context.observer != nil && !textSize.isAccessibilitySize
+            HStack(spacing: 0) {
+                allPassesList.frame(width: wide ? 340 : nil)
+                if wide, let observer = context.observer {
+                    Divider().overlay(AppTheme.border)
+                    NavigationStack {
+                        if let selected = effectiveTabletSelection {
+                            passDestination(selected, observer: observer)
+                                .id(selected.passSnapshots.pass.notificationIdentifier)
+                        } else if itemsByVisibility != nil {
+                            ContentUnavailableView {
+                                Label(AppLocalization.text("No passes found"), systemImage: "sparkles")
+                            }
+                        } else {
+                            ProgressView(AppLocalization.text("Calculating..."))
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+            }
+            .onChange(of: wide, initial: true) { _, value in usesSplitLayout = value }
+            .onChange(of: context.observer) { _, _ in tabletSelection = nil }
+        }
         .modifier(CompactHeightLayout())
         .frame(maxWidth: .infinity)
         .modifier(AppSurface())
@@ -552,6 +587,21 @@ public struct AllPassesView: View {
                 viewModel.send(.showOnboarding(false))
             }
         }
+    }
+
+    private var defaultTabletSelection: AllPassViewNavigation? {
+        let item = itemsByVisibility?[.visible]?.first ?? itemsByVisibility?.values.flatMap { $0 }.min { $0.index < $1.index }
+        return item.map { .init(passIndex: $0.index, passSnapshots: $0.passSnapshots) }
+    }
+
+    private var effectiveTabletSelection: AllPassViewNavigation? {
+        if let selected = tabletSelection,
+           let item = itemsByVisibility?.values.flatMap({ $0 }).first(where: {
+               $0.passSnapshots.pass.notificationIdentifier == selected.passSnapshots.pass.notificationIdentifier
+           }) {
+            return .init(passIndex: item.index, passSnapshots: item.passSnapshots)
+        }
+        return defaultTabletSelection
     }
 
 }

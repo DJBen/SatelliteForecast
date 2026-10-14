@@ -38,6 +38,7 @@ public struct SatelliteCategoryViewContext {
 public struct SatelliteCategoryViewImpl: SatelliteCategoryView {
     @State var viewModel: SatelliteCategoryModel
     @State private var navigationPath: NavigationPath
+    @Environment(\.dynamicTypeSize) private var textSize
     let context: SatelliteCategoryViewContext
     let listViewFactory: ViewFactory<SatelliteListViewContext, SatelliteListView>
     /// Optional content shown above the categories, such as the station cards.
@@ -76,11 +77,7 @@ public struct SatelliteCategoryViewImpl: SatelliteCategoryView {
                             .padding(.top, 8)
                         if let header { header.padding(.bottom, 10) }
                         Section {
-                            LazyVStack(
-                                alignment: .leading,
-                                spacing: 20,
-                                pinnedViews: []
-                            ) {
+                            LazyVGrid(columns: [GridItem(.adaptive(minimum: textSize.isAccessibilitySize ? 600 : 300), spacing: 20)], spacing: 20) {
                                 ForEach(
                                     [
                                         SatelliteCategory.brightest100,
@@ -96,8 +93,10 @@ public struct SatelliteCategoryViewImpl: SatelliteCategoryView {
                             }
                         }
                     }
+                    .frame(maxWidth: 1160)
+                    .frame(maxWidth: .infinity)
                 }
-                .padding(.horizontal, 16)
+                .padding(.horizontal, 20)
                 .contentMargins(.bottom, geometry.safeAreaInsets.bottom, for: .scrollContent)
                 .ignoresSafeArea(.container, edges: .bottom)
                 .modifier(AppSurface())

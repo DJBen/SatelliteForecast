@@ -1,0 +1,20 @@
+[
+  {
+    "CFBundleIdentifier": "io.djben.SatelliteForecast",
+    "CFBundleShortVersionString": "2.2.0",
+    "CFBundleVersion": "30",
+    "UIDeviceFamily": [
+      1,
+      2
+    ]
+  },
+  {
+    "CFBundleIdentifier": "io.djben.SatelliteForecast.Widget",
+    "CFBundleShortVersionString": "2.2.0",
+    "CFBundleVersion": "30",
+    "UIDeviceFamily": [
+      1,
+      2
+    ]
+  }
+]

@@ -219,8 +219,8 @@ struct LiveSkyPlanetarium: View {
                 }
                 PlanetariumLiveSatelliteIndicator(controller: controller, state: controller.selectionState)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                PlanetariumSelectionCard(controller: controller, state: controller.selectionState)
-                satelliteStatus
+                PlanetariumSelectionCard(controller: controller, state: controller.selectionState).frame(maxWidth: 560)
+                satelliteStatus.frame(maxWidth: 640)
                 if showFPS, let monitor = controller.renderer?.frameRate {
                     PlanetariumFPSReadout(monitor: monitor)
                 }

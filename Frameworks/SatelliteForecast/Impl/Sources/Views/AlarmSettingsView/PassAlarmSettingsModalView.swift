@@ -231,11 +231,10 @@ public struct PassAlarmSettingsModalView: View {
                     Text(isNotificationScheduled ? "Save changes" : "Set alarm", bundle: .module)
                 }
                 .font(.headline)
-                .frame(maxWidth: .infinity, minHeight: 48)
+                .frame(maxWidth: .infinity, minHeight: 22)
             }
-            .buttonStyle(.borderedProminent)
-            .foregroundStyle(viewModel.isSaving || (isNotificationScheduled && !hasChanges)
-                             ? AppTheme.muted : Color(uiColor: .systemBackground))
+            .buttonStyle(AppActionButtonStyle(prominent: true))
+            .keyboardShortcut(.return, modifiers: .command)
             .disabled(viewModel.isSaving || (isNotificationScheduled && !hasChanges))
             .accessibilityIdentifier("alarm.save")
             if isNotificationScheduled {
@@ -252,7 +251,9 @@ public struct PassAlarmSettingsModalView: View {
                 .accessibilityIdentifier("alarm.delete")
             }
         }
+        .frame(maxWidth: 560)
         .padding(16)
+        .frame(maxWidth: .infinity)
         .background(AppTheme.background)
     }
 
@@ -264,7 +265,8 @@ public struct PassAlarmSettingsModalView: View {
                     momentPicker
                     timePicker
                 }
-                .padding(20)
+                .frame(maxWidth: 560).padding(20)
+                .frame(maxWidth: .infinity, alignment: .top)
                 .disabled(viewModel.isSaving)
             }
             .safeAreaInset(edge: .bottom, spacing: 0) { footer }
@@ -276,6 +278,7 @@ public struct PassAlarmSettingsModalView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button { dismiss() } label: { Text("Cancel", bundle: .module) }
+                        .keyboardShortcut(.cancelAction)
                         .disabled(viewModel.isSaving)
                 }
             }

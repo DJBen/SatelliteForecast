@@ -109,8 +109,22 @@ __pycache__/
 # Local capture scratch space; reviewed release assets live under Documentation/AppStore.
 /output/
 
+# Generated UX capture evidence stays local; retain lightweight review notes.
+/Documentation/UX/**
+!/Documentation/UX/**/
+!/Documentation/UX/**/*.md
+
+# New design-review screenshot and gallery outputs also stay local.
+/Documentation/DesignReview/**/*.png
+/Documentation/DesignReview/**/*.jpg
+/Documentation/DesignReview/**/*.jpeg
+/Documentation/DesignReview/**/*.webp
+/Documentation/DesignReview/**/*.gif
+/Documentation/DesignReview/**/*.html
+/Documentation/DesignReview/**/*.log
+
 # Private local crash/device investigation evidence
 /.local/
-# Keep original diagnostic captures local; commit reviewed summaries and images.
+# Keep original diagnostic captures local; commit reviewed summaries.
 /Documentation/DesignReview/ActivePass-2026-09-27/*.ips
 /Documentation/DesignReview/ActivePass-2026-09-27/*.log

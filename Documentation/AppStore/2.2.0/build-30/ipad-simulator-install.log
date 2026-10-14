@@ -1,0 +1,5 @@
+App installed successfully in simulator 12EF8F59-ECBB-4A3B-9450-FA76A523DBC3.
+
+Next steps:
+1. Open the Simulator app: xcodebuildmcp simulator-management open
+2. Launch the app: xcodebuildmcp simulator launch-app --simulator-id "12EF8F59-ECBB-4A3B-9450-FA76A523DBC3" --bundle-id "io.djben.SatelliteForecast"

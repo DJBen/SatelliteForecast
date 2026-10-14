@@ -82,30 +82,10 @@ struct ObservationHomeView: View {
     var body: some View {
         @Bindable var navigation = session.navigation
         NavigationStack(path: $navigation.forecastPath) {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    header
-                    if input.observer == nil {
-                        locationPrompt
-                    } else if let pass = passes.first {
-                        hero(pass)
-                        if dynamicType.isAccessibilitySize { weatherBadge }
-                        upcoming
-                        if hasFailure { failureNotice }
-                    } else if isLoading {
-                        ProgressView(AppLocalization.text("Finding your next observation…"))
-                            .frame(maxWidth: .infinity, minHeight: 240)
-                    } else {
-                        emptyState
-                    }
-                    if let reading = weather.current(for: weatherLocation) {
-                        HomeWeatherAttribution(reading: reading)
-                            .frame(maxWidth: .infinity, alignment: .trailing)
-                    }
+            GeometryReader { geometry in
+                ScrollView {
+                    homeContent(width: geometry.size.width)
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 8)
-                .padding(.bottom, 24)
             }
             .modifier(AppSurface())
             .toolbar(.hidden, for: .navigationBar)
@@ -157,6 +137,38 @@ struct ObservationHomeView: View {
         }
     }
 
+    private func homeContent(width: CGFloat) -> some View {
+        let wide = width >= 980 && !dynamicType.isAccessibilitySize
+        let contentWidth = min(1160, max(0, width - 40))
+        let heroWidth = wide ? contentWidth - 384 : min(contentWidth, 760)
+        let layout = wide ? AnyLayout(HStackLayout(alignment: .top, spacing: 24)) : AnyLayout(VStackLayout(spacing: 24))
+        return VStack(alignment: .leading, spacing: 24) {
+            header
+            if input.observer == nil {
+                locationPrompt
+            } else if let pass = passes.first {
+                layout {
+                    hero(pass, previewHeight: dynamicType.isAccessibilitySize ? 180 : min(380, max(220, (heroWidth - 40) * 0.58)))
+                        .frame(maxWidth: .infinity)
+                    upcoming(limit: wide ? 6 : 3).frame(width: wide ? 360 : nil)
+                }
+                if dynamicType.isAccessibilitySize { weatherBadge }
+                if hasFailure { failureNotice }
+            } else if isLoading {
+                ProgressView(AppLocalization.text("Finding your next observation…"))
+                    .frame(maxWidth: .infinity, minHeight: 240)
+            } else {
+                emptyState
+            }
+            if let reading = weather.current(for: weatherLocation) {
+                HomeWeatherAttribution(reading: reading).frame(maxWidth: .infinity, alignment: .trailing)
+            }
+        }
+        .frame(maxWidth: wide ? 1160 : 760)
+        .padding(.horizontal, 20).padding(.top, 16).padding(.bottom, 28)
+        .frame(maxWidth: .infinity, alignment: .top)
+    }
+
     private var header: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Next observation", bundle: .module).font(dynamicType.isAccessibilitySize ? .title2.bold() : .largeTitle.bold())
@@ -185,7 +197,7 @@ struct ObservationHomeView: View {
                     .fixedSize()
             }
             .font(.subheadline)
-            .frame(minHeight: 40, alignment: .leading)
+            .frame(minHeight: 44, alignment: .leading)
         }
         .buttonStyle(.plain)
     }
@@ -209,9 +221,9 @@ struct ObservationHomeView: View {
         }
     }
 
-    private func hero(_ pass: Pass) -> some View {
+    private func hero(_ pass: Pass, previewHeight: CGFloat) -> some View {
         let live = ObservationOpportunity.isOccurring(pass, now: now)
-        return VStack(spacing: 0) {
+        return VStack(alignment: .leading, spacing: 0) {
             Button { open(pass) } label: {
                 VStack(alignment: .leading, spacing: 9) {
                     if live {
@@ -237,37 +249,40 @@ struct ObservationHomeView: View {
                     Text(ObservationOpportunity.name(pass)).font(.headline).foregroundStyle(AppTheme.text)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.trailing, showsBellShortcut(pass) ? 56 : 0)
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .accessibilityHint(Text("Opens the sky chart for this pass", bundle: .module))
-            if !live { reminderButton(pass).padding(.vertical, 10) }
             Text(summary(pass)).font(.subheadline).foregroundStyle(AppTheme.muted)
                 .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.bottom, 8)
+                .padding(.top, 8).padding(.bottom, 16)
             Button { open(pass) } label: {
                 VStack {
                     if let preview = currentPreview, let observer = input.observer {
                         ObservationSkyPreview(preview: preview, observer: observer, session: session,
                             extendsSkyUpward: true, liveJulianDate: live ? now : nil,
                             isActive: isVisible && skyIsVisible && !showsLocation && session.navigation.forecastPath.isEmpty && session.navigation.deepLink == nil)
-                            .frame(height: dynamicType.isAccessibilitySize ? 120 : 194)
+                            .frame(height: previewHeight)
                             .onScrollVisibilityChange(threshold: 0.1) { skyIsVisible = $0 }
                     } else if previewFailed {
                         Label(AppLocalization.text("Pass preview unavailable"), systemImage: "cloud")
                             .font(.subheadline).foregroundStyle(AppTheme.muted)
-                            .frame(maxWidth: .infinity, minHeight: 190)
+                            .frame(maxWidth: .infinity, minHeight: previewHeight)
                     } else {
-                        ProgressView().frame(maxWidth: .infinity, minHeight: 194)
+                        ProgressView().frame(maxWidth: .infinity, minHeight: previewHeight)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .background(AppTheme.background.opacity(0.7), in: RoundedRectangle(cornerRadius: 18))
+                .clipShape(RoundedRectangle(cornerRadius: 18))
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .accessibilityLabel(Text("Open pass chart", bundle: .module))
             .accessibilityHint(Text("Opens the sky chart for this pass", bundle: .module))
+            if !live { reminderButton(pass).padding(.top, 16) }
             if previewFailed {
                 Button(AppLocalization.text("Retry preview")) { previewAttempt += 1 }
                     .padding(.bottom, 10)
@@ -283,10 +298,8 @@ struct ObservationHomeView: View {
             }
         }
         .padding(20)
-        .background {
-            AppTheme.featuredBackground
-                .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
-        }
+        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .overlay { RoundedRectangle(cornerRadius: 24).strokeBorder(AppTheme.border, lineWidth: 1) }
         .overlay(alignment: .topTrailing) {
             if showsBellShortcut(pass) { bellShortcut.padding(14) }
         }
@@ -309,12 +322,10 @@ struct ObservationHomeView: View {
         } label: {
             Image(systemName: "bell")
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(AppTheme.accent)
-                .frame(width: 44, height: 44)
-                .background(AppTheme.accent.opacity(0.14), in: Circle())
+                .frame(width: 22, height: 22)
                 .matchedGeometryEffect(id: "reminderBell", in: reminderNamespace)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(AppActionButtonStyle())
         .accessibilityLabel(Text(session.notifications.isDenied ? "Open notification settings" : "Enable station reminders", bundle: .module))
     }
 
@@ -371,17 +382,12 @@ struct ObservationHomeView: View {
                 } else { Image(systemName: icon) }
                 Text(AppLocalization.text(title)).fixedSize(horizontal: false, vertical: true)
             }
-            .font(.body.weight(.semibold))
-            .frame(maxWidth: .infinity, minHeight: 32)
-            .padding(.vertical, 10)
+            .frame(minHeight: 22)
         }
-        .buttonStyle(.borderedProminent)
-        .tint(AppTheme.accent)
-        .foregroundStyle(Color(uiColor: .systemBackground))
-        .buttonBorderShape(.roundedRectangle(radius: 16))
+        .buttonStyle(AppActionButtonStyle(prominent: true))
     }
 
-    private var upcoming: some View {
+    private func upcoming(limit: Int) -> some View {
         VStack(spacing: 10) {
             HStack {
                 Text("Coming up", bundle: .module).font(.title3.weight(.semibold))
@@ -394,7 +400,7 @@ struct ObservationHomeView: View {
                 }.frame(minHeight: 44)
             }
             .padding(.horizontal, 4)
-            let next = Array(passes.dropFirst().prefix(3))
+            let next = Array(passes.dropFirst().prefix(limit))
             if next.isEmpty {
                 Text("No more visible station passes in this forecast.", bundle: .module)
                     .font(.subheadline).foregroundStyle(AppTheme.muted)
@@ -428,9 +434,11 @@ struct ObservationHomeView: View {
                         .font(.subheadline).foregroundStyle(AppTheme.muted).padding(.horizontal, 4)
                 }
             }
+            .frame(maxWidth: 760)
             .padding(.horizontal, 20)
             .padding(.top, 8)
             .padding(.bottom, 24)
+            .frame(maxWidth: .infinity, alignment: .top)
         }
         .modifier(AppSurface())
         .navigationTitle(Text("All passes", bundle: .module))
@@ -458,13 +466,13 @@ struct ObservationHomeView: View {
                 HStack {
                     if session.location.isRequestingLocation { ProgressView() }
                     Label(AppLocalization.text("Use my location"), systemImage: "location.fill")
-                }.frame(maxWidth: .infinity, minHeight: 32)
+                }.frame(maxWidth: .infinity, minHeight: 22)
             }
-            .buttonStyle(.borderedProminent).tint(AppTheme.accent)
-            .foregroundStyle(Color(uiColor: .systemBackground)).font(.headline)
+            .buttonStyle(AppActionButtonStyle(prominent: true))
             .disabled(session.location.isRequestingLocation)
             Button(AppLocalization.text("Choose a city")) { showsLocation = true }
-                .frame(maxWidth: .infinity, minHeight: 40)
+                .frame(maxWidth: .infinity, minHeight: 22)
+                .buttonStyle(AppActionButtonStyle())
             if let error = session.location.locationError { Text(error).font(.footnote).foregroundStyle(AppTheme.warning) }
         }
         .padding(24)

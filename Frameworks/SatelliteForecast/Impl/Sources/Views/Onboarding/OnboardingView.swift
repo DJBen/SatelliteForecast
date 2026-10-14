@@ -54,10 +54,6 @@ public struct OnboardingView: View {
                 customView: { geometry in
                     AnyView(
                         OnboardingPassAnimation(session: session, isActive: isReplayActive)
-                            .frame(height: geometry.size.height * 0.58)
-                            .padding(.horizontal, 24)
-                            .padding(.top, geometry.safeAreaInsets.top + 48)
-                            .frame(maxHeight: .infinity, alignment: .top)
                     )
                 }
             ),
@@ -93,7 +89,7 @@ public struct OnboardingView: View {
 }
 
 private struct OnboardingPageView: View {
-    @Environment(\.compactHeightLayout) private var compactHeight
+    @Environment(\.dynamicTypeSize) private var textSize
     let page: OnboardingPage
     let isLastPage: Bool
     let onComplete: () -> Void
@@ -106,6 +102,7 @@ private struct OnboardingPageView: View {
     var body: some View {
         ZStack {
             GeometryReader { geometry in
+                let wide = geometry.size.width >= 980 && !textSize.isAccessibilitySize
                 // Background video or gradient
                 if !page.videoName.isEmpty,
                    let videoURL = Bundle.module.url(forResource: page.videoName, withExtension: page.videoExtension) {
@@ -159,61 +156,77 @@ private struct OnboardingPageView: View {
                 )
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .ignoresSafeArea(.all)
-                // Custom view overlay (if present)
-                if let customView = page.customView {
-                    customView(geometry)
-                        .frame(width: geometry.size.width, height: geometry.size.height)
-                        .ignoresSafeArea(.all)
-                        .clipped()
-                }
-
-            }
-            
-            // Content overlay
-            VStack(spacing: 0) {
-                Spacer()
-                
-                // Bottom text area
-                VStack(spacing: 24) {
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text(page.title)
-                            .font(.title)
-                            .fontWeight(.bold)
-                            .multilineTextAlignment(.leading)
-                        
-                        Text(page.description)
-                            .font(.headline)
-                            .fontWeight(.medium)
-                            .foregroundStyle(AppTheme.text.opacity(0.85))
-                            .multilineTextAlignment(.leading)
-                            .lineLimit(nil)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    .padding(.horizontal, 32)
-                    
-                    Button(action: isLastPage ? onComplete : onContinue) {
-                        HStack {
-                            Text(isLastPage ? "Get Started" : "Continue", bundle: .module)
-                            if isLastPage {
-                                Image(systemName: "arrow.right")
-                            }
+                if wide {
+                    HStack(spacing: 40) {
+                        if let customView = page.customView {
+                            GeometryReader { preview in customView(preview) }
+                                .frame(height: min(720, geometry.size.height - 160))
+                        } else {
+                            // Keep the moving sky visible beside the introduction.
+                            Color.clear
                         }
-                        .font(.headline.weight(.semibold))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, compactHeight ? 0 : 8)
+                        copyAndAction
+                            .padding(32)
+                            .frame(width: 420)
+                            .background(AppTheme.surface.opacity(0.94), in: RoundedRectangle(cornerRadius: 24))
                     }
-                    .buttonStyle(.glass)
-                    .buttonBorderShape(.capsule)
-                    .controlSize(.large)
-                    .foregroundStyle(AppTheme.text)
-                    .environment(\.colorScheme, .dark)
-                    .padding(.horizontal, 32)
+                    .padding(48)
+                    .frame(maxWidth: 1200, maxHeight: .infinity)
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+                } else {
+                    if let customView = page.customView {
+                        customView(geometry)
+                            .frame(height: geometry.size.height * 0.58)
+                            .padding(.horizontal, 24)
+                            .padding(.top, geometry.safeAreaInsets.top + 48)
+                            .frame(maxHeight: .infinity, alignment: .top)
+                    }
+                    VStack {
+                        Spacer()
+                        copyAndAction.padding(.horizontal, 32)
+                            .frame(maxWidth: 560).padding(.bottom, 48)
+                    }
+                    .frame(width: geometry.size.width, height: geometry.size.height)
                 }
-                .padding(.bottom, 48)
             }
         }.ignoresSafeArea()
     }
     
+    private var copyAndAction: some View {
+        VStack(spacing: 24) {
+            VStack(alignment: .leading, spacing: 16) {
+                Text(page.title)
+                    .font(.title)
+                    .fontWeight(.bold)
+                    .multilineTextAlignment(.leading)
+
+                Text(page.description)
+                    .font(.headline)
+                    .fontWeight(.medium)
+                    .foregroundStyle(AppTheme.text.opacity(0.85))
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+
+            Button(action: isLastPage ? onComplete : onContinue) {
+                HStack {
+                    Text(isLastPage ? "Get Started" : "Continue", bundle: .module)
+                    if isLastPage {
+                        Image(systemName: "arrow.right")
+                    }
+                }
+                .font(.headline.weight(.semibold))
+                .frame(maxWidth: .infinity)
+                .frame(minHeight: 22)
+            }
+            .buttonStyle(AppActionButtonStyle(prominent: true))
+            .environment(\.colorScheme, .dark)
+
+        }
+    }
+
     private func setupPlayer(with videoURL: URL) {
         player = AVPlayer(url: videoURL)
         player?.isMuted = true

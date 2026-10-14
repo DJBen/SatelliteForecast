@@ -52,7 +52,7 @@ struct SatelliteOverviewCell: View {
             // Background video
             let videoName = satellite == .iss ? "iss" : "tiangong"
             AutoPlayVideoView(videoName: videoName, bundle: .module)
-                .frame(height: 184 * (compactHeight ? 0.85 : 1))
+                .aspectRatio(16.0 / 9.0, contentMode: .fit)
                 .clipped()
             
             // Pass information section
@@ -200,7 +200,7 @@ extension SatelliteOverviewCell {
                 Text("Passing now!", bundle: .module, comment: "A string describing that the satellite is currently passing")
                     .font(.subheadline.monospacedDigit())
                     .fontWeight(.bold)
-                    .foregroundColor(isFlashing ? .pink : .orange)
+                    .foregroundStyle(AppTheme.accent)
                     .onAppear {
                         withAnimation(Animation.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) {
                             isFlashing = true
@@ -227,7 +227,7 @@ extension SatelliteOverviewCell {
                         .font(.subheadline)
                         .foregroundStyle(
                             LinearGradient(
-                                colors: [AppTheme.warning, AppTheme.warning],
+                                colors: [AppTheme.accent, AppTheme.accent],
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )

@@ -40,9 +40,20 @@ public final class SkyChartModel {
 
 @MainActor @Observable
 public final class BackgroundSkyModel {
+  private struct RenderRequest: Equatable {
+    let size: CGSize
+    let quality: ChartQuality
+    let date: Double
+    let key: BackgroundSkyKey
+  }
   public var state: BackgroundSkyViewState
   private let catalog: AppStarCatalog?
   private let renderer: ChartRenderer
+  @ObservationIgnored private var expandedCatalog: AppStarCatalog?
+  @ObservationIgnored private var expandedMagnitude: Double = 6.5
+  @ObservationIgnored private var renderedCatalog: AppStarCatalog?
+  @ObservationIgnored private var renderRequest: RenderRequest?
+  public var visibleCatalog: AppStarCatalog? { renderedCatalog ?? catalog }
   @ObservationIgnored private var task: Task<Void, Never>?
   public init(
     state: BackgroundSkyViewState = .init(), catalog: AppStarCatalog? = nil,
@@ -57,13 +68,29 @@ public final class BackgroundSkyModel {
     guard let catalog else { return }
     switch action {
     case .requestRasterizedBackgroundSky(let size, let quality, let date, let key, let traits):
+      let request = RenderRequest(size: size, quality: quality, date: date, key: key)
+      guard renderRequest != request else { return }
+      renderRequest = request
       task?.cancel()
       task = Task { [weak self, renderer] in
         do {
+          let renderCatalog: AppStarCatalog
+          if case .limitedMagnitude(let limit) = key.configs.stars, limit > 6.5 {
+            let bounded = min(8, limit)
+            if let expanded = self?.expandedCatalog, (self?.expandedMagnitude ?? 0) >= bounded {
+              renderCatalog = expanded
+            } else {
+              renderCatalog = try await catalog.expanded(maximumMagnitude: bounded)
+              try Task.checkCancellation()
+              self?.expandedCatalog = renderCatalog
+              self?.expandedMagnitude = bounded
+            }
+          } else { renderCatalog = catalog }
           let image = try await renderer.background(
             size: size, quality: quality, julianDate: date, key: key, traitCollection: traits,
-            catalog: catalog)
+            catalog: renderCatalog)
           try Task.checkCancellation()
+          self?.renderedCatalog = renderCatalog
           self?.state.resources = .init(allConstellations: Array(catalog.allConstellations()))
           switch quality {
           case .preview: self?.state.resources.previewBackgroundSkies = [key: [date: image]]
@@ -71,11 +98,13 @@ public final class BackgroundSkyModel {
           case .detailed: self?.state.resources.detailedBackgroundSkies = [key: [date: image]]
           case .onboarding: self?.state.resources.onboardingBackgroundSkies = [key: [date: image]]
           }
-        } catch {}
+        } catch {
+          if !Task.isCancelled, self?.renderRequest == request { self?.renderRequest = nil }
+        }
       }
     }
   }
-  public func cancel() { task?.cancel() }
+  public func cancel() { task?.cancel(); renderRequest = nil }
   deinit { task?.cancel() }
 }
 

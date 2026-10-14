@@ -5,12 +5,13 @@ struct PassChartControls: View {
     @Binding var isCompassEnabled: Bool
     var openChart: () -> Void
     var openPlanetarium: () -> Void
+    var vertical = false
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     var body: some View {
-        GlassEffectContainer(spacing: 10) {
-            if dynamicTypeSize.isAccessibilitySize {
+        Group {
+            if vertical || dynamicTypeSize.isAccessibilitySize {
                 VStack(spacing: 10) { buttons(stacked: false, intrinsic: false) }
             } else {
                 ViewThatFits(in: .horizontal) {
@@ -21,14 +22,13 @@ struct PassChartControls: View {
                 }
             }
         }
-        .buttonStyle(.glass)
-        .buttonBorderShape(.roundedRectangle(radius: 16))
+        .buttonStyle(AppActionButtonStyle())
     }
 
     @ViewBuilder
     private func buttons(stacked: Bool, intrinsic: Bool, compactCompass: Bool = false) -> some View {
         if isCompassEnabled {
-            compass(stacked: stacked, intrinsic: intrinsic, iconOnly: compactCompass).buttonStyle(.glassProminent)
+            compass(stacked: stacked, intrinsic: intrinsic, iconOnly: compactCompass).buttonStyle(AppActionButtonStyle(prominent: true))
         } else {
             compass(stacked: stacked, intrinsic: intrinsic, iconOnly: compactCompass)
         }
@@ -72,7 +72,7 @@ struct PassChartControls: View {
             }
         }
         .frame(minWidth: iconOnly ? 24 : nil, maxWidth: iconOnly ? nil : .infinity)
-        .frame(minHeight: 28)
+        .frame(minHeight: 22)
         .contentShape(Rectangle())
     }
 }

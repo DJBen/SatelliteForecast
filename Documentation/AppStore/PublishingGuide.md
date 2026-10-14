@@ -195,7 +195,28 @@ python3 scripts/capture-widget-home-screenshots.py --output Documentation/AppSto
   change what customers can download; report internal TestFlight, App Review and public
   release states separately and independently per build.
 
+## Native iPad internal testing
+
+- For universal builds, align app and widget device families in both Debug and
+  Release, then verify `UIDeviceFamily = [1, 2]` in the archive and exported IPA.
+  The version/build identity must match in the app and extension too.
+- The iPad review harness provides controlled Pro, mini-size and narrow-window
+  canvases. These establish layout and rendering evidence; physical keyboard,
+  trackpad, VoiceOver, live resizing/rotation and widget installation remain
+  TestFlight tasks. Regenerate before/after galleries locally in ignored `output/`
+  or `Documentation/UX/` directories. Generated UX images, galleries and capture
+  logs are not committed to Git.
+- The iPad simulator reopened the universal app in a narrow native window during
+  this review. Inspect the actual window width separately from device-family
+  metadata; a hosted wide canvas does not prove live window resizing.
+
 ## Evidence index
+
+- [2.2.0 build 30](2.2.0/build-30/README.md): native iPad layouts, sharper sky
+  rendering and consistent action styling. Internal-only First Light TestFlight
+  verified VALID / IN_BETA_TESTING on October 13, 2026; external state
+  NOT_APPLICABLE. Full behavior suite: 168 passed, 3 optional review tests skipped.
+  Public App Store remains 2.1.1; no App Review submission or store asset changes.
 
 - [2.1.1 build 29](2.1.1/build-29/README.md): Alarms tab, local alarm timing and
   compass onboarding update; includes a fresh four-screen capture in eight locales.

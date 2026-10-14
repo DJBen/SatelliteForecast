@@ -28,6 +28,225 @@ final class ScreenSnapshotTests: XCTestCase {
         NSTimeZone.default = TimeZone(secondsFromGMT: 0)!
     }
 
+    /// Opt-in iPad layout evidence. These are hosted native views on explicit canvases,
+    /// separate from phone baselines and from end-to-end simulator screenshots.
+    func testIPadUXReview() async throws {
+        let env = ProcessInfo.processInfo.environment
+        guard let output = env["IPAD_UX_OUTPUT"] else { throw XCTSkip("Set IPAD_UX_OUTPUT for iPad UX review") }
+        XCTAssertEqual(UIDevice.current.userInterfaceIdiom, env["IPAD_UX_DEVICE_KIND"] == "phone" ? .phone : .pad)
+        let folder = URL(fileURLWithPath: output)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        let catalog = try await AppStarCatalog.load()
+        let fixtureFolder = root.appendingPathComponent("SatelliteForecastTests/Fixtures/AppStore")
+        func tle(_ name: String) throws -> [String] {
+            try String(contentsOf: fixtureFolder.appendingPathComponent(name), encoding: .utf8)
+                .split(whereSeparator: \.isNewline).map(String.init)
+        }
+        let previousTimeZone = NSTimeZone.default
+        let reviewTimeZone = TimeZone(identifier: "America/Los_Angeles")!
+        NSTimeZone.default = reviewTimeZone
+        defer { NSTimeZone.default = previousTimeZone }
+        let fixture = try await Fixture(catalog: catalog,
+            now: ISO8601DateFormatter().date(from: "2026-09-10T10:11:15Z")!, tle: tle("iss.tle"))
+        let tiangong = try await Fixture(catalog: catalog, now: fixture.now, tle: tle("tiangong.tle"))
+        let featured = try await Fixture(catalog: catalog,
+            now: ISO8601DateFormatter().date(from: "2026-09-10T02:34:57Z")!, tle: tle("iss.tle"))
+        UserDefaults.standard.set(true, forKey: "hasCompletedHomeOnboarding")
+        UserDefaults.standard.set(true, forKey: "hasCompletedAllPassesOnboarding")
+        let primary = await fixture.storeScreens(tianhePasses: tiangong.passes, tianheInfo: tiangong.info, featured: featured)
+        var secondary = featured.screens().filter { ["01-welcome", "02-predictions-intro", "05-satellite-list", "10-settings", "11-location", "13-pass-alarm"].contains($0.0) }
+        if env["IPAD_UX_SCREENS"]?.split(separator: ",").contains("preview-cards") == true {
+            let visible = try XCTUnwrap(featured.passes.first { $0.pass.visibility == .visible && $0.pass.sunElevationAtTransit < -10 })
+            let unlit = try XCTUnwrap(featured.passes.first { $0.pass.visibility == .unlit && $0.pass.sunElevationAtTransit < -10 })
+            let factory = ViewFactory<SkyChartContext<EmptyView, EmptyView>, SkyChart<EmptyView, EmptyView>> { context in
+                XCTAssertEqual(context.configs.backgroundSkyConfigs.stars, .limitedMagnitude(3))
+                return featured.factory.sky(context)
+            }
+            func preview(_ pass: PassSnapshots) -> PassPreviewCell {
+                PassPreviewCell(satelliteInfo: featured.info, observer: featured.observer,
+                    passSnapshots: pass, hasScheduledAlert: false, skyChartFactory: factory,
+                    julianDateOffset: 0, starManager: catalog, julianDateProvider: { featured.now.julianDate })
+            }
+            secondary.append(("preview-cards", AnyView(VStack(spacing: 24) {
+                Text("List preview components · magnitude 3").font(.headline)
+                preview(visible).frame(height: 230)
+                HStack(alignment: .top, spacing: 12) {
+                    preview(unlit).frame(width: 180)
+                    preview(unlit).frame(width: 180)
+                }
+            }.padding(20).frame(maxWidth: 440).background(AppTheme.pageBackground))))
+        }
+        if env["IPAD_UX_SCREENS"]?.split(separator: ",").contains("08-detailed-sky") == true,
+           let detail = featured.screens().first(where: { $0.0 == "08-detailed-sky" }) {
+            secondary.append(detail)
+        }
+        let skyDate = try XCTUnwrap(featured.passes.first).pass.culmination.julianDate
+        let skySnapshot = try featured.info.generateSnapshot(julianDate: skyDate, observer: fixture.observer)
+        let skyResult = RealtimePropagationResult(noradIndex: featured.info.noradIndex,
+            snapshot: skySnapshot, satelliteInfo: featured.info, nextCheckJulianDate: skyDate + 1)
+        secondary.append(("09-sky-now", AnyView(RealtimeSkyViewImpl(viewModel: .init(state: .init(
+            resources: .init(displayResults: [skyResult]), satellites: .loaded([featured.info]), observer: fixture.observer)),
+            context: .init(basicChartConfigs: .init(), backgroundSkyConfigs: .preset,
+                satelliteMagToRadiusFunction: .default, starManager: catalog, julianDateProvider: { skyDate }),
+            backgroundSkyViewFactory: ViewFactory { fixture.factory.background($0) }))))
+        let saved = featured.passes.prefix(3).map { snapshots in
+            ScheduledPassNotification(id: snapshots.pass.notificationIdentifier, notification:
+                PassNotification(pass: snapshots.pass, satelliteName: "ISS", category: .iss,
+                    observer: fixture.observer, timing: .transit, timeOffset: -300))
+        }
+        let alarms = [("alarms-empty", AnyView(NavigationStack {
+            AlarmSettingsView(notifications: [], deleteNotifications: { _ in }, choosePass: {}, authorizationStatus: .authorized)
+        })), ("alarms-saved", AnyView(NavigationStack {
+            AlarmSettingsView(notifications: saved, deleteNotifications: { _ in }, choosePass: {}, authorizationStatus: .authorized)
+        }))]
+        let requested = env["IPAD_UX_CANVASES"]?.split(separator: ",").map(String.init) ?? ["pro-portrait", "pro-landscape", "mini-portrait", "narrow-window"]
+        let canvases: [(String, CGSize)] = [
+            ("pro-portrait", .init(width: 1032, height: 1376)),
+            ("pro-landscape", .init(width: 1376, height: 1032)),
+            ("mini-portrait", .init(width: 744, height: 1133)),
+            ("narrow-window", .init(width: 500, height: 900)),
+            ("phone-portrait", .init(width: 440, height: 956)),
+            ("phone-small", .init(width: 375, height: 667))
+        ]
+        let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.first as? UIWindowScene)
+        let selectedScreens = env["IPAD_UX_SCREENS"]?.split(separator: ",").map(String.init)
+        var manifest: [[String: Any]] = []
+        for (canvas, bounds) in canvases where requested.contains(canvas) {
+            let views = canvas == "pro-portrait" || canvas == "pro-landscape" || canvas.hasPrefix("phone-") ? primary + secondary + alarms : primary.filter { $0.0 != "05-planetarium" } + alarms
+            for (name, view) in views {
+                if let selectedScreens, !selectedScreens.contains(name) { continue }
+                let textSizes: [DynamicTypeSize] = canvas == "narrow-window" && ["01-forecast", "alarms-saved"].contains(name) ? [.large, .accessibility3] : [.large]
+                for textSize in textSizes {
+                    let host = UIHostingController(rootView: view.id(canvas + name)
+                        .environment(\.motionManagerKey, CMMotionManager())
+                        .environment(\.locale, Locale(identifier: "en_US"))
+                        .environment(\.timeZone, reviewTimeZone)
+                        .environment(\.colorScheme, .dark)
+                        .environment(\.scenePhase, .active)
+                        .environment(\.dynamicTypeSize, textSize)
+                        .transaction { $0.animation = nil })
+                    host.traitOverrides.horizontalSizeClass = bounds.width >= 600 ? .regular : .compact
+                    host.traitOverrides.verticalSizeClass = .regular
+                    let window = UIWindow(windowScene: scene)
+                    window.frame = CGRect(origin: .zero, size: bounds)
+                    window.overrideUserInterfaceStyle = .dark
+                    window.rootViewController = host
+                    window.makeKeyAndVisible()
+                    host.view.frame = window.bounds
+                    host.view.layoutIfNeeded()
+                    try await Task.sleep(for: .seconds(name == "08-detailed-sky" || name == "02-predictions-intro" || name == "preview-cards" ? 15 :
+                        (name == "02-pass-chart" || name == "03-pass-list" || name == "05-satellite-list" || name == "09-sky-now" ? 10 :
+                        (name == "01-forecast" || name == "05-planetarium" || name == "02-predictions-intro" ? 4 : 1.5))))
+                    host.view.layoutIfNeeded()
+                    let actual = host.view.bounds.size
+                    XCTAssertEqual(actual.width, bounds.width, accuracy: 1)
+                    XCTAssertEqual(actual.height, bounds.height, accuracy: 1)
+                    let file = "\(canvas)-\(name)\(textSize.isAccessibilitySize ? "-ax3" : "")-dark.png"
+                    let format = UIGraphicsImageRendererFormat(); format.scale = 2
+                    let image = UIGraphicsImageRenderer(size: actual, format: format).image { _ in
+                        window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
+                    }
+                    try XCTUnwrap(image.pngData()).write(to: folder.appendingPathComponent(file))
+                    manifest.append(["file": file, "canvas": canvas, "screen": name,
+                        "widthPoints": actual.width, "heightPoints": actual.height,
+                        "textSize": textSize.isAccessibilitySize ? "accessibility3" : "large",
+                        "source": "hosted-native-view", "appearance": "dark"])
+                    window.isHidden = true
+                    window.rootViewController = nil
+                }
+            }
+        }
+        let manifestURL = folder.appendingPathComponent("manifest.json")
+        if selectedScreens != nil, let data = try? Data(contentsOf: manifestURL),
+           let previous = try JSONSerialization.jsonObject(with: data) as? [[String: Any]] {
+            let files = Set(manifest.compactMap { $0["file"] as? String })
+            manifest = previous.filter { !files.contains($0["file"] as? String ?? "") } + manifest
+        }
+        try JSONSerialization.data(withJSONObject: manifest, options: [.prettyPrinted, .sortedKeys]).write(to: manifestURL)
+    }
+
+    func testIPadSkyDetailExploration() async throws {
+        guard let path = ProcessInfo.processInfo.environment["SKY_DETAIL_OUTPUT"] else {
+            throw XCTSkip("Set SKY_DETAIL_OUTPUT for the chart detail exploration")
+        }
+        XCTAssertEqual(UIDevice.current.userInterfaceIdiom, .pad)
+        let folder = URL(fileURLWithPath: path)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        let catalog = try await AppStarCatalog.load()
+        let tle = try String(contentsOf: root.appendingPathComponent("SatelliteForecastTests/Fixtures/AppStore/iss.tle"), encoding: .utf8)
+            .split(whereSeparator: \.isNewline).map(String.init)
+        let fixture = try await Fixture(catalog: catalog, now: ISO8601DateFormatter().date(from: "2026-09-10T02:34:57Z")!, tle: tle)
+        let pass = try XCTUnwrap(fixture.passes.first {
+            $0.pass.visibility == .visible && ($0.pass.highestIlluminated?.elev ?? 0) > 45 && $0.pass.sunElevationAtTransit < -10
+        })
+        let date = pass.pass.culmination.julianDate
+        let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.first as? UIWindowScene)
+        var cases: [(String, CGFloat, Double, Bool, DynamicTypeSize)] = []
+        for diameter: CGFloat in [700, 1000] {
+            for (name, magnitude, names) in [("baseline", 6.0, false), ("balanced", 6.5, true), ("rich", 7.5, true), ("deep", 8.0, true)] {
+                cases.append((name, diameter, magnitude, names, .large))
+            }
+        }
+        cases += [("adaptive-mini", 560, 6.5, true, .large), ("adaptive-phone", 320, 6, false, .large),
+                  ("rich-large-text", 700, 7.5, true, .accessibility1)]
+        if ProcessInfo.processInfo.environment["SKY_DETAIL_SELECTED_ONLY"] == "1" {
+            cases = [180, 239, 240, 320, 479, 480, 700, 1000].map { diameter in
+                ("selected", CGFloat(diameter), SkyChartDetail.maximumMagnitude(diameter: CGFloat(diameter)), diameter >= 480, .large)
+            }
+            cases.append(("selected-large-text", 700, 5.5, true, .accessibility1))
+        }
+        var records: [[String: Any]] = []
+        for (name, diameter, magnitude, names, textSize) in cases {
+            let configs = name.hasPrefix("selected") ? SkyChartDetail.configs(diameter: diameter)
+                : SkyChartDetail.configs(magnitude: magnitude, names: names)
+            let model = BackgroundSkyModel(catalog: catalog, renderer: fixture.session.renderer)
+            let chart = SkyChart(viewModel: SkyChartModel(renderer: fixture.session.renderer),
+                context: SkyChartContext<EmptyView, EmptyView>(satelliteInfo: fixture.info, observer: fixture.observer,
+                    passSnapshots: pass, configs: .init(backgroundSkyConfigs: configs, showPassInfoLabels: false),
+                    quality: .full, starManager: catalog, julianDateProvider: { date }),
+                backgroundSkyViewFactory: ViewFactory { BackgroundSkyView(viewModel: model, context: $0) })
+            let content = VStack(spacing: 14) {
+                Text("\(name) · magnitude ≤ \(magnitude.formatted()) · \(Int(diameter)) pt")
+                    .font(.system(size: 15, weight: .semibold))
+                chart.frame(width: diameter, height: diameter).padding(24)
+            }.frame(width: max(400, diameter + 80), height: max(440, diameter + 120))
+                .background(AppTheme.pageBackground)
+                .environment(\.colorScheme, .dark).environment(\.dynamicTypeSize, textSize)
+                .environment(\.locale, Locale(identifier: "en_US"))
+                .environment(\.timeZone, TimeZone(identifier: "America/Los_Angeles")!)
+                .environment(\.scenePhase, .active).transaction { $0.animation = nil }
+            let host = UIHostingController(rootView: content)
+            let window = UIWindow(windowScene: scene)
+            window.frame = CGRect(x: 0, y: 0, width: max(400, diameter + 80), height: max(440, diameter + 120))
+            window.overrideUserInterfaceStyle = .dark
+            window.rootViewController = host; window.makeKeyAndVisible()
+            host.view.frame = window.bounds; host.view.layoutIfNeeded()
+            for _ in 0..<600 where model.state.resources.rasterizedBackgroundSky.isEmpty {
+                try await Task.sleep(for: .milliseconds(25))
+            }
+            XCTAssertFalse(model.state.resources.rasterizedBackgroundSky.isEmpty, "\(name) at \(diameter) pt must finish rendering")
+            try await Task.sleep(for: .milliseconds(500))
+            host.view.layoutIfNeeded()
+            let format = UIGraphicsImageRendererFormat(); format.scale = 2
+            let image = UIGraphicsImageRenderer(size: window.bounds.size, format: format).image { _ in
+                window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
+            }
+            let file = "\(Int(diameter))-\(name)-dark.png"
+            try XCTUnwrap(image.pngData()).write(to: folder.appendingPathComponent(file))
+            let stars = (model.visibleCatalog ?? catalog).stars(maximumMagnitude: magnitude)
+            let aboveHorizon = stars.filter {
+                azel(time: Date(julianDate: date), site: LatLon(fixture.observer), cele: RADec($0.coordinate)).elev > 0
+            }.count
+            records.append(["file": file, "profile": name, "diameter": diameter, "magnitude": magnitude,
+                "constellationNames": names, "catalogStars": stars.count, "aboveHorizonStars": aboveHorizon,
+                "textSize": textSize.isAccessibilitySize ? "accessibility1" : "large", "julianDate": date,
+                "observer": [fixture.observer.lat, fixture.observer.lon], "source": "hosted-native-view"])
+            window.isHidden = true; window.rootViewController = nil
+        }
+        try JSONSerialization.data(withJSONObject: records, options: [.prettyPrinted, .sortedKeys])
+            .write(to: folder.appendingPathComponent("manifest.json"))
+    }
+
     func testCategoryNavigationPushesAndBackSynchronizes() async throws {
         let model = SatelliteCategoryModel()
         let view = SatelliteCategoryViewImpl(viewModel: model,
@@ -828,6 +1047,75 @@ final class ScreenSnapshotTests: XCTestCase {
         XCTAssertGreaterThan(example.samples.count, 300)
     }
 
+    func testAnimatedOnboardingRetainsItsRenderedSky() async throws {
+        let previous = ProcessInfo.processInfo.environment["SATELLITE_SNAPSHOT_TESTS"]
+        setenv("SATELLITE_SNAPSHOT_TESTS", "0", 1)
+        defer {
+            if let previous { setenv("SATELLITE_SNAPSHOT_TESTS", previous, 1) }
+            else { unsetenv("SATELLITE_SNAPSHOT_TESTS") }
+        }
+        let catalog = try await AppStarCatalog.load()
+        let session = AppSession(catalog: catalog)
+        let model = BackgroundSkyModel(catalog: catalog, renderer: session.renderer)
+        let host = UIHostingController(rootView: OnboardingPassAnimation(session: session, isActive: true, backgroundModel: model)
+            .environment(\.scenePhase, .active).environment(\.colorScheme, .dark)
+            .frame(width: 760, height: 900))
+        let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.first as? UIWindowScene)
+        let window = UIWindow(windowScene: scene)
+        window.frame = CGRect(x: 0, y: 0, width: 760, height: 900)
+        window.overrideUserInterfaceStyle = .dark
+        window.rootViewController = host; window.makeKeyAndVisible()
+        defer { window.isHidden = true; window.rootViewController = nil }
+        host.view.frame = window.bounds; host.view.layoutIfNeeded()
+        for _ in 0..<600 where model.state.resources.rasterizedBackgroundSky.isEmpty {
+            try await Task.sleep(for: .milliseconds(25))
+        }
+        let key = try XCTUnwrap(model.state.resources.rasterizedBackgroundSky.keys.first)
+        XCTAssertEqual(key.configs.stars, .limitedMagnitude(5.5))
+        XCTAssertTrue(key.configs.showConstellationNames)
+        XCTAssertFalse(model.state.resources.allConstellations.isEmpty)
+        let date = try XCTUnwrap(model.state.resources.rasterizedBackgroundSky[key]?.keys.first)
+        let image = try XCTUnwrap(model.state.resources.rasterizedBackgroundSky[key]?[date])
+        let example = try await OnboardingPassExample.load()
+        XCTAssertEqual(date, example.pass.pass.culmination.julianDate.roundJulianDate(.toMins(1)))
+        // Four real seconds advance the satellite by nearly three replay minutes.
+        try await Task.sleep(for: .seconds(4))
+        XCTAssertTrue(model.state.resources.rasterizedBackgroundSky[key]?[date] === image,
+            "The reference sky must survive animation ticks and replay clock changes")
+    }
+
+    func testSkyDensityChangeRendersWithoutResizingTheCanvas() async throws {
+        let catalog = try await AppStarCatalog.load()
+        let model = BackgroundSkyModel(catalog: catalog)
+        let observer = OnboardingPassExample.observer
+        let date = 2461293.65
+        func sky(diameter: CGFloat) -> some View {
+            BackgroundSkyView(viewModel: model, context: BackgroundSkyViewContext(
+                observer: observer, basicChartConfigs: .init(), configs: SkyChartDetail.configs(diameter: diameter),
+                quality: .full, starManager: catalog, constellationLabel: { _ in EmptyView() },
+                annotationView: { _ in EmptyView() }, starTapped: { _ in }))
+                .environment(\.backgroundSkyJulianDateKey, date)
+                .environment(\.colorScheme, .dark).frame(width: 160, height: 160)
+        }
+        let host = UIHostingController(rootView: sky(diameter: 700))
+        let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.first as? UIWindowScene)
+        let window = UIWindow(windowScene: scene)
+        window.overrideUserInterfaceStyle = .dark
+        window.rootViewController = host; window.makeKeyAndVisible()
+        defer { window.isHidden = true; window.rootViewController = nil }
+        host.view.layoutIfNeeded()
+        for diameter: CGFloat in [700, 320, 180, 700] {
+            host.rootView = sky(diameter: diameter)
+            host.view.layoutIfNeeded()
+            let key = BackgroundSkyKey(observer: observer, configs: SkyChartDetail.configs(diameter: diameter), isDark: true)
+            for _ in 0..<400 where model.state.resources.rasterizedBackgroundSky[key]?[date] == nil {
+                try await Task.sleep(for: .milliseconds(25))
+            }
+            XCTAssertNotNil(model.state.resources.rasterizedBackgroundSky[key]?[date],
+                "Changing density must refresh the fixed-size canvas")
+        }
+    }
+
     func testAllScreensLightAndDark() async throws {
         UserDefaults.standard.set(true, forKey: "hasCompletedAllPassesOnboarding")
         NSTimeZone.default = TimeZone(secondsFromGMT: 0)!
@@ -1589,7 +1877,9 @@ struct Fixture {
             ("02-predictions-intro", AnyView(OnboardingView(session: session, initialPage: 1, onComplete: {}))),
             ("03-forecast", AnyView(overview)),
             ("04-satellites", AnyView(SatelliteCategoryViewImpl(viewModel: .init(state: .init(observer: observer)), context: .init(starManager: catalog, julianDateProvider: date), listViewFactory: ViewFactory { factory.list($0) }))),
-            ("05-satellite-list", AnyView(NavigationStack { SatelliteListView(viewModel: .init(state: .init(satelliteInfo: [.brightest100: .loaded(Map([(info.noradIndex, info)]))])), context: .init(category: .brightest100, julianDateRange: range, observer: observer, starManager: catalog, julianDateProvider: date), allPassesViewFactory: ViewFactory { factory.passes($0) }) })),
+            ("05-satellite-list", AnyView(NavigationStack { SatelliteListView(viewModel: .init(state: .init(satelliteInfo: [.brightest100: .loaded(Map([(info.noradIndex, info)]))])), context: .init(category: .brightest100, julianDateRange: range, observer: observer, starManager: catalog, julianDateProvider: date), allPassesViewFactory: ViewFactory { context in
+                AllPassesView(viewModel: .init(state: .init(location: CLLocation(latitude: observer.lat, longitude: observer.lon), satelliteTrails: [info.noradIndex: trails])), context: context, skyChartFactory: ViewFactory { factory.sky($0) }, passViewFactory: ViewFactory { factory.pass($0) })
+            }) })),
             ("06-pass-forecast", AnyView(NavigationStack { AllPassesView(viewModel: .init(state: .init(location: CLLocation(latitude: observer.lat, longitude: observer.lon), satelliteTrails: [info.noradIndex: trails])), context: .init(satelliteInfo: info, julianDateRange: range, observer: observer, starManager: catalog, julianDateProvider: date), skyChartFactory: ViewFactory { factory.sky($0) }, passViewFactory: ViewFactory { factory.pass($0) }) })),
             ("07-pass", AnyView(NavigationStack { factory.pass(.init(passIndex: 0, satelliteInfo: info, satelliteCommonName: "ISS (ZARYA)", category: .iss, julianDateRange: range, observer: observer, passSnapshots: pass, starManager: catalog, julianDateProvider: date)) })),
             ("07-pass-compass-off", AnyView(NavigationStack { factory.pass(.init(passIndex: 0, satelliteInfo: info, satelliteCommonName: "ISS (ZARYA)", category: .iss, julianDateRange: range, observer: observer, passSnapshots: pass, starManager: catalog, julianDateProvider: date), isCompassEnabled: false) })),

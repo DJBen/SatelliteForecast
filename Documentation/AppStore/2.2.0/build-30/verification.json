@@ -1,0 +1,25 @@
+{
+  "behaviorTests": {
+    "Total": 171,
+    "Passed": 168,
+    "Failed": 0,
+    "Skipped": 3
+  },
+  "targetedUXTests": {
+    "passed": 96,
+    "failed": 0
+  },
+  "darkUXCaptures": 60,
+  "localesAudited": 8,
+  "appAndWidgetVersion": "2.2.0",
+  "appAndWidgetBuild": "30",
+  "deviceFamilies": [
+    1,
+    2
+  ],
+  "debugDelivery": {
+    "iphoneSimulator": "built and running 2.2.0 (30), dark",
+    "ipadSimulator": "installed and running 2.2.0 (30), dark",
+    "physicalIPhone": "installation blocked: device services unavailable; Debug build ready"
+  }
+}

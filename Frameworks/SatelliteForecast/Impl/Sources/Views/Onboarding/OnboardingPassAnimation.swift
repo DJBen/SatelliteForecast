@@ -37,6 +37,14 @@ struct OnboardingPassAnimation: View {
     @State private var example: OnboardingPassExample?
     @State private var failed = false
     @State private var started = Date()
+    @State private var backgroundModel: BackgroundSkyModel
+
+    init(session: AppSession, isActive: Bool, backgroundModel: BackgroundSkyModel? = nil) {
+        self.session = session
+        self.isActive = isActive
+        _backgroundModel = State(initialValue: backgroundModel ??
+            BackgroundSkyModel(catalog: session.catalog, renderer: session.renderer))
+    }
 
     private var paused: Bool {
         reduceMotion || SnapshotEnvironment.isEnabled || !isActive || scenePhase != .active
@@ -62,12 +70,22 @@ struct OnboardingPassAnimation: View {
                             let side = min(geometry.size.width, max(0, geometry.size.height - 48))
                             let rect = CGRect(x: 0, y: 0, width: side, height: side)
                             ZStack {
-                                ScreenFactory(session: session).background(BackgroundSkyViewContext(
+                                BackgroundSkyView(viewModel: backgroundModel, context: BackgroundSkyViewContext(
                                     observer: OnboardingPassExample.observer,
-                                    basicChartConfigs: .init(), configs: .preset, quality: .full,
+                                    basicChartConfigs: .init(), configs: SkyChartDetail.configs(diameter: side), quality: .full,
                                     starManager: session.catalog, constellationLabel: { _ in EmptyView() },
-                                    annotationView: { _ in EmptyView() }, starTapped: { _ in }))
-                                    .environment(\.backgroundSkyJulianDateKey, julianDate.roundJulianDate(.toMins(1)))
+                                    annotationView: { _ in EmptyView() }, starTapped: { _ in },
+                                    labelExclusionZones: { bounds in
+                                        example.samples.enumerated().compactMap { index, sample in
+                                            guard index.isMultiple(of: max(1, example.samples.count / 80)) else { return nil }
+                                            let point = SkyChartUtils.point(at: AziEle(sample.position.azim, max(0, sample.position.elev)), rect: bounds)
+                                            return CGRect(x: point.x - 8, y: point.y - 8, width: 16, height: 16)
+                                        }
+                                    }))
+                                    // The 40× satellite replay must not repeatedly cancel the star raster.
+                                    // Keep the reference sky at the recorded pass midpoint throughout replay.
+                                    .environment(\.backgroundSkyJulianDateKey,
+                                        example.pass.pass.culmination.julianDate.roundJulianDate(.toMins(1)))
                                 orbit(example, progress: progress, rect: rect)
                             }
                             .frame(width: side, height: side)

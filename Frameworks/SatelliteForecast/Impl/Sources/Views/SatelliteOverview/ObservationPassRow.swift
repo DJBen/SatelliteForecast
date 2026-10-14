@@ -20,32 +20,35 @@ struct ObservationPassRow: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(alignment: .center, spacing: 14) {
-                ObservationStationIcon(pass: pass)
-                    .frame(width: dynamicType.isAccessibilitySize ? 40 : 52, height: dynamicType.isAccessibilitySize ? 40 : 52)
-                VStack(alignment: .leading, spacing: 5) {
-                    HStack(spacing: 8) {
+            HStack(alignment: .center, spacing: 12) {
+                ObservationStationIcon(pass: pass).frame(width: 44, height: 44)
+                VStack(alignment: .leading, spacing: 7) {
+                    if dynamicType.isAccessibilitySize {
                         Text(ObservationOpportunity.shortName(pass)).font(.headline).foregroundStyle(AppTheme.text)
-                        ObservationElevationBadge(degrees: elevation)
+                        timeLabel
+                    } else {
+                        HStack(alignment: .firstTextBaseline, spacing: 8) {
+                            Text(ObservationOpportunity.shortName(pass)).font(.headline)
+                                .foregroundStyle(AppTheme.text).fixedSize()
+                            Spacer(minLength: 8)
+                            timeLabel
+                        }
                     }
-                    HStack(spacing: 5) {
+                    HStack(spacing: 6) {
+                        ObservationElevationBadge(degrees: elevation)
                         Text(ObservationOpportunity.direction(pass.rise.azim))
-                        Image(systemName: "arrow.right").font(.caption2.weight(.bold))
+                        Image(systemName: "arrow.right").font(.caption2.weight(.semibold))
                         Text(ObservationOpportunity.direction(pass.set.azim))
                         Text(verbatim: "·")
-                        Text(AppLocalization.format("%d min", minutes))
+                        Text(AppLocalization.format("%d min", minutes)).fixedSize()
                     }
-                    .font(.subheadline).foregroundStyle(AppTheme.muted).lineLimit(1)
-                }
-                Spacer(minLength: 8)
-                VStack(alignment: .trailing, spacing: 5) {
-                    Text(start, format: .dateTime.hour().minute())
-                        .font(.system(.headline, design: .rounded, weight: .semibold)).foregroundStyle(AppTheme.text)
+                    .font(.caption).foregroundStyle(AppTheme.muted)
                     if showsDay {
                         Text(ObservationPassRow.dayLabel(start, now: now, locale: locale, timeZone: timeZone, short: true))
                             .font(.caption).foregroundStyle(AppTheme.muted)
                     }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
             .padding(.vertical, 12)
             .padding(.horizontal, 16)
@@ -56,6 +59,12 @@ struct ObservationPassRow: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel(Text(verbatim: "\(ObservationOpportunity.name(pass)), \(start.formatted(date: .abbreviated, time: .shortened)), \(PassPreviewCell.visibleDurationText(for: pass, locale: locale))"))
         .accessibilityHint(Text("Opens the sky chart for this pass", bundle: .module))
+    }
+
+    private var timeLabel: some View {
+        Text(start, format: .dateTime.hour().minute())
+            .font(.headline.monospacedDigit()).foregroundStyle(AppTheme.text)
+            .fixedSize(horizontal: false, vertical: true)
     }
 
     static func dayLabel(_ target: Date, now: Double, locale: Locale, timeZone: TimeZone, short: Bool = false) -> String {
@@ -99,7 +108,6 @@ struct ObservationStationIcon: View {
             .aspectRatio(contentMode: .fit)
             .saturation(colorScheme == .dark ? 0.08 : 1)
             .colorMultiply(colorScheme == .dark ? AppTheme.text : .white)
-            .shadow(color: AppTheme.accent.opacity(0.45), radius: 8)
             .accessibilityHidden(true)
     }
 }

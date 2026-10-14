@@ -31,6 +31,7 @@ public struct BackgroundSkyViewContext<ConstellationLabel: View, AnnotationView:
     public let constellationLabel: (String) -> ConstellationLabel
     public let annotationView: (@escaping (RADec) -> CGPoint) -> AnnotationView
     public let starTapped: (Star?) -> Void
+    public let labelExclusionZones: (CGRect) -> [CGRect]
 
     public init(
         observer: LatLonAlt,
@@ -41,7 +42,8 @@ public struct BackgroundSkyViewContext<ConstellationLabel: View, AnnotationView:
         starManager: AppStarCatalog,
         @ViewBuilder constellationLabel: @escaping (String) -> ConstellationLabel,
         @ViewBuilder annotationView: @escaping (@escaping (RADec) -> CGPoint) -> AnnotationView,
-        starTapped: @escaping (Star?) -> Void
+        starTapped: @escaping (Star?) -> Void,
+        labelExclusionZones: @escaping (CGRect) -> [CGRect] = { _ in [] }
     ) {
         self.observer = observer
         self.basicChartConfigs = basicChartConfigs
@@ -52,6 +54,7 @@ public struct BackgroundSkyViewContext<ConstellationLabel: View, AnnotationView:
         self.constellationLabel = constellationLabel
         self.annotationView = annotationView
         self.starTapped = starTapped
+        self.labelExclusionZones = labelExclusionZones
     }
 }
 
@@ -182,14 +185,14 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
                         let aziEle = SkyChartUtils.aziEle(at: point, in: rect)
                         let raDec = azelToRADec(aziEle: aziEle, julianDate: julianDate, site: (context.observer.lat, context.observer.lon))
                         let vec = SIMD3<Double>(raDec: raDec)
-                        if let star = context.starManager.closestStar(to: vec, maximumMagnitude: 3.52, maximumAngularDistance: nil) {
+                        if let star = (viewModel.visibleCatalog ?? context.starManager).closestStar(to: vec, maximumMagnitude: 3.52, maximumAngularDistance: nil) {
                             context.starTapped(star)
                         }
                     case .limitedMagnitude(let magnitude):
                         let aziEle = SkyChartUtils.aziEle(at: point, in: rect)
                         let raDec = azelToRADec(aziEle: aziEle, julianDate: julianDate, site: (context.observer.lat, context.observer.lon))
                         let vec = SIMD3<Double>(raDec: raDec)
-                        if let star = context.starManager.closestStar(to: vec, maximumMagnitude: magnitude, maximumAngularDistance: nil) {
+                        if let star = (viewModel.visibleCatalog ?? context.starManager).closestStar(to: vec, maximumMagnitude: magnitude, maximumAngularDistance: nil) {
                             context.starTapped(star)
                         }
                     }
@@ -221,73 +224,110 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
         }
     }
 
-    /// A restrained set of names in the all-sky chart; the 3D chart reveals more on zoom.
-    @ViewBuilder private func brightStarNames(julianDate: Double) -> some View {
+    /// More annotations on a large chart, with shared collision and horizon rules.
+    @ViewBuilder private func skyNames(julianDate: Double) -> some View {
         Canvas { canvas, size in
             let sun = SkyChartAtmosphere.sun(observer: context.observer, julianDate: julianDate)
-            guard sun.elev < 0, min(size.width, size.height) >= 250 else { return }
+            let diameter = min(size.width, size.height)
+            guard sun.elev < 0, diameter >= 250 else { return }
             let rect = CGRect(origin: .zero, size: size)
             let convert = getStarCoordinateConverter(julianDate: julianDate, rect: rect)
-            var occupied: [CGRect] = []
-            if context.configs.showConstellationLines && ObjectIdentifier(ConstellationLabel.self) != ObjectIdentifier(EmptyView.self) {
+            var layout = SkyChartLabelLayout(bounds: rect, occupied: context.labelExclusionZones(rect))
+            for body in context.configs.visibleBodies {
+                let center = convert(RADec(body.eci(julianDay: julianDate)))
+                layout.occupied.append(CGRect(x: center.x - 45, y: center.y - 22, width: 90, height: 44))
+            }
+            let customNames = ObjectIdentifier(ConstellationLabel.self) != ObjectIdentifier(EmptyView.self)
+            if context.configs.showConstellationLines && customNames && !context.configs.showConstellationNames {
                 for constellation in viewModel.state.resources.allConstellations {
                     let center = convert(RADec(constellation.center))
                     let width = (constellation.localizedName.uppercased(with: .current) as NSString).size(withAttributes: [
-                        .font: UIFont.systemFont(ofSize: 12)]).width
-                    occupied.append(CGRect(x: center.x - width / 2 - 5, y: center.y - 10, width: width + 10, height: 20))
+                        .font: UIFont.preferredFont(forTextStyle: .caption1)]).width
+                    layout.occupied.append(CGRect(x: center.x - width / 2 - 5, y: center.y - 10, width: width + 10, height: 20))
                 }
             }
-            for body in context.configs.visibleBodies {
-                let center = convert(RADec(body.eci(julianDay: julianDate)))
-                occupied.append(CGRect(x: center.x - 45, y: center.y - 22, width: 90, height: 44))
+            canvas.addFilter(.shadow(color: .black.opacity(0.8), radius: 1.5))
+            if context.configs.showStarNames {
+                let rich = context.configs.showConstellationNames
+                let budget = rich ? (diameter >= 900 ? 16 : 12) : (diameter >= 450 ? 6 : 3)
+                var count = 0
+                for star in context.starManager.namedBrightStars {
+                    guard count < budget, let name = star.info?.displayName else { continue }
+                    let point = convert(RADec(star.coordinate))
+                    let text = canvas.resolve(Text(verbatim: name)
+                        .font(rich ? .system(.caption2, design: .serif) : .system(size: 11, design: .serif))
+                        .foregroundStyle(Color.secondary))
+                    let textSize = text.measure(in: CGSize(width: 140, height: 60))
+                    let center = CGPoint(x: point.x, y: point.y + textSize.height / 2 + 5)
+                    if let box = layout.place(size: textSize, near: center, canMove: false) {
+                        canvas.draw(text, at: CGPoint(x: box.midX, y: box.midY))
+                        count += 1
+                    }
+                }
             }
-            let budget = min(size.width, size.height) >= 450 ? 6 : 3
-            var count = 0
-            for star in context.starManager.namedBrightStars {
-                guard count < budget, let name = star.info?.displayName else { continue }
-                let point = convert(RADec(star.coordinate))
-                let text = canvas.resolve(Text(verbatim: name).font(.system(size: 11, design: .serif))
-                    .foregroundStyle(Color.secondary))
-                let textSize = text.measure(in: CGSize(width: 140, height: 24))
-                let center = CGPoint(x: point.x, y: point.y + 12)
-                let box = CGRect(x: center.x - textSize.width / 2, y: center.y - textSize.height / 2,
-                    width: textSize.width, height: textSize.height).insetBy(dx: -5, dy: -4)
-                // Keep the entire label inside the horizon and away from other annotations.
-                let radius = min(size.width, size.height) / 2 - 8
-                let corners = [CGPoint(x: box.minX, y: box.minY), CGPoint(x: box.maxX, y: box.minY),
-                    CGPoint(x: box.minX, y: box.maxY), CGPoint(x: box.maxX, y: box.maxY)]
-                guard corners.allSatisfy({ hypot($0.x - rect.midX, $0.y - rect.midY) < radius }),
-                      !occupied.contains(where: { $0.intersects(box) }) else { continue }
-                occupied.append(box)
-                canvas.draw(text, at: center)
-                count += 1
+            if context.configs.showConstellationLines && context.configs.showConstellationNames {
+                var visible: [(Constellation, Double)] = []
+                for constellation in viewModel.state.resources.allConstellations {
+                    let horizontal = azel(time: Date(julianDate: julianDate), site: LatLon(context.observer),
+                        cele: RADec(constellation.center))
+                    if horizontal.elev > 0 { visible.append((constellation, horizontal.elev)) }
+                }
+                visible.sort { lhs, rhs in
+                    lhs.1 == rhs.1 ? lhs.0.id < rhs.0.id : lhs.1 > rhs.1
+                }
+                let budget = diameter >= 900 ? 28 : (diameter >= 640 ? 18 : 12)
+                var count = 0
+                for (constellation, _) in visible {
+                    guard count < budget else { break }
+                    let text = canvas.resolve(Text(verbatim: constellation.localizedName.uppercased(with: .current))
+                        .font(.system(.caption, design: .serif).weight(.semibold))
+                        .tracking(1).foregroundStyle(AppTheme.muted))
+                    let textSize = text.measure(in: CGSize(width: 300, height: 60))
+                    if let box = layout.place(size: textSize, near: convert(RADec(constellation.center))) {
+                        canvas.draw(text, at: CGPoint(x: box.midX, y: box.midY))
+                        count += 1
+                    }
+                }
             }
+
         }
         .allowsHitTesting(false)
+        .accessibilityChildren {
+            if context.configs.showConstellationNames && context.configs.showConstellationLines &&
+                SkyChartAtmosphere.sun(observer: context.observer, julianDate: julianDate).elev < 0 {
+                ForEach(viewModel.state.resources.allConstellations.sorted { $0.id < $1.id }) { constellation in
+                    let horizontal = azel(time: Date(julianDate: julianDate), site: LatLon(context.observer), cele: RADec(constellation.center))
+                    if horizontal.elev > 0 { Text(verbatim: constellation.localizedName) }
+                }
+            }
+        }
     }
 
     @ViewBuilder func constellationLabelView(julianDate: Double) -> some View {
         GeometryReader { geometry in
             let rect = geometry.frame(in: .local)
             ZStack {
-                ForEach(viewModel.state.resources.allConstellations) { constellation in
-                    let displayCenter = constellation.center
-                    let raDec = RADec(displayCenter)
-                    let coordinate = azel(
-                        time: Date(julianDate: julianDate),
-                        site: LatLon(context.observer),
-                        cele: raDec
-                    )
-
-                    context.constellationLabel(
-                        constellation.localizedName.uppercased(with: .current)
-                    )
-                    .position(
-                        SkyChartUtils.point(
-                            at: coordinate,
-                            rect: rect
+                if !context.configs.showConstellationNames {
+                    ForEach(viewModel.state.resources.allConstellations) { constellation in
+                        let displayCenter = constellation.center
+                        let raDec = RADec(displayCenter)
+                        let coordinate = azel(
+                            time: Date(julianDate: julianDate),
+                            site: LatLon(context.observer),
+                            cele: raDec
                         )
-                    )
+
+                        context.constellationLabel(
+                            constellation.localizedName.uppercased(with: .current)
+                        )
+                        .position(
+                            SkyChartUtils.point(
+                                at: coordinate,
+                                rect: rect
+                            )
+                        )
+                    }
+
                 }
 
                 context.annotationView(
@@ -323,7 +363,11 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
                             constellationLabelView(julianDate: backgroundSkyJulianDate)
                         }
                     }
-                    .overlay { if context.configs.showStarNames { brightStarNames(julianDate: backgroundSkyJulianDate) } }
+                    .overlay {
+                        if context.configs.showStarNames || context.configs.showConstellationNames {
+                            skyNames(julianDate: backgroundSkyJulianDate)
+                        }
+                    }
                     .clipShape(Circle())
                 )
             } else {
@@ -333,11 +377,11 @@ public struct BackgroundSkyView<ConstellationLabel: View, AnnotationView: View>:
                 )
             }
         }
-        .onChange(of: colorScheme) { _, _ in
+        .onChange(of: BackgroundSkyKey(observer: context.observer, configs: context.configs, isDark: colorScheme == .dark)) { _, key in
             guard let julianDate = backgroundSkyJulianDate, contentSize.width > 0, contentSize.height > 0 else { return }
             viewModel.send(.requestRasterizedBackgroundSky(
                 size: contentSize, quality: context.quality, julianDate: julianDate,
-                key: BackgroundSkyKey(observer: context.observer, configs: context.configs, isDark: colorScheme == .dark),
+                key: key,
                 traitCollection: UITraitCollection(userInterfaceStyle: UIUserInterfaceStyle(colorScheme))))
         }
         .onChange(of: backgroundSkyJulianDate) { _, backgroundSkyJulianDateKey in

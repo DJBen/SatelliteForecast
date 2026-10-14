@@ -205,6 +205,17 @@ public struct RootView<RealtimeSkyViewType: RealtimeSkyView, SatelliteOverviewVi
         .tint(AppTheme.accent)
         .foregroundStyle(AppTheme.text)
         .background(AppTheme.pageBackground.ignoresSafeArea())
+        .background {
+            // Native keyboard commands work without adding visible product chrome.
+            HStack {
+                Button(forecastTabText) { selectedTab = .forecast }.keyboardShortcut("1")
+                Button(realtimeSkyTabText) { selectedTab = .realtimeSky }.keyboardShortcut("2")
+                Button(satelliteCategoryText) { selectedTab = .satellites }.keyboardShortcut("3")
+                Button(AppLocalization.text("Alarms")) { selectedTab = .alarms }.keyboardShortcut("4")
+                Button(settingsTabText) { selectedTab = .settings }.keyboardShortcut("5")
+            }
+            .frame(width: 0, height: 0).clipped().accessibilityHidden(true)
+        }
     }
 }
 

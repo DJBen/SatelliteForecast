@@ -1,0 +1,3 @@
+Capture verification: full matrix generated 42 images; the opt-in test passed with all requested canvas width/height assertions. A targeted second run of pass chart and Sky now in Pro portrait/landscape also passed after allowing chart rendering to settle and supplying an explicit active sky fixture. The test plan was restored after both runs. Application and widget source/settings were unchanged.
+
+Gallery verification: canvas and screen filters show the requested capture; All canvases shows 42 captures; original landscape chart loads at 2752 × 2064 pixels; modal open/close works; browser error log is empty. Python scripts compile and git diff --check passes.

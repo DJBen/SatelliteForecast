@@ -62,22 +62,20 @@ public struct AlarmSettingsView: View {
             if denied, let openNotificationSettings {
                 Button(action: openNotificationSettings) {
                     Label { Text("Open notification settings", bundle: .module) } icon: { Image(systemName: "arrow.up.right") }
-                        .frame(maxWidth: .infinity, minHeight: 32)
+                        .frame(maxWidth: .infinity, minHeight: 22)
                 }
                 .accessibilityIdentifier("alarms.notificationSettings")
-                .buttonStyle(.borderedProminent)
-                .foregroundStyle(Color(uiColor: .systemBackground))
+                .buttonStyle(AppActionButtonStyle(prominent: true))
             } else if let enableNotifications {
                 Button(action: enableNotifications) {
                     HStack {
                         if isRequestingAuthorization { ProgressView() }
                         Text("Enable notifications", bundle: .module)
-                    }.frame(maxWidth: .infinity, minHeight: 32)
+                    }.frame(maxWidth: .infinity, minHeight: 22)
                 }
                 .accessibilityIdentifier("alarms.enableNotifications")
                 .disabled(isRequestingAuthorization)
-                .buttonStyle(.borderedProminent)
-                .foregroundStyle(Color(uiColor: .systemBackground))
+                .buttonStyle(AppActionButtonStyle(prominent: true))
             }
         }
         .fixedSize(horizontal: false, vertical: true)
@@ -144,9 +142,7 @@ public struct AlarmSettingsView: View {
                 .font(.subheadline).foregroundStyle(AppTheme.muted).multilineTextAlignment(.center)
             if let choosePass {
                 Button(action: choosePass) { Text("Choose a pass", bundle: .module).frame(minHeight: 28) }
-                    .buttonStyle(.glass)
-                    .buttonBorderShape(.capsule)
-                    .foregroundStyle(AppTheme.text)
+                    .buttonStyle(AppActionButtonStyle())
                     .accessibilityIdentifier("alarms.choosePass")
             }
         }
@@ -169,9 +165,7 @@ public struct AlarmSettingsView: View {
             }
         }
         .font(.subheadline)
-        .buttonStyle(.bordered)
-        .buttonBorderShape(.capsule)
-        .controlSize(.large)
+        .buttonStyle(AppActionButtonStyle())
         .fixedSize()
     }
 
@@ -191,7 +185,9 @@ public struct AlarmSettingsView: View {
             }
         }
         .foregroundStyle(AppTheme.text)
+        .frame(maxWidth: 680)
         .padding(.horizontal, 20)
+        .frame(maxWidth: .infinity)
         .padding(.top, 8)
         .padding(.bottom, 8)
         .background(AppTheme.pageBackground)
@@ -225,6 +221,7 @@ public struct AlarmSettingsView: View {
         .listStyle(.insetGrouped)
         .contentMargins(.top, 8, for: .scrollContent)
         .scrollContentBackground(.hidden)
+        .modifier(BoundedContent())
         .modifier(AppSurface())
         .navigationTitle(Text("Alarms", bundle: .module))
         .analyticsScreen(.alarms)
@@ -233,7 +230,7 @@ public struct AlarmSettingsView: View {
         .safeAreaInset(edge: .top, spacing: 0) { pageHeader }
         .environment(\.editMode, $editMode)
         .sheet(item: $selectedAlarm) { alarm in
-            if let alarmEditor { alarmEditor(alarm) }
+            if let alarmEditor { alarmEditor(alarm).presentationSizing(.form) }
         }
 
     }

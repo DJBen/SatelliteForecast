@@ -16,7 +16,7 @@ public enum AppTheme {
 
     public static let backgroundColor = adaptive(light: 0xF1F5F7, dark: MoonstonePalette.backgroundHex)
     public static let surfaceColor = adaptive(light: 0xFFFFFF, dark: MoonstonePalette.surfaceHex)
-    public static let accentColor = adaptive(light: 0x006C78, dark: MoonstonePalette.accentHex)
+    public static let accentColor = adaptive(light: 0x006C78, dark: 0xA8CCD2)
     public static let mutedColor = adaptive(light: 0x536575, dark: MoonstonePalette.mutedHex)
     public static let warningColor = adaptive(light: 0x8A5000, dark: MoonstonePalette.warningHex)
     public static let borderColor = adaptive(light: 0xD6E0E7, dark: MoonstonePalette.borderHex)
@@ -30,6 +30,39 @@ public enum AppTheme {
                            green: CGFloat((hex >> 8) & 255) / 255,
                            blue: CGFloat(hex & 255) / 255, alpha: 1)
         }
+    }
+}
+
+/// Consistent, opaque controls for content surfaces. The sky keeps its own colors;
+/// actions use one restrained accent instead of sampling unrelated glass behind them.
+struct AppActionButtonStyle: ButtonStyle {
+    var prominent = false
+    @Environment(\.isEnabled) private var enabled
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.subheadline.weight(.semibold))
+            .padding(.horizontal, 16)
+            .padding(.vertical, 11)
+            .frame(minHeight: 44)
+            .foregroundStyle(prominent ? AppTheme.background : AppTheme.accent)
+            .background(prominent ? AppTheme.accent : AppTheme.surface,
+                        in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .overlay {
+                if !prominent {
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .strokeBorder(AppTheme.border, lineWidth: 1)
+                }
+            }
+            .opacity(enabled ? (configuration.isPressed ? 0.72 : 1) : 0.45)
+            .contentShape(RoundedRectangle(cornerRadius: 14))
+            .hoverEffect(.highlight)
+    }
+}
+
+struct BoundedContent: ViewModifier {
+    var width: CGFloat = 720
+    func body(content: Content) -> some View {
+        content.frame(maxWidth: width).frame(maxWidth: .infinity, alignment: .top)
     }
 }
 

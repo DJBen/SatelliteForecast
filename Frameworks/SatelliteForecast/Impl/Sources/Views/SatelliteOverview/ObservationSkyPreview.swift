@@ -39,7 +39,8 @@ struct ObservationSkyPreview: View {
                     guard pass.sunElevationAtTransit < -6 else { return }
                     let traits = UITraitCollection(userInterfaceStyle: .dark)
                     context.withCGContext { cg in
-                        for star in session.catalog.stars(maximumMagnitude: 2.5) {
+                        let magnitude = SkyChartDetail.maximumMagnitude(diameter: min(geometry.size.width, geometry.size.height))
+                        for star in session.catalog.stars(maximumMagnitude: magnitude) {
                             let coordinate = azel(time: Date(julianDate: pass.culmination.julianDate),
                                 site: LatLon(observer), cele: RADec(star.coordinate))
                             guard let point = projection.visiblePoint(azimuth: coordinate.azim, elevation: coordinate.elev) else { continue }
@@ -150,12 +151,10 @@ struct ObservationSkyPreview: View {
                 if !ahead && lit {
                     context.drawLayer { glow in
                         glow.addFilter(.blur(radius: 4))
-                        glow.stroke(path, with: .color(color(lit).opacity(0.35)), lineWidth: 4)
+                        glow.stroke(path, with: .color(color(lit).opacity(0.20)), lineWidth: 3)
                     }
                 }
-                let stroke = StrokeStyle(lineWidth: ahead ? 2.2 : 2.8, lineCap: .round, dash: ahead ? [2, 5] : [])
-                context.stroke(path, with: .color(.black.opacity(0.5)),
-                    style: StrokeStyle(lineWidth: stroke.lineWidth + 2, lineCap: .round, dash: stroke.dash))
+                let stroke = StrokeStyle(lineWidth: ahead ? 1.4 : 2, lineCap: .round, dash: ahead ? [2, 5] : [])
                 context.stroke(path, with: .color(color(lit)), style: stroke)
             }
         }
@@ -261,20 +260,21 @@ struct ObservationSkyProjection: Hashable, Sendable {
                      (z * cos(pitch) - depth * sin(pitch)) / denominator)
     }
 
-    /// Keep the photographic sky close to the pass, with a narrow feather across
-    /// the arc. The shared raster gives home and widgets the same limited bleed;
-    /// foreground stars use the same fade, without recoloring the atmosphere.
+    /// Home fills its sky panel; compact previews feather around the pass.
+    /// Foreground stars use the same fade without recoloring the atmosphere.
     func edgeFade(at point: CGPoint) -> Double {
         func smooth(_ low: Double, _ high: Double, _ value: Double) -> Double {
             let t = min(1, max(0, (value - low) / (high - low)))
             return t * t * (3 - 2 * t)
         }
         let x = min(skyBoundary.count - 1, max(0, Int(point.x)))
-        var vertical = smooth(-bleed, bleed, point.y - skyBoundary[x])
         if extendsUpward {
-            // Straight sides up from the horizon; the top dissolves by the pass's peak.
-            vertical = max(vertical, smooth(0, peak, point.y))
+            // Home is a coherent sky panel, rather than a small arc-shaped cutout
+            // floating in an oversized card. The horizon still masks the ground.
+            return smooth(0, width * 0.04, min(point.x, width - point.x))
+                * smooth(0, height * 0.04, height - point.y)
         }
+        let vertical = smooth(-bleed, bleed, point.y - skyBoundary[x])
         return vertical
             * smooth(0, width * 0.08, min(point.x, width - point.x))
             * smooth(0, height * 0.08, height - point.y)

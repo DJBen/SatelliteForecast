@@ -210,7 +210,19 @@ public struct SkyChart<ConstellationLabel: View, BackgroundAnnotationView: View>
                 starManager: context.starManager,
                 constellationLabel: context.constellationLabel,
                 annotationView: context.backgroundAnnotationView,
-                starTapped: context.backgroundStarTapped
+                starTapped: context.backgroundStarTapped,
+                labelExclusionZones: { rect in
+                    let samples = context.passSnapshots.snapshots.filter {
+                        $0.julianDate >= context.passSnapshots.pass.rise.julianDate &&
+                        $0.julianDate <= context.passSnapshots.pass.set.julianDate && $0.position.elev >= 0
+                    }
+                    let stride = max(1, samples.count / 80)
+                    return samples.enumerated().compactMap { index, sample in
+                        guard index % stride == 0 else { return nil }
+                        let point = SkyChartUtils.point(at: AziEle(sample.position.azim, sample.position.elev), rect: rect)
+                        return CGRect(x: point.x - 8, y: point.y - 8, width: 16, height: 16)
+                    }
+                }
             )
         )
         .environment(\.backgroundSkyJulianDateKey, backgroundSkyJulianDateKey)

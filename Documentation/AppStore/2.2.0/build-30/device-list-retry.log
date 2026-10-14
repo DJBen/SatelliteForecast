@@ -1,0 +1,112 @@
+Connected Devices:
+
+✅ Available Devices:
+
+📱 Live Activity Review (iPhone 17 Pro Max)
+   UDID: FF96D265-32CC-4DA9-8C78-61A55E871059
+   Model: iPhone18,2
+   Product Type: iPhone18,2
+   Platform: Unknown 27.0
+   CPU Architecture: arm64
+   Connection: sameMachine
+
+📱 Sihao Lu’s iPad
+   UDID: D444E04A-6A82-5EEA-B1D5-4C5123C6F006
+   Model: iPad8,1
+   Product Type: iPad8,1
+   Platform: Unknown 26.6.2
+   CPU Architecture: arm64e
+   Connection: wired
+   Developer Mode: enabled
+
+📱 Sihao’s iPhone
+   UDID: C3458ABB-8C5F-50FC-AC3F-C9C3815810C7
+   Model: iPhone18,4
+   Product Type: iPhone18,4
+   Platform: Unknown 27.0
+   CPU Architecture: arm64e
+   Connection:
+   Developer Mode: enabled
+
+📱 iPad (9)
+   UDID: E4CDDE80-CAB4-5A1E-8778-898FC2CAB970
+   Model: iPad14,1
+   Product Type: iPad14,1
+   Platform: Unknown 18.7.8
+   CPU Architecture: arm64e
+   Connection: localNetwork
+   Developer Mode: enabled
+
+📱 iPad Pro 13-inch (M5)
+   UDID: 12EF8F59-ECBB-4A3B-9450-FA76A523DBC3
+   Model: iPad17,4
+   Product Type: iPad17,4
+   Platform: Unknown 27.0
+   CPU Architecture: arm64
+   Connection: sameMachine
+
+📱 iPhone (23)
+   UDID: DE7942F6-E892-5574-A8D3-38AEE42A0E14
+   Model: iPhone16,1
+   Product Type: iPhone16,1
+   Platform: Unknown 26.6.1
+   CPU Architecture: arm64e
+   Connection:
+   Developer Mode: enabled
+
+📱 iPhone 12 — UX Review
+   UDID: 077A131A-1CD3-4371-BBB4-803F185B690F
+   Model: iPhone13,2
+   Product Type: iPhone13,2
+   Platform: Unknown 27.0
+   CPU Architecture: arm64
+   Connection: sameMachine
+
+📱 iPhone 17 Pro Max
+   UDID: 0D39CA43-2212-46F4-AE51-A38A3DDDB9BC
+   Model: iPhone18,2
+   Product Type: iPhone18,2
+   Platform: Unknown 27.0
+   CPU Architecture: arm64
+   Connection: sameMachine
+
+📱 iPhone 17 Pro Max — App Store 19
+   UDID: 0DB01E7A-D65B-47B3-BBDE-5CDD10BC9858
+   Model: iPhone18,2
+   Product Type: iPhone18,2
+   Platform: Unknown 27.0
+   CPU Architecture: arm64
+   Connection: sameMachine
+
+📱 iPhone 17 Pro Max — Store Widgets 19
+   UDID: 52951D26-A33B-4408-88C1-178D83712E9B
+   Model: iPhone18,2
+   Product Type: iPhone18,2
+   Platform: Unknown 27.0
+   CPU Architecture: arm64
+   Connection: sameMachine
+
+📱 iPhone 18 Pro
+   UDID: A97C7651-6B7A-451A-9DEC-A6A2BD0D2589
+   Model: iPhone19,2
+   Product Type: iPhone19,2
+   Platform: Unknown 27.0
+   CPU Architecture: arm64
+   Connection: sameMachine
+
+📱 iPhone Duo — Design Review
+   UDID: 7C40B063-AE4F-4981-9915-EDCD4DF343A5
+   Model: iPhone19,4
+   Product Type: iPhone19,4
+   Platform: Unknown 27.1
+   CPU Architecture: arm64
+   Connection: sameMachine
+
+Note: Use the device ID/UDID from above when required by other tools.
+Hint: Save a default device with session-set-defaults { deviceId: 'DEVICE_UDID' }.
+
+
+Next steps:
+1. Build for device: xcodebuildmcp device build --scheme "SCHEME" --device-id "DEVICE_UDID"
+2. Run tests on device: xcodebuildmcp device test --scheme "SCHEME" --device-id "DEVICE_UDID"
+3. Get app path: xcodebuildmcp device get-app-path --scheme "SCHEME"

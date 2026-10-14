@@ -436,3 +436,38 @@ Orientation guidance is again an overlay on the pass chart. Its compact bottom-r
 The alarm editor offers the first upward 10° crossing in addition to rise and peak moments; the crossing is calculated from orbital propagation and retained with the saved pass. Pass end is no longer selectable. Legacy pass-end alarms keep their absolute alert time when opened, anchored to rise for editing. Older saved passes without a retained crossing omit the 10° option until a fresh prediction is opened. The wheel picker replaces the lead-time shortcuts, and redundant sound copy is removed. Scheduling still uses the default sound and the existing `alarm_setup`/OS-acceptance event boundaries; no telemetry parameters are added.
 
 The Skychart tutorial now belongs to the shared pass chart and appears on first Compass use from either Passes or Satellites, independent of pass visibility. Opening a list or a chart with Compass off does not consume it. New users start with Compass off; existing saved Compass preferences and the `hasCompletedAllPassesOnboarding` seen flag are retained. An unseen tutorial also appears when entering with an existing enabled Compass preference. Manual help replay marks the same seen flag. Disabling Compass before the delayed presentation cancels it without marking it seen. The tutorial adds no screen/event; existing pass-detail screen names and measurement boundaries remain unchanged. Alarm sound behavior is unchanged when its row indicator is removed.
+
+## Adaptive iPad layouts (2026-10-13)
+
+The universal app and widget builds retain the existing screen names, event names,
+operation timers and conversion boundaries. Wide satellite/pass browsers display
+an initial selection beside the list. `satellites`, `passes` and `pass_detail`
+therefore can be visible concurrently, and an automatically displayed first detail
+is a screen impression rather than evidence of a user tap. Do not interpret the
+wide-layout screen sequence as a new intent or alarm conversion. Choosing a
+sidebar row and keyboard tab navigation introduce no new events or parameters.
+
+Home layout, action styling, denser catalog stars and increased bounded sky texture
+resolution are local presentation work. They remain outside forecast/catalog
+operation timers. Alarm sheets still use `alarm_setup`; `alarm_scheduled` remains
+after notification acceptance and persistence. Automatic alerts remain separate
+from local alarms. No coordinates, queries, identifiers, pixel/frame data or raw
+errors are logged. Debug, snapshot and XCTest telemetry suppression is unchanged.
+
+The iPad chart detail exploration compared size-dependent star limits; the selected
+2D chart initially used magnitude 5.5 at all sizes. The selected limits now follow
+usable chart diameter: under 240 pt uses magnitude 3, 240–479 pt uses 4.5, and
+480 pt or more uses 5.5. Regular pass charts, compact list previews, onboarding
+and home sky previews share this policy. The expanded chart bases density on its
+visible viewport rather than the offscreen 1000 pt scrollable canvas. Localized constellation names and
+collision-aware star labels remain adaptive to the chart size. A deeper, bounded
+catalog snapshot is loaded on demand only for explicit deeper exploration settings;
+the shared startup/planetarium catalog retains its existing limit. Drawing, label placement and this local
+catalog expansion remain outside forecast/network operation timers. No screen,
+event, conversion or telemetry parameter changes are introduced.
+
+The recorded onboarding replay uses the selected size-adaptive sky and
+constellation labels. Its reference sky remains at pass culmination while the
+satellite animates at 40×, preventing background renders from being cancelled by
+the replay clock. This remains the existing `onboarding` screen and adds no events,
+parameters or operation timers; routine Debug and XCTest telemetry stays suppressed.

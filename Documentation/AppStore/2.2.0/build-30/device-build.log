@@ -1,0 +1,5 @@
+✅ iOS Device Build build succeeded for scheme SatelliteForecastApp.
+Next Steps:
+1. Get app path: get_device_app_path({ scheme: 'SatelliteForecastApp' })
+2. Get bundle ID: get_app_bundle_id({ appPath: 'PATH_FROM_STEP_1' })
+3. Launch: launch_app_device({ bundleId: 'BUNDLE_ID_FROM_STEP_2' })
